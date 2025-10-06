@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -166,7 +166,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         if (isSnippet)
         {
             Assert.StartsWith(directive.Directive, item.InsertText);
-            Assert.Equal(item.InsertText, DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive.Directive].InsertText);
+            Assert.Equal(item.InsertText, DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive.Directive].InsertText);
         }
         else
         {
@@ -176,7 +176,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         Assert.Same(item.Source, source);
         Assert.True(item.Properties.TryGetProperty<DirectiveCompletionDescription>(RazorDirectiveCompletionSource.DescriptionKey, out var actualDescription));
 
-        var description = isSnippet ? "@" + DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive.Directive].DisplayText
+        var description = isSnippet ? "@" + DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive.Directive].DisplayText
                          + Environment.NewLine
                          + WorkspacesSR.DirectiveSnippetDescription
                          : directive.Description;
@@ -203,29 +203,21 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
 
     private static IVisualStudioRazorParser CreateParser(string text, params DirectiveDescriptor[] directives)
     {
-        var syntaxTree = CreateSyntaxTree(text, directives);
-        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Default));
+        var source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(
+            source,
+            parserOptions: RazorParserOptions.Default.WithDirectives([.. directives]));
+
+        var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
         codeDocument.SetSyntaxTree(syntaxTree);
+
         codeDocument.SetTagHelperContext(TagHelperDocumentContext.Create(prefix: null, tagHelpers: []));
+
         var parserMock = new StrictMock<IVisualStudioRazorParser>();
         parserMock
             .Setup(p => p.GetLatestCodeDocumentAsync(It.IsAny<ITextSnapshot>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(codeDocument);
 
         return parserMock.Object;
-    }
-
-    private static RazorSyntaxTree CreateSyntaxTree(string text, params DirectiveDescriptor[] directives)
-    {
-        var sourceDocument = TestRazorSourceDocument.Create(text);
-        var options = RazorParserOptions.Create(builder =>
-        {
-            foreach (var directive in directives)
-            {
-                builder.Directives.Add(directive);
-            }
-        });
-        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, options);
-        return syntaxTree;
     }
 }

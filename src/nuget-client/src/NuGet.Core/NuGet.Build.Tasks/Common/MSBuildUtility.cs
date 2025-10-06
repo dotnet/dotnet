@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
 using NuGet.Commands;
-using NuGet.Common;
 
 namespace NuGet.Build
 {

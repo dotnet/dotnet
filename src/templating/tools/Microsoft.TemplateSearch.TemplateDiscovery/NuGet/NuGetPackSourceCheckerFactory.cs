@@ -71,18 +71,18 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
             }
             Verbose.WriteLine($"Opening {fileLocation.FullName}");
 
-            using (var fileStream = fileLocation.OpenRead())
-            using (var textReader = new StreamReader(fileStream, System.Text.Encoding.UTF8, true))
-            using (var jsonReader = new JsonTextReader(textReader))
-            {
-                return new JsonSerializer().Deserialize<IEnumerable<FilteredPackageInfo>>(jsonReader);
-            }
+            using var fileStream = fileLocation.OpenRead();
+            using var textReader = new StreamReader(fileStream, System.Text.Encoding.UTF8, true);
+            using var jsonReader = new JsonTextReader(textReader);
+            return new JsonSerializer().Deserialize<IEnumerable<FilteredPackageInfo>>(jsonReader);
         }
 
         private static async Task<TemplateSearchCache?> LoadExistingCacheAsync(CommandArgs config, CancellationToken cancellationToken)
         {
             Verbose.WriteLine($"Loading existing cache information.");
-            const string uri = "https://dotnet-templating.azureedge.net/search/NuGetTemplateSearchInfoVer2.json";
+            // aka.ms link should point to https://dotnet-templating-hrdkctdrgkacbyek.b01.azurefd.net/search/NuGetTemplateSearchInfoVer2.json or
+            // whatever the future absolute URL for the JSON file is.
+            const string uri = "https://aka.ms/dotnet/templating/searchcacheurl";
 
             FileInfo? cacheFileLocation = config.DiffOverrideSearchCacheLocation;
 
@@ -92,12 +92,10 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
                 cacheFileLocation = new FileInfo("currentSearchCache.json");
             }
             Verbose.WriteLine($"Opening {cacheFileLocation.FullName}");
-            using (var fileStream = cacheFileLocation.OpenRead())
-            using (var textReader = new StreamReader(fileStream, System.Text.Encoding.UTF8, true))
-            using (var jsonReader = new JsonTextReader(textReader))
-            {
-                return TemplateSearchCache.FromJObject(JObject.Load(jsonReader), NullLogger.Instance, new Dictionary<string, Func<object, object>>() { { CliHostSearchCacheData.DataName, CliHostSearchCacheData.Reader } });
-            }
+            using var fileStream = cacheFileLocation.OpenRead();
+            using var textReader = new StreamReader(fileStream, System.Text.Encoding.UTF8, true);
+            using var jsonReader = new JsonTextReader(textReader);
+            return TemplateSearchCache.FromJObject(JObject.Load(jsonReader), NullLogger.Instance, new Dictionary<string, Func<object, object>>() { { CliHostSearchCacheData.DataName, CliHostSearchCacheData.Reader } });
         }
 
         private static async Task DownloadUriToFileAsync(string uri, string filePath, CancellationToken cancellationToken)
@@ -109,17 +107,13 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
                     CheckCertificateRevocationList = true,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 };
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    using (HttpResponseMessage response = await client.GetAsync(uri, cancellationToken).ConfigureAwait(false))
-                    {
-                        response.EnsureSuccessStatusCode();
-                        string resultText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                        File.WriteAllText(filePath, resultText);
-                        Verbose.WriteLine($"{uri} was successfully downloaded to {filePath}.");
-                        return;
-                    }
-                }
+                using HttpClient client = new HttpClient(handler);
+                using HttpResponseMessage response = await client.GetAsync(uri, cancellationToken).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                string resultText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                File.WriteAllText(filePath, resultText);
+                Verbose.WriteLine($"{uri} was successfully downloaded to {filePath}.");
+                return;
             }
             catch (TaskCanceledException)
             {

@@ -1,27 +1,24 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
+#if !NET
+using System.Collections.Generic;
+#endif
+
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
-    private readonly bool _bindGetSetSupported;
-
-    public ComponentBindLoweringPass(bool bindGetSetSupported)
-    {
-        _bindGetSetSupported = bindGetSetSupported;
-    }
+    private static readonly string s_cultureInvariantText = $"global::{typeof(CultureInfo).FullName}.{nameof(CultureInfo.InvariantCulture)}";
 
     // Run after event handler pass
     public override int Order => 100;
@@ -41,293 +38,342 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             return;
         }
 
-        // For each @bind *usage* we need to rewrite the tag helper node to map to basic constructs.
-        var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
-        var parameterReferences = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeParameterIntermediateNode>();
+        var bindGetSetSupported = codeDocument.ParserOptions.LanguageVersion >= RazorLanguageVersion.Version_7_0;
 
-        var parents = new HashSet<IntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
-        {
-            parents.Add(references[i].Parent);
-        }
-        for (var i = 0; i < parameterReferences.Count; i++)
-        {
-            parents.Add(parameterReferences[i].Parent);
-        }
+        using var references = new PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode>>();
+        using var parameterReferences = new PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeParameterIntermediateNode>>();
 
-        foreach (var parent in parents)
-        {
-            ProcessDuplicates(parent);
-        }
+        ref var referencesRef = ref references.AsRef();
+        ref var parameterReferencesRef = ref parameterReferences.AsRef();
 
-        // First, collect all the non-parameterized @bind or @bind-* attributes.
-        // The dict key is a tuple of (parent, attributeName) to differentiate attributes with the same name in two different elements.
-        // We don't have to worry about duplicate bound attributes in the same element
-        // like, <Foo @bind="bar" @bind="bar" />, because IR lowering takes care of that.
-        var bindEntries = new Dictionary<(IntermediateNode, string), BindEntry>();
-        for (var i = 0; i < references.Count; i++)
+        // First, process duplicates so we don't have to worry about them later.
+        documentNode.CollectDescendantReferences(ref referencesRef);
+        documentNode.CollectDescendantReferences(ref parameterReferencesRef);
+
+        ProcessDuplicates(ref referencesRef, ref parameterReferencesRef);
+
+        // Now that we've processed duplicates, re-collect all the references as some may have been removed.
+        references.Clear();
+        documentNode.CollectDescendantReferences(ref referencesRef);
+
+        parameterReferences.Clear();
+        documentNode.CollectDescendantReferences(ref parameterReferencesRef);
+
+        // For each @bind usage we need to rewrite the tag helper node to map to basic constructs.
+
+        // Collect all the non-parameterized @bind or @bind-* attributes.
+        // The dict key is essentially a tuple of (parent, attributeName) to differentiate attributes
+        // with the same name in two different elements. We don't have to worry about duplicate bound
+        // attributes in the same element such as, <Foo @bind="bar" @bind="bar" />, because IR lowering
+        // takes care of that.
+        using var _ = DictionaryPool<BindEntryKey, BindEntry>.GetPooledObject(out var bindEntries);
+
+        foreach (var reference in references)
         {
-            var reference = references[i];
             var parent = reference.Parent;
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
-            if (!parent.Children.Contains(node))
+            if (node.TagHelper.Kind == TagHelperKind.Bind)
             {
-                // This node was removed as a duplicate, skip it.
-                continue;
-            }
-
-            if (node.TagHelper.IsBindTagHelper())
-            {
-                bindEntries[(parent, node.AttributeName)] = new BindEntry(reference);
+                bindEntries.Add(new(parent, node), new BindEntry(reference));
             }
         }
 
         // Do a pass to look for (@bind:get, @bind:set) pairs as this alternative form might have been used
         // to define the binding.
-        for (var i = 0; i < parameterReferences.Count; i++)
+        foreach (var parameterReference in parameterReferences)
         {
-            var reference = parameterReferences[i];
-            var parent = reference.Parent;
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)reference.Node;
+            var parent = parameterReference.Parent;
+            var node = parameterReference.Node;
 
-            if (!parent.Children.Contains(node))
+            if (!node.BoundAttributeParameter.BindAttributeGetSet)
             {
-                // This node was removed as a duplicate, skip it.
                 continue;
             }
 
-            if (node.BoundAttributeParameter.Metadata.ContainsKey(ComponentMetadata.Bind.BindAttributeGetSet))
+            if (!bindGetSetSupported)
             {
-                if (!_bindGetSetSupported)
-                {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_UnsupportedSyntaxBindGetSet(
-                        node.Source,
-                        node.AttributeName));
-                }
-                if (!bindEntries.TryGetValue((reference.Parent, node.AttributeNameWithoutParameter), out var existingEntry))
-                {
-                    bindEntries[(reference.Parent, node.AttributeNameWithoutParameter)] = new BindEntry(reference);
-                }
-                else
-                {
-                    existingEntry.BindNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindAndBindGet(
-                            node.Source,
-                            existingEntry.BindNode.AttributeName));
-                }
+                node.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_UnsupportedSyntaxBindGetSet(
+                    node.Source,
+                    node.AttributeName));
+            }
+
+            var key = new BindEntryKey(parent, node);
+
+            if (!bindEntries.TryGetValue(key, out var existingEntry))
+            {
+                bindEntries.Add(key, new BindEntry(parameterReference));
+            }
+            else
+            {
+                var bindNode = existingEntry.BindNode.AssumeNotNull();
+
+                bindNode.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindAndBindGet(
+                    node.Source,
+                    bindNode.AttributeName));
             }
         }
 
         // Now collect all the parameterized attributes and store them along with their corresponding @bind or @bind-* attributes.
-        for (var i = 0; i < parameterReferences.Count; i++)
+        foreach (var parameterReference in parameterReferences)
         {
-            var parameterReference = parameterReferences[i];
             var parent = parameterReference.Parent;
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
+            var node = parameterReference.Node;
 
-            if (!parent.Children.Contains(node))
+            if (node.TagHelper.Kind != TagHelperKind.Bind)
             {
-                // This node was removed as a duplicate, skip it.
                 continue;
             }
 
-            if (node.TagHelper.IsBindTagHelper())
+            // Check if this tag contains a corresponding non-parameterized bind node.
+            var key = new BindEntryKey(parent, node);
+            var name = node.BoundAttributeParameter.Name;
+
+            if (!bindEntries.TryGetValue(key, out var entry))
             {
-                // Check if this tag contains a corresponding non-parameterized bind node.
-                if (!bindEntries.TryGetValue((parent, node.AttributeNameWithoutParameter), out var entry))
+                if (name != "set")
                 {
-                    if (node.BoundAttributeParameter.Name != "set")
-                    {
-                        // There is no corresponding bind node. Add a diagnostic and move on.
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBind(
-                            node.Source,
-                            node.AttributeName));
-                    }
-                    else
-                    {
-                        // There is no corresponding bind node. Add a diagnostic and move on.
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBindGet(
-                            node.Source,
-                            node.AttributeNameWithoutParameter));
-                    }
-                }
-                else if (node.BoundAttributeParameter.Name == "event")
-                {
-                    entry.BindEventNode = node;
-                }
-                else if (node.BoundAttributeParameter.Name == "format")
-                {
-                    entry.BindFormatNode = node;
-                }
-                else if (node.BoundAttributeParameter.Name == "culture")
-                {
-                    entry.BindCultureNode = node;
-                }
-                else if (node.BoundAttributeParameter.Name == "after")
-                {
-                    entry.BindAfterNode = node;
-                }
-                else if (node.BoundAttributeParameter.Name == "get")
-                {
-                    // Avoid removing the reference since it will be processed later on.
-                    continue;
-                }
-                else if (node.BoundAttributeParameter.Name == "set")
-                {
-                    if (entry.BindNode != null)
-                    {
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_UseBindGet(
-                            node.Source,
-                            node.BoundAttribute.Name));
-                    }
-                    entry.BindSetNode = node;
+                    // There is no corresponding bind node. Add a diagnostic and move on.
+                    parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBind(
+                        node.Source,
+                        node.AttributeName));
                 }
                 else
                 {
-                    // Unsupported bind attribute parameter. This can only happen if bound attribute descriptor
-                    // is configured to expect a parameter other than 'event' and 'format'.
+                    // There is no corresponding bind node. Add a diagnostic and move on.
+                    parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBindGet(
+                        node.Source,
+                        node.AttributeNameWithoutParameter));
+                }
+            }
+            else if (name == "event")
+            {
+                entry.BindEventNode = node;
+            }
+            else if (name == "format")
+            {
+                entry.BindFormatNode = node;
+            }
+            else if (name == "culture")
+            {
+                entry.BindCultureNode = node;
+            }
+            else if (name == "after")
+            {
+                entry.BindAfterNode = node;
+            }
+            else if (name == "get")
+            {
+                // Avoid removing the reference since it will be processed later on.
+                continue;
+            }
+            else if (name == "set")
+            {
+                if (entry.BindNode != null)
+                {
+                    parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_UseBindGet(
+                        node.Source,
+                        node.BoundAttribute.Name));
                 }
 
-                // We've extracted what we need from the parameterized bind node. Remove it.
-                parameterReference.Remove();
+                entry.BindSetNode = node;
             }
+            else
+            {
+                // Unsupported bind attribute parameter. This can only happen if bound attribute descriptor
+                // is configured to expect a parameter other than 'event' and 'format'.
+            }
+
+            // We've extracted what we need from the parameterized bind node. Remove it.
+            parameterReference.Remove();
         }
 
         // We now have all the info we need to rewrite the tag helper.
-        foreach (var entry in bindEntries)
+        foreach (var (key, entry) in bindEntries)
         {
-            var reference = entry.Value.BindNodeReference;
-            if (entry.Value.BindSetNode != null && entry.Value.BindAfterNode != null)
+            if (entry.BindSetNode != null && entry.BindAfterNode is { } afterNode)
             {
-                var afterNode = entry.Value.BindAfterNode;
-                entry.Key.Item1.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindSetAfter(
+                key.Parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindSetAfter(
                     afterNode.Source,
                     afterNode.AttributeNameWithoutParameter));
             }
-            var rewritten = RewriteUsage(reference.Parent, entry.Value);
+
+            var reference = entry.BindNodeReference;
+            var newNodes = RewriteUsage(reference.Parent, entry);
             reference.Remove();
 
-            for (var j = 0; j < rewritten.Length; j++)
+            foreach (var newNode in newNodes)
             {
-                reference.Parent.Children.Add(rewritten[j]);
+                reference.Parent.Children.Add(newNode);
             }
         }
     }
 
-    private void ProcessDuplicates(IntermediateNode node)
+    private static void ProcessDuplicates(
+        ref PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode>> references,
+        ref PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeParameterIntermediateNode>> parameterReferences)
     {
-        // Reverse order because we will remove nodes.
-        //
-        // Each 'property' node could be duplicated if there are multiple tag helpers that match that
-        // particular attribute. This is common in our approach, which relies on 'fallback' tag helpers
-        // that overlap with more specific ones.
-        for (var i = node.Children.Count - 1; i >= 0; i--)
+        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+
+        foreach (var reference in references)
+        {
+            parents.Add(reference.Parent);
+        }
+
+        foreach (var parameterReference in parameterReferences)
+        {
+            parents.Add(parameterReference.Parent);
+        }
+
+        foreach (var parent in parents)
+        {
+            ProcessDuplicateAttributes(parent);
+        }
+    }
+
+    private static void ProcessDuplicateAttributes(IntermediateNode node)
+    {
+        var children = node.Children;
+
+        // First, collect all the bind-related attributes on this node.
+        using var attributes = new PooledArrayBuilder<AttributeInfo>();
+
+        for (var i = 0; i < children.Count; i++)
+        {
+            switch (children[i])
+            {
+                case TagHelperDirectiveAttributeIntermediateNode directiveAttribute:
+                    attributes.Add(new(directiveAttribute, i));
+                    break;
+
+                case TagHelperDirectiveAttributeParameterIntermediateNode directiveAttributeParameter:
+                    attributes.Add(new(directiveAttributeParameter, i));
+                    break;
+            }
+        }
+
+        // Next, identify attributes for "fallback" bind tag helpers that are overridden by attributes
+        // with more specific bind tag helpers.
+        using var toRemove = new PooledArrayBuilder<AttributeInfo>();
+
+        foreach (var attribute in attributes)
         {
             // For each usage of the general 'fallback' bind tag helper, it could duplicate
             // the usage of a more specific one. Look for duplicates and remove the fallback.
-            TagHelperDescriptor tagHelper = null;
-            string attributeName = null;
-            var attribute = node.Children[i];
-            if (attribute is TagHelperDirectiveAttributeIntermediateNode directiveAttribute)
-            {
-                attributeName = directiveAttribute.AttributeName;
-                tagHelper = directiveAttribute.TagHelper;
-            }
-            else if (attribute is TagHelperDirectiveAttributeParameterIntermediateNode parameterAttribute)
-            {
-                attributeName = parameterAttribute.AttributeName;
-                tagHelper = parameterAttribute.TagHelper;
-            }
-            if (attribute != null &&
-                tagHelper != null &&
-                tagHelper.IsFallbackBindTagHelper())
-            {
-                for (var j = 0; j < node.Children.Count; j++)
-                {
-                    TagHelperDescriptor duplicateTagHelper = null;
-                    string duplicateAttributeName = null;
-                    var duplicate = node.Children[j];
-                    if (duplicate is TagHelperDirectiveAttributeIntermediateNode duplicateDirectiveAttribute)
-                    {
-                        duplicateAttributeName = duplicateDirectiveAttribute.AttributeName;
-                        duplicateTagHelper = duplicateDirectiveAttribute.TagHelper;
-                    }
-                    else if (duplicate is TagHelperDirectiveAttributeParameterIntermediateNode duplicateParameterAttribute)
-                    {
-                        duplicateAttributeName = duplicateParameterAttribute.AttributeName;
-                        duplicateTagHelper = duplicateParameterAttribute.TagHelper;
-                    }
-                    if (duplicate != null &&
-                        duplicateTagHelper != null &&
-                        duplicateTagHelper.IsBindTagHelper() &&
-                        duplicateAttributeName == attributeName &&
-                        !object.ReferenceEquals(attribute, duplicate))
-                    {
-                        // Found a duplicate - remove the 'fallback' in favor of the
-                        // more specific tag helper.
-                        node.Children.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
-
+            //
             // Also treat the general <input @bind="..." /> as a 'fallback' for that case and remove it.
             // This is a workaround for a limitation where you can't write a tag helper that binds only
-            // when a specific attribute is **not** present.
-            if (attribute != null &&
-                tagHelper != null &&
-                tagHelper.IsInputElementFallbackBindTagHelper())
+            // when a specific attribute is *not* present.
+
+            if (attribute.IsFallback)
             {
-                for (var j = 0; j < node.Children.Count; j++)
+                foreach (var candidate in attributes)
                 {
-                    TagHelperDescriptor duplicateTagHelper = null;
-                    string duplicateAttributeName = null;
-                    var duplicate = node.Children[j];
-                    if (duplicate is TagHelperDirectiveAttributeIntermediateNode duplicateDirectiveAttribute)
+                    if (ReferenceEquals(attribute.Node, candidate.Node))
                     {
-                        duplicateAttributeName = duplicateDirectiveAttribute.AttributeName;
-                        duplicateTagHelper = duplicateDirectiveAttribute.TagHelper;
+                        // Same node, skip.
+                        continue;
                     }
-                    else if (duplicate is TagHelperDirectiveAttributeParameterIntermediateNode duplicateParameterAttribute)
+
+                    // If the candidate isn't a more specific bind tag helper then skip it.
+                    if ((attribute.IsFallbackBindTagHelper && !candidate.IsBindTagHelper) ||
+                        (attribute.IsInputElementFallbackBindTagHelper && !candidate.IsInputElementBindTagHelper))
                     {
-                        duplicateAttributeName = duplicateParameterAttribute.AttributeName;
-                        duplicateTagHelper = duplicateParameterAttribute.TagHelper;
+                        continue;
                     }
-                    if (duplicate != null &&
-                        duplicateTagHelper != null &&
-                        duplicateTagHelper.IsInputElementBindTagHelper() &&
-                        duplicateAttributeName == attributeName &&
-                        !object.ReferenceEquals(attribute, duplicate))
+
+                    if (attribute.AttributeName == candidate.AttributeName)
                     {
-                        // Found a duplicate - remove the 'fallback' input tag helper in favor of the
-                        // more specific tag helper.
-                        node.Children.RemoveAt(i);
+                        // Found a duplicate - remove the 'fallback' in favor of the more specific tag helper.
+                        toRemove.Add(attribute);
                         break;
                     }
                 }
             }
         }
 
-        // If we still have duplicates at this point then they are genuine conflicts.
-        var duplicates = node.Children
-            .OfType<TagHelperDirectiveAttributeIntermediateNode>()
-            .GroupBy(p => p.AttributeName)
-            .Where(g => g.Count() > 1);
-
-        foreach (var duplicate in duplicates)
+        // Now that we've identified attributes that should be removed, iterate them in reverse order
+        // and remove them using the index we stored. Note: We know the attributes are already ordered
+        // by index.
+        for (var i = toRemove.Count - 1; i >= 0; i--)
         {
-            node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_Duplicates(
-                node.Source,
-                duplicate.First().OriginalAttributeName,
-                duplicate.ToArray()));
-            foreach (var property in duplicate)
+            children.RemoveAt(toRemove[i].Index);
+        }
+
+        // If we still have duplicates at this point then they are genuine conflicts.
+        // Use a hash set to quickly determine whether there are any duplicates.
+        // If so, we need to do a more expensive pass to identify and remove them.
+        using var _ = StringHashSetPool.Ordinal.GetPooledObject(out var duplicates);
+
+        foreach (var child in children)
+        {
+            // UNDONE: For some reason, we do not look for duplicates among parameterized
+            // attributes here or in ReportDiagnosticAndRemoveDuplicates. Prior to being
+            // unrolled, duplicates were identified with a LINQ expression that called
+            // OfType<TagHelperDirectiveAttributeIntermediateNode>(), meaning that
+            // TagHelperDirectiveAttributeParameterIntermediateNode nodes were never considered.
+            // This is possibly a bug, but without a report or a repro it's hard to say for sure.
+            if (child is TagHelperDirectiveAttributeIntermediateNode { AttributeName: string attributeName } &&
+                !duplicates.Add(attributeName))
             {
-                node.Children.Remove(property);
+                ReportDiagnosticAndRemoveDuplicates(node);
+                break;
+            }
+        }
+
+        static void ReportDiagnosticAndRemoveDuplicates(IntermediateNode node)
+        {
+            var children = node.Children;
+
+            using var _ = StringDictionaryPool<ImmutableArray<AttributeInfo>.Builder>.Ordinal.GetPooledObject(out var duplicates);
+
+            for (var i = 0; i < children.Count; i++)
+            {
+                if (children[i] is TagHelperDirectiveAttributeIntermediateNode directiveAttribute)
+                {
+                    if (!duplicates.TryGetValue(directiveAttribute.AttributeName, out var builder))
+                    {
+                        builder = ImmutableArray.CreateBuilder<AttributeInfo>();
+                        duplicates[directiveAttribute.AttributeName] = builder;
+                    }
+
+                    builder.Add(new(directiveAttribute, i));
+                }
+            }
+
+            using var toRemove = new PooledArrayBuilder<AttributeInfo>();
+
+            foreach (var (_, builder) in duplicates)
+            {
+                if (builder.Count > 1)
+                {
+                    node.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_Duplicates(
+                        node.Source,
+                        builder[0].OriginalAttributeName,
+                        builder.Select(static x => (TagHelperDirectiveAttributeIntermediateNode)x.Node)));
+
+                    foreach (var attribute in builder)
+                    {
+                        toRemove.Add(attribute);
+                    }
+                }
+            }
+
+            // Do we have duplicates to remove? If so, remove them in reverse order.
+            if (toRemove.Count > 0)
+            {
+                // Sort by index to ensure we remove in the right order.
+                toRemove.Sort(static (x, y) => x.Index.CompareTo(y.Index));
+
+                for (var i = toRemove.Count - 1; i >= 0; i--)
+                {
+                    children.RemoveAt(toRemove[i].Index);
+                }
             }
         }
     }
 
-    private IntermediateNode[] RewriteUsage(IntermediateNode parent, BindEntry bindEntry)
+    private static ImmutableArray<IntermediateNode> RewriteUsage(IntermediateNode parent, BindEntry bindEntry)
     {
         // Bind works similarly to a macro, it always expands to code that the user could have written.
         //
@@ -351,8 +397,6 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         // We also assume that the element will be treated as a component for now because
         // multiple passes handle 'special' tag helpers. We have another pass that translates
         // a tag helper node back into 'regular' element when it doesn't have an associated component
-        var node = bindEntry.BindNode;
-        var getNode = bindEntry.BindGetNode;
         if (!TryComputeAttributeNames(
             parent,
             bindEntry,
@@ -364,22 +408,25 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             out var changeAttribute,
             out var expressionAttribute))
         {
-            // Skip anything we can't understand. It's important that we don't crash, that will bring down
-            // the build.
-            if (node != null)
+            // Skip anything we can't understand. It's important that we don't crash, that will bring down the build.
+            if (bindEntry.BindNode is { } bindNode)
             {
-                node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_InvalidSyntax(
-                    node.Source,
-                    node.AttributeName));
-                return new[] { node };
+                bindNode.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_InvalidSyntax(
+                    bindNode.Source,
+                    bindNode.AttributeName));
+
+                return [bindNode];
             }
             else
             {
-                getNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_MissingBindSet(
-                    getNode.Source,
-                    getNode.AttributeName,
-                    $"{getNode.AttributeNameWithoutParameter}:set"));
-                return new[] { getNode };
+                var bindGetNode = bindEntry.BindGetNode.AssumeNotNull();
+
+                bindGetNode.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_MissingBindSet(
+                    bindGetNode.Source,
+                    bindGetNode.AttributeName,
+                    $"{bindGetNode.AttributeNameWithoutParameter}:set"));
+
+                return [bindGetNode];
             }
         }
 
@@ -388,59 +435,47 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         {
             // This can happen in error cases, the parser will already have flagged this
             // as an error, so ignore it.
-            return new[] { bindEntry.GetEffectiveBindNode() };
+            return [bindEntry.GetEffectiveBindNode()];
         }
 
         // Look for a format. If we find one then we need to pass the format into the
         // two nodes we generate.
-        IntermediateToken format = null;
-        if (bindEntry.BindFormatNode != null)
+        IntermediateToken? format = null;
+        if (bindEntry.BindFormatNode is { } formatNode)
         {
-            format = GetAttributeContent(bindEntry.BindFormatNode);
+            format = GetAttributeContent(formatNode);
         }
-        else if (bindEntry.GetEffectiveNodeTagHelperDescriptor()?.GetFormat() != null)
+        else if (bindEntry.GetFormat() is string formatContent)
         {
             // We may have a default format if one is associated with the field type.
-            format = new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "\"" + bindEntry.GetEffectiveNodeTagHelperDescriptor().GetFormat() + "\"",
-            };
+            format = IntermediateNodeFactory.CSharpToken($"\"{formatContent}\"");
         }
 
         // Look for a culture. If we find one then we need to pass the culture into the
         // two nodes we generate.
-        IntermediateToken culture = null;
-        if (bindEntry.BindCultureNode != null)
+        IntermediateToken? culture = null;
+        if (bindEntry.BindCultureNode is { } cultureNode)
         {
-            culture = GetAttributeContent(bindEntry.BindCultureNode);
+            culture = GetAttributeContent(cultureNode);
         }
-        else if (bindEntry.GetEffectiveNodeTagHelperDescriptor()?.IsInvariantCultureBindTagHelper() == true)
+        else if (bindEntry.IsInvariantCultureBindTagHelper())
         {
             // We may have a default invariant culture if one is associated with the field type.
-            culture = new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = $"global::{typeof(CultureInfo).FullName}.{nameof(CultureInfo.InvariantCulture)}",
-            };
+            culture = IntermediateNodeFactory.CSharpToken(s_cultureInvariantText);
         }
 
         // Look for an after event. If we find one then we need to pass the event into the
         // CreateBinder call we generate.
-        IntermediateToken after = null;
-        if (bindEntry.BindAfterNode != null)
-        {
-            after = GetAttributeContent(bindEntry.BindAfterNode);
-        }
+        var after = bindEntry.BindAfterNode is { } afterNode
+            ? GetAttributeContent(afterNode)
+            : null;
 
-        IntermediateToken setter = null;
-        if (bindEntry.BindSetNode != null)
-        {
-            setter = GetAttributeContent(bindEntry.BindSetNode);
-        }
+        var setter = bindEntry.BindSetNode is { } setterNode
+            ? GetAttributeContent(setterNode)
+            : null;
 
-        var valueExpressionTokens = new List<IntermediateToken>();
-        var changeExpressionTokens = new List<IntermediateToken>();
+        using var valueExpressionTokens = new PooledArrayBuilder<IntermediateToken>();
+        using var changeExpressionTokens = new PooledArrayBuilder<IntermediateToken>();
 
         // There are a few cases to handle for @bind:
         // 1. This is a component using a delegate (int Value & Action<int> Value)
@@ -449,32 +484,23 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         if (parent is ComponentIntermediateNode && changeAttribute != null && changeAttribute.IsDelegateProperty())
         {
             RewriteNodesForComponentDelegateBind(
-                original,
-                setter,
-                after,
-                changeAttribute.IsDelegateWithAwaitableResult(),
-                valueExpressionTokens,
-                changeExpressionTokens);
+                original, setter, after, changeAttribute.IsDelegateWithAwaitableResult(),
+                ref valueExpressionTokens.AsRef(),
+                ref changeExpressionTokens.AsRef());
         }
         else if (parent is ComponentIntermediateNode)
         {
             RewriteNodesForComponentEventCallbackBind(
-                original,
-                setter,
-                after,
-                valueExpressionTokens,
-                changeExpressionTokens);
+                original, setter, after,
+                ref valueExpressionTokens.AsRef(),
+                ref changeExpressionTokens.AsRef());
         }
         else
         {
             RewriteNodesForElementEventCallbackBind(
-                original,
-                format,
-                culture,
-                setter,
-                after,
-                valueExpressionTokens,
-                changeExpressionTokens);
+                original, format, culture, setter, after,
+                ref valueExpressionTokens.AsRef(),
+                ref changeExpressionTokens.AsRef());
         }
 
         var targetNode = bindEntry.GetEffectiveBindNode();
@@ -483,10 +509,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         {
             var valueNode = new HtmlAttributeIntermediateNode()
             {
-                Annotations =
-                    {
-                        [ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName(),
-                    },
+                OriginalAttributeName = bindEntry.OriginalAttributeName,
                 AttributeName = valueAttributeName,
                 Source = targetNode.Source,
 
@@ -494,23 +517,20 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 Suffix = "\"",
             };
 
-            for (var i = 0; i < targetNode.Diagnostics.Count; i++)
+            valueNode.AddDiagnosticsFromNode(targetNode);
+
+            var valueAttributeValue = new CSharpExpressionAttributeValueIntermediateNode();
+
+            foreach (var token in valueExpressionTokens)
             {
-                valueNode.Diagnostics.Add(targetNode.Diagnostics[i]);
+                valueAttributeValue.Children.Add(token);
             }
 
-            valueNode.Children.Add(new CSharpExpressionAttributeValueIntermediateNode());
-            for (var i = 0; i < valueExpressionTokens.Count; i++)
-            {
-                valueNode.Children[0].Children.Add(valueExpressionTokens[i]);
-            }
+            valueNode.Children.Add(valueAttributeValue);
 
             var changeNode = new HtmlAttributeIntermediateNode()
             {
-                Annotations =
-                    {
-                        [ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName(),
-                    },
+                OriginalAttributeName = bindEntry.OriginalAttributeName,
                 AttributeName = changeAttributeName,
                 AttributeNameExpression = changeAttributeNode,
                 Source = targetNode.Source,
@@ -521,51 +541,67 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 EventUpdatesAttributeName = valueAttributeName,
             };
 
-            changeNode.Children.Add(new CSharpExpressionAttributeValueIntermediateNode());
-            for (var i = 0; i < changeExpressionTokens.Count; i++)
+            var changeAttributeValue = new CSharpExpressionAttributeValueIntermediateNode();
+
+            foreach (var token in changeExpressionTokens)
             {
-                changeNode.Children[0].Children.Add(changeExpressionTokens[i]);
+                changeAttributeValue.Children.Add(token);
             }
 
-            return new[] { valueNode, changeNode };
+            changeNode.Children.Add(changeAttributeValue);
+
+            return [valueNode, changeNode];
         }
         else
         {
-            using var _ = ArrayBuilderPool<IntermediateNode>.GetPooledObject(out var builder);
+            var node = bindEntry.BindNode;
+            var getNode = bindEntry.BindGetNode;
 
-            var valuePropertyName = valueAttribute?.GetPropertyName();
+            using var builder = new PooledArrayBuilder<IntermediateNode>();
 
-            ComponentAttributeIntermediateNode valueNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-            valueNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+            var valueNode = node != null
+                ? ComponentAttributeIntermediateNode.From(node, addChildren: false)
+                : ComponentAttributeIntermediateNode.From(getNode.AssumeNotNull(), addChildren: false);
+
+            valueNode.OriginalAttributeName = bindEntry.OriginalAttributeName;
+
+            valueNode.PropertySpan = GetOriginalPropertySpan(valueNode);
             valueNode.AttributeName = valueAttributeName;
             valueNode.BoundAttribute = valueAttribute; // Might be null if it doesn't match a component attribute
-            valueNode.PropertyName = valuePropertyName;
-            valueNode.TagHelper = valueAttribute == null ? null : bindEntry.GetEffectiveNodeTagHelperDescriptor();
-            valueNode.TypeName = valueAttribute?.IsWeaklyTyped() == false ? valueAttribute.TypeName : null;
+            valueNode.PropertyName = valueAttribute?.PropertyName;
+            valueNode.TypeName = valueAttribute?.IsWeaklyTyped == false ? valueAttribute.TypeName : null;
 
-            valueNode.Children.Clear();
-            valueNode.Children.Add(new CSharpExpressionIntermediateNode());
-            for (var i = 0; i < valueExpressionTokens.Count; i++)
+            var valueExpressionNode = new CSharpExpressionIntermediateNode();
+
+            foreach (var token in valueExpressionTokens)
             {
-                valueNode.Children[0].Children.Add(valueExpressionTokens[i]);
+                valueExpressionNode.Children.Add(token);
             }
+
+            valueNode.Children.Add(valueExpressionNode);
 
             builder.Add(valueNode);
 
-            var changeNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-            changeNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+            var changeNode = node != null
+                ? ComponentAttributeIntermediateNode.From(node, addChildren: false)
+                : ComponentAttributeIntermediateNode.From(getNode.AssumeNotNull(), addChildren: false);
+
+            changeNode.OriginalAttributeName = bindEntry.OriginalAttributeName;
+            changeNode.PropertySpan = GetOriginalPropertySpan(changeNode);
+            changeNode.IsSynthesized = true;
             changeNode.AttributeName = changeAttributeName;
             changeNode.BoundAttribute = changeAttribute; // Might be null if it doesn't match a component attribute
-            changeNode.PropertyName = changeAttribute?.GetPropertyName();
-            changeNode.TagHelper = changeAttribute == null ? null : bindEntry.GetEffectiveNodeTagHelperDescriptor();
-            changeNode.TypeName = changeAttribute?.IsWeaklyTyped() == false ? changeAttribute.TypeName : null;
+            changeNode.PropertyName = changeAttribute?.PropertyName;
+            changeNode.TypeName = changeAttribute?.IsWeaklyTyped == false ? changeAttribute.TypeName : null;
 
-            changeNode.Children.Clear();
-            changeNode.Children.Add(new CSharpExpressionIntermediateNode());
-            for (var i = 0; i < changeExpressionTokens.Count; i++)
+            var changeExpressionNode = new CSharpExpressionIntermediateNode();
+
+            foreach (var token in changeExpressionTokens)
             {
-                changeNode.Children[0].Children.Add(changeExpressionTokens[i]);
+                changeExpressionNode.Children.Add(token);
             }
+
+            changeNode.Children.Add(changeExpressionNode);
 
             builder.Add(changeNode);
 
@@ -573,20 +609,21 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             // component is defined to accept one
             if (expressionAttribute != null)
             {
-                var expressionNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-                expressionNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+                var expressionNode = node != null
+                    ? ComponentAttributeIntermediateNode.From(node, addChildren: false)
+                    : ComponentAttributeIntermediateNode.From(getNode.AssumeNotNull(), addChildren: false);
+
+                expressionNode.OriginalAttributeName = bindEntry.OriginalAttributeName;
+                expressionNode.PropertySpan = GetOriginalPropertySpan(expressionNode);
+                expressionNode.IsSynthesized = true;
                 expressionNode.AttributeName = expressionAttributeName;
                 expressionNode.BoundAttribute = expressionAttribute;
-                expressionNode.PropertyName = expressionAttribute.GetPropertyName();
-                expressionNode.TagHelper = bindEntry.GetEffectiveNodeTagHelperDescriptor();
-                expressionNode.TypeName = expressionAttribute.IsWeaklyTyped() ? null : expressionAttribute.TypeName;
+                expressionNode.PropertyName = expressionAttribute.PropertyName;
+                expressionNode.TypeName = expressionAttribute.IsWeaklyTyped ? null : expressionAttribute.TypeName;
 
-                expressionNode.Children.Clear();
-                expressionNode.Children.Add(new CSharpExpressionIntermediateNode());
-                expressionNode.Children[0].Children.Add(new IntermediateToken()
+                expressionNode.Children.Add(new CSharpExpressionIntermediateNode()
                 {
-                    Content = $"() => {original.Content}",
-                    Kind = TokenKind.CSharp
+                    Children = { IntermediateNodeFactory.CSharpToken($"() => {original.Content}") }
                 });
 
                 builder.Add(expressionNode);
@@ -595,32 +632,39 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             // We don't need to generate any runtime code for these attributes normally, as they're handled by the above nodes,
             // but in order for IDE scenarios around component attributes to work we need to generate a little bit of design
             // time code, so we create design time specific nodes with minimal information in order to do so.
-            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindSetNode, valuePropertyName);
-            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindEventNode, valuePropertyName);
-            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindAfterNode, valuePropertyName);
+            ref var builderRef = ref builder.AsRef();
 
-            return builder.ToArray();
+            TryAddDesignTimePropertyAccessHelperNode(ref builderRef, bindEntry.BindSetNode, valueAttribute);
+            TryAddDesignTimePropertyAccessHelperNode(ref builderRef, bindEntry.BindEventNode, valueAttribute);
+            TryAddDesignTimePropertyAccessHelperNode(ref builderRef, bindEntry.BindAfterNode, valueAttribute);
+
+            return builder.ToImmutableAndClear();
         }
     }
 
-    private static void TryAddDesignTimePropertyAccessHelperNode(ImmutableArray<IntermediateNode>.Builder builder, TagHelperDirectiveAttributeParameterIntermediateNode intermediateNode, string propertyName)
+    private static void TryAddDesignTimePropertyAccessHelperNode(
+        ref PooledArrayBuilder<IntermediateNode> builder,
+        TagHelperDirectiveAttributeParameterIntermediateNode? node,
+        BoundAttributeDescriptor? valueAttribute)
     {
-        if (intermediateNode is null || propertyName is null)
+        if (node is null || valueAttribute is null)
         {
             return;
         }
 
-        var helperNode = new ComponentAttributeIntermediateNode(intermediateNode);
-        helperNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = intermediateNode.OriginalAttributeName;
-        helperNode.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] = bool.TrueString;
-        helperNode.PropertyName = propertyName;
+        var helperNode = ComponentAttributeIntermediateNode.From(node, addChildren: true);
+        helperNode.OriginalAttributeName = node.OriginalAttributeName;
+        helperNode.IsDesignTimePropertyAccessHelper = true;
+        helperNode.PropertySpan = GetOriginalPropertySpan(node);
+        helperNode.BoundAttribute = valueAttribute;
+        helperNode.PropertyName = valueAttribute.PropertyName;
 
         builder.Add(helperNode);
     }
 
-    private bool TryParseBindAttribute(BindEntry bindEntry, out string valueAttributeName)
+    private static bool TryParseBindAttribute(BindEntry bindEntry, out string? valueAttributeName)
     {
-        var attributeName = bindEntry.GetEffectiveBindNodeAttributeName();
+        var attributeName = bindEntry.AttributeName;
         valueAttributeName = null;
 
         if (attributeName == "bind")
@@ -633,21 +677,21 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             return false;
         }
 
-        valueAttributeName = attributeName.Substring("bind-".Length);
+        valueAttributeName = attributeName["bind-".Length..];
         return true;
     }
 
     // Attempts to compute the attribute names that should be used for an instance of 'bind'.
-    private bool TryComputeAttributeNames(
+    private static bool TryComputeAttributeNames(
         IntermediateNode parent,
         BindEntry bindEntry,
-        out string valueAttributeName,
-        out string changeAttributeName,
-        out string expressionAttributeName,
-        out CSharpExpressionIntermediateNode changeAttributeNode,
-        out BoundAttributeDescriptor valueAttribute,
-        out BoundAttributeDescriptor changeAttribute,
-        out BoundAttributeDescriptor expressionAttribute)
+        out string? valueAttributeName,
+        [NotNullWhen(true)] out string? changeAttributeName,
+        [NotNullWhen(true)] out string? expressionAttributeName,
+        out CSharpExpressionIntermediateNode? changeAttributeNode,
+        out BoundAttributeDescriptor? valueAttribute,
+        out BoundAttributeDescriptor? changeAttribute,
+        out BoundAttributeDescriptor? expressionAttribute)
     {
         changeAttributeName = null;
         expressionAttributeName = null;
@@ -662,7 +706,6 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         // generated to match a specific tag and has metadata that identify the attributes.
         //
         // We expect 1 bind tag helper per-node.
-        var attributeName = bindEntry.GetEffectiveBindNodeAttributeName();
 
         // Even though some of our 'bind' tag helpers specify the attribute names, they
         // should still satisfy one of the valid syntaxes.
@@ -671,14 +714,14 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             return false;
         }
 
-        valueAttributeName = bindEntry.GetEffectiveNodeTagHelperDescriptor()?.GetValueAttributeName() ?? valueAttributeName;
+        valueAttributeName = bindEntry.GetValueAttributeName() ?? valueAttributeName;
 
         // If there an attribute that specifies the event like @bind:event="oninput",
         // that should be preferred. Otherwise, use the one from the tag helper.
         if (bindEntry.BindEventNode == null)
         {
             // @bind:event not specified
-            changeAttributeName = bindEntry.GetEffectiveBindNodeChangeAttributeName();
+            changeAttributeName = bindEntry.GetChangeAttributeName();
         }
         else if (TryExtractEventNodeStaticText(bindEntry.BindEventNode, out var text))
         {
@@ -691,56 +734,50 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             changeAttributeNode = ExtractEventNodeExpression(bindEntry.BindEventNode);
         }
 
-        expressionAttributeName = bindEntry.GetEffectiveBindNodeExpressionAttributeName();
+        expressionAttributeName = bindEntry.GetExpressionAttributeName();
 
         // We expect 0-1 components per-node.
-        var componentTagHelper = (parent as ComponentIntermediateNode)?.Component;
-        if (componentTagHelper == null)
+        if ((parent as ComponentIntermediateNode)?.Component is not { } componentTagHelper)
         {
             // If it's not a component node then there isn't too much else to figure out.
-            return attributeName != null && (changeAttributeName != null || changeAttributeNode != null);
-        }
-
-        // If this is a component, we need an attribute name for the value.
-        if (attributeName == null)
-        {
-            return false;
+            return changeAttributeName != null || changeAttributeNode != null;
         }
 
         // If this is a component, then we can infer '<PropertyName>Changed' as the name
         // of the change event.
-        if (changeAttributeName == null)
-        {
-            changeAttributeName = valueAttributeName + "Changed";
-        }
+        changeAttributeName ??= valueAttributeName + "Changed";
 
         // Likewise for the expression attribute
-        if (expressionAttributeName == null)
-        {
-            expressionAttributeName = valueAttributeName + "Expression";
-        }
+        expressionAttributeName ??= valueAttributeName + "Expression";
 
-        foreach (var attribute in componentTagHelper.BoundAttributes)
+        var boundAttributes = componentTagHelper.BoundAttributes;
+        for (int i = boundAttributes.Length - 1, set = 0; i >= 0 && set != 3; i--)
         {
-            if (string.Equals(valueAttributeName, attribute.Name))
+            var attribute = boundAttributes[i];
+            var comparison = attribute.GetComparison();
+
+            if (valueAttribute is null && string.Equals(valueAttributeName, attribute.Name, comparison))
             {
                 valueAttribute = attribute;
+                set++;
             }
 
-            if (string.Equals(changeAttributeName, attribute.Name))
+            if (changeAttribute is null && string.Equals(changeAttributeName, attribute.Name, comparison))
             {
                 changeAttribute = attribute;
+                set++;
             }
 
-            if (string.Equals(expressionAttributeName, attribute.Name))
+            if (expressionAttribute is null && string.Equals(expressionAttributeName, attribute.Name, comparison))
             {
                 expressionAttribute = attribute;
+                set++;
             }
         }
 
         return true;
 
-        static bool TryExtractEventNodeStaticText(TagHelperDirectiveAttributeParameterIntermediateNode node, out string text)
+        static bool TryExtractEventNodeStaticText(TagHelperDirectiveAttributeParameterIntermediateNode node, [NotNullWhen(true)] out string? text)
         {
             if (node.Children[0] is HtmlContentIntermediateNode html)
             {
@@ -752,24 +789,19 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             return false;
         }
 
-        static CSharpExpressionIntermediateNode ExtractEventNodeExpression(TagHelperDirectiveAttributeParameterIntermediateNode node)
+        static CSharpExpressionIntermediateNode? ExtractEventNodeExpression(TagHelperDirectiveAttributeParameterIntermediateNode node)
         {
-            if (node.Children[0] is CSharpExpressionIntermediateNode expression)
-            {
-                return expression;
-            }
-
-            return null;
+            return node.Children[0] as CSharpExpressionIntermediateNode;
         }
     }
 
-    private void RewriteNodesForComponentDelegateBind(
+    private static void RewriteNodesForComponentDelegateBind(
         IntermediateToken original,
-        IntermediateToken setter,
-        IntermediateToken after,
+        IntermediateToken? setter,
+        IntermediateToken? after,
         bool awaitable,
-        List<IntermediateToken> valueExpressionTokens,
-        List<IntermediateToken> changeExpressionTokens)
+        ref PooledArrayBuilder<IntermediateToken> valueExpressionTokens,
+        ref PooledArrayBuilder<IntermediateToken> changeExpressionTokens)
     {
         // For a component using @bind we want to:
         //  - use the value as-is
@@ -794,60 +826,39 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         //
         // __value => <code> = __value
 
-        if (setter == null && after == null)
+        switch ((setter, after))
         {
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"__value => {original.Content} = __value",
-                Kind = TokenKind.CSharp,
-            });
-        }
-        else if (setter != null && after == null)
-        {
-            changeExpressionTokens.Add(setter);
-        }
-        else if (after != null && setter == null)
-        {
-            var invokeDelegateMethod = ComponentsApi.RuntimeHelpers.InvokeSynchronousDelegate;
-            var asyncKeyword = "";
-            var awaitKeyword = "";
+            case (null, null):
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"__value => {original.Content} = __value"));
+                break;
 
-            if (awaitable)
-            {
-                invokeDelegateMethod = ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate;
-                awaitKeyword = "await ";
-                asyncKeyword = "async ";
-            }
+            case (not null, null):
+                changeExpressionTokens.Add(setter);
+                break;
 
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{asyncKeyword} __value => {{ {original.Content} = __value; {awaitKeyword}{invokeDelegateMethod}(",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(after);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = "); }",
-                Kind = TokenKind.CSharp
-            });
-        }
-        else
-        {
-            // Treat this as the original case, since we don't support bind:set and bind:after simultaneously, we will produce an error.
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"__value => {original.Content} = __value",
-                Kind = TokenKind.CSharp,
-            });
+            case (null, not null):
+                var startToken = awaitable
+                    ? IntermediateNodeFactory.CSharpToken($"async  __value => {{ {original.Content} = __value; await {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(")
+                    : IntermediateNodeFactory.CSharpToken($" __value => {{ {original.Content} = __value; {ComponentsApi.RuntimeHelpers.InvokeSynchronousDelegate}(");
+
+                changeExpressionTokens.Add(startToken);
+                changeExpressionTokens.Add(after);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken("); }"));
+                break;
+
+            default:
+                // Treat this as the original case, since we don't support bind:set and bind:after simultaneously, we will produce an error.
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"__value => {original.Content} = __value"));
+                break;
         }
     }
 
-    private void RewriteNodesForComponentEventCallbackBind(
+    private static void RewriteNodesForComponentEventCallbackBind(
         IntermediateToken original,
-        IntermediateToken setter,
-        IntermediateToken after,
-        List<IntermediateToken> valueExpressionTokens,
-        List<IntermediateToken> changeExpressionTokens)
+        IntermediateToken? setter,
+        IntermediateToken? after,
+        ref PooledArrayBuilder<IntermediateToken> valueExpressionTokens,
+        ref PooledArrayBuilder<IntermediateToken> changeExpressionTokens)
     {
         // For a component using @bind we want to:
         //  - use the value as-is
@@ -855,79 +866,51 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         valueExpressionTokens.Add(original);
 
         // This is largely the same as the one for elements as we can invoke CreateInferredCallback all the way to victory
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, ",
-            Kind = TokenKind.CSharp
-        });
+        changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, "));
 
-        if (setter == null && after == null)
+        switch ((setter, after))
         {
-            // no bind:set nor bind:after, assign to the bound expression
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"__value => {original.Content} = __value",
-                Kind = TokenKind.CSharp
-            });
+            case (null, null):
+                // no bind:set nor bind:after, assign to the bound expression
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"__value => {original.Content} = __value"));
+                break;
 
-        }
-        else if (setter != null && after == null)
-        {
-            // bind:set only
-            changeExpressionTokens.Add(setter);
-        }
-        else if (setter == null && after != null)
-        {
-            // bind:after only
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(after);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"); }}, value: {original.Content})",
-                Kind = TokenKind.CSharp
-            });
-        }
-        else
-        {
-            // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(setter);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $", value: {original.Content}); await {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(after);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"); }}, value: {original.Content})",
-                Kind = TokenKind.CSharp
-            });
+            case (not null, null):
+                // bind:set only
+                changeExpressionTokens.Add(setter);
+                break;
+
+            case (null, not null):
+                // bind:after only
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: "));
+                changeExpressionTokens.Add(after);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"); }}, value: {original.Content})"));
+                break;
+
+            default:
+                // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: "));
+                changeExpressionTokens.Add(setter);
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($", value: {original.Content}); await {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: "));
+                changeExpressionTokens.Add(after);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"); }}, value: {original.Content})"));
+                break;
         }
 
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = $", {original.Content})",
-            Kind = TokenKind.CSharp
-        });
+        changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($", {original.Content})"));
     }
 
-    private void RewriteNodesForElementEventCallbackBind(
+    private static void RewriteNodesForElementEventCallbackBind(
         IntermediateToken original,
-        IntermediateToken format,
-        IntermediateToken culture,
-        IntermediateToken setter,
-        IntermediateToken after,
-        List<IntermediateToken> valueExpressionTokens,
-        List<IntermediateToken> changeExpressionTokens)
+        IntermediateToken? format,
+        IntermediateToken? culture,
+        IntermediateToken? setter,
+        IntermediateToken? after,
+        ref PooledArrayBuilder<IntermediateToken> valueExpressionTokens,
+        ref PooledArrayBuilder<IntermediateToken> changeExpressionTokens)
     {
         // This is bind on a markup element. We use FormatValue to transform the value in the correct way
         // according to format and culture.
@@ -935,38 +918,22 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         // Now rewrite the content of the value node to look like:
         //
         // BindConverter.FormatValue(<code>, format: <format>, culture: <culture>)
-        valueExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = $"global::{ComponentsApi.BindConverter.FormatValue}(",
-            Kind = TokenKind.CSharp
-        });
+        valueExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"global::{ComponentsApi.BindConverter.FormatValue}("));
         valueExpressionTokens.Add(original);
 
-        if (!string.IsNullOrEmpty(format?.Content))
+        if (format is { Content.Length: > 0 })
         {
-            valueExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = ", format: ",
-                Kind = TokenKind.CSharp,
-            });
+            valueExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(", format: "));
             valueExpressionTokens.Add(format);
         }
 
-        if (!string.IsNullOrEmpty(culture?.Content))
+        if (culture is { Content.Length: > 0 })
         {
-            valueExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = ", culture: ",
-                Kind = TokenKind.CSharp,
-            });
+            valueExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(", culture: "));
             valueExpressionTokens.Add(culture);
         }
 
-        valueExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = ")",
-            Kind = TokenKind.CSharp,
-        });
+        valueExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(")"));
 
         // Now rewrite the content of the change-handler node. There are two cases we care about
         // here. If it's a component attribute, then don't use the 'CreateBinder' wrapper. We expect
@@ -984,193 +951,232 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         //
         // EventCallbackFactory.CreateBinder(this, __value => <code> = __value, <code>, format: <format>, culture: <culture>)
         //
-        // Note that the linemappings here are applied to the value attribute, not the change attribute.
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = $"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateBinderMethod}(this, ",
-            Kind = TokenKind.CSharp
-        });
+        // Note that the line-mappings here are applied to the value attribute, not the change attribute.
+        changeExpressionTokens.Add(
+            IntermediateNodeFactory.CSharpToken($"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateBinderMethod}(this, "));
 
-        if (setter == null && after == null)
+        switch ((setter, after))
         {
-            // no bind:set nor bind:after, , assign to the bound expression
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"__value => {original.Content} = __value",
-                Kind = TokenKind.CSharp
-            });
-        }
-        else if (setter != null && after == null)
-        {
-            // bind:set only
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(setter);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $", value: {original.Content})",
-                Kind = TokenKind.CSharp
-            });
-        }
-        else if (setter == null && after != null)
-        {
-            // bind:after only
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(after);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"); }}, value: {original.Content})",
-                Kind = TokenKind.CSharp
-            });
-        }
-        else
-        {
-            // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(setter);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $", value: {original.Content})(); await {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: ",
-                Kind = TokenKind.CSharp
-            });
-            changeExpressionTokens.Add(after);
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $"); }}, value: {original.Content})",
-                Kind = TokenKind.CSharp
-            });
+            case (null, null):
+                // no bind:set nor bind:after, , assign to the bound expression
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"__value => {original.Content} = __value"));
+                break;
+
+            case (not null, null):
+                // bind:set only
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: "));
+                changeExpressionTokens.Add(setter);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($", value: {original.Content})"));
+                break;
+
+            case (null, not null):
+                // bind:after only
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: "));
+                changeExpressionTokens.Add(after);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"); }}, value: {original.Content})"));
+                break;
+
+            default:
+                // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: "));
+                changeExpressionTokens.Add(setter);
+                changeExpressionTokens.Add(
+                    IntermediateNodeFactory.CSharpToken($", value: {original.Content})(); await {ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: "));
+                changeExpressionTokens.Add(after);
+                changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($"); }}, value: {original.Content})"));
+                break;
         }
 
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = $", ",
-            Kind = TokenKind.CSharp
-        });
+        changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(", "));
 
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = original.Content,
-            Kind = TokenKind.CSharp
-        });
+        changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(original.Content));
 
-        if (format != null)
+        if (format is { Content.Length: > 0 })
         {
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $", format: {format.Content}",
-                Kind = TokenKind.CSharp
-            });
+            changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($", format: {format.Content}"));
         }
 
-        if (culture != null)
+        if (culture is { Content.Length: > 0 })
         {
-            changeExpressionTokens.Add(new IntermediateToken()
-            {
-                Content = $", culture: {culture.Content}",
-                Kind = TokenKind.CSharp
-            });
+            changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken($", culture: {culture.Content}"));
         }
 
-        changeExpressionTokens.Add(new IntermediateToken()
-        {
-            Content = ")",
-            Kind = TokenKind.CSharp,
-        });
+        changeExpressionTokens.Add(IntermediateNodeFactory.CSharpToken(")"));
     }
 
     private static IntermediateToken GetAttributeContent(IntermediateNode node)
     {
-        var nodes = node.FindDescendantNodes<TemplateIntermediateNode>();
-        var template = nodes.Count > 0 ? nodes[0] : default;
-        if (template != null)
+        using var nodes = new PooledArrayBuilder<TemplateIntermediateNode>();
+        node.CollectDescendantNodes(ref nodes.AsRef());
+
+        if (nodes.FirstOrDefault() is { } template)
         {
             // See comments in TemplateDiagnosticPass
-            node.Diagnostics.Add(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
-            return new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty, };
+            node.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
+            return IntermediateNodeFactory.CSharpToken(string.Empty);
         }
 
-        if (node.Children[0] is HtmlContentIntermediateNode htmlContentNode)
+        return node.Children[0] switch
         {
-            // This case can be hit for a 'string' attribute. We want to turn it into
-            // an expression.
-            var content = "\"" + string.Join(string.Empty, htmlContentNode.Children.OfType<IntermediateToken>().Select(t => t.Content)) + "\"";
-            return new IntermediateToken() { Kind = TokenKind.CSharp, Content = content };
-        }
-        else if (node.Children[0] is CSharpExpressionIntermediateNode cSharpNode)
-        {
+            // This case can be hit for a 'string' attribute. We want to turn it into an expression.
+            HtmlContentIntermediateNode htmlContentNode
+                => IntermediateNodeFactory.CSharpToken(GetTokenContent(htmlContentNode.Children, addQuotes: true)),
+
             // This case can be hit when the attribute has an explicit @ inside, which
             // 'escapes' any special sugar we provide for codegen.
-            return GetToken(cSharpNode);
-        }
-        else
-        {
-            // This is the common case for 'mixed' content
-            return GetToken(node);
-        }
+            CSharpExpressionIntermediateNode csharpNode
+                => GetToken(csharpNode),
 
-        IntermediateToken GetToken(IntermediateNode parent)
+            // This is the common case for 'mixed' content.
+            _ => GetToken(node)
+        };
+
+        static IntermediateToken GetToken(IntermediateNode node)
         {
-            if (parent.Children.Count == 1 && parent.Children[0] is IntermediateToken token)
+            if (node.Children is [IntermediateToken token])
             {
                 return token;
             }
 
             // In error cases we won't have a single token, but we still want to generate the code.
-            return new IntermediateToken()
+            return IntermediateNodeFactory.CSharpToken(GetTokenContent(node.Children));
+        }
+
+        static string GetTokenContent(IntermediateNodeCollection children, bool addQuotes = false)
+        {
+            using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+            if (addQuotes)
             {
-                Kind = TokenKind.CSharp,
-                Content = string.Join(string.Empty, parent.Children.OfType<IntermediateToken>().Select(t => t.Content)),
-            };
+                builder.Append('"');
+            }
+
+            foreach (var child in children)
+            {
+                if (child is IntermediateToken token)
+                {
+                    builder.Append(token.Content);
+                }
+            }
+
+            if (addQuotes)
+            {
+                builder.Append('"');
+            }
+
+            return builder.ToString();
         }
     }
 
-    private class BindEntry
+    private static SourceSpan? GetOriginalPropertySpan(IntermediateNode node)
     {
-        public BindEntry(IntermediateNodeReference bindNodeReference)
+        var originalSpan = node switch
         {
-            BindNodeReference = bindNodeReference;
-            BindNode = bindNodeReference.Node as TagHelperDirectiveAttributeIntermediateNode;
-            BindGetNode = BindNodeReference.Node as TagHelperDirectiveAttributeParameterIntermediateNode;
+            ComponentAttributeIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperDirectiveAttributeIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperDirectiveAttributeParameterIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperPropertyIntermediateNode n => n.OriginalAttributeSpan,
+            _ => null
+        };
+
+        if (originalSpan is SourceSpan span)
+        {
+            var offset = "bind-".Length;
+
+            return new SourceSpan(span.FilePath,
+                                  span.AbsoluteIndex + offset,
+                                  span.LineIndex,
+                                  span.CharacterIndex + offset,
+                                  span.Length - offset,
+                                  span.LineCount,
+                                  span.EndCharacterIndex);
         }
 
+        return null;
+    }
+
+    private sealed class BindEntry
+    {
         public IntermediateNodeReference BindNodeReference { get; }
 
-        public TagHelperDirectiveAttributeIntermediateNode BindNode { get; }
+        // Note: Either BindNode or BindGetNode is non-null. They can't both be null or non-null.
+        public TagHelperDirectiveAttributeIntermediateNode? BindNode { get; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindGetNode { get; }
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindEventNode { get; set; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindEventNode { get; set; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindFormatNode { get; set; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindCultureNode { get; set; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindSetNode { get; set; }
+        public TagHelperDirectiveAttributeParameterIntermediateNode? BindAfterNode { get; set; }
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindFormatNode { get; set; }
+        public TagHelperDescriptor TagHelper => field ??= GetTagHelper();
+        public string AttributeName => field ??= GetAttributeName();
+        public string OriginalAttributeName => field ??= GetOriginalAttributeName();
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindCultureNode { get; set; }
+        public BindEntry(IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode> bindNodeReference)
+        {
+            BindNodeReference = bindNodeReference;
+            BindNode = bindNodeReference.Node;
+        }
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindGetNode { get; set; }
+        public BindEntry(IntermediateNodeReference<TagHelperDirectiveAttributeParameterIntermediateNode> bindNodeReference)
+        {
+            BindNodeReference = bindNodeReference;
+            BindGetNode = bindNodeReference.Node;
+        }
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindSetNode { get; set; }
+        [DoesNotReturn]
+        private static T CantBothBeNullOrNonNull<T>()
+            => Assumed.Unreachable<T>($"{nameof(BindNode)} and {nameof(BindGetNode)} can't both be null or non-null.");
 
-        public TagHelperDirectiveAttributeParameterIntermediateNode BindAfterNode { get; set; }
+        public IntermediateNode GetEffectiveBindNode()
+            => (BindNode, BindGetNode) switch
+            {
+                ({ } result, null) => result,
+                (null, { } result) => result,
+                _ => CantBothBeNullOrNonNull<IntermediateNode>()
+            };
 
-        public IntermediateNode GetEffectiveBindNode() => (IntermediateNode)BindNode ?? BindGetNode;
+        private TagHelperDescriptor GetTagHelper()
+            => (BindNode, BindGetNode) switch
+            {
+                ({ TagHelper: var result }, null) => result,
+                (null, { TagHelper: var result }) => result,
+                _ => CantBothBeNullOrNonNull<TagHelperDescriptor>()
+            };
 
-        public TagHelperDescriptor GetEffectiveNodeTagHelperDescriptor() => BindNode?.TagHelper ?? BindGetNode?.TagHelper;
-
-        public string GetOriginalAttributeName() => BindNode?.OriginalAttributeName ?? BindGetNode?.OriginalAttributeName;
+        private string GetOriginalAttributeName()
+            => (BindNode, BindGetNode) switch
+            {
+                ({ OriginalAttributeName: var result }, null) => result,
+                (null, { OriginalAttributeName: var result }) => result,
+                _ => CantBothBeNullOrNonNull<string>()
+            };
 
         // Return the attribute name, for @bind it's the attribute, for @bind:get is the attribute without the parameter part.
-        public string GetEffectiveBindNodeAttributeName() => BindNode?.AttributeName ?? BindGetNode?.AttributeNameWithoutParameter;
+        private string GetAttributeName()
+            => (BindNode, BindGetNode) switch
+            {
+                ({ AttributeName: var result }, null) => result,
+                (null, { AttributeNameWithoutParameter: var result }) => result,
+                _ => CantBothBeNullOrNonNull<string>()
+            };
 
-        public string GetEffectiveBindNodeChangeAttributeName() => BindNode?.TagHelper.GetChangeAttributeName() ?? BindGetNode?.TagHelper.GetChangeAttributeName();
+        public string? GetChangeAttributeName()
+            => TagHelper.GetChangeAttributeName();
 
-        public string GetEffectiveBindNodeExpressionAttributeName() => BindNode?.TagHelper.GetExpressionAttributeName() ?? BindGetNode?.TagHelper.GetExpressionAttributeName();
+        public string? GetExpressionAttributeName()
+            => TagHelper.GetExpressionAttributeName();
+
+        public string? GetValueAttributeName()
+            => TagHelper.GetValueAttributeName();
+
+        public string? GetFormat()
+            => TagHelper.GetFormat();
+
+        public bool IsInvariantCultureBindTagHelper()
+            => TagHelper.IsInvariantCultureBindTagHelper();
     }
 }

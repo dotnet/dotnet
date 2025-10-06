@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Build.Framework;
+using NuGet.Common;
 
 namespace NuGet.Build.Tasks
 {
@@ -12,6 +13,16 @@ namespace NuGet.Build.Tasks
     /// </summary>
     public sealed class GenerateRestoreGraphFileTask : StaticGraphRestoreTaskBase
     {
+        public GenerateRestoreGraphFileTask()
+            : this(EnvironmentVariableWrapper.Instance)
+        {
+        }
+
+        internal GenerateRestoreGraphFileTask(IEnvironmentVariableReader environmentVariableReader)
+            : base(environmentVariableReader)
+        {
+        }
+
         /// <summary>
         /// RestoreGraphOutputPath - The location to write the output to.
         /// </summary>

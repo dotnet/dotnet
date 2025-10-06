@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using Microsoft.Extensions.ObjectPool;
@@ -17,6 +17,9 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 internal static partial class ListPool<T>
 {
     public static readonly ObjectPool<List<T>> Default = DefaultPool.Create(Policy.Instance);
+
+    public static ObjectPool<List<T>> Create(int size = 20)
+        => DefaultPool.Create(Policy.Instance, size);
 
     public static PooledObject<List<T>> GetPooledObject()
         => Default.GetPooledObject();

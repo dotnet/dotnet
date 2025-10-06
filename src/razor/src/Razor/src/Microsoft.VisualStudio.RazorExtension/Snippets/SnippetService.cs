@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
-using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.ProjectSystem.VS;
+using Microsoft.VisualStudio.Razor.Extensions;
+using Microsoft.VisualStudio.Razor.Settings;
+using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -28,8 +28,6 @@ internal class SnippetService
     private readonly SnippetCache _snippetCache;
     private readonly IAdvancedSettingsStorage _advancedSettingsStorage;
     private IVsExpansionManager? _vsExpansionManager;
-
-    private readonly object _cacheGuard = new();
 
     private static readonly Guid s_CSharpLanguageId = new("694dd9b6-b865-4c5b-ad85-86356e9c88dc");
     private static readonly Guid s_HtmlLanguageId = new("9bbfd173-9770-47dc-b191-651b7ff493cd");

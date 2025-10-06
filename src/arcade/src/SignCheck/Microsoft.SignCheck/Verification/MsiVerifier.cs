@@ -64,22 +64,28 @@ namespace Microsoft.SignCheck.Verification
                 }
 
                 // Extract files from the Binary table - this is where items such as custom actions are stored.
+                // Be aware if there is no Binary table.
                 try
                 {
                     using (var installDatabase = new Database(svr.FullPath, DatabaseOpenMode.ReadOnly))
-                    using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `Binary`"))
                     {
-                        view.Execute();
-
-                        foreach (Record record in view)
+                        if (installDatabase.Tables.Contains("Binary"))
                         {
-                            string binaryFile = (string)record["Name"];
-                            string binaryFilePath = Path.Combine(svr.TempPath, binaryFile);
-                            StructuredStorage.SaveStream(record, svr.TempPath);
-                            SignatureVerificationResult binaryStreamResult = VerifyFile(binaryFilePath, svr.Filename, Path.Combine(svr.VirtualPath, binaryFile), containerPath: null);
-                            binaryStreamResult.AddDetail(DetailKeys.Misc, SignCheckResources.FileExtractedFromBinaryTable);
-                            svr.NestedResults.Add(binaryStreamResult);
-                            record.Close();
+                            using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `Binary`"))
+                            {
+                                view.Execute();
+
+                                foreach (Record record in view)
+                                {
+                                    string binaryFile = (string)record["Name"];
+                                    string binaryFilePath = Path.Combine(svr.TempPath, binaryFile);
+                                    StructuredStorage.SaveStream(record, svr.TempPath);
+                                    SignatureVerificationResult binaryStreamResult = VerifyFile(binaryFilePath, svr.Filename, Path.Combine(svr.VirtualPath, binaryFile), containerPath: null);
+                                    binaryStreamResult.AddDetail(DetailKeys.Misc, SignCheckResources.FileExtractedFromBinaryTable);
+                                    svr.NestedResults.Add(binaryStreamResult);
+                                    record.Close();
+                                }
+                            }
                         }
                     }
                 }

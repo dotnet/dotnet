@@ -36,6 +36,15 @@ internal class IntegrationFactDiscoverer(IMessageSink diagnosticMessageSink)
 internal class IntegrationTheoryDiscoverer(IMessageSink diagnosticMessageSink)
     : TheoryDiscoverer(diagnosticMessageSink)
 {
+    public override IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute)
+    {
+        // We have to force pre-enumeration of theories for this discoverer to work correctly. Normally its true in VS,
+        // but false in command line/CI. Since we're injecting "fake" data rows, we rely on it everywhere. Without this
+        // set to true, the method below that we override doesn't get called.
+        discoveryOptions.SetValue("xunit.discovery.PreEnumerateTheories", true);
+        return base.Discover(discoveryOptions, testMethod, theoryAttribute);
+    }
+
     protected override IEnumerable<IXunitTestCase> CreateTestCasesForDataRow(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute, object[] dataRow)
     {
         return [

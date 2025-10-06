@@ -46,14 +46,15 @@ namespace Microsoft.Build.Evaluation
         protected EvaluationContext EvaluationContext { get; }
 
         protected IFileSystem FileSystem => EvaluationContext.FileSystem;
+
         protected FileMatcher FileMatcher => EvaluationContext.FileMatcher;
 
         public LazyItemEvaluator(IEvaluatorData<P, I, M, D> data, IItemFactory<I, I> itemFactory, LoggingContext loggingContext, EvaluationProfiler evaluationProfiler, EvaluationContext evaluationContext)
         {
             _outerEvaluatorData = data;
-            _outerExpander = new Expander<P, I>(_outerEvaluatorData, _outerEvaluatorData, evaluationContext);
+            _outerExpander = new Expander<P, I>(_outerEvaluatorData, _outerEvaluatorData, evaluationContext, loggingContext);
             _evaluatorData = new EvaluatorData(_outerEvaluatorData, _itemLists);
-            _expander = new Expander<P, I>(_evaluatorData, _evaluatorData, evaluationContext);
+            _expander = new Expander<P, I>(_evaluatorData, _evaluatorData, evaluationContext, loggingContext);
             _itemFactory = itemFactory;
             _loggingContext = loggingContext;
             _evaluationProfiler = evaluationProfiler;
@@ -89,8 +90,6 @@ namespace Microsoft.Build.Evaluation
                     expanderOptions,
                     GetCurrentDirectoryForConditionEvaluation(element, lazyEvaluator),
                     element.ConditionLocation,
-                    lazyEvaluator._loggingContext.LoggingService,
-                    lazyEvaluator._loggingContext.BuildEventContext,
                     lazyEvaluator.FileSystem,
                     loggingContext: lazyEvaluator._loggingContext);
                 MSBuildEventSource.Log.EvaluateConditionStop(condition, result);
@@ -385,7 +384,7 @@ namespace Microsoft.Build.Evaluation
                                 break;
                             }
 
-                            string fullPath = FileUtilities.GetFullPath(frag.TextFragment, frag.ProjectDirectory);
+                            string fullPath = FileUtilities.NormalizePathForComparisonNoThrow(frag.TextFragment, frag.ProjectDirectory);
                             if (itemsWithNoWildcards.ContainsKey(fullPath))
                             {
                                 // Another update will already happen on this path. Make that happen before evaluating this one.
@@ -437,14 +436,11 @@ namespace Microsoft.Build.Evaluation
 
             private static void ProcessNonWildCardItemUpdates(Dictionary<string, UpdateOperation> itemsWithNoWildcards, OrderedItemDataCollection.Builder items)
             {
-#if DEBUG
-                ErrorUtilities.VerifyThrow(itemsWithNoWildcards.All(fragment => !MSBuildConstants.CharactersForExpansion.Any(fragment.Key.Contains)), $"{nameof(itemsWithNoWildcards)} should not contain any text fragments with wildcards.");
-#endif
                 if (itemsWithNoWildcards.Count > 0)
                 {
                     for (int i = 0; i < items.Count; i++)
                     {
-                        string fullPath = FileUtilities.GetFullPath(items[i].Item.EvaluatedIncludeEscaped, items[i].Item.ProjectDirectory);
+                        string fullPath = FileUtilities.NormalizePathForComparisonNoThrow(items[i].Item.EvaluatedInclude, items[i].Item.ProjectDirectory);
                         if (itemsWithNoWildcards.TryGetValue(fullPath, out UpdateOperation op))
                         {
                             items[i] = op.UpdateItem(items[i]);
@@ -618,7 +614,7 @@ namespace Microsoft.Build.Evaluation
 
         private void ProcessItemSpec(string rootDirectory, string itemSpec, IElementLocation itemSpecLocation, OperationBuilder builder)
         {
-            builder.ItemSpec = new ItemSpec<P, I>(itemSpec, _outerExpander, itemSpecLocation, rootDirectory, loggingContext: _loggingContext);
+            builder.ItemSpec = new ItemSpec<P, I>(itemSpec, _outerExpander, itemSpecLocation, rootDirectory);
 
             foreach (ItemSpecFragment fragment in builder.ItemSpec.Fragments)
             {
@@ -629,37 +625,35 @@ namespace Microsoft.Build.Evaluation
             }
         }
 
-        private static IEnumerable<string> GetExpandedMetadataValuesAndConditions(ICollection<ProjectMetadataElement> metadata, Expander<P, I> expander, LoggingContext loggingContext = null)
-        {
-            // Since we're just attempting to expand properties in order to find referenced items and not expanding metadata,
-            // unexpected errors may occur when evaluating property functions on unexpanded metadata. Just ignore them if that happens.
-            // See: https://github.com/dotnet/msbuild/issues/3460
-            const ExpanderOptions expanderOptions = ExpanderOptions.ExpandProperties | ExpanderOptions.LeavePropertiesUnexpandedOnError;
-
-            // Expand properties here, because a property may have a value which is an item reference (ie "@(Bar)"), and
-            // if so we need to add the right item reference.
-            foreach (var metadatumElement in metadata)
-            {
-                yield return expander.ExpandIntoStringLeaveEscaped(
-                    metadatumElement.Value,
-                    expanderOptions,
-                    metadatumElement.Location,
-                    loggingContext);
-
-                yield return expander.ExpandIntoStringLeaveEscaped(
-                    metadatumElement.Condition,
-                    expanderOptions,
-                    metadatumElement.ConditionLocation);
-            }
-        }
-
         private void ProcessMetadataElements(ProjectItemElement itemElement, OperationBuilderWithMetadata operationBuilder)
         {
             if (itemElement.HasMetadata)
             {
                 operationBuilder.Metadata.AddRange(itemElement.Metadata);
 
-                var itemsAndMetadataFound = ExpressionShredder.GetReferencedItemNamesAndMetadata(GetExpandedMetadataValuesAndConditions(itemElement.Metadata, _expander, _loggingContext));
+                ItemsAndMetadataPair itemsAndMetadataFound = new ItemsAndMetadataPair(null, null);
+
+                // Since we're just attempting to expand properties in order to find referenced items and not expanding metadata,
+                // unexpected errors may occur when evaluating property functions on unexpanded metadata. Just ignore them if that happens.
+                // See: https://github.com/dotnet/msbuild/issues/3460
+                const ExpanderOptions expanderOptions = ExpanderOptions.ExpandProperties | ExpanderOptions.LeavePropertiesUnexpandedOnError;
+                foreach (var metadatumElement in itemElement.Metadata)
+                {
+                    string expression = _expander.ExpandIntoStringLeaveEscaped(
+                        metadatumElement.Value,
+                        expanderOptions,
+                        metadatumElement.Location);
+
+                    ExpressionShredder.GetReferencedItemNamesAndMetadata(expression, 0, expression.Length, ref itemsAndMetadataFound, ShredderOptions.All);
+
+                    expression = _expander.ExpandIntoStringLeaveEscaped(
+                        metadatumElement.Condition,
+                        expanderOptions,
+                        metadatumElement.ConditionLocation);
+
+                    ExpressionShredder.GetReferencedItemNamesAndMetadata(expression, 0, expression.Length, ref itemsAndMetadataFound, ShredderOptions.All);
+                }
+
                 if (itemsAndMetadataFound.Items != null)
                 {
                     foreach (var itemType in itemsAndMetadataFound.Items)
@@ -678,7 +672,7 @@ namespace Microsoft.Build.Evaluation
             }
             else
             {
-                ExpressionShredder.ItemExpressionCapture match = Expander<P, I>.ExpandSingleItemVectorExpressionIntoExpressionCapture(
+                ExpressionShredder.ItemExpressionCapture? match = Expander<P, I>.ExpandSingleItemVectorExpressionIntoExpressionCapture(
                     expression, ExpanderOptions.ExpandItems, elementLocation);
 
                 if (match == null)
@@ -686,7 +680,7 @@ namespace Microsoft.Build.Evaluation
                     return;
                 }
 
-                AddReferencedItemLists(operationBuilder, match);
+                AddReferencedItemLists(operationBuilder, match.Value);
             }
         }
 

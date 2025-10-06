@@ -12,7 +12,7 @@
                             Identifier;[val];
                             Not;[!];
                             LeftBracket;[[];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightBracket;[]];
         MarkupTextLiteral - [8..8)::0 - [] - Gen<Markup>
             Marker;[];

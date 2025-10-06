@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio;
 
@@ -16,8 +17,8 @@ namespace NuGetConsole.Host.PowerShell.Implementation
     {
         public event EventHandler ExecuteEnd;
 
-        public AsyncPowerShellHost(string name, IRestoreEvents restoreEvents, IRunspaceManager runspaceManager)
-            : base(name, restoreEvents, runspaceManager)
+        public AsyncPowerShellHost(string name, IRestoreEvents restoreEvents, IRunspaceManager runspaceManager, IEnvironmentVariableReader environmentVariableReader)
+            : base(name, restoreEvents, runspaceManager, environmentVariableReader)
         {
         }
 

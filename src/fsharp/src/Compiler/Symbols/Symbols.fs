@@ -26,6 +26,7 @@ open FSharp.Compiler.TypedTree
 open FSharp.Compiler.TypedTreeBasics
 open FSharp.Compiler.TypedTreeOps
 open FSharp.Compiler.TypeHierarchy
+open FSharp.Compiler.CheckExpressionsOps
 
 type FSharpAccessibility(a:Accessibility, ?isProtected) = 
     let isProtected = defaultArg isProtected  false
@@ -58,7 +59,7 @@ type FSharpAccessibility(a:Accessibility, ?isProtected) =
 
 type SymbolEnv(g: TcGlobals, thisCcu: CcuThunk, thisCcuTyp: ModuleOrNamespaceType option, tcImports: TcImports, amap: Import.ImportMap, infoReader: InfoReader) = 
 
-    let tcVal = CheckExpressions.LightweightTcValForUsingInBuildMethodCall g
+    let tcVal = LightweightTcValForUsingInBuildMethodCall g
 
     new(g: TcGlobals, thisCcu: CcuThunk, thisCcuTyp: ModuleOrNamespaceType option, tcImports: TcImports) =
         let amap = tcImports.GetImportMap()
@@ -215,6 +216,9 @@ type FSharpDisplayContext(denv: TcGlobals -> DisplayEnv) =
     member _.WithSuffixGenericParameters () =
         FSharpDisplayContext(fun g -> { denv g with genericParameterStyle = GenericParameterStyle.Suffix }  )
 
+    member x.WithTopLevelPrefixGenericParameters () =
+        FSharpDisplayContext(fun g -> (denv g).UseTopLevelPrefixGenericParameterStyle())
+
 // delay the realization of 'item' in case it is unresolved
 type FSharpSymbol(cenv: SymbolEnv, item: unit -> Item, access: FSharpSymbol -> CcuThunk -> AccessorDomain -> bool) =
 
@@ -359,7 +363,8 @@ type FSharpEntity(cenv: SymbolEnv, entity: EntityRef, tyargs: TType list) =
     inherit FSharpSymbol(cenv, 
                          (fun () -> 
                               checkEntityIsResolved entity
-                              if entity.IsModuleOrNamespace then Item.ModuleOrNamespaces [entity] 
+                              if entity.IsModuleOrNamespace then Item.ModuleOrNamespaces [entity]
+                              elif entity.IsFSharpException then Item.ExnCase entity
                               else Item.UnqualifiedType [entity]), 
                          (fun _this thisCcu2 ad -> 
                              checkForCrossProjectAccessibility cenv.g.ilg (thisCcu2, ad) (cenv.thisCcu, getApproxFSharpAccessibilityOfEntity entity)) 
@@ -740,7 +745,7 @@ type FSharpEntity(cenv: SymbolEnv, entity: EntityRef, tyargs: TType list) =
     
         if entity.IsILEnumTycon then
             let (TILObjectReprData(_scoref, _enc, tdef)) = entity.ILTyconInfo
-            let formalTypars = entity.Typars(range.Zero)
+            let formalTypars = entity.Typars range0
             let formalTypeInst = generalizeTypars formalTypars
             let ty = TType_app(entity, formalTypeInst, cenv.g.knownWithoutNull)
             let formalTypeInfo = ILTypeInfo.FromType cenv.g ty
@@ -1570,6 +1575,11 @@ type FSharpGenericParameterConstraint(cenv, cx: TyparConstraint) =
         | TyparConstraint.SupportsComparison _ -> true 
         | _ -> false
 
+    member _.IsNotSupportsNullConstraint = 
+        match cx with 
+        | TyparConstraint.NotSupportsNull _ -> true 
+        | _ -> false
+
     member _.IsEqualityConstraint = 
         match cx with 
         | TyparConstraint.SupportsEquality _ -> true 
@@ -1589,6 +1599,11 @@ type FSharpGenericParameterConstraint(cenv, cx: TyparConstraint) =
         match cx with 
         | TyparConstraint.IsDelegate(ty1, ty2, _) ->  FSharpGenericParameterDelegateConstraint(cenv, ty1, ty2) 
         | _ -> invalidOp "not a delegate constraint"
+
+    member _.IsAllowsRefStructConstraint = 
+        match cx with 
+        | TyparConstraint.AllowsRefStruct _ -> true 
+        | _ -> false
 
     override x.ToString() = "<type constraint>"
 
@@ -1707,20 +1722,36 @@ type FSharpMemberOrFunctionOrValue(cenv, d:FSharpMemberOrValData, item) =
         | ParentNone -> None
         | Parent p -> FSharpEntity(cenv, p) |> Some
 
-    member _.ApparentEnclosingEntity: FSharpEntity = 
+    member _.ApparentEnclosingEntity: FSharpEntity option = 
         let createEntity (ttype: TType) =
-            let tcref, tyargs = destAppTy cenv.g ttype
-            FSharpEntity(cenv, tcref, tyargs)
+            match tryAppTy cenv.g ttype with
+            | ValueSome(tcref, tyargs) -> Some(FSharpEntity(cenv, tcref, tyargs))
+            | _ -> None
 
         checkIsResolved()
-        match d with 
+
+        match d with
         | E e -> createEntity e.ApparentEnclosingType
         | P p -> createEntity p.ApparentEnclosingType
         | M m | C m -> createEntity m.ApparentEnclosingType
-        | V v -> 
-        match v.ApparentEnclosingEntity with 
-        | ParentNone -> invalidOp "the value or member doesn't have a logical parent" 
-        | Parent p -> FSharpEntity(cenv, p)
+        | V v ->
+
+        match v.ApparentEnclosingEntity with
+        | ParentNone -> invalidOp "the value or member doesn't have a logical parent"
+        | Parent p -> Some(FSharpEntity(cenv, p))
+
+    member _.ApparentEnclosingType: FSharpType =
+        checkIsResolved()
+
+        match d with
+        | E e -> FSharpType(cenv, e.ApparentEnclosingType)
+        | P p -> FSharpType(cenv, p.ApparentEnclosingType)
+        | M m | C m -> FSharpType(cenv, m.ApparentEnclosingType)
+        | V v ->
+
+        match v.ApparentEnclosingEntity with
+        | ParentNone -> invalidOp "the value or member doesn't have a logical parent"
+        | Parent p -> FSharpType(cenv, generalizedTyconRef cenv.g p)
 
     member _.GenericParameters = 
         checkIsResolved()
@@ -1782,7 +1813,11 @@ type FSharpMemberOrFunctionOrValue(cenv, d:FSharpMemberOrValData, item) =
         match d with
         | P p -> p.IsUnionCaseTester
         | M m -> m.IsUnionCaseTester
-        | E _ | C _ | V _ -> invalidOp "the value or member is not a property"
+        | V v ->
+            v.IsPropertyGetterMethod &&
+            v.LogicalName.StartsWith("get_Is") &&
+            v.IsImplied && v.MemberApparentEntity.IsUnionTycon
+        | E _ | C _ -> false
 
     member _.EventAddMethod =
         checkIsResolved()
@@ -2125,7 +2160,7 @@ type FSharpMemberOrFunctionOrValue(cenv, d:FSharpMemberOrValData, item) =
              |> makeReadOnlyCollection
 
         | V v -> 
-        match v.ValReprInfo with 
+        match tryGetArityOfValForDisplay v.Deref with 
         | None ->
             let _, tau = v.GeneralizedType
             if isFunTy cenv.g tau then
@@ -2383,18 +2418,56 @@ type FSharpMemberOrFunctionOrValue(cenv, d:FSharpMemberOrValData, item) =
             | _ -> NicePrint.stringOfMethInfoFSharpStyle cenv.infoReader m displayEnv methInfo
 
         let stringValOfPropInfo (p: PropInfo) =
+            let supportAccessModifiersBeforeGetSet =
+                cenv.g.langVersion.SupportsFeature Features.LanguageFeature.AllowAccessModifiersToAutoPropertiesGettersAndSetters
+
             match p with
-            | DifferentGetterAndSetter(getValRef, setValRef) ->
+            | DifferentGetterAndSetter(getValRef, setValRef) when (not supportAccessModifiersBeforeGetSet || p.IsIndexer) ->
                 let g = NicePrint.stringValOrMember displayEnv cenv.infoReader getValRef
                 let s = NicePrint.stringValOrMember displayEnv cenv.infoReader setValRef
                 $"{g}\n{s}"
-            | _ ->
-                let t = p.GetPropertyType(cenv.amap, m ) |> NicePrint.layoutType displayEnv |> LayoutRender.showL
+            
+            | _ when not supportAccessModifiersBeforeGetSet->
+                let t = p.GetPropertyType(cenv.amap, m) |> NicePrint.layoutType displayEnv |> LayoutRender.showL
                 let withGetSet =
                     if p.HasGetter && p.HasSetter then "with get, set"
                     elif p.HasGetter then "with get"
                     elif p.HasSetter then "with set"
                     else ""
+
+                $"member %s{p.DisplayName}: %s{t} %s{withGetSet}"
+
+            | _ ->
+                let layoutAccessibilityCore (denv: DisplayEnv) accessibility =
+                    let isInternalCompPath x = 
+                        match x with 
+                        | CompPath(ILScopeRef.Local, _, []) -> true 
+                        | _ -> false
+                    let (|Public|Internal|Private|) (TAccess p) = 
+                        match p with 
+                        | [] -> Public 
+                        | _ when List.forall isInternalCompPath p -> Internal 
+                        | _ -> Private
+                    match denv.contextAccessibility, accessibility with
+                    | Public, Internal -> "internal "
+                    | Public, Private -> "private "
+                    | Internal, Private -> "private "
+                    | _ -> String.Empty
+
+                let getterAccess, setterAccess = 
+                    layoutAccessibilityCore displayEnv (Option.defaultValue taccessPublic p.GetterAccessibility),
+                    layoutAccessibilityCore displayEnv (Option.defaultValue taccessPublic p.SetterAccessibility)
+                let t = p.GetPropertyType(cenv.amap, m) |> NicePrint.layoutType displayEnv |> LayoutRender.showL
+                let withGetSet =
+                    match p.HasGetter, p.HasSetter with
+                    | true, false ->
+                        $"with %s{getterAccess}get"
+                    | false, true ->
+                        $"with %s{setterAccess}set"
+                    | true, true ->
+                        $"with %s{getterAccess}get, %s{setterAccess}set"
+                    | false, false ->
+                        String.Empty
 
                 $"member %s{p.DisplayName}: %s{t} %s{withGetSet}"
 
@@ -2466,9 +2539,9 @@ type FSharpType(cenv, ty:TType) =
        DiagnosticsLogger.protectAssemblyExploration true <| fun () -> 
         match stripTyparEqns ty with 
         | TType_app (tcref, tyargs, _) -> FSharpEntity(cenv, tcref, tyargs).IsUnresolved
-        | TType_measure (Measure.Const tcref) ->  FSharpEntity(cenv, tcref).IsUnresolved
+        | TType_measure (Measure.Const(tyconRef= tcref)) ->  FSharpEntity(cenv, tcref).IsUnresolved
         | TType_measure (Measure.Prod _) ->  FSharpEntity(cenv, cenv.g.measureproduct_tcr).IsUnresolved 
-        | TType_measure Measure.One ->  FSharpEntity(cenv, cenv.g.measureone_tcr).IsUnresolved 
+        | TType_measure (Measure.One _) ->  FSharpEntity(cenv, cenv.g.measureone_tcr).IsUnresolved 
         | TType_measure (Measure.Inv _) ->  FSharpEntity(cenv, cenv.g.measureinverse_tcr).IsUnresolved 
         | _ -> false
     
@@ -2482,7 +2555,7 @@ type FSharpType(cenv, ty:TType) =
        isResolved() &&
        protect <| fun () -> 
          match stripTyparEqns ty with 
-         | TType_app _ | TType_measure (Measure.Const _ | Measure.Prod _ | Measure.Inv _ | Measure.One) -> true 
+         | TType_app _ | TType_measure (Measure.Const _ | Measure.Prod _ | Measure.Inv _ | Measure.One _) -> true 
          | _ -> false
 
     member _.IsMeasureType =
@@ -2510,11 +2583,28 @@ type FSharpType(cenv, ty:TType) =
        protect <| fun () -> 
         match stripTyparEqns ty with 
         | TType_app (tcref, tyargs, _) -> FSharpEntity(cenv, tcref, tyargs) 
-        | TType_measure (Measure.Const tcref) ->  FSharpEntity(cenv, tcref) 
+        | TType_measure (Measure.Const(tyconRef= tcref)) ->  FSharpEntity(cenv, tcref) 
         | TType_measure (Measure.Prod _) ->  FSharpEntity(cenv, cenv.g.measureproduct_tcr) 
-        | TType_measure Measure.One ->  FSharpEntity(cenv, cenv.g.measureone_tcr) 
+        | TType_measure (Measure.One _) ->  FSharpEntity(cenv, cenv.g.measureone_tcr) 
         | TType_measure (Measure.Inv _) ->  FSharpEntity(cenv, cenv.g.measureinverse_tcr) 
         | _ -> invalidOp "not a named type"
+
+    member _.HasNullAnnotation = 
+       protect <| fun () -> 
+        match stripTyparEqns ty with 
+        | TType_var (_, nullness) 
+        | TType_app (_, _, nullness) 
+        | TType_fun(_, _, nullness) -> match nullness.Evaluate() with NullnessInfo.WithNull -> true | _ -> false
+        | TType_tuple (_, _) -> false
+        | _ -> false
+
+    member _.IsNullAmbivalent = 
+       protect <| fun () -> 
+        match stripTyparEqns ty with 
+        | TType_app (_, _, nullness)
+        | TType_fun(_, _, nullness) -> match nullness.Evaluate() with NullnessInfo.AmbivalentToNull -> true | _ -> false
+        | TType_tuple (_, _) -> false
+        | _ -> false
 
     member _.GenericArguments = 
        protect <| fun () -> 
@@ -2524,8 +2614,8 @@ type FSharpType(cenv, ty:TType) =
         | TType_tuple (_, tyargs) -> (tyargs |> List.map (fun ty -> FSharpType(cenv, ty)) |> makeReadOnlyCollection) 
         | TType_fun(domainTy, rangeTy, _) -> [| FSharpType(cenv, domainTy); FSharpType(cenv, rangeTy) |] |> makeReadOnlyCollection
         | TType_measure (Measure.Const _) ->  [| |] |> makeReadOnlyCollection
-        | TType_measure (Measure.Prod (t1, t2)) ->  [| FSharpType(cenv, TType_measure t1); FSharpType(cenv, TType_measure t2) |] |> makeReadOnlyCollection
-        | TType_measure Measure.One ->  [| |] |> makeReadOnlyCollection
+        | TType_measure (Measure.Prod(measure1= t1; measure2 = t2)) ->  [| FSharpType(cenv, TType_measure t1); FSharpType(cenv, TType_measure t2) |] |> makeReadOnlyCollection
+        | TType_measure (Measure.One _) ->  [| |] |> makeReadOnlyCollection
         | TType_measure (Measure.Inv t1) ->  [| FSharpType(cenv, TType_measure t1) |] |> makeReadOnlyCollection
         | _ -> invalidOp "not a named type"
 
@@ -2711,7 +2801,7 @@ type FSharpType(cenv, ty:TType) =
 
 type FSharpAttribute(cenv: SymbolEnv, attrib: AttribInfo) = 
 
-    let rec resolveArgObj (arg: obj) =
+    let rec resolveArgObj (arg: objnull) =
         match arg with
         | :? TType as t -> box (FSharpType(cenv, t)) 
         | :? (obj[]) as a -> a |> Array.map resolveArgObj |> box
@@ -2738,8 +2828,8 @@ type FSharpAttribute(cenv: SymbolEnv, attrib: AttribInfo) =
             | AttribInfo.FSAttribInfo(g, attrib) ->
                 NicePrint.stringOfFSAttrib (context.Contents g) attrib
             | AttribInfo.ILAttribInfo (g, _, _scoref, cattr, _) -> 
-                let parms, _args = decodeILAttribData cattr 
-                NicePrint.stringOfILAttrib (context.Contents g) (cattr.Method.DeclaringType, parms)
+                let params_, _args = decodeILAttribData cattr 
+                NicePrint.stringOfILAttrib (context.Contents g) (cattr.Method.DeclaringType, params_)
 
     member _.Range = attrib.Range
 
@@ -2923,6 +3013,8 @@ type FSharpAssembly internal (cenv, ccu: CcuThunk) =
 
     member _.SimpleName = ccu.AssemblyName 
 
+    member _.IsFSharp = ccu.IsFSharp
+
 #if !NO_TYPEPROVIDERS
     member _.IsProviderGenerated = ccu.IsProviderGenerated
 #endif
@@ -2964,4 +3056,3 @@ type FSharpOpenDeclaration(target: SynOpenDeclTarget, range: range option, modul
     member _.AppliedScope = appliedScope
 
     member _.IsOwnNamespace = isOwnNamespace
-

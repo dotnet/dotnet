@@ -141,7 +141,11 @@ internal class RunTestsArgumentExecutor : IArgumentExecutor
             throw new CommandLineException(CommandLineResources.MissingTestSourceFile);
         }
 
-        Output.WriteLine(CommandLineResources.StartingExecution, OutputLevel.Information);
+        if (Environment.GetEnvironmentVariable("VSTEST_MSBUILD_NOLOGO") != "1")
+        {
+            Output.WriteLine(CommandLineResources.StartingExecution, OutputLevel.Information);
+        }
+
         if (!StringUtils.IsNullOrEmpty(EqtTrace.LogFile))
         {
             Output.Information(false, CommandLineResources.VstestDiagLogOutputPath, EqtTrace.LogFile);

@@ -1,26 +1,25 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
+using Microsoft.VisualStudio.Razor.Documents;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
 [Export(typeof(IImportDocumentManager))]
 [method: ImportingConstructor]
-internal sealed class ImportDocumentManager(
-    ProjectSnapshotManagerDispatcher dispatcher,
-    IFileChangeTrackerFactory fileChangeTrackerFactory) : IImportDocumentManager
+internal sealed class ImportDocumentManager(IFileChangeTrackerFactory fileChangeTrackerFactory) : IImportDocumentManager
 {
     private readonly IFileChangeTrackerFactory _fileChangeTrackerFactory = fileChangeTrackerFactory;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+
+    private readonly object _gate = new();
     private readonly Dictionary<string, ImportTracker> _importTrackerCache = new(StringComparer.OrdinalIgnoreCase);
 
     public event EventHandler<ImportChangedEventArgs>? Changed;
@@ -31,8 +30,6 @@ internal sealed class ImportDocumentManager(
         {
             throw new ArgumentNullException(nameof(documentTracker));
         }
-
-        _dispatcher.AssertRunningOnDispatcher();
 
         var filePath = documentTracker.FilePath;
         var projectSnapshot = documentTracker.ProjectSnapshot.AssumeNotNull();
@@ -48,18 +45,21 @@ internal sealed class ImportDocumentManager(
                 continue;
             }
 
-            if (!_importTrackerCache.TryGetValue(importFilePath, out var importTracker))
+            lock (_gate)
             {
-                // First time seeing this import. Start tracking it.
-                var fileChangeTracker = _fileChangeTrackerFactory.Create(importFilePath);
-                importTracker = new ImportTracker(fileChangeTracker);
-                _importTrackerCache[importFilePath] = importTracker;
+                if (!_importTrackerCache.TryGetValue(importFilePath, out var importTracker))
+                {
+                    // First time seeing this import. Start tracking it.
+                    var fileChangeTracker = _fileChangeTrackerFactory.Create(importFilePath);
+                    importTracker = new ImportTracker(fileChangeTracker);
+                    _importTrackerCache[importFilePath] = importTracker;
 
-                fileChangeTracker.Changed += FileChangeTracker_Changed;
-                fileChangeTracker.StartListening();
+                    fileChangeTracker.Changed += FileChangeTracker_Changed;
+                    fileChangeTracker.StartListening();
+                }
+
+                importTracker.AddAssociatedDocument(documentTracker.FilePath);
             }
-
-            importTracker.AssociatedDocuments.Add(documentTracker.FilePath);
         }
     }
 
@@ -70,8 +70,6 @@ internal sealed class ImportDocumentManager(
             throw new ArgumentNullException(nameof(documentTracker));
         }
 
-        _dispatcher.AssertRunningOnDispatcher();
-
         var filePath = documentTracker.FilePath;
         var projectSnapshot = documentTracker.ProjectSnapshot.AssumeNotNull();
 
@@ -79,59 +77,65 @@ internal sealed class ImportDocumentManager(
         {
             var importPhysicalPath = import.PhysicalPath.AssumeNotNull();
 
-            if (_importTrackerCache.TryGetValue(importPhysicalPath, out var importTracker))
+            lock (_gate)
             {
-                importTracker.AssociatedDocuments.Remove(documentTracker.FilePath);
-
-                if (importTracker.AssociatedDocuments.Count == 0)
+                if (_importTrackerCache.TryGetValue(importPhysicalPath, out var importTracker))
                 {
-                    // There are no open documents that care about this import. We no longer need to track it.
-                    importTracker.FileChangeTracker.StopListening();
-                    _importTrackerCache.Remove(importPhysicalPath);
+                    importTracker.RemoveAssociatedDocument(documentTracker.FilePath);
+
+                    if (importTracker.AssociatedDocumentCount == 0)
+                    {
+                        // There are no open documents that care about this import. We no longer need to track it.
+                        importTracker.FileChangeTracker.StopListening();
+                        _importTrackerCache.Remove(importPhysicalPath);
+                    }
                 }
             }
         }
     }
 
-    private static IEnumerable<RazorProjectItem> GetPhysicalImportItems(string filePath, IProjectSnapshot projectSnapshot)
+    private static ImmutableArray<RazorProjectItem> GetPhysicalImportItems(string filePath, ILegacyProjectSnapshot projectSnapshot)
     {
         var projectEngine = projectSnapshot.GetProjectEngine();
-        var documentSnapshot = projectSnapshot.GetDocument(filePath);
-        var projectItem = projectEngine.FileSystem.GetItem(filePath, documentSnapshot?.FileKind);
 
-        foreach (var projectFeature in projectEngine.ProjectFeatures)
-        {
-            if (projectFeature is not IImportProjectFeature importFeature)
-            {
-                continue;
-            }
+        // If we can get the document, use it's target path to find the project item
+        // to avoid GetItem(...) throwing an exception if the file path is rooted outside
+        // of the project. If we can't get the document, we'll just go ahead and use
+        // the file path, since it's probably OK.
+        var projectItem = projectSnapshot.GetDocument(filePath) is { } document
+            ? projectEngine.FileSystem.GetItem(document.TargetPath, document.FileKind)
+            : projectEngine.FileSystem.GetItem(filePath, fileKind: null);
 
-            foreach (var importItem in importFeature.GetImports(projectItem))
-            {
-                if (importItem.PhysicalPath is null)
-                {
-                    continue;
-                }
-
-                yield return importItem;
-            }
-        }
+        return projectEngine.GetImports(projectItem, static i => i is not DefaultImportProjectItem);
     }
 
     private void FileChangeTracker_Changed(object sender, FileChangeEventArgs args)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
-        if (_importTrackerCache.TryGetValue(args.FilePath, out var importTracker))
+        lock (_gate)
         {
-            Changed?.Invoke(this, new ImportChangedEventArgs(importTracker.FilePath, args.Kind, importTracker.AssociatedDocuments));
+            if (_importTrackerCache.TryGetValue(args.FilePath, out var importTracker))
+            {
+                Changed?.Invoke(this, new ImportChangedEventArgs(importTracker.FilePath, args.Kind, importTracker.GetAssociatedDocuments()));
+            }
         }
     }
 
     private sealed class ImportTracker(IFileChangeTracker fileChangeTracker)
     {
+        private readonly HashSet<string> _associatedDocuments = new(StringComparer.OrdinalIgnoreCase);
+
         public IFileChangeTracker FileChangeTracker => fileChangeTracker;
         public string FilePath => fileChangeTracker.FilePath;
-        public HashSet<string> AssociatedDocuments { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        public int AssociatedDocumentCount => _associatedDocuments.Count;
+
+        public void AddAssociatedDocument(string filePath)
+            => _associatedDocuments.Add(filePath);
+
+        public void RemoveAssociatedDocument(string filePath)
+            => _associatedDocuments.Remove(filePath);
+
+        public ImmutableArray<string> GetAssociatedDocuments()
+            => _associatedDocuments.ToImmutableArray();
     }
 }

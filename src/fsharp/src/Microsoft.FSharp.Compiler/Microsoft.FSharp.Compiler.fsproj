@@ -7,7 +7,7 @@
     <NuspecFile>Microsoft.FSharp.Compiler.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
     <PackageDescription>.NET Core compatible version of the F# compiler fsc.exe.</PackageDescription>
-    <PackageReleaseNotes>/blob/main/release-notes.md#FSharp-Tools-$(FSProductVersionReleaseNotesVersion)</PackageReleaseNotes>
+    <PackageReleaseNotes>/blob/main/docs/release-notes/.Language/$(FSLanguageVersion).md</PackageReleaseNotes>
     <NoDefaultExcludes>true</NoDefaultExcludes>
   </PropertyGroup>
 
@@ -25,15 +25,16 @@
     <NuspecProperty Include="fSharpCompilerServicePackageVersion=$(FSharpCompilerServicePackageVersion)" />
     <NuspecProperty Include="artifactsPackagesDir=$(ArtifactsPackagesDir)" />
     <NuspecProperty Include="fSharpNetCoreProductTargetFramework=$(FSharpNetCoreProductTargetFramework)" />
+    <NuspecProperty Include="configuration=$(Configuration)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IgnoreMibc)' != 'true'">
+    <NuspecProperty Include="mibcRoot=$(ArtifactsDir)\mibc" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\fsi\fsiProject\fsi.fsproj">
-        <AdditionalProperties>Configuration=ReleaseCompressed;CompressAllMetadata=true</AdditionalProperties>
-    </ProjectReference>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\fsc\fscProject\fsc.fsproj">
-        <AdditionalProperties>Configuration=ReleaseCompressed;CompressAllMetadata=true</AdditionalProperties>
-    </ProjectReference>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\fsi\fsiProject\fsi.fsproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\fsc\fscProject\fsc.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +53,9 @@
     <DependentProjects Include="$(MSBuildThisFileDirectory)..\Compiler\FSharp.Compiler.Service.fsproj">
         <AdditionalProperties>TargetFrameworks=netstandard2.0</AdditionalProperties>
     </DependentProjects>
+    <DependentProjects Include="$(MSBuildThisFileDirectory)..\Compiler\FSharp.Compiler.Service.fsproj">
+        <AdditionalProperties>TargetFrameworks=netstandard2.0</AdditionalProperties>
+    </DependentProjects>
   </ItemGroup>
 
    <ItemGroup>
@@ -59,9 +63,9 @@
   </ItemGroup>
 
   <!--
-     The targets below manages Arcade Release/Shipping nuget package manahement.
+     The targets below manages Arcade Release/Shipping nuget package management.
      This is particularly tricky because we generate fsharp.core and fsharp.compiler.service 
-     nupkgs and embedd both the shipping and release nuget packages inside the final 
+     nupkgs and embed both the shipping and release nuget packages inside the final 
      microsoft.fsharp.compiler.nupkg which we insert into the dotnet sdk
   -->
   <Target Name="PackageReleaseDependentPackages" AfterTargets="Pack" Condition="'$(DotNetFinalVersionKind)' == ''">
@@ -75,6 +79,8 @@
 
     <!-- Force references among packages to use exact versions (see https://github.com/NuGet/Home/issues/7213) -->
     <Microsoft.DotNet.Tools.UpdatePackageVersionTask VersionKind="release" Packages="@(_BuiltPackages)" OutputDirectory="$(DependentPackagesDir)Release" AllowPreReleaseDependencies="true" ExactVersions="true" />
+    
+    <Microsoft.DotNet.Tools.UpdatePackageVersionTask VersionKind="prerelease" Packages="@(_BuiltPackages)" OutputDirectory="$(DependentPackagesDir)PreRelease" AllowPreReleaseDependencies="true" ExactVersions="true" />
 
     <!-- Rewrite the version ranges of per-build pre-release packages (see https://github.com/NuGet/Home/issues/7213) -->
     <Microsoft.DotNet.Tools.UpdatePackageVersionTask Packages="@(_BuiltPackages)" OutputDirectory="$(DependentPackagesDir)Shipping" ExactVersions="true"/>

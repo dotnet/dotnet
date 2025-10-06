@@ -6,6 +6,7 @@ open System
 open System.Collections.Generic
 open System.Runtime.CompilerServices
 open Internal.Utilities.Library
+open FSharp.Compiler
 open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.Symbols
 open FSharp.Compiler.Syntax.PrettyNaming
@@ -51,6 +52,11 @@ module UnusedOpens =
                         if not entity.IsNamespace && not entity.IsFSharpModule then
                             for fv in entity.MembersFunctionsAndValues do
                                 fv
+
+                            if entity.IsEnum then
+                                for field in entity.FSharpFields do
+                                    if field.IsStatic && field.IsLiteral then
+                                        field
                     |]
 
                 HashSet<_>(symbols, symbolHash)
@@ -296,6 +302,8 @@ module UnusedOpens =
     /// Async to allow cancellation.
     let getUnusedOpens (checkFileResults: FSharpCheckFileResults, getSourceLineStr: int -> string) : Async<range list> =
         async {
+            use! _holder = Cancellable.UseToken()
+
             if checkFileResults.OpenDeclarations.Length = 0 then
                 return []
             else

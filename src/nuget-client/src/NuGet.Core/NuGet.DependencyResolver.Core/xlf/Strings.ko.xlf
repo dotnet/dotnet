@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="Error_PackageNotFoundWhenExpected">
+        <source>The feed '{0}' lists package '{1}' but multiple attempts to download the nupkg have failed. The feed is either invalid or required packages were removed while the current operation was in progress. Verify the package exists on the feed and try again.</source>
+        <target state="translated">'{0}' 피드에서 '{1}' 패키지를 나열하지만 nupkg를 다운로드하려는 시도가 여러 번 실패했습니다. 피드가 잘못되었거나 현재 작업을 진행 중인 동안 필요한 패키지가 제거되었습니다. 피드에 패키지가 있는지 확인하고 다시 시도하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MatchingSourceFoundForPackage">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'.</source>
+        <target state="translated">‘{0}’ 패키지 ID에 대한 패키지 소스 맵 일치를 ‘{1}’개 찾았습니다.</target>
+        <note>{0} - Package id {1} - list of sources</note>
+      </trans-unit>
+      <trans-unit id="Log_NoMatchingSourceFoundForPackage">
+        <source>Package source mapping match not found for package ID '{0}'.</source>
+        <target state="translated">‘{0}’ 패키지 ID에 대한 패키지 소스 맵 일치 검색 결과가 없습니다.</target>
+        <note>{0} - Package id</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

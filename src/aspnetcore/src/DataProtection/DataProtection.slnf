@@ -1,6 +1,6 @@
 {
   "solution": {
-    "path": "..\\..\\AspNetCore.sln",
+    "path": "..\\..\\AspNetCore.slnx",
     "projects": [
       "src\\DataProtection\\Abstractions\\src\\Microsoft.AspNetCore.DataProtection.Abstractions.csproj",
       "src\\DataProtection\\Abstractions\\test\\Microsoft.AspNetCore.DataProtection.Abstractions.Tests.csproj",
@@ -19,6 +19,7 @@
       "src\\DataProtection\\samples\\CustomEncryptorSample\\CustomEncryptorSample.csproj",
       "src\\DataProtection\\samples\\EntityFrameworkCoreSample\\EntityFrameworkCoreSample.csproj",
       "src\\DataProtection\\samples\\KeyManagementSample\\KeyManagementSample.csproj",
+      "src\\DataProtection\\samples\\KeyManagementSimulator\\KeyManagementSimulator.csproj",
       "src\\DataProtection\\samples\\NonDISample\\NonDISample.csproj",
       "src\\DataProtection\\samples\\Redis\\Redis.csproj",
       "src\\Extensions\\Features\\src\\Microsoft.Extensions.Features.csproj",

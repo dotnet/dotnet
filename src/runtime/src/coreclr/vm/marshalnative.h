@@ -23,6 +23,9 @@ public:
     static FCDECL2(LPVOID, GCHandleInternalAlloc, Object *obj, int type);
     static FCDECL1(FC_BOOL_RET, GCHandleInternalFree, OBJECTHANDLE handle);
     static FCDECL1(LPVOID, GCHandleInternalGet, OBJECTHANDLE handle);
+#ifdef FEATURE_JAVAMARSHAL
+    static FCDECL2(FC_BOOL_RET, GCHandleInternalTryGetBridgeWait, OBJECTHANDLE handle, Object** pObjResult);
+#endif
     static FCDECL2(VOID, GCHandleInternalSet, OBJECTHANDLE handle, Object *obj);
     static FCDECL3(Object*, GCHandleInternalCompareExchange, OBJECTHANDLE handle, Object *obj, Object* oldObj);
 
@@ -55,6 +58,9 @@ extern "C" int32_t QCALLTYPE MarshalNative_GetHRForException(QCall::ObjectHandle
 
 extern "C" OBJECTHANDLE QCALLTYPE GCHandle_InternalAllocWithGCTransition(QCall::ObjectHandleOnStack obj, int type);
 extern "C" void QCALLTYPE GCHandle_InternalFreeWithGCTransition(OBJECTHANDLE handle);
+#ifdef FEATURE_JAVAMARSHAL
+extern "C" void QCALLTYPE GCHandle_InternalGetBridgeWait(OBJECTHANDLE handle, QCall::ObjectHandleOnStack result);
+#endif
 
 #ifdef _DEBUG
 using IsInCooperativeGCMode_fn = BOOL(STDMETHODCALLTYPE*)(void);
@@ -76,6 +82,11 @@ extern "C" IUnknown* QCALLTYPE MarshalNative_GetIUnknownForObject(QCall::ObjectH
 // return the IDispatch* for an Object
 //====================================================================
 extern "C" IDispatch* QCALLTYPE MarshalNative_GetIDispatchForObject(QCall::ObjectHandleOnStack o);
+
+//====================================================================
+// return the IUnknown* or IDispatch* for an Object.
+//====================================================================
+extern "C" void* QCALLTYPE MarshalNative_GetIUnknownOrIDispatchForObject(QCall::ObjectHandleOnStack o, BOOL* isIDispatch);
 
 //====================================================================
 // return the IUnknown* representing the interface for the Object
@@ -106,7 +117,7 @@ extern "C" void QCALLTYPE MarshalNative_GetTypedObjectForIUnknown(IUnknown* pUnk
 extern "C" IUnknown* QCALLTYPE MarshalNative_CreateAggregatedObject(IUnknown* pOuter, QCall::ObjectHandleOnStack o);
 
 //====================================================================
-// Free unused RCWs in the current COM+ context.
+// Free unused RCWs in the current CLR context.
 //====================================================================
 extern "C" void QCALLTYPE MarshalNative_CleanupUnusedObjectsInCurrentContext();
 

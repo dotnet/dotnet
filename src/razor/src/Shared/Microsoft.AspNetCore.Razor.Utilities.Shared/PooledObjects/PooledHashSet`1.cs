@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,9 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 internal ref struct PooledHashSet<T>
 {
     private readonly ObjectPool<HashSet<T>> _pool;
+#pragma warning disable IDE0052 // Used in NET only code below. Called API doesn't exist on framework.
     private readonly int? _capacity;
+#pragma warning restore IDE0052
     private HashSet<T>? _set;
 
     public PooledHashSet()
@@ -67,10 +69,13 @@ internal ref struct PooledHashSet<T>
         => _set?.Contains(item) ?? false;
 
     public readonly T[] ToArray()
-        => _set?.ToArray() ?? Array.Empty<T>();
+        => _set?.ToArray() ?? [];
 
     public readonly ImmutableArray<T> ToImmutableArray()
-        => _set?.ToImmutableArray() ?? ImmutableArray<T>.Empty;
+        => _set?.ToImmutableArray() ?? [];
+
+    public readonly ImmutableArray<T> OrderByAsArray<TKey>(Func<T, TKey> keySelector)
+        => _set?.OrderByAsArray(keySelector) ?? [];
 
     public void UnionWith(IList<T>? other)
     {

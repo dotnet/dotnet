@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Test
@@ -35,7 +37,7 @@ namespace NuGet.CommandLine.Test
                 // Act
                 // Set the working directory to C:\, otherwise,
                 // the test will change the nuget.config at the code repo's root directory
-                var result = Program.MainCore(root, args);
+                var result = Program.MainCore(root, args, TestEnvironmentVariableReader.EmptyInstance);
 
                 // Assert
                 Assert.Equal(0, result);

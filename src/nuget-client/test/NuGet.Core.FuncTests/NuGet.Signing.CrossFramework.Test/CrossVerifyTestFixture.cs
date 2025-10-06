@@ -5,10 +5,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using NuGet.Packaging.Signing;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1.X509;
-using Test.Utility.Signing;
 
 namespace NuGet.Signing.CrossFramework.Test
 {
@@ -18,8 +16,8 @@ namespace NuGet.Signing.CrossFramework.Test
         private const string DotnetExe = "dotnet.exe";
         //In net472 code path, the SDK version and TFM could not be detected automatically, so we manually specified according to the sdk version we're testing against.
         //https://github.com/NuGet/Home/issues/12187
-        private const string SdkVersion = "8";
-        private const string SdkTfm = "net8.0";
+        private const string SdkVersion = "10";
+        private const string SdkTfm = "net10.0";
         internal string _dotnetExePath;
 #else
         private const string NuGetExe = "NuGet.exe";
@@ -94,7 +92,7 @@ namespace NuGet.Signing.CrossFramework.Test
             var testServer = await _testServer.Value;
             var rootCa = CertificateAuthority.Create(testServer.Url);
             var intermediateCa = rootCa.CreateIntermediateCertificateAuthority();
-            var rootCertificate = new X509Certificate2(rootCa.Certificate.GetEncoded());
+            var rootCertificate = new X509Certificate2(rootCa.Certificate);
 
             _trustedTimestampRoot = TrustedTestCert.Create(
                 rootCertificate,
@@ -135,10 +133,10 @@ namespace NuGet.Signing.CrossFramework.Test
                 KeyPair = keyPair,
                 NotBefore = DateTimeOffset.UtcNow.AddSeconds(-2),
                 NotAfter = DateTimeOffset.UtcNow.AddHours(1),
-                SubjectName = new X509Name("CN=NuGet Cross Verify Test Author Signning Certificate")
+                SubjectName = new X500DistinguishedName("CN=NuGet Cross Verify Test Author Signning Certificate")
             };
-            var bcCertificate = ca.IssueCertificate(issueOptions);
-            return CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, keyPair);
+
+            return ca.IssueCertificate(issueOptions);
         }
 
         private async Task<X509Certificate2> CreateDefaultRepositorySigningCertificateAsync()
@@ -150,10 +148,10 @@ namespace NuGet.Signing.CrossFramework.Test
                 KeyPair = keyPair,
                 NotBefore = DateTimeOffset.UtcNow.AddSeconds(-2),
                 NotAfter = DateTimeOffset.UtcNow.AddHours(1),
-                SubjectName = new X509Name("CN=NuGet Cross Verify Test Repository Signning Certificate")
+                SubjectName = new X500DistinguishedName("CN=NuGet Cross Verify Test Repository Signning Certificate")
             };
-            var bcCertificate = ca.IssueCertificate(issueOptions);
-            return CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, keyPair);
+
+            return ca.IssueCertificate(issueOptions);
         }
 
         public void Dispose()

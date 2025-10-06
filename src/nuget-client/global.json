@@ -1,15 +1,15 @@
 {
-  // This empty file has no effect and is here to support Arcade-powered source-build.
-  // The Arcade build process requires a global.json at the root of the repo and normally
-  // uses it to restore the necessary SDK and tools to build the repo.
-  // However, NuGet explitcly wants to use the ambient SDK (normally latest), not any particular
-  // version.  We also don't want to introduce MS.DN.Arcade.SDK into the non-source-build build.
-  // eng/source-build/global.json has the entry for the Arcade version we need for
-  // Arcade-powered source-build.
   "sdk": {
+    "version": "9.0.300",
+    "rollForward": "latestMajor",
     "allowPrerelease": true
   },
+  "tools": {
+    "dotnet": "9.0.300",
+    "pinned": true
+  },
   "msbuild-sdks": {
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25409.103",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }

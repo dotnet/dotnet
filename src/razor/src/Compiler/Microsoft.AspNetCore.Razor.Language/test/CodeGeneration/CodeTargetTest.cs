@@ -15,7 +15,7 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         // Act
         var target = CodeTarget.CreateDefault(codeDocument, options);
@@ -32,7 +32,7 @@ public class CodeTargetTest
         Action<CodeTargetBuilder> @delegate = (b) => { wasCalled = true; };
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         // Act
         CodeTarget.CreateDefault(codeDocument, options, @delegate);
@@ -46,7 +46,7 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         // Act
         CodeTarget.CreateDefault(codeDocument, options, configure: null);
@@ -59,7 +59,7 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         // Act
         CodeTarget.CreateDefault(codeDocument, options, configure: null);

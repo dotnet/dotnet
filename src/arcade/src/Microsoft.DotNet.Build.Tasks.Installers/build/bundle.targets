@@ -1,6 +1,8 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <Import Project="$(MSBuildThisFileDirectory)installer.targetos.targets" />
+
   <Target Name="GetBundleGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo" Condition="'$(SkipInstallerBuild)' != 'true'">
     <Error
       Text="Unable to build a bundle installer for a non-Windows, non-macOS platform."
@@ -12,7 +14,8 @@
     </PropertyGroup>
   </Target>
 
-  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" Condition="'$(UseWix5)' == ''" />
+  <Import Project="$(MSBuildThisFileDirectory)wix5/wix.targets" Condition="'$(UseWix5)' != ''" />
 
   <Target Name="GenerateBundles" DependsOnTargets="GetBundleGenerationFlags" Condition="'$(SkipInstallerBuild)' != 'true'">
     <MakeDir Directories="$(PackageOutputPath)" />
@@ -78,14 +81,14 @@
     <ItemGroup Condition="'$(GenerateExeBundle)' == 'true'">
       <BundleComponentReference>
         <Targets>CreateWixInstaller</Targets>
-        <AdditionalProperties>GenerateMSI=true</AdditionalProperties>
+        <AdditionalProperties>_IsIndividualInstallerBuild=true;GenerateMSI=true</AdditionalProperties>
         <RemoveProperties>GenerateExeBundle</RemoveProperties>
       </BundleComponentReference>
     </ItemGroup>
     <ItemGroup Condition="'$(GeneratePkgBundle)' == 'true'">
       <BundleComponentReference>
         <Targets>CreatePkg</Targets>
-        <AdditionalProperties>GeneratePkg=true</AdditionalProperties>
+        <AdditionalProperties>_IsIndividualInstallerBuild=true;GeneratePkg=true</AdditionalProperties>
         <RemoveProperties>GeneratePkgBundle</RemoveProperties>
       </BundleComponentReference>
     </ItemGroup>
@@ -93,6 +96,29 @@
     <MSBuild Projects="@(BundleComponentReference)" Targets="%(Targets)" RemoveProperties="%(RemoveProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_BundledComponents" />
     </MSBuild>
+
+    <PropertyGroup>
+      <_BundledComponentsPackageGroupWxsPath>$(IntermediateOutputPath)dotnetPackageGroup.wxs</_BundledComponentsPackageGroupWxsPath>
+      <DotNetPackageGroupWxsContent>
+<![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <PackageGroup Id="PG_DotNet">
+            @(_BundledComponents->'<MsiPackage SourceFile="%(Identity)" />', '
+            ')
+        </PackageGroup>
+    </Fragment>
+</Wix>
+]]>
+      </DotNetPackageGroupWxsContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_BundledComponentsPackageGroupWxsPath)"
+                      Lines="$(DotNetPackageGroupWxsContent)"
+                      WriteOnlyWhenDifferent="true"
+                      Overwrite="true" />
   </Target>
 
   <!--

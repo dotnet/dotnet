@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <!-- A sentinel package only used for communicating non-shipping versions. -->
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <IsShippingPackage>false</IsShippingPackage>
+    <IsPackable>true</IsPackable>
+    <IncludeSymbols>false</IncludeSymbols>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+</Project>

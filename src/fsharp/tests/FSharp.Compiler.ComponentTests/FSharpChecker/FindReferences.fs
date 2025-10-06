@@ -7,16 +7,16 @@ open FSharp.Test.ProjectGeneration.Helpers
 
 #nowarn "57"
 
-type Occurence = Definition | InType | Use
+type Occurrence = Definition | InType | Use
 
-let deriveOccurence (su:FSharpSymbolUse) =
+let deriveOccurrence (su:FSharpSymbolUse) =
     if su.IsFromDefinition 
     then Definition
     elif su.IsFromType
     then InType
     elif su.IsFromUse
     then Use
-    else failwith $"Unexpected type of occurence (for this test), symbolUse = {su}" 
+    else failwith $"Unexpected type of occurrence (for this test), symbolUse = {su}" 
 
 /// https://github.com/dotnet/fsharp/issues/13199
 let reproSourceCode = """
@@ -40,9 +40,9 @@ let ``Finding usage of type via GetUsesOfSymbolInFile should also find it's cons
                 let references = 
                     typeCheckResult.GetUsesOfSymbolInFile(symbolUse.Symbol) 
                     |> Array.sortBy (fun su -> su.Range.StartLine)
-                    |> Array.map (fun su -> su.Range.StartLine, su.Range.StartColumn, su.Range.EndColumn, deriveOccurence su)
+                    |> Array.map (fun su -> su.Range.StartLine, su.Range.StartColumn, su.Range.EndColumn, deriveOccurrence su)
 
-                Assert.Equal<(int*int*int*Occurence)>(
+                Assert.Equal<(int*int*int*Occurrence)>(
                     [| 7,5,11,Definition
                        8,25,31,InType
                        10,8,14,Use
@@ -264,6 +264,33 @@ val myFunc2: param: int -> int
                     "FileSource.fs", 7, 20, 25
                 ])
             }
+
+module Exceptions =
+    let project() = SyntheticProject.Create(
+        { sourceFile "First" [] with ExtraSource = "exception MyException of string" },
+        { sourceFile "Second" [] with ExtraSource = """
+open ModuleFirst
+let foo x = raise (MyException "foo")""" })
+
+    [<Fact>]
+    let ``We find exception from definition`` () =
+        project().Workflow {
+            placeCursor "First" 6 21 "exception MyException of string" ["MyException"]
+            findAllReferences (expectToFind [
+                "FileFirst.fs", 6, 10, 21
+                "FileSecond.fs", 8, 19, 30
+            ])
+        }
+
+    [<Fact>]
+    let ``We find exception from usage`` () =
+        project().Workflow {
+            placeCursor "Second" 8 30 "raise (MyException \"foo\")" ["MyException"]
+            findAllReferences (expectToFind [
+                "FileFirst.fs", 6, 10, 21
+                "FileSecond.fs", 8, 19, 30
+            ])
+        }
 
 module Attributes =
 

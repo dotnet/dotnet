@@ -12,7 +12,7 @@ open FSharp.Compiler.IO
 // 1. List of frameworks
 // 2. DeriveTargetFrameworkDirectoriesFor45Plus
 // 3. HighestInstalledRefAssembliesOrDotNETFramework
-// 4. GetPathToDotNetFrameworkImlpementationAssemblies
+// 4. GetPathToDotNetFrameworkImplementationAssemblies
 [<Literal>]
 let private Net45 = "v4.5"
 
@@ -43,18 +43,33 @@ let private Net472 = "v4.7.2"
 [<Literal>]
 let private Net48 = "v4.8"
 
+[<Literal>]
+let private Net481 = "v4.8.1"
+
 let SupportedDesktopFrameworkVersions =
-    [ Net48; Net472; Net471; Net47; Net462; Net461; Net46; Net452; Net451; Net45 ]
+    [
+        Net481
+        Net48
+        Net472
+        Net471
+        Net47
+        Net462
+        Net461
+        Net46
+        Net452
+        Net451
+        Net45
+    ]
 
 let private SimulatedMSBuildResolver =
 
     /// Get the path to the .NET Framework implementation assemblies by using ToolLocationHelper.GetPathToDotNetFramework
     /// This is only used to specify the "last resort" path for assembly resolution.
-    let GetPathToDotNetFrameworkImlpementationAssemblies _ =
+    let GetPathToDotNetFrameworkImplementationAssemblies _ =
         let isDesktop = typeof<int>.Assembly.GetName().Name = "mscorlib"
 
         if isDesktop then
-            match System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory() with
+            match (System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(): string MaybeNull) with
             | null -> []
             | x -> [ x ]
         else
@@ -82,7 +97,7 @@ let private SimulatedMSBuildResolver =
             if Environment.OSVersion.Platform = PlatformID.Win32NT then
                 let PF =
                     match Environment.GetEnvironmentVariable("ProgramFiles(x86)") with
-                    | null -> Environment.GetEnvironmentVariable("ProgramFiles") // if PFx86 is null, then we are 32-bit and just get PF
+                    | null -> !!Environment.GetEnvironmentVariable("ProgramFiles") // if PFx86 is null, then we are 32-bit and just get PF
                     | s -> s
 
                 PF + @"\Reference Assemblies\Microsoft\Framework\.NETFramework"
@@ -112,7 +127,7 @@ let private SimulatedMSBuildResolver =
                     yield fsharpCoreDir
                     yield implicitIncludeDir
                     yield! GetPathToDotNetFrameworkReferenceAssemblies targetFrameworkVersion
-                    yield! GetPathToDotNetFrameworkImlpementationAssemblies targetFrameworkVersion
+                    yield! GetPathToDotNetFrameworkImplementationAssemblies targetFrameworkVersion
                 ]
 
             for r, baggage in references do
@@ -150,14 +165,14 @@ let private SimulatedMSBuildResolver =
                         let fscoreDir0 =
                             let PF =
                                 match Environment.GetEnvironmentVariable("ProgramFiles(x86)") with
-                                | null -> Environment.GetEnvironmentVariable("ProgramFiles")
+                                | null -> !!Environment.GetEnvironmentVariable("ProgramFiles")
                                 | s -> s
 
                             PF
                             + @"\Reference Assemblies\Microsoft\FSharp\.NETFramework\v4.0\"
-                            + n.Version.ToString()
+                            + (!!n.Version).ToString()
 
-                        let trialPath = Path.Combine(fscoreDir0, n.Name + ".dll")
+                        let trialPath = Path.Combine(fscoreDir0, !!n.Name + ".dll")
 
                         if FileSystem.FileExistsShim trialPath then
                             success trialPath
@@ -173,7 +188,7 @@ let private SimulatedMSBuildResolver =
                         r
                     else
                         try
-                            AssemblyName(r).Name + ".dll"
+                            !!AssemblyName(r).Name + ".dll"
                         with _ ->
                             r + ".dll"
 
@@ -198,7 +213,7 @@ let private SimulatedMSBuildResolver =
                         let netFx = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()
 
                         let gac =
-                            Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(netFx.TrimEnd('\\'))), "assembly")
+                            Path.Combine(!!Path.GetDirectoryName(Path.GetDirectoryName(netFx.TrimEnd('\\'))), "assembly")
 
                         match n.Version, n.GetPublicKeyToken() with
                         | null, _
@@ -207,7 +222,7 @@ let private SimulatedMSBuildResolver =
                                 [
                                     if FileSystem.DirectoryExistsShim gac then
                                         for gacDir in FileSystem.EnumerateDirectoriesShim gac do
-                                            let assemblyDir = Path.Combine(gacDir, n.Name)
+                                            let assemblyDir = Path.Combine(gacDir, !!n.Name)
 
                                             if FileSystem.DirectoryExistsShim assemblyDir then
                                                 for tdir in FileSystem.EnumerateDirectoriesShim assemblyDir do
@@ -228,7 +243,7 @@ let private SimulatedMSBuildResolver =
                             if FileSystem.DirectoryExistsShim gac then
                                 for gacDir in Directory.EnumerateDirectories gac do
                                     //printfn "searching GAC directory: %s" gacDir
-                                    let assemblyDir = Path.Combine(gacDir, n.Name)
+                                    let assemblyDir = Path.Combine(gacDir, !!n.Name)
 
                                     if FileSystem.DirectoryExistsShim assemblyDir then
                                         //printfn "searching GAC directory: %s" assemblyDir

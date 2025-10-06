@@ -35,7 +35,7 @@ internal sealed class VisualStudioSettingsOptionPersister
         = ImmutableDictionary<string, (OptionKey2, string)>.Empty;
 
     /// <remarks>
-    /// We make sure this code is from the UI by asking for all <see cref="IOptionPersister"/> in <see cref="RoslynPackage.InitializeAsync"/>
+    /// We make sure this code is from the UI by asking for all <see cref="IOptionPersister"/> in <see cref="RoslynPackage.RegisterOnAfterPackageLoadedAsyncWork"/>
     /// </remarks>
     public VisualStudioSettingsOptionPersister(Action<OptionKey2, object?> refreshOption, ImmutableDictionary<string, Lazy<IVisualStudioStorageReadFallback, OptionNameMetadata>> readFallbacks, ISettingsManager settingsManager)
     {
@@ -109,7 +109,20 @@ internal sealed class VisualStudioSettingsOptionPersister
 
         var underlyingType = Nullable.GetUnderlyingType(storageType);
         if (underlyingType?.IsEnum == true)
-            return manager.TryGetValue(storageKey, out int? value) == GetValueResult.Success ? (value.HasValue ? Enum.ToObject(underlyingType, value.Value) : null) : default(Optional<object?>);
+        {
+            if (manager.TryGetValue(storageKey, out int? nullableValue) == GetValueResult.Success)
+            {
+                return nullableValue.HasValue ? Enum.ToObject(underlyingType, nullableValue.Value) : null;
+            }
+            else if (manager.TryGetValue(storageKey, out int value) == GetValueResult.Success)
+            {
+                return Enum.ToObject(underlyingType, value);
+            }
+            else
+            {
+                return default;
+            }
+        }
 
         if (storageType == typeof(NamingStylePreferences))
         {
@@ -182,7 +195,7 @@ internal sealed class VisualStudioSettingsOptionPersister
     {
         Contract.ThrowIfNull(_settingManager);
 
-        if (value is ICodeStyleOption codeStyleOption)
+        if (value is ICodeStyleOption2 codeStyleOption)
         {
             // We store these as strings, so serialize
             value = codeStyleOption.ToXElement().ToString();

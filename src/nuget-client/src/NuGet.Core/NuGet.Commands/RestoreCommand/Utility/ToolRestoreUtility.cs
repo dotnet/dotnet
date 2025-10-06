@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -37,13 +36,13 @@ namespace NuGet.Commands
                     {
                         TargetAlias = frameworkShortFolderName,
                         FrameworkName = framework,
-                        Dependencies = new List<LibraryDependency>
-                        {
-                            new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                        Dependencies =
+                        [
+                            new LibraryDependency()
                             {
                                 LibraryRange = new LibraryRange(id, versionRange, LibraryDependencyTarget.Package)
                             }
-                        }
+                        ]
                     }
                 },
                 RestoreMetadata = new ProjectRestoreMetadata()

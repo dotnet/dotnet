@@ -1,10 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System.IO;
+using System.ComponentModel;
+using FileSystemWatcher = System.IO.FileSystemWatcher;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
+[DesignerCategory("code")]
 internal class RazorFileSystemWatcher : FileSystemWatcher
 {
     // Without trimming trailing `/`, `\\` from the workspace directory, the FileSystemWatcher

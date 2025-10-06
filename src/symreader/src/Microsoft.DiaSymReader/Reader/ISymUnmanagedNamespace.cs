@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("0DFF7289-54F8-11d3-BD28-0000F80849BD")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedNamespace
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedNamespace
     {
         [PreserveSig]
         int GetName(

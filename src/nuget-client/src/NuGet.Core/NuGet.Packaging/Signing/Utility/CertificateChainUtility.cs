@@ -127,7 +127,11 @@ namespace NuGet.Packaging.Signing
                 // Return a new certificate object.
                 // This allows the chain and its chain element certificates to be disposed
                 // in both success and error cases.
+#if NET9_0_OR_GREATER
+                certs.Add(X509CertificateLoader.LoadCertificate(item.Certificate.RawData));
+#else
                 certs.Add(new X509Certificate2(item.Certificate.RawData));
+#endif
             }
 
             return certs;

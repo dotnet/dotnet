@@ -17,18 +17,18 @@ namespace NuGet.CommandLine.XPlat
         private const string PreferredUILang = nameof(PreferredUILang);
         private static ILogger Logger;
 
-        public static void Setup(ILogger logger)
+        public static void Setup(ILogger logger, IEnvironmentVariableReader environmentVariableReader)
         {
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
             Logger = logger;
-            CultureInfo language = GetOverriddenUILanguage();
+            CultureInfo language = GetOverriddenUILanguage(environmentVariableReader);
             if (language != null)
             {
                 ApplyOverrideToCurrentProcess(language);
-                FlowOverrideToChildProcesses(language);
+                FlowOverrideToChildProcesses(language, environmentVariableReader);
             }
         }
 
@@ -37,18 +37,18 @@ namespace NuGet.CommandLine.XPlat
             CultureInfo.DefaultThreadCurrentUICulture = language;
         }
 
-        private static void FlowOverrideToChildProcesses(CultureInfo language)
+        private static void FlowOverrideToChildProcesses(CultureInfo language, IEnvironmentVariableReader environmentVariableReader)
         {
             // Do not override any environment variables that are already set as we do not want to clobber a more granular setting with our global setting.
-            SetIfNotAlreadySet(DOTNET_CLI_UI_LANGUAGE, language.Name);
-            SetIfNotAlreadySet(VSLANG, language.LCID); // for tools following VS guidelines to just work in CLI
-            SetIfNotAlreadySet(PreferredUILang, language.Name); // for C#/VB targets that pass $(PreferredUILang) to compiler
+            SetIfNotAlreadySet(DOTNET_CLI_UI_LANGUAGE, language.Name, environmentVariableReader);
+            SetIfNotAlreadySet(VSLANG, language.LCID, environmentVariableReader); // for tools following VS guidelines to just work in CLI
+            SetIfNotAlreadySet(PreferredUILang, language.Name, environmentVariableReader); // for C#/VB targets that pass $(PreferredUILang) to compiler
         }
 
-        private static CultureInfo GetOverriddenUILanguage()
+        private static CultureInfo GetOverriddenUILanguage(IEnvironmentVariableReader environmentVariableReader)
         {
             // DOTNET_CLI_UI_LANGUAGE=<culture name> is the main way for users to customize the CLI's UI language.
-            string dotnetCliLanguage = Environment.GetEnvironmentVariable(DOTNET_CLI_UI_LANGUAGE);
+            string dotnetCliLanguage = environmentVariableReader.GetEnvironmentVariable(DOTNET_CLI_UI_LANGUAGE);
             if (dotnetCliLanguage != null)
             {
                 try
@@ -63,7 +63,7 @@ namespace NuGet.CommandLine.XPlat
 
             // VSLANG=<lcid> is set by VS and we respect that as well so that we will respect the VS 
             // language preference if we're invoked by VS. 
-            string vsLang = Environment.GetEnvironmentVariable(VSLANG);
+            string vsLang = environmentVariableReader.GetEnvironmentVariable(VSLANG);
             if (vsLang != null && int.TryParse(vsLang, out int vsLcid))
             {
                 try
@@ -79,18 +79,20 @@ namespace NuGet.CommandLine.XPlat
             return null;
         }
 
-        private static void SetIfNotAlreadySet(string environmentVariableName, string value)
+        private static void SetIfNotAlreadySet(string environmentVariableName, string value, IEnvironmentVariableReader environmentVariableReader)
         {
-            string currentValue = Environment.GetEnvironmentVariable(environmentVariableName);
+            string currentValue = environmentVariableReader.GetEnvironmentVariable(environmentVariableName);
             if (currentValue == null)
             {
+#pragma warning disable RS0030 // Do not used banned APIs
                 Environment.SetEnvironmentVariable(environmentVariableName, value);
+#pragma warning restore RS0030 // Do not used banned APIs
             }
         }
 
-        private static void SetIfNotAlreadySet(string environmentVariableName, int value)
+        private static void SetIfNotAlreadySet(string environmentVariableName, int value, IEnvironmentVariableReader environmentVariableReader)
         {
-            SetIfNotAlreadySet(environmentVariableName, value.ToString());
+            SetIfNotAlreadySet(environmentVariableName, value.ToString(), environmentVariableReader);
         }
     }
 }

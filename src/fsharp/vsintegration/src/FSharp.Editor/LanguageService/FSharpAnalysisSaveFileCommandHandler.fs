@@ -8,7 +8,7 @@ open Microsoft.CodeAnalysis
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.ExternalAccess.FSharp.Diagnostics
 open Microsoft.VisualStudio.FSharp.Editor
-open Microsoft.VisualStudio.FSharp.Editor.Logging
+open Microsoft.VisualStudio.FSharp.Editor.DebugHelpers
 open Microsoft.VisualStudio.Text.Editor.Commanding.Commands
 open Microsoft.VisualStudio.Commanding
 open Microsoft.VisualStudio.Utilities
@@ -17,7 +17,7 @@ open Microsoft.VisualStudio.FSharp.Editor.Telemetry
 
 // This causes re-analysis to happen when a F# document is saved.
 // We do this because FCS relies on the file system and existing open documents
-// need to be re-analyzed so the changes are propogated.
+// need to be re-analyzed so the changes are propagated.
 // We only re-analyze F# documents that are dependent on the document that was just saved.
 // We ignore F# script documents here.
 // REVIEW: This could be removed when Roslyn workspaces becomes the source of truth for FCS instead of the file system.
@@ -90,7 +90,7 @@ type internal FSharpAnalysisSaveFileCommandHandler [<ImportingConstructor>] (ana
                                         analyzerService.Reanalyze(workspace, documentIds = docIdsToReanalyze)
                                 with ex ->
                                     TelemetryReporter.ReportFault(TelemetryEvents.AnalysisSaveFileHandler, e = ex)
-                                    logException ex
+                                    FSharpOutputPane.logException ex
                             }
                             |> CancellableTask.startWithoutCancellation
                             |> ignore // fire and forget

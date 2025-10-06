@@ -9,6 +9,7 @@ using System.Xml;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -92,6 +93,9 @@ public class RunConfiguration : TestRunSettings
         _shouldCollectSourceInformation = false;
         TargetDevice = null;
         ExecutionThreadApartmentState = Constants.DefaultExecutionThreadApartmentState;
+        CaptureStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING);
+        ForwardStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
+        DisableSharedTestHost = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
     }
 
     /// <summary>
@@ -431,9 +435,36 @@ public class RunConfiguration : TestRunSettings
     /// </summary>
     public string? TestCaseFilter { get; private set; }
 
+    /// <summary>
     /// Path to dotnet executable to be used to invoke testhost.dll. Specifying this will skip looking up testhost.exe and will force usage of the testhost.dll.
     /// </summary>
     public string? DotnetHostPath { get; private set; }
+
+    /// <summary>
+    /// When true, we capture standard output of child processes. When false the standard output is not captured and it will end up in command line.
+    /// This makes the output visible to the user when running in vstest.console in-process. Such setup makes the behavior the same as in 17.6.3 and earlier.
+    /// 
+    /// The recommended way is to use this with ForwardStandardOutput=true to forward output as informational messages so the output is always visible in console and VS,
+    /// unless the logging level is set to Warning or higher.
+    ///
+    /// Lastly this can be used with ForwardStandardOutput=false, to suppress the output in console, which is behavior of 17.7.0 till now.
+    /// </summary>
+    public bool CaptureStandardOutput { get; private set; }
+
+    /// <summary>
+    /// Forward captured standard output of testhost as Informational test messages. Default is true. Needs CaptureStandardOutput to be true.
+    /// </summary>
+    public bool ForwardStandardOutput { get; private set; }
+
+    /// <summary>
+    /// Disables sharing of .NET Framework testhosts.
+    /// </summary>
+    public bool DisableSharedTestHost { get; private set; }
+
+    /// <summary>
+    /// Skips passing VisualStudio built in adapters to the project.
+    /// </summary>
+    public bool SkipDefaultAdapters { get; private set; }
 
     /// <inheritdoc/>
     public override XmlElement ToXml()
@@ -549,6 +580,22 @@ public class RunConfiguration : TestRunSettings
             treatAsError.InnerText = TreatNoTestsAsError.ToString();
             root.AppendChild(treatAsError);
         }
+
+        XmlElement captureStandardOutput = doc.CreateElement(nameof(CaptureStandardOutput));
+        captureStandardOutput.InnerXml = CaptureStandardOutput.ToString();
+        root.AppendChild(captureStandardOutput);
+
+        XmlElement forwardStandardOutput = doc.CreateElement(nameof(ForwardStandardOutput));
+        forwardStandardOutput.InnerXml = ForwardStandardOutput.ToString();
+        root.AppendChild(forwardStandardOutput);
+
+        XmlElement disableSharedTesthost = doc.CreateElement(nameof(DisableSharedTestHost));
+        disableSharedTesthost.InnerXml = DisableSharedTestHost.ToString();
+        root.AppendChild(disableSharedTesthost);
+
+        XmlElement skipDefaultAdapters = doc.CreateElement(nameof(SkipDefaultAdapters));
+        skipDefaultAdapters.InnerXml = SkipDefaultAdapters.ToString();
+        root.AppendChild(skipDefaultAdapters);
 
         return root;
     }
@@ -907,6 +954,67 @@ public class RunConfiguration : TestRunSettings
                     case "TargetFrameworkTestHostDemultiplexer":
                         reader.Skip();
                         break;
+
+                    case "CaptureStandardOutput":
+                        XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                        string captureStandardOutputStr = reader.ReadElementContentAsString();
+
+                        bool bCaptureStandardOutput;
+                        if (!bool.TryParse(captureStandardOutputStr, out bCaptureStandardOutput))
+                        {
+                            throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, bCaptureStandardOutput, elementName));
+                        }
+
+                        runConfiguration.CaptureStandardOutput = bCaptureStandardOutput;
+                        break;
+
+                    case "ForwardStandardOutput":
+                        XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                        string forwardStandardOutputStr = reader.ReadElementContentAsString();
+
+                        bool bForwardStandardOutput;
+                        if (!bool.TryParse(forwardStandardOutputStr, out bForwardStandardOutput))
+                        {
+                            throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, bForwardStandardOutput, elementName));
+                        }
+
+                        runConfiguration.ForwardStandardOutput = bForwardStandardOutput;
+                        break;
+
+                    case nameof(DisableSharedTestHost):
+                        {
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, boolValue, elementName));
+                            }
+
+                            runConfiguration.DisableSharedTestHost = boolValue;
+                            break;
+                        }
+
+                    case nameof(SkipDefaultAdapters):
+                        {
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, boolValue, elementName));
+                            }
+
+                            runConfiguration.SkipDefaultAdapters = boolValue;
+                            break;
+                        }
+
                     default:
                         // Ignore a runsettings element that we don't understand. It could occur in the case
                         // the test runner is of a newer version, but the test host is of an earlier version.

@@ -26,14 +26,12 @@ trigger:
 
 variables:
   # Release branch for F#
-  # Should be 'current' release branch name, i.e. 'release/dev17.10' in dotnet/fsharp/refs/heads/main, 'release/dev17.10' in dotnet/fsharp/refs/heads/release/dev17.10 and 'release/dev17.9' in dotnet/fsharp/refs/heads/release/dev17.9
-  # Should **never** be 'main' in dotnet/fsharp/refs/heads/main, since it will start inserting to VS twice.
+  # The future "product" gets developed in main, so should be main in main.
+  # When servicing branch gets created, this should maintain the mapping between F# servicing and VS servicing branches
   - name: FSharpReleaseBranchName
-    value: release/dev17.10
+    value: main
   # VS Insertion branch name (NOT the same as F# branch)
-  # Should be previous release branch in 'main' and 'main' in release branch
-  # (since for all *new* release branches we insert into VS main and for all *previous* releases we insert into corresponding VS release),
-  # i.e. 'rel/d17.9' in dotnet/fsharp/refs/heads/main and 'main' in F# dotnet/fsharp/refs/heads/release/dev17.10
+  # ( for main we insert into VS main and for all *previous* releases we insert into corresponding VS release),
   - name: VSInsertionTargetBranchName
     value: main
   - name: _TeamName
@@ -46,14 +44,10 @@ variables:
     value: Real
   - name: _PublishUsingPipelines
     value: true
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
   - name: VisualStudioDropName
     value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
   - name: Codeql.Enabled
     value: true
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCoreValidation
   - group: DotNet-FSharp-SDLValidation-Params
   - template: /eng/common/templates-official/variables/pool-providers.yml@self
 
@@ -77,9 +71,12 @@ extends:
       sbom:
         enabled: false # VS SBOM is generated with other steps
         justificationForDisabling: 'SBOM for F# is generated via build process. Will be migrated at later date.'
+      tsa:
+        enabled: true
+        configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
       sourceAnalysisPool:
         name: NetCore1ESPool-Svc-Internal
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
     stages:
     - stage: build
@@ -88,8 +85,8 @@ extends:
       #-------------------------------------------------------------------------------------------------------------------#
       #                                                  Signed build                                                     #
       #-------------------------------------------------------------------------------------------------------------------#
-      # Localization: we only run it for specific release branches
-      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/dev17.10') }}:
+      # Localization: we only run it for main
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
         - template: /eng/common/templates-official/job/onelocbuild.yml@self
           parameters:
             MirrorRepo: fsharp
@@ -104,6 +101,11 @@ extends:
           enablePublishBuildAssets: true
           enablePublishUsingPipelines: $(_PublishUsingPipelines)
           enableSourceBuild: true
+          sourceBuildParameters:
+            platforms:
+            - name: 'Managed'
+              container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9'
+              buildArguments: '--source-build'
           enableTelemetry: true
           helixRepo: dotnet/fsharp
           jobs:
@@ -116,6 +118,7 @@ extends:
               mb:
                 signing:
                   enabled: true
+                  signWithProd: true
                   feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
                   signType: $(_SignType)
                   zipSources: false
@@ -132,27 +135,23 @@ extends:
             - script: eng\CIBuild.cmd
                       -configuration $(_BuildConfig)
                       -prepareMachine
-                      -testAllButIntegration
+                      -testAllButIntegrationAndAot
                       -officialSkipTests $(SkipTests)
                       /p:SignType=$(_SignType)
                       /p:DotNetSignType=$(_SignType)
                       /p:MicroBuild_SigningEnabled=true
-                      /p:OverridePackageSource=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
                       /p:TeamName=$(_TeamName)
                       /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
-                      /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
-                      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-                      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
                       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-                      /p:PublishToSymbolServer=true
                       /p:VisualStudioDropName=$(VisualStudioDropName)
                       /p:GenerateSbom=true
               env:
                   NativeToolsOnMachine: true
+                  FSHARP_CACHE_OVERRIDE: 256
             - task: PublishTestResults@2
               displayName: Publish Test Results
               inputs:
-                testResultsFormat: 'NUnit'
+                testResultsFormat: 'XUnit'
                 testResultsFiles: '*.xml'
                 searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
               continueOnError: true

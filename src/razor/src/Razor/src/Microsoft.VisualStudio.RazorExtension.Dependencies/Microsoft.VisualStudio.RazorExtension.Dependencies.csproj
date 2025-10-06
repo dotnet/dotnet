@@ -8,12 +8,12 @@
       extra dependencies + codebases that may not be present in public VS installs.
     -->
 
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
 
     <IsShipping>false</IsShipping>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable>false</IsPackable>
 
     <!-- Don't automatically include dependencies -->
@@ -40,14 +40,17 @@
 
   <ItemGroup>
     <!-- To include the ProvideCodeBase attribute type. -->
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150PackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
   </ItemGroup>
 
   <!-- Reference the LSP protocol dlls so that we can include them in the code base and output them with the VSIX. -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(MicrosoftVisualStudioLanguageServerProtocolPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,14 +61,14 @@
 
   <!-- Reference the Roslyn dependencies so that Preview builds work -->
   <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(MicrosoftCodeAnalysisEditorFeaturesPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.CSharp.Symbols" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.CSharp.Symbols" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
@@ -75,8 +78,8 @@
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Text.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Wpf.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.InteractiveHost.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Features.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.LanguageServer.Protocol.dll" />

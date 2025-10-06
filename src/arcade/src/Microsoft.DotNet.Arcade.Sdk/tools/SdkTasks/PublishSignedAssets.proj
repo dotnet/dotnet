@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
   </PropertyGroup>
   
   <!--
@@ -13,8 +13,7 @@
       - NonShippingFolder                       : Location of the nonshipping assets about to be published.
       - FeedName                                : Name of the feed that will be created. This will
                                                   be appended by '-shipping' and '-nonshipping' depending the case
-      - NugetPath                               : Path to nuget.exe                                            
-      - AzdoTargetFeedPAT                       : Required token to publish assets to feeds
+      - AzdoTargetFeedPAT                       : Token to publish assets to feeds
   -->
 
   <Target Name="Execute">
@@ -29,10 +28,6 @@
     <Error
       Condition="'$(NonShippingFolder)' == ''"
       Text="Parameters 'NonShippingFolder' is empty." />
-
-    <Error
-      Condition="'$(AzdoTargetFeedPAT)' == ''"
-      Text="Parameters 'AzdoTargetFeedPAT' is empty." />
 
     <PropertyGroup>
       <AzureDevOpsOrg Condition="'$(AzureDevOpsOrg)' == ''">dnceng</AzureDevOpsOrg>
@@ -67,8 +62,7 @@
       ShippingFeedName="$(ShippingAzdoPackageFeedURL)"
       NonShippingFeedName="$(NonShippingAzdoPackageFeedURL)"
       ShippingAssetsFolder="$(ShippingFolder)"
-      NonShippingAssetsFolder="$(NonShippingFolder)"
-      NugetPath="$(NugetPath)">
+      NonShippingAssetsFolder="$(NonShippingFolder)">
     </PublishSignedAssets>
   </Target>
 

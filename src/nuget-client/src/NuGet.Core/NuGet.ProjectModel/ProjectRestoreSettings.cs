@@ -1,10 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NuGet.Shared;
+using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
 {
@@ -19,10 +17,17 @@ namespace NuGet.ProjectModel
         /// </summary>
         public bool HideWarningsAndErrors { get; set; } = false;
 
+        /// <summary>
+        /// Indicates the .NET SDK Version if any.
+        /// In combination with SdkAnalysisLevel, it allows us to determine whether the analysis level is the default one or manually specified.
+        /// </summary>
+        public NuGetVersion SdkVersion { get; set; }
+
         public ProjectRestoreSettings Clone()
         {
             var clonedObject = new ProjectRestoreSettings();
             clonedObject.HideWarningsAndErrors = HideWarningsAndErrors;
+            clonedObject.SdkVersion = SdkVersion;
             return clonedObject;
         }
 
@@ -43,13 +48,15 @@ namespace NuGet.ProjectModel
                 return true;
             }
 
-            return HideWarningsAndErrors == other.HideWarningsAndErrors;
+            return HideWarningsAndErrors == other.HideWarningsAndErrors &&
+                   EqualityUtility.EqualsWithNullCheck(SdkVersion, other.SdkVersion);
         }
 
         public override int GetHashCode()
         {
             var hashCode = new HashCodeCombiner();
             hashCode.AddObject(HideWarningsAndErrors);
+            hashCode.AddObject(SdkVersion);
             return hashCode.CombinedHash;
         }
     }

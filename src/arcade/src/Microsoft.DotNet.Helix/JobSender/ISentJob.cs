@@ -24,17 +24,6 @@ namespace Microsoft.DotNet.Helix.Client
         string HelixCancellationToken { get; }
 
         /// <summary>
-        /// URI for blob storage container with the results.
-        /// </summary>
-        string ResultsContainerUri { get; }
-
-        /// <summary>
-        /// Shared Access Signature for access to the container with results.
-        /// Used for internal builds.
-        /// </summary>
-        string ResultsContainerReadSAS { get; }
-
-        /// <summary>
         /// Poll for the job to actually finish inside Helix.
         /// </summary>
         Task<JobPassFail> WaitAsync(int pollingIntervalMs = 10000, CancellationToken cancellationToken = default);

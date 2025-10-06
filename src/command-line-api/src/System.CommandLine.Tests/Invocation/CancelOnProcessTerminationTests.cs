@@ -20,7 +20,7 @@ namespace System.CommandLine.Tests.Invocation
         private const int SIGTERM_EXIT_CODE = 143;
         private const int GracefulExitCode = 42;
 
-        private static readonly CliOption<bool> InfiniteDelayOption = new("--infiniteDelay");
+        private static readonly Option<bool> InfiniteDelayOption = new("--infiniteDelay");
 
         public enum Signals
         {
@@ -50,19 +50,21 @@ namespace System.CommandLine.Tests.Invocation
 
         private static Task<int> Program(string[] args)
         {
-            CliRootCommand command = new ()
+            RootCommand command = new ()
             {
                 InfiniteDelayOption
             };
             command.Action = new CustomCliAction();
 
-            return new CliConfiguration(command)
+            var config = new InvocationConfiguration
             {
                 ProcessTerminationTimeout = TimeSpan.FromSeconds(2)
-            }.InvokeAsync(args);
+            };
+
+            return command.Parse(args).InvokeAsync(config);
         }
 
-        private sealed class CustomCliAction : AsynchronousCliAction
+        private sealed class CustomCliAction : AsynchronousCommandLineAction
         {
             public override async Task<int> InvokeAsync(ParseResult context, CancellationToken cancellationToken = default)
             {

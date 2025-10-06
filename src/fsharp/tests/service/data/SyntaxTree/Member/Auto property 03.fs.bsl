@@ -1,7 +1,6 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Member/Auto property 03.fs", false, QualifiedNameOfFile Module, [],
-      [],
       [SynModuleOrNamespace
          ([Module], false, NamedModule,
           [Types
@@ -27,7 +26,7 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((4,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None,
+                         GetSet (None, None, None),
                          ArbitraryAfterError
                            ("typedSequentialExprBlock1", (4,19--4,19)),
                          (4,4--4,19),
@@ -51,7 +50,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 2, (5,20--5,21)), (5,4--5,21),
+                         GetSet (None, None, None),
+                         Const (Int32 2, (5,20--5,21)), (5,4--5,21),
                          { LeadingKeyword =
                             MemberVal ((5,4--5,10), (5,11--5,14))
                            WithKeyword = None
@@ -64,6 +64,7 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--7,2), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
 
 (5,4)-(5,10) parse error Unexpected syntax or possible incorrect indentation: this token is offside of context started at position (4:5). Try indenting this further.

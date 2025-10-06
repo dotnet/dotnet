@@ -10,9 +10,9 @@ using Microsoft.CodeAnalysis.DocumentationComments;
 
 namespace Microsoft.CodeAnalysis.MetadataAsSource;
 
-internal partial class AbstractMetadataAsSourceService
+internal abstract partial class AbstractMetadataAsSourceService
 {
-    private class WrappedMethodSymbol(IMethodSymbol methodSymbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService) : AbstractWrappedSymbol(methodSymbol, canImplementImplicitly, docCommentFormattingService), IMethodSymbol
+    private sealed class WrappedMethodSymbol(IMethodSymbol methodSymbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService) : AbstractWrappedSymbol(methodSymbol, canImplementImplicitly, docCommentFormattingService), IMethodSymbol
     {
         private readonly IMethodSymbol _symbol = methodSymbol;
 
@@ -121,11 +121,15 @@ internal partial class AbstractMetadataAsSourceService
             return _symbol.ReduceExtensionMethod(receiverType);
         }
 
+        public IMethodSymbol AssociatedExtensionImplementation => null;
+
         public bool IsVararg => _symbol.IsVararg;
 
         public bool IsCheckedBuiltin => _symbol.IsCheckedBuiltin;
 
         public bool IsConditional => _symbol.IsConditional;
+
+        public bool IsIterator => _symbol.IsIterator;
 
         public SignatureCallingConvention CallingConvention => _symbol.CallingConvention;
 

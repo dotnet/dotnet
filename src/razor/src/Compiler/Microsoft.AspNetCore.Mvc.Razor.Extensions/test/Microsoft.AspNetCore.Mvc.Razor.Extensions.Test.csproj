@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);$(NetFxVS)</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <DefaultItemExcludes>$(DefaultItemExcludes);TestFiles\**</DefaultItemExcludes>
 
@@ -18,26 +18,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <ProjectReference Include="..\..\..\Shared\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.csproj" />
-    <ProjectReference Include="..\..\test\Microsoft.AspNetCore.Razor.Test.MvcShim\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.csproj" />
 
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <PackageReference Include="Moq" />
   </ItemGroup>
 
-  <Target Name="CopyDepsFromShims_Build" AfterTargets="Build">
-    <ItemGroup>
-      <MvcShim Condition="$(TargetFramework) != ''" Include="$(ArtifactsBinDir)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler\$(Configuration)\$(TargetFramework)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.deps.json" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(MvcShim)" DestinationFolder="$(OutputPath)" />
-  </Target>
-
-  <Target Name="CopyDepsFromShims_Publish" AfterTargets="Publish">
-    <ItemGroup>
-      <MvcShim Condition="$(TargetFramework) != ''" Include="$(ArtifactsBinDir)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler\$(Configuration)\$(TargetFramework)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.deps.json" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(MvcShim)" DestinationFolder="$(PublishDir)" Condition="Exists($(PublishDir))" />
-  </Target>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
+  </ItemGroup>
 </Project>

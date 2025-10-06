@@ -41,7 +41,7 @@ public class PrivateFontCollectionTests
         }
 
         using PrivateFontCollection fontCollection = new();
-        string relativePath = Path.Combine("fonts", "CodeNewRoman.ttf");
+        string relativePath = Path.Join("fonts", "CodeNewRoman.ttf");
         fontCollection.AddFontFile(relativePath);
 
         FontFamily fontFamily = Assert.Single(fontCollection.Families);
@@ -128,7 +128,7 @@ public class PrivateFontCollectionTests
         PrivateFontCollection fontCollection = new();
         fontCollection.Dispose();
 
-        AssertExtensions.Throws<ArgumentException>(null, () => fontCollection.AddFontFile("fileName"));
+        AssertExtensions.Throws<ArgumentException>(null, () => fontCollection.AddFontFile(typeof(Font).Assembly.Location));
     }
 
     [Fact]

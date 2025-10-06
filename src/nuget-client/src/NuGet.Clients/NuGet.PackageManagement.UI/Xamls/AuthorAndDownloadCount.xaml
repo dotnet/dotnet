@@ -1,26 +1,76 @@
-﻿<UserControl x:Class="NuGet.PackageManagement.UI.AuthorAndDownloadCount"
+<UserControl x:Class="NuGet.PackageManagement.UI.AuthorAndDownloadCount"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:nugettel="clr-namespace:NuGet.PackageManagement.Telemetry;assembly=NuGet.PackageManagement.VisualStudio"
              mc:Ignorable="d"
              x:Name="_self"
              d:DesignHeight="300" d:DesignWidth="300">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
   <StackPanel Orientation="Horizontal">
-    <!-- text "by author" is shown here -->
+    <!-- text "by owner" is shown here -->
+    <ItemsControl x:Name="_panelOwners"
+      ItemsSource="{Binding KnownOwnerViewModels}"
+      Visibility="{Binding KnownOwnerViewModels, Converter={StaticResource EnumerableToVisibilityConverter}}"
+      Focusable="False"
+      AlternationCount="{Binding RelativeSource={RelativeSource Self}, Path=Items.Count}">
+      <ItemsControl.Template>
+        <ControlTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="0,0,2,0" Text="{x:Static nuget:Resources.Text_By}"/>
+            <ItemsPresenter/>
+          </StackPanel>
+        </ControlTemplate>
+      </ItemsControl.Template>
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" Margin="2,0,0,0"/>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <TextBlock><Hyperlink
+              NavigateUri="{Binding Link, Mode=OneWay}"
+              ToolTip="{Binding Link, Mode=OneWay}"
+              Style="{StaticResource HyperlinkSelectorAware}"
+              Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+              CommandParameter="{x:Static nugettel:HyperlinkType.OwnerProfile}">
+              <Run Text="{Binding Name, Mode=OneTime}" />
+            </Hyperlink><TextBlock Margin="0,0,2,0" Text=",">
+              <TextBlock.Visibility>
+                <MultiBinding Converter="{StaticResource LastItemToVisibilityConverter}">
+                  <Binding RelativeSource="{RelativeSource Mode=TemplatedParent}" Path="(ItemsControl.AlternationIndex)" />
+                  <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="Items.Count" />
+                </MultiBinding>
+              </TextBlock.Visibility>
+            </TextBlock>
+          </TextBlock>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <!-- text "by author" is shown here when owner is unavailable -->
     <TextBlock 
-      x:Name="_textBlockAuthor" 
-      Visibility="Collapsed"/>
-    
-    <TextBlock 
-      x:Name="_separator" 
-      xml:space="preserve" 
-      Visibility="Collapsed">, </TextBlock>
-    
+        x:Name="_textBlockAuthor"
+        Visibility="Collapsed"/>
+
+    <TextBlock
+        x:Name="_separator"
+        xml:space="preserve"
+        Margin="0,0,2,0"
+        Visibility="Collapsed">,</TextBlock>
+
     <!-- the download count -->
     <TextBlock 
-      x:Name="_textBlockDownloadCount" 
-      Visibility="Collapsed"/>
+        x:Name="_textBlockDownloadCount"
+        Visibility="Collapsed"/>
   </StackPanel>
 </UserControl>

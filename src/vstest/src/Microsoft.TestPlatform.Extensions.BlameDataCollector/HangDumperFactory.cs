@@ -70,7 +70,7 @@ internal class HangDumperFactory : IHangDumperFactory
                 return new SigtrapDumper();
             }
 
-            EqtTrace.Info($"HangDumperFactory: This is Linux netcoreapp3.1 or newer, returning the standard NETClient library dumper.");
+            EqtTrace.Info($"HangDumperFactory: This is Linux net6.0 or newer, returning the standard NETClient library dumper.");
             return new NetClientHangDumper();
         }
 

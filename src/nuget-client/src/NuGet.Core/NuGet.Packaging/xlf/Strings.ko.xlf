@@ -1,0 +1,1139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="AnAbsoluteUriIsRequired">
+        <source>An absolute URI is required.</source>
+        <target state="translated">절대 URI가 필요합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AuthorPrimarySignatureFriendlyName">
+        <source>author primary signature</source>
+        <target state="translated">작성자의 기본 시그니처</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHash">
+        <source>{0} hash: {1}</source>
+        <target state="translated">{0} 해시: {1}</target>
+        <note>0 - Hash algorithm name
+1 - certificate hash in given hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHashSha1">
+        <source>SHA1 hash: {0}</source>
+        <target state="translated">SHA1 해시: {0}</target>
+        <note>0 - certificate sha1 hash</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateIssuer">
+        <source>Issued by: {0}</source>
+        <target state="translated">발급자: {0}</target>
+        <note>0 - certificate issuer</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateSubjectName">
+        <source>Subject Name: {0}</source>
+        <target state="translated">주체 이름: {0}</target>
+        <note>0 - certificate subject name</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateValidity">
+        <source>Valid from: {0} to {1}</source>
+        <target state="translated">유효 기간: {0}~{1}</target>
+        <note>0 -  start date
+1 - end date</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesFooter">
+        <source>... {0} more.</source>
+        <target state="translated">...기타 {0}개.</target>
+        <note>0 - number of certificates left</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesHeader">
+        <source>The following certificates meet all given criteria:</source>
+        <target state="translated">모든 지정된 조건에 맞는 인증서는 다음과 같습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainBuildFailed">
+        <source>A complete certificate chain could not be built for the signing certificate.</source>
+        <target state="translated">서명 인증서에 대해 전체 인증서 체인을 빌드할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainValidationFailed">
+        <source>Certificate chain validation failed.</source>
+        <target state="translated">인증서 체인 유효성 검사에 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForCodeSigning">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for code signing.</source>
+        <target state="translated">X.509 인증서 체인 유효성 검사는 코드 서명에 .NET에서 선택한 기본 신뢰 저장소를 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForTimestamping">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for timestamping.</source>
+        <target state="translated">X.509 인증서 체인 유효성 검사는 타임스탬프에 .NET에서 선택한 기본 신뢰 저장소를 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingFallbackCertificateBundle">
+        <source>X.509 certificate chain validation will use the fallback certificate bundle at '{0}'.</source>
+        <target state="translated">X.509 인증서 체인 유효성 검사는 '{0}'에서 대체 인증서 번들을 사용합니다.</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingNoCertificateBundle">
+        <source>X.509 certificate chain validation will not have any trusted roots. Chain building will fail with an untrusted status.</source>
+        <target state="translated">X.509 인증서 체인 유효성 검사에는 신뢰할 수 있는 루트가 없습니다. 신뢰할 수 없는 상태로 체인 구축이 실패합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingSystemCertificateBundle">
+        <source>X.509 certificate chain validation will use the system certificate bundle at '{0}'.</source>
+        <target state="translated">X.509 인증서 체인 유효성 검사는 '{0}'에서 시스템 인증서 번들을 사용합니다.</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalid">
+        <source>The commitment-type-indication attribute is invalid.</source>
+        <target state="translated">commitment-type-indication 특성이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalidCombination">
+        <source>The commitment-type-indication attribute contains an invalid combination of values.</source>
+        <target state="translated">commitment-type-indication 특성에 잘못된 값 조합이 포함되어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConflictingAllowUntrustedRoot">
+        <source>There are two certificates with conflicting allowUntrustedRoot attributes in the computed settings. The allowUntrustedRoot attribute is going to be set to false. Certificate: {0}-{1}</source>
+        <target state="translated">계산된 설정에서 allowUntrustedRoot 특성이 충돌하는 인증서가 두 개 있습니다. allowUntrustedRoot 특성이 false로 설정됩니다. 인증서: {0}-{1}</target>
+        <note>0 - Hash algorithm
+1 - Fingerprint
+'allowUntrustedRoot' should not be localized</note>
+      </trans-unit>
+      <trans-unit id="DefaultError_EmptyAllowList">
+        <source>A list of trusted signers is required but none was found.</source>
+        <target state="translated">신뢰할 수 있는 서명자 목록이 필요하지만 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultError_NoMatchInAllowList">
+        <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
+        <target state="translated">패키지 서명 인증서 지문이 허용 목록의 모든 인증서 지문과 일치하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
+        <source>Cannot target author signatures that are countersignatures.</source>
+        <target state="translated">연대 시그니처인 작성자의 시그니처를 대상으로 할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorByteSignatureNotFound">
+        <source>Byte signature not found in package archive:  0x{0}</source>
+        <target state="translated">패키지 보관에 없는 바이트 시그니처:  0x{0}</target>
+        <note>{0} is the byte signature in hexadecimal</note>
+      </trans-unit>
+      <trans-unit id="ErrorDuplicatePackages">
+        <source>There are duplicate packages: {0}</source>
+        <target state="translated">중복 패키지가 있습니다. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidAllowedVersions">
+        <source>Invalid allowedVersions for package id '{0}': '{1}'</source>
+        <target state="translated">패키지 ID '{0}'에 대한 allowedVersions가 잘못되었습니다. '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidCertificateChainUnspecifiedReason">
+        <source>Certificate chain validation failed for an unspecified reason.</source>
+        <target state="translated">알 수 없는 이유로 인증서 체인 유효성 검사에 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidMinClientVersion">
+        <source>Invalid minClientVersion: '{0}'</source>
+        <target state="translated">minClientVersion이 잘못되었습니다. '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageArchive">
+        <source>Invalid package archive.</source>
+        <target state="translated">잘못된 패키지 보관입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersion">
+        <source>Invalid package version for package id '{0}': '{1}'</source>
+        <target state="translated">패키지 ID '{0}'에 대한 패키지 버전이 잘못되었습니다. '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersionForDependency">
+        <source>Invalid package version for a dependency with id '{0}' in package '{1}': '{2}'</source>
+        <target state="translated">'{1}' 패키지에서 ID가 '{0}'인 종속성에 대한 패키지 버전이 잘못되었습니다. '{2}'</target>
+        <note>{0} is the dependency's package id.
+{1} is the package's identity.
+{2} is the dependency's version range.</note>
+      </trans-unit>
+      <trans-unit id="ErrorManifestFileNotFound">
+        <source>Manifest file not found at '{0}'</source>
+        <target state="translated">'{0}'에서 매니페스트 파일을 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMultipleTimestamps">
+        <source>Multiple timestamps are not accepted.</source>
+        <target state="translated">여러 개의 타임스탬프는 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNoTimestamp">
+        <source>The signature should be timestamped to enable long-term signature validity after the certificate has expired.</source>
+        <target state="translated">인증서가 만료된 후 장기 시그니처 유효 기간을 사용하려면 시그니처를 타임스탬프해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNullOrEmptyPackageId">
+        <source>Null or empty package id</source>
+        <target state="translated">패키지 ID가 Null이거나 비어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">패키지가 서명되어 있지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageSignatureInvalid">
+        <source>The package signature is invalid or cannot be verified on this platform.</source>
+        <target state="translated">패키지 서명이 잘못되었거나 이 플랫폼에서 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableCheckPackageEntries">
+        <source>An unexpected error occurred while checking package entries.</source>
+        <target state="translated">패키지 항목을 확인하는 동안 예기치 않은 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableToDeleteFile">
+        <source>Unable to delete temporary file '{0}'. Error: '{1}'.</source>
+        <target state="translated">임시 파일 {0}을(를) 삭제할 수 없습니다. 오류:'{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnsafePackageEntry">
+        <source>The package '{0}' contains an entry '{1}' which is unsafe for extraction.</source>
+        <target state="translated">패키지 '{0}'에 추출에 대해 안전하지 않은 항목 '{1}'이(가) 포함되어 있습니다.</target>
+        <note>{0} is the package identity.
+    {1} is the package entry</note>
+      </trans-unit>
+      <trans-unit id="ErrorZip64NotSupported">
+        <source>Signed Zip64 packages are not supported.</source>
+        <target state="translated">서명된 Zip64 패키지는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Unsupported targetFramework value '{0}'.</source>
+        <target state="translated">지원되지 않는 targetFramework 값 '{0}'입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_LoadingHashFile">
+        <source>Error parsing nupkg metadata file {0} : {1}</source>
+        <target state="translated">Nupkg 메타데이터 파일 {0}을(를) 구문 분석하는 동안 오류 발생 : {1}</target>
+        <note>0 - nupkg metadata file path
+1 - error message</note>
+      </trans-unit>
+      <trans-unit id="Error_MissingNuspecFile">
+        <source>The package is missing the required nuspec file. </source>
+        <target state="translated">패키지에 필수 nuspec 파일이 없습니다. </target>
+        <note>package folder path will be appended to this message, if exists</note>
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">signatureValidationMode를 설정해야 합니다. 신뢰할 수 있는 서명자가 서명한 경우에만 패키지가 허용됩니다. 그러나 신뢰할 수 있는 서명자가 지정되지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">이 패키지는 서명되어 있지만 신뢰할 수 있는 서명자가 서명하지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingRepositoryCertificate">
+        <source>This package was not repository signed with a certificate listed by this repository.</source>
+        <target state="translated">이 패키지는 이 리포지토리에서 나열한 인증서로 서명된 리포지토리가 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoRepoAllowList">
+        <source>This repository indicated that all its packages are repository signed; however, it listed no signing certificates.</source>
+        <target state="translated">이 리포지토리는 모든 패키지가 서명된 리포지토리임을 나타내지만, 서명 인증서를 나열하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOnePrimarySignature">
+        <source>The package signature file does not contain exactly one primary signature.</source>
+        <target state="translated">패키지 서명 파일에 정확하게 기본 시그니처 하나가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOneRepositoryCounterSignature">
+        <source>The package signature contains multiple repository countersignatures.</source>
+        <target state="translated">패키지 서명에 여러 개의 리포지토리 연대 시그니처가 포함되어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySettings_UnsignedPackage">
+        <source>This repository indicated that all its packages are repository signed; however, this package is unsigned.</source>
+        <target state="translated">이 리포지토리는 모든 패키지가 서명된 리포지토리임을 나타내지만, 이 패키지는 서명되지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySignatureMustNotHaveARepositoryCountersignature">
+        <source>A repository primary signature must not have a repository countersignature.</source>
+        <target state="translated">리포지토리 기본 시그니처에 리포지토리 연대 시그니처를 포함할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RequireMode_UnsignedPackage">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.</source>
+        <target state="translated">signatureValidationMode를 설정해야 합니다. 신뢰할 수 있는 서명자가 서명한 경우에만 패키지가 허용됩니다. 그러나 이 패키지는 서명되지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeRequired">
+        <source>Exactly one {0} attribute is required.</source>
+        <target state="translated">정확히 하나의 {0} 특성이 필요합니다.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeValueRequired">
+        <source>The {0} attribute must have exactly one attribute value.</source>
+        <target state="translated">{0} 특성에는 정확히 하나의 특성 값이 있어야 합니다.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExtractionLog_InformationPrefix">
+        <source>Package '{0} {1}' from source '{2}': {3}</source>
+        <target state="translated">소스 '{2}'의 패키지 '{0} {1}': {3}</target>
+        <note>0 - package ID
+1 - package versions
+2 - package source url
+3 - Log Message</note>
+      </trans-unit>
+      <trans-unit id="FailToLoadPackagesConfig">
+        <source>Fail to load packages.config as XML file. Please check it. </source>
+        <target state="translated">packages.config를 XML 파일로 로드하지 못했습니다. 파일을 확인하세요. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailToWritePackagesConfig">
+        <source>Failed to write packages.config as XML file '{0}'. Error: '{1}'.</source>
+        <target state="translated">packages.config를 XML 파일 '{0}'로 쓰지 못했습니다. 오류: '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedFileTime">
+        <source>Failed to update file time for {0}: {1}</source>
+        <target state="translated">{0}에 대한 파일 시간을 업데이트하지 못했습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FallbackFolderNotFound">
+        <source>Unable to find fallback package folder '{0}'.</source>
+        <target state="translated">대체 패키지 폴더 '{0}'을(를) 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpOrHttpsIsRequired">
+        <source>HTTP or HTTPS is required.</source>
+        <target state="translated">HTTP 또는 HTTPS가 필요합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgument">
+        <source>The argument is invalid.</source>
+        <target state="translated">인수가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgumentCombination">
+        <source>Invalid combination of arguments {0} and {1}.</source>
+        <target state="translated">{0} 및 {1} 인수의 조합이 잘못되었습니다.</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="InvalidAsn1">
+        <source>The ASN.1 data is invalid.</source>
+        <target state="translated">ASN.1 데이터가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">이 도구 집합이 버전 문자열 '{0}'을(를) 지원하지 않습니다. 지원되는 가장 높은 버전은 '{1}'입니다. 더 낮은 버전을 사용하거나 도구 집합을 업그레이드하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNuspecElement">
+        <source>{0} This validation error occurred in a '{1}' element.</source>
+        <target state="translated">{0} '{1}' 요소에서 이 유효성 검사 오류가 발생했습니다.</target>
+        <note>{0} is the validation error message.
+{1} is the local name of the XML element that causes the validation error.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecEntry">
+        <source>The nuspec contains an invalid entry '{0}' in package '{1}' .</source>
+        <target state="translated">nuspec은 '{1}' 패키지에서 잘못된 항목 '{0}'을(를) 포함하고 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageFrameworkFolderName">
+        <source>The framework in the folder name of '{0}' in package '{1}' could not be parsed.</source>
+        <target state="translated">'{1}' 패키지의 폴더 이름 '{0}'에 있는 프레임워크를 구문 분석할 수 없습니다.</target>
+        <note>{0} is the invalid path.
+{1} is the package ID and version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageNupkg">
+        <source>The file is not a valid nupkg. File path: {0}</source>
+        <target state="translated">파일이 유효한 nupkg가 아닙니다. 파일 경로: {0}</target>
+        <note>0 - Nupkg file path</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFile">
+        <source>The package contains an invalid package signature file.</source>
+        <target state="translated">패키지에 잘못된 패키지 서명 파일이 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntry">
+        <source>The package signature file entry is invalid. {0}</source>
+        <target state="translated">패키지 서명 파일 항목이 잘못되었습니다. {0}</target>
+        <note>{0} - error message suffix containing the reason for failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
+        <source>The central directory header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">중앙 디렉터리 헤더 필드 '{0}'에 잘못된 값({1})이 있습니다.</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryLocalFileHeader">
+        <source>The local file header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">로컬 파일 헤더 필드 '{0}'에 잘못된 값({1})이 있습니다.</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageTypeVersion">
+        <source>Nuspec file contains a package type with an invalid package version '{0}'.</source>
+        <target state="translated">Nuspec 파일에 잘못된 패키지 버전 '{0}'이(가) 포함된 패키지 유형이 있습니다.</target>
+        <note>{0} is the invalid version string.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrimarySignature">
+        <source>The primary signature is invalid.</source>
+        <target state="translated">기본 시그니처가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRepositoryCountersignature">
+        <source>The repository countersignature is invalid.</source>
+        <target state="translated">리포지토리 연대 시그니처가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSignatureContent">
+        <source>The package signature content is invalid.</source>
+        <target state="translated">패키지 서명 콘텐츠가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestampSignature">
+        <source>The timestamp signature is invalid.</source>
+        <target state="translated">타임스탬프 시그니처가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL value is invalid.</source>
+        <target state="translated">URL 값이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidX509StorePurpose">
+        <source>Invalid X.509 store purpose.</source>
+        <target state="translated">유효하지 않은 X.509 저장소 용도입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledPackage">
+        <source>Installed {0} {1} from {2} to {3} with content hash {4}.</source>
+        <target state="translated">콘텐츠 해시 {0}을(를) 사용하여 {1}에서 {2} {3}에 {4}을(를) 설치했습니다.</target>
+        <note>0 - package id
+1 - package version
+2 - package source
+3 - package installed path
+4 - hex byte string, representing content hash</note>
+      </trans-unit>
+      <trans-unit id="Message_Path">
+        <source>Path: {0}</source>
+        <target state="translated">경로: {0}</target>
+        <note>0 - folder path</note>
+      </trans-unit>
+      <trans-unit id="MinClientVersionAlreadyExist">
+        <source>MinClientVersion already exists in packages.config</source>
+        <target state="translated">MinClientVersion이 packages.config에 이미 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingMetadataNode">
+        <source>Nuspec file does not contain the '{0}' node.</source>
+        <target state="translated">Nuspec 파일에 '{0}' 노드가 포함되어 있지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPackageTypeName">
+        <source>Nuspec file contains a package type that is missing the name attribute.</source>
+        <target state="translated">Nuspec 파일에 이름 특성이 없는 패키지 유형이 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromDependencyGroups">
+        <source>Some dependency group TFMs are missing a platform version: {0}</source>
+        <target state="translated">일부 종속성 그룹 TFM({0})에 플랫폼 버전이 없습니다.</target>
+        <note>0 - comma-separated list of dependency group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyGroups">
+        <source>Some reference assembly group TFMs are missing a platform version: {0}</source>
+        <target state="translated">일부 참조 어셈블리 그룹 TFM에 플랫폼 버전 {0}이(가) 없습니다.</target>
+        <note>0 - comma-separated list of reference assembly group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyReferences">
+        <source>Some framework assembly reference TFMs are missing a platform version: {0}</source>
+        <target state="translated">일부 프레임워크 어셈블리 참조 TFM에 플랫폼 버전 {0}이(가) 없습니다.</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromIncludedFiles">
+        <source>Some included files are included under TFMs which are missing a platform version: {0}</source>
+        <target state="translated">일부 포함된 파일이 플랫폼 버전 {0}이(가) 없는 TFM에 포함되어 있습니다.</target>
+        <note>0 - comma-separated list of files with bad TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromReferenceGroups">
+        <source>Some reference group TFMs are missing a platform version: {0}</source>
+        <target state="translated">일부 참조 그룹 TFM에 플랫폼 버전 {0}이(가) 없습니다.</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MultipleAttributesDisallowed">
+        <source>Multiple {0} attributes are not allowed.</source>
+        <target state="translated">여러 개의 {0} 특성은 사용할 수 없습니다.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="MultipleNuspecFiles">
+        <source>Package contains multiple nuspec files.</source>
+        <target state="translated">패키지에 여러 nuspec 파일이 포함되어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageSignatureFiles">
+        <source>The package contains multiple package signature files.</source>
+        <target state="translated">패키지에 여러 패키지 서명 파일이 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainAbsolutePath">
+        <source>'{0}' must contain an absolute path '{1}'.</source>
+        <target state="translated">'{0}'에는 절대 경로 '{1}'이(가) 있어야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageSignatureFile">
+        <source>The package does not contain a valid package signature file.</source>
+        <target state="translated">패키지에 유효한 패키지 서명 파일이 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoRepositoryCountersignature">
+        <source>Verification settings require a repository countersignature, but the package does not have a repository countersignature.</source>
+        <target state="translated">확인 설정에 리포지토리 연대 시그니처가 필요한데, 패키지에 리포지토리 연대 시그니처가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_DeprecatedIdentifier">
+        <source>The identifier '{0}' is deprecated.</source>
+        <target state="translated">식별자 '{0}'는 사용되지 않습니다.</target>
+        <note>0 - identifier (license or exception)</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_ExceptionIdentifierIsLicense">
+        <source>The identifier '{0}' is a license. It cannot be used as an exception.</source>
+        <target state="translated">식별자 '{0}'은(는) 라이선스입니다. 예외로 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_IllegalUnlicensedOperator">
+        <source>The 'UNLICENSED' license identifier cannot be combined with the '+' operator.</source>
+        <target state="translated">'UNLICENSED' 라이선스 식별자는 '+' 연산자와 결합할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidCharacters">
+        <source>The license expression '{0}' contains invalid characters.</source>
+        <target state="translated">라이선스 식 '{0}'에 잘못된 문자가 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExceptionIdentifier">
+        <source>The identifier '{0}' is not a standard exception.</source>
+        <target state="translated">식별자 '{0}'은(는) 표준 예외가 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExpression">
+        <source>The license expression is invalid.</source>
+        <target state="translated">라이선스 식이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidToken">
+        <source>Invalid element '{0}'.</source>
+        <target state="translated">'{0}' 요소가 잘못되었습니다.</target>
+        <note>0 - The element value</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseIdentifierIsException">
+        <source>The identifier '{0}' is an exception. It cannot be used as a license.</source>
+        <target state="translated">식별자 '{0}'은(는) 예외입니다. 라이선스로 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseInvalidCharacters">
+        <source>The license identifier '{0}' contains invalid characters.</source>
+        <target state="translated">라이선스 식별자 '{0}'에 잘못된 문자가 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_MismatchedParentheses">
+        <source>Mismatched parentheses in the expression.</source>
+        <target state="translated">식에 짝이 맞지 않는 괄호가 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) '{0}' is(are) not recognized by the current toolset.</source>
+        <target state="translated">라이선스 식별자 '{0}'을(를) 현재 도구 집합에서 인식할 수 없습니다.</target>
+        <note>0 - semicolon delimited list of identifiers</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnexpectedIdentifier">
+        <source>Unexpected license identifier '{0}'. The identifier is not allowed in this context.</source>
+        <target state="translated">예기치 않은 라이선스 식별자 '{0}'입니다. 이 컨텍스트에서 이 식별자를 사용할 수 없습니다.</target>
+        <note>0 - the license identifier.</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnlicensedPackageWarning">
+        <source>The owner has marked this package as 'UNLICENSED'. This means that there is no license that allows this package to be used outside of the copyright owner.</source>
+        <target state="translated">소유자가 이 패키지를 'UNLICENSED'로 표시했습니다. 즉 저작권 소유자 외에 이 패키지를 사용하는 것을 허용하는 라이선스가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseExpressionVersion">
+        <source>The license version string '{0}'  is invalid.</source>
+        <target state="translated">라이선스 버전 문자열 '{0}'이(가) 잘못되었습니다.</target>
+        <note>0 - version string, 1 - the metadata</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseType">
+        <source>Unrecognized license type '{0}'</source>
+        <target state="translated">라이선스 형식 '{0}'을(를) 인식할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseElementMissingValue">
+        <source>The license element value is empty. This is likely due to an authoring error. </source>
+        <target state="translated">라이선스 요소 값이 비어 있습니다. 작성 오류 때문인 것 같습니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">라이선스 버전 문자열 '{0}'이(가) 이 도구 집합 '{1}'에서 지원하는 것보다 높습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_MissingRequiredValue">
+        <source>The element 'license' cannot be empty. </source>
+        <target state="translated">'license' 요소는 비워 둘 수 없습니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwners">
+        <source>Owners: {0}</source>
+        <target state="translated">소유자: {0}</target>
+        <note>0 - The nuget-package-owners value</note>
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalid">
+        <source>The nuget-package-owners attribute is invalid.</source>
+        <target state="translated">nuget-package-owners 특성이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalidValue">
+        <source>One or more package owner values are invalid.</source>
+        <target state="translated">하나 이상의 패키지 소유자 값이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrl">
+        <source>Service index: {0}</source>
+        <target state="translated">서비스 인덱스: {0}</target>
+        <note>0- The nuget-v3-service-index-url value</note>
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalid">
+        <source>The nuget-v3-service-index-url attribute is invalid.</source>
+        <target state="translated">nuget-v3-service-index-url 특성이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalidValue">
+        <source>The nuget-v3-service-index-url attribute value is invalid.</source>
+        <target state="translated">nuget-v3-service-index-url 특성 값이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryAlreadyExist">
+        <source>Package entry already exists in packages.config. Id: {0}</source>
+        <target state="translated">패키지 항목이 packages.config에 이미 있습니다. ID: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryNotExist">
+        <source>Package entry does not exists in packages.config. Id: {0}, Version: {1}</source>
+        <target state="translated">패키지 항목이 packages.config에 없습니다. ID: {0}, 버전: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageMinVersionNotSatisfied">
+        <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget</source>
+        <target state="translated">'{0}' 패키지에는 NuGet 클라이언트 버전 '{1}' 이상이 필요하지만 현재 NuGet 버전은 '{2}'입니다. NuGet을 업그레이드하려면 https://docs.nuget.org/consume/installing-nuget으로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSignatureVerificationLog">
+        <source>PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</source>
+        <target state="translated">PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</target>
+        <note>0 - package id and version
+1 - package source url
+2 - validation result as a bool</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">패키지 스트림을 찾을 수 있어야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesNodeNotExist">
+        <source>Packages node does not exists in packages.config at {0}.</source>
+        <target state="translated">packages.config의 {0}에 패키지 노드가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureFriendlyName">
+        <source>primary signature</source>
+        <target state="translated">기본 시그니처</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureHasNoTimestamp">
+        <source>The primary signature does not have a timestamp.</source>
+        <target state="translated">기본 시그니처에 타임스탬프가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}'은(는) null일 수 없습니다.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RangeOutOfBoundsForArray">
+        <source>Arguments {0} and {1} were out of bounds for the array.</source>
+        <target state="translated">{0} 및 {1} 인수가 배열에 대한 범위를 벗어났습니다.</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureFriendlyName">
+        <source>repository countersignature</source>
+        <target state="translated">리포지토리 연대 시그니처</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoCertificate">
+        <source>The repository countersignature does not have a signing certificate.</source>
+        <target state="translated">리포지토리 연대 시그니처에 서명 인증서가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoTimestamp">
+        <source>The repository countersignature does not have a timestamp.</source>
+        <target state="translated">리포지토리 연대 시그니처에 타임스탬프가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryPrimarySignatureFriendlyName">
+        <source>repository primary signature</source>
+        <target state="translated">리포지토리 기본 시그니처</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">타임스탬프 인증서는 공개 키 길이에 대한 최소 요구 사항을 충족하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampGeneralizedTimeInvalid">
+        <source>The timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">타임스탬프의 일반적인 시간이 타임스탬핑 인증서의 유효 기간을 벗어납니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampIntegrityCheckFailed">
+        <source>The timestamp integrity check failed.</source>
+        <target state="translated">타임스탬프 무결성 검사에 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNoCertificate">
+        <source>The timestamp does not have a signing certificate.</source>
+        <target state="translated">타임스탬프에 서명 인증서가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNotYetValid">
+        <source>The timestamp signing certificate is not yet valid.</source>
+        <target state="translated">타임스탬프 서명 인증서가 아직 유효하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampSignatureValidationFailed">
+        <source>The timestamp signature validation failed.</source>
+        <target state="translated">타임스탬프 시그니처 유효성 검사에 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignFailureCertificateInvalidProviderType">
+        <source>The following certificate cannot be used for package signing as the private key provider is unsupported:</source>
+        <target state="translated">프라이빗 키 공급자가 지원되지 않으므로 다음 인증서를 패키지 서명에 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureContainsInvalidAttribute">
+        <source>Package signature contains an invalid attribute: {0}</source>
+        <target state="translated">패키지 서명에 잘못된 특성이 있습니다. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureDebug_HashOidFound">
+        <source>Signature hash OID found: {0}</source>
+        <target state="translated">시그니처 해시 OID가 발견됨: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFailureInvalidHashAlgorithmOid">
+        <source>The package hash uses an unsupported hash algorithm.</source>
+        <target state="translated">패키지 해시는 지원되지 않는 해시 알고리즘을 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFriendlyName">
+        <source>signature</source>
+        <target state="translated">시그니처</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureHashAlgorithm">
+        <source>Signature Hash Algorithm: {0}</source>
+        <target state="translated">시그니처 해시 알고리즘: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignaturePackageIntegrityFailure">
+        <source>The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.</source>
+        <target state="translated">패키지 무결성 검사에 실패했습니다. 패키지가 서명된 이후 변경되었습니다. 로컬 http-cache를 지우고 nuget 작업을 다시 실행해 보세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureType">
+        <source>Signature type: {0}</source>
+        <target state="translated">시그니처 형식: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageAlreadySigned">
+        <source>The package already contains a signature. Please remove the existing signature before adding a new signature.</source>
+        <target state="translated">패키지에 이미 시그니처가 있습니다. 새 시그니처를 추가하기 전에 기존 시그니처를 제거하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOExtraRead">
+        <source>Package stream read position cannot be longer than the length of the stream.</source>
+        <target state="translated">패키지 스트림의 읽기 위치는 스트림 길이보다 길 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOInvalidRead">
+        <source>Package stream read position cannot be before the current position in the stream.</source>
+        <target state="translated">패키지 스트림의 읽기 위치는 스트림에서의 현재 위치보다 앞일 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnRemove">
+        <source>The package is not signed. Unable to remove signature from an unsigned package.</source>
+        <target state="translated">패키지가 서명되지 않았습니다. 서명되지 않은 패키지에서 시그니처를 제거할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnVerify">
+        <source>The package is not signed. Unable to verify signature from an unsigned package.</source>
+        <target state="translated">패키지가 서명되지 않았습니다. 서명되지 않은 패키지에서 시그니처를 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackagePackageAlreadyCountersigned">
+        <source>The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.</source>
+        <target state="translated">패키지에 이미 리포지토리 연대 시그니처가 있습니다. 새 리포지토리 연대 시그니처를 추가하기 전에 기존 시그니처를 제거하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageUnableToAccessSignature">
+        <source>The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package.</source>
+        <target state="translated">시그니처 작업을 수행할 패키지가 제대로 열리지 않았습니다. 패키지의 시그니처 특성에 액세스할 수 있도록 스트림 기반 생성자를 사용하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCannotBeDoneInPlace">
+        <source>{0} and {1} should be different. Package signing cannot be done in place.</source>
+        <target state="translated">{0} 및 {1}은(는) 달라야 합니다. 패키지 시그니처을 완료할 수 없습니다.</target>
+        <note>0 - PackageFilePath parameter name
+1 - OutputFilePath parameter name</note>
+      </trans-unit>
+      <trans-unit id="SigningCertificateAttributeMustNotBePresent">
+        <source>The signing-certificate attribute is not allowed.</source>
+        <target state="translated">signing-certificate 특성을 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateCertificateNotFound">
+        <source>A certificate referenced by the signing-certificate attribute could not be found.</source>
+        <target state="translated">signing-certificate 특성에 의해 참조되는 인증서를 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateInvalid">
+        <source>The signing-certificate attribute is invalid.</source>
+        <target state="translated">signing-certificate 특성이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV1OrV2AttributeMustBePresent">
+        <source>Either the signing-certificate or signing-certificate-v2 attribute must be present.</source>
+        <target state="translated">signing-certificate 또는 signing-certificate-v2 특성이 있어야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2CertificateNotFound">
+        <source>A certificate referenced by the signing-certificate-v2 attribute could not be found.</source>
+        <target state="translated">signing-certificate-v2 특성에 의해 참조되는 인증서를 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2Invalid">
+        <source>The signing-certificate-v2 attribute is invalid.</source>
+        <target state="translated">signing-certificate-v2 특성이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2UnsupportedHashAlgorithm">
+        <source>The signing-certificate-v2 attribute uses an unsupported hash algorithm.</source>
+        <target state="translated">signing-certificate-v2 특성은 지원되지 않는 해시 알고리즘을 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The signing certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">서명 인증서는 공개 키 길이에 대한 최소 요구 사항을 충족하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the signing certificate is not supported.</source>
+        <target state="translated">서명 인증서에서 영구 서명 EKU는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The signing certificate has an unsupported signature algorithm.</source>
+        <target state="translated">서명 인증서에 지원되지 않는 시그니처 알고리즘이 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_NotYetValid">
+        <source>The signing certificate is not yet valid.</source>
+        <target state="translated">서명 인증서가 아직 유효하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningWouldRequireZip64">
+        <source>The package cannot be signed as it would require the Zip64 format.</source>
+        <target state="translated">패키지는 Zip64 형식이 필요하므로 서명될 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeReadable">
+        <source>The stream must be readable.</source>
+        <target state="translated">스트림은 읽을 수 있어야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeSeekable">
+        <source>The stream must be seekable.</source>
+        <target state="translated">스트림은 검색 가능해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">문자열 인수 '{0}'은(는) null이거나 비어 있을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampCertificateUnsupportedSignatureAlgorithm">
+        <source>The timestamp certificate has an unsupported signature algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">타임스탬프 인증서에 지원되지 않는 시그니처 알고리즘이 있습니다({0}). 다음 알고리즘이 지원됩니다. {1}.</target>
+        <note>0 - certificate signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureInvalidHttpScheme">
+        <source>The timestamper URL '{0}' has an invalid URI scheme. The supported schemes are '{1}' and '{2}'.</source>
+        <target state="translated">타임스탬프 URL '{0}'에 잘못된 URI 스키마가 있습니다. 지원되는 스키마는 '{1}' 및 '{2}'입니다.</target>
+        <note>0 - url value
+1 - Uri.Http scheme
+2 - Uri.Https scheme</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureNonceMismatch">
+        <source>The timestamp response is invalid.  Nonces did not match.</source>
+        <target state="translated">타임스탬프 응답이 잘못되었습니다. Nonce가 일치하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampServiceRespondedError">
+        <source>The timestamp service responded with HTTP status code '{0}' ('{1}').</source>
+        <target state="translated">타임스탬프 서비스가 HTTP 상태 코드 '{0}'('{1}')(으)로 응답했습니다.</target>
+        <note>{0} is the httpResponse.StatusCode, {1} is the httpResponse.ReasonPhrase.</note>
+      </trans-unit>
+      <trans-unit id="TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The timestamp signature has an unsupported digest algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">타임스탬프 시그니처에 지원되지 않는 다이제스트 알고리즘이 있습니다({0}). 다음 알고리즘이 지원됩니다. {1}.</target>
+        <note>0 - signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampValue">
+        <source>Timestamp: {0}</source>
+        <target state="translated">타임스탬프: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToAddEntry">
+        <source>An error occurred while updating packages.config. The file was closed before the entry could be added.</source>
+        <target state="translated">packages.config를 업데이트하는 동안 오류가 발생했습니다. 항목을 추가하기 전에 파일이 닫혔습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseClientVersion">
+        <source>Unable to parse the current NuGet client version.</source>
+        <target state="translated">현재 NuGet 클라이언트 버전을 구문 분석할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToReadPackageHashInformation">
+        <source>Package hash information could not be read from the package signature.</source>
+        <target state="translated">패키지 서명에서 패키지 해시 정보를 읽을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedPackageSignatureVerificationError">
+        <source>An unexpected error occurred while verifying a package signature.</source>
+        <target state="translated">패키지 서명을 확인하는 동안 예기치 않은 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">열거형 값 '{0}'을(를) 인식할 수 없습니다.</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="UnrelatedSignatures">
+        <source>The primary signature and repository countersignature are unrelated.</source>
+        <target state="translated">기본 시그니처와 리포지토리 연대 시그니처가 서로 관련이 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedAsn1">
+        <source>The ASN.1 data is unsupported.</source>
+        <target state="translated">ASN.1 데이터는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureFormatVersion">
+        <source>The package signature format version is not supported. Updating your client may solve this problem.</source>
+        <target state="translated">패키지 서명 형식 버전이 지원되지 않습니다. 클라이언트를 업데이트하면 이 문제를 해결할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because it is not present in the certificate bundle at {0}.  For more information, see documentation for NU3042.
+    Subject:  {1}
+    Fingerprint (SHA-256):  {2}
+    Certificate (PEM):
+{3}</source>
+        <target state="translated">다음 X.509 루트 인증서는 {0}에 있는 인증서 번들에 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
+    제목: {1}
+    지문(SHA-256): {2}
+    인증서(PEM):
+{3}</target>
+        <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithoutCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because no certificate bundle was found.  For more information, see documentation for NU3042.
+    Subject:  {0}
+    Fingerprint (SHA-256):  {1}
+    Certificate (PEM):
+{2}</source>
+        <target state="translated">다음 X.509 루트 인증서는 인증서 번들을 찾을 수 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
+    제목:  {0}
+    지문(SHA-256):  {1}
+    인증서(PEM):
+{2}</target>
+        <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="VerificationCertDisplay">
+        <source>Verifying the {0} with certificate: {1}</source>
+        <target state="translated">인증서를 사용하여 {0} 확인: {1}</target>
+        <note>0 - Signature friendly
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerificationTimestamperCertDisplay">
+        <source>Verifying {0}'s timestamp with timestamping service certificate: {1}</source>
+        <target state="translated">타임스탬핑 서비스 인증서로 {0}의 타임스탬프 확인: {1}</target>
+        <note>0 - signature friendly name
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOffline">
+        <source>The revocation function was unable to check revocation because the certificate is not available in the cached certificate revocation list and NUGET_CERT_REVOCATION_MODE environment variable has been set to offline. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">캐시된 인증서 해지 목록에서 인증서를 사용할 수 없고 NUGET_CERT_REVOCATION_MODE 환경 변수가 오프라인으로 설정되어 있기 때문에 해지 함수가 해지를 확인할 수 없습니다. 자세한 내용은 https://aka.ms/certificateRevocationMode를 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOnline">
+        <source>The revocation function was unable to check revocation because the revocation server could not be reached. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">해지 서버에 연결할 수 없기 때문에 해지 함수가 해지를 확인할 수 없습니다. 자세한 내용은 https://aka.ms/certificateRevocationMode를 참조하세요.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue">
+        <source>The {0} found a chain building issue: {1}</source>
+        <target state="translated">{0}에서 체인 만들기 문제를 찾았습니다. {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s signing certificate is not trusted by the trust provider.</source>
+        <target state="translated">{0}의 서명 인증서는 신뢰 공급자가 신뢰하지 않습니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">{0}의 인증서는 최소 공개 키 길이 요구 사항을 충족하지 않습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the {0}'s certificate is not supported.</source>
+        <target state="translated">{0}의 인증서에서 영구 서명 EKU는 지원되지 않습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The {0}'s certificate has an unsupported signature algorithm.</source>
+        <target state="translated">{0}의 인증서에 지원되지 않는 시그니처 알고리즘이 있습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateNotYetValid">
+        <source>The {0}'s certificate is not yet valid.</source>
+        <target state="translated">{0}의 인증서가 아직 유효하지 않습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_InvalidCertificateChain">
+        <source>The {0}'s certificate chain validation failed with error(s): {1}</source>
+        <target state="translated">다음 오류로 인해 {0}의 인증서 체인 유효성 검사에 실패했습니다. {1}</target>
+        <note>0 - Signature friendly name
+1 - error list</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureNotTimeValid">
+        <source>The {0} validity period has expired.</source>
+        <target state="translated">{0} 유효 기간이 만료되었습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureVerificationFailed">
+        <source>The {0} validation failed.</source>
+        <target state="translated">{0} 유효성 검사에 실패했습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">{0}의 타임스탬프 인증서는 최소 공개 키 길이 요구 사항을 충족하지 않습니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampGeneralizedTimeInvalid">
+        <source>The {0}'s timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">{0}의 타임스탬프의 일반적인 시간이 타임스탬핑 인증서의 유효 기간을 벗어납니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampIntegrityCheckFailed">
+        <source>The {0}'s timestamp integrity check failed.</source>
+        <target state="translated">{0}의 타임스탬프 무결성 검사에 실패했습니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampInvalid">
+        <source>The {0} contains an invalid timestamp.</source>
+        <target state="translated">{0}에 잘못된 타임스탬프가 포함되어 있습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampMessageImprintUnsupportedHashAlgorithm">
+        <source>The {0} timestamp's message imprint uses an unsupported hash algorithm.</source>
+        <target state="translated">{0} 타임스탬프의 메시지 임프린트가 지원되지 않는 해시 알고리즘을 사용합니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNoCertificate">
+        <source>The {0}'s timestamp does not have a signing certificate.</source>
+        <target state="translated">{0}의 타임스탬프에 서명 인증서가 없습니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNotYetValid">
+        <source>The {0}'s timestamp signing certificate is not yet valid.</source>
+        <target state="translated">{0}의 타임스탬프 서명 인증서가 아직 유효하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The {0}'s timestamp signature has an unsupported digest algorithm.</source>
+        <target state="translated">{0}의 타임스탬프 시그니처에 지원되지 않는 다이제스트 알고리즘이 있습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureValidationFailed">
+        <source>The {0}'s timestamp signature validation failed.</source>
+        <target state="translated">{0}의 타임스탬프 시그니처 유효성 검사에 실패했습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampUnsupportedSignatureAlgorithm">
+        <source>The {0}'s timestamp certificate has an unsupported signature algorithm.</source>
+        <target state="translated">{0}의 타임스탬프 인증서에 지원되지 않는 시그니처 알고리즘이 있습니다.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampVerifyChainBuildingIssue">
+        <source>The {0}'s timestamp found a chain building issue: {1}</source>
+        <target state="translated">{0}의 타임스탬프에서 체인 만들기 문제를 찾았습니다. {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyTimestampChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s timestamping certificate is not trusted by the trust provider.</source>
+        <target state="translated">{0}의 타임스탬프 인증서는 신뢰 공급자가 신뢰하지 않습니다.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="Verify_ErrorNoCertificate">
+        <source>The {0} does not have a signing certificate.</source>
+        <target state="translated">{0}에 서명 인증서가 없습니다.</target>
+        <note>0 - signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="ZipFileLastWriteTimeStampModifiedMessage">
+        <source>'{0}' changed from '{1}' to '{2}'</source>
+        <target state="translated">'{0}'이(가) '{1}'에서 '{2}'(으)로 변경되었습니다.</target>
+        <note>0 - File name
+1 - Original last write timestamp
+2 - Updated last write timestamp</note>
+      </trans-unit>
+      <trans-unit id="ZipFileTimeStampModifiedWarning">
+        <source>The zip format supports a limited date range. The following files are outside the supported range:</source>
+        <target state="translated">zip 형식은 제한된 날짜 범위를 지원합니다. 다음 파일은 지원되는 범위를 벗어납니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

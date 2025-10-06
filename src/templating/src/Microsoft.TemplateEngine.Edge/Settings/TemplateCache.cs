@@ -1,11 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Abstractions;
@@ -84,7 +80,7 @@ namespace Microsoft.TemplateEngine.Edge.Settings
             else
             {
                 Version = null;
-                TemplateInfo = Array.Empty<TemplateInfo>();
+                TemplateInfo = [];
                 MountPointsInfo = new Dictionary<string, DateTime>();
                 Locale = string.Empty;
                 return;
@@ -178,7 +174,7 @@ namespace Microsoft.TemplateEngine.Edge.Settings
                 // we print the message only if managed template wins and we have > 1 managed templates with overlapping identities
                 var lastTemplate = identityToTemplates.Value.Last();
                 var managedTemplates = identityToTemplates.Value.Where(templateInto => templateInto.TemplatePackage is IManagedTemplatePackage).ToArray();
-                if (lastTemplate.TemplatePackage is IManagedTemplatePackage managedPackage && managedTemplates.Length > 1)
+                if (lastTemplate.TemplatePackage is IManagedTemplatePackage && managedTemplates.Length > 1)
                 {
                     var templatesList = new StringBuilder();
                     foreach (var (templateName, packageId, _, _) in managedTemplates)

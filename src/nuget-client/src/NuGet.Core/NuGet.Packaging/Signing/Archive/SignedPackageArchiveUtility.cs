@@ -8,9 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
-#endif
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -104,7 +102,22 @@ namespace NuGet.Packaging.Signing
             var buffer = new byte[localFileHeader.UncompressedSize];
 
             reader.BaseStream.Seek(offsetToData, SeekOrigin.Begin);
-            reader.BaseStream.Read(buffer, offset: 0, count: buffer.Length);
+#if NET
+            reader.BaseStream.ReadExactly(buffer, offset: 0, count: buffer.Length);
+#else
+            int count = buffer.Length;
+            int offset = 0;
+            while (count > 0)
+            {
+                int read = reader.BaseStream.Read(buffer, offset, count);
+                if (read <= 0)
+                {
+                    throw new EndOfStreamException();
+                }
+                offset += read;
+                count -= read;
+            }
+#endif
 
             return new MemoryStream(buffer, writable: false);
         }
@@ -226,7 +239,6 @@ namespace NuGet.Packaging.Signing
             return false;
         }
 
-#if IS_SIGNING_SUPPORTED
         /// <summary>
         /// Removes repository primary signature (if it exists) or any repository countersignature (if it exists).
         /// </summary>
@@ -519,32 +531,6 @@ namespace NuGet.Packaging.Signing
 
             return false;
         }
-#else
-
-        public static Task<bool> RemoveRepositorySignaturesAsync(
-            Stream input,
-            Stream output,
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static void SignZip(MemoryStream signatureStream, BinaryReader reader, BinaryWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static void UnsignZip(BinaryReader reader, BinaryWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static void VerifySignedZipIntegrity(BinaryReader reader, HashAlgorithm hashAlgorithm, byte[] expectedHash)
-        {
-            throw new NotImplementedException();
-        }
-
-#endif
 
         private static List<CentralDirectoryHeaderMetadata> RemoveSignatureAndOrderByOffset(SignedPackageArchiveMetadata metadata)
         {
@@ -672,5 +658,6 @@ namespace NuGet.Packaging.Signing
             }
             return true;
         }
+
     }
 }

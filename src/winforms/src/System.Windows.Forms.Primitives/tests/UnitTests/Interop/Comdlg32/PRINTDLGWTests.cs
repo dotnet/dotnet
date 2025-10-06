@@ -7,7 +7,7 @@ namespace System.Windows.Forms.Primitives.Tests.Interop.Comdlg32;
 
 public class PRINTDLGWTests
 {
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is32bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is32bit))]
     public unsafe void PRINTDLGW_32_Size()
     {
         if (Environment.Is64BitProcess)
@@ -18,7 +18,7 @@ public class PRINTDLGWTests
         Assert.Equal(66, sizeof(PRINTDLGW_32));
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is32bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is32bit))]
     public unsafe void PRINTDLGW_32_ensure_layout()
     {
         if (Environment.Is64BitProcess)
@@ -26,7 +26,7 @@ public class PRINTDLGWTests
             return;
         }
 
-        PRINTDLGW_32 sut = new();
+        PRINTDLGW_32 sut = default;
         byte* addr = (byte*)&sut;
 
         Assert.Equal(0, (byte*)&sut.lStructSize - addr);           // 4, DWORD
@@ -50,7 +50,7 @@ public class PRINTDLGWTests
         Assert.Equal(62, (byte*)&sut.hSetupTemplate - addr);       // 4, HGLOBAL
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is64bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is64bit))]
     public unsafe void PRINTDLGW_64_Size()
     {
         if (!Environment.Is64BitProcess)
@@ -61,7 +61,7 @@ public class PRINTDLGWTests
         Assert.Equal(120, sizeof(PRINTDLGW_64));
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is64bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is64bit))]
     public unsafe void PRINTDLGW_64_ensure_layout()
     {
         if (!Environment.Is64BitProcess)
@@ -69,7 +69,7 @@ public class PRINTDLGWTests
             return;
         }
 
-        PRINTDLGW_64 sut = new();
+        PRINTDLGW_64 sut = default;
         byte* addr = (byte*)&sut;
 
         Assert.Equal(0, (byte*)&sut.lStructSize - addr);           // 8, DWORD

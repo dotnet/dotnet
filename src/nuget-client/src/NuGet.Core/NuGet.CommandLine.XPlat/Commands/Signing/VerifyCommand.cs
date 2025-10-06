@@ -8,7 +8,6 @@ using System.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
-using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using static NuGet.Commands.VerifyArgs;
 

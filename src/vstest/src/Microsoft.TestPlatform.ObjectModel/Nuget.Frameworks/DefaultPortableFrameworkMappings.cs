@@ -32,8 +32,8 @@ namespace NuGetClone.Frameworks
 
             var wpa81 = FrameworkConstants.CommonFrameworks.WPA81;
 
-            return new[]
-            {
+            return
+            [
                 // v4.6
                 CreateProfileFrameworks(31, win81, wp81),
                 CreateProfileFrameworks(32, win81, wpa81),
@@ -82,8 +82,8 @@ namespace NuGetClone.Frameworks
                 CreateProfileFrameworks(255, net45, sl5, win8, wpa81),
                 CreateProfileFrameworks(328, net4, sl5, win8, wpa81, wp8),
                 CreateProfileFrameworks(336, net403, sl5, win8, wpa81, wp8),
-                CreateProfileFrameworks(344, net45, sl5, win8, wpa81, wp8),
-            };
+                CreateProfileFrameworks(344, net45, sl5, win8, wpa81, wp8)
+            ];
         });
 
         public IEnumerable<KeyValuePair<int, NuGetFramework[]>> ProfileFrameworks
@@ -101,9 +101,9 @@ namespace NuGetClone.Frameworks
 
         // profiles that also support monotouch1+monoandroid1
         private static readonly int[] ProfilesWithOptionalFrameworks =
-        {
-                5, 6, 7, 14, 19, 24, 37, 42, 44, 47, 49, 78, 92, 102, 111, 136, 147, 151, 158, 225, 255, 259, 328, 336, 344
-        };
+        [
+            5, 6, 7, 14, 19, 24, 37, 42, 44, 47, 49, 78, 92, 102, 111, 136, 147, 151, 158, 225, 255, 259, 328, 336, 344
+        ];
 
         private static readonly Lazy<List<KeyValuePair<int, NuGetFramework[]>>> ProfileOptionalFrameworksLazy = new(() =>
         {
@@ -135,8 +135,8 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<int, FrameworkRange>[]> CompatibilityMappingsLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 CreateStandardMapping(7, FrameworkConstants.CommonFrameworks.NetStandard11),
                 CreateStandardMapping(31, FrameworkConstants.CommonFrameworks.NetStandard10),
                 CreateStandardMapping(32, FrameworkConstants.CommonFrameworks.NetStandard12),
@@ -148,7 +148,7 @@ namespace NuGetClone.Frameworks
                 CreateStandardMapping(151, FrameworkConstants.CommonFrameworks.NetStandard12),
                 CreateStandardMapping(157, FrameworkConstants.CommonFrameworks.NetStandard10),
                 CreateStandardMapping(259, FrameworkConstants.CommonFrameworks.NetStandard10)
-            };
+            ];
         });
 
         public IEnumerable<KeyValuePair<int, FrameworkRange>> CompatibilityMappings

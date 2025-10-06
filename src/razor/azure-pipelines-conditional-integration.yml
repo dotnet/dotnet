@@ -18,6 +18,8 @@ variables:
   value: false
 - name: Codeql.SkipTaskAutoInjection
   value: true
+- name: _IntegrationTestsRunningInCI
+  value: true
 
 trigger: none
 
@@ -26,6 +28,20 @@ pr: none
 schedules:
 - cron: '0 */12 * * *'
   displayName: Every 12 hours
+  branches:
+    include:
+    - main
+  always: true # run the pipeline even if there are no code changes
+
+- cron: '0 */24 * * *'
+  displayName: FeatureFlags - ForceRuntimeCodeGeneration
+  branches:
+    include:
+    - main
+  always: true # run the pipeline even if there are no code changes
+
+- cron: '0 */24 * * *'
+  displayName: FeatureFlags - ForceRuntimeCodeGeneration,UseRazorCohostServer
   branches:
     include:
     - main

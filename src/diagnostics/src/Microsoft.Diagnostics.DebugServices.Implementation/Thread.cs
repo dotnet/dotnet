@@ -10,7 +10,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
     public class Thread : IThread, IDisposable
     {
         private readonly ThreadService _threadService;
-        private byte[] _threadContext;
+        private ReadOnlyMemory<byte> _threadContext;
         private ulong? _teb;
 
         protected readonly ServiceContainer _serviceContainer;
@@ -24,7 +24,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
             _serviceContainer.AddService<IThread>(this);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _serviceContainer.RemoveService(typeof(IThread));
             _serviceContainer.DisposeServices();
@@ -40,58 +40,65 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
 
         public IServiceProvider Services => _serviceContainer;
 
-        public bool TryGetRegisterValue(int index, out ulong value)
+        public bool TryGetRegisterValue(int registerIndex, out ulong value)
         {
-            value = 0;
-
-            if (_threadService.TryGetRegisterInfo(index, out RegisterInfo info))
+            try
             {
-                try
-                {
-                    Span<byte> threadContext = new(GetThreadContext(), info.RegisterOffset, info.RegisterSize);
-                    switch (info.RegisterSize)
-                    {
-                        case 1:
-                            value = MemoryMarshal.Read<byte>(threadContext);
-                            return true;
-                        case 2:
-                            value = MemoryMarshal.Read<ushort>(threadContext);
-                            return true;
-                        case 4:
-                            value = MemoryMarshal.Read<uint>(threadContext);
-                            return true;
-                        case 8:
-                            value = MemoryMarshal.Read<ulong>(threadContext);
-                            return true;
-                        default:
-                            Trace.TraceError($"GetRegisterValue: 0x{ThreadId:X4} {info.RegisterName} invalid size {info.RegisterSize}");
-                            break;
-                    }
-                }
-                catch (DiagnosticsException ex)
-                {
-                    Trace.TraceError($"GetRegisterValue: 0x{ThreadId:X4} {info.RegisterName} {ex}");
-                }
+                ReadOnlySpan<byte> context = GetThreadContext();
+                return _threadService.TryGetRegisterValue(context, registerIndex, out value);
             }
+            catch (DiagnosticsException ex)
+            {
+                Trace.TraceError($"GetRegisterValue: 0x{ThreadId:X4} {ex}");
+            }
+            value = 0;
             return false;
         }
 
-        public byte[] GetThreadContext()
+        public ReadOnlySpan<byte> GetThreadContext()
         {
-            _threadContext ??= _threadService.GetThreadContext(this);
-            return _threadContext;
+            if (_threadContext.IsEmpty)
+            {
+                byte[] threadContext = new byte[_threadService.ContextSize];
+                if (!GetThreadContextInner(_threadService.ContextFlags, threadContext))
+                {
+                    throw new DiagnosticsException($"Unable to get the context for thread {ThreadId:X8} with flags {_threadService.ContextFlags:X8}");
+                }
+                _threadContext = threadContext;
+            }
+            return _threadContext.Span;
         }
+
+        /// <summary>
+        /// Get the thread context
+        /// </summary>
+        /// <param name="contextFlags">Windows context flags</param>
+        /// <param name="context">Context buffer</param>
+        /// <returns>true succeeded, false failed</returns>
+        protected virtual bool GetThreadContextInner(uint contextFlags, byte[] context) => _threadService.GetThreadContext(ThreadId, contextFlags, context);
 
         public ulong GetThreadTeb()
         {
             if (!_teb.HasValue)
             {
-                _teb = _threadService.GetThreadTeb(this);
+                _teb = GetThreadTebInner();
             }
             return _teb.Value;
         }
 
+        /// <summary>
+        /// Returns the Windows TEB pointer for the thread
+        /// </summary>
+        /// <returns>TEB pointer or 0 if not implemented or thread id not found</returns>
+        protected virtual ulong GetThreadTebInner() => _threadService.GetThreadTeb(ThreadId);
+
         #endregion
+
+        protected void SetContextFlags(uint contextFlags, Span<byte> context)
+        {
+            Span<byte> threadSpan = context.Slice(_threadService.ContextFlagsOffset, sizeof(uint));
+            MemoryMarshal.Write<uint>(threadSpan, ref contextFlags);
+        }
 
         public override bool Equals(object obj)
         {

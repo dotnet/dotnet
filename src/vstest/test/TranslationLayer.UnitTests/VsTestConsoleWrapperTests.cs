@@ -28,12 +28,12 @@ public class VsTestConsoleWrapperTests
     private readonly Mock<IProcessManager> _mockProcessManager;
     private readonly Mock<IProcessHelper> _mockProcessHelper;
     private readonly Mock<ITranslationLayerRequestSender> _mockRequestSender;
-    private readonly List<string> _testSources = new() { "Hello", "World" };
-    private readonly List<TestCase> _testCases = new()
-    {
+    private readonly List<string> _testSources = ["Hello", "World"];
+    private readonly List<TestCase> _testCases =
+    [
         new TestCase("a.b.c", new Uri("d://uri"), "a.dll"),
         new TestCase("d.e.f", new Uri("g://uri"), "d.dll")
-    };
+    ];
     private readonly ConsoleParameters _consoleParameters;
     private readonly Mock<ITelemetryEventsHandler> _telemetryEventsHandler;
 

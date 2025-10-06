@@ -112,7 +112,8 @@
     <_PreReleaseLabel Condition="'$(SemanticVersioningV1)' != 'true' and '$(PreReleaseVersionIteration)' != ''">$(PreReleaseVersionLabel).$(PreReleaseVersionIteration)</_PreReleaseLabel>
     <_PreReleaseLabel Condition="'$(SemanticVersioningV1)' == 'true'">$(PreReleaseVersionLabel)$(PreReleaseVersionIteration)</_PreReleaseLabel>
     <_PreReleaseLabel Condition="'$(ContinuousIntegrationBuild)' == 'true' and '$(OfficialBuild)' != 'true'">ci</_PreReleaseLabel>
-    <_PreReleaseLabel Condition="'$(ContinuousIntegrationBuild)' != 'true'">dev</_PreReleaseLabel>
+    <!-- Allow a non CI build to have an official build version label when OfficialBuild is explicitly passed-in. -->
+    <_PreReleaseLabel Condition="'$(ContinuousIntegrationBuild)' != 'true' and '$(OfficialBuild)' != 'true'">dev</_PreReleaseLabel>
 
     <_BuildNumberLabels Condition="'$(VersionSuffixDateStamp)' != '' and '$(SemanticVersioningV1)' != 'true'">.$(VersionSuffixDateStamp).$(VersionSuffixBuildOfTheDay)</_BuildNumberLabels>
     <_BuildNumberLabels Condition="'$(VersionSuffixDateStamp)' != '' and '$(SemanticVersioningV1)' == 'true'">-$(VersionSuffixDateStamp)-$(VersionSuffixBuildOfTheDayPadded)</_BuildNumberLabels>

@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,10 +11,10 @@ using Microsoft.Build.BackEnd.Logging;
 using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
+using Microsoft.Build.Experimental.BuildCheck;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Framework.Profiler;
 using Microsoft.Build.Shared;
-using Microsoft.Build.Utilities;
 using Microsoft.NET.StringTools;
 
 #nullable disable
@@ -125,7 +124,7 @@ namespace Microsoft.Build.Logging
         /// <param name="binaryWriter">A BinaryWriter to write the BuildEventArgs instances to</param>
         public BuildEventArgsWriter(BinaryWriter binaryWriter)
         {
-            this.originalStream = binaryWriter.BaseStream;
+            originalStream = binaryWriter.BaseStream;
 
             // this doesn't exceed 30K for smaller binlogs so seems like a reasonable
             // starting point to avoid reallocations in the common case
@@ -185,8 +184,10 @@ namespace Microsoft.Build.Logging
                     TargetFinished
                     ProjectStarted
                     ProjectFinished
+                    BuildSubmissionStarted
                     BuildStarted
                     BuildFinished
+                    BuildCanceled
                     ProjectEvaluationStarted
                     ProjectEvaluationFinished
                 BuildError
@@ -212,10 +213,14 @@ namespace Microsoft.Build.Logging
                 case BuildWarningEventArgs buildWarning: return Write(buildWarning);
                 case ProjectStartedEventArgs projectStarted: return Write(projectStarted);
                 case ProjectFinishedEventArgs projectFinished: return Write(projectFinished);
+                case BuildSubmissionStartedEventArgs buildSubmissionStarted: return Write(buildSubmissionStarted);
                 case BuildStartedEventArgs buildStarted: return Write(buildStarted);
                 case BuildFinishedEventArgs buildFinished: return Write(buildFinished);
+                case BuildCanceledEventArgs buildCanceled: return Write(buildCanceled);
                 case ProjectEvaluationStartedEventArgs projectEvaluationStarted: return Write(projectEvaluationStarted);
                 case ProjectEvaluationFinishedEventArgs projectEvaluationFinished: return Write(projectEvaluationFinished);
+                case BuildCheckTracingEventArgs buildCheckTracing: return Write(buildCheckTracing);
+                case BuildCheckAcquisitionEventArgs buildCheckAcquisition: return Write(buildCheckAcquisition);
                 default:
                     // convert all unrecognized objects to message
                     // and just preserve the message
@@ -304,11 +309,39 @@ namespace Microsoft.Build.Logging
             return BinaryLogRecordKind.BuildFinished;
         }
 
+        private BinaryLogRecordKind Write(BuildCanceledEventArgs e)
+        {
+            WriteBuildEventArgsFields(e);
+
+            return BinaryLogRecordKind.BuildCanceled;
+        }
+
         private BinaryLogRecordKind Write(ProjectEvaluationStartedEventArgs e)
         {
             WriteBuildEventArgsFields(e, writeMessage: false);
             WriteDeduplicatedString(e.ProjectFile);
             return BinaryLogRecordKind.ProjectEvaluationStarted;
+        }
+
+        private BinaryLogRecordKind Write(BuildCheckTracingEventArgs e)
+        {
+            WriteBuildEventArgsFields(e, writeMessage: false);
+
+            Dictionary<string, TimeSpan> stats = e.TracingData.ExtractCheckStats();
+            stats.Merge(e.TracingData.InfrastructureTracingData, (span1, span2) => span1 + span2);
+
+            WriteProperties(stats);
+
+            return BinaryLogRecordKind.BuildCheckTracing;
+        }
+
+        private BinaryLogRecordKind Write(BuildCheckAcquisitionEventArgs e)
+        {
+            WriteBuildEventArgsFields(e, writeMessage: false);
+            WriteDeduplicatedString(e.AcquisitionPath);
+            WriteDeduplicatedString(e.ProjectPath);
+
+            return BinaryLogRecordKind.BuildCheckAcquisition;
         }
 
         private BinaryLogRecordKind Write(ProjectEvaluationFinishedEventArgs e)
@@ -336,6 +369,18 @@ namespace Microsoft.Build.Logging
             }
 
             return BinaryLogRecordKind.ProjectEvaluationFinished;
+        }
+
+        private BinaryLogRecordKind Write(BuildSubmissionStartedEventArgs e)
+        {
+            WriteBuildEventArgsFields(e, writeMessage: false);
+            Write(e.GlobalProperties);
+            WriteStringList(e.EntryProjectsFullPath);
+            WriteStringList(e.TargetNames);
+            Write((int)e.Flags);
+            Write(e.SubmissionId);
+
+            return BinaryLogRecordKind.BuildSubmissionStarted;
         }
 
         private BinaryLogRecordKind Write(ProjectStartedEventArgs e)
@@ -408,6 +453,7 @@ namespace Microsoft.Build.Logging
             WriteDeduplicatedString(e.TaskName);
             WriteDeduplicatedString(e.ProjectFile);
             WriteDeduplicatedString(e.TaskFile);
+            WriteDeduplicatedString(e.TaskAssemblyLocation);
 
             return BinaryLogRecordKind.TaskStarted;
         }
@@ -460,7 +506,6 @@ namespace Microsoft.Build.Logging
             switch (e)
             {
                 case ResponseFileUsedEventArgs responseFileUsed: return Write(responseFileUsed);
-                case GeneratedFileUsedEventArgs generatedFileUsed: return Write(generatedFileUsed);
                 case TaskParameterEventArgs taskParameter: return Write(taskParameter);
                 case ProjectImportedEventArgs projectImported: return Write(projectImported);
                 case TargetSkippedEventArgs targetSkipped: return Write(targetSkipped);
@@ -471,6 +516,7 @@ namespace Microsoft.Build.Logging
                 case PropertyInitialValueSetEventArgs propertyInitialValueSet: return Write(propertyInitialValueSet);
                 case CriticalBuildMessageEventArgs criticalBuildMessage: return Write(criticalBuildMessage);
                 case AssemblyLoadBuildEventArgs assemblyLoad: return Write(assemblyLoad);
+
                 default: // actual BuildMessageEventArgs
                     WriteMessageFields(e, writeImportance: true);
                     return BinaryLogRecordKind.Message;
@@ -526,19 +572,21 @@ namespace Microsoft.Build.Logging
             WriteDeduplicatedString(e.PreviousValue);
             WriteDeduplicatedString(e.NewValue);
             WriteDeduplicatedString(e.Location);
+
             return BinaryLogRecordKind.PropertyReassignment;
         }
 
         private BinaryLogRecordKind Write(UninitializedPropertyReadEventArgs e)
         {
-            WriteMessageFields(e, writeImportance: true);
+            WriteMessageFields(e, writeMessage: false, writeImportance: true);
             WriteDeduplicatedString(e.PropertyName);
+
             return BinaryLogRecordKind.UninitializedPropertyRead;
         }
 
         private BinaryLogRecordKind Write(PropertyInitialValueSetEventArgs e)
         {
-            WriteMessageFields(e, writeImportance: true);
+            WriteMessageFields(e, writeMessage: false, writeImportance: true);
             WriteDeduplicatedString(e.PropertyName);
             WriteDeduplicatedString(e.PropertyValue);
             WriteDeduplicatedString(e.PropertySource);
@@ -547,23 +595,22 @@ namespace Microsoft.Build.Logging
 
         private BinaryLogRecordKind Write(EnvironmentVariableReadEventArgs e)
         {
-            WriteMessageFields(e, writeImportance: true);
+            WriteMessageFields(e, writeImportance: false);
             WriteDeduplicatedString(e.EnvironmentVariableName);
+            Write(e.LineNumber);
+            Write(e.ColumnNumber);
+            WriteDeduplicatedString(e.File);
+
             return BinaryLogRecordKind.EnvironmentVariableRead;
         }
+
         private BinaryLogRecordKind Write(ResponseFileUsedEventArgs e)
         {
             WriteMessageFields(e);
             WriteDeduplicatedString(e.ResponseFilePath);
             return BinaryLogRecordKind.ResponseFileUsed;
         }
-        private BinaryLogRecordKind Write(GeneratedFileUsedEventArgs e)
-        {
-            WriteMessageFields(e);
-            WriteDeduplicatedString(e.FilePath);
-            WriteDeduplicatedString(e.Content);
-            return BinaryLogRecordKind.GeneratedFileUsed;
-        }
+
         private BinaryLogRecordKind Write(TaskCommandLineEventArgs e)
         {
             WriteMessageFields(e, writeMessage: false, writeImportance: true);
@@ -578,6 +625,8 @@ namespace Microsoft.Build.Logging
             Write((int)e.Kind);
             WriteDeduplicatedString(e.ItemType);
             WriteTaskItemList(e.Items, e.LogItemMetadata);
+            WriteDeduplicatedString(e.ParameterName);
+            WriteDeduplicatedString(e.PropertyName);
             if (e.Kind == TaskParameterMessageKind.AddItem
                || e.Kind == TaskParameterMessageKind.TaskOutput)
             {
@@ -707,7 +756,30 @@ namespace Microsoft.Build.Logging
             Write(count);
             for (int i = 0; i < count; i++)
             {
-                string argument = Convert.ToString(arguments[i], CultureInfo.CurrentCulture);
+                string argument;
+                try
+                {
+                    argument = Convert.ToString(arguments[i], CultureInfo.CurrentCulture);
+                }
+                catch (Exception ex) when (ex is ArgumentOutOfRangeException or InvalidOperationException)
+                {
+                    // Handle cases where the object's ToString() method fails due to internal state corruption.
+                    // This commonly occurs with StringBuilder when:
+                    // 1. Race conditions: Multiple threads modify StringBuilder without synchronization, causing
+                    //    internal fields (m_ChunkLength, m_ChunkOffset) to become inconsistent with the actual
+                    //    character array, leading to range exceptions in ToString()
+                    // 2. Memory corruption: Unsafe code or interop operations corrupt StringBuilder's internal state
+                    // 3. Reflection abuse: Direct modification of private fields creates invalid object state
+                    // 4. Serialization issues: Deserialized objects with inconsistent internal field values
+                    //
+                    // Adding synchronization would be prohibitively expensive here since:
+                    // - This is called frequently during build logging (performance critical path)
+                    // - We can't control the threading behavior of the objects passed to us
+                    // - The corruption typically happens before objects reach this method
+                    // - Defensive exception handling is more efficient than preemptive locking
+                    argument = $"Exception encountered writing an object of type {arguments[i]?.GetType()?.Name ?? "<null>"}";
+                }
+
                 WriteDeduplicatedString(argument);
             }
         }
@@ -1044,6 +1116,16 @@ namespace Microsoft.Build.Logging
             WriteNameValueList();
 
             nameValueListBuffer.Clear();
+        }
+
+        private void WriteStringList(IEnumerable<string> items)
+        {
+            int length = items.Count();
+            Write(length);
+            foreach (string entry in items)
+            {
+                WriteDeduplicatedString(entry);
+            }
         }
 
         private void WriteNameValueList()

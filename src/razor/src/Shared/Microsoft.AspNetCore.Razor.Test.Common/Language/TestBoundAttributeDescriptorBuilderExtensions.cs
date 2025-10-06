@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -34,31 +33,26 @@ public static class TestBoundAttributeDescriptorBuilderExtensions
         return builder;
     }
 
-    public static BoundAttributeDescriptorBuilder Metadata(
-        this BoundAttributeDescriptorBuilder builder,
-        KeyValuePair<string, string> pair)
+    public static BoundAttributeDescriptorBuilder PropertyName(this BoundAttributeDescriptorBuilder builder, string propertyName)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        builder.PropertyName = propertyName;
 
-        builder.SetMetadata(pair);
+        return builder;
+    }
+
+    public static BoundAttributeDescriptorBuilder IsDirectiveAttribute(
+        this BoundAttributeDescriptorBuilder builder, bool isDirectiveAttribute = true)
+    {
+        builder.IsDirectiveAttribute = isDirectiveAttribute;
 
         return builder;
     }
 
     public static BoundAttributeDescriptorBuilder Metadata(
         this BoundAttributeDescriptorBuilder builder,
-        KeyValuePair<string, string> pair1,
-        KeyValuePair<string, string> pair2)
+        MetadataObject metadata)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.SetMetadata(pair1, pair2);
+        builder.SetMetadata(metadata);
 
         return builder;
     }
@@ -92,11 +86,6 @@ public static class TestBoundAttributeDescriptorBuilderExtensions
         string attributeNamePrefix,
         string valueTypeName)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         builder.IsDictionary = true;
         builder.IndexerAttributeNamePrefix = attributeNamePrefix;
         builder.IndexerValueTypeName = valueTypeName;
@@ -127,4 +116,17 @@ public static class TestBoundAttributeDescriptorBuilderExtensions
 
         return builder;
     }
+
+#nullable enable
+
+    public static BoundAttributeDescriptorBuilder AsDictionaryAttribute<TValue>(
+        this BoundAttributeDescriptorBuilder builder,
+        string attributeNamePrefix)
+        => builder.AsDictionaryAttribute(attributeNamePrefix, typeof(TValue));
+
+    public static BoundAttributeDescriptorBuilder AsDictionaryAttribute(
+        this BoundAttributeDescriptorBuilder builder,
+        string attributeNamePrefix,
+        Type valueType)
+        => builder.AsDictionaryAttribute(attributeNamePrefix, valueType.FullName);
 }

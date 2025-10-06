@@ -1,13 +1,68 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets" TreatAsLocalProperty="CleanWhileBuilding">
 
-  <ItemGroup>
-    <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="command-line-api" />
+  <PropertyGroup>
+    <!-- The scenario-tests repo shouldn't be cleaned after building as we run tests from it. -->
+    <CleanWhileBuilding>false</CleanWhileBuilding>
+
+    <TestArgs>$(TestArgs) /p:TestBinlogDir="$(ArtifactsLogRepoDir.TrimEnd('/\'))"</TestArgs>
+    <TestArgs>$(TestArgs) /p:TestDotNetRoot="$(DotNetSdkExtractDir.TrimEnd('/\'))"</TestArgs>
+
+    <!-- Don't use the updated NuGet.config file that includes the live package feeds when testing source-only as in that configuration
+         the Microsoft built packages should be used. -->
+    <TestArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSourceOnlyTestOnly)' != 'true'">$(TestArgs) /p:TestRestoreConfigFile=$(OriginalNuGetConfigFile)</TestArgs>
+
+    <!-- In source only test mode, or if SkipScenarioTestsDependencies is 'true', do not depend on other repositories
+         as the scenario tests repo needs to be capable of being built by itself in a standalone validation job.
+         This also requires the use of bootstrap arcade. -->
+    <SkipScenarioTestsDependencies Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">true</SkipScenarioTestsDependencies>
+
+    <!-- In source only builds, tests are always allowed to use online sources -->
+    <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</DotNetBuildWithOnlineFeeds>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SkipScenarioTestsDependencies)' == 'true'">
+    <UseBootstrapArcade>true</UseBootstrapArcade>
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);SkipScenarioTestsDependencies</_GlobalPropertiesToRemoveFromProjectReferences>
+  </PropertyGroup>
+
+  <!-- Use PrivateAssets="all" to not flow repo dependencies to consuming projects (for installer tests). -->
+  <ItemGroup Condition="'$(SkipScenarioTestsDependencies)' != 'true'">
+    <RepositoryReference Include="arcade" PrivateAssets="all" />
+    <RepositoryReference Include="command-line-api" PrivateAssets="all" />
+    <!-- Depend on NuGet packages from the sdk repo and transitive repositories. -->
+    <RepositoryReference Include="sdk" PrivateAssets="all" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" />
-    <RepositoryReference Include="source-build-reference-packages" />
-  </ItemGroup>
+  <Target Name="PrepareScenarioTestsInputs"
+          DependsOnTargets="DetermineSourceBuiltSdkVersion;DetermineSourceBuiltRuntimeVersion"
+          BeforeTargets="RepoTest">
+    <PropertyGroup>
+      <TestArgs>$(TestArgs) /p:TestSdkVersion=$(SourceBuiltSdkVersion)</TestArgs>
+      <TestArgs>$(TestArgs) /p:TestFxVersion=$(SourceBuiltRuntimeVersion)</TestArgs>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <ScenarioTestsResultsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsTestResultsDir)', 'scenario-tests'))</ScenarioTestsResultsDir>
+      <TestXmlOutputPath>$(ScenarioTestsResultsDir)$([System.DateTime]::Now.ToString("yyyy-MM-dd_HH_mm_ss")).xml</TestXmlOutputPath>
+      <ScenarioTestsAdditionalArgs>--xml $(TestXmlOutputPath) --target-rid $(TargetRid) --portable-rid $(PortableTargetRid) --no-cleanup --no-traits Category=MultiTFM</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNonTargetRidPackages</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == 'true'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresPortableAssets</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnlyUnofficialBuild</ScenarioTestsAdditionalArgs>
+    </PropertyGroup>
+
+    <!-- Needs to be set as an env var as the eng/common/tools parser can't handle this string. -->
+    <ItemGroup>
+      <TestEnvironmentVariable Include="AdditionalTestArgs=$(ScenarioTestsAdditionalArgs)" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(ScenarioTestsResultsDir)" />
+  </Target>
+
+  <Target Name="SetAzureDevOpsVariableForScenarioTests"
+          Condition="'$(ContinuousIntegrationBuild)' == 'true'"
+          BeforeTargets="RepoTest">
+    <Message Importance="High" Text="##vso[task.setvariable variable=hasScenarioTestResults]true" />
+  </Target>
 
 </Project>

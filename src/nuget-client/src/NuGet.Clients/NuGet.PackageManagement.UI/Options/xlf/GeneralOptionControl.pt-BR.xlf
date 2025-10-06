@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../GeneralOptionControl.resx">
+    <body>
+      <trans-unit id="BindingRedirectsHeader.Text">
+        <source>Binding Redirects</source>
+        <target state="translated">Redirecionamentos de associação</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagementHeader.Text">
+        <source>Package Management</source>
+        <target state="translated">Gerenciamento de Pacotes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreHeader.Text">
+        <source>Package Restore</source>
+        <target state="translated">Restauração de pacote</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.AccessibleName">
+        <source>Default Package Management Format</source>
+        <target state="translated">Formato de gerenciamento de pacotes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items1">
+        <source>PackageReference</source>
+        <target state="translated">PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatLabel.Text">
+        <source>Default package management format:</source>
+        <target state="translated">Formato padrão de gerenciamento de pacotes:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandButton.Text">
+        <source>&amp;Clear All NuGet Storage</source>
+        <target state="translated">&amp;Limpar Todo o Armazenamento NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandStatusText.Text">
+        <source>http://example.com/help/locals</source>
+        <target state="translated">http://example.com/help/locals</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreAutomaticCheckBox.Text">
+        <source>Auto&amp;matically check for missing packages during build in Visual Studio</source>
+        <target state="translated">Verificar auto&amp;maticamente se há pacotes ausentes durante a compilação do Visual Studio</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreConsentCheckBox.Text">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">&amp;Permitir que o NuGet baixe os pacotes ausentes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="showPackageManagementChooser.Text">
+        <source>Prompt for &amp;format selection on first package install</source>
+        <target state="translated">Solicitar seleção de &amp;formato na primeira instalação do pacote</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="skipBindingRedirects.Text">
+        <source>Skip applying &amp;binding redirects</source>
+        <target state="translated">Ignorar aplicação de &amp;redirecionamentos de associação</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

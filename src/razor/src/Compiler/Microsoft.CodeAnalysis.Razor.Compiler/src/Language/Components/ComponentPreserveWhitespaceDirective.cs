@@ -26,6 +26,6 @@ internal static class ComponentPreserveWhitespaceDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Component, FileKinds.ComponentImport);
+        builder.AddDirective(Directive, RazorFileKind.Component, RazorFileKind.ComponentImport);
     }
 }

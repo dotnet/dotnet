@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/SynType/SynTypeOrWithAppTypeOnTheRightHandSide.fs", false,
-      QualifiedNameOfFile SynTypeOrWithAppTypeOnTheRightHandSide, [], [],
+      QualifiedNameOfFile SynTypeOrWithAppTypeOnTheRightHandSide, [],
       [SynModuleOrNamespace
          ([SynTypeOrWithAppTypeOnTheRightHandSide], false, AnonModule,
           [Let
@@ -40,7 +40,7 @@ ImplFile
                               SynValInfo ([], SynArgInfo ([], false, None)),
                               false, false,
                               PreXmlDoc ((2,39), FSharp.Compiler.Xml.XmlDocCollector),
-                              None, None, (2,39--2,59),
+                              Single None, None, (2,39--2,59),
                               { LeadingKeyword =
                                  StaticMember ((2,39--2,45), (2,46--2,52))
                                 InlineKeyword = None
@@ -60,4 +60,5 @@ ImplFile
                     EqualsRange = Some (2,21--2,22) })], (2,0--2,64))],
           PreXmlDocEmpty, [], None, (2,0--3,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

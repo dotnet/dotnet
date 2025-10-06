@@ -50,13 +50,10 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.AdditionalData
                     file = mountPoint.FileInfo(templateInfo.HostConfigPlace);
                     if (file != null && file.Exists)
                     {
-                        JObject jsonData;
-                        using (Stream stream = file.OpenRead())
-                        using (TextReader textReader = new StreamReader(stream, true))
-                        using (JsonReader jsonReader = new JsonTextReader(textReader))
-                        {
-                            jsonData = JObject.Load(jsonReader);
-                        }
+                        using Stream stream = file.OpenRead();
+                        using TextReader textReader = new StreamReader(stream, true);
+                        using JsonReader jsonReader = new JsonTextReader(textReader);
+                        var jsonData = JObject.Load(jsonReader);
 
                         return new CliHostTemplateData(jsonData);
                     }
@@ -67,7 +64,7 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.AdditionalData
                 Console.Error.WriteLine(
                     "Failed to load dotnet CLI host data for template {0} from {1}. The host data will be ignored.",
                     templateInfo.ShortNameList?[0] ?? templateInfo.Name,
-                    file?.GetDisplayPath() ?? templateInfo.MountPointUri + templateInfo.HostConfigPlace);
+                    file?.GetDisplayPath() ?? (templateInfo.MountPointUri + templateInfo.HostConfigPlace));
                 Console.Error.WriteLine("Details: {0}", e);
             }
             finally

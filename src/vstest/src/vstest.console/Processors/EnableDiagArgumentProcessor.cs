@@ -101,6 +101,7 @@ internal class EnableDiagArgumentExecutor : IArgumentExecutor
     /// Default constructor.
     /// </summary>
     /// <param name="fileHelper">The file helper.</param>
+    /// <param name="processHelper">Process helper</param>
     public EnableDiagArgumentExecutor(IFileHelper fileHelper, IProcessHelper processHelper)
     {
         _fileHelper = fileHelper;

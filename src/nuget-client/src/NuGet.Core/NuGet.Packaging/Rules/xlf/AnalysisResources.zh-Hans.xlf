@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">程序集“{0}”已放置在 "lib" 文件夹之下。建议将程序集放置在特定于框架的文件夹内。请将其移入特定于框架的文件夹。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">程序集“{0}”不在 "lib" 文件夹内，因此将包安装到项目中后，不能将该程序集添加为引用。如需引用，请将其移动到 "lib" 文件夹。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">-“{1}”中找到至少一个 {0} 文件，但“{2}”中未找到。</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">{1}的值“{0}”是示例值，应将其删除。请将其替换为适当的值，或将其删除并重新生成包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">-为以下组件添加库或引用程序集</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">-为以下组件添加依赖项组</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">目标框架</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">到 nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">在 nuspec 和 lib/ref 文件夹的依赖项组中声明的某些目标框架具有兼容的匹配项，但在其他位置不是完全匹配项。除非有意为之，否则请参阅以下操作列表:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">在 nuspec 和 lib/ref 文件夹的依赖项组中声明的某些目标框架在其他位置没有完全匹配项。请参阅以下操作列表:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">文件“{0}”路径和/或名称过长。不支持长文件路径，包可能无法正常工作。请缩短文件路径或文件名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">"PackageIconUrl"/"iconUrl" 元素已弃用。请考虑改用 "PackageIcon"/"icon" 元素。可在 https://aka.ms/deprecateIconUrl 了解详细信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">"lib" 下的文件夹“{0}”无法识别为有效的框架名称或支持的区域性标识符。请将其重命名为有效的框架名称或区域性标识符。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">{0} 处的文件使用符号表示空目录 "_._"，但该文件存在于包含其他文件的目录中。请从包含其他文件的目录中移除此文件。</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">包的稳定版本不应有预发布依赖项。请修改依赖项“{0}”的版本规范，或更新 nuspec 中的版本字段。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">以下依赖关系组需要在框架版本中使用点: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">以下打包文件文件夹需要在框架版本中使用点: {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">以下框架程序集组需要在框架版本中使用点: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">以下引用组需要在框架版本中使用点: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">包中的一个或多个目标框架说明符缺少其框架版本号所需的点。从 .NET5.0 开始，这是必需的。请将其重命名为包括所需的点(例如将 "net50" 重命名为 "net5.0")。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">包版本“{0}”使用 SemVer 2.0.0 或 SemVer 1.0.0 的组件，这些组件在旧版客户端上不受支持。请将包版本更改为 SemVer 1.0.0 字符串。如果版本包含版本标签，则它必须以字母开头。如果不打算将包用于旧版客户端，可以忽略此消息。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">"licenseUrl" 元素将被弃用。请考虑改用 "license" 元素。</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">如果包在迁移后安装，将忽略程序集 "lib\{0}"。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">如果包在迁移后安装，则 "content" 资产不可用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">如果包在迁移后安装，则会忽略 install.ps1 脚本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">如果包在迁移后安装，将不会应用 XDT 转换文件“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">文件“{0}”将被 NuGet 忽略，因为它并非直接位于 "tools" 文件夹下。请将其直接放置在 "tools" 文件夹下。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">转换文件“{0}”位于 "content" 文件夹之外，因此在安装此程序包期间将不会转换该文件。请将其移入 "content" 文件夹。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">包 {0} 缺少自述文件。转到 https://aka.ms/nuget/authoring-best-practices/readme 了解为什么包阅读主题很重要。</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">此包不包含 lib/ 或 ref/ 文件夹，因此将被视为对所有框架兼容。由于在 {0} 的生成目录下找到框架特定文件，请考虑创建以下空文件来正确地缩小包的兼容性范围:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">空文件夹占位符文件“{0}”为非空文件夹，应予以移除。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">在 nuspec 中找到了引用，但在 nuspec 和 ref 文件夹中都找不到某些引用程序集。请添加以下引用程序集:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">-将 {0} 添加到 nuspec 中的 {1} 引用组</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">-将 {0} 添加到 nuspec 中的引用元素</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">-将 {0} 添加到 ref/{1}/ 目录</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">脚本文件“{0}”位于 "tools" 文件夹之外，因此在安装此程序包期间将不会执行该脚本文件。请将其移入 "tools" 文件夹。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">当前工具集无法识别许可证标识符“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">NuGet 无法识别脚本文件“{0}”，因此安装此包时不会执行该脚本。请将其重命名为 install.ps1、uninstall.ps1 或 init.ps1，并将其直接放置在 "tools" 下。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">未指定依赖项“{0}”的版本。请指定依赖项版本，并重新生成包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">“{0}”处的文件使用过时的 "WinRT" 作为框架文件夹。请将 "WinRT" 或 "WinRT45" 替换为 "NetCore45"。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

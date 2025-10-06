@@ -4,12 +4,47 @@
 #nullable disable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class ComponentAttributeIntermediateNode : IntermediateNode
 {
+    public bool HasExplicitTypeName { get; set; }
+    public bool IsOpenGeneric { get; set; }
+
+    /// <summary>
+    /// Used to track if this node was synthesized by the compiler and not explicitly written by a user.
+    /// </summary>
+    public bool IsSynthesized { get; set; }
+
+    public bool IsDesignTimePropertyAccessHelper { get; set; }
+
+    /// <summary>
+    /// Represents the sub-span of the bind node that actually represents the property
+    /// </summary>
+    /// <remarks>
+    /// <pre>
+    /// @bind-Value:get=""
+    /// ^----------------^ Regular node span
+    ///       ^---^        Property span
+    /// </pre>
+    /// </remarks>
+    public SourceSpan? PropertySpan { get; set; }
+
+    public string OriginalAttributeName { get; set; }
+
+    public SourceSpan? OriginalAttributeSpan { get; set; }
+
+    public string AddAttributeMethodName { get; set; }
+
+    /// <summary>
+    /// When a generic component is re-written with its concrete implementation type
+    /// We use this metadata on its bound attributes to track the updated type.
+    /// </summary>
+    public string ConcreteContainingType { get; set; }
+
     public ComponentAttributeIntermediateNode()
     {
     }
@@ -25,20 +60,12 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeStructure = attributeNode.AttributeStructure;
         Source = attributeNode.Source;
 
-        foreach (var annotation in attributeNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
-
         for (var i = 0; i < attributeNode.Children.Count; i++)
         {
             Children.Add(attributeNode.Children[i]);
         }
 
-        for (var i = 0; i < attributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(attributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(attributeNode);
     }
 
     public ComponentAttributeIntermediateNode(TagHelperPropertyIntermediateNode propertyNode)
@@ -53,90 +80,64 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeName = attributeName;
         AttributeStructure = propertyNode.AttributeStructure;
         BoundAttribute = propertyNode.BoundAttribute;
-        PropertyName = propertyNode.BoundAttribute.GetPropertyName();
+        OriginalAttributeSpan = propertyNode.OriginalAttributeSpan;
+        PropertyName = propertyNode.BoundAttribute.PropertyName;
         Source = propertyNode.Source;
-        TagHelper = propertyNode.TagHelper;
-        TypeName = propertyNode.BoundAttribute.IsWeaklyTyped() ? null : propertyNode.BoundAttribute.TypeName;
-
-        foreach (var annotation in propertyNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
+        TypeName = propertyNode.BoundAttribute.IsWeaklyTyped ? null : propertyNode.BoundAttribute.TypeName;
 
         for (var i = 0; i < propertyNode.Children.Count; i++)
         {
             Children.Add(propertyNode.Children[i]);
         }
 
-        for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(propertyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(propertyNode);
     }
 
-    public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeIntermediateNode directiveAttributeNode)
+    private ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeIntermediateNode node, bool addChildren)
     {
-        if (directiveAttributeNode == null)
+        AttributeName = node.AttributeName;
+        AttributeStructure = node.AttributeStructure;
+        BoundAttribute = node.BoundAttribute;
+        OriginalAttributeSpan = node.OriginalAttributeSpan;
+        PropertyName = node.BoundAttribute.PropertyName;
+        Source = node.Source;
+        TypeName = node.BoundAttribute.IsWeaklyTyped
+            ? null
+            : node.BoundAttribute.TypeName;
+
+        if (addChildren)
         {
-            throw new ArgumentNullException(nameof(directiveAttributeNode));
+            Children.AddRange(node.Children);
         }
 
-        AttributeName = directiveAttributeNode.AttributeName;
-        AttributeStructure = directiveAttributeNode.AttributeStructure;
-        BoundAttribute = directiveAttributeNode.BoundAttribute;
-        PropertyName = directiveAttributeNode.BoundAttribute.GetPropertyName();
-        Source = directiveAttributeNode.Source;
-        TagHelper = directiveAttributeNode.TagHelper;
-        TypeName = directiveAttributeNode.BoundAttribute.IsWeaklyTyped() ? null : directiveAttributeNode.BoundAttribute.TypeName;
-
-        foreach (var annotation in directiveAttributeNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
-
-        for (var i = 0; i < directiveAttributeNode.Children.Count; i++)
-        {
-            Children.Add(directiveAttributeNode.Children[i]);
-        }
-
-        for (var i = 0; i < directiveAttributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(directiveAttributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(node);
     }
 
-    public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeParameterIntermediateNode directiveAttributeParameterNode)
+    private ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeParameterIntermediateNode node, bool addChildren)
     {
-        if (directiveAttributeParameterNode == null)
+        AttributeName = node.AttributeNameWithoutParameter;
+        AttributeStructure = node.AttributeStructure;
+        BoundAttribute = node.BoundAttribute;
+        OriginalAttributeSpan = node.OriginalAttributeSpan;
+        PropertyName = node.BoundAttributeParameter.PropertyName;
+        Source = node.Source;
+        TypeName = node.BoundAttributeParameter.TypeName;
+
+        if (addChildren)
         {
-            throw new ArgumentNullException(nameof(directiveAttributeParameterNode));
+            Children.AddRange(node.Children);
         }
 
-        AttributeName = directiveAttributeParameterNode.AttributeNameWithoutParameter;
-        AttributeStructure = directiveAttributeParameterNode.AttributeStructure;
-        BoundAttribute = directiveAttributeParameterNode.BoundAttribute;
-        PropertyName = directiveAttributeParameterNode.BoundAttributeParameter.GetPropertyName();
-        Source = directiveAttributeParameterNode.Source;
-        TagHelper = directiveAttributeParameterNode.TagHelper;
-        TypeName = directiveAttributeParameterNode.BoundAttributeParameter.TypeName;
-
-        foreach (var annotation in directiveAttributeParameterNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
-
-        for (var i = 0; i < directiveAttributeParameterNode.Children.Count; i++)
-        {
-            Children.Add(directiveAttributeParameterNode.Children[i]);
-        }
-
-        for (var i = 0; i < directiveAttributeParameterNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(directiveAttributeParameterNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(node);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public static ComponentAttributeIntermediateNode From(TagHelperDirectiveAttributeIntermediateNode node, bool addChildren)
+        => new(node, addChildren);
+
+    public static ComponentAttributeIntermediateNode From(TagHelperDirectiveAttributeParameterIntermediateNode node, bool addChildren)
+        => new(node, addChildren);
+
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public string AttributeName { get; set; }
 
@@ -146,7 +147,7 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
 
     public string PropertyName { get; set; }
 
-    public TagHelperDescriptor TagHelper { get; set; }
+    public TagHelperDescriptor TagHelper => BoundAttribute?.Parent;
 
     public string TypeName { get; set; }
 
@@ -241,5 +242,62 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         // We don't really want to crash though.
         argument = default;
         return false;
+    }
+
+    internal static bool TryGetActionArgument(ReadOnlyMemory<char> candidate, out ReadOnlyMemory<char> argument)
+    {
+        // Strip 'global::' from the candidate.
+        if (candidate.Span.StartsWith("global::".AsSpan()))
+        {
+            candidate = candidate["global::".Length..];
+        }
+
+        if (!candidate.Span.StartsWith("System.Action".AsSpan()))
+        {
+            argument = default;
+            return false;
+        }
+
+
+        candidate = candidate["System.Action".Length..];
+        if (candidate.Span is ['<', .., '>'])
+        {
+            argument = candidate[1..^1];
+            return true;
+        }
+
+        argument = default;
+        return false;
+    }
+
+    /// <summary>
+    /// Returns a string where the generic type argument of a System.Action&lt;MyType&lt;TItem&gt;&gt; this method
+    /// constructs a new string replacing 'TItem' with <paramref name="genericType"/>
+    /// </summary>
+    /// <param name="candidate">The full candidate string to parse, e.g System.Action&lt;MyType&lt;TItem&gt;&gt;</param>
+    /// <param name="genericType">The type name to replace the generic argument with</param>
+    /// <param name="argument"/>The resulting string with the generic argument replaced with <paramref name="genericType"/></param>
+    /// <returns>True if the argument could be constructed</returns>
+    internal static bool TryGetGenericActionArgument(ReadOnlyMemory<char> candidate, string genericType, [NotNullWhen(true)] out string argument)
+    {
+        if (!TryGetActionArgument(candidate, out var actionArgument))
+        {
+            argument = default;
+            return false;
+        }
+
+        var genericTypeStart = actionArgument.Span.IndexOf('<');
+        var genericTypeEnd = actionArgument.Span.IndexOf('>');
+
+        // Check (start + 1) to ensure there is at least one character
+        // between the start and end
+        if (genericTypeStart <= 0 || genericTypeEnd < (genericTypeStart + 1))
+        {
+            argument = default;
+            return false;
+        }
+
+        argument = actionArgument[0..(genericTypeStart + 1)] + genericType + actionArgument[genericTypeEnd..];
+        return true;
     }
 }

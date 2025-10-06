@@ -1,0 +1,350 @@
+{
+  "properties": {
+    "nuGetPackageManager.general.externalSettings": {
+      "type": "external",
+      "title": "@115;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      // callback has two members, packageId and serviceId.  Both are GUIDs.  Either or both may be supplied.  If only packageId is supplied,
+      // the package must implement IExternalSettingsProvider itself.  If only serviceId is supplied, the package must proffer a globally
+      // visible service with that GUID which implements IExternalSettingsProvider.  If both are supplied, the package may proffer a private
+      // service (i.e. with promote:false) instead of a public one.  In managed code, the GUID of a service is derived from the service type,
+      // and is typically specified with an explicit [Guid] attribute on it.
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "6C09BBE2-4537-48B4-87D8-01BF5EB75901"
+      },
+
+      // This should be true if the external settings provider can monitor the backing store for changes and raise SettingValuesChanged when
+      // they occur.  If the backing store cannot be efficiently monitored for changes, the provider should set this to false and implement
+      // ICachingExternalSettingsProvider.
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "packageRestore.allowRestoreDownload": {
+          "type": "boolean",
+          "title": "@PackageRestoreConsent;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#allow-nuget-to-download-missing-packages"
+        },
+        "packageRestore.packageRestoreAutomatic": {
+          "type": "boolean",
+          "title": "@packageRestoreAutomatic;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "enableWhen": "${config:packageRestore.allowRestoreDownload}=='true'",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#automatically-check-for-missing-packages-during-build"
+        },
+        "bindingRedirects.skipBindingRedirects": {
+          "type": "boolean",
+          "title": "@skipBindingRedirects;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/reference/nuget-config-file#bindingredirects-section"
+        },
+        "packageManagement.defaultPackageManagementFormat": {
+          "type": "string",
+          "title": "@defaultPackageManagementFormat;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#choose-the-default-package-management-format",
+
+          // Invariant monikers
+          "enum": [
+            "packages-config",
+            "package-reference"
+          ],
+
+          // Localizable titles
+          "enumItemLabels": [
+            "@PackagesConfig;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+            "@PackageReference;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+          ]
+        },
+        "packageManagement.showPackageManagementChooser": {
+          "type": "boolean",
+          "title": "@showPackageManagementChooser;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-restore#choose-the-default-package-management-format"
+        }
+      },
+      "categories": {
+        "packageRestore": {
+          "title": "@PackageRestore;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        },
+        "bindingRedirects": {
+          "title": "@BindingRedirects;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        },
+        "packageManagement": {
+          "title": "@PackageManagement;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+        }
+      }
+    },
+    "nuGetPackageManager.configurationFiles.externalSettings": {
+      "type": "external",
+      "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@Text_ConfigurationFiles_Priority;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "4F0DC114-28A6-4888-84E7-766D6E7DE456"
+      },
+
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "configurationFiles": {
+          "type": "array",
+          "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "filePath": {
+                "type": "string",
+                "title": "@Text_FilePath_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": false,
+          "allowAdditionsAndRemovals": false,
+          "messages": [
+            {
+              "text": "@Text_ConfigurationFiles_CommonLink;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+            }
+          ]
+        }
+      }
+    },
+    "nuGetPackageManager.packageSources.externalSettings": {
+      "type": "external",
+      "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "15C605EC-4FD7-446B-BA4A-75ECF0C0B2D0"
+      },
+
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "packageSources": {
+          "type": "array",
+          "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "isEnabled": {
+                "type": "boolean",
+                "title": "@Text_PackageSourceEnabled_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "default": true
+              },
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default":  "",
+                "example": "Package source",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceName_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceName} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default": "",
+                "example": "https://packagesource",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceUri_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceUrl} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  },
+                  {
+                    "text": "@Text_HttpSource_Warning;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "(${config:allowInsecureConnections} == '' || ${config:allowInsecureConnections} == 'true') && ${config:sourceUrl} ~= '(?i)^http\\\\:'",
+                    "severity": "warning"
+                  },
+                  {
+                    "text": "@Text_HttpSource_Error;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:allowInsecureConnections} == 'false' && ${config:sourceUrl} ~= '(?i)^http\\\\:'",
+                    "severity": "error"
+                  }
+                ]
+              },
+              "allowInsecureConnections": {
+                "type": "boolean",
+                "title": "@Text_AllowInsecureConnections_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "default": false,
+                "helpUri": "https://aka.ms/nuget-https-everywhere"
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true
+        },
+        "machineWidePackageSources": {
+          "type": "array",
+          "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          // Don't show Machine-wide Package Sources section when empty.
+          "visibleWhen": "${config:machineWidePackageSources} != '[]'",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "isEnabled": {
+                "type": "boolean",
+                "title": "@Text_PackageSourceEnabled_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              },
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": false,
+          "allowAdditionsAndRemovals": false
+        }
+      }
+    },
+    "nuGetPackageManager.packageSourceMapping.externalSettings": {
+      "type": "external",
+      "title": "@116;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "ACE317DA-8399-4DA4-9828-107E02244D45"
+      },
+
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "packageSourceMapping": {
+          "type": "array",
+          "title": "Package Source Mapping",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "packageId": {
+                "type": "string",
+                "title": "@Text_PackageSourceMappingPattern_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "example": "@Text_Watermark_ExamplePackageIdPattern;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "maxLength": 100, // Matches the maximum length set in NuGet.Configuration/PackageSourceMapping/PackageSourceMapping.cs.
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceMappingPattern_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:packageId} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              },
+              "sourceName": {
+                "type": "array",
+                "uniqueItems": true,
+                "minItems": 1,
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "items": {
+                  "type": "string",
+                  "enum": [], // These are set by PackageSourceMappingPage external settings provider.
+                  "enumItemLabels": [] // These are set by PackageSourceMappingPage external settings provider.
+                },
+                "default": [],
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceMappingSource_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceName} == '[]'",
+                    "severity": "error"
+                  }
+                ]
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true
+        }
+      }
+    }
+  },
+  "categories": {
+    "nuGetPackageManager": {
+      "title": "@110;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+    },
+    "nuGetPackageManager.general": {
+      "title": "@115;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "0F052CF7-BF62-4743-B190-87FA4D49421E", // Corresponds to the GUID defined in OptionsPageActivator.cs for GeneralPage
+      "order": 0,
+      "commands": [
+        {
+          "vsct": {
+            "text": "@clearLocalResources;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+            "set": "54A0AC88-A025-4A62-8D48-6C1848E4F545", // guidClearNuGetLocalResourcesCmdSetString
+            "id": 256 // cmdidClearNuGetLocalResources
+          }
+        }
+      ]
+    },
+    "nuGetPackageManager.configurationFiles": {
+      "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "C17B308A-00BB-446E-9212-2D14E1005985", // Corresponds to the GUID defined in OptionsPageActivator.cs for ConfigurationFilesPage
+      "order": 1
+    },
+    "nuGetPackageManager.packageSources": {
+      "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "2819C3B6-FC75-4CD5-8C77-877903DE864C", // Corresponds to the GUID defined in OptionsPageActivator.cs for PackageSourcesPage
+      "order": 2
+    },
+    "nuGetPackageManager.packageSourceMapping": {
+      "title": "@116;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "F175964E-89F5-4521-8FE2-C10C07BB968C", // Corresponds to the GUID defined in OptionsPageActivator.cs for PackageSourceMappingPage
+      "order": 3,
+      "helpUri": "https://learn.microsoft.com/nuget/consume-packages/package-source-mapping"
+    }
+  }
+}

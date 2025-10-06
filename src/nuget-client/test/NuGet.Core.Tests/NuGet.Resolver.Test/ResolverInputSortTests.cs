@@ -3,9 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;

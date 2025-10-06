@@ -13,13 +13,13 @@ public class DefaultRazorParsingPhaseTest
     {
         // Arrange
         var phase = new DefaultRazorParsingPhase();
-        var engine = RazorProjectEngine.CreateEmpty(builder =>
+
+        var projectEngine = RazorProjectEngine.CreateEmpty(builder =>
         {
             builder.Phases.Add(phase);
-            builder.Features.Add(new DefaultRazorParserOptionsFeature(designTime: false, version: RazorLanguageVersion.Latest, fileKind: null));
         });
 
-        var codeDocument = TestRazorCodeDocument.CreateEmpty();
+        var codeDocument = projectEngine.CreateEmptyCodeDocument();
 
         // Act
         phase.Execute(codeDocument);
@@ -33,20 +33,20 @@ public class DefaultRazorParsingPhaseTest
     {
         // Arrange
         var phase = new DefaultRazorParsingPhase();
-        var engine = RazorProjectEngine.CreateEmpty((builder) =>
+
+        var projectEngine = RazorProjectEngine.CreateEmpty((builder) =>
         {
             builder.Phases.Add(phase);
-            builder.Features.Add(new DefaultRazorParserOptionsFeature(designTime: false, version: RazorLanguageVersion.Latest, fileKind: null));
-            builder.Features.Add(new MyParserOptionsFeature());
+            builder.AddDirective(CreateDirective());
         });
 
-        var codeDocument = TestRazorCodeDocument.CreateEmpty();
+        var codeDocument = projectEngine.CreateEmptyCodeDocument();
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        Assert.True(codeDocument.TryGetSyntaxTree(out var syntaxTree));
         var directive = Assert.Single(syntaxTree.Options.Directives);
         Assert.Equal("test", directive.Directive);
     }
@@ -56,38 +56,31 @@ public class DefaultRazorParsingPhaseTest
     {
         // Arrange
         var phase = new DefaultRazorParsingPhase();
-        var engine = RazorProjectEngine.CreateEmpty((builder) =>
+
+        var projectEngine = RazorProjectEngine.CreateEmpty(builder =>
         {
             builder.Phases.Add(phase);
-            builder.Features.Add(new DefaultRazorParserOptionsFeature(designTime: false, version: RazorLanguageVersion.Latest, fileKind: null));
-            builder.Features.Add(new MyParserOptionsFeature());
+            builder.AddDirective(CreateDirective());
         });
 
-        var imports = ImmutableArray.Create(
+        var source = TestRazorSourceDocument.Create();
+        var importSources = ImmutableArray.Create(
             TestRazorSourceDocument.Create(),
             TestRazorSourceDocument.Create());
 
-        var codeDocument = TestRazorCodeDocument.Create(TestRazorSourceDocument.Create(), imports);
+        var codeDocument = projectEngine.CreateCodeDocument(source, importSources);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var importSyntaxTrees = codeDocument.GetImportSyntaxTrees();
-        Assert.False(importSyntaxTrees.IsDefault);
+        Assert.True(codeDocument.TryGetImportSyntaxTrees(out var importSyntaxTrees));
         Assert.Collection(
             importSyntaxTrees,
-            t => { Assert.Same(t.Source, imports[0]); Assert.Equal("test", Assert.Single(t.Options.Directives).Directive); },
-            t => { Assert.Same(t.Source, imports[1]); Assert.Equal("test", Assert.Single(t.Options.Directives).Directive); });
+            t => { Assert.Same(t.Source, importSources[0]); Assert.Equal("test", Assert.Single(t.Options.Directives).Directive); },
+            t => { Assert.Same(t.Source, importSources[1]); Assert.Equal("test", Assert.Single(t.Options.Directives).Directive); });
     }
 
-    private class MyParserOptionsFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
-    {
-        public int Order { get; }
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.Directives.Add(DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine));
-        }
-    }
+    private static DirectiveDescriptor CreateDirective()
+        => DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine);
 }

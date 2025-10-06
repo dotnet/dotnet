@@ -28,7 +28,7 @@ The Skip family of assertions (like `Assert.Skip`) require xUnit.net v3. Define 
 
 ### `XUNIT_SPAN` (min: C# 6.0, xUnit.net v2)
 
-There are optimized versions of `Assert.Equal` for arrays which use `Span<T>`- and/or `Memory<T>`-based comparison options. If you are using a target framework that supports `Span<T>` and `Memory<T>`, you should define `XUNIT_SPAN` to enable these new assertions.
+There are optimized versions of `Assert.Equal` for arrays which use `Span<T>`- and/or `Memory<T>`-based comparison options. If you are using a target framework that supports `Span<T>` and `Memory<T>`, you should define `XUNIT_SPAN` to enable these new assertions. You may need to add a reference to [`System.Memory`](https://www.nuget.org/packages/System.Memory) for older target frameworks.
 
 ### `XUNIT_VISIBILITY_INTERNAL`
 

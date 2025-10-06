@@ -131,7 +131,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var _target = new InstalledPackageFeed(feedCollection, _metadataProvider);
 
             // Act
-            IPackageSearchMetadata[] result = await _target.GetMetadataForPackagesAndSortAsync(feedCollection, includePrerelease: It.IsAny<bool>(), CancellationToken.None);
+            IPackageSearchMetadata[] result = await _target.GetMetadataForPackagesAsync(feedCollection, includePrerelease: It.IsAny<bool>(), CancellationToken.None);
 
             // Assert
             var idComparer = Comparer<IPackageSearchMetadata>.Create((a, b) => a.Identity.Id.CompareTo(b.Identity.Id));

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="CouldNotFindInstalledPackage">
+        <source>Failed to resolve SDK '{0}'. A package was successfully restored but the package could not be located.</source>
+        <target state="translated">SDK '{0}'을(를) 확인하지 못했습니다. 패키지가 복원되었지만 패키지를 찾을 수 없습니다.</target>
+        <note>{0} is the name of an MSBuild project SDK.</note>
+      </trans-unit>
+      <trans-unit id="Error_DisabledSdkResolver">
+        <source>The NuGetSdkResolver did not resolve this SDK because it was disabled by the MSBUILDDISABLENUGETSDKRESOLVER environment variable.</source>
+        <target state="translated">NuGetSdkResolver는 MSBUILDDISABLENUGETSDKRESOLVER 환경 변수에 의해 비활성화되었기 때문에 이 SDK를 확인하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToReadSettings">
+        <source>Failed to load NuGet settings. {0}</source>
+        <target state="translated">NuGet 설정을 로드하지 못했습니다. {0}</target>
+        <note>{0} is exception message.</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSdkVersion">
+        <source>The NuGetSdkResolver did not resolve this SDK because there was no version specified in the project or global.json.</source>
+        <target state="translated">프로젝트 또는 global.json에 지정된 버전이 없기 때문에 NuGetSdkResolver가 이 SDK를 해결하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToFindPathToGlobalJson">
+        <source>Failed to determine path to global.json from path "{0}". {1}</source>
+        <target state="translated">경로 "{0}"에서 global.json에 대한 경로를 확인하지 못했습니다. {1}</target>
+        <note>{0} is the path to the file used to start looking for global.json and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="FailedToParseGlobalJson">
+        <source>Failed to parse "{0}". {1}</source>
+        <target state="translated">"{0}"을(를) 구문 분석하지 못했습니다. {1}</target>
+        <note>{0} is the path to the global.json file that was attempted to be parsed and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="FailedToReadGlobalJson">
+        <source>Failed to read file "{0}". {1}</source>
+        <target state="translated">“{0}” 파일을 읽지 못했습니다. {1}</target>
+        <note>{0} is the path to the global.json file that was attempted to be read and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="PackageWasNotInstalled">
+        <source>Failed to resolve SDK '{0}'. Package restore was successful but a package with the ID of "{1}" was not installed.</source>
+        <target state="translated">SDK '{0}'을(를) 확인하지 못했습니다. 패키지를 복원했지만 ID가 "{1}"인 패키지가 설치되지 않았습니다.</target>
+        <note>{0} is name of an MSBuild project SDK and {1} is package ID that was installed.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -97,11 +97,12 @@ public class DiscoveryTests : AcceptanceTestBase
         var extensionsDirectory = IntegrationTestEnvironment.ExtensionsDirectory;
         var extensionsToVerify = new Dictionary<string, string[]>
         {
-            {"Microsoft.TestPlatform.Extensions.EventLogCollector.dll", new[] { "Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector"} },
-            {"Microsoft.TestPlatform.Extensions.BlameDataCollector.dll", new[] { "Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameLogger", "Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameCollector" } },
-            {"Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll", new[] { "Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger" } },
-            {"Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll", new[] { "Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger" } },
-            {"Microsoft.TestPlatform.TestHostRuntimeProvider.dll", new[] { "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager", "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager" } }
+            {"Microsoft.TestPlatform.Extensions.EventLogCollector.dll", ["Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector"] },
+            {"Microsoft.TestPlatform.Extensions.BlameDataCollector.dll", ["Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameLogger", "Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameCollector"] },
+            {"Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll", ["Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger"] },
+            {"Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll", ["Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger"] },
+            {"Microsoft.TestPlatform.TestHostRuntimeProvider.dll", ["Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager", "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager"]
+            }
         };
 
         foreach (var extension in extensionsToVerify.Keys)

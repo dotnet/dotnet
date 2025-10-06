@@ -18,7 +18,7 @@
                             Whitespace;[ ];
                             Identifier;[e];
                             Whitespace;[ ];
-                            GreaterThanEqual;[=>];
+                            CSharpOperator;[=>];
                             Whitespace;[ ];
                             LeftParenthesis;[(];
                             Keyword;[int];
@@ -32,16 +32,16 @@
                             Dot;[.];
                             Identifier;[Now];
                             Whitespace;[ ];
-                            Minus;[-];
+                            CSharpOperator;[-];
                             Whitespace;[ ];
                             Identifier;[dt];
                             RightParenthesis;[)];
                             Dot;[.];
                             Identifier;[TotalDays];
                             Whitespace;[ ];
-                            Slash;[/];
+                            CSharpOperator;[/];
                             Whitespace;[ ];
-                            IntegerLiteral;[365];
+                            NumericLiteral;[365];
                             RightParenthesis;[)];
                             RightParenthesis;[)];
         MarkupTextLiteral - [103..103)::0 - [] - Gen<Markup>

@@ -8,6 +8,7 @@ using System.Threading;
 using FluentAssertions;
 using NuGet.Common.Migrations;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Common.Test
@@ -23,7 +24,7 @@ namespace NuGet.Common.Test
             string migrationsDirectory = Path.Combine(testDirectory, "migrations");
 
             // Act
-            MigrationRunner.Run(migrationsDirectory);
+            MigrationRunner.Run(migrationsDirectory, TestEnvironmentVariableReader.EmptyInstance);
 
             // Assert
             AssertSingleMigrationDirectory(migrationsDirectory);
@@ -44,7 +45,7 @@ namespace NuGet.Common.Test
             // Act
             for (int i = 0; i < numThreads; i++)
             {
-                var thread = new Thread(() => MigrationRunner.Run(migrationsDirectory));
+                var thread = new Thread(() => MigrationRunner.Run(migrationsDirectory, TestEnvironmentVariableReader.EmptyInstance));
                 thread.Start();
                 threads.Add(thread);
             }
@@ -75,7 +76,7 @@ namespace NuGet.Common.Test
             signal.Should().BeTrue(because: "A mutex should have been acquired.");
 
             // Act
-            MigrationRunner.Run(migrationsDirectory);
+            MigrationRunner.Run(migrationsDirectory, TestEnvironmentVariableReader.EmptyInstance);
 
             // Assert
             AssertSingleMigrationDirectory(migrationsDirectory);

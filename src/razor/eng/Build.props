@@ -6,7 +6,7 @@
          that is treated as an analyzer, there can be file locking issues if Razor.Diagnostics.Analyzers isn't
          built before Razor.sln. Setting "BuildInParallel" to "false" ensures that this solution will be fully
          built first. -->
-    <ProjectToBuild Include="$(RepoRoot)BuildAnalyzers.sln" BuildInParallel="false" />
+    <ProjectToBuild Include="$(RepoRoot)\eng\BuildAnalyzers.sln" BuildInParallel="false" />
 
     <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'==''" Include="$(MSBuildThisFileDirectory)..\Razor.sln" />
 

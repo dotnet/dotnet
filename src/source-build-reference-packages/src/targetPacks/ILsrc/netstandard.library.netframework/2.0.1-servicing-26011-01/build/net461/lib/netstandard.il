@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -389,6 +389,10 @@
 }
 .assembly /*20000001*/ netstandard
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000001:0A000001*/ instance void [mscorlib/*23000001*/]System.Reflection.AssemblyTitleAttribute/*01000001*/::.ctor(string) /* 0A000001 */ = ( 01 00 0B 6E 65 74 73 74 61 6E 64 61 72 64 00 00 ) // ...netstandard..
   .custom /*0C000002:0A000002*/ instance void [mscorlib/*23000001*/]System.Reflection.AssemblyDescriptionAttribute/*01000002*/::.ctor(string) /* 0A000002 */ = ( 01 00 0B 6E 65 74 73 74 61 6E 64 61 72 64 00 00 ) // ...netstandard..
   .custom /*0C000003:0A000003*/ instance void [mscorlib/*23000001*/]System.Reflection.AssemblyDefaultAliasAttribute/*01000003*/::.ctor(string) /* 0A000003 */ = ( 01 00 0B 6E 65 74 73 74 61 6E 64 61 72 64 00 00 ) // ...netstandard..
@@ -10093,6 +10097,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F4669328000
+// Image base: 0x00007F899B9E4000
 
 // *********** DISASSEMBLY COMPLETE ***********************

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ internal class BackgroundParser : IDisposable
     private readonly MainThreadState _main;
     private readonly BackgroundThread _bg;
 
-    public BackgroundParser(RazorProjectEngine projectEngine, string filePath, string projectDirectory, string fileKind)
+    public BackgroundParser(RazorProjectEngine projectEngine, string filePath, string projectDirectory, RazorFileKind fileKind)
     {
         _main = new MainThreadState();
         _bg = new BackgroundThread(_main, projectEngine, filePath, projectDirectory, fileKind);
@@ -275,14 +275,14 @@ internal class BackgroundParser : IDisposable
         private readonly string _filePath;
         private readonly string _relativeFilePath;
         private readonly string _projectDirectory;
-        private readonly string _fileKind;
+        private readonly RazorFileKind _fileKind;
         private readonly MainThreadState _main;
         private readonly Thread _backgroundThread;
         private CancellationToken _shutdownToken;
         private readonly RazorProjectEngine _projectEngine;
         private IList<ChangeReference>? _previouslyDiscarded = new List<ChangeReference>();
 
-        public BackgroundThread(MainThreadState main, RazorProjectEngine projectEngine, string filePath, string projectDirectory, string fileKind)
+        public BackgroundThread(MainThreadState main, RazorProjectEngine projectEngine, string filePath, string projectDirectory, RazorFileKind fileKind)
         {
             // Run on MAIN thread!
             _main = main;

@@ -1,0 +1,1032 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="AddCommand_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">O pacote '{0}' já existe no feed '{1}' e é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">O pacote '{0}' já existe no feed '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_SourceNotProvided">
+        <source>'-Source' switch is not provided. nupkg gets added to the 'Source' and is mandatory.</source>
+        <target state="translated">A opção '-Source' não foi fornecida. O nupkg é adicionado à 'Source' e é obrigatório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddFileToPackage">
+        <source>Add file '{0}' to package as '{1}'</source>
+        <target state="translated">Adicionar arquivo '{0}' ao pacote como '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousCommand">
+        <source>Ambiguous command '{0}'. Possible values: {1}.</source>
+        <target state="translated">Comando ambíguo '{0}'. Valores possíveis: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousOption">
+        <source>Ambiguous option '{0}'. Possible values: {1}.</source>
+        <target state="translated">Opção ambígua '{0}'. Valores possíveis: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildingProjectTargetingFramework">
+        <source>Building project '{0}' for target framework '{1}'.</source>
+        <target state="translated">Criando o projeto '{0}' para a estrutura de destino '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLine_Warning">
+        <source>WARNING: {0}</source>
+        <target state="translated">WARNING: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandKeyNotFound">
+        <source>Key '{0}' not found.</source>
+        <target state="translated">A chave '{0}' não foi encontrada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessage">
+        <source>{0} (y/N) </source>
+        <target state="translated">{0} (s/N) </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessageAccept">
+        <source>y</source>
+        <target state="translated">s</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_DisplayFile">
+        <source>Please provide password for: {0}</source>
+        <target state="translated">Forneça a senha para: {0}</target>
+        <note>0 - file that requires password</note>
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_PromptForPassword">
+        <source>Password: </source>
+        <target state="translated">Senha: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ForbiddenCredentials">
+        <source>The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}</source>
+        <target state="translated">O servidor remoto indicou que a solicitação anterior foi proibida. Forneça credenciais para: {0}</target>
+        <note>{0} will be replaced with the URL that needs credentials.</note>
+      </trans-unit>
+      <trans-unit id="Credentials_Password">
+        <source>Password: </source>
+        <target state="translated">Senha: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ProxyCredentials">
+        <source>Please provide proxy credentials:</source>
+        <target state="translated">Forneça as credenciais de proxy:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_RequestCredentials">
+        <source>Please provide credentials for: {0}</source>
+        <target state="translated">Forneça credenciais para: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_UserName">
+        <source>UserName: </source>
+        <target state="translated">Nome de usuário :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultCommandDescription">
+        <source>No description was provided for this command.</source>
+        <target state="translated">Nenhuma descrição foi fornecida para este comando.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">o servidor de símbolos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error">
+        <source>Error</source>
+        <target state="translated">Erro</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotExpected">
+        <source>The argument '{0}' is not expected.</source>
+        <target state="translated">O argumento '{0}' não é esperado.</target>
+        <note>0 - argument name</note>
+      </trans-unit>
+      <trans-unit id="Error_AttemptingToPackSDKproject">
+        <source>The `pack` command for SDK-style projects is not supported, use `dotnet pack` or `msbuild -t:pack` to pack this project instead. You can override this behavior by setting the '{0}' environment variable to 'true'.</source>
+        <target state="translated">O comando `pack` para projetos no estilo SDK não é suportado, em vez disso, use `dotnet pack` ou `msbuild -t:pack` para compactar este projeto. Você pode substituir esse comportamento definindo a variável de ambiente '{0}' como 'true'.</target>
+        <note>0 - environment variable name. 
+Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find the specified version of msbuild: '{0}'</source>
+        <target state="translated">Não é possível localizar aversão especificada do msbuild: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindNonArchitectureSpecificMsbuild">
+        <source>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</source>
+        <target state="translated">O diretório MSBuild resolvido é `{0}`, que é um diretório específico da arquitetura. Não foi possível localizar o MSBuild em seu diretório pai (não específico da arquitetura).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetGetAllProjectFileNamesMethod">
+        <source>Cannot get the GetAllProjectFileNamesMethod from type  Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">Cannot get the GetAllProjectFileNamesMethod from type  Mono.XBuild.CommandLine.SolutionParser.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetXBuildSolutionParser">
+        <source>Cannot get type Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">Não é possível obter o tipo Mono.XBuild.CommandLine.SolutionParser.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotKillMsBuild">
+        <source>MsBuild timeout out while trying to get project to project references, and NuGet.exe failed to kill the process.</source>
+        <target state="translated">O tempo limite do MsBuild foi atingido ao tentar obter referências de projeto para projeto, e o NuGet.exe falhou ao encerrar o processo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeProjectInSolution">
+        <source>Cannot load type Microsoft.Build.Construction.ProjectInSolution from Microsoft.Build.dll</source>
+        <target state="translated">Não é possível carregar o tipo Microsoft.Build.Construction.ProjectInSolution de Microsoft.Build.dll</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeSolutionParser">
+        <source>Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</source>
+        <target state="translated">Não é possível carregar o tipo Microsoft.Build.Construction.SolutionParser de Microsoft.Build.dll</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLocateSolutionFile">
+        <source>Cannot locate a solution file.</source>
+        <target state="translated">Não é possível localizar um arquivo de solução.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotPromptForInput">
+        <source>Cannot prompt for input in non-interactive mode.</source>
+        <target state="translated">Não é possível solicitar entrada no modo não interativo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateRandomFileForP2P">
+        <source>Failed to create a temporary file while trying to get project to project references.</source>
+        <target state="translated">Falha ao criar um arquivo temporário ao tentar obter o projeto para referências de projeto.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet exige fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Você está executando a operação "{0}" com fontes 'HTTP': {1}. O NuGet exige fontes HTTPS. Para usar fontes HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCharactersInPathSegment">
+        <source>Invalid characters in one of the following path segments: '{0}'</source>
+        <target state="translated">Caracteres inválidos em um dos seguintes segmentos de caminho: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCultureInfo">
+        <source>Invalid culture identifier in {0} environment variable. Value read is '{1}'</source>
+        <target state="translated">Identificador de cultura inválido na variável de ambiente {0}. O valor lido é '{1}'</target>
+        <note>0 - Environment variable name, 1 - value set in environment variable</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidMsbuildVersion">
+        <source>Invalid MSBuild version specified: '{0}'</source>
+        <target state="translated">Versão inválida especificada do MSBuild: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSolutionDirectory">
+        <source>Invalid solution directory: '{0}'</source>
+        <target state="translated">Diretório de solução inválido: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MSBuildNotInstalled">
+        <source>MSBuild is not installed.</source>
+        <target state="translated">O MSBuild não está instalado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">O parâmetro de origem não foi especificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MsBuildTimedOut">
+        <source>MsBuild timeout out while trying to get project to project references.</source>
+        <target state="translated">O tempo limite do MsBuild foi atingido ao tentar obter referências do projeto para o projeto.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleSolutions">
+        <source>This folder contains more than one solution file.</source>
+        <target state="translated">Esta pasta contém mais de um arquivo de solução.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleTargetFrameworks">
+        <source>project.json cannot contain multiple Target Frameworks.</source>
+        <target state="translated">O project.json não pode conter várias Estruturas de Destino.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NuGetExeNeedsToBeUnblockedAfterDownloading">
+        <source>NuGet.exe file on path {0} needs to be unblocked after downloading.</source>
+        <target state="translated">O arquivo NuGet.exe no caminho {0} precisa ser desbloqueado após o download.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagesConfigParseError">
+        <source>Error parsing packages.config file at {0}: {1}</source>
+        <target state="translated">Erro ao analisar o arquivo packages.config em {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProcessingNuspecFile">
+        <source>Error occurred when processing file '{0}': {1}</source>
+        <target state="translated">Ocorreu um erro ao processar o arquivo '{0}': {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJsonNotAllowed">
+        <source>Invalid input '{0}'. Provide the path of an msbuild solution file instead. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">Entrada inválida '{0}'. O suporte do XProj foi removido. O suporte para arquivos project.json independentes e XProj foi removido, para continuar trabalhando com projetos herdados, use o NuGet 3.5.x em https://nuget.org/downloads</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated_And_Removed">
+        <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
+Please consider migrating '{0}' to `PackageReference` and using the pack targets.
+You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
+        <target state="translated">O pacote 'project.json' está desabilitado na versão atual do NuGet e será removido permanentemente em uma versão futura.
+Considere migrar '{0}' para 'PackageReference' e usar os destinos do pacote.
+Você pode definir a '{1}' de ambiente como 'true' para habilitar temporariamente essa funcionalidade.</target>
+        <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileDoesNotExist">
+        <source>Response file '{0}' does not exist</source>
+        <target state="translated">O arquivo de resposta '{0}' não existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileInvalid">
+        <source>Invalid response file, '@' does not exist</source>
+        <target state="translated">O arquivo de resposta '@' não existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileMaxRecursionDepth">
+        <source>No more than {0} nested response files are allowed</source>
+        <target state="translated">Não mais que {0} arquivos de resposta aninhados são permitidos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileNullOrEmpty">
+        <source>Response file '{0}' cannot be empty</source>
+        <target state="translated">O arquivo de resposta '{0}' não pode ficar vazio</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileTooLarge">
+        <source>Response file '{0}' cannot be larger than {1}mb</source>
+        <target state="translated">O arquivo de resposta '{0}' não pode ser maior que {1}mb</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SettingsIsNull">
+        <source>Property Settings is null.</source>
+        <target state="translated">As configurações de propriedade são null.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SolutionFileParseError">
+        <source>Error parsing solution file at {0}: {1}</source>
+        <target state="translated">Erro ao analisar o arquivo de solução em {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceProviderIsNull">
+        <source>Property SourceProvider is null.</source>
+        <target state="translated">A propriedade SourceProvider é nula.</target>
+        <note>Don't localize 'SourceProvider'</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain an msbuild solution or packages.config file to restore.</source>
+        <target state="translated">A pasta '{0}' não contém uma solução msbuild ou packages.config arquivo a ser restaurado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget_Because">
+        <source>Failed to find an msbuild solution, packages.config, or project.json file in the folder '{0}'.</source>
+        <target state="translated">Falha ao localizar um arquivo msbuild solution, packages.config ou project.json na pasta '{0}'.</target>
+        <note>{0} is the folder that could not be accessed. The underlying failure is available in the inner exception message.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownAction">
+        <source>The action '{0}' is not recognized.</source>
+        <target state="translated">A ação '{0}' não é reconhecida.</target>
+        <note>0 - action</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownDependencyVersion">
+        <source>Invalid value given for 'DependencyVersion': "{0}".</source>
+        <target state="translated">Valor inválido fornecido para 'DependencyVersion': "{0}".</target>
+        <note>Please don't localize "DependencyVersion".</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSlnx">
+        <source>This version of MSBuild not support the slnx format: '{0}'. Please use a MSBuild version greater or equal to 17.13 to use this feature.</source>
+        <target state="translated">Essa versão do MSBuild não dá suporte ao formato slnx: "{0}". Use uma versão do MSBuild maior ou igual a 17.13 para usar esse recurso.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
+        <source>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</source>
+        <target state="translated">Esta versão do MSBuild não dá suporte ao filtro de Solução: '{0}'. Use uma versão do MSBuild maior ou igual a 16.7 para usar esse recurso.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsbuild">
+        <source>This version of msbuild is not supported: '{0}'</source>
+        <target state="translated">Não há suporte para esta versão do msbuild: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UpdateSelf_Source">
+        <source>The `update -self` command only accepts one source as an argument. If the source option is not specified, the default NuGet source will be used.</source>
+        <target state="translated">O comando 'update -self' aceita apenas uma fonte como argumento. Se a opção de origem não for especificada, a origem padrão do NuGet será usada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">Falha ao criar '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtension">
+        <source>Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock).</source>
+        <target state="translated">Falha ao carregar {0}. Se essa extensão foi baixada da Internet, verifique se ela foi desbloqueada (clique com o botão direito do mouse, propriedades, desbloqueio).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtensionDuringMefComposition">
+        <source>Failed to load {0}{1}</source>
+        <target state="translated">Falha ao carregar {0}{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictChoiceText">
+        <source>[Y] Yes  [A] Yes to All  [N] No  [L] No to All ?</source>
+        <target state="translated">[Y] Sim [A] Sim para Todos [N] Não [L] Não para Todos?</target>
+        <note>Please do not localize the letters inside the [] brackets.</note>
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">O arquivo '{0}' não foi incluído porque o pacote já contém o arquivo '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProject">
+        <source>Found 1 project with a packages.config file. ({0})</source>
+        <target state="translated">Encontrado 1 projeto com um arquivo packages.config. ({0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProjects">
+        <source>Found {0} projects with a packages.config file. ({1})</source>
+        <target state="translated">Encontrado {0} projeto com um arquivo packages.config. ({1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandForMoreInfo">
+        <source>For more information, visit {0}</source>
+        <target state="translated">Para obter mais informações, acesse: {0}</target>
+        <note>{0} will be replaced with a url.</note>
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedContainsNoPackages">
+        <source>Feed '{0}' contains no packages.</source>
+        <target state="translated">O feed '{0}' não contém pacotes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedIsNotFound">
+        <source>Provided feed folder '{0}' is not found.</source>
+        <target state="translated">A pasta de feed '{0}' não foi encontrada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandHigherVersionAlreadyExists">
+        <source>Skipping installation of package "{0}" because higher version "{1}" is already installed.</source>
+        <target state="translated">Ignorando a instalação do pacote "{0}" porque a versão superior "{1}" já está instalada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandInvalidPackageReference">
+        <source>'{0}' contains invalid package references. </source>
+        <target state="translated">'{0}' contém referências de pacote inválidas. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandNothingToInstall">
+        <source>All packages listed in {0} are already installed.</source>
+        <target state="translated">Todos os pacotes listados em {0} já estão instalados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageAlreadyExists">
+        <source>Package "{0}" is already installed.</source>
+        <target state="translated">O pacote "{0}" já está instalado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageReferenceInvalidVersion">
+        <source>Version string specified for package reference '{0}' is invalid.</source>
+        <target state="translated">A cadeia de caracteres de versão especificada para a referência de pacote '{0}' é inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageRestoreConsentNotFound">
+        <source>Package restore is disabled. To enable it, open the Visual Studio Options dialog, click on Package Manager node and check '{0}'. You can also enable package restore by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">A restauração do pacote está desabilitada. Para habilitá-la, abra a caixa de diálogo Opções do Visual Studio, clique no nó do gerenciador de pacotes e marque '{0}'. Você também pode habilitar a restauração de pacotes definindo a variável de ambiente 'EnableNuGetPackageRestore' como 'true'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandUnableToFindPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">Não é possível encontrar o pacote '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallPackageMessage">
+        <source>Installing package '{0}' to '{1}'.</source>
+        <target state="translated">Instalando o pacote '{0}' em '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArguments">
+        <source>{0}: invalid arguments.</source>
+        <target state="translated">{0}: argumentos inválidos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAssemblyInformationalVersion">
+        <source>Invalid AssemblyInformationalVersion '{0}' on assembly '{1}'; falling back to AssemblyVersion '{2}'.</source>
+        <target state="translated">AssemblyInformationalVersion inválido '{0}' no assembly '{1}'; voltando para AssemblyVersion '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFile">
+        <source>No packages.config, project or solution file specified. Use the -self switch to update NuGet.exe.</source>
+        <target state="translated">Nenhum arquivo packages.config, projeto ou solução especificado. Use a opção -self para atualizar o NuGet.exe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOptionValueError">
+        <source>Invalid option value: '{0} {1}'</source>
+        <target state="translated">Valor de opção inválido: '{0} {1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
+        <target state="translated">A fonte especificada '{0}' é inválida. Forneça uma fonte válida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandNoPackages">
+        <source>No packages found.</source>
+        <target state="translated">Nenhum pacote encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_LicenseUrl">
+        <source>License url: {0}</source>
+        <target state="translated">URL da licença: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_ListNotSupported">
+        <source>This version of nuget.exe does not support listing packages from package source '{0}'.</source>
+        <target state="translated">Esta versão do nuget.exe não dá suporte à listagem de pacotes da origem do pacote '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">a galeria do NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: one or more errors occured.</source>
+        <target state="translated">Falha ao limpar recursos locais: ocorreu um ou mais erros.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">Recursos locais limpos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetCache">
+        <source>Clearing NuGet cache: {0}</source>
+        <target state="translated">Limpando o cache NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesCache">
+        <source>Clearing NuGet global packages cache: {0}</source>
+        <target state="translated">Limpando cache de pacotes global NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">Limpando o cache NuGet HTTP: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">Falha ao excluir '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
+        <target state="translated">Um nome de recurso local inválido foi fornecido. Forneça um dos seguintes valores: http-cache, packages-cache, global-packages, all.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">A localização do recurso local '{0}' é indefinida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">Recursos locais parcialmente limpos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LookingForInstalledPackages">
+        <source>Looking for installed packages in '{0}'.</source>
+        <target state="translated">Procurando pacotes instalados em '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'.</source>
+        <target state="translated">Detecção automática do MSBuild: usando a versão do msbuild '{0}' de '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection_Verbose">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'. Use option -MSBuildVersion to force nuget to use a specific version of MSBuild.</source>
+        <target state="translated">Detecção automática do MSBuild: usando a versão do msbuild '{0}' de '{1}'. Use a opção -MSBuildVersion para forçar o nuget a usar uma versão específica do MSBuild.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSbuildFromPath">
+        <source>Using Msbuild from '{0}'.</source>
+        <target state="translated">Usando o Msbuild de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOptionValueError">
+        <source>Missing option value for: '{0}'</source>
+        <target state="translated">Valor de opção ausente para: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsBuildDoesNotExistAtPath">
+        <source>MsBuild.exe does not exist at '{0}'.</source>
+        <target state="translated">O MsBuild.exe não existe em '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildLoadToolSetError">
+        <source>Failed to load msbuild Toolset</source>
+        <target state="translated">Falha ao carregar o conjunto de ferramentas do msbuild</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildPathNotExist">
+        <source>MSBuildPath : {0} does not exist.</source>
+        <target state="translated">Caminho '{0}' inexistente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleProjectFilesFound">
+        <source>Found multiple project files for '{0}'.</source>
+        <target state="translated">Foram encontrados vários arquivos de projeto para '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesConfig">
+        <source>Unable to update. The project does not contain a packages.config file.</source>
+        <target state="translated">Não é possível atualizar. O projeto não contém um arquivo packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsFound">
+        <source>No projects found with packages.config.</source>
+        <target state="translated">Nenhum projeto encontrado com packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidNupkg">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">'{0}' não é um arquivo nupkg válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_NotFound">
+        <source>Provided Nupkg file '{0}' is not found.</source>
+        <target state="translated">O arquivo Nupkg fornecido '{0}' não foi encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OfficialPackageSourceName">
+        <source>NuGet official package source</source>
+        <target state="translated">Origem oficial do pacote do NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OptionInvalidWithoutSetter">
+        <source>[option] on '{0}' is invalid without a setter.</source>
+        <target state="translated">[option] em '{0}' é inválido sem um setter.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_VerboseDeprecated">
+        <source>Option 'Verbose' has been deprecated. Use 'Verbosity' instead.</source>
+        <target state="translated">A opção 'Verbose' foi preterida. Em vez disso, use 'Verbosity'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputNuGetVersion">
+        <source>{0} Version: {1}</source>
+        <target state="translated">{0} Versão: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">Arquivo '{0}' adicionado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildPackage">
+        <source>Attempting to build package from '{0}'.</source>
+        <target state="translated">Tentando criar o pacote de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">Tentando criar o pacote de símbolos para '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsChanged">
+        <source>File from dependency is changed. Adding file '{0}'.</source>
+        <target state="translated">O arquivo de dependência foi alterado. Adicionando o arquivo '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsNotChanged">
+        <source>File from dependency is not changed. File '{0}' is not added.</source>
+        <target state="translated">O arquivo da dependência não foi alterado. O arquivo '{0}' não foi adicionado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandInvalidMinClientVersion">
+        <source>The value of MinClientVersion argument is not a valid version.</source>
+        <target state="translated">O valor do argumento MinClientVersion não é uma versão válida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueDescription">
+        <source>Description: {0}</source>
+        <target state="translated">Descrição: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueSolution">
+        <source>Solution: {0}</source>
+        <target state="translated">Solução '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueTitle">
+        <source>Issue: {0}</source>
+        <target state="translated">Problema: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Falha ao criar o pacote. Certifique-se de que o '{0}' inclui arquivos de assembly. Para obter ajuda ao criar o pacote de símbolos, visite {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Falha ao criar o pacote. Certifique-se de que o '{0}' inclui arquivos de símbolo e origem. Para obter ajuda para criar o pacote de símbolos, visite {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPackageIssueSummary">
+        <source>{0} issue(s) found with package '{1}'.</source>
+        <target state="translated">{0} problema(s) encontrado(s) com o pacote '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSpecifyInputFileError">
+        <source>Please specify a nuspec or project file to use.</source>
+        <target state="translated">Especifique um nuspec ou arquivo de projeto a ser usado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">Pacote criado com êxito '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExist">
+        <source>Unable to locate '{0} {1}'. Make sure all packages exist in the packages folder before running update.</source>
+        <target state="translated">Não é possível localizar '{0} {1}'. Verifique se todos os pacotes existem na pasta de pacotes antes de executar a atualização.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreConsentCheckBoxText">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">&amp;Permitir que o NuGet baixe pacotes ausentes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagingFilesFromOutputPath">
+        <source>Packing files from '{0}'.</source>
+        <target state="translated">Compactando arquivos de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">'{0}' não é um caminho válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">'{0}' deve ser um caminho local ou um caminho de compartilhamento UNC.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectJsonPack_Deprecated">
+        <source>`project.json` pack is deprecated. Please consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
+        <target state="translated">O pacote 'project.json' foi preterido. Considere migrar '{0}' para 'PackageReference' e usar os destinos do pacote.</target>
+        <note>Do not localize project.json and `PackageReference` 
+0 - project path (project.json file path)</note>
+      </trans-unit>
+      <trans-unit id="ProjectRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. This project does not specify any packages for NuGet to restore.</source>
+        <target state="translated">Não há nada a fazer. Este projeto não especifica nenhum pacote para o NuGet restaurar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandNoSourceError">
+        <source>There is no default source, please specify a source.</source>
+        <target state="translated">Não há nenhuma fonte padrão, especifique uma origem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandTimeoutError">
+        <source>Pushing took too long. You can change the default timeout of 300 seconds by using the -Timeout &lt;seconds&gt; option with the push command.</source>
+        <target state="translated">O envio por push demorou muito. Você pode alterar o tempo limite padrão de 300 segundos usando a opção --Timeout &lt;seconds&gt; com o comando push.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourcePropertyIncorrectType">
+        <source>The property '{0}' on resource type '{1}' is not a type of ResourceManager.</source>
+        <target state="translated">A{1}propriedade '{0}' no tipo de recurso '' não é um tipo de ResourceManager.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourceTypeDoesNotHaveProperty">
+        <source>The resource type '{0}' does not have an accessible static property named '{1}'.</source>
+        <target state="translated">O tipo de recurso '{0}' não tem uma propriedade estática acessível denominada '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
+        <source>'globalPackagesFolder' setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
+        <target state="translated">A configuração 'globalPackagesFolder' é um caminho relativo. Para determinar o caminho completo, especifique -SolutionDirectory ou um arquivo de solução como um parâmetro. Para ignorar a configuração 'globalPackagesFolder', especifique -PackagesDirectory.</target>
+        <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
+        <source>Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory.</source>
+        <target state="translated">Não é possível determinar a pasta de pacotes para restaurar pacotes NuGet. Especifique -PackagesDirectory ou -SolutionDirectory.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandFileNotFound">
+        <source>Input file does not exist: {0}.</source>
+        <target state="translated">O arquivo de entrada não existe: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandOptionSolutionDirectoryIsInvalid">
+        <source>Option -SolutionDirectory is not valid when restoring packages for a solution.</source>
+        <target state="translated">Option -SolutionDirectory não é válido ao restaurar pacotes para uma solução.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandPackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
+        <target state="translated">Restaurando pacotes NuGet... 
+Para impedir que o NuGet baixe pacotes durante a compilação, abra a caixa de diálogo Opções do Visual Studio, clique no nó do gerenciador de pacotes do NuGet e desmarque '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandProjectNotFound">
+        <source>Project file {0} cannot be found.</source>
+        <target state="translated">O arquivo {0} não pode ser encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesForSolution">
+        <source>Restoring NuGet packages for solution {0}.</source>
+        <target state="translated">Restaurando pacotes NuGet para {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesFromPackagesConfigFile">
+        <source>Restoring NuGet packages listed in packages.config file.</source>
+        <target state="translated">Restaurando pacotes NuGet listados no arquivo packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesListedInFile">
+        <source>Restoring NuGet packages listed in file {0}.</source>
+        <target state="translated">Restaurando pacotes NuGet listados no arquivo {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScanningForProjects">
+        <source>Scanning for projects...</source>
+        <target state="translated">Verificando projetos...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandApiKeySaved">
+        <source>The API Key '{0}' was saved for {1}.</source>
+        <target state="translated">A Chave de API '{0}' foi salva para {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandDefaultApiKeysSaved">
+        <source>The API Key '{0}' was saved for {1} and {2}.</source>
+        <target state="translated">A Chave de API '{0}' foi salva para {1} e {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsCredentials_UsingSavedCredentials">
+        <source>Using credentials from config. UserName: {0}</source>
+        <target state="translated">Usando credenciais de configuração UserName: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. None of the projects in this solution specify any packages for NuGet to restore.</source>
+        <target state="translated">Não há nada a fazer. Nenhum dos projetos nesta solução especifica nenhum pacote para o NuGet restaurar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_NotFound">
+        <source>Source '{0}' is not found.</source>
+        <target state="translated">A origem '{0}' não foi encontrada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandCreatedNuSpec">
+        <source>Created '{0}' successfully.</source>
+        <target state="translated">'{0}' foi criado com êxito.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandFileExists">
+        <source>'{0}' already exists, use -Force to overwrite it.</source>
+        <target state="translated">'{0}' já existe, use -Force para substituí-lo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToConvertTypeError">
+        <source>Unable to change from type '{0}' to '{1}'.</source>
+        <target state="translated">Não é possível alterar do tipo '{0}' para '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToExtractAssemblyMetadata">
+        <source>Unable to extract metadata from '{0}'.</source>
+        <target state="translated">Não foi possível extrair metadados do '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindBuildOutput">
+        <source>Unable to find '{0}'. Make sure the project has been built.</source>
+        <target state="translated">Não foi possível encontrar o '{0}'. Certifique-se de que o projeto foi criado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPackages">
+        <source>Unable to find '{0}'. Make sure they are specified in packages.config.</source>
+        <target state="translated">Não é possível localizar '{0}'. Verifique se eles estão especificados em packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindProject">
+        <source>Unable to find project '{0}'.</source>
+        <target state="translated">Não é possível encontrar o projeto '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindSolution">
+        <source>Unable to find solution '{0}'.</source>
+        <target state="translated">Não é possível localizar a solução '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocatePackagesFolder">
+        <source>Unable to locate the packages folder. Verify all the packages are restored before running 'nuget.exe update'.</source>
+        <target state="translated">Não é possível localizar a pasta de pacotes. Verifique se todos os pacotes foram restaurados antes de executar a 'atualização do nuget.exe'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocateProjectFile">
+        <source>Unable to locate project file for '{0}'.</source>
+        <target state="translated">Não é possível localizar o arquivo de projeto para '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknowCommandError">
+        <source>Unknown command: '{0}'</source>
+        <target state="translated">Comando desconhecido: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownOptionError">
+        <source>Unknown option: '{0}'</source>
+        <target state="translated">Opção desconhecida: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFramework">
+        <source>'{0}' is not a valid target framework.</source>
+        <target state="translated">'{0}' não é uma estrutura de destino válida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCheckingForUpdates">
+        <source>Checking for updates from {0}.</source>
+        <target state="translated">Verificando se há atualizações {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCurrentlyRunningNuGetExe">
+        <source>Currently running NuGet.exe {0}.</source>
+        <target state="translated">Atualmente executando o NuGet.exe {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandNuGetUpToDate">
+        <source>NuGet.exe is up to date.</source>
+        <target state="translated">O NuGet.exe está atualizado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToFindPackage">
+        <source>Unable to find '{0}' package.</source>
+        <target state="translated">Não é possível encontrar o pacote '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToLocateNuGetExe">
+        <source>Invalid NuGet.CommandLine package. Unable to locate NuGet.exe within the package.</source>
+        <target state="translated">Pacote NuGet.CommandLine inválido. Não é possível localizar o NuGet.exe dentro do pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdateSuccessful">
+        <source>Update successful.</source>
+        <target state="translated">Atualização bem-sucedida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdatingNuGet">
+        <source>Updating NuGet.exe to {0}.</source>
+        <target state="translated">Atualizando o NuGet.exe para {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdatingProject">
+        <source>Updating '{0}'...</source>
+        <target state="translated">Atualizando '{0}'...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingNuspecForMetadata">
+        <source>Using '{0}' for metadata.</source>
+        <target state="translated">Usando o '{0}' para metadados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingPackagesConfigForDependencies">
+        <source>Found packages.config. Using packages listed as dependencies</source>
+        <target state="translated">packages.config encontrado. Usando os pacotes listados como dependências</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_CommandDeprecated">
+        <source>'{0} {1}' is deprecated. Use '{0} {2}' instead.</source>
+        <target state="translated">''{0} {1}'' foi preterido. Em vez disso, use ''{0} {2}''.</target>
+        <note>{0} - name of the assembly running the command, e.g., NuGet
+{1} - current command marked as deprecated, e.g., list
+{2} - replacement command. For example, search</note>
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValue">
+        <source>The value "{0}" for {1} is a sample value and should be removed.</source>
+        <target state="translated">O valor "{0}" para {1} é um valor de exemplo e deve ser removido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueSolution">
+        <source>Replace with an appropriate value or remove and it and rebuild your package.</source>
+        <target state="translated">Substitua-o com um valor adequado ou remova-o e recompile o seu pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueTitle">
+        <source>Remove sample nuspec values.</source>
+        <target state="translated">Remova os valores nuspec de exemplo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">A chave '{0}' já existe na coleção Properties. Substituindo o valor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileDoesNotExist">
+        <source>'{0}' was included in the project but doesn't exist. Skipping...</source>
+        <target state="translated">'{0}' foi incluído no projeto mas não existe. Ignorando...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_InvalidPackageSaveMode">
+        <source>Invalid PackageSaveMode value '{0}'.</source>
+        <target state="translated">Valor de PackageSaveMode inválido '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_DisabledPolicy">
+        <source>Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">Habilite o suporte ao caminho de arquivo longo na política de grupo local. Para obter mais detalhes, consulte https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
+        <source>Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">Instale o .NET Framework 4.6.2 ou superior que dê suporte a caminhos de arquivo longos. Para obter mais detalhes, consulte https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedOS">
+        <source>Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">No momento, só há suporte para o caminho de arquivo longo no Windows 10. Para obter mais detalhes, consulte https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MsbuildPath">
+        <source>MsbuildPath : {0} is using, ignore MsBuildVersion: {1}. </source>
+        <target state="translated">MsbuildPath: {0} está usando, ignore MsBuildVersion: {1}. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoPromptDeprecated">
+        <source>Option 'NoPrompt' has been deprecated. Use 'NonInteractive' instead.</source>
+        <target state="translated">A opção 'NoPrompt' foi preterida. Em vez disso, use 'NonInteractive'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ReadingProjectsFailed">
+        <source>Error reading msbuild project information, ensure that your input solution or project file is valid. NETCore and UAP projects will be skipped, only packages.config files will be restored.</source>
+        <target state="translated">Erro ao ler as informações do projeto do msbuild. Verifique se a solução de entrada ou o arquivo de projeto é válido. Os projetos NETCore e UAP serão ignorados, somente os arquivos packages.config serão restaurados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersion">
+        <source>Version "{0}" does not follow semantic versioning guidelines.</source>
+        <target state="translated">A versão "{0}" não segue diretrizes de controle de versão semântico.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionSolution">
+        <source>Update your nuspec file or use the AssemblyInformationalVersion assembly attribute to specify a semantic version as described at http://semver.org. </source>
+        <target state="translated">Atualize seu arquivo nuspec ou use o atributo do assembly AssemblyInformationalVersion para especificar uma versão semântica conforme descrito em http://semver.org. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionTitle">
+        <source>Use semantic versioning</source>
+        <target state="translated">Use controle de versão semântico</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnresolvedFilePath">
+        <source>'{0}' was included in the project but the path could not be resolved. Skipping...</source>
+        <target state="translated">'{0}' foi incluído no projeto, mas o caminho não pôde ser resolvido. Ignorando...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersion">
+        <source>The version of dependency '{0}' is not specified.</source>
+        <target state="translated">A versão de dependência '{0}' não é especificada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionSolution">
+        <source>Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">Especifique a versão de dependência e recrie seu pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionTitle">
+        <source>Specify version of dependencies.</source>
+        <target state="translated">Especifique a versão das dependências.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedField">
+        <source>{0} was not specified. Using '{1}'.</source>
+        <target state="translated">{0} não foi especificado. Usando '{1}'.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

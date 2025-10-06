@@ -1,6 +1,0 @@
-* text=auto
-
-*.sh text eol=lf
-
-# patch files need lf line-endings, even on Windows
-*.patch text eol=lf

@@ -7,7 +7,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -27,13 +26,13 @@ namespace NuGetConsole
         private readonly AsyncLazy<IVsOutputWindow> _vsOutputWindow;
 
         [ImportingConstructor]
-        OutputConsoleProvider(
+        internal OutputConsoleProvider(
             [ImportMany]
             IEnumerable<Lazy<IHostProvider, IHostMetadata>> hostProviders)
             : this(AsyncServiceProvider.GlobalProvider, hostProviders)
         { }
 
-        OutputConsoleProvider(
+        internal OutputConsoleProvider(
             IAsyncServiceProvider asyncServiceProvider,
             IEnumerable<Lazy<IHostProvider, IHostMetadata>> hostProviders)
         {

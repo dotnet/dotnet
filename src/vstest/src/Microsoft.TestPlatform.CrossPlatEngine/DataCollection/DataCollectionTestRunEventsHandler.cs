@@ -41,6 +41,7 @@ internal class DataCollectionTestRunEventsHandler : IInternalTestRunEventsHandle
     /// <param name="proxyDataCollectionManager">
     /// The proxy Data Collection Manager.
     /// </param>
+    /// <param name="cancellationToken">Cancellation token</param>
     public DataCollectionTestRunEventsHandler(IInternalTestRunEventsHandler baseTestRunEventsHandler, IProxyDataCollectionManager proxyDataCollectionManager, CancellationToken cancellationToken)
         : this(baseTestRunEventsHandler, proxyDataCollectionManager, JsonDataSerializer.Instance, cancellationToken)
     {
@@ -58,6 +59,7 @@ internal class DataCollectionTestRunEventsHandler : IInternalTestRunEventsHandle
     /// <param name="dataSerializer">
     /// The data Serializer.
     /// </param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public DataCollectionTestRunEventsHandler(IInternalTestRunEventsHandler baseTestRunEventsHandler, IProxyDataCollectionManager proxyDataCollectionManager, IDataSerializer dataSerializer, CancellationToken cancellationToken)
     {
         _proxyDataCollectionManager = proxyDataCollectionManager;
@@ -196,7 +198,7 @@ internal class DataCollectionTestRunEventsHandler : IInternalTestRunEventsHandle
     /// The run context attachments.
     /// </param>
     /// <returns>
-    /// The <see cref="Collection"/>.
+    /// The <see cref="Collection{T}"/>.
     /// </returns>
     [return: NotNullIfNotNull("originalAttachmentSets")]
     [return: NotNullIfNotNull("newAttachments")]

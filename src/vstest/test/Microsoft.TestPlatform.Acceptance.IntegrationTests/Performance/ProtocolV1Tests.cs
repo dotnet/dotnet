@@ -63,7 +63,7 @@ public class ProtocolV1Tests
         sw.Stop();
 
         var actualDuration = sw.Elapsed;
-        actualDuration.Should().BeLessOrEqualTo(2.Seconds(), $"when serializing 10k test cases");
+        actualDuration.Should().BeLessThanOrEqualTo(2.Seconds(), $"when serializing 10k test cases");
     }
 
     [TestMethod]
@@ -80,7 +80,7 @@ public class ProtocolV1Tests
         sw.Stop();
 
         var actualDuration = sw.Elapsed;
-        actualDuration.Should().BeLessOrEqualTo(2.Seconds(), $"when de-serializing 10k test cases");
+        actualDuration.Should().BeLessThanOrEqualTo(2.Seconds(), $"when de-serializing 10k test cases");
     }
 
     [TestMethod]
@@ -96,7 +96,7 @@ public class ProtocolV1Tests
         sw.Stop();
 
         var actualDuration = sw.Elapsed;
-        actualDuration.Should().BeLessOrEqualTo(2.Seconds(), $"when serializing 10k test results");
+        actualDuration.Should().BeLessThanOrEqualTo(2.Seconds(), $"when serializing 10k test results");
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class ProtocolV1Tests
         sw.Stop();
 
         var actualDuration = sw.Elapsed;
-        actualDuration.Should().BeLessOrEqualTo(3.5.Seconds(), $"when de-serializing 10k test results");
+        actualDuration.Should().BeLessThanOrEqualTo(3.5.Seconds(), $"when de-serializing 10k test results");
     }
 
     private static string SerializeV1<T>(T data)

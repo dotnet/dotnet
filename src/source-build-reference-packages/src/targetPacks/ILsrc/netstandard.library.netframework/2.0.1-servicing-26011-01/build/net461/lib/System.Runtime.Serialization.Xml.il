@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -286,6 +286,10 @@
 }
 .assembly /*20000001*/ System.Runtime.Serialization.Xml
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000001:0A000003*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000004*/::.ctor() /* 0A000003 */ = ( 01 00 00 00 ) 
   .custom /*0C000002:0A00000C*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000010*/::.ctor(int32) /* 0A00000C */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000003:0A00000D*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000011*/::.ctor() /* 0A00000D */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -459,7 +463,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FC2C0EC4000
+// Image base: 0x00007FBA89545000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -492,7 +496,7 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method NotImplemented::ByDesignWithMessage
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Exception/*01000002*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Exception/*01000002*/
           ByDesign()
   {
     .get class [mscorlib/*23000001*/]System.Exception/*01000002*/ System.NotImplemented/*02000002*/::get_ByDesign() /* 06000001 */
@@ -647,7 +651,7 @@
       IL_0005:  /* 7A   |                  */ throw
     } // end of method SurrogateProviderAdapter::ProcessImportedType
 
-    .property /*17000002*/ instance class [System.Runtime.Serialization.Primitives/*23000002*/]System.Runtime.Serialization.ISerializationSurrogateProvider/*01000005*/
+    .property /*17000002*/ instance callconv(8) class [System.Runtime.Serialization.Primitives/*23000002*/]System.Runtime.Serialization.ISerializationSurrogateProvider/*01000005*/
             Provider()
     {
       .get instance class [System.Runtime.Serialization.Primitives/*23000002*/]System.Runtime.Serialization.ISerializationSurrogateProvider/*01000005*/ System.Runtime.Serialization.DataContractSerializerExtensions/*02000003*//SurrogateProviderAdapter/*02000004*/::get_Provider() /* 06000006 */

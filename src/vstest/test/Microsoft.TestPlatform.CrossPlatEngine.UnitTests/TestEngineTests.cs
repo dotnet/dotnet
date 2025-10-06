@@ -31,7 +31,7 @@ public class TestEngineTests
 
     public TestEngineTests()
     {
-        TestPluginCacheHelper.SetupMockExtensions(new[] { typeof(TestEngineTests).Assembly.Location }, () => { });
+        TestPluginCacheHelper.SetupMockExtensions([typeof(TestEngineTests).Assembly.Location], () => { });
         _mockProcessHelper = new Mock<IProcessHelper>();
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();
@@ -1042,7 +1042,7 @@ new Mock<IWarningLogger>().Object);
         var testRunCriteria = new TestRunCriteria(new List<string> { "1.dll" }, 100, false, settingXml);
 
         var runtimeProviderInfo = new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, settingXml,
-            new List<SourceDetail> { new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework } });
+            [new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework }]);
         var nonParallelExecutionManager = _testEngine.CreateNonParallelExecutionManager(_mockRequestData.Object, testRunCriteria, true, runtimeProviderInfo);
 
         Assert.IsNotNull(nonParallelExecutionManager);
@@ -1068,10 +1068,10 @@ new Mock<IWarningLogger>().Object);
             </RunSettings>";
 
         var runtimeProviderInfo = new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, settingXml,
-            new List<SourceDetail> {
-                new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
-                new() { Source = "2.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
-            });
+        [
+            new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
+            new() { Source = "2.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
+        ]);
         var nonParallelExecutionManager = _testEngine.CreateNonParallelExecutionManager(_mockRequestData.Object, testRunCriteria, true, runtimeProviderInfo);
 
         Assert.IsInstanceOfType(nonParallelExecutionManager, typeof(ProxyExecutionManagerWithDataCollection));

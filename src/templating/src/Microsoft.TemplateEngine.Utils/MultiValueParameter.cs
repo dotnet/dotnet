@@ -1,10 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Microsoft.TemplateEngine.Utils
 {
     /// <summary>
@@ -34,7 +30,7 @@ namespace Microsoft.TemplateEngine.Utils
         /// <summary>
         /// The actual atomic values specified for the parameter.
         /// </summary>
-        public IReadOnlyList<string> Values { get; private init; }
+        public IReadOnlyList<string> Values { get; }
 
         public static bool TryPerformMultiValueEqual(object x, object y, out bool result)
         {

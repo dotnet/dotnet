@@ -7,6 +7,7 @@ using System.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Shared;
+using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
 {
@@ -132,6 +133,20 @@ namespace NuGet.ProjectModel
 
         public RestoreAuditProperties RestoreAuditProperties { get; set; }
 
+        /// <summary>
+        /// A unified flag to help users manage their SDK warning levels. Example: 9.0.100.
+        /// When introducing a new warning or error use this property to
+        /// allow users to tell the sdk "treat me as if I were SDK x.y.z" and manage breaking changes
+        /// </summary>
+        public NuGetVersion SdkAnalysisLevel { get; set; }
+
+        /// <summary>
+        /// Indicates that Microsoft.NET.Sdk is being used.
+        /// </summary>
+        public bool UsingMicrosoftNETSdk { get; set; }
+
+        public bool UseLegacyDependencyResolver { get; set; }
+
         public override int GetHashCode()
         {
             StringComparer osStringComparer = PathUtility.GetStringComparerBasedOnOS();
@@ -162,6 +177,9 @@ namespace NuGet.ProjectModel
             hashCode.AddObject(CentralPackageVersionOverrideDisabled);
             hashCode.AddObject(CentralPackageTransitivePinningEnabled);
             hashCode.AddObject(RestoreAuditProperties);
+            hashCode.AddObject(UsingMicrosoftNETSdk);
+            hashCode.AddObject(SdkAnalysisLevel);
+            hashCode.AddObject(UseLegacyDependencyResolver);
 
             return hashCode.CombinedHash;
         }
@@ -207,7 +225,10 @@ namespace NuGet.ProjectModel
                    EqualityUtility.EqualsWithNullCheck(CentralPackageFloatingVersionsEnabled, other.CentralPackageFloatingVersionsEnabled) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageVersionOverrideDisabled, other.CentralPackageVersionOverrideDisabled) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageTransitivePinningEnabled, other.CentralPackageTransitivePinningEnabled) &&
-                   RestoreAuditProperties == other.RestoreAuditProperties;
+                   RestoreAuditProperties == other.RestoreAuditProperties &&
+                   UsingMicrosoftNETSdk == other.UsingMicrosoftNETSdk &&
+                   EqualityUtility.EqualsWithNullCheck(SdkAnalysisLevel, other.SdkAnalysisLevel) &&
+                   UseLegacyDependencyResolver == other.UseLegacyDependencyResolver;
         }
 
         private HashSet<string> GetSources(IList<PackageSource> sources)
@@ -258,6 +279,9 @@ namespace NuGet.ProjectModel
             clone.CentralPackageVersionOverrideDisabled = CentralPackageVersionOverrideDisabled;
             clone.CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
             clone.RestoreAuditProperties = RestoreAuditProperties?.Clone();
+            clone.SdkAnalysisLevel = SdkAnalysisLevel;
+            clone.UsingMicrosoftNETSdk = UsingMicrosoftNETSdk;
+            clone.UseLegacyDependencyResolver = UseLegacyDependencyResolver;
         }
     }
 }

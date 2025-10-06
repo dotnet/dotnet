@@ -27,10 +27,9 @@ namespace Test
 
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
-                __builder2.AddContent(1, 
 #nullable restore
-#line (1,56)-(1,82) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLowerInvariant()
+#line (1,56)-(1,82) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(1, context.ToLowerInvariant()
 
 #line default
 #line hidden
@@ -47,7 +46,15 @@ context.ToLowerInvariant()
 #nullable disable
 
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddComponentParameter(3, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,14)-(2,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+Header
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>)(
 #nullable restore
 #line (2,22)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
 header

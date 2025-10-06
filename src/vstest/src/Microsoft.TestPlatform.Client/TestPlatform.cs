@@ -87,7 +87,7 @@ internal class TestPlatform : ITestPlatform
         loggerManager.Initialize(discoveryCriteria.RunSettings);
 
         IProxyDiscoveryManager discoveryManager = _testEngine.GetDiscoveryManager(requestData, discoveryCriteria, sourceToSourceDetailMap, warningLogger);
-        discoveryManager.Initialize(options?.SkipDefaultAdapters ?? false);
+        discoveryManager.Initialize(GetSkipDefaultAdapters(options, discoveryCriteria.RunSettings));
 
         return new DiscoveryRequest(requestData, discoveryCriteria, discoveryManager, loggerManager);
     }
@@ -110,9 +110,29 @@ internal class TestPlatform : ITestPlatform
         loggerManager.Initialize(testRunCriteria.TestRunSettings);
 
         IProxyExecutionManager executionManager = _testEngine.GetExecutionManager(requestData, testRunCriteria, sourceToSourceDetailMap, warningLogger);
-        executionManager.Initialize(options?.SkipDefaultAdapters ?? false);
+        executionManager.Initialize(GetSkipDefaultAdapters(options, testRunCriteria.TestRunSettings));
 
         return new TestRunRequest(requestData, testRunCriteria, executionManager, loggerManager);
+    }
+
+    private static bool GetSkipDefaultAdapters(TestPlatformOptions? options, string? runSettings)
+    {
+        if (options?.SkipDefaultAdapters ?? false)
+        {
+            EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Skipping default adapters because of TestPlatform options SkipDefaultAdapters.");
+            return true;
+        }
+
+        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
+        var skipping = runConfiguration.SkipDefaultAdapters;
+        if (skipping)
+        {
+            EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Skipping default adapters because of RunConfiguration SkipDefaultAdapters.");
+            return true;
+        }
+
+        EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Not skipping default adapters SkipDefaultAdapters was false.");
+        return false;
     }
 
     /// <inheritdoc/>
@@ -211,6 +231,7 @@ internal class TestPlatform : ITestPlatform
     /// </summary>
     ///
     /// <param name="sources">The list of sources.</param>
+    /// <param name="strategy">Adapter loading strategy</param>
     private void AddLoggerAssembliesFromSource(IEnumerable<string> sources, TestAdapterLoadingStrategy strategy)
     {
         // Skip discovery unless we're using the default behavior, or NextToSource is specified.
@@ -263,7 +284,7 @@ internal class TestPlatform : ITestPlatform
         TestAdapterLoadingStrategy strategy = runConfiguration.TestAdapterLoadingStrategy;
 
         FileHelper fileHelper = new();
-        IEnumerable<string> defaultExtensionPaths = Enumerable.Empty<string>();
+        IEnumerable<string> defaultExtensionPaths = [];
 
         // Explicit adapter loading
         if (strategy.HasFlag(TestAdapterLoadingStrategy.Explicit))
@@ -334,7 +355,7 @@ internal class TestPlatform : ITestPlatform
     {
         if (!strategy.HasFlag(TestAdapterLoadingStrategy.Explicit))
         {
-            return Enumerable.Empty<string>();
+            return [];
         }
 
         if (fileHelper.Exists(path))
@@ -357,7 +378,7 @@ internal class TestPlatform : ITestPlatform
         }
 
         EqtTrace.Warning($"{nameof(TestPlatform)}.{nameof(ExpandAdaptersWithExplicitStrategy)} AdapterPath Not Found: {path}");
-        return Enumerable.Empty<string>();
+        return [];
     }
 
     private static IEnumerable<string> ExpandAdaptersWithDefaultStrategy(string path, IFileHelper fileHelper)
@@ -368,7 +389,7 @@ internal class TestPlatform : ITestPlatform
         {
             EqtTrace.Warning($"{nameof(TestPlatform)}.{nameof(ExpandAdaptersWithDefaultStrategy)} AdapterPath Not Found: {path}");
 
-            return Enumerable.Empty<string>();
+            return [];
         }
 
         return fileHelper.EnumerateFiles(

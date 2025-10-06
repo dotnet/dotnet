@@ -6,14 +6,6 @@
   -->
 
   <PropertyGroup>
-    <!-- Respect environment variable for the NuGet Packages Root if set; otherwise, use the current default location -->
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)'))</NuGetPackageRoot>
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(NUGET_PACKAGES)' != ''">$([MSBuild]::NormalizeDirectory('$(NUGET_PACKAGES)'))</NuGetPackageRoot>
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(UserProfile)', '.nuget', 'packages'))</NuGetPackageRoot>
-    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' != 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(HOME)', '.nuget', 'packages'))</NuGetPackageRoot>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <RepoRoot Condition="'$(RepoRoot)' == ''">$([MSBuild]::NormalizeDirectory('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'global.json'))'))</RepoRoot>
   </PropertyGroup>
 
@@ -56,6 +48,21 @@
     <VisualStudioSetupInsertionPath>$([MSBuild]::NormalizeDirectory('$(VisualStudioSetupOutputPath)', 'Insertion'))</VisualStudioSetupInsertionPath>
     <VisualStudioSetupIntermediateOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'VSSetup.obj', '$(Configuration)'))</VisualStudioSetupIntermediateOutputPath>
     <VisualStudioBuildPackagesDir>$([MSBuild]::NormalizeDirectory('$(VisualStudioSetupOutputPath)', 'DevDivPackages'))</VisualStudioBuildPackagesDir>
+  </PropertyGroup>
+
+  <!-- Keep in sync with eng/common/tools NUGET_PACKAGES env var defines. -->
+  <PropertyGroup>
+    <!-- Respect environment variable for the NuGet Packages Root if set. -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)'))</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(NUGET_PACKAGES)' != ''">$([MSBuild]::NormalizeDirectory('$(NUGET_PACKAGES)'))</NuGetPackageRoot>
+
+    <!-- When building source-only or with the ci flag, don't fallback to default cache locations. -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and
+                                 ('$(ContinuousIntegrationBuild)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true')">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.packages'))</NuGetPackageRoot>
+
+    <!-- Otherwise, use the current default location -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(UserProfile)', '.nuget', 'packages'))</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' and '$(OS)' != 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(HOME)', '.nuget', 'packages'))</NuGetPackageRoot>
   </PropertyGroup>
 
 </Project>

@@ -13,9 +13,9 @@ internal static partial class LegacySyntaxNodeExtensions
 {
     private class SpanData
     {
-        public SyntaxNode? Previous;
+        public SyntaxNodeOrToken? Previous;
         public bool PreviousComputed;
-        public SyntaxNode? Next;
+        public SyntaxNodeOrToken? Next;
         public bool NextComputed;
     }
 
@@ -86,6 +86,8 @@ internal static partial class LegacySyntaxNodeExtensions
 
     public static SpanEditHandler? GetEditHandler(this SyntaxNode node) => node.GetAnnotationValue(SyntaxConstants.EditHandlerKind) as SpanEditHandler;
 
+    public static SpanEditHandler? GetEditHandler(this SyntaxToken token) => token.GetAnnotationValue(SyntaxConstants.EditHandlerKind) as SpanEditHandler;
+
     public static TNode WithEditHandler<TNode>(this TNode node, SpanEditHandler? editHandler) where TNode : SyntaxNode
     {
         if (node is null)
@@ -143,10 +145,7 @@ internal static partial class LegacySyntaxNodeExtensions
     [Obsolete("Use FindToken or FindInnermostNode instead", error: false)]
     public static SyntaxNode? LocateOwner(this SyntaxNode node, SourceChange change)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         if (change.Span.AbsoluteIndex < node.Position)
         {
@@ -164,7 +163,7 @@ internal static partial class LegacySyntaxNodeExtensions
 
         if (node.IsSpanKind())
         {
-            var editHandler = node.GetEditHandler() ?? SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+            var editHandler = node.GetEditHandler() ?? SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any);
             return editHandler.OwnsChange(node, change) ? node : null;
         }
 
@@ -174,7 +173,7 @@ internal static partial class LegacySyntaxNodeExtensions
             MarkupEndTagSyntax endTag => LocateOwnerForSyntaxList(endTag.LegacyChildren, change),
             MarkupTagHelperStartTagSyntax startTagHelper => LocateOwnerForSyntaxList(startTagHelper.LegacyChildren, change),
             MarkupTagHelperEndTagSyntax endTagHelper => LocateOwnerForSyntaxList(endTagHelper.LegacyChildren, change),
-            _ => LocateOwnerForChildSyntaxList(node.ChildNodes(), change)
+            _ => LocateOwnerForChildSyntaxList(node.ChildNodesAndTokens(), change)
         };
 
         static SyntaxNode? LocateOwnerForSyntaxList(in SyntaxList<RazorSyntaxNode> list, SourceChange change)
@@ -194,7 +193,7 @@ internal static partial class LegacySyntaxNodeExtensions
         {
             foreach (var child in list)
             {
-                if (child.LocateOwner(change) is { } owner)
+                if (child.AsNode(out var node) && node.LocateOwner(change) is { } owner)
                 {
                     return owner;
                 }
@@ -206,60 +205,49 @@ internal static partial class LegacySyntaxNodeExtensions
 
     public static bool IsTransitionSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_transitionSpanKinds.Contains(node.Kind);
     }
 
+    public static bool IsMetaCodeSpanKind(this SyntaxNodeOrToken nodeOrToken)
+    {
+        ArgHelper.ThrowIfNull(nodeOrToken);
+
+        return s_metaCodeSpanKinds.Contains(nodeOrToken.Kind);
+    }
+
     public static bool IsMetaCodeSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_metaCodeSpanKinds.Contains(node.Kind);
     }
 
     public static bool IsCommentSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_commentSpanKinds.Contains(node.Kind);
     }
 
     public static bool IsCodeSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_codeSpanKinds.Contains(node.Kind);
     }
 
     public static bool IsMarkupSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_markupSpanKinds.Contains(node.Kind);
     }
 
     public static bool IsNoneSpanKind(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         return s_noneSpanKinds.Contains(node.Kind);
     }
@@ -267,13 +255,16 @@ internal static partial class LegacySyntaxNodeExtensions
     public static bool IsSpanKind(this SyntaxNode node)
         => s_allSpanKinds.Contains(node.Kind);
 
-    private static IEnumerable<SyntaxNode> FlattenSpansInReverse(this SyntaxNode node)
+    public static bool IsSpanKind(this SyntaxNodeOrToken nodeOrToken)
+        => s_allSpanKinds.Contains(nodeOrToken.Kind);
+
+    private static IEnumerable<SyntaxNodeOrToken> FlattenSpansInReverse(this SyntaxNode node)
     {
         using var stack = new ChildSyntaxListReversedEnumeratorStack(node);
 
-        while (stack.TryGetNextNode(out var nextNode))
+        while (stack.TryGetNextNodeOrToken(out var nextNode))
         {
-            if (nextNode is MarkupStartTagSyntax startTag)
+            if (nextNode.AsNode() is MarkupStartTagSyntax startTag)
             {
                 var children = startTag.LegacyChildren;
 
@@ -286,7 +277,7 @@ internal static partial class LegacySyntaxNodeExtensions
                     }
                 }
             }
-            else if (nextNode is MarkupEndTagSyntax endTag)
+            else if (nextNode.AsNode() is MarkupEndTagSyntax endTag)
             {
                 var children = endTag.LegacyChildren;
 
@@ -308,10 +299,7 @@ internal static partial class LegacySyntaxNodeExtensions
 
     public static IEnumerable<SyntaxNode> FlattenSpans(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         foreach (var child in node.DescendantNodes())
         {
@@ -342,12 +330,9 @@ internal static partial class LegacySyntaxNodeExtensions
         }
     }
 
-    public static SyntaxNode? PreviousSpan(this SyntaxNode node)
+    public static SyntaxNodeOrToken? PreviousSpan(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         var spanData = s_spanDataTable.GetOrCreateValue(node);
 
@@ -376,18 +361,15 @@ internal static partial class LegacySyntaxNodeExtensions
             }
 
             spanData.PreviousComputed = true;
-            spanData.Previous = null;
+            spanData.Previous = default;
 
-            return null;
+            return default;
         }
     }
 
-    public static SyntaxNode? NextSpan(this SyntaxNode node)
+    public static SyntaxNodeOrToken? NextSpan(this SyntaxNode node)
     {
-        if (node is null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
         var spanData = s_spanDataTable.GetOrCreateValue(node);
 
@@ -416,7 +398,7 @@ internal static partial class LegacySyntaxNodeExtensions
             }
 
             spanData.NextComputed = true;
-            spanData.Next = null;
+            spanData.Next = default;
 
             return null;
         }

@@ -24,7 +24,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<(System.Int32 Horizontal, System.Int32 Vertical)>(
+            __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<(global::System.Int32 Horizontal, global::System.Int32 Vertical)>(
 #nullable restore
 #line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
                        (32, 16)

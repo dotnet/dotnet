@@ -175,8 +175,12 @@ mono_arch_opcode_supported (int opcode)
 	switch (opcode) {
 	case OP_ATOMIC_ADD_I4:
 	case OP_ATOMIC_ADD_I8:
+	case OP_ATOMIC_EXCHANGE_U1:
+	case OP_ATOMIC_EXCHANGE_U2:
 	case OP_ATOMIC_EXCHANGE_I4:
 	case OP_ATOMIC_EXCHANGE_I8:
+	case OP_ATOMIC_CAS_U1:
+	case OP_ATOMIC_CAS_U2:
 	case OP_ATOMIC_CAS_I4:
 	case OP_ATOMIC_CAS_I8:
 	case OP_ATOMIC_LOAD_I1:
@@ -444,13 +448,17 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 //functions exported to be used by JS
 G_BEGIN_DECLS
-EMSCRIPTEN_KEEPALIVE void mono_wasm_execute_timer (void);
 
 //JS functions imported that we use
-extern void mono_wasm_schedule_timer (int shortestDueTimeMs);
+#ifdef DISABLE_THREADS
+EMSCRIPTEN_KEEPALIVE void mono_wasm_execute_timer (void);
+EMSCRIPTEN_KEEPALIVE void mono_background_exec (void);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_ds_exec (void);
+extern void SystemJS_ScheduleTimerImpl (int shortestDueTimeMs);
+#else
+extern void SystemJS_ScheduleSynchronizationContext(MonoNativeThreadId target_thread);
+#endif // DISABLE_THREADS
 G_END_DECLS
-
-void mono_background_exec (void);
 
 #endif // HOST_BROWSER
 
@@ -570,7 +578,6 @@ mono_init_native_crash_info (void)
 void
 mono_runtime_setup_stat_profiler (void)
 {
-	g_error ("mono_runtime_setup_stat_profiler");
 }
 
 gboolean
@@ -581,12 +588,20 @@ MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 	return FALSE;
 }
 
+void
+mono_chain_signal_to_default_sigsegv_handler (void)
+{
+	g_error ("mono_chain_signal_to_default_sigsegv_handler not supported on WASM");
+}
+
 gboolean
 mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {
 	g_error ("WASM systems don't support mono_thread_state_init_from_handle");
 	return FALSE;
 }
+
+#ifdef DISABLE_THREADS
 
 // this points to System.Threading.TimerQueue.TimerHandler C# method
 static void *timer_handler;
@@ -605,15 +620,14 @@ mono_wasm_execute_timer (void)
 	MONO_EXIT_GC_UNSAFE;
 }
 
-#ifdef DISABLE_THREADS
 void
-mono_wasm_main_thread_schedule_timer (void *timerHandler, int shortestDueTimeMs)
+SystemJS_ScheduleTimer (void *timerHandler, int shortestDueTimeMs)
 {
 	// NOTE: here the `timerHandler` callback is [UnmanagedCallersOnly] which wraps it with MONO_ENTER_GC_UNSAFE/MONO_EXIT_GC_UNSAFE
 
 	g_assert (timerHandler);
 	timer_handler = timerHandler;
-    mono_wasm_schedule_timer (shortestDueTimeMs);
+    SystemJS_ScheduleTimerImpl (shortestDueTimeMs);
 }
 #endif
 #endif
@@ -623,10 +637,10 @@ mono_arch_register_icall (void)
 {
 #ifdef HOST_BROWSER
 #ifdef DISABLE_THREADS
-	mono_add_internal_call_internal ("System.Threading.TimerQueue::MainThreadScheduleTimer", mono_wasm_main_thread_schedule_timer);
-	mono_add_internal_call_internal ("System.Threading.ThreadPool::MainThreadScheduleBackgroundJob", mono_main_thread_schedule_background_job);
+	mono_add_internal_call_internal ("System.Threading.TimerQueue::MainThreadScheduleTimer", SystemJS_ScheduleTimer);
+	mono_add_internal_call_internal ("System.Threading.ThreadPool::MainThreadScheduleBackgroundJob", SystemJS_ScheduleBackgroundJob);
 #else
-	mono_add_internal_call_internal ("System.Runtime.InteropServices.JavaScript.JSSynchronizationContext::TargetThreadScheduleBackgroundJob", mono_target_thread_schedule_background_job);
+	mono_add_internal_call_internal ("System.Runtime.InteropServices.JavaScript.JSSynchronizationContext::ScheduleSynchronizationContext", SystemJS_ScheduleSynchronizationContext);
 #endif /* DISABLE_THREADS */
 #endif /* HOST_BROWSER */
 }
@@ -741,7 +755,7 @@ mono_wasm_enable_debugging (int log_level)
 	mono_wasm_debug_level = log_level;
 }
 
-int
+MONO_API int
 mono_wasm_get_debug_level (void)
 {
 	return mono_wasm_debug_level;
@@ -785,7 +799,7 @@ mini_wasm_is_scalar_vtype (MonoType *type, MonoType **etype)
 		} else if (MONO_TYPE_ISSTRUCT (t)) {
 			if (!mini_wasm_is_scalar_vtype (t, etype))
 				return FALSE;
-		} else if (!((MONO_TYPE_IS_PRIMITIVE (t) || MONO_TYPE_IS_REFERENCE (t) || MONO_TYPE_IS_POINTER (t)))) {
+		} else if (!(MONO_TYPE_IS_PRIMITIVE (t) || MONO_TYPE_IS_REFERENCE (t) || MONO_TYPE_IS_POINTER (t))) {
 			return FALSE;
 		} else {
 			if (etype)
@@ -793,10 +807,12 @@ mini_wasm_is_scalar_vtype (MonoType *type, MonoType **etype)
 		}
 	}
 
-	if (etype) {
-		if (!(*etype))
-			*etype = mono_get_int32_type ();
+	// empty struct
+	if (nfields == 0 && etype) {
+		*etype = m_class_get_byval_arg (mono_defaults.sbyte_class);
 	}
+
+	g_assert (!etype || *etype);
 
 	return TRUE;
 }

@@ -16,7 +16,28 @@ namespace AspNetCore
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"1ca5ae8e569aefa6575a68e8d8b2d375ed79deec6565fb893b72b89423f55abd", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml")]
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InheritsViewModel : MyBasePageForViews<MyModel>
+    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InheritsViewModel : 
+#line (1,11)-(1,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+MyBasePageForViews
+
+#line default
+#line hidden
+#line (1,29)-(1,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+<
+
+#line default
+#line hidden
+#line (2,8)-(2,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+MyModel
+
+#line default
+#line hidden
+#line (1,36)-(1,37) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+>
+
+#line default
+#line hidden
+
     {
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()

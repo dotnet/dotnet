@@ -1,11 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
@@ -19,7 +20,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 {
     private string _filePath;
 
-    private IRazorDocumentMappingService DocumentMappingService { get; set; }
+    private IDocumentMappingService DocumentMappingService { get; set; }
 
     private IDocumentSnapshot DocumentSnapshot { get; set; }
 
@@ -38,9 +39,9 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
     {
         EnsureServicesInitialized();
 
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
-        _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
+        _filePath = Path.Combine(projectRoot, "Components", "Pages", "Generated.razor");
 
         WriteSampleFile(_filePath, Blocks, out var indexes);
 
@@ -50,8 +51,8 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
 
-        var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync();
-        CSharpDocument = codeDocument.GetCSharpDocument();
+        var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync(CancellationToken.None);
+        CSharpDocument = codeDocument.GetRequiredCSharpDocument();
     }
 
     private static void WriteSampleFile(string filePath, int blocks, out List<int> indexes)
@@ -114,26 +115,21 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
         LinePosition position = default;
         foreach (var index in Indexes)
         {
-            DocumentMappingService.TryMapToHostDocumentPosition(CSharpDocument, index, out position, out _);
+            DocumentMappingService.TryMapToRazorDocumentPosition(CSharpDocument, index, out position, out _);
         }
 
         return position;
     }
 
     // old code, copied from RazorDocumentMappingService before making changes
-    private bool TryMapToHostDocumentPosition(IRazorGeneratedDocument generatedDocument, int generatedDocumentIndex, out LinePosition hostDocumentPosition, out int hostDocumentIndex)
+    private bool TryMapToHostDocumentPosition(RazorCSharpDocument csharpDocument, int generatedDocumentIndex, out LinePosition hostDocumentPosition, out int hostDocumentIndex)
     {
-        if (generatedDocument is null)
+        if (csharpDocument is null)
         {
-            throw new ArgumentNullException(nameof(generatedDocument));
+            throw new ArgumentNullException(nameof(csharpDocument));
         }
 
-        if (generatedDocument.CodeDocument is not { } codeDocument)
-        {
-            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
-        }
-
-        foreach (var mapping in generatedDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappings)
         {
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
@@ -147,7 +143,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
                     // Found the generated span that contains the generated absolute index
 
                     hostDocumentIndex = mapping.OriginalSpan.AbsoluteIndex + distanceIntoGeneratedSpan;
-                    hostDocumentPosition = codeDocument.Source.Text.Lines.GetLinePosition(hostDocumentIndex);
+                    hostDocumentPosition = csharpDocument.CodeDocument.Source.Text.GetLinePosition(hostDocumentIndex);
                     return true;
                 }
             }
@@ -163,15 +159,14 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
     {
         File.Delete(_filePath);
 
-        var innerServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
+        var server = RazorLanguageServerHost.GetTestAccessor().Server;
 
-        await innerServer.ShutdownAsync();
-        await innerServer.ExitAsync();
+        await server.ShutdownAsync();
+        await server.ExitAsync();
     }
 
     private void EnsureServicesInitialized()
     {
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        DocumentMappingService = languageServer.GetRequiredService<IRazorDocumentMappingService>();
+        DocumentMappingService = RazorLanguageServerHost.GetRequiredService<IDocumentMappingService>();
     }
 }

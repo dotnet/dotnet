@@ -36,7 +36,7 @@ type PartialLongName =
 ///
 /// These methods are very old and are mostly to do with extracting "long identifier islands"
 ///     A.B.C
-/// from F# source code, an approach taken from pre-F# VS samples for implementing intelliense.
+/// from F# source code, an approach taken from pre-F# VS samples for implementing intellisense.
 ///
 /// This code should really no longer be needed since the language service has access to
 /// parsed F# source code ASTs.  However, the long identifiers are still passed back to GetDeclarations and friends in the
@@ -79,7 +79,7 @@ module QuickParse =
         | _ -> false
 
     let GetCompleteIdentifierIslandImplAux (lineStr: string) (index: int) : (string * int * bool) option =
-        if index < 0 || isNull lineStr || index >= lineStr.Length then
+        if index < 0 || index >= lineStr.Length then
             None
         else
             let fixup =
@@ -200,7 +200,7 @@ module QuickParse =
     /// a call to `DeclItemsForNamesAtPosition` for intellisense. This will
     /// allow us to use find the correct qualified items rather than resorting
     /// to the more expensive and less accurate environment lookup.
-    let GetCompleteIdentifierIsland (tolerateJustAfter: bool) (lineStr: string) (index: int) : (string * int * bool) option =
+    let GetCompleteIdentifierIsland (tolerateJustAfter: bool) (lineStr: string MaybeNull) (index: int) : (string * int * bool) option =
         if String.IsNullOrEmpty lineStr then
             None
         else

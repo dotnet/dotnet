@@ -32,7 +32,7 @@ public class MetadataAttributeTargetExtensionTest
         extension.WriteRazorCompiledItemAttribute(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"[assembly: global::TestItem(typeof(Foo.Bar), @""test"", @""Foo/Bar"")]
 ",
@@ -61,7 +61,7 @@ public class MetadataAttributeTargetExtensionTest
         extension.WriteRazorSourceChecksumAttribute(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"[global::TestChecksum(@""Sha256"", @""74657374"", @""Foo/Bar"")]
 ",
@@ -89,7 +89,7 @@ public class MetadataAttributeTargetExtensionTest
         extension.WriteRazorCompiledItemMetadataAttribute(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode().Trim();
+        var csharp = context.CodeWriter.GetText().ToString().Trim();
         Assert.Equal(
 "[global::TestItemMetadata(\"key\", \"value\")]",
             csharp,
@@ -116,7 +116,7 @@ public class MetadataAttributeTargetExtensionTest
         extension.WriteRazorCompiledItemMetadataAttribute(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode().Trim();
+        var csharp = context.CodeWriter.GetText().ToString().Trim();
         Assert.Equal(
 "[global::TestItemMetadata(\"\\\"test\\\" key\", \"\\\"test\\\" value\")]",
             csharp,

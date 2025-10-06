@@ -32,7 +32,7 @@ public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.
         var rewritten = rewriter.Visit(parsed.Root);
 
         // Assert
-        var rewrittenTree = RazorSyntaxTree.Create(rewritten, parsed.Source, parsed.Diagnostics, parsed.Options);
+        var rewrittenTree = new RazorSyntaxTree(rewritten, parsed.Source, parsed.Diagnostics, parsed.Options);
         BaselineTest(rewrittenTree);
     }
 }

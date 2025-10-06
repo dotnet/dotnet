@@ -6,14 +6,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
+using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Commands.Test
@@ -241,7 +244,7 @@ namespace NuGet.Commands.Test
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1);
-                spec1.TargetFrameworks.Single().TargetAlias = "net45";
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks.Single()) { TargetAlias = "net45" };
                 spec1.RestoreMetadata = new ProjectRestoreMetadata
                 {
                     OutputPath = Path.Combine(project1.FullName, "obj"),
@@ -462,7 +465,7 @@ namespace NuGet.Commands.Test
                 var lockPath2 = Path.Combine(objPath2, "project.assets.json");
 
                 // Link projects
-                spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
+                var spec1TargetFrameworkDependencies = spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange()
                     {
@@ -470,6 +473,7 @@ namespace NuGet.Commands.Test
                         TypeConstraint = LibraryDependencyTarget.ExternalProject
                     }
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = spec1TargetFrameworkDependencies };
 
                 spec1.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(NuGetFramework.Parse("net45")));
                 spec1.RestoreMetadata.TargetFrameworks
@@ -613,7 +617,7 @@ namespace NuGet.Commands.Test
                 var lockPath2 = Path.Combine(objPath2, "project.assets.json");
 
                 // Link projects
-                spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
+                var spec1TargetFrameworkDependencies = spec1.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange()
                     {
@@ -621,6 +625,7 @@ namespace NuGet.Commands.Test
                         TypeConstraint = LibraryDependencyTarget.ExternalProject
                     }
                 });
+                spec1.TargetFrameworks[0] = new TargetFrameworkInformation(spec1.TargetFrameworks[0]) { Dependencies = spec1TargetFrameworkDependencies };
 
                 spec1.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(NuGetFramework.Parse("net45")) { TargetAlias = "net45" });
                 spec1.RestoreMetadata.TargetFrameworks
@@ -937,7 +942,7 @@ namespace NuGet.Commands.Test
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(0, lockFile.LogMessages.Count);
                     Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
+                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Last().Name);
                     Assert.True(Directory.Exists(Path.Combine(globalPackagesFolder.FullName, "y", "1.0.0"))); // Y 1.0.0 is installed
@@ -1230,8 +1235,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(0, lockFile.LogMessages.Count);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
 
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("z", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
@@ -1331,8 +1336,8 @@ namespace NuGet.Commands.Test
 
 
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.First().Name);
                     Assert.Equal("y", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
 
@@ -1440,8 +1445,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal(1, lockFile.Libraries.Count); // Only X is written in the libraries section.
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal(1, lockFile.LogMessages.Count);
 
                     var logMessage = lockFile.LogMessages.First();
@@ -1538,8 +1543,8 @@ namespace NuGet.Commands.Test
                     Assert.Equal(1, lockFile.Libraries.Count);
                     Assert.Equal("x", lockFile.Targets.First().Libraries.First().Name);
                     Assert.Equal(2, lockFile.PackageSpec.TargetFrameworks.Count);
-                    Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Count);
-                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Count);
+                    Assert.Equal(0, lockFile.PackageSpec.TargetFrameworks.First().DownloadDependencies.Length);
+                    Assert.Equal(1, lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.Length);
                     Assert.Equal("x", lockFile.PackageSpec.TargetFrameworks.Last().DownloadDependencies.First().Name);
 
                     Assert.Equal(1, lockFile.LogMessages.Count);
@@ -1990,6 +1995,107 @@ namespace NuGet.Commands.Test
                     Assert.Equal(0, lockFile.LogMessages.Count);
                 }
             }
+        }
+
+        [Fact]
+        public async Task RestoreRunner_WithMultipleProjects_AndPackagePruningOnOnlyOne_PrunesCorrectly()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Arrange
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("packageB", "1.0.0")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var p1 = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            var p2 = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, p1).WithSettingsBasedRestoreMetadata(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, p2).WithSettingsBasedRestoreMetadata(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
+
+            // set up the dg spec.
+            var dgFile = new DependencyGraphSpec();
+            dgFile.AddProject(projectSpec1);
+            dgFile.AddProject(projectSpec2);
+            dgFile.AddRestore(projectSpec1.RestoreMetadata.ProjectUniqueName);
+            dgFile.AddRestore(projectSpec2.RestoreMetadata.ProjectUniqueName);
+
+            var logger = new TestLogger();
+            using var cacheContext = new SourceCacheContext();
+
+            var settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+
+            var restoreContext = new RestoreArgs()
+            {
+                CacheContext = cacheContext,
+                DisableParallel = true,
+                Log = logger,
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                CachingSourceProvider = new CachingSourceProvider(new TestPackageSourceProvider([new PackageSource(pathContext.PackageSource)])),
+                PreLoadedRequestProviders = new List<IPreLoadedRestoreRequestProvider>()
+                {
+                    new DependencyGraphSpecRequestProvider(new RestoreCommandProvidersCache(), dgFile)
+                }
+            };
+
+            // Act
+            var summaries = await RestoreRunner.RunAsync(restoreContext);
+            Assert.True(summaries.All(e => e.Success), string.Join(Environment.NewLine, logger.Messages));
+
+            var lockFormat = new LockFileFormat();
+            var p1AssetsFile = lockFormat.Read(Path.Combine(projectSpec1.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+            var p2AssetsFile = lockFormat.Read(Path.Combine(projectSpec2.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+
+            p1AssetsFile.Targets.Should().HaveCount(1);
+            p1AssetsFile.Targets[0].Libraries.Should().HaveCount(1);
+            p1AssetsFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            p1AssetsFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p1AssetsFile.Targets[0].Libraries[0].Dependencies.Should().BeEmpty();
+
+            p2AssetsFile.Targets.Should().HaveCount(1);
+            p2AssetsFile.Targets[0].Libraries.Should().HaveCount(2);
+            p2AssetsFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            p2AssetsFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p2AssetsFile.Targets[0].Libraries[0].Dependencies.Should().HaveCount(1);
+            p2AssetsFile.Targets[0].Libraries[1].Name.Should().Be("packageB");
+            p2AssetsFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+            p2AssetsFile.Targets[0].Libraries[1].Dependencies.Should().BeEmpty();
         }
     }
 }

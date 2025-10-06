@@ -57,7 +57,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     private ToolboxItemCreatorCallback _toolboxCreator;
 
     /// <summary>
-    ///  Property shadow for ContainerControl's AutoScaleDimensions.  We shadow here so it
+    ///  Property shadow for ContainerControl's AutoScaleDimensions. We shadow here so it
     ///  always returns the CurrentAutoScaleDimensions for the control. This way the control's
     ///  state always adapts to the current font / monitor.
     /// </summary>
@@ -77,15 +77,12 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             ContainerControl c = Control as ContainerControl;
-            if (c is not null)
-            {
-                c.AutoScaleDimensions = value;
-            }
+            c?.AutoScaleDimensions = value;
         }
     }
 
     /// <summary>
-    ///  Property shadow for ContainerControl's AutoScaleMode.  We shadow here so it
+    ///  Property shadow for ContainerControl's AutoScaleMode. We shadow here so it
     ///  never gets to the control; it can be very distracting if you change the font
     ///  and have the form you're designing suddenly move on you.
     /// </summary>
@@ -122,7 +119,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  BackColor property on control.  We shadow this property at design time.
+    ///  BackColor property on control. We shadow this property at design time.
     /// </summary>
     private Color BackColor
     {
@@ -143,7 +140,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Location property on control.  We shadow this property at design time.
+    ///  Location property on control. We shadow this property at design time.
     /// </summary>
     [DefaultValue(typeof(Point), "0, 0")]
     private Point Location
@@ -173,7 +170,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Determines if the tab order UI is active.  When tab order is active, we don't want to forward
+    ///  Determines if the tab order UI is active. When tab order is active, we don't want to forward
     ///  any WndProc messages to the menu editor service (those are all non-selectable components)
     /// </summary>
     private bool TabOrderActive
@@ -199,10 +196,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayAutoArrange = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.AutoArrange = _trayAutoArrange;
-            }
+            _componentTray?.AutoArrange = _trayAutoArrange;
         }
     }
 
@@ -213,10 +207,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayLargeIcon = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.ShowLargeIcons = _trayLargeIcon;
-            }
+            _componentTray?.ShowLargeIcons = _trayLargeIcon;
         }
     }
 
@@ -227,10 +218,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         set
         {
             _trayHeight = value;
-            if (_componentTray is not null)
-            {
-                _componentTray.Height = _trayHeight;
-            }
+            _componentTray?.Height = _trayHeight;
         }
     }
 
@@ -249,12 +237,16 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     {
         // If there is no tray we bail.
         if (_componentTray is null)
+        {
             return true;
+        }
 
         // Figure out if any of the components in the drag-drop are children
         // of our own tray. If so, we should prevent this drag-drop from proceeding.
-        //
-        OleDragDropHandler ddh = GetOleDragHandler();
+
+        // Keeping GetOleDragHandler() for compat.
+        _ = GetOleDragHandler();
+
         object[] dragComps = OleDragDropHandler.GetDraggingObjects(de);
 
         if (dragComps is not null)
@@ -275,12 +267,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         }
 
         // ToolStripItems cannot be dropped on any ParentControlDesigners since they have custom DataObject Format.
-        if (de.Data is ToolStripItemDataObject)
-        {
-            return false;
-        }
-
-        return true;
+        return de.Data is not ToolStripItemDataObject;
     }
 
     private AxToolboxItem CreateAxToolboxItem(IDataObject dataObject)
@@ -352,11 +339,11 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
                     host.RemoveService<ToolStripAdornerWindowService>();
                 }
 
-                host.Activated -= new EventHandler(OnDesignerActivate);
-                host.Deactivated -= new EventHandler(OnDesignerDeactivate);
+                host.Activated -= OnDesignerActivate;
+                host.Deactivated -= OnDesignerDeactivate;
 
                 // If the tray wasn't destroyed, then we got some sort of imbalance
-                // in our add/remove calls.  Don't sweat it, but do remove the tray.
+                // in our add/remove calls. Don't sweat it, but do remove the tray.
                 //
                 if (_componentTray is not null)
                 {
@@ -374,15 +361,15 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
                 IComponentChangeService cs = (IComponentChangeService)GetService(typeof(IComponentChangeService));
                 if (cs is not null)
                 {
-                    cs.ComponentAdded -= new ComponentEventHandler(OnComponentAdded);
-                    cs.ComponentChanged -= new ComponentChangedEventHandler(OnComponentChanged);
-                    cs.ComponentRemoved -= new ComponentEventHandler(OnComponentRemoved);
+                    cs.ComponentAdded -= OnComponentAdded;
+                    cs.ComponentChanged -= OnComponentChanged;
+                    cs.ComponentRemoved -= OnComponentRemoved;
                 }
 
                 if (_undoEngine is not null)
                 {
-                    _undoEngine.Undoing -= new EventHandler(OnUndoing);
-                    _undoEngine.Undone -= new EventHandler(OnUndone);
+                    _undoEngine.Undoing -= OnUndoing;
+                    _undoEngine.Undone -= OnUndone;
                 }
 
                 if (_toolboxCreator is not null)
@@ -403,20 +390,14 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             ISelectionService ss = (ISelectionService)GetService(typeof(ISelectionService));
             if (ss is not null)
             {
-                ss.SelectionChanged -= new EventHandler(OnSelectionChanged);
+                ss.SelectionChanged -= OnSelectionChanged;
             }
 
-            if (_behaviorService is not null)
-            {
-                _behaviorService.Dispose();
-                _behaviorService = null;
-            }
+            _behaviorService?.Dispose();
+            _behaviorService = null;
 
-            if (_selectionManager is not null)
-            {
-                _selectionManager.Dispose();
-                _selectionManager = null;
-            }
+            _selectionManager?.Dispose();
+            _selectionManager = null;
 
             if (_componentTray is not null)
             {
@@ -430,54 +411,33 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
                 _componentTray = null;
             }
 
-            if (_pbrsFwd is not null)
-            {
-                _pbrsFwd.Dispose();
-                _pbrsFwd = null;
-            }
+            _pbrsFwd?.Dispose();
+            _pbrsFwd = null;
 
-            if (_frame is not null)
-            {
-                _frame.Dispose();
-                _frame = null;
-            }
+            _frame?.Dispose();
+            _frame = null;
 
-            if (_commandSet is not null)
-            {
-                _commandSet.Dispose();
-                _commandSet = null;
-            }
+            _commandSet?.Dispose();
+            _commandSet = null;
 
-            if (_inheritanceService is not null)
-            {
-                _inheritanceService.Dispose();
-                _inheritanceService = null;
-            }
+            _inheritanceService?.Dispose();
+            _inheritanceService = null;
 
-            if (_inheritanceUI is not null)
-            {
-                _inheritanceUI.Dispose();
-                _inheritanceUI = null;
-            }
+            _inheritanceUI?.Dispose();
+            _inheritanceUI = null;
 
             if (_designBindingValueUIHandler is not null)
             {
                 IPropertyValueUIService pvUISvc = (IPropertyValueUIService)GetService(typeof(IPropertyValueUIService));
-                if (pvUISvc is not null)
-                {
-                    pvUISvc.RemovePropertyValueUIHandler(new PropertyValueUIHandler(_designBindingValueUIHandler.OnGetUIValueItem));
-                    pvUISvc = null;
-                }
+                pvUISvc?.RemovePropertyValueUIHandler(new PropertyValueUIHandler(_designBindingValueUIHandler.OnGetUIValueItem));
+                pvUISvc = null;
 
                 _designBindingValueUIHandler.Dispose();
                 _designBindingValueUIHandler = null;
             }
 
-            if (_designerExtenders is not null)
-            {
-                _designerExtenders.Dispose();
-                _designerExtenders = null;
-            }
+            _designerExtenders?.Dispose();
+            _designerExtenders = null;
 
             _axTools?.Clear();
 
@@ -499,7 +459,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <summary>
     ///  Returns an array of Glyph objects representing the selection
-    ///  borders and grab handles for the related Component.  Note that
+    ///  borders and grab handles for the related Component. Note that
     ///  based on 'selType' the Glyphs returned will either: represent
     ///  a fully resizeable selection border with grab handles, a locked
     ///  selection border, or a single 'hidden' selection Glyph.
@@ -579,9 +539,9 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Examines the current selection for a suitable frame designer.  This
+    ///  Examines the current selection for a suitable frame designer. This
     ///  is used when we are creating a new component so we know what control
-    ///  to parent the component to.  This will always return a frame designer,
+    ///  to parent the component to. This will always return a frame designer,
     ///  and may walk all the way up the control parent chain to this designer
     ///  if it needs to.
     /// </summary>
@@ -592,9 +552,9 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
         if (s is not null)
         {
-            // We first try the primary selection.  If that is null
+            // We first try the primary selection. If that is null
             // or isn't a Control, we then walk the set of selected
-            // objects.  Failing all of this, we default to us.
+            // objects. Failing all of this, we default to us.
             //
             object sel = s.PrimarySelection;
 
@@ -651,7 +611,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     /// <summary>
     ///  Determines if the given tool is supported by this designer.
     ///  If a tool is supported then it will be enabled in the toolbox
-    ///  when this designer regains focus.  Otherwise, it will be disabled.
+    ///  when this designer regains focus. Otherwise, it will be disabled.
     ///  Once a tool is marked as enabled or disabled it may not be
     ///  queried again.
     /// </summary>
@@ -661,7 +621,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Initializes the designer with the given component.  The designer can
+    ///  Initializes the designer with the given component. The designer can
     ///  get the component's site and request services from it in this call.
     /// </summary>
     public override void Initialize(IComponent component)
@@ -689,8 +649,8 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
         if (host is not null)
         {
-            host.Activated += new EventHandler(OnDesignerActivate);
-            host.Deactivated += new EventHandler(OnDesignerDeactivate);
+            host.Activated += OnDesignerActivate;
+            host.Deactivated += OnDesignerDeactivate;
 
             ServiceCreatorCallback callback = new(OnCreateService);
             host.AddService<IEventHandlerService>(callback);
@@ -700,7 +660,6 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             // Create the view for this component. We first create the designer frame so we can provide
             // the overlay and split window services, and then later on we initialize the frame with
             // the designer view.
-            //
             _frame = new DesignerFrame(component.Site);
 
             IOverlayService os = _frame;
@@ -720,18 +679,18 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             IComponentChangeService cs = (IComponentChangeService)GetService(typeof(IComponentChangeService));
             if (cs is not null)
             {
-                cs.ComponentAdded += new ComponentEventHandler(OnComponentAdded);
-                cs.ComponentChanged += new ComponentChangedEventHandler(OnComponentChanged);
-                cs.ComponentRemoved += new ComponentEventHandler(OnComponentRemoved);
+                cs.ComponentAdded += OnComponentAdded;
+                cs.ComponentChanged += OnComponentChanged;
+                cs.ComponentRemoved += OnComponentRemoved;
             }
 
             // We must do the inheritance scan early, but not so early that we haven't hooked events
-            // to handle invisible components.  We also use the variable "inheritanceService"
+            // to handle invisible components. We also use the variable "inheritanceService"
             // as a check in OnCreateHandle -- we cannot call base.OnCreateHandle if we have
             // not done an inheritance scan yet, because this will cause the base control
-            // class to hook all of the controls we may want to inherit.  So, we do the
+            // class to hook all of the controls we may want to inherit. So, we do the
             // scan, assign the variable, and then call OnCreateHandle if needed.
-            //
+
             _inheritanceUI = new InheritanceUI();
             host.AddService(_inheritanceUI);
 
@@ -766,17 +725,17 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
                 toolbox.AddCreator(_toolboxCreator, OleDragDropHandler.NestedToolboxItemFormat, host);
             }
 
-            // Listen for the completed load.  When finished, we need to select the form.  We don'
+            // Listen for the completed load. When finished, we need to select the form. We don'
             // want to do it before we're done, however, or else the dimensions of the selection rectangle
             // could be off because during load, change events are not fired.
-            host.LoadComplete += new EventHandler(OnLoadComplete);
+            host.LoadComplete += OnLoadComplete;
         }
 
         // Setup our menu command structure.
         Debug.Assert(component.Site is not null, "Designer host should have given us a site by now.");
         _commandSet = new ControlCommandSet(component.Site);
 
-        // Finally hook the designer view into the frame.  We do this last because the frame may
+        // Finally hook the designer view into the frame. We do this last because the frame may
         // cause the control to be created, and if this happens before the inheritance scan we
         // will subclass the inherited controls before we get a chance to attach designers.
         _frame.Initialize(Control);
@@ -789,7 +748,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <summary>
     ///  Checks to see if the give CLSID is an ActiveX control
-    ///  that we support.  This ignores designtime controls.
+    ///  that we support. This ignores designtime controls.
     /// </summary>
     private static bool IsSupportedActiveXControl(string clsid)
     {
@@ -878,69 +837,55 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     /// </summary>
     private void OnComponentAdded(object source, ComponentEventArgs ce)
     {
-        IDesignerHost host = (IDesignerHost)GetService(typeof(IDesignerHost));
-        if (host is not null)
+        if (!TryGetService(out IDesignerHost host))
         {
-            IComponent component = ce.Component;
+            return;
+        }
 
-            bool addControl = true;
+        IComponent component = ce.Component;
 
-            // This is the mirror to logic in ParentControlDesigner.  The component should be
-            // added somewhere, and this logic decides where.
+        // This is the mirror to logic in ParentControlDesigner. The component should be
+        // added somewhere, and this logic decides where.
 
-            // LETS SEE IF WE ARE TOOLSTRIP in which case we want to get added
-            // to the componentTray even though this is a control..
-            // We should think of implementing an interface so that we can have many more
-            // controls behaving like this.
+        // If the component is a toolstrip or a top level form, we should add to the tray.
 
-            if (host.GetDesigner(component) is not ToolStripDesigner td)
+        IDesigner designer = host.GetDesigner(component);
+        bool addControl = designer is ToolStripDesigner
+            || designer is not ControlDesigner cd
+            || (cd.Control is Form form && form.TopLevel);
+
+        if (!addControl || !TypeDescriptor.GetAttributes(component).Contains(DesignTimeVisibleAttribute.Yes))
+        {
+            return;
+        }
+
+        if (_componentTray is null && TryGetService(out ISplitWindowService sws))
+        {
+            _componentTray = new ComponentTray(this, Component.Site);
+            sws.AddSplitWindow(_componentTray);
+
+            _componentTray.Height = _trayHeight;
+            _componentTray.ShowLargeIcons = _trayLargeIcon;
+            _componentTray.AutoArrange = _trayAutoArrange;
+
+            host.AddService(_componentTray);
+        }
+
+        if (_componentTray is not null)
+        {
+            // Suspend the layout of the tray through the loading
+            // process. This way, we won't continuously try to layout
+            // components in auto arrange mode. We will instead let
+            // the controls restore themselves to their persisted state
+            // and then let auto-arrange kick in once.
+
+            if (host is not null && host.Loading && !_trayLayoutSuspended)
             {
-                ControlDesigner cd = host.GetDesigner(component) as ControlDesigner;
-                if (cd is not null)
-                {
-                    if (cd.Control is not Form form || !form.TopLevel)
-                    {
-                        addControl = false;
-                    }
-                }
+                _trayLayoutSuspended = true;
+                _componentTray.SuspendLayout();
             }
 
-            if (addControl &&
-                TypeDescriptor.GetAttributes(component).Contains(DesignTimeVisibleAttribute.Yes))
-            {
-                if (_componentTray is null)
-                {
-                    ISplitWindowService sws = (ISplitWindowService)GetService(typeof(ISplitWindowService));
-                    if (sws is not null)
-                    {
-                        _componentTray = new ComponentTray(this, Component.Site);
-                        sws.AddSplitWindow(_componentTray);
-
-                        _componentTray.Height = _trayHeight;
-                        _componentTray.ShowLargeIcons = _trayLargeIcon;
-                        _componentTray.AutoArrange = _trayAutoArrange;
-
-                        host.AddService(_componentTray);
-                    }
-                }
-
-                if (_componentTray is not null)
-                {
-                    // Suspend the layout of the tray through the loading
-                    // process. This way, we won't continuously try to layout
-                    // components in auto arrange mode. We will instead let
-                    // the controls restore themselves to their persisted state
-                    // and then let auto-arrange kick in once.
-                    //
-                    if (host is not null && host.Loading && !_trayLayoutSuspended)
-                    {
-                        _trayLayoutSuspended = true;
-                        _componentTray.SuspendLayout();
-                    }
-
-                    _componentTray.AddComponent(component);
-                }
-            }
+            _componentTray.AddComponent(component);
         }
     }
 
@@ -977,7 +922,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Called when the context menu should be displayed.  This displays the document
+    ///  Called when the context menu should be displayed. This displays the document
     ///  context menu.
     /// </summary>
     protected override void OnContextMenu(int x, int y)
@@ -988,7 +933,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             ISelectionService selSvc = (ISelectionService)GetService(typeof(ISelectionService));
             if (selSvc is not null)
             {
-                // Here we check to see if we're the only component selected.  If not, then
+                // Here we check to see if we're the only component selected. If not, then
                 // we'll display the standard component menu.
                 //
                 if (selSvc.SelectionCount == 1 && selSvc.GetComponentSelected(Component))
@@ -1053,7 +998,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Called when our document becomes active.  We paint our form's
+    ///  Called when our document becomes active. We paint our form's
     ///  border the appropriate color here.
     /// </summary>
     private ToolboxItem OnCreateToolboxItem(object serializedData, string format)
@@ -1081,7 +1026,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Called when our document becomes active.  Here we try to
+    ///  Called when our document becomes active. Here we try to
     ///  select the appropriate toolbox tab.
     /// </summary>
     private void OnDesignerActivate(object source, EventArgs evevent)
@@ -1091,14 +1036,14 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             _undoEngine = GetService(typeof(UndoEngine)) as UndoEngine;
             if (_undoEngine is not null)
             {
-                _undoEngine.Undoing += new EventHandler(OnUndoing);
-                _undoEngine.Undone += new EventHandler(OnUndone);
+                _undoEngine.Undoing += OnUndoing;
+                _undoEngine.Undone += OnUndone;
             }
         }
     }
 
     /// <summary>
-    ///  Called by the host when we become inactive.  Here we update the
+    ///  Called by the host when we become inactive. Here we update the
     ///  title bar of our form so it's the inactive color.
     /// </summary>
     private unsafe void OnDesignerDeactivate(object sender, EventArgs e)
@@ -1106,18 +1051,18 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         Control control = Control;
         if (control is not null && control.IsHandleCreated)
         {
-            PInvoke.SendMessage(control, PInvoke.WM_NCACTIVATE, (WPARAM)(BOOL)false);
+            PInvokeCore.SendMessage(control, PInvokeCore.WM_NCACTIVATE, (WPARAM)(BOOL)false);
             PInvoke.RedrawWindow(control, lprcUpdate: null, HRGN.Null, REDRAW_WINDOW_FLAGS.RDW_FRAME);
         }
     }
 
     /// <summary>
-    ///  Called when the designer is finished loading.  Here we select the form.
+    ///  Called when the designer is finished loading. Here we select the form.
     /// </summary>
     private void OnLoadComplete(object sender, EventArgs e)
     {
         // Remove the handler; we're done looking at this.
-        ((IDesignerHost)sender).LoadComplete -= new EventHandler(OnLoadComplete);
+        ((IDesignerHost)sender).LoadComplete -= OnLoadComplete;
 
         // Restore the tray layout.
         if (_trayLayoutSuspended && _componentTray is not null)
@@ -1127,7 +1072,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         ISelectionService ss = (ISelectionService)GetService(typeof(ISelectionService));
         if (ss is not null)
         {
-            ss.SelectionChanged += new EventHandler(OnSelectionChanged);
+            ss.SelectionChanged += OnSelectionChanged;
             ss.SetSelectedComponents(new object[] { Component }, SelectionTypes.Replace);
             Debug.Assert(ss.PrimarySelection == Component, "Bug in selection service:  form should have primary selection.");
         }
@@ -1156,86 +1101,83 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     }
 
     /// <summary>
-    ///  Called by the selection service when the selection has changed.  We do a number
+    ///  Called by the selection service when the selection has changed. We do a number
     ///  of selection-related things here.
     /// </summary>
     private void OnSelectionChanged(object sender, EventArgs e)
     {
-        ISelectionService svc = (ISelectionService)GetService(typeof(ISelectionService));
-        if (svc is not null)
+        if (!TryGetService(out ISelectionService svc))
         {
-            ICollection selComponents = svc.GetSelectedComponents();
+            return;
+        }
 
-            // Setup the correct active accessibility selection / focus data
-            Debug.WriteLineIf(CompModSwitches.MSAA.TraceInfo, "MSAA: SelectionChanged");
-            foreach (object selObj in selComponents)
-            {
-                if (selObj is Control c)
-                {
-                    Debug.WriteLineIf(CompModSwitches.MSAA.TraceInfo, $"MSAA: SelectionAdd, control = {c}");
-                    PInvoke.NotifyWinEvent(
-                        (uint)AccessibleEvents.SelectionAdd,
-                        c,
-                        (int)OBJECT_IDENTIFIER.OBJID_CLIENT,
-                        (int)PInvoke.CHILDID_SELF);
-                }
-            }
+        ICollection selComponents = svc.GetSelectedComponents();
 
-            if (svc.PrimarySelection is Control primary)
+        // Setup the correct active accessibility selection / focus data
+        foreach (object selObj in selComponents)
+        {
+            if (selObj is Control c)
             {
-                Debug.WriteLineIf(CompModSwitches.MSAA.TraceInfo, $"MSAA: Focus, control = {primary}");
                 PInvoke.NotifyWinEvent(
-                    (uint)AccessibleEvents.Focus,
-                    primary,
+                    (uint)AccessibleEvents.SelectionAdd,
+                    c,
                     (int)OBJECT_IDENTIFIER.OBJID_CLIENT,
                     (int)PInvoke.CHILDID_SELF);
             }
+        }
 
-            // See if there are visual controls selected.  If so, we add a context attribute.
-            // Otherwise, we remove the attribute.  We do not count the form.
-            IHelpService hs = (IHelpService)GetService(typeof(IHelpService));
+        if (svc.PrimarySelection is Control primary)
+        {
+            PInvoke.NotifyWinEvent(
+                (uint)AccessibleEvents.Focus,
+                primary,
+                (int)OBJECT_IDENTIFIER.OBJID_CLIENT,
+                (int)PInvoke.CHILDID_SELF);
+        }
 
-            if (hs is not null)
-            {
-                ushort type = 0;
-                string[] types =
-                [
-                    "VisualSelection",
+        // See if there are visual controls selected. If so, we add a context attribute.
+        // Otherwise, we remove the attribute. We do not count the form.
+        IHelpService hs = (IHelpService)GetService(typeof(IHelpService));
+
+        if (hs is not null)
+        {
+            ushort type = 0;
+            string[] types =
+            [
+                "VisualSelection",
                     "NonVisualSelection",
                     "MixedSelection"
-                ];
+            ];
 
-                foreach (object obj in selComponents)
+            foreach (object obj in selComponents)
+            {
+                if (obj is Control)
                 {
-                    if (obj is Control)
+                    if (obj != Component)
                     {
-                        if (obj != Component)
-                        {
-                            type |= 1;
-                        }
-                    }
-                    else
-                    {
-                        type |= 2;
-                    }
-
-                    if (type == 3)
-                    {
-                        break;
+                        type |= 1;
                     }
                 }
-
-                // Remove any prior attribute
-                //
-                for (int i = 0; i < types.Length; i++)
+                else
                 {
-                    hs.RemoveContextAttribute("Keyword", types[i]);
+                    type |= 2;
                 }
 
-                if (type != 0)
+                if (type == 3)
                 {
-                    hs.AddContextAttribute("Keyword", types[type - 1], HelpKeywordType.GeneralKeyword);
+                    break;
                 }
+            }
+
+            // Remove any prior attribute
+            for (int i = 0; i < types.Length; i++)
+            {
+                hs.RemoveContextAttribute("Keyword", types[i]);
+            }
+
+            if (type != 0)
+            {
+                hs.AddContextAttribute("Keyword", types[type - 1], HelpKeywordType.GeneralKeyword);
             }
         }
     }
@@ -1243,7 +1185,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     /// <summary>
     ///  Allows a designer to filter the set of properties
     ///  the component it is designing will expose through the
-    ///  TypeDescriptor object.  This method is called
+    ///  TypeDescriptor object. This method is called
     ///  immediately before its corresponding "Post" method.
     ///  If you are overriding this method you should call
     ///  the base implementation before you perform your own
@@ -1335,7 +1277,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         // Visual inheritance always adds default
         // value attributes that adopt the current values. This
         // isn't right for auto scale, however,because we always
-        // want to write out the auto scale values.  So, we have
+        // want to write out the auto scale values. So, we have
         // to be a bit sleazy here and trick the inheritance engine
         // to think that these properties currently have their
         // default values.
@@ -1347,7 +1289,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         // Visual inheritance always adds default
         // value attributes that adopt the current values. This
         // isn't right for auto scale, however,because we always
-        // want to write out the auto scale values.  So, we have
+        // want to write out the auto scale values. So, we have
         // to be a bit sleazy here and trick the inheritance engine
         // to think that these properties currently have their
         // default values.
@@ -1360,7 +1302,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     private bool ShouldSerializeBackColor()
     {
         // We push Color.Empty into our shadow cash during
-        // init and also whenever we are reset.  We do this
+        // init and also whenever we are reset. We do this
         // so we can push a real color into the controls
         // back color to stop it from walking the parent chain.
         // But, we want it to look like we didn't push a color
@@ -1375,7 +1317,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <summary>
     ///  This will be called when the user double-clicks on a
-    ///  toolbox item.  The document designer should create
+    ///  toolbox item. The document designer should create
     ///  a component for the given tool.
     /// </summary>
     protected virtual void ToolPicked(ToolboxItem tool)
@@ -1419,11 +1361,11 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <internalonly/>
     /// <summary>
-    /// The list of technologies that this designer can support
-    /// for its view.  Examples of different technologies are
-    /// WinForms and Web Forms.  Other object models can be
-    /// supported at design time, but they most be able to
-    /// provide a view in one of the supported technologies.
+    ///  The list of technologies that this designer can support
+    ///  for its view. Examples of different technologies are
+    ///  WinForms and Web Forms. Other object models can be
+    ///  supported at design time, but they most be able to
+    ///  provide a view in one of the supported technologies.
     /// </summary>
     ViewTechnology[] IRootDesigner.SupportedTechnologies
     {
@@ -1437,20 +1379,15 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     ///  The view for this document. The designer should assume that the view will be shown shortly
     ///  after this call is made and make any necessary preparations.
     /// </summary>
-    object IRootDesigner.GetView(ViewTechnology technology)
-    {
-        if (technology is not ViewTechnology.Default and not ((ViewTechnology)1))
-        {
-            throw new ArgumentException();
-        }
-
-        return _frame;
-    }
+    object IRootDesigner.GetView(ViewTechnology technology) =>
+        technology is not ViewTechnology.Default and not (ViewTechnology)1
+            ? throw new ArgumentException(null, nameof(technology))
+            : (object)_frame;
 
     /// <summary>
     ///  Determines if the given tool is supported by this designer.
     ///  If a tool is supported then it will be enabled in the toolbox
-    ///  when this designer regains focus.  Otherwise, it will be disabled.
+    ///  when this designer regains focus. Otherwise, it will be disabled.
     ///  Once a tool is marked as enabled or disabled it may not be
     ///  queried again.
     /// </summary>
@@ -1461,7 +1398,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <internalonly/>
     /// <summary>
-    /// <para>Selects the specified tool.</para>
+    ///  <para>Selects the specified tool.</para>
     /// </summary>
     void IToolboxUser.ToolPicked(ToolboxItem tool)
     {

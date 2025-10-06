@@ -21,7 +21,7 @@ namespace NuGet.Common
         /// </summary>
         public static string GetTempFilePath(string directory)
         {
-            var fileName = $"{Guid.NewGuid()}.tmp".ToLowerInvariant();
+            var fileName = $"{Guid.NewGuid()}.tmp";
 
             return Path.GetFullPath(Path.Combine(directory, fileName));
         }
@@ -269,7 +269,7 @@ namespace NuGet.Common
                 }
                 catch (Exception ex) when ((i < retries) && (ex is UnauthorizedAccessException || ex is IOException))
                 {
-                    Sleep(100);
+                    await Task.Delay(100);
                 }
             }
             // This will never reached, but the compiler can't detect that 

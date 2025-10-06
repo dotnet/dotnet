@@ -1,21 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis.Text;
 
 internal static class TextSpanExtensions
 {
     internal static TextSpan TrimLeadingWhitespace(this TextSpan span, SourceText text)
     {
-        if (text is null)
-        {
-            throw new ArgumentNullException(nameof(text));
-        }
-
         for (var i = 0; i < span.Length; ++i)
         {
             if (!char.IsWhiteSpace(text[span.Start + i]))
@@ -27,21 +20,13 @@ internal static class TextSpanExtensions
         return span;
     }
 
-    public static Range ToRange(this TextSpan span, SourceText sourceText)
+    internal static RazorTextSpan ToRazorTextSpan(this TextSpan span)
     {
-        if (sourceText is null)
+        return new RazorTextSpan()
         {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        sourceText.GetLinesAndOffsets(span, out var startLine, out var startChar, out var endLine, out var endChar);
-
-        var range = new Range
-        {
-            Start = new Position(startLine, startChar),
-            End = new Position(endLine, endChar)
+            Start = span.Start,
+            Length = span.Length
         };
-
-        return range;
     }
 }
+

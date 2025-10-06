@@ -1,4 +1,5 @@
-﻿using System.CommandLine.Help;
+﻿using System.Collections;
+using System.CommandLine.Help;
 using System.CommandLine.Invocation;
 using FluentAssertions;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace System.CommandLine.Tests
         {
             bool asserted = false;
             const string value = "hello";
-            var rootCommand = new CliRootCommand
+            var rootCommand = new RootCommand
             {
                 new EnvironmentVariablesDirective()
             };
@@ -28,12 +29,12 @@ namespace System.CommandLine.Tests
                 Environment.GetEnvironmentVariable(_testVariableName).Should().Be(value);
             });
 
-            var config = new CliConfiguration(rootCommand)
+            var config = new InvocationConfiguration
             {
                 EnableDefaultExceptionHandler = false
             };
 
-            await config.InvokeAsync($"[env:{_testVariableName}={value}]");
+            await rootCommand.Parse($"[env:{_testVariableName}={value}]").InvokeAsync(config);
 
             asserted.Should().BeTrue();
         }
@@ -43,7 +44,7 @@ namespace System.CommandLine.Tests
         {
             bool asserted = false;
             const string value = "1=2";
-            var rootCommand = new CliRootCommand
+            var rootCommand = new RootCommand
             {
                 new EnvironmentVariablesDirective()
             };
@@ -53,12 +54,12 @@ namespace System.CommandLine.Tests
                 Environment.GetEnvironmentVariable(_testVariableName).Should().Be(value);
             });
 
-            var config = new CliConfiguration(rootCommand)
+            var config = new InvocationConfiguration
             {
                 EnableDefaultExceptionHandler = false
             };
 
-            await config.InvokeAsync($"[env:{_testVariableName}={value}]" );
+            await rootCommand.Parse($"[env:{_testVariableName}={value}]" ).InvokeAsync(config);
 
             asserted.Should().BeTrue();
         }
@@ -68,7 +69,7 @@ namespace System.CommandLine.Tests
         {
             bool asserted = false;
             string variable = _testVariableName;
-            var rootCommand = new CliRootCommand
+            var rootCommand = new RootCommand
             {
                 new EnvironmentVariablesDirective()
             };
@@ -78,12 +79,12 @@ namespace System.CommandLine.Tests
                 Environment.GetEnvironmentVariable(variable).Should().BeNull();
             });
 
-            var config = new CliConfiguration(rootCommand)
+            var config = new InvocationConfiguration
             {
                 EnableDefaultExceptionHandler = false
             };
 
-            await config.InvokeAsync( $"[env:{variable}]" );
+            await rootCommand.Parse( $"[env:{variable}]" ).InvokeAsync(config);
 
             asserted.Should().BeTrue();
         }
@@ -93,48 +94,44 @@ namespace System.CommandLine.Tests
         {
             bool asserted = false;
             string value = "value";
-            var rootCommand = new CliRootCommand
+            var rootCommand = new RootCommand
             {
                 new EnvironmentVariablesDirective()
             };
+
+            IDictionary env = null;
             rootCommand.SetAction(_ =>
             {
                 asserted = true;
-                var env = Environment.GetEnvironmentVariables();
-                env.Values.Cast<string>().Should().NotContain(value);
+                env = Environment.GetEnvironmentVariables();
             });
 
-            var config = new CliConfiguration(rootCommand)
-            {
-                EnableDefaultExceptionHandler = false
-            };
-
-            var result = config.Parse($"[env:={value}]");
+            var result = rootCommand.Parse($"[env:={value}]");
 
             await result.InvokeAsync();
 
             asserted.Should().BeTrue();
+            env.Values.Cast<string>().Should().NotContain(value);
         }
 
         [Fact]
         public void It_does_not_prevent_help_from_being_invoked()
         {
-            var root = new CliRootCommand();
+            var root = new RootCommand();
             root.SetAction(_ => { });
 
             var customHelpAction = new CustomHelpAction();
             root.Options.OfType<HelpOption>().Single().Action = customHelpAction;
 
-            var config = new CliConfiguration(root);
             root.Directives.Add(new EnvironmentVariablesDirective());
 
-            root.Parse($"[env:{_testVariableName}=1] -h", config).Invoke();
+            root.Parse($"[env:{_testVariableName}=1] -h").Invoke();
 
             customHelpAction.WasCalled.Should().BeTrue();
             Environment.GetEnvironmentVariable(_testVariableName).Should().Be("1");
         }
 
-        private class CustomHelpAction : SynchronousCliAction
+        private class CustomHelpAction : SynchronousCommandLineAction
         {
             public bool WasCalled { get; private set; }
 

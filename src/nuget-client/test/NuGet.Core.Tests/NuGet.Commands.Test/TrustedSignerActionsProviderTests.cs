@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
-using System.Security.Cryptography.Pkcs;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,14 +12,15 @@ using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Configuration.Test;
-using NuGet.Packaging;
 using NuGet.Packaging.Signing;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
-using NuGet.Test.Utility;
 using Test.Utility;
-using Test.Utility.Signing;
 using Xunit;
+using System.Security.Cryptography.Pkcs;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using NuGet.Packaging;
+using NuGet.Test.Utility;
+using Test.Utility.Signing;
 
 namespace NuGet.Commands.Test
 {
@@ -196,7 +194,6 @@ namespace NuGet.Commands.Test
                     SettingsTestUtils.DeepEquals(i.Certificates.First(), expectedCert))));
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public async Task AddTrustedSignerAsync_WithNullPackage_ThrowsAsync()
         {
@@ -854,7 +851,6 @@ namespace NuGet.Commands.Test
                 }
             }
         }
-#endif
 
         [Theory]
         [InlineData(null)]

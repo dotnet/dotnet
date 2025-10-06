@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,27 +24,11 @@ public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractR
     // If you want to generate the "after" state simple run the test without
     // creating the expected file, and it will be generated for you.
     //
-    // Things that aren't (yet?) supported:
-    //   * Formatting must change the input state or the test will hang
-    //     ie. these tests cannot be used for pure validation
-    //   * Test input is always placed in a .razor file, so .cshtml specific
-    //     quirks can't be validated
-    //
-    // You'll just have to write tests for those ones :P
+    // NOTE: Formatting must change the input state or the test will hang
+    // ie. these tests cannot be used for pure validation
 
     [IdeTheory]
-    [InlineData("BadlyFormattedCounter.razor")]
-    [InlineData("FormatCommentWithKeyword.cshtml")]
-    [InlineData("FormatDocument.cshtml")]
-    [InlineData("FormatDocumentAfterEdit.cshtml")]
-    [InlineData("FormatDocumentWithTextAreaAttributes.cshtml")]
-    [InlineData("FormatIfBlockInsideForBlock.cshtml")]
-    [InlineData("FormatOnPaste.cshtml")]
-    [InlineData("FormatOnPasteContainedLanguageCode.cshtml")]
-    [InlineData("FormatSelection.cshtml")]
-    [InlineData("FormatSelectionStartingWithContainedLanguageCode.cshtml")]
-    [InlineData("FormatSwitchCaseBlock.cshtml")]
-    [InlineData("RazorInCssClassAttribute.cshtml")]
+    [MemberData(nameof(GetFormattingTestResourceNames))]
     public async Task FormattingDocument(string testFileName)
     {
         var inputResourceName = GetResourceName(testFileName, "Input");
@@ -88,11 +73,14 @@ public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractR
             throw new Exception("Test did not have expected results file so one has been generated. Running the test again should make it pass.");
         }
 
-        Assert.Equal(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
     }
 
+    private static string GetResourceBaseName()
+        => $"{typeof(FormatDocumentTests).Namespace}.Formatting.TestFiles";
+
     private static string GetResourceName(string name, string suffix)
-        => $"{typeof(FormatDocumentTests).Namespace}.Formatting.TestFiles.{suffix}.{name}";
+        => $"{GetResourceBaseName()}.{suffix}.{name}";
 
     private static bool TryGetResource(string name, [NotNullWhen(true)] out string? value)
     {
@@ -110,5 +98,22 @@ public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractR
         }
 
         return true;
+    }
+
+    public static TheoryData<string> GetFormattingTestResourceNames()
+    {
+        var baseName = $"{GetResourceBaseName()}.Input.";
+        var data = new TheoryData<string>();
+        var names = typeof(FormatDocumentTests).Assembly.GetManifestResourceNames();
+
+        foreach (var name in names)
+        {
+            if (name.StartsWith(baseName))
+            {
+                data.Add(Path.GetFileName(name)[baseName.Length..]);
+            }
+        }
+
+        return data;
     }
 }

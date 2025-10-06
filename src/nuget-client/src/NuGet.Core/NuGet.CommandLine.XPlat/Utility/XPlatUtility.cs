@@ -1,12 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
+using System;
+using System.Globalization;
 using System.IO;
-
-#if IS_CORECLR
-using System.Runtime.InteropServices;
-#endif
-
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -61,12 +60,7 @@ namespace NuGet.CommandLine.XPlat
 
         public static void SetUserAgent()
         {
-#if IS_CORECLR
-            UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet xplat")
-                .WithOSDescription(RuntimeInformation.OSDescription));
-#else
             UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet xplat"));
-#endif
         }
 
         internal static ISettings ProcessConfigFile(string configFile)
@@ -83,6 +77,92 @@ namespace NuGet.CommandLine.XPlat
                 directory,
                 configFileName,
                 machineWideSettings: new XPlatMachineWideSetting());
+        }
+
+        /// <summary>
+        /// Get the project or solution file from the given directory.
+        /// </summary>
+        /// <param name="directory">A directory with exactly one project or solution file.</param>
+        /// <returns>A single project or solution file.</returns>
+        /// <exception cref="ArgumentException">Throws an exception if the directory has none or multiple project/solution files.</exception>
+        internal static string GetProjectOrSolutionFileFromDirectory(string directory)
+        {
+            var topLevelFiles = Directory.GetFiles(directory, "*.*", SearchOption.TopDirectoryOnly);
+
+            string? candidateFile = null;
+            foreach (string file in topLevelFiles)
+            {
+                if (IsSolutionFile(file) || IsProjectFile(file))
+                {
+                    if (candidateFile == null)
+                    {
+                        candidateFile = file;
+                    }
+                    else
+                    {
+                        throw new ArgumentException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Error_MultipleProjectOrSolutionFilesInDirectory,
+                                directory));
+                    }
+                }
+            }
+
+            if (candidateFile == null)
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.Error_NoProjectOrSolutionFilesInDirectory,
+                        directory));
+            }
+
+            return candidateFile;
+        }
+
+        /// <summary>
+        /// Checks if the given file is a solution file.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>Returns true if the given file exists and has a .sln extension.</returns>
+        internal static bool IsSolutionFile(string fileName)
+        {
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+            {
+                var extension = System.IO.Path.GetExtension(fileName);
+
+                return string.Equals(extension, ".sln", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".slnx", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the given file is a project file.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>Returns true if the given file exists and has a .*proj extension.</returns>
+        internal static bool IsProjectFile(string fileName)
+        {
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+            {
+                var extension = System.IO.Path.GetExtension(fileName);
+
+                var lastFourCharacters = extension.Length >= 4
+                                            ? extension.Substring(extension.Length - 4)
+                                            : string.Empty;
+
+                return string.Equals(lastFourCharacters, "proj", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
+        internal static bool IsJsonFile(string filename)
+        {
+            var extension = Path.GetExtension(filename);
+            return string.Equals(".json", extension, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

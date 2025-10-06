@@ -23,6 +23,7 @@ namespace NuGet.PackageManagement.UI
             SelectedFilter = ItemFilter.Installed;
             DependencyBehavior = DependencyBehavior.Lowest;
             FileConflictAction = FileConflictAction.PromptUser;
+            SelectedPackageMetadataTab = PackageMetadataTab.Readme;
             OptionsExpanded = false;
         }
 
@@ -39,6 +40,8 @@ namespace NuGet.PackageManagement.UI
         public bool IncludePrerelease { get; set; }
 
         public ItemFilter SelectedFilter { get; set; }
+
+        public PackageMetadataTab SelectedPackageMetadataTab { get; set; }
 
         public DependencyBehavior DependencyBehavior { get; set; }
 

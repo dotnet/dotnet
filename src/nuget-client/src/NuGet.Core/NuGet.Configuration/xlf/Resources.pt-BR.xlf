@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly">
+        <source>Argument cannot be null, empty, or whitespace only.</source>
+        <target state="translated">A argumentação não pode ser apenas nula, vazia ou em espaço branco.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Value cannot be null or empty string.</source>
+        <target state="translated">O valor não pode ser nulo ou uma cadeia de caracteres vazia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttributeNotAllowed">
+        <source>Attribute '{0}' is not allowed in element '{1}'.</source>
+        <target state="translated">O atributo '{0}' não é permitido no elemento '{1}'.</target>
+        <note>0 - attribute name
+1 - element name</note>
+      </trans-unit>
+      <trans-unit id="AttributeValueNotAllowed">
+        <source>The attribute '{0}' has an unallowed value '{1}' in element '{2}'.</source>
+        <target state="translated">O atributo '{0}' tem um valor não permitido '{1}' no elemento '{2}'.</target>
+        <note>0 - attribute name
+1 - attribute value
+2 - element name</note>
+      </trans-unit>
+      <trans-unit id="CannotUpdateDifferentItems">
+        <source>The item passed to the Update method cannot refer to a different item than the one being updated.</source>
+        <target state="translated">O item passado para o Método de atualização não pode se referir a um item diferente do que está sendo atualizado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateMachineWide">
+        <source>Unable to update setting since it is in a machine-wide NuGet.Config.</source>
+        <target state="translated">Não é possível atualizar a configuração porque ela está em um NuGet.Config em todo o computador.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateNode">
+        <source>Cannot update the node of a setting.</source>
+        <target state="translated">Não é possível atualizar o nó de uma configuração.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateReadOnlyConfig">
+        <source>Unable to update setting since it is in an uneditable config file.</source>
+        <target state="translated">Não é possível atualizar a configuração porque ela está em um arquivo de configuração não editável.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificateDuplicateConfiguration">
+        <source>There are multiple client certificate configurations associated with the same package source(s): {0}</source>
+        <target state="translated">Há várias configurações de certificado de cliente associadas à mesma origem do pacote: {0}</target>
+        <note>0 - Package sources separated with comma</note>
+      </trans-unit>
+      <trans-unit id="CredentialsItemMustHaveUsernamePassword">
+        <source>Credentials item must have username and password.</source>
+        <target state="translated">O item de credenciais deve ter nome de usuário e senha.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DuplicatePackageSource">
+        <source>PackageSourceMapping is enabled and there are multiple package sources associated with the same key(s): {0}. Path: {1}</source>
+        <target state="translated">PackageSourceMapping está habilitado e há várias origens de pacote associadas às mesmas chaves: {0}. Caminho: {1}</target>
+        <note>0 - package sources separated with comma 1 - path</note>
+      </trans-unit>
+      <trans-unit id="Error_EncryptionUnsupported">
+        <source>Encryption is not supported on non-Windows platforms.</source>
+        <target state="translated">Não há suporte para criptografia em plataformas não Windows.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidAttribute">
+        <source>The attribute {0}-{1} is not valid.</source>
+        <target state="translated">O atributo {0}-{1} não é válido.</target>
+        <note>0 - attribute name
+1 - attribute value</note>
+      </trans-unit>
+      <trans-unit id="Error_ItemNeedsAtLeastOnePackagePattern">
+        <source>Package source '{0}' must have at least one package pattern.</source>
+        <target state="translated">A origem do pacote '{0}' deve ter pelo menos um padrão de pacote.</target>
+        <note>0 - The name of the item.</note>
+      </trans-unit>
+      <trans-unit id="Error_ItemNeedsAtLeastOnePackagePatternWithPath">
+        <source>Package source '{0}' must have at least one package pattern. Path: '{1}'</source>
+        <target state="translated">A origem do pacote '{0}' deve ter pelo menos um padrão de pacote. Caminho: '{1}'</target>
+        <note>0 - The name of the item
+1 - file path</note>
+      </trans-unit>
+      <trans-unit id="Error_MergeTwoDifferentSections">
+        <source>Cannot merge two different sections.</source>
+        <target state="translated">Não é possível mesclar duas seções diferentes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOnePassword">
+        <source>A credentials item must have only one Password or ClearTextPassword entry.</source>
+        <target state="translated">Um item de credenciais precisa ter apenas uma entrada Password ou ClearTextPassword.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOneUsername">
+        <source>A credentials item must have only one Username entry.</source>
+        <target state="translated">Um item de credenciais precisa ter apenas uma entrada Username.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOneValidAuthenticationTypes">
+        <source>A credentials item must have only one ValidAuthenticationTypes entry.</source>
+        <target state="translated">Um item de credenciais precisa ter apenas uma entrada ValidAuthenticationTypes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StoreCertCertificateNotFound">
+        <source>Certificate for the package source '{0}' was not found in '{1}.{2}' storage by '{3}' criteria with '{4}' value.</source>
+        <target state="translated">O certificado para a origem do pacote '{0}' não foi encontrado no armazenamento '{1}.{2}' pelos critérios '{3}' com o valor '{4}'.</target>
+        <note>0 - Package source name
+1 - Store location
+2 - Store name
+3 - Find by
+4 - Find value</note>
+      </trans-unit>
+      <trans-unit id="FileCertItemPasswordAndClearTextPasswordAtSameTime">
+        <source>Password and ClearTextPassword cannot be used at the same time.</source>
+        <target state="translated">Password e ClearTextPassword não podem ser usados ao mesmo tempo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileCertItemPasswordCannotBeDecrypted">
+        <source>Client certificate configuration password for the package source '{0}' cannot be decrypted</source>
+        <target state="translated">A senha de configuração do certificado do cliente para a origem do pacote '{0}' não pode ser descriptografada</target>
+        <note>0 - Package name</note>
+      </trans-unit>
+      <trans-unit id="FileCertItemPathFileNotExist">
+        <source>A fileCert path specified a file that does not exist.</source>
+        <target state="translated">Um caminho fileCert especificou um arquivo que não existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileCertItemPathFileNotSet">
+        <source>A fileCert item path was not set.</source>
+        <target state="translated">Um caminho de item fileCert não foi definido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileDoesNotExist">
+        <source>File '{0}' does not exist.</source>
+        <target state="translated">O arquivo '{0}' não existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNullSettingsOperation">
+        <source>"{0}" cannot be called on a NullSettings. This may be caused on account of insufficient permissions to read or write to "%AppData%\NuGet\NuGet.config".</source>
+        <target state="translated">Não é possível executar o "{0}" em NullSettings. Isso pode ser causado devido a permissões insuficientes para ler ou gravar em "%AppData%\NuGet\NuGet.config".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ItemDoesNotExist">
+        <source>The item does not exist in the {0} section.</source>
+        <target state="translated">O item não existe na seção {0}.</target>
+        <note>0 - section name</note>
+      </trans-unit>
+      <trans-unit id="MissingRequiredAttribute">
+        <source>Missing required attribute '{0}' in element '{1}'.</source>
+        <target state="translated">Atributo obrigatório ausente '{0}' no elemento '{1}'.</target>
+        <note>0 - attribute name
+1 - element name</note>
+      </trans-unit>
+      <trans-unit id="MustContainAbsolutePath">
+        <source>'{0}' must contain an absolute path '{1}'.</source>
+        <target state="translated">O '{0}' deve conter um caminho absoluto '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAttributesAllowed">
+        <source>The {0} item should not have any attributes and it was found with {1}.</source>
+        <target state="translated">O item {0} não deve ter nenhum atributo e ele foi encontrado com {1}.</target>
+        <note>0 - item name
+1- attributes count</note>
+      </trans-unit>
+      <trans-unit id="NoWritteableConfig">
+        <source>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</source>
+        <target state="translated">Não há nenhum NuGet.Config que poderia ser usado para gravar as configurações. Crie um no local desejado e reinicie o cliente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OwnersItemMustHaveAtLeastOneOwner">
+        <source>Owners item must have at least one owner.</source>
+        <target state="translated">O item do proprietário deve ter pelo menos um proprietário.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OwnersMustOnlyHaveContent">
+        <source>Owners item must only have text content and cannot be empty.</source>
+        <target state="translated">O item do proprietário só deve ter conteúdo de texto e não pode estar vazio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNullOrEmpty">
+        <source>{0} cannot be null or empty.</source>
+        <target state="translated">{0} não pode ser nulo ou estar vazio.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RepositoryMustHaveOneOwners">
+        <source>The repository item with name '{0}' and service index '{1}' has more than one owners item in it.</source>
+        <target state="translated">O item de repositório com o nome '{0}' e o serviço de índice '{1}' tem mais de um item de proprietários nele.</target>
+        <note>0 - repository name
+1 - service index</note>
+      </trans-unit>
+      <trans-unit id="SectionDoesNotExist">
+        <source>The section '{0}' does not exist in the settings.</source>
+        <target state="translated">A seção '{0}' não existe nas configurações.</target>
+        <note>0 - section name</note>
+      </trans-unit>
+      <trans-unit id="Settings_FileName_Cannot_Be_A_Path">
+        <source>Parameter 'fileName' to Settings must be just a file name and not a path.</source>
+        <target state="translated">O parâmetro 'fileName' para as Configurações deve ser somente um nome de arquivo e não um caminho.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_CannotHaveChildren">
+        <source>Error parsing NuGet.Config. Element '{0}' cannot have descendant elements. Path: '{1}'.</source>
+        <target state="translated">Erro ao analisar o NuGet.Config. O elemento '{0}' não pode ter elementos descendentes. Caminho: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigDuplicateDisabledSources">
+        <source>Cannot update package sources, config file contains a duplicated key '{0}' in the disabled package sources section. Path: '{1}'</source>
+        <target state="translated">Não é possível atualizar as origens do pacote, o arquivo de configuração contém uma chave duplicada '{0}' na seção de origens do pacote desabilitado. Caminho: '{1}'</target>
+        <note>0 - key 
+1 - config file path
+</note>
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigHasInvalidPackageSource">
+        <source>{0}: NuGet.Config has an invalid package source value '{1}'. Reason: {2}</source>
+        <target state="translated">{0}: o NuGet.Config tem um valor de origem de pacote inválido '{1}'. Motivo: {2}</target>
+        <note>0 - NU log code
+1 - package source value
+2 - original exception message</note>
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigInvalidOperation">
+        <source>NuGet.Config is malformed. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config está malformado. Caminho: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigInvalidXml">
+        <source>NuGet.Config is not valid XML. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config não é um XML válido. Caminho: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigRootInvalid">
+        <source>NuGet.Config does not contain the expected root element: 'configuration'. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config não contém o elemento raiz esperado: 'configuration'. Caminho: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigUnauthorizedAccess">
+        <source>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'.</source>
+        <target state="translated">Falha ao ler o NuGet.Config devido ao acesso não autorizado. Caminho: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_UnknownOrigin">
+        <source>File location not known</source>
+        <target state="translated">Local do arquivo não conhecido</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TextShouldNotBeEmpty">
+        <source>Text elements should not be empty.</source>
+        <target state="translated">Os elementos de texto não devem ficar vazios.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerMustHaveCertificates">
+        <source>A trusted signer entry must have at least one certificate entry.</source>
+        <target state="translated">Uma entrada do signatário confiável deve ter ao menos uma entrada do certificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownHashAlgorithmNotSupported">
+        <source>Unknown hash algorithm is not supported.</source>
+        <target state="translated">O algoritmo de hash desconhecido não é compatível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_Config_Exception">
+        <source>Unexpected failure reading NuGet.Config. Path: '{0}'.</source>
+        <target state="translated">Falha inesperada ao ler o NuGet.Config. Caminho: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedDecryptPassword">
+        <source>Password decryption is not supported on .NET Core for this platform. The following feed uses an encrypted password: '{0}'. You can use a clear text password as a workaround.</source>
+        <target state="translated">A decriptografia de senha não tem suporte no .NET Core nessa plataforma. O feed a seguir usa uma senha criptografada. O feed a seguir usa uma senha criptografada: '{0}'. Você pode usar uma senha com texto não criptografado como uma solução alternativa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedEncryptPassword">
+        <source>Password encryption is not supported on .NET Core for this platform. The following feed try to use an encrypted password: '{0}'. You can use a clear text password as a workaround.</source>
+        <target state="translated">A criptografia de senha não tem suporte no .NET Core nessa plataforma. O feed a seguir tenta usar uma senha criptografada. O feed a seguir usa uma senha criptografada: '{0}'. Você pode usar uma senha com texto não criptografado como uma solução alternativa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>Certificate entry has an unsupported hash algorithm: '{0}'.</source>
+        <target state="translated">A entrada do certificado tem um algoritmo de hash sem suporte: '{0}'.</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="UserSettings_UnableToParseConfigFile">
+        <source>Unable to parse config file because: {0} Path: '{1}'.</source>
+        <target state="translated">Não é possível analisar o arquivo de configuração porque: {0} Caminho: '{1}'.</target>
+        <note>0 - reason
+1- config file path</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

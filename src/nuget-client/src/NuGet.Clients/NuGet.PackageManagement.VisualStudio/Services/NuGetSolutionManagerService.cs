@@ -5,7 +5,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -88,11 +87,6 @@ namespace NuGet.PackageManagement.VisualStudio
             cancellationToken.ThrowIfCancellationRequested();
 
             return await SolutionManager.GetSolutionDirectoryAsync();
-        }
-
-        private static string CreateProjectActionId()
-        {
-            return Guid.NewGuid().ToString("N", provider: null);
         }
 
         private void RegisterEventHandlers()

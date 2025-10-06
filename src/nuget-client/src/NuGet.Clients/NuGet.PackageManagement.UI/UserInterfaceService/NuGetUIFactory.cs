@@ -2,12 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
-using Microsoft.VisualStudio.Utilities;
 using NuGet.Commands;
 using NuGet.Configuration;
 using NuGet.PackageManagement.VisualStudio;
@@ -18,6 +16,7 @@ using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -59,6 +58,9 @@ namespace NuGet.PackageManagement.UI
 
         [Import]
         private Lazy<IRestoreProgressReporter> RestoreProgressReporter { get; set; }
+
+        [Import]
+        private INuGetTelemetryProvider NuGetTelemetryProvider { get; set; }
 
         [ImportingConstructor]
         public NuGetUIFactory(
@@ -107,6 +109,7 @@ namespace NuGet.PackageManagement.UI
                 LockService.Value,
                 OutputConsoleLogger,
                 RestoreProgressReporter.Value,
+                NuGetTelemetryProvider,
                 CancellationToken.None,
                 projects);
         }

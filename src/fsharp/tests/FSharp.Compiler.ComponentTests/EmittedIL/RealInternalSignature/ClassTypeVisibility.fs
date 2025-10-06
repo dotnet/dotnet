@@ -25,10 +25,9 @@ type public TypeThree private () = class end
 type public TypeFour () = class end
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             """  .class auto ansi serializable nested public TypeOne
          extends [runtime]System.Object
   {
@@ -73,10 +72,9 @@ type private TypeThree private () = class end
 type private TypeFour () = class end
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 //type private TypeOne public () = class end
                 """.class auto ansi serializable nested private TypeOne
@@ -161,10 +159,9 @@ type public TestType () =
     member _.DefaultMethod() = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig instance void 
@@ -251,10 +248,9 @@ type public TestType () =
     member _.DefaultMethod() = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig instance void 
@@ -341,10 +337,9 @@ type public TestType () =
     member val DefaultProperty = 0 with get, set
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig specialname 
@@ -567,10 +562,9 @@ type public TestType () =
     member val DefaultProperty = 0 with get, set
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig specialname 
@@ -801,10 +795,9 @@ type public TestType () =
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig specialname 
@@ -1243,10 +1236,9 @@ type private TestType () =
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method assembly hidebysig specialname 
@@ -1677,10 +1669,9 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig instance void 
@@ -1767,10 +1758,9 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig instance void 
@@ -1856,10 +1846,9 @@ type public TestType () =
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .me  thod public specialname static int32 
@@ -2193,10 +2182,9 @@ type private TestType () =
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig specialname 
@@ -2427,10 +2415,9 @@ type public TestType () =
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method public hidebysig specialname 
@@ -2869,10 +2856,9 @@ type private TestType () =
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
     .method assembly hidebysig specialname 

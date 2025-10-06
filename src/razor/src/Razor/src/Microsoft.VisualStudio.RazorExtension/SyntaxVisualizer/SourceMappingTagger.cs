@@ -1,11 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.VisualStudio.Razor.Documents;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -39,31 +39,33 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
     {
         if (!Enabled || spans.Count == 0)
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
         var snapshot = spans[0].Snapshot;
 
         if (!_textDocumentFactoryService.TryGetTextDocument(_buffer, out var textDocument))
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
-        var codeDocument = ThreadHelper.JoinableTaskFactory.Run(() => _sourceMappingProjectChangeTrigger.Value.GetRazorCodeDocumentAsync(textDocument.FilePath));
+        var codeDocument = ThreadHelper.JoinableTaskFactory.Run(
+            () => _sourceMappingProjectChangeTrigger.Value.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
 
         if (codeDocument is null)
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
         return GetTagsWorker(codeDocument, snapshot);
 
         static IEnumerable<ITagSpan<SourceMappingTag>> GetTagsWorker(RazorCodeDocument codeDocument, ITextSnapshot snapshot)
         {
-            var csharpDocument = codeDocument.GetCSharpDocument();
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+            var generatedCode = csharpDocument.Text.ToString();
             foreach (var mapping in csharpDocument.SourceMappings)
             {
-                var generatedText = GetGeneratedCodeSnippet(csharpDocument.GeneratedCode, mapping.GeneratedSpan.AbsoluteIndex);
+                var generatedText = GetGeneratedCodeSnippet(generatedCode, mapping.GeneratedSpan.AbsoluteIndex);
 
                 var position = Math.Min(mapping.OriginalSpan.AbsoluteIndex, snapshot.Length);
                 var point = new SnapshotPoint(snapshot, position);
@@ -102,11 +104,15 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
     private void HandleBufferChanged(TextContentChangedEventArgs args)
     {
         if (args.Changes.Count == 0)
+        {
             return;
+        }
 
         var tagsChanged = TagsChanged;
         if (tagsChanged == null)
+        {
             return;
+        }
 
         // Combine all changes into a single span so that
         // the ITagger<>.TagsChanged event can be raised just once for a compound edit

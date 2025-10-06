@@ -33,7 +33,7 @@ namespace Test
 #line hidden
 #nullable disable
             );
-            __o = new global::System.Action<System.Int32>(
+            __o = new global::System.Action<global::System.Int32>(
             __value => ParentValue = __value);
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }

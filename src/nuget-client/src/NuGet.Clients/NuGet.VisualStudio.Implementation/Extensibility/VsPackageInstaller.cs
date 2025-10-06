@@ -42,7 +42,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
         private readonly INuGetTelemetryProvider _telemetryProvider;
         private readonly IRestoreProgressReporter _restoreProgressReporter;
 
-        private JoinableTaskFactory PumpingJTF { get; set; }
+        private readonly JoinableTaskFactory _pumpingJtf;
 
         [ImportingConstructor]
         public VsPackageInstaller(
@@ -60,7 +60,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             _telemetryProvider = telemetryProvider;
             _restoreProgressReporter = restoreProgressReporter;
 
-            PumpingJTF = new PumpingJTF(NuGetUIThreadHelper.JoinableTaskFactory);
+            _pumpingJtf = new PumpingJTF(NuGetUIThreadHelper.JoinableTaskFactory);
         }
 
         public void InstallLatestPackage(
@@ -74,7 +74,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
             try
             {
-                PumpingJTF.Run(() => InstallPackageAsync(
+                _pumpingJtf.Run(() => InstallPackageAsync(
                     source,
                     project,
                     packageId,
@@ -107,7 +107,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
                     semVer = new NuGetVersion(version);
                 }
 
-                PumpingJTF.Run(() => InstallPackageAsync(
+                _pumpingJtf.Run(() => InstallPackageAsync(
                     source,
                     project,
                     packageId,
@@ -140,7 +140,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
                     _ = NuGetVersion.TryParse(version, out semVer);
                 }
 
-                PumpingJTF.Run(() => InstallPackageAsync(
+                _pumpingJtf.Run(() => InstallPackageAsync(
                     source,
                     project,
                     packageId,
@@ -227,9 +227,9 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 
             try
             {
-                PumpingJTF.Run(async () =>
+                _pumpingJtf.Run(async () =>
                     {
-                        // HACK !!! : This is a hack for PCL projects which send isPreUnzipped = true, but their package source 
+                        // HACK !!! : This is a hack for PCL projects which send isPreUnzipped = true, but their package source
                         // (located at C:\Program Files (x86)\Microsoft SDKs\NuGetPackages) follows the V3
                         // folder version format.
                         if (isPreUnzipped)
@@ -278,13 +278,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             const string eventName = nameof(IVsPackageInstaller) + "." + nameof(InstallPackagesFromVSExtensionRepository) + ".1";
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
 
-            InstallPackagesFromVSExtensionRepositoryImpl(
-                extensionId,
-                isPreUnzipped,
-                skipAssemblyReferences,
-                ignoreDependencies: true,
-                project: project,
-                packageVersions: packageVersions);
+            throw new NotSupportedException();
         }
 
         public void InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, Project project, IDictionary<string, string> packageVersions)
@@ -320,7 +314,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 
             try
             {
-                PumpingJTF.Run(() =>
+                _pumpingJtf.Run(() =>
                     {
                         var repoProvider = new PreinstalledRepositoryProvider(ErrorHandler, _sourceRepositoryProvider);
                         repoProvider.AddFromExtension(_sourceRepositoryProvider, extensionId);
@@ -418,7 +412,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
         private SourceRepository GetSource(string source)
         {
             var repo = _sourceRepositoryProvider.GetRepositories()
-                .Where(e => StringComparer.OrdinalIgnoreCase.Equals(e.PackageSource.Source, source)).FirstOrDefault();
+                .FirstOrDefault(e => StringComparer.OrdinalIgnoreCase.Equals(e.PackageSource.Source, source));
 
             if (repo == null)
             {

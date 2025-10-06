@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <!-- Intentionally empty, used to act as a stand-in for the runtime-produced package to avoid downloading the actual packages -->
+</Project>

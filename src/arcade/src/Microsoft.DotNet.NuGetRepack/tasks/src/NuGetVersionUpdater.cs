@@ -240,7 +240,7 @@ namespace Microsoft.DotNet.Tools
                     {
                         package.PackageProperties.Version = newPackageVersion.ToFullString();
                     }
-                    
+
                     packageInfo = new PackageInfo(package, packageId, packageVersion, newPackageVersion, tempPathOpt, nuspecStream, nuspecXml, nuspecXmlns);
                 }
                 finally
@@ -319,6 +319,16 @@ namespace Microsoft.DotNet.Tools
                             throw new InvalidDataException($"Unexpected dependency version range: '{id}, {versionRangeAttribute.Value}'");
                         }
 
+                        var dependencyVersion = versionRange.MinVersion ?? versionRange.MaxVersion;
+                        var oldVersion = ToNuGetVersion(dependentPackage.OldVersion);
+
+                        if (dependencyVersion != oldVersion)
+                        {
+                            // The dependency version being referenced was not from
+                            // this build so it does not need to be updated.
+                            continue;
+                        }
+
                         var newVersion = ToNuGetVersion(dependentPackage.NewVersion);
 
                         var newRange = exactVersions ?
@@ -356,7 +366,7 @@ namespace Microsoft.DotNet.Tools
                 package.SpecificationXml.Save(package.SpecificationStream);
 
                 package.Package.Close();
-                
+
                 string finalPath = Path.Combine(outDirectory, package.Id + "." + package.NewVersion + ".nupkg");
 
                 try

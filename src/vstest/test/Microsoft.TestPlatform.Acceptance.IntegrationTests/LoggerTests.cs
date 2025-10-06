@@ -77,7 +77,7 @@ public class LoggerTests : AcceptanceTestBase
     private static XmlDocument LoadReport(string htmlLogFilePath)
     {
         // XML reader cannot handle <br> tags because they are not closed, and hence are not valid XML.
-        // They are correct HTML though, so we patch it here. 
+        // They are correct HTML though, so we patch it here.
         var text = File.ReadAllText(htmlLogFilePath).Replace("<br>", "<br/>");
         var report = new XmlDocument();
         report.Load(new StringReader(text));
@@ -163,7 +163,7 @@ public class LoggerTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        string? outcomeValue = GetElementAtributeValueFromTrx(trxFilePath, "ResultSummary", "outcome");
+        string? outcomeValue = GetElementAttributeValueFromTrx(trxFilePath, "ResultSummary", "outcome");
 
         Assert.AreEqual("Failed", outcomeValue);
     }
@@ -186,7 +186,7 @@ public class LoggerTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        string? outcomeValue = GetElementAtributeValueFromTrx(trxFilePath, "ResultSummary", "outcome");
+        string? outcomeValue = GetElementAttributeValueFromTrx(trxFilePath, "ResultSummary", "outcome");
 
         Assert.AreEqual("Completed", outcomeValue);
     }
@@ -233,14 +233,14 @@ public class LoggerTests : AcceptanceTestBase
         }
 
         string filePathContent = sb.ToString();
-        string[] divs = { "Total tests", "Passed", "Failed", "Skipped", "Run duration", "Pass percentage", "PassingTest" };
+        string[] divs = ["Total tests", "Passed", "Failed", "Skipped", "Run duration", "Pass percentage", "PassingTest"];
         foreach (string str in divs)
         {
             StringAssert.Contains(filePathContent, str);
         }
     }
 
-    private static string? GetElementAtributeValueFromTrx(string trxFileName, string fieldName, string attributeName)
+    private static string? GetElementAttributeValueFromTrx(string trxFileName, string fieldName, string attributeName)
     {
         using FileStream file = File.OpenRead(trxFileName);
         using XmlReader reader = XmlReader.Create(file);

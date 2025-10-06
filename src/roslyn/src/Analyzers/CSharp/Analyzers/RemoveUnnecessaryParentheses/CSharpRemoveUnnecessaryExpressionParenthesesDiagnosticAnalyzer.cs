@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.RemoveUnnecessaryParentheses;
 namespace Microsoft.CodeAnalysis.CSharp.RemoveUnnecessaryParentheses;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-internal class CSharpRemoveUnnecessaryExpressionParenthesesDiagnosticAnalyzer
+internal sealed class CSharpRemoveUnnecessaryExpressionParenthesesDiagnosticAnalyzer
     : AbstractRemoveUnnecessaryParenthesesDiagnosticAnalyzer<SyntaxKind, ParenthesizedExpressionSyntax>
 {
     protected override SyntaxKind GetSyntaxKind()
@@ -54,7 +54,7 @@ internal class CSharpRemoveUnnecessaryExpressionParenthesesDiagnosticAnalyzer
         ExpressionSyntax parentExpression;
         switch (parenthesizedExpression.Parent)
         {
-            case ConditionalExpressionSyntax _:
+            case ConditionalExpressionSyntax:
                 // If our parent is a conditional, then only remove parens if the inner
                 // expression is a primary. i.e. it's ok to remove any of the following:
                 //
@@ -77,7 +77,7 @@ internal class CSharpRemoveUnnecessaryExpressionParenthesesDiagnosticAnalyzer
                 parentExpression = isPatternExpression;
                 break;
 
-            case ConstantPatternSyntax constantPattern when constantPattern.Parent is IsPatternExpressionSyntax isPatternExpression:
+            case ConstantPatternSyntax { Parent: IsPatternExpressionSyntax isPatternExpression }:
                 // on the right side of an 'x is const_pattern' expression
                 parentExpression = isPatternExpression;
                 break;

@@ -20,7 +20,7 @@ namespace Commands.Test
 
     public class NugetPackageUtilsTests
     {
-        private readonly int DefaultTimeOut = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
+        private static readonly int DefaultTimeOut = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
 
         [Fact]
         public async Task PackageExpander_ExpandsPackage()
@@ -620,7 +620,9 @@ namespace Commands.Test
         {
             // Arrange
             var packageIdentity = new PackageIdentity("packageA", new NuGetVersion("2.0.3"));
-            var entryModifiedTime = new DateTimeOffset(1985, 11, 20, 12, 0, 0, TimeSpan.FromHours(-7.0)).DateTime;
+            var entryModifiedTime = new DateTimeOffset(1985, 11, 20, 12, 0, 0, TimeSpan.FromHours(-7.0));
+            DateTime expectedLastWriteTime = entryModifiedTime.DateTime.ToLocalTime();
+
             using (var packagesDirectory = TestDirectory.Create())
             {
                 var pathResolver = new VersionFolderPathResolver(packagesDirectory);
@@ -641,7 +643,7 @@ namespace Commands.Test
 
                 // Act
                 using (var packageDownloader = new LocalPackageArchiveDownloader(
-                    null,
+                    source: null,
                     packageFileInfo.FullName,
                     packageIdentity,
                     NullLogger.Instance))
@@ -661,7 +663,7 @@ namespace Commands.Test
                 var dllPath = Path.Combine(packageVersionDirectory, "lib", "net45", "A.dll");
                 var dllFileInfo = new FileInfo(dllPath);
                 AssertFileExists(dllFileInfo.FullName);
-                Assert.Equal(entryModifiedTime, dllFileInfo.LastWriteTime);
+                Assert.Equal(expectedLastWriteTime, dllFileInfo.LastWriteTime);
             }
         }
 

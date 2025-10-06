@@ -1,3 +1,7 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else

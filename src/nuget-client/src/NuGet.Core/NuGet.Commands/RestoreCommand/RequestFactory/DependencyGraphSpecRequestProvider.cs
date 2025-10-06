@@ -4,13 +4,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using NuGet.Shared;
 
 namespace NuGet.Commands
@@ -74,7 +75,7 @@ namespace NuGet.Commands
                     projectsWithErrors.Add(projectPath);
                 }
             }
-            SpecValidationUtility.ValidateDependencySpec(dgFile, projectsWithErrors);
+            SpecValidationUtility.ValidateDependencySpec(dgFile, projectsWithErrors, restoreContext.Log);
 
             // Create requests
             var requests = new ConcurrentBag<RestoreSummaryRequest>();
@@ -141,8 +142,6 @@ namespace NuGet.Commands
             var projectReferences = rootProject.RestoreMetadata?.TargetFrameworks.SelectMany(e => e.ProjectReferences)
                 ?? new List<ProjectRestoreReference>();
 
-            var type = rootProject.RestoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
-
             var uniqueReferences = projectReferences
                 .Select(p => p.ProjectUniqueName)
                 .Distinct(StringComparer.OrdinalIgnoreCase);
@@ -167,7 +166,8 @@ namespace NuGet.Commands
             var fallbackPaths = projectPackageSpec.RestoreMetadata.FallbackFolders;
             var globalPath = GetPackagesPath(restoreArgs, projectPackageSpec);
             var settings = _settings ?? Settings.LoadImmutableSettingsGivenConfigPaths(projectPackageSpec.RestoreMetadata.ConfigFilePaths, settingsLoadingContext);
-            var sources = restoreArgs.GetEffectiveSources(settings, projectPackageSpec.RestoreMetadata.Sources);
+            var packageSources = restoreArgs.GetEffectiveSources(settings, projectPackageSpec.RestoreMetadata.Sources);
+            var auditSources = GetAuditSources(restoreArgs.CachingSourceProvider);
             var clientPolicyContext = ClientPolicyContext.GetClientPolicy(settings, restoreArgs.Log);
             var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
             var updateLastAccess = SettingsUtility.GetUpdatePackageLastAccessTimeEnabledStatus(settings);
@@ -175,7 +175,8 @@ namespace NuGet.Commands
             var sharedCache = _providerCache.GetOrCreate(
                 globalPath,
                 fallbackPaths.AsList(),
-                sources,
+                packageSources,
+                auditSources,
                 restoreArgs.CacheContext,
                 restoreArgs.Log,
                 updateLastAccess);
@@ -219,9 +220,31 @@ namespace NuGet.Commands
                 request,
                 project.MSBuildProjectPath,
                 settings.GetConfigFilePaths(),
-                sources);
+                packageSources);
 
             return summaryRequest;
+        }
+
+        private static IReadOnlyList<SourceRepository> GetAuditSources(CachingSourceProvider cachingSourceProvider)
+        {
+            IReadOnlyList<PackageSource> auditSources = cachingSourceProvider.PackageSourceProvider.LoadAuditSources();
+
+            if (auditSources is null || auditSources.Count == 0)
+            {
+                return Array.Empty<SourceRepository>();
+            }
+
+            var auditSourceRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource source = auditSources[i];
+                if (source.IsEnabled)
+                {
+                    auditSourceRepositories.Add(cachingSourceProvider.CreateRepository(source));
+                }
+            }
+
+            return auditSourceRepositories;
         }
 
         private string GetPackagesPath(RestoreArgs restoreArgs, PackageSpec project)
@@ -231,33 +254,6 @@ namespace NuGet.Commands
                 project.RestoreMetadata.PackagesPath = restoreArgs.GlobalPackagesFolder;
             }
             return project.RestoreMetadata.PackagesPath;
-        }
-
-        /// <summary>
-        /// Return all references for a given project path.
-        /// References is modified by this method.
-        /// This includes the root project.
-        /// </summary>
-        private static void CollectReferences(
-            ExternalProjectReference root,
-            Dictionary<string, ExternalProjectReference> allProjects,
-            HashSet<ExternalProjectReference> references)
-        {
-            if (references.Add(root))
-            {
-                foreach (var child in root.ExternalProjectReferences)
-                {
-                    ExternalProjectReference childProject;
-                    if (!allProjects.TryGetValue(child, out childProject))
-                    {
-                        // Let the resolver handle this later
-                        Debug.Fail($"Missing project {childProject}");
-                    }
-
-                    // Recurse down
-                    CollectReferences(childProject, allProjects, references);
-                }
-            }
         }
 
         internal static IReadOnlyList<IAssetsLogMessage> GetMessagesForProject(IReadOnlyList<IAssetsLogMessage> allMessages, string projectPath)

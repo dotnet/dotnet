@@ -16,6 +16,9 @@ using NuGet.Configuration;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
+using NuGet.Protocol.Providers;
+using NuGet.Protocol.Resources;
 using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat
@@ -58,9 +61,13 @@ namespace NuGet.CommandLine.XPlat
 
             //If the given file is a solution, get the list of projects
             //If not, then it's a project, which is put in a list
-            var projectsPaths = Path.GetExtension(listPackageArgs.Path).Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ?
-                           MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(f => File.Exists(f)) :
-                           new List<string>(new string[] { listPackageArgs.Path });
+            string fileExtension = Path.GetExtension(listPackageArgs.Path);
+            var projectsPaths =
+                (fileExtension.Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ||
+                    fileExtension.Equals(".slnx", PathUtility.GetStringComparisonBasedOnOS()) ||
+                    fileExtension.Equals(".slnf", PathUtility.GetStringComparisonBasedOnOS()))
+                    ? MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(File.Exists)
+                    : [listPackageArgs.Path];
 
             MSBuildAPIUtility msBuild = listPackageReportModel.MSBuildAPIUtility;
 
@@ -99,105 +106,232 @@ namespace NuGet.CommandLine.XPlat
 
             var assetsPath = project.GetPropertyValue(ProjectAssetsFile);
 
+            if (!IsProjectAssetsFileValid(assetsPath, projectPath, projectModel, out LockFile assetsFile))
+            {
+                return;
+            }
+
+            List<FrameworkPackages> frameworks;
+
+            try
+            {
+                frameworks = MSBuildAPIUtility.GetResolvedVersions(project, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
+            }
+            catch (InvalidOperationException ex)
+            {
+                projectModel.AddProjectInformation(ProblemType.Error, ex.Message);
+                return;
+            }
+
+            if (frameworks.Count > 0)
+            {
+                bool vulnerabilitiesCheckedFromAuditSources = false;
+
+                if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
+                {
+                    List<PackageSource> httpSources = HttpSourcesUtility.GetDisallowedInsecureHttpSources(listPackageArgs.PackageSources);
+                    httpSources.AddRange(HttpSourcesUtility.GetDisallowedInsecureHttpSources(listPackageArgs.AuditSources));
+
+                    if (httpSources.Count > 0)
+                    {
+                        projectModel.AddProjectInformation(ProblemType.Error, HttpSourcesUtility.BuildHttpSourceErrorMessage(httpSources, "list package"));
+                        return;
+                    }
+
+                    if (listPackageArgs.ReportType == ReportType.Vulnerable && listPackageArgs.AuditSources != null && listPackageArgs.AuditSources.Count > 0)
+                    {
+                        await GetVulnerabilitiesFromAuditSourcesAsync(listPackageArgs, listPackageReportModel, projectModel, frameworks);
+                        vulnerabilitiesCheckedFromAuditSources = true;
+                    }
+                    else
+                    {
+                        var metadata = await GetPackageMetadataAsync(frameworks, listPackageArgs);
+                        await UpdatePackagesWithSourceMetadata(frameworks, metadata, listPackageArgs);
+                    }
+                }
+
+                if (!vulnerabilitiesCheckedFromAuditSources)
+                {
+                    bool filterPackages = FilterPackages(frameworks, listPackageArgs) || ReportType.Default == listPackageArgs.ReportType;
+
+                    if (filterPackages)
+                    {
+                        var hasAutoReference = false;
+                        List<ListPackageReportFrameworkPackage> projectFrameworkPackages = ProjectPackagesPrintUtility.GetPackagesMetadata(frameworks, listPackageArgs, ref hasAutoReference);
+                        projectModel.TargetFrameworkPackages = projectFrameworkPackages;
+                        projectModel.AutoReferenceFound = hasAutoReference;
+                    }
+                    else
+                    {
+                        projectModel.TargetFrameworkPackages = new List<ListPackageReportFrameworkPackage>();
+                    }
+                }
+            }
+        }
+
+        private static async Task GetVulnerabilitiesFromAuditSourcesAsync(
+            ListPackageArgs listPackageArgs,
+            ListPackageReportModel listPackageReportModel,
+            ListPackageProjectModel projectModel,
+            List<FrameworkPackages> frameworks)
+        {
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> vulnerabilities = await GetVulnerabilityData(
+                projectModel,
+                listPackageReportModel,
+                listPackageArgs.AuditSources,
+                listPackageArgs.Logger,
+                listPackageArgs.CancellationToken);
+
+            foreach (var frameworkPackages in frameworks)
+            {
+                var frameworkPackage = new ListPackageReportFrameworkPackage(frameworkPackages.Framework)
+                {
+                    TransitivePackages = new List<ListReportPackage>(),
+                    TopLevelPackages = new List<ListReportPackage>()
+                };
+
+                ProcessPackages(frameworkPackages.TopLevelPackages, vulnerabilities, frameworkPackage.TopLevelPackages);
+                ProcessPackages(frameworkPackages.TransitivePackages, vulnerabilities, frameworkPackage.TransitivePackages);
+
+                projectModel.TargetFrameworkPackages ??= new List<ListPackageReportFrameworkPackage>();
+                projectModel.TargetFrameworkPackages.Add(frameworkPackage);
+            }
+        }
+
+        private static void ProcessPackages(
+            IEnumerable<InstalledPackageReference> packages,
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> vulnerabilities,
+            List<ListReportPackage> reportPackages)
+        {
+            foreach (var package in packages)
+            {
+                var vuln = GetPackageVulnerabilities(
+                    vulnerabilities,
+                    package.Name,
+                    package.ResolvedPackageMetadata.Identity.Version.ToNormalizedString()
+                    ).ToList();
+
+                if (vuln != null && vuln.Count > 0)
+                {
+                    reportPackages.Add(
+                        new ListReportPackage(
+                            package.Name,
+                            package.OriginalRequestedVersion,
+                            package.ResolvedPackageMetadata.Identity.Version.ToString(),
+                            vuln));
+                }
+            }
+        }
+
+        private static bool IsProjectAssetsFileValid(string assetsPath, string projectPath, ListPackageProjectModel projectModel, out LockFile assetsFile)
+        {
+            assetsFile = null;
+
             if (!File.Exists(assetsPath))
             {
                 projectModel.AddProjectInformation(ProblemType.Error,
                     string.Format(CultureInfo.CurrentCulture, Strings.Error_AssetsFileNotFound, projectPath));
+                return false;
             }
             else
             {
                 var lockFileFormat = new LockFileFormat();
-                LockFile assetsFile = lockFileFormat.Read(assetsPath);
+                assetsFile = lockFileFormat.Read(assetsPath);
 
                 // Assets file validation
-                if (assetsFile.PackageSpec != null &&
-                    assetsFile.Targets != null &&
-                    assetsFile.Targets.Count != 0)
-                {
-                    // Get all the packages that are referenced in a project
-                    List<FrameworkPackages> frameworks;
-                    try
-                    {
-                        frameworks = msBuild.GetResolvedVersions(project, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        projectModel.AddProjectInformation(ProblemType.Error, ex.Message);
-                        return;
-                    }
-
-                    if (frameworks.Count > 0)
-                    {
-                        if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
-                        {
-                            WarnForHttpSources(listPackageArgs, projectModel);
-                            var metadata = await GetPackageMetadataAsync(frameworks, listPackageArgs);
-                            await UpdatePackagesWithSourceMetadata(frameworks, metadata, listPackageArgs);
-                        }
-
-                        bool printPackages = FilterPackages(frameworks, listPackageArgs);
-                        printPackages = printPackages || ReportType.Default == listPackageArgs.ReportType;
-                        if (printPackages)
-                        {
-                            var hasAutoReference = false;
-                            List<ListPackageReportFrameworkPackage> projectFrameworkPackages = ProjectPackagesPrintUtility.GetPackagesMetadata(frameworks, listPackageArgs, ref hasAutoReference);
-                            projectModel.TargetFrameworkPackages = projectFrameworkPackages;
-                            projectModel.AutoReferenceFound = hasAutoReference;
-                        }
-                        else
-                        {
-                            projectModel.TargetFrameworkPackages = new List<ListPackageReportFrameworkPackage>();
-                        }
-                    }
-                }
-                else
+                if (assetsFile.PackageSpec == null ||
+                    assetsFile.Targets == null ||
+                    assetsFile.Targets.Count == 0)
                 {
                     projectModel.AddProjectInformation(ProblemType.Error,
                         string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingAssetsFile, assetsPath));
-                }
-
-                // Unload project
-                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
-            }
-        }
-
-        private static void WarnForHttpSources(ListPackageArgs listPackageArgs, ListPackageProjectModel projectModel)
-        {
-            List<PackageSource> httpPackageSources = null;
-            foreach (PackageSource packageSource in listPackageArgs.PackageSources)
-            {
-                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
-                {
-                    if (httpPackageSources == null)
-                    {
-                        httpPackageSources = new();
-                    }
-                    httpPackageSources.Add(packageSource);
-                }
-            }
-
-            if (httpPackageSources != null && httpPackageSources.Count != 0)
-            {
-                if (httpPackageSources.Count == 1)
-                {
-                    projectModel.AddProjectInformation(
-                        ProblemType.Warning,
-                        string.Format(CultureInfo.CurrentCulture,
-                        Strings.Warning_HttpServerUsage,
-                        "list package",
-                        httpPackageSources[0]));
+                    return false;
                 }
                 else
                 {
+                    return true;
+                }
+            }
+        }
+
+        private static async Task<List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>> GetVulnerabilityData(
+            ListPackageProjectModel projectModel,
+            ListPackageReportModel reportModel,
+            IReadOnlyList<PackageSource> sources,
+            ILogger logger,
+            CancellationToken cancellationToken)
+        {
+            var vulnerabilityInfo = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>();
+
+            foreach (var source in sources)
+            {
+                if (!await TryAddSourceVulnerabilityInfo(source, reportModel, logger, cancellationToken, vulnerabilityInfo))
+                {
                     projectModel.AddProjectInformation(
                         ProblemType.Warning,
-                        string.Format(CultureInfo.CurrentCulture,
-                        Strings.Warning_HttpServerUsage_MultipleSources,
-                        "list package",
-                        Environment.NewLine + string.Join(Environment.NewLine, httpPackageSources.Select(e => e.Name))));
+                        string.Format(CultureInfo.CurrentCulture, Strings.Warning_AuditSourceWithoutData, source.Name)
+                    );
                 }
             }
 
+            return vulnerabilityInfo;
+        }
+
+        private static async Task<bool> TryAddSourceVulnerabilityInfo(
+            PackageSource source,
+            ListPackageReportModel reportModel,
+            ILogger logger,
+            CancellationToken cancellationToken,
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> vulnerabilityInfo)
+        {
+            var repository = Repository.Factory.GetCoreV3(source);
+            var vulnerabilityProvider = new VulnerabilityInfoResourceV3Provider();
+            var (isCreated, resource) = await vulnerabilityProvider.TryCreate(repository, cancellationToken);
+
+            if (!isCreated || resource is not VulnerabilityInfoResourceV3 vulnerabilityResource)
+            {
+                return false;
+            }
+
+            reportModel.AuditSourcesUsed.Add(source);
+
+            var vulnerabilityInfoResult = await vulnerabilityResource.GetVulnerabilityInfoAsync(
+                new SourceCacheContext(),
+                logger,
+                cancellationToken
+            );
+
+            if (vulnerabilityInfoResult?.KnownVulnerabilities != null)
+            {
+                vulnerabilityInfo.AddRange(vulnerabilityInfoResult.KnownVulnerabilities);
+            }
+
+            return true;
+        }
+
+        private static IEnumerable<PackageVulnerabilityMetadata> GetPackageVulnerabilities(
+            IEnumerable<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> vulnerabilities,
+            string id,
+            string version)
+        {
+            if (vulnerabilities == null)
+            {
+                return Enumerable.Empty<PackageVulnerabilityMetadata>();
+            }
+
+            var parsedVersion = new NuGetVersion(version);
+            foreach (var vulnFile in vulnerabilities)
+            {
+                if (vulnFile.TryGetValue(id, out IReadOnlyList<PackageVulnerabilityInfo> vulnPackages) && vulnPackages != null)
+                {
+                    return vulnPackages
+                        .Where(package => package.Versions.Satisfies(parsedVersion))
+                        .Select(v => new PackageVulnerabilityMetadata(v.Url, (int)v.Severity))
+                        .ToList();
+                }
+            }
+
+            return Enumerable.Empty<PackageVulnerabilityMetadata>();
         }
 
         public static bool FilterPackages(IEnumerable<FrameworkPackages> packages, ListPackageArgs listPackageArgs)
@@ -440,9 +574,8 @@ namespace NuGet.CommandLine.XPlat
 
                         // Update resolved version with additional metadata information returned by the server.
                         var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
-                            .Where(v => v.SearchMetadata.Identity.Version == topLevelPackage.ResolvedPackageMetadata.Identity.Version &&
-                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
-                            .FirstOrDefault();
+                            .FirstOrDefault(v => v.SearchMetadata.Identity.Version == topLevelPackage.ResolvedPackageMetadata.Identity.Version &&
+                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null));
 
                         if (resolvedVersionFromServer != null)
                         {
@@ -469,9 +602,8 @@ namespace NuGet.CommandLine.XPlat
 
                         // Update resolved version with additional metadata information returned by the server.
                         var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
-                            .Where(v => v.SearchMetadata.Identity.Version == transitivePackage.ResolvedPackageMetadata.Identity.Version &&
-                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
-                            .FirstOrDefault();
+                            .FirstOrDefault(v => v.SearchMetadata.Identity.Version == transitivePackage.ResolvedPackageMetadata.Identity.Version &&
+                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null));
 
                         if (resolvedVersionFromServer != null)
                         {
@@ -514,8 +646,7 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <param name="package">The package to get the latest version for</param>
         /// <param name="listPackageArgs">List args for the token and source provider></param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A list of tasks for all latest versions for packages from all sources</returns>
         private async Task<KeyValuePair<string, List<IPackageSearchMetadata>>> GetPackageVersionsAsync(
             string package,
@@ -535,46 +666,12 @@ namespace NuGet.CommandLine.XPlat
         }
 
         /// <summary>
-        /// Prepares the calls to sources for current versions and updates
-        /// the list of tasks with the requests
-        /// </summary>
-        /// <param name="packageId">The package ID to get the current version metadata for</param>
-        /// <param name="requestedVersion">The version of the requested package</param>
-        /// <param name="listPackageArgs">List args for the token and source provider></param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
-        /// <returns>A list of tasks for all current versions for packages from all sources</returns>
-        private IList<Task> PrepareCurrentVersionsRequests(
-            string packageId,
-            NuGetVersion requestedVersion,
-            ListPackageArgs listPackageArgs,
-            Dictionary<string, IList<IPackageSearchMetadata>> packagesVersionsDict)
-        {
-            var requests = new List<Task>();
-            var sources = listPackageArgs.PackageSources;
-
-            foreach (var packageSource in sources)
-            {
-                requests.Add(
-                    GetPackageMetadataFromSourceAsync(
-                        packageSource,
-                        listPackageArgs,
-                        packageId,
-                        requestedVersion,
-                        packagesVersionsDict));
-            }
-
-            return requests;
-        }
-
-        /// <summary>
         /// Gets the highest version of a package from a specific source
         /// </summary>
         /// <param name="packageSource">The source to look for packages at</param>
         /// <param name="listPackageArgs">The list args for the cancellation token</param>
         /// <param name="package">Package to look for updates for</param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>An updated package with the highest version at a single source</returns>
         private async Task<IEnumerable<IPackageSearchMetadata>> GetLatestVersionPerSourceAsync(
             PackageSource packageSource,
@@ -596,49 +693,6 @@ namespace NuGet.CommandLine.XPlat
                     token: listPackageArgs.CancellationToken);
 
             return packages;
-        }
-
-        /// <summary>
-        /// Gets the requested version of a package from a specific source
-        /// </summary>
-        /// <param name="packageSource">The source to look for packages at</param>
-        /// <param name="listPackageArgs">The list args for the cancellation token</param>
-        /// <param name="packageId">Package to look for</param>
-        /// <param name="requestedVersion">Requested package version</param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
-        /// <returns>An updated package with the resolved version metadata from a single source</returns>
-        private async Task GetPackageMetadataFromSourceAsync(
-            PackageSource packageSource,
-            ListPackageArgs listPackageArgs,
-            string packageId,
-            NuGetVersion requestedVersion,
-            Dictionary<string, IList<IPackageSearchMetadata>> packagesVersionsDict)
-        {
-            SourceRepository sourceRepository = _sourceRepositoryCache[packageSource];
-            var packageMetadataResource = await sourceRepository
-                .GetResourceAsync<PackageMetadataResource>(listPackageArgs.CancellationToken);
-
-            using var sourceCacheContext = new SourceCacheContext();
-            var packages = await packageMetadataResource.GetMetadataAsync(
-                packageId,
-                includePrerelease: true,
-                includeUnlisted: true, // Include unlisted because deprecated packages may be unlisted.
-                sourceCacheContext: sourceCacheContext,
-                log: listPackageArgs.Logger,
-                token: listPackageArgs.CancellationToken);
-
-            var resolvedVersionsForPackage = packagesVersionsDict
-                .Where(p => p.Key.Equals(packageId, StringComparison.OrdinalIgnoreCase))
-                .Single()
-                .Value;
-
-            var resolvedPackageVersionMetadata = packages.SingleOrDefault(p => p.Identity.Version.Equals(requestedVersion));
-            if (resolvedPackageVersionMetadata != null)
-            {
-                // Package version metadata found on source
-                resolvedVersionsForPackage.Add(resolvedPackageVersionMetadata);
-            }
         }
 
         /// <summary>

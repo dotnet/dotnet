@@ -3,7 +3,7 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
-using Test.Utility.Signing;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 
 namespace NuGet.Commands.Test
 {
@@ -19,7 +19,7 @@ namespace NuGet.Commands.Test
         {
             _defaultCertificate = SigningTestUtility.GenerateCertificate("test", generator => { });
 
-            X509Certificate2 _defaultCertificateForTrust = SigningTestUtility.GenerateCertificate("test trusted", generator => { });
+            X509Certificate2 _defaultCertificateForTrust = SigningTestUtility.GenerateCertificate("NuGet Test Certificate", generator => { });
 
             _trustedDefaultCertificate = TrustedTestCert.Create(
                 new X509Certificate2(_defaultCertificateForTrust),
@@ -50,7 +50,8 @@ namespace NuGet.Commands.Test
 
         public X509Certificate2 GetTrustedCertificate()
         {
-            return _trustedDefaultCertificate.TrustedCert;
+            // Return a copy because we don't want the caller disposing our private copy.
+            return new X509Certificate2(_trustedDefaultCertificate.TrustedCert);
         }
     }
 }

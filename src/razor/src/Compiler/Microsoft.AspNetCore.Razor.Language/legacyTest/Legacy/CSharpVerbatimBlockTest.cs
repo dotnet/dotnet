@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpVerbatimBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true)
+public class CSharpVerbatimBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true, useLegacyTokenizer: true)
 {
     [Fact]
     public void VerbatimBlock()

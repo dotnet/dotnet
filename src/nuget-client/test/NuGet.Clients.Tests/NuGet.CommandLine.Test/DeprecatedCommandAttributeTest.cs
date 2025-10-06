@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
-using NuGet.Test.Utility;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Xunit;
 
 namespace NuGet.CommandLine.Test

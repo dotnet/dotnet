@@ -1,22 +1,57 @@
 <RunSettings>
-    <RunConfiguration>
-        <!-- Let the runtime decide how many cores to use -->
-        <MaxCpuCount>0</MaxCpuCount>
-        <ReporterSwitch>verbose</ReporterSwitch>
-        <!-- Consider it an error if no tests are discovered -->
-        <TreatNoTestsAsError>true</TreatNoTestsAsError>
-    </RunConfiguration>
-    <DataCollectionRunSettings>
-        <DataCollectors>
-            <DataCollector friendlyName="blame" enabled="True">
-                <Configuration>
-                    <!-- Enables crash dump-->
-                    <CollectDump DumpType="Full" />
-                    <!-- Enables hang dump-->
-                    <CollectDumpOnTestSessionHang TestTimeout="15min" HangDumpType="full" />
-                    <ResultsDirectory>%AGENT_TEMPDIRECTORY%</ResultsDirectory>
-                </Configuration>
-            </DataCollector>
-        </DataCollectors>
-    </DataCollectionRunSettings>
+  <!-- https://learn.microsoft.com/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file#runconfiguration-element -->
+  <RunConfiguration>
+    <!--
+      This setting controls the level of parallelism on process-level. Use 0 to enable the maximum process-level parallelism.
+
+      This setting determines the maximum number of test DLLs, or other test containers that can run in parallel. Each DLL runs in its own testhost process, and is isolated on the process level from the tests in other test DLLs. This setting doesn't force tests in each test DLL to run in parallel. Controlling the parallel execution within a DLL (on the thread-level) is up to the test framework such as MSTest, XUnit or NUnit.
+
+      The default value is 1, meaning that only one testhost runs at the same time. A special value 0 allows as many testhosts as you have logical processors (for example, 6, for a computer with 6 physical cores without multi-threading, or 12, for a computer with six physical cores with multi-threading).
+
+      The number of distinct DLLs in the run determines the actual number of testhosts started.
+    -->
+    <MaxCpuCount>0</MaxCpuCount>
+
+    <!-- Specify a Boolean value, which defines the exit code when no tests are discovered. If the value is true and no tests are discovered, a nonzero exit code is returned. Otherwise, zero is returned. -->
+    <TreatNoTestsAsError>true</TreatNoTestsAsError>
+  </RunConfiguration>
+
+  <!-- https://xunit.net/docs/runsettings -->
+  <xUnit>
+    <!-- Set this value to true to include diagnostic information during test discovery and execution. Each runner has a unique method of presenting diagnostic messages. -->
+    <DiagnosticMessages>true</DiagnosticMessages>
+
+    <!-- Set this value to enable long-running (hung) test detection. When the runner is idle waiting for tests to finished, it will report that fact once the timeout has passed. Use a value of 0 to disable the feature, or a positive integer value to enable the feature (time in seconds). -->
+    <LongRunningTestSeconds>90</LongRunningTestSeconds>
+
+    <!-- Set this to override the maximum number of threads to be used when parallelizing tests within this assembly. Use a value of 0 or "default" to indicate that you would like the default behavior; use a value of -1 or "unlimited" to indicate that you do not wish to limit the number of threads used for parallelization. -->
+    <MaxParallelThreads>0</MaxParallelThreads>
+
+    <!-- Set this to true if this assembly is willing to participate in parallelization with other assemblies. Test runners can use this information to automatically enable parallelization across assemblies if all the assemblies agree to it. -->
+    <ParallelizeAssembly>true</ParallelizeAssembly>
+
+    <!-- Set this to true if the assembly is willing to run tests inside this assembly in parallel against each other. Tests in the same test collection will be run sequentially against each other, but tests in different test collections will be run in parallel against each other. Set this to false to disable all parallelization within this test assembly. -->
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
+
+    <!-- Set this to true to use shadow copying when running tests in separate App Domains; set to false to run tests without shadow copying. When running tests without App Domains, this value is ignored. -->
+    <ShadowCopy>false</ShadowCopy>
+  </xUnit>
+
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName="blame" enabled="True" />
+    </Loggers>
+  </LoggerRunSettings>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <!-- Enables blame -->
+      <DataCollector friendlyName="blame" enabled="True">
+        <Configuration>
+          <!-- Enables hang dump or testhost and its child processes when a test hangs for more than 5 minutes. Dump type "Full", "Mini" or "None" (just kill the processes). -->
+          <CollectDumpOnTestSessionHang TestTimeout="5min" HangDumpType="Mini" />
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
 </RunSettings>

@@ -2,7 +2,7 @@ SigFile
   (ParsedSigFileInput
      ("/root/ConditionalDirective/DirectivesInMultilineStringAreNotReportedAsTriviaSignatureFile.fsi",
       QualifiedNameOfFile
-        DirectivesInMultilineStringAreNotReportedAsTriviaSignatureFile, [], [],
+        DirectivesInMultilineStringAreNotReportedAsTriviaSignatureFile, [],
       [SynModuleOrNamespaceSig
          ([Foobar], false, DeclaredNamespace,
           [Val
@@ -10,7 +10,8 @@ SigFile
                 ([], SynIdent (v, None), SynValTyparDecls (None, true),
                  LongIdent (SynLongIdent ([string], [], [None])),
                  SynValInfo ([], SynArgInfo ([], false, None)), false, false,
-                 PreXmlDoc ((4,0), FSharp.Compiler.Xml.XmlDocCollector), None,
+                 PreXmlDoc ((4,0), FSharp.Compiler.Xml.XmlDocCollector),
+                 Single None,
                  Some
                    (Const
                       (String
@@ -28,4 +29,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--9,19),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

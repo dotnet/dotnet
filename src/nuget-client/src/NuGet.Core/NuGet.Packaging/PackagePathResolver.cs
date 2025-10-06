@@ -19,8 +19,9 @@ namespace NuGet.Packaging
         public bool UseSideBySidePaths { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackagePathResolver"/> class.
+        /// Initializes a new instance of the <see cref="PackagePathResolver"/> class, which calculates packages.config style package directory layouts.
         /// </summary>
+        /// <remarks>See <see cref="VersionFolderPathResolver"/> for PackageReference and global packages folder layouts.</remarks>
         /// <param name="rootDirectory">The root directory.</param>
         /// <param name="useSideBySidePaths">A value indicating whether to use side-by-side paths.</param>
         /// <exception cref="System.ArgumentException">If rootDirectory is null, empty or does not contain an absolute path. </exception>

@@ -5,18 +5,20 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CS1701;xUnit1012;xUnit1014;xUnit2000;xUnit2009;xUnit2013</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);xUnit2024</WarningsAsErrors>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit" />
     <PackageReference Include="Moq" />
-    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="AwesomeAssertions" />
   </ItemGroup>
 
   <PropertyGroup>
-    <TestResultsDirectory>$(BuildCommonDirectory)TestResults\</TestResultsDirectory>
+    <VSTestResultsDirectory>$(RepositoryRootDirectory).test\TestResults\</VSTestResultsDirectory>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == '' AND '$(BuildingInsideVisualStudio)' != 'true'">$(MSBuildThisFileDirectory)xunit.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <!-- Workaround for test projects not automatically creating binding redirects -->
@@ -24,12 +26,5 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(UseParallelXunit)' == 'true' ">
-    <None Include="$(BuildCommonDirectory)TestShared\xunit.runner.json">
-      <Link>xunit.runner.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>

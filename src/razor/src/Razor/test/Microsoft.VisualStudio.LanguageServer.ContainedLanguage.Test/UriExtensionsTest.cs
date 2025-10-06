@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor;
@@ -17,7 +17,7 @@ public class UriExtensionsTest : ToolingTestBase
     {
     }
 
-    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    [ConditionalFact(Is.Windows)]
     public void GetAbsoluteOrUNCPath_AbsolutePath_ReturnsAbsolutePath()
     {
         // Arrange
@@ -30,7 +30,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    [ConditionalFact(Is.Windows)]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesPlusPaths()
     {
         // Arrange
@@ -43,7 +43,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    [ConditionalFact(Is.Windows)]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesSpacePaths()
     {
         // Arrange

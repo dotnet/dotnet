@@ -12,14 +12,14 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
     public Matrix()
     {
         GdiPlus.Matrix* matrix;
-        PInvoke.GdipCreateMatrix(&matrix).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateMatrix(&matrix).ThrowIfFailed();
         NativeMatrix = matrix;
     }
 
     public Matrix(float m11, float m12, float m21, float m22, float dx, float dy)
     {
         GdiPlus.Matrix* matrix;
-        PInvoke.GdipCreateMatrix2(m11, m12, m21, m22, dx, dy, &matrix).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateMatrix2(m11, m12, m21, m22, dx, dy, &matrix).ThrowIfFailed();
         NativeMatrix = matrix;
     }
 
@@ -36,7 +36,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
     internal static GdiPlus.Matrix* CreateNativeHandle(Matrix3x2 matrix)
     {
         GdiPlus.Matrix* nativeMatrix;
-        PInvoke.GdipCreateMatrix2(
+        PInvokeGdiPlus.GdipCreateMatrix2(
             matrix.M11,
             matrix.M12,
             matrix.M21,
@@ -48,7 +48,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         return nativeMatrix;
     }
 
-    public Matrix(RectangleF rect, PointF[] plgpts)
+    public Matrix(RectangleF rect, params PointF[] plgpts)
     {
         ArgumentNullException.ThrowIfNull(plgpts);
         if (plgpts.Length != 3)
@@ -57,12 +57,12 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         fixed (PointF* p = plgpts)
         {
             GdiPlus.Matrix* matrix;
-            PInvoke.GdipCreateMatrix3((RectF*)&rect, (GdiPlus.PointF*)p, &matrix).ThrowIfFailed();
+            PInvokeGdiPlus.GdipCreateMatrix3((RectF*)&rect, (GdiPlus.PointF*)p, &matrix).ThrowIfFailed();
             NativeMatrix = matrix;
         }
     }
 
-    public Matrix(Rectangle rect, Point[] plgpts)
+    public Matrix(Rectangle rect, params Point[] plgpts)
     {
         ArgumentNullException.ThrowIfNull(plgpts);
         if (plgpts.Length != 3)
@@ -71,7 +71,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         fixed (Point* p = plgpts)
         {
             GdiPlus.Matrix* matrix;
-            PInvoke.GdipCreateMatrix3I((Rect*)&rect, (GdiPlus.Point*)p, &matrix).ThrowIfFailed();
+            PInvokeGdiPlus.GdipCreateMatrix3I((Rect*)&rect, (GdiPlus.Point*)p, &matrix).ThrowIfFailed();
             NativeMatrix = matrix;
         }
     }
@@ -88,7 +88,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         {
             if (Gdip.Initialized)
             {
-                PInvoke.GdipDeleteMatrix(NativeMatrix);
+                PInvokeGdiPlus.GdipDeleteMatrix(NativeMatrix);
             }
 
             NativeMatrix = null;
@@ -100,7 +100,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
     public Matrix Clone()
     {
         GdiPlus.Matrix* matrix;
-        PInvoke.GdipCloneMatrix(NativeMatrix, &matrix).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCloneMatrix(NativeMatrix, &matrix).ThrowIfFailed();
         GC.KeepAlive(this);
         return new Matrix(matrix);
     }
@@ -123,13 +123,13 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         get
         {
             Matrix3x2 matrix = default;
-            PInvoke.GdipGetMatrixElements(NativeMatrix, (float*)&matrix).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetMatrixElements(NativeMatrix, (float*)&matrix).ThrowIfFailed();
             GC.KeepAlive(this);
             return matrix;
         }
         set
         {
-            PInvoke.GdipSetMatrixElements(
+            PInvokeGdiPlus.GdipSetMatrixElements(
                 NativeMatrix,
                 value.M11,
                 value.M12,
@@ -148,7 +148,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
         fixed (float* m = elements)
         {
-            PInvoke.GdipGetMatrixElements(NativeMatrix, m).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetMatrixElements(NativeMatrix, m).ThrowIfFailed();
             GC.KeepAlive(this);
         }
     }
@@ -169,7 +169,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
     public void Reset()
     {
-        PInvoke.GdipSetMatrixElements(
+        PInvokeGdiPlus.GdipSetMatrixElements(
             NativeMatrix,
             1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f).ThrowIfFailed();
@@ -186,7 +186,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         if (matrix.NativeMatrix == NativeMatrix)
             throw new InvalidOperationException(SR.GdiplusObjectBusy);
 
-        PInvoke.GdipMultiplyMatrix(NativeMatrix, matrix.NativeMatrix, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipMultiplyMatrix(NativeMatrix, matrix.NativeMatrix, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
         GC.KeepAlive(matrix);
     }
@@ -195,7 +195,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
     public void Translate(float offsetX, float offsetY, MatrixOrder order)
     {
-        PInvoke.GdipTranslateMatrix(NativeMatrix, offsetX, offsetY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipTranslateMatrix(NativeMatrix, offsetX, offsetY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -203,7 +203,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
     public void Scale(float scaleX, float scaleY, MatrixOrder order)
     {
-        PInvoke.GdipScaleMatrix(NativeMatrix, scaleX, scaleY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipScaleMatrix(NativeMatrix, scaleX, scaleY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -211,7 +211,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
     public void Rotate(float angle, MatrixOrder order)
     {
-        PInvoke.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -221,15 +221,15 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         Status status;
         if (order == MatrixOrder.Prepend)
         {
-            status = PInvoke.GdipTranslateMatrix(NativeMatrix, point.X, point.Y, (GdiPlus.MatrixOrder)order);
-            status |= PInvoke.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order);
-            status |= PInvoke.GdipTranslateMatrix(NativeMatrix, -point.X, -point.Y, (GdiPlus.MatrixOrder)order);
+            status = PInvokeGdiPlus.GdipTranslateMatrix(NativeMatrix, point.X, point.Y, (GdiPlus.MatrixOrder)order);
+            status |= PInvokeGdiPlus.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order);
+            status |= PInvokeGdiPlus.GdipTranslateMatrix(NativeMatrix, -point.X, -point.Y, (GdiPlus.MatrixOrder)order);
         }
         else
         {
-            status = PInvoke.GdipTranslateMatrix(NativeMatrix, -point.X, -point.Y, (GdiPlus.MatrixOrder)order);
-            status |= PInvoke.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order);
-            status |= PInvoke.GdipTranslateMatrix(NativeMatrix, point.X, point.Y, (GdiPlus.MatrixOrder)order);
+            status = PInvokeGdiPlus.GdipTranslateMatrix(NativeMatrix, -point.X, -point.Y, (GdiPlus.MatrixOrder)order);
+            status |= PInvokeGdiPlus.GdipRotateMatrix(NativeMatrix, angle, (GdiPlus.MatrixOrder)order);
+            status |= PInvokeGdiPlus.GdipTranslateMatrix(NativeMatrix, point.X, point.Y, (GdiPlus.MatrixOrder)order);
         }
 
         status.ThrowIfFailed();
@@ -238,29 +238,40 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
 
     public void Shear(float shearX, float shearY)
     {
-        PInvoke.GdipShearMatrix(NativeMatrix, shearX, shearY, GdiPlus.MatrixOrder.MatrixOrderPrepend).ThrowIfFailed();
+        PInvokeGdiPlus.GdipShearMatrix(NativeMatrix, shearX, shearY, GdiPlus.MatrixOrder.MatrixOrderPrepend).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
     public void Shear(float shearX, float shearY, MatrixOrder order)
     {
-        PInvoke.GdipShearMatrix(NativeMatrix, shearX, shearY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipShearMatrix(NativeMatrix, shearX, shearY, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
     public void Invert()
     {
-        PInvoke.GdipInvertMatrix(NativeMatrix).ThrowIfFailed();
+        PInvokeGdiPlus.GdipInvertMatrix(NativeMatrix).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
-    public void TransformPoints(PointF[] pts)
+    /// <inheritdoc cref="TransformPoints(Point[])"/>
+    public void TransformPoints(params PointF[] pts)
     {
         ArgumentNullException.ThrowIfNull(pts);
+        TransformPoints(pts.AsSpan());
+    }
 
+    /// <inheritdoc cref="TransformPoints(Point[])"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    void TransformPoints(params ReadOnlySpan<PointF> pts)
+    {
         fixed (PointF* p = pts)
         {
-            PInvoke.GdipTransformMatrixPoints(
+            PInvokeGdiPlus.GdipTransformMatrixPoints(
                 NativeMatrix,
                 (GdiPlus.PointF*)p,
                 pts.Length).ThrowIfFailed();
@@ -269,13 +280,27 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         GC.KeepAlive(this);
     }
 
-    public void TransformPoints(Point[] pts)
+    /// <summary>
+    ///  Applies the geometric transform this <see cref="Matrix"/> represents to an array of points.
+    /// </summary>
+    /// <param name="pts">The points to transform.</param>
+    public void TransformPoints(params Point[] pts)
     {
         ArgumentNullException.ThrowIfNull(pts);
+        TransformPoints(pts.AsSpan());
+    }
 
+    /// <inheritdoc cref="TransformPoints(Point[])"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    void TransformPoints(params ReadOnlySpan<Point> pts)
+    {
         fixed (Point* p = pts)
         {
-            PInvoke.GdipTransformMatrixPointsI(
+            PInvokeGdiPlus.GdipTransformMatrixPointsI(
                 NativeMatrix,
                 (GdiPlus.Point*)p,
                 pts.Length).ThrowIfFailed();
@@ -284,13 +309,27 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         GC.KeepAlive(this);
     }
 
-    public void TransformVectors(PointF[] pts)
+    /// <summary>
+    ///  Multiplies each vector in an array by the matrix. The translation elements of this matrix (third row) are ignored.
+    /// </summary>
+    /// <param name="pts">The points to transform.</param>
+    public void TransformVectors(params PointF[] pts)
     {
         ArgumentNullException.ThrowIfNull(pts);
+        TransformVectors(pts.AsSpan());
+    }
 
+    /// <inheritdoc cref="TransformVectors(PointF[])"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    void TransformVectors(params ReadOnlySpan<PointF> pts)
+    {
         fixed (PointF* p = pts)
         {
-            PInvoke.GdipVectorTransformMatrixPoints(
+            PInvokeGdiPlus.GdipVectorTransformMatrixPoints(
                 NativeMatrix,
                 (GdiPlus.PointF*)p,
                 pts.Length).ThrowIfFailed();
@@ -299,15 +338,32 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         GC.KeepAlive(this);
     }
 
-    public void VectorTransformPoints(Point[] pts) => TransformVectors(pts);
+    /// <inheritdoc cref="TransformVectors(PointF[])"/>
+    public void VectorTransformPoints(params Point[] pts) => TransformVectors(pts);
 
-    public void TransformVectors(Point[] pts)
+#if NET9_0_OR_GREATER
+    /// <inheritdoc cref="TransformVectors(PointF[])"/>
+    public void VectorTransformPoints(params ReadOnlySpan<Point> pts) => TransformVectors(pts);
+#endif
+
+    /// <inheritdoc cref="TransformVectors(PointF[])"/>
+    public void TransformVectors(params Point[] pts)
     {
         ArgumentNullException.ThrowIfNull(pts);
+        TransformVectors(pts.AsSpan());
+    }
 
+    /// <inheritdoc cref="TransformVectors(PointF[])"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    void TransformVectors(params ReadOnlySpan<Point> pts)
+    {
         fixed (Point* p = pts)
         {
-            PInvoke.GdipVectorTransformMatrixPointsI(
+            PInvokeGdiPlus.GdipVectorTransformMatrixPointsI(
                 NativeMatrix,
                 (GdiPlus.Point*)p,
                 pts.Length).ThrowIfFailed();
@@ -321,7 +377,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         get
         {
             BOOL invertible;
-            PInvoke.GdipIsMatrixInvertible(NativeMatrix, &invertible).ThrowIfFailed();
+            PInvokeGdiPlus.GdipIsMatrixInvertible(NativeMatrix, &invertible).ThrowIfFailed();
             GC.KeepAlive(this);
             return invertible;
         }
@@ -332,7 +388,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
         get
         {
             BOOL identity;
-            PInvoke.GdipIsMatrixIdentity(NativeMatrix, &identity).ThrowIfFailed();
+            PInvokeGdiPlus.GdipIsMatrixIdentity(NativeMatrix, &identity).ThrowIfFailed();
             GC.KeepAlive(this);
             return identity;
         }
@@ -344,7 +400,7 @@ public sealed unsafe class Matrix : MarshalByRefObject, IDisposable
             return false;
 
         BOOL equal;
-        PInvoke.GdipIsMatrixEqual(
+        PInvokeGdiPlus.GdipIsMatrixEqual(
             NativeMatrix,
             matrix2.NativeMatrix,
             &equal).ThrowIfFailed();

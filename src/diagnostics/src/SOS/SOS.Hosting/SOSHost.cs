@@ -13,8 +13,7 @@ using SOS.Hosting.DbgEng;
 using SOS.Hosting.DbgEng.Interop;
 using Architecture = System.Runtime.InteropServices.Architecture;
 
-namespace SOS.Hosting
-{
+namespace SOS.Hosting {
     /// <summary>
     /// Helper code to hosting the native SOS code
     /// </summary>
@@ -165,27 +164,16 @@ namespace SOS.Hosting
             IntPtr self,
             IMAGE_FILE_MACHINE* type)
         {
-            switch (Target.Architecture)
+            *type = Target.Architecture switch
             {
-                case Architecture.X64:
-                    *type = IMAGE_FILE_MACHINE.AMD64;
-                    break;
-                case Architecture.X86:
-                    *type = IMAGE_FILE_MACHINE.I386;
-                    break;
-                case Architecture.Arm:
-                    *type = IMAGE_FILE_MACHINE.THUMB2;
-                    break;
-                case Architecture.Arm64:
-                    *type = IMAGE_FILE_MACHINE.ARM64;
-                    break;
-                case (Architecture)9 /* Architecture.RiscV64 */:
-                    *type = IMAGE_FILE_MACHINE.RISCV64;
-                    break;
-                default:
-                    *type = IMAGE_FILE_MACHINE.UNKNOWN;
-                    break;
-            }
+                Architecture.X64 => IMAGE_FILE_MACHINE.AMD64,
+                Architecture.X86 => IMAGE_FILE_MACHINE.I386,
+                Architecture.Arm => IMAGE_FILE_MACHINE.ARMNT,
+                Architecture.Arm64 => IMAGE_FILE_MACHINE.ARM64,
+                (Architecture)6 /* Architecture.LoongArch64 */=> IMAGE_FILE_MACHINE.LOONGARCH64,
+                (Architecture)9 /* Architecture.RiscV64 */=> IMAGE_FILE_MACHINE.RISCV64,
+                _ => IMAGE_FILE_MACHINE.UNKNOWN,
+            };
             return HResult.S_OK;
         }
 
@@ -592,21 +580,13 @@ namespace SOS.Hosting
             int contextSize,
             IntPtr context)
         {
-            byte[] registerContext;
             try
             {
-                registerContext = ThreadService.GetThreadFromId(threadId).GetThreadContext();
+                ThreadService.GetThreadFromId(threadId).GetThreadContext(context, contextSize);
             }
-            catch (DiagnosticsException)
+            catch (Exception ex) when (ex is DiagnosticsException or ArgumentOutOfRangeException)
             {
-                return HResult.E_FAIL;
-            }
-            try
-            {
-                Marshal.Copy(registerContext, 0, context, Math.Min(registerContext.Length, contextSize));
-            }
-            catch (Exception ex) when (ex is ArgumentOutOfRangeException or ArgumentNullException)
-            {
+                Trace.TraceError($"SOSHost.GetThreadContext({threadId:X8}) FAILED");
                 return HResult.E_INVALIDARG;
             }
             return HResult.S_OK;

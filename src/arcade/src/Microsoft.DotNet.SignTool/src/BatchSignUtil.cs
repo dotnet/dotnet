@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TaskLoggingHelper = Microsoft.Build.Utilities.TaskLoggingHelper;
 
@@ -25,8 +26,6 @@ namespace Microsoft.DotNet.SignTool
         private Telemetry _telemetry;
         private readonly int _repackParallelism;
         private readonly long _maximumParallelFileSizeInBytes;
-
-        internal bool SkipZipContainerSignatureMarkerCheck { get; set; }
 
         internal BatchSignUtil(IBuildEngine buildEngine,
             TaskLoggingHelper log,
@@ -59,8 +58,10 @@ namespace Microsoft.DotNet.SignTool
                 return;
             }
 
-            // Next remove public signing from all of the assemblies; it can interfere with the signing process.
-            RemovePublicSign();
+            // Remove strong name signing, as sn.exe would choke on already signed binaries.
+            // Our new signing infra is more resilient, but sn.exe may be used as a backup
+            // or when not signing locally.
+            RemoveStrongNameSigning();
 
             // Next sign all of the files
             if (!SignFiles())
@@ -84,7 +85,7 @@ namespace Microsoft.DotNet.SignTool
             // This is a recursive process since we process nested containers.
             foreach (var file in _batchData.FilesToSign)
             {
-                VerifyAfterSign(file);
+                VerifyAfterSign(_log, file);
             }
 
             if (_log.HasLoggedErrors)
@@ -95,14 +96,14 @@ namespace Microsoft.DotNet.SignTool
             _log.LogMessage(MessageImportance.High, "Build artifacts signed and validated.");
         }
 
-        private void RemovePublicSign()
+        private void RemoveStrongNameSigning()
         {
             foreach (var fileSignInfo in _batchData.FilesToSign.Where(x => x.IsPEFile()))
             {
-                if (fileSignInfo.SignInfo.StrongName != null && fileSignInfo.SignInfo.ShouldSign)
+                if (fileSignInfo.SignInfo.ShouldStrongName)
                 {
-                    _log.LogMessage($"Removing public sign: '{fileSignInfo.FileName}'");
-                    _signTool.RemovePublicSign(fileSignInfo.FullPath);
+                    _log.LogMessage($"Removing strong name signing from: '{fileSignInfo.FileName}'");
+                    _signTool.RemoveStrongNameSign(fileSignInfo.FullPath);
                 }
             }
         }
@@ -123,17 +124,20 @@ namespace Microsoft.DotNet.SignTool
             bool signGroup(IEnumerable<FileSignInfo> files, out int signedCount)
             {
                 var filesToSign = files.Where(fileInfo => fileInfo.SignInfo.ShouldSign).ToArray();
+                var filesToNotarize = files.Where(fileInfo => fileInfo.SignInfo.ShouldNotarize).ToArray();
                 signedCount = filesToSign.Length;
                 if (filesToSign.Length == 0) return true;
 
-                _log.LogMessage(MessageImportance.High, $"Round {round}: Signing {filesToSign.Length} files.");
+                _log.LogMessage(MessageImportance.High, $"Round {round}: Signing {filesToSign.Length} files" +
+                    $"{(filesToNotarize.Length > 0? $", Notarizing {filesToNotarize.Length} files" : "")}");
 
                 foreach (var file in filesToSign)
                 {
                     string collisionIdInfo = string.Empty;
                     if(_hashToCollisionIdMap != null)
                     {
-                        if(_hashToCollisionIdMap.TryGetValue(file.FileContentKey, out string collisionPriorityId))
+                        if(_hashToCollisionIdMap.TryGetValue(file.FileContentKey, out string collisionPriorityId) &&
+                            !string.IsNullOrEmpty(collisionPriorityId))
                         {
                             collisionIdInfo = $"Collision Id='{collisionPriorityId}'";
                         }
@@ -150,7 +154,7 @@ namespace Microsoft.DotNet.SignTool
             bool signEngines(IEnumerable<FileSignInfo> files, out int signedCount)
             {
                 var enginesToSign = files.Where(fileInfo => fileInfo.SignInfo.ShouldSign && 
-                                                fileInfo.IsWixContainer() &&
+                                                fileInfo.IsUnpackableWixContainer() &&
                                                 Path.GetExtension(fileInfo.FullPath) == ".exe").ToArray();
                 signedCount = enginesToSign.Length;
                 if (enginesToSign.Length == 0)
@@ -168,7 +172,7 @@ namespace Microsoft.DotNet.SignTool
                 {
                     string engineFileName = $"{Path.Combine(workingDirectory, $"{engineContainer}", file.FileName)}{SignToolConstants.MsiEngineExtension}";
                     _log.LogMessage(MessageImportance.Normal, $"Extracting engine from {file.FullPath}");
-                    if (!RunWixTool("insignia.exe", $"-ib {file.FullPath} -o {engineFileName}",
+                    if (!RunWixTool("wix.exe", $"burn detach {file.FullPath} -engine {engineFileName}",
                         workingDirectory, _signTool.WixToolsPath, _log))
                     {
                         _log.LogError($"Failed to extract engine from {file.FullPath}");
@@ -197,8 +201,8 @@ namespace Microsoft.DotNet.SignTool
 
                     try
                     {
-                        if (!RunWixTool("insignia.exe",
-                            $"-ab {engine.Key.FileName} {engine.Value.FullPath} -o {engine.Value.FullPath}", workingDirectory,
+                        if (!RunWixTool("wix.exe",
+                            $"burn reattach {engine.Value.FullPath} -engine {engine.Key.FileName} -o {engine.Value.FullPath}", workingDirectory,
                             _signTool.WixToolsPath, _log))
                         {
                             _log.LogError($"Failed to attach engine to {engine.Value.FullPath}");
@@ -275,15 +279,10 @@ namespace Microsoft.DotNet.SignTool
 
             void repackContainer(FileSignInfo file)
             {
-                if (file.IsZipContainer())
+                if (file.IsUnpackableContainer())
                 {
                     _log.LogMessage($"Repacking container: '{file.FileName}'");
-                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath, _signTool.TarToolPath);
-                }
-                else if (file.IsWixContainer())
-                {
-                    _log.LogMessage($"Packing wix container: '{file.FileName}'");
-                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath, _signTool.TarToolPath);
+                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.Wix3ToolsPath, _signTool.WixToolsPath, _signTool.TarToolPath, _signTool.PkgToolPath);
                 }
                 else
                 {
@@ -295,7 +294,7 @@ namespace Microsoft.DotNet.SignTool
             // signed, don't need signing, and are repacked.
             bool isReady(FileSignInfo file)
             {
-                if (file.IsContainer())
+                if (file.IsUnpackableContainer())
                 {
                     var zipData = _batchData.ZipDataMap[file.FileContentKey];
                     return zipData.NestedParts.Values.All(x => (!x.FileSignInfo.SignInfo.ShouldSign ||
@@ -431,7 +430,7 @@ namespace Microsoft.DotNet.SignTool
             };
 
             string path = processStartInfo.EnvironmentVariables["PATH"];
-            path = $"{path};{wixToolsPath}";
+            path = $"{wixToolsPath};{path}";
             processStartInfo.EnvironmentVariables.Remove("PATH");
             processStartInfo.EnvironmentVariables.Add("PATH", path);
 
@@ -495,6 +494,28 @@ namespace Microsoft.DotNet.SignTool
                         log.LogError($"VSIX {fileName} cannot be strong name signed.");
                     }
                 }
+                else if (fileName.IsDeb())
+                {
+                    if (isInvalidEmptyCertificate)
+                    {
+                        log.LogError($"Deb package {fileName} should have a certificate name.");
+                    }
+                    if (!IsLinuxSignCertificate(fileName.SignInfo.Certificate))
+                    {
+                        log.LogError($"Deb package {fileName} must be signed with a LinuxSign certificate.");
+                    }
+                }
+                else if (fileName.IsRpm())
+                {
+                    if (isInvalidEmptyCertificate)
+                    {
+                        log.LogError($"Rpm package {fileName} should have a certificate name.");
+                    }
+                    if (!IsLinuxSignCertificate(fileName.SignInfo.Certificate))
+                    {
+                        log.LogError($"Rpm package {fileName} must be signed with a LinuxSign certificate.");
+                    }
+                }
                 else if (fileName.IsNupkg())
                 {
                     if(isInvalidEmptyCertificate)
@@ -505,6 +526,30 @@ namespace Microsoft.DotNet.SignTool
                     if (fileName.SignInfo.StrongName != null)
                     {
                         log.LogError($"Nupkg {fileName} cannot be strong name signed.");
+                    }
+                }
+                else if (fileName.IsPkg())
+                {
+                    if(isInvalidEmptyCertificate)
+                    {
+                        log.LogError($"Pkg {fileName} should have a certificate name.");
+                    }
+
+                    if (fileName.SignInfo.StrongName != null)
+                    {
+                        log.LogError($"Pkg {fileName} cannot be strong name signed.");
+                    }
+                }
+                else if (fileName.IsAppBundle())
+                {
+                    if (isInvalidEmptyCertificate)
+                    {
+                        log.LogError($"AppBundle {fileName} should have a certificate name.");
+                    }
+
+                    if (fileName.SignInfo.StrongName != null)
+                    {
+                        log.LogError($"AppBundle {fileName} cannot be strong name signed.");
                     }
                 }
                 else if (fileName.IsZip())
@@ -534,67 +579,79 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void VerifyAfterSign(FileSignInfo file)
+        /// <summary>
+        /// Recursively verify that files are signed properly.
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="file"></param>
+        private void VerifyAfterSign(TaskLoggingHelper log, FileSignInfo file)
         {
-            if (file.IsPEFile())
+            // No need to check if the file should not have been signed.
+            if (file.SignInfo.ShouldSign)
             {
-                using (var stream = File.OpenRead(file.FullPath))
+                if (file.IsPEFile())
                 {
-                    if (!_signTool.VerifySignedPEFile(stream))
+                    using (var stream = File.OpenRead(file.FullPath))
                     {
-                        _log.LogError($"Assembly {file.FullPath} is NOT signed properly");
-                    }
-                    else
-                    {
-                        _log.LogMessage(MessageImportance.Low, $"Assembly {file.FullPath} is signed properly");
+                        var status = _signTool.VerifySignedPEFile(stream);
+                        LogSigningStatus(file, status, "PE file");
                     }
                 }
-            }
-            else if (file.IsPowerShellScript())
-            {
-                if (!_signTool.VerifySignedPowerShellFile(file.FullPath))
+                else if (file.IsDeb())
                 {
-                    _log.LogError($"Powershell file {file.FullPath} does not have a signature mark.");
+                    var status = _signTool.VerifySignedDeb(log, file.FullPath);
+                    LogSigningStatus(file, status, "Debian package");
+                }
+                else if (file.IsRpm())
+                {
+                    var status = _signTool.VerifySignedRpm(log, file.FullPath);
+                    LogSigningStatus(file, status, "RPM package");
+                }
+                else if (file.IsPowerShellScript())
+                {
+                    var status = _signTool.VerifySignedPowerShellFile(file.FullPath);
+                    LogSigningStatus(file, status, "Powershell file");
+                }
+                else if (file.IsPkg() || file.IsAppBundle())
+                {
+                    var status = _signTool.VerifySignedPkgOrAppBundle(_log, file.FullPath, _signTool.PkgToolPath);
+                    LogSigningStatus(file, status, "Pkg or app");
+                }
+                else if (file.IsNupkg())
+                {
+                    var status = _signTool.VerifySignedNuGet(file.FullPath);
+                    LogSigningStatus(file, status, "Nuget package");
+                } 
+                else if (file.IsVsix())
+                {
+                    var status = _signTool.VerifySignedVSIX(file.FullPath);
+                    LogSigningStatus(file, status, "VSIX package");
                 }
             }
-            else if (file.IsZipContainer())
+
+            if (file.IsUnpackableContainer())
             {
                 var zipData = _batchData.ZipDataMap[file.FileContentKey];
-                bool signedContainer = false;
 
-                foreach (var (relativeName, _, _) in ZipData.ReadEntries(file.FullPath, _signTool.TempDir, _signTool.TarToolPath, ignoreContent: true))
+                foreach (var nestedPart in zipData.NestedParts.Values)
                 {
-                    if (!SkipZipContainerSignatureMarkerCheck)
-                    {
-                        if (file.IsNupkg() && _signTool.VerifySignedNugetFileMarker(relativeName))
-                        {
-                            signedContainer = true;
-                        }
-                        else if (file.IsVsix() && _signTool.VerifySignedVSIXFileMarker(relativeName))
-                        {
-                            signedContainer = true;
-                        }
-                    }
-
-                    var zipPart = zipData.FindNestedPart(relativeName);
-                    if (!zipPart.HasValue)
-                    {
-                        continue;
-                    }
-
-                    VerifyAfterSign(zipPart.Value.FileSignInfo);
+                    VerifyAfterSign(log, nestedPart.FileSignInfo);
                 }
+            }
 
-                if (!SkipZipContainerSignatureMarkerCheck)
+            void LogSigningStatus(FileSignInfo file, SigningStatus status, string fileType)
+            {
+                if (status == SigningStatus.NotSigned)
                 {
-                    if ((file.IsNupkg() || file.IsVsix()) && !signedContainer)
-                    {
-                        _log.LogError($"Container {file.FullPath} does not have signature marker.");
-                    }
-                    else
-                    {
-                        _log.LogMessage(MessageImportance.Low, $"Container {file.FullPath} has a signature marker.");
-                    }
+                    _log.LogError($"{fileType} {file.FullPath} is not signed properly.");
+                }
+                else if (status == SigningStatus.Unknown)
+                {
+                    _log.LogMessage(MessageImportance.Low, $"Signing status of {file.FullPath} could not be determined.");
+                }
+                else
+                {
+                    _log.LogMessage(MessageImportance.Low, $"{fileType} {file.FullPath} is signed properly");
                 }
             }
         }
@@ -609,17 +666,22 @@ namespace Microsoft.DotNet.SignTool
                     continue;
                 }
 
-                if (file.IsManaged() && !file.IsCrossgened() && !_signTool.VerifyStrongNameSign(file.FullPath))
+                if (file.IsManaged() && !file.IsCrossgened())
                 {
-                    _log.LogError($"Assembly {file.FullPath} is not strong-name signed correctly.");
-                }
-                else
-                {
-                    _log.LogMessage(MessageImportance.Low, $"Assembly {file.FullPath} strong-name signature is valid.");
+                    if (_signTool.VerifyStrongNameSign(file.FullPath) != SigningStatus.Signed)
+                    {
+                        _log.LogError($"Assembly {file.FullPath} is not strong-name signed correctly.");
+                    }
+                    else
+                    {
+                        _log.LogMessage(MessageImportance.Low, $"Assembly {file.FullPath} strong-name signature is valid.");
+                    }
                 }
             }
         }
 
         private static bool IsVsixCertificate(string certificate) => certificate.StartsWith("Vsix", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsLinuxSignCertificate(string certificate) => certificate.StartsWith("LinuxSign", StringComparison.OrdinalIgnoreCase);
     }
 }

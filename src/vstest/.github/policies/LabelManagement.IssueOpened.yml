@@ -1,0 +1,27 @@
+id:
+name: LabelManagement.IssueOpened
+description: Handlers when an issue is first opened
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Add needs triage to new issues
+        if:
+          - payloadType: Issues
+          - isAction:
+              action: Opened
+          - and:
+            - not:
+                activitySenderHasPermission:
+                  permission: Admin
+            - not:
+                activitySenderHasPermission:
+                  permission: Write
+        then:
+          - addLabel:
+              label: 'Needs: Triage :mag:'
+onFailure:
+onSuccess:

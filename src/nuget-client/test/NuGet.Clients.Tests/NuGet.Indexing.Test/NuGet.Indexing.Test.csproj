@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NETFXTargetFramework)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(IsXPlat)' == 'true' "></TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>Unit tests for NuGet.Indexing.</Description>
   </PropertyGroup>
 
@@ -13,9 +11,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.Indexing\NuGet.Indexing.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 </Project>

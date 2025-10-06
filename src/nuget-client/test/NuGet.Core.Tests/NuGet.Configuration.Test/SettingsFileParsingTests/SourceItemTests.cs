@@ -59,6 +59,9 @@ namespace NuGet.Configuration.Test
         <add key='nuget3' value='http://serviceIndex.test3/api/index.json' protocolVersion='3' ALLOWInsecureConnections='true' />
         <add key='nuget4' value='http://serviceIndex.test4/api/index.json' allowInsecureConnections='true' />
         <add key='nuget5' value='http://serviceIndex.test5/api/index.json' allowInsecureConnections='false' protocolVersion='2' />
+        <add key='nuget6' value='http://serviceIndex.test6/api/index.json' protocolVersion='3' ALLOWInsecureConnections='true' DiSaBleTLSCertificateValidation='true'/>
+        <add key='nuget7' value='http://serviceIndex.test7/api/index.json' allowInsecureConnections='true' disableTLSCertificateValidation='false'/>
+        <add key='nuget8' value='http://serviceIndex.test8/api/index.json' allowInsecureConnections='false' protocolVersion='2' disableTLSCertificateValidation='true'/>
     </packageSources>
 </configuration>";
 
@@ -69,6 +72,9 @@ namespace NuGet.Configuration.Test
                 new SourceItem("nuget3","http://serviceIndex.test3/api/index.json", protocolVersion: "3", allowInsecureConnections: "true" ),
                 new SourceItem("nuget4","http://serviceIndex.test4/api/index.json", protocolVersion: null, allowInsecureConnections: "true"  ),
                 new SourceItem("nuget5","http://serviceIndex.test5/api/index.json", protocolVersion: "2", allowInsecureConnections: "false"),
+                new SourceItem("nuget6","http://serviceIndex.test6/api/index.json", protocolVersion: "3", allowInsecureConnections: "true", disableTLSCertificateValidation: "true"),
+                new SourceItem("nuget7","http://serviceIndex.test7/api/index.json", protocolVersion: null, allowInsecureConnections: "true", disableTLSCertificateValidation: "false"),
+                new SourceItem("nuget8","http://serviceIndex.test8/api/index.json", protocolVersion: "2", allowInsecureConnections: "false", disableTLSCertificateValidation: "true"),
             };
 
             var nugetConfigPath = "NuGet.Config";
@@ -86,7 +92,7 @@ namespace NuGet.Configuration.Test
                 var children = section!.Items.Cast<SourceItem>().ToList();
 
                 children.Should().NotBeEmpty();
-                children.Count.Should().Be(5);
+                children.Count.Should().Be(8);
 
                 for (var i = 0; i < children.Count; i++)
                 {
@@ -95,6 +101,7 @@ namespace NuGet.Configuration.Test
                     children[i].Value.Should().Be(expectedValues[i].Value, because: $"SourceItem[{i}].Value is {children[i].Value}, but it's expected to be {expectedValues[i].Value}");
                     children[i].ProtocolVersion.Should().Be(expectedValues[i].ProtocolVersion, because: $"SourceItem[{i}].ProtocolVersion is {children[i].ProtocolVersion}, but it's expected to be {expectedValues[i].ProtocolVersion}");
                     children[i].AllowInsecureConnections.Should().Be(expectedValues[i].AllowInsecureConnections, because: $"SourceItem[{i}].AllowInsecureConnections is {children[i].AllowInsecureConnections}, but it's expected to be {expectedValues[i].AllowInsecureConnections}");
+                    children[i].DisableTLSCertificateValidation.Should().Be(expectedValues[i].DisableTLSCertificateValidation, because: $"SourceItem[{i}].DisableTLSCertificateValidation is {children[i].DisableTLSCertificateValidation}, but it's expected to be {expectedValues[i].DisableTLSCertificateValidation}");
                 }
             }
         }
@@ -107,7 +114,10 @@ namespace NuGet.Configuration.Test
                     new SourceItem("nuget1", "http://serviceIndex.test1/api/index.json", protocolVersion: "3", allowInsecureConnections: "true"),
                     new SourceItem("nuget2", "http://serviceIndex.test2/api/index.json", protocolVersion: "2", allowInsecureConnections: "false"),
                     new SourceItem("nuget3", "http://serviceIndex.test3/api/index.json", protocolVersion: null, allowInsecureConnections: "true"),
-                    new SourceItem("nuget4", "http://serviceIndex.test4/api/index.json", protocolVersion: "3")));
+                    new SourceItem("nuget4", "http://serviceIndex.test4/api/index.json", protocolVersion: "3"),
+                    new SourceItem("nuget5", "http://serviceIndex.test5/api/index.json", protocolVersion: "3", allowInsecureConnections: "true", disableTLSCertificateValidation: "false"),
+                    new SourceItem("nuget6", "http://serviceIndex.test6/api/index.json", protocolVersion: "2", allowInsecureConnections: "false", disableTLSCertificateValidation: "false"),
+                    new SourceItem("nuget7", "http://serviceIndex.test7/api/index.json", protocolVersion: null, allowInsecureConnections: "true", disableTLSCertificateValidation: "true")));
             var resultXml = SettingsTestUtils.RemoveWhitespace(configuration.AsXNode().ToString());
 
             var expectedXNode = new XElement("configuration",
@@ -129,7 +139,24 @@ namespace NuGet.Configuration.Test
                     new XElement("add",
                         new XAttribute("key", "nuget4"),
                         new XAttribute("value", "http://serviceIndex.test4/api/index.json"),
-                        new XAttribute("protocolVersion", "3"))));
+                        new XAttribute("protocolVersion", "3")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget5"),
+                        new XAttribute("value", "http://serviceIndex.test5/api/index.json"),
+                        new XAttribute("protocolVersion", "3"),
+                        new XAttribute("allowInsecureConnections", "true"),
+                        new XAttribute("disableTLSCertificateValidation", "false")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget6"),
+                        new XAttribute("value", "http://serviceIndex.test6/api/index.json"),
+                        new XAttribute("protocolVersion", "2"),
+                        new XAttribute("allowInsecureConnections", "false"),
+                        new XAttribute("disableTLSCertificateValidation", "false")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget7"),
+                        new XAttribute("value", "http://serviceIndex.test7/api/index.json"),
+                        new XAttribute("allowInsecureConnections", "true"),
+                        new XAttribute("disableTLSCertificateValidation", "true"))));
             var expectedXml = SettingsTestUtils.RemoveWhitespace(expectedXNode.ToString());
 
             resultXml.Should().Be(expectedXml, because: resultXml);

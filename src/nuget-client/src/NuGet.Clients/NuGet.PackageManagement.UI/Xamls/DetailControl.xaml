@@ -30,7 +30,7 @@
     HorizontalScrollBarVisibility="Disabled"
     AutomationProperties.Name="{Binding Text, ElementName=_packageId}">
     <Grid
-      Margin="24,0,7,0">
+      Margin="0,0,7,0">
       <Grid.RowDefinitions>
         <RowDefinition
           Height="Auto" />
@@ -42,22 +42,14 @@
         <RowDefinition
           Height="Auto" />
         <RowDefinition
-          Height="Auto" />
-        <RowDefinition
-          Height="Auto" />
-        <RowDefinition
-          Height="Auto" />
-        <RowDefinition
-          Height="Auto" />
-        <RowDefinition
-          Height="Auto" />
+          Height="*" />
       </Grid.RowDefinitions>
 
       <!-- Icon and Id -->
       <Grid
         Grid.Row="0"
         MinHeight="32"
-        Margin="0,8">
+        Margin="24,8,0,8">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="auto"/>
           <ColumnDefinition Width="*"/>
@@ -132,7 +124,7 @@
       <!-- project action when in project package manager -->
       <nuget:ProjectView
         Grid.Row="1"
-        Margin="0,8"
+        Margin="24,8,0,8"
         x:Name="_projectView"
         Visibility="{Binding Path=IsSolution, Converter={StaticResource NegatedBooleanToVisibilityConverter}}" />
 
@@ -141,7 +133,7 @@
         AutomationProperties.AutomationId="SolutionView"
         x:Name="_solutionView"
         Grid.Row="1"
-        Margin="0,8"
+        Margin="24,8,0,8"
         Visibility="{Binding Path=IsSolution,Converter={StaticResource BooleanToVisibilityConverter}}" />
 
       <!-- the splitter is shown when in solution package manager -->
@@ -158,39 +150,10 @@
         BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
         BorderThickness="0,1" />
 
-      <!-- vulnerabilities info -->
-      <Border
-        Grid.Row="3"
-        Margin="0,11,0,0"
-        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-        Visibility="{Binding Path=IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}"
-        BorderThickness="0,1,0,0">
-        <Grid>
-          <nuget:VulnerabilitiesControl
-            x:Name="_vulnerabilitiesControl"
-            DataContext="{Binding}"
-            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageVulnerabilities}" />
-        </Grid>
-      </Border>
-
-      <!-- deprecation info -->
-      <Border
-        Grid.Row="4"
-        Margin="0,11,0,0"
-        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-        Visibility="{Binding Path=IsPackageDeprecated,Converter={StaticResource BooleanToVisibilityConverter}}"
-        BorderThickness="0,1,0,0">
-        <Grid>
-          <nuget:DeprecationControl
-            x:Name="_deprecationControl"
-            DataContext="{Binding}"
-            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageDeprecation}" />
-        </Grid>
-      </Border>
-
       <!-- options -->
       <Border
-        Grid.Row="5"
+        Grid.Row="3"
+        Margin="24,0,0,0"
         BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
         BorderThickness="0,1,0,1">
         <Grid>
@@ -216,12 +179,11 @@
             Visibility="{Binding Path=OptionsBlockedMessage,Converter={StaticResource InverseNullToVisibilityConverter}}" />
         </Grid>
       </Border>
-      
-      <nuget:PackageMetadataControl
-        Grid.Row="7"
-        AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageMetadata}"
-        Margin="0,12,0,0"
-        DataContext="{Binding PackageMetadata}" />
+
+      <nuget:PackageDetailsTabControl
+        x:Name="_packageDetailsTabControl"
+        Grid.Row="4"
+        Margin="0,12,0,0"/>
     </Grid>
   </ScrollViewer>
 </UserControl>

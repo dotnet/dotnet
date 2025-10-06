@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,10 +30,13 @@ namespace NuGet.Commands
         public override LockFile PreviousLockFile => LockFile;
 
         //We override this method because in the case of a no op we don't need to update anything
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously.
-        public override async Task CommitAsync(ILogger log, CancellationToken token)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously.
+        public override Task CommitAsync(ILogger log, CancellationToken token)
         {
+            if (log == null)
+            {
+                throw new ArgumentNullException(nameof(log));
+            }
+
             var isTool = ProjectStyle == ProjectStyle.DotnetCliTool;
 
             if (isTool)
@@ -55,12 +57,19 @@ namespace NuGet.Commands
                         Strings.Log_SkippingCacheFile,
                         CacheFilePath));
             }
+            return Task.CompletedTask;
         }
 
         //We override this method because in the case of a no op we don't have any new libraries installed
         public override ISet<LibraryIdentity> GetAllInstalled()
         {
             return new HashSet<LibraryIdentity>();
+        }
+
+        //We override this method because in the case of a no op we don't have any dirty files.
+        internal override IReadOnlyList<string> GetDirtyFiles()
+        {
+            return null;
         }
     }
 }

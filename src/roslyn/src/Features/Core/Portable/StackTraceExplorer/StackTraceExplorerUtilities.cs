@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.EmbeddedLanguages.StackFrame;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.FindUsages;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Roslyn.Utilities;
 
@@ -48,6 +47,8 @@ internal static class StackTraceExplorerUtilities
         using var _ = PooledObjects.ArrayBuilder<Project>.GetInstance(out var candidateProjects);
         foreach (var project in solution.Projects)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!project.SupportsCompilation)
             {
                 continue;
@@ -117,6 +118,8 @@ internal static class StackTraceExplorerUtilities
 
         foreach (var resolver in _resolvers)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var matchingMethod = await resolver.TryGetBestMatchAsync(project, type, methodNode, methodArguments, methodTypeArguments, cancellationToken).ConfigureAwait(false);
             if (matchingMethod is not null)
             {

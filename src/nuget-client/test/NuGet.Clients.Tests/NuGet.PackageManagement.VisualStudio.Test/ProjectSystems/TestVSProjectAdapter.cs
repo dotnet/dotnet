@@ -26,7 +26,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         private readonly bool _isCPVMEnabled;
         private readonly IEnumerable<(string PackageId, string Version)> _projectPackageVersions;
         private readonly string _isCentralPackageVersionOverrideEnabled;
-        private readonly string _CentralPackageTransitivePinningEnabled;
+        private readonly string _isCentralPackageTransitivePinningEnabled;
 
         public TestVSProjectAdapter(
             string fullProjectPath,
@@ -49,7 +49,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _isCPVMEnabled = projectPackageVersions?.Any() == true;
             _projectPackageVersions = projectPackageVersions;
             _isCentralPackageVersionOverrideEnabled = isCentralPackageVersionOverrideEnabled;
-            _CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
+            _isCentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             Mock.Get(BuildProperties)
@@ -62,7 +62,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             Mock.Get(BuildProperties)
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.CentralPackageTransitivePinningEnabled))))
-                .Returns(_CentralPackageTransitivePinningEnabled ?? string.Empty);
+                .Returns(_isCentralPackageTransitivePinningEnabled ?? string.Empty);
 
             Mock.Get(BuildProperties)
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.NuGetLockFilePath))))
@@ -128,9 +128,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(new FrameworkName(_targetFrameworkString));
         }
 
-        public Task<string[]> GetProjectTypeGuidsAsync()
+        public string[] GetProjectTypeGuids()
         {
-            return Task.FromResult(Array.Empty<string>());
+            return Array.Empty<string>();
         }
 
         public Task<IEnumerable<string>> GetReferencedProjectsAsync()
@@ -148,9 +148,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(Enumerable.Empty<CompatibilityProfile>());
         }
 
-        public Task<NuGetFramework> GetTargetFrameworkAsync()
+        public NuGetFramework GetTargetFramework()
         {
-            return Task.FromResult(NuGetFramework.Parse(_targetFrameworkString));
+            return NuGetFramework.Parse(_targetFrameworkString);
         }
 
         public Task<IEnumerable<(string PackageId, string Version)>> GetPackageVersionInformationAsync()
@@ -158,11 +158,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(_projectPackageVersions);
         }
 
-        public async Task<IEnumerable<(string ItemId, string[] ItemMetadata)>> GetBuildItemInformationAsync(string itemName, params string[] metadataNames)
+        public IEnumerable<(string ItemId, string[] ItemMetadata)> GetBuildItemInformation(string itemName, params string[] metadataNames)
         {
             if (itemName == "PackageVersion")
             {
-                return await Task.FromResult(_projectPackageVersions.Select(x => (ItemId: x.PackageId, ItemMetadata: new string[] { x.Version })));
+                return _projectPackageVersions.Select(x => (ItemId: x.PackageId, ItemMetadata: new string[] { x.Version }));
             }
 
             return Enumerable.Empty<(string ItemId, string[] ItemMetadata)>();

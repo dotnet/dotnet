@@ -3,13 +3,13 @@
 
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public abstract class SetupTargetFeedConfigBase
     {
         protected bool IsInternalBuild { get; set; }
-        protected bool IsStableBuild { get; set; }
         protected string RepositoryName { get; set; }
         protected string CommitSha { get; set; }
         protected bool PublishInstallersAndChecksums { get; set; }
@@ -20,11 +20,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         protected string AzureDevOpsStaticShippingFeed { get; set; }
         protected string AzureDevOpsStaticTransportFeed { get; set; }
         protected string AzureDevOpsStaticSymbolsFeed { get; set; }
-        protected List<string> LatestLinkShortUrlPrefixes { get; set; }
+        protected ImmutableList<string> LatestLinkShortUrlPrefixes { get; set; }
         protected string AzureDevOpsFeedsKey { get; set; }
 
-        protected SetupTargetFeedConfigBase(bool isInternalBuild,
-            bool isStableBuild,
+        protected SetupTargetFeedConfigBase(
+            bool isInternalBuild,
             string repositoryName,
             string commitSha,
             bool publishInstallersAndChecksums,
@@ -35,11 +35,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string azureDevOpsStaticShippingFeed,
             string azureDevOpsStaticTransportFeed,
             string azureDevOpsStaticSymbolsFeed,
-            List<string> latestLinkShortUrlPrefixes,
+            ImmutableList<string> latestLinkShortUrlPrefixes,
             string azureDevOpsFeedsKey)
         {
             IsInternalBuild = isInternalBuild;
-            IsStableBuild = isStableBuild;
             RepositoryName = repositoryName;
             CommitSha = commitSha;
             PublishInstallersAndChecksums = publishInstallersAndChecksums;

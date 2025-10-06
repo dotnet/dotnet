@@ -115,6 +115,15 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for &apos;{0}&apos; items..
+        /// </summary>
+        internal static string ItemValuesAreDifferentAcrossTargetFrameworks {
+            get {
+                return ResourceManager.GetString("ItemValuesAreDifferentAcrossTargetFrameworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All packages are already installed and there is nothing to restore..
         /// </summary>
         internal static string NothingToRestore {

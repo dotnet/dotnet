@@ -76,7 +76,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             // Act and Assert 3: Both are null
             int result3 = GetPackageReferenceUtility.PackageReferenceMergeComparer.Compare(null, null);
-            Assert.True(result3 == 0);
+            Assert.Equal(0, result3);
 
             var prWithNullIdentity = new PackageReference(null, null);
 

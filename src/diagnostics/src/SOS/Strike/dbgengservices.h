@@ -6,6 +6,7 @@
 #include <unknwn.h>
 #include <rpc.h>
 #include <dbgeng.h>
+#include <dbgmodel.h>
 #include "debuggerservices.h"
 #include "remotememoryservice.h"
 #include "extensions.h"
@@ -28,6 +29,7 @@ private:
     PDEBUG_SYMBOLS2       m_symbols;
     PDEBUG_SYSTEM_OBJECTS m_system;
     PDEBUG_ADVANCED       m_advanced;
+    IModelObject*         m_settings;
     IMachine*             m_targetMachine;
     bool                  m_flushNeeded;
 
@@ -40,8 +42,6 @@ public:
     //----------------------------------------------------------------------------
     // Helper functions
     //----------------------------------------------------------------------------
-
-    void FlushCheck(Extensions* extensions);
 
     IMachine* GetMachine();
 
@@ -74,7 +74,7 @@ public:
         PULONG debugClass,
         PULONG qualifier);
 
-    HRESULT STDMETHODCALLTYPE GetExecutingProcessorType(
+    HRESULT STDMETHODCALLTYPE GetProcessorType(
         PULONG type);
 
     HRESULT STDMETHODCALLTYPE AddCommand(
@@ -102,6 +102,10 @@ public:
     HRESULT STDMETHODCALLTYPE GetNumberModules(
         PULONG loaded,
         PULONG unloaded);
+
+    HRESULT STDMETHODCALLTYPE GetModuleByIndex(
+        ULONG index,
+        PULONG64 base);
 
     HRESULT STDMETHODCALLTYPE GetModuleNames(
         ULONG index,
@@ -131,6 +135,12 @@ public:
         ULONG bufferSize,
         PULONG versionInfoSize);
     
+    HRESULT STDMETHODCALLTYPE GetModuleByModuleName(
+        PCSTR name,
+        ULONG startIndex,
+        PULONG index,
+        PULONG64 base);
+
     HRESULT STDMETHODCALLTYPE GetNumberThreads(
         PULONG number);
 
@@ -218,6 +228,15 @@ public:
         ULONG descriptionSize,
         PULONG descriptionUsed);
 
+    void STDMETHODCALLTYPE FlushCheck();
+
+    HRESULT STDMETHODCALLTYPE ExecuteHostCommand(
+        PCSTR commandLine,
+        PEXECUTE_COMMAND_OUTPUT_CALLBACK callback);
+
+    HRESULT STDMETHODCALLTYPE GetDacSignatureVerificationSettings(
+        BOOL* dacSignatureVerificationEnabled);
+
     //----------------------------------------------------------------------------
     // IRemoteMemoryService
     //----------------------------------------------------------------------------
@@ -303,6 +322,76 @@ public:
     HRESULT STDMETHODCALLTYPE UnloadModule(
         PCSTR ImageBaseName,
         ULONG64 BaseOffset);
+};
+
+class OutputCaptureHolder : IDebugOutputCallbacks
+{
+private:
+    ULONG m_ref;
+    IDebugClient* m_client;
+    IDebugOutputCallbacks* m_previous;
+    PEXECUTE_COMMAND_OUTPUT_CALLBACK m_callback;
+
+public:
+    //----------------------------------------------------------------------------
+    // IUnknown
+    //----------------------------------------------------------------------------
+
+    HRESULT STDMETHODCALLTYPE
+    QueryInterface(REFIID InterfaceId, PVOID* Interface)
+    {
+        if (InterfaceId == __uuidof(IUnknown) ||
+            InterfaceId == __uuidof(IDebugOutputCallbacks))
+        {
+            *Interface = static_cast<IDebugOutputCallbacks*>(this);
+            AddRef();
+            return S_OK;
+        }
+        *Interface = nullptr;
+        return E_NOINTERFACE;
+    }
+
+    ULONG STDMETHODCALLTYPE
+    AddRef()
+    {
+        LONG ref = InterlockedIncrement(&m_ref);    
+        return ref;
+    }
+
+    ULONG STDMETHODCALLTYPE
+    Release()
+    {
+        LONG ref = InterlockedDecrement(&m_ref);
+        return ref;
+    }
+
+    HRESULT STDMETHODCALLTYPE
+    Output(ULONG mask, PCSTR text)
+    {
+        m_callback(mask, text);
+        return S_OK;
+    }
+
+public:
+    OutputCaptureHolder(IDebugClient* client, PEXECUTE_COMMAND_OUTPUT_CALLBACK callback) :
+        m_ref(0),
+        m_client(client),
+        m_previous(nullptr),
+        m_callback(callback)
+    {
+        HRESULT hr = client->GetOutputCallbacks(&m_previous);
+        _ASSERTE(SUCCEEDED(hr));
+
+        hr = client->SetOutputCallbacks(this);
+        _ASSERTE(SUCCEEDED(hr));
+    }
+
+    ~OutputCaptureHolder()
+    {
+        HRESULT hr = m_client->SetOutputCallbacks(m_previous);
+        _ASSERTE(SUCCEEDED(hr));
+        _ASSERTE(m_ref == 0);
+    }
 };
 
 #ifdef __cplusplus

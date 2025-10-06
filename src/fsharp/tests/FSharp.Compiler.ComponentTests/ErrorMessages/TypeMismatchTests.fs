@@ -347,7 +347,26 @@ let f4 =
         |> withDiagnostics [
             (Error 1,   Line 6,  Col 9,  Line 6,  Col 16, "This expression was expected to have type\n    'int'    \nbut here has type\n    'string'    ")
             (Error 1,   Line 12, Col 13, Line 12, Col 16, "This expression was expected to have type\n    'int'    \nbut here has type\n    'string'    ")
-            (Error 193,   Line 21, Col 9,  Line 21, Col 24, "Type constraint mismatch. The type \n    'int list'    \nis not compatible with type\n    'string seq'    \n")
+            (Error 193, Line 21, Col 16,  Line 21, Col 24, "Type constraint mismatch. The type \n    'int list'    \nis not compatible with type\n    'string seq'    \n")
             (Error 1,   Line 28, Col 9,  Line 28, Col 12, "This expression was expected to have type\n    'int64'    \nbut here has type\n    'float'    ")
+        ]
+
+    [<Fact>]
+    let ``Error when tuples have differing lengths and we do not know the types.``() =
+        Fsx """
+let foo items =
+    for (a,b,c) in items do
+        printfn "%A" (a, c)
+
+[<EntryPoint>]
+let main args =
+    foo (seq {1..10} |> Seq.pairwise)
+    0
+        """
+        |> asExe
+        |> typecheck
+        |> shouldFail
+        |> withDiagnostics [
+            (Error 1, Line 8, Col 25, Line 8, Col 37, "The tuples have differing lengths of 3 and 2")
         ]
 

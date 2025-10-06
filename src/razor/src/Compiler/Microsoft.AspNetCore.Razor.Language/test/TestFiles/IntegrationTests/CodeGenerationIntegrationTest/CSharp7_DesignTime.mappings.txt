@@ -6,7 +6,7 @@
         };
 
         |
-Generated Location: (731:19,6 [187] )
+Generated Location: (2010:39,6 [187] )
 |
         var nameLookup = new Dictionary<string, (string FirstName, string LastName, object Extra)>()
         {
@@ -23,7 +23,7 @@ Source Location: (246:7,53 [253] TestFiles/IntegrationTests/CodeGenerationIntegr
         double AvogadroConstant = 6.022_140_857_747_474e23;
         decimal GoldenRatio = 1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M;
     |
-Generated Location: (1125:32,53 [253] )
+Generated Location: (2404:52,53 [253] )
 |
 
         int Sixteen = 0b0001_0000;
@@ -40,7 +40,7 @@ Source Location: (509:15,5 [159] TestFiles/IntegrationTests/CodeGenerationIntegr
             // Do Something
         }
     }|
-Generated Location: (1538:45,5 [159] )
+Generated Location: (2817:65,5 [159] )
 |if (nameLookup.TryGetValue("John Doe", out var entry))
     {
         if (entry.Extra is bool alive)
@@ -51,12 +51,12 @@ Generated Location: (1538:45,5 [159] )
 
 Source Location: (718:23,39 [62] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
 |1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M|
-Generated Location: (1891:58,39 [62] )
+Generated Location: (3170:78,39 [62] )
 |1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M|
 
 Source Location: (816:27,10 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
 |(First: "John", Last: "Doe").First|
-Generated Location: (2119:65,10 [34] )
+Generated Location: (3398:85,10 [34] )
 |(First: "John", Last: "Doe").First|
 
 Source Location: (891:30,5 [291] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
@@ -72,7 +72,7 @@ Source Location: (891:30,5 [291] TestFiles/IntegrationTests/CodeGenerationIntegr
             // Do even more of something
             break;
     }|
-Generated Location: (2314:72,5 [291] )
+Generated Location: (3593:92,5 [291] )
 |switch (entry.Extra)
     {
         case int age:

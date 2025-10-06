@@ -20,39 +20,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string ContainerName { get; set; }
 
         /// <summary>
-        /// The read-only SAS token created when ReadOnlyTokenDaysValid is greater than zero.
-        /// </summary>
-        [Output]
-        public string ReadOnlyToken { get; set; }
-
-        /// <summary>
-        /// The number of days for which the read-only token should be valid.
-        /// </summary>
-        public int ReadOnlyTokenDaysValid { get; set; }
-
-        /// <summary>
         /// The URI of the created container.
         /// </summary>
         [Output]
         public string StorageUri { get; set; }
 
         /// <summary>
-        /// The write-only SAS token to create when the value of WriteOnlyTokenDaysValid is greater than zero.
-        /// </summary>
-        [Output]
-        public string WriteOnlyToken { get; set; }
-
-        /// <summary>
-        /// The number of days for which the write-only token should be valid.
-        /// </summary>
-        public int WriteOnlyTokenDaysValid { get; set; }
-
-        /// <summary>
         /// Whether the Container to be created is public or private
         /// </summary>
         public bool IsPublic { get; set; } = false;
 
-        public abstract Task<AzureStorageUtils> GetBlobStorageUtilsAsync(string accountName, string accountKey, string containerName);
+        public abstract Task<AzureStorageUtils> GetBlobStorageUtilsAsync();
 
         public override bool Execute()
         {
@@ -63,16 +41,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             try
             {
-                AzureStorageUtils blobUtils = await GetBlobStorageUtilsAsync(AccountName, AccountKey, ContainerName);
-                
+                AzureStorageUtils blobUtils = await GetBlobStorageUtilsAsync();
+
                 PublicAccessType permissions = IsPublic ? PublicAccessType.Blob : PublicAccessType.None;
 
                 StorageUri = await blobUtils.CreateContainerAsync(permissions);
 
                 Log.LogMessage(MessageImportance.High, $"Created blob storage container {StorageUri}");
-
-                ReadOnlyToken = blobUtils.CreateSASToken(ReadOnlyTokenDaysValid, BlobContainerSasPermissions.Read);
-                WriteOnlyToken = blobUtils.CreateSASToken(WriteOnlyTokenDaysValid, BlobContainerSasPermissions.Write);
             }
             catch (Exception e)
             {

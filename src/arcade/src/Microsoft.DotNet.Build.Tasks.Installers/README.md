@@ -10,8 +10,8 @@ There are a few common properties used by all of the installer types and the bun
   - The name of the installer file without an extension..
 - `ProductBrandPrefix`
   - The branding name of this component, such as "Microsoft Windows Desktop"
-- `PackageBrandNameSuffix` (`ToolPack` installers only)
-  - The type of package, for example "Shared Host" or "AppHost Pack". This is set automatically for any non-ToolPack package types.
+- `PackageBrandNameSuffix`
+  - The type of package, for example "Shared Host" or "AppHost Pack". This is set automatically for any non-ToolPack packages produced by the Shared Framework SDK.
 
 For correct branding and versioning, this SDK has a dependency on Arcade's versioning setup, including the `MajorVersion`, `MinorVersion`, `PreReleaseVersionLabel`, `PreReleaseVersionIteration` and `DotNetFinalVersionKind` properties.
 
@@ -29,19 +29,34 @@ To control the order in which an older product is removed during an upgrade, set
 
 To add package dependencies for linux packages, add a `LinuxPackageDependency` item with the version in the `Version` metadata.
 
+To add package conflicts, add a `LinuxPackageConflict` item for the package.
+
+To add symlinks that should be installed on the system, add a `LinuxPackageSymlink` item with the `LinkTarget` metadata pointing to the target of the symlink.
+
+> [!NOTE]
+> Symlinks added with `LinuxPackageSymlink` are relative to the filesystem root, not to the `LinuxInstallRoot` property.
+> As the vast majority of symlinks in a package are from system locations to the install root, this provides an easier UX for defining symlinks.
+
+Add a `LinuxPostInstallScript` item to specify an sh script that should be run after the package is installed.
+Add a `LinuxPostRemoveScript` item to specify an sh script that should be run after the package is removed.
+
 #### Deb package configuration
 
-To add additional properties for the deb package tool, add items to the `DebJsonProperty` item group.
+To add additional properties for the deb control file, add `DebControlProperty` items with the value of the field in the `Value` metadata.
+
+To add additional files to the `control` tarball in the package, add `DebControlFile` items for each file.
 
 #### Rpm package configuration
 
-To add additional properties for the deb package tool, add items to the `RpmJsonProperty` item group.
+To specify directories owned by the package, add `RpmOwnedDirectory` items for each directory. These are provided automatically for any non-ToolPack packages produced by the Shared Framework SDK.
 
 ### MacOS Pkg configuration
 
 To specify a directory where `pkgbuild` should look for scripts, set the `MacOSScriptsDirectory` to the path to the scripts.
 
-If you are building a `ToolPack` pack, you need to specify the `MacOSComponentNamePackType` property to create the component name for the `.pkg` package. If you want the component name to not include the version (for example you are building the shared host), you can set the `IncludeVersionInMacOSComponentName` property to false.
+You need to specify the `MacOSComponentNamePackType` to create the component name for the `.pkg` package. This is set automatically for any non-ToolPack packages produced by the Shared Framework SDK.
+
+If you want the component name to not include the version (for example you are building the shared host), you can set the `IncludeVersionInMacOSComponentName` property to false.
 
 If your `pkg` is later going to be bundled in a macOS `pkg` bundle created by `productbuild`, you should also specify the `MacOSPackageDescription` property, which will set the package description in the bundle distribution file.
 
@@ -100,7 +115,7 @@ The purpose of the wix command package is to provide a simple way to operate on 
 
 If you're using the targets in this package to produce wix artifacts, then a wix command package will automatically be created for you.  If you're using the [wix toolset](https://wixtoolset.org/) to produce wix files, then you can produce "wix command packages" using the MSBuild tasks directly.
 
-Wix command packages are produced by using the `CreateLightCommandPackageDrop` or `CreateLitCommandPackageDrop` MSBuild tasks from the `Microsoft.DotNet.Build.Tasks.Installers` package.  Task usage is defined [here](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Installers/README.md#tasks)
+Wix command packages are produced by using the `CreateLightCommandPackageDrop` MSBuild task from the `Microsoft.DotNet.Build.Tasks.Installers` package.  Task usage is defined [here](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Installers/README.md#tasks)
 
 ### File Format
 

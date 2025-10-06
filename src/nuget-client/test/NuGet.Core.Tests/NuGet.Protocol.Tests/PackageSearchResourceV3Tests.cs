@@ -19,9 +19,10 @@ namespace NuGet.Protocol.Tests
     public class PackageSearchResourceV3Tests
     {
         [Theory]
-        [InlineData("EntityFrameworkSearch.json", true)]
-        [InlineData("EntityFrameworkSearchWithoutOwner.json", false)]
-        public async Task PackageSearchResourceV3_GetMetadataAsync(string jsonFileName, bool expectOwner)
+        [InlineData("EntityFrameworkSearch.json", true, true)]
+        [InlineData("EntityFrameworkSearchWithStringTypes.json", true, false)]
+        [InlineData("EntityFrameworkSearchWithoutOwner.json", false, false)]
+        public async Task PackageSearchResourceV3_GetMetadataAsync(string jsonFileName, bool hasOwners, bool hasOwnersArray)
         {
             // Arrange
             var responses = new Dictionary<string, string>();
@@ -73,16 +74,30 @@ namespace NuGet.Protocol.Tests
 
             package.Authors.Should().Be("Microsoft");
 
-            if (expectOwner)
+            //we have owners, expect both list/str to be populated.
+            if (hasOwners)
             {
-                package.OwnersList.Should()
-                    .NotBeNull()
-                    .And.NotBeEmpty()
-                    .And.HaveCount(3)
-                    .And.ContainInOrder(["aspnet", "EntityFramework", "Microsoft"]);
-                package.Owners.Should().Be("aspnet, EntityFramework, Microsoft");
+                // we have array, expect list to contain N items
+                if (hasOwnersArray)
+                {
+                    package.OwnersList.Should()
+                        .NotBeNull()
+                        .And.NotBeEmpty()
+                        .And.HaveCount(3)
+                        .And.ContainInOrder(["aspnet", "EntityFramework", "Microsoft"]);
+                    package.Owners.Should().Be("aspnet, EntityFramework, Microsoft");
+                }
+                else // Data is a string
+                {
+                    string ownerString = "aspnet, EntityFramework, Microsoft";
+                    package.OwnersList.Should().NotBeNull()
+                        .And.NotBeEmpty()
+                        .And.HaveCount(1)
+                        .And.ContainSingle(ownerString);
+                    package.Owners.Should().Be(ownerString);
+                }
             }
-            else
+            else // No owners data provided in response.
             {
                 package.OwnersList.Should().BeNull();
                 package.Owners.Should().BeNull();
@@ -191,7 +206,7 @@ namespace NuGet.Protocol.Tests
         public async Task PackageSearchResourceV3_SearchEncoding()
         {
             // Arrange
-            var serviceAddress = ProtocolUtility.CreateServiceAddress();
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
 
             var responses = new Dictionary<string, string>();
             responses.Add(
@@ -229,10 +244,106 @@ namespace NuGet.Protocol.Tests
         }
 
         [Fact]
+        public async Task Search_HttpResource_ThrowsAnException()
+        {
+            // Arrange
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var httpresource = ProtocolUtility.CreateServiceAddress();
+            var requestUrl = httpresource + "?q=azure%20b&skip=0&take=1&prerelease=false" +
+                "&supportedFramework=.NETFramework,Version=v4.5&semVerLevel=2.0.0";
+
+            var responses = new Dictionary<string, string>
+            {
+                {
+                    requestUrl,
+                    ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.V3Search.json", GetType())
+                },
+                { serviceAddress, string.Empty }
+            };
+
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+
+            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, [new Uri(httpresource)]);
+
+            var searchFilter = new SearchFilter(includePrerelease: false)
+            {
+                SupportedFrameworks = [".NETFramework,Version=v4.5"]
+            };
+
+            var skip = 0;
+            var take = 1;
+
+            // Act
+            var ex = await Assert.ThrowsAsync<HttpSourceException>(() => packageSearchResourceV3.Search(
+                        "azure b",
+                        searchFilter,
+                        skip,
+                        take,
+                        NullLogger.Instance,
+                        CancellationToken.None));
+
+            // Assert
+            ex.GetType().Should().Be(typeof(HttpSourceException));
+            ex.Message.Should().Contain(string.Format(Protocol.Strings.Error_Insecure_HTTP, serviceAddress, requestUrl));
+        }
+
+        [Fact]
+        public async Task Search_HttpResourceAndAllowInsecureConnections_Succeeds()
+        {
+            // Arrange
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var httpresource = ProtocolUtility.CreateServiceAddress();
+            var requestUrl = httpresource + "?q=azure%20b&skip=0&take=1&prerelease=false" +
+                "&supportedFramework=.NETFramework,Version=v4.5&semVerLevel=2.0.0";
+
+            var responses = new Dictionary<string, string>
+            {
+                {
+                    requestUrl,
+                    ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.V3Search.json", GetType())
+                },
+                {
+                    serviceAddress, string.Empty
+                }
+            };
+
+            var httpSource = new TestHttpSource(
+                new PackageSource(serviceAddress)
+                {
+                    AllowInsecureConnections = true
+                },
+                responses);
+
+            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, [new Uri(httpresource)]);
+
+            var searchFilter = new SearchFilter(includePrerelease: false)
+            {
+                SupportedFrameworks = [".NETFramework,Version=v4.5"]
+            };
+
+            var skip = 0;
+            var take = 1;
+
+            // Act
+            var packages = await packageSearchResourceV3.Search(
+                        "azure b",
+                        searchFilter,
+                        skip,
+                        take,
+                        NullLogger.Instance,
+                        CancellationToken.None);
+
+            var packagesArray = packages.ToArray();
+
+            // Assert
+            Assert.True(packagesArray.Length > 0);
+        }
+
+        [Fact]
         public async Task PackageSearchResourceV3_VerifyReadSyncIsNotUsed()
         {
             // Arrange
-            var serviceAddress = ProtocolUtility.CreateServiceAddress();
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
 
             var responses = new Dictionary<string, string>();
             responses.Add(
@@ -275,7 +386,7 @@ namespace NuGet.Protocol.Tests
         public async Task PackageSearchResourceV3_CancelledToken_ThrowsOperationCancelledException()
         {
             // Arrange
-            var serviceAddress = ProtocolUtility.CreateServiceAddress();
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
 
             var responses = new Dictionary<string, string>();
             responses.Add(

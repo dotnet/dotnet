@@ -28,4 +28,20 @@
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
+
+  <!--
+    Arcade does not contribute any artifacts that will be redisted by shipping packages in other components
+    while building the VMR. Therefore, we can safely skip signing the artifacts.
+   -->
+  <Choose>
+    <When Condition="'$(DotNetBuild)' == 'true'">
+      <ItemGroup>
+        <ItemsToSign Remove="@(ItemsToSign)" />
+      </ItemGroup>
+
+      <PropertyGroup>
+        <AllowEmptySignList>true</AllowEmptySignList>
+      </PropertyGroup>
+    </When>
+  </Choose>
 </Project>

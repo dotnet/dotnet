@@ -18,15 +18,22 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddComponentParameter(1, "MyAttr", "abc");
-            __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)((context) => (__builder2) => {
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,14)-(1,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+MyAttr
+
+#line default
+#line hidden
+#nullable disable
+            ), "abc");
+            __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>)((context) => (__builder2) => {
                 __builder2.AddContent(3, "Some text");
                 __builder2.OpenElement(4, "some-child");
                 __builder2.AddAttribute(5, "a", "1");
-                __builder2.AddContent(6, 
 #nullable restore
-#line (1,55)-(1,81) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLowerInvariant()
+#line (1,55)-(1,81) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(6, context.ToLowerInvariant()
 
 #line default
 #line hidden

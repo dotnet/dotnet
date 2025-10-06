@@ -19,30 +19,30 @@
   <Import Condition="Exists('$(BuildManifestFile)')" Project="$(BuildManifestFile)" />
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Build</NETCORE_ENGINEERING_TELEMETRY>
-    <SignCheckTaskAssembly>$(NuGetPackageRoot)Microsoft.DotNet.SignCheck\$(MicrosoftDotNetSignCheckVersion)\tools\Microsoft.DotNet.SignCheck.exe</SignCheckTaskAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="SignCheck.SignCheckTask" AssemblyFile="$(SignCheckTaskAssembly)" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SignCheckTask" Version="$(MicrosoftDotNetSignCheckTaskVersion)" />
+  </ItemGroup>
 
   <Target Name="Execute">
     <PropertyGroup>
       <SignCheckInputDir>$(PackageBasePath)</SignCheckInputDir>
       <SignCheckLog Condition="'$(SignCheckLog)' == ''">$(ArtifactsLogDir)\signcheck.log</SignCheckLog>
       <SignCheckErrorLog Condition="'$(SignCheckErrorLog)' == ''">$(ArtifactsLogDir)\signcheck.errors.log</SignCheckErrorLog>
+      <SignCheckResultsXmlFile Condition="'$(SignCheckResultsXmlFile)' == ''">$(ArtifactsLogDir)\signcheck.xml</SignCheckResultsXmlFile>
       <InputFiles Condition="'$(BuildManifestFile)' == ''">$(SignCheckInputDir)</InputFiles>
       <InputFiles Condition="'$(BuildManifestFile)' != ''">@(ItemsToSign)</InputFiles>
     </PropertyGroup>
-
-    <Error Condition="'$(MSBuildRuntimeType)' == 'Core'" Text="Signing validation task does not run on core." />
 
     <Message Text="Using build manifest file '$(BuildManifestFile)'" Condition="Exists('$(BuildManifestFile)')" />
       <!--
         Documentation for these arguments is available here:
         https://github.com/dotnet/arcade/tree/master/src/SignCheck
       -->
-    <SignCheckTask 
+    <Microsoft.DotNet.SignCheckTask.SignCheckTask 
       Recursive="true"
       FileStatus="UnsignedFiles"
       InputFiles="$(InputFiles)"
@@ -51,6 +51,7 @@
       VerifyStrongName="$(EnableStrongNameCheck)"
       LogFile="$(SignCheckLog)"
       ErrorLogFile="$(SignCheckErrorLog)"
+      ResultsXmlFile="$(SignCheckResultsXmlFile)"
       ArtifactFolder="$(SignCheckInputDir)"/>
 
     <Error 
@@ -61,9 +62,5 @@
       Text="##vso[artifact.upload containerfolder=LogFiles;artifactname=LogFiles]{SignCheckErrorLog}"
       Condition="Exists($(SignCheckErrorLog)) and '$([System.IO.File]::ReadAllText($(SignCheckErrorLog)))' != ''" />
   </Target>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.SignCheck" Version="$(MicrosoftDotNetSignCheckVersion)" />
-  </ItemGroup>
 
 </Project>

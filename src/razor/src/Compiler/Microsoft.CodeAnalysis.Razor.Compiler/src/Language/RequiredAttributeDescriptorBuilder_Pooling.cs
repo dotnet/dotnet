@@ -22,13 +22,12 @@ public partial class RequiredAttributeDescriptorBuilder
     private protected override void Reset()
     {
         _parent = null;
+        _flags = 0;
 
         Name = null;
-        NameComparisonMode = default;
+        NameComparison = default;
         Value = null;
-        ValueComparisonMode = default;
-
-        _metadata.Clear();
+        ValueComparison = default;
     }
 
     private sealed class Policy : PooledBuilderPolicy<RequiredAttributeDescriptorBuilder>

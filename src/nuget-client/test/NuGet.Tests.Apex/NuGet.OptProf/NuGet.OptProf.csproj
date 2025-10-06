@@ -21,7 +21,7 @@
     <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
     <PackageReference Include="Xunit.StaFact" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!-- Manually consuming compile-time assets from Microsoft.Test.Apex.VisualStudio and excluding ones that cause compile warnings -->
     <Reference Include="$(PkgMicrosoft_Test_Apex_VisualStudio)\lib\net46\*.dll"

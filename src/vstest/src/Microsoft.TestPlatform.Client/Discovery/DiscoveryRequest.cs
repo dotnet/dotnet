@@ -33,6 +33,7 @@ public sealed class DiscoveryRequest : IDiscoveryRequest, ITestDiscoveryEventsHa
     /// <param name="requestData">The Request Data instance providing services and data for discovery</param>
     /// <param name="criteria">Discovery criterion.</param>
     /// <param name="discoveryManager">Discovery manager instance.</param>
+    /// <param name="loggerManager">Logger manager instance.</param>
     internal DiscoveryRequest(IRequestData requestData, DiscoveryCriteria criteria, IProxyDiscoveryManager discoveryManager, ITestLoggerManager loggerManager)
         : this(requestData, criteria, discoveryManager, loggerManager, JsonDataSerializer.Instance)
     {
@@ -44,6 +45,7 @@ public sealed class DiscoveryRequest : IDiscoveryRequest, ITestDiscoveryEventsHa
     /// <param name="requestData">The Request Data instance providing services and data for discovery</param>
     /// <param name="criteria">Discovery criterion.</param>
     /// <param name="discoveryManager">Discovery manager instance.</param>
+    /// <param name="loggerManager">Logger manager instance.</param>
     /// <param name="dataSerializer">Data Serializer</param>
     internal DiscoveryRequest(
         IRequestData requestData,

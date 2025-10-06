@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.ComponentModel.Design.Serialization;
 using Moq;
@@ -582,8 +584,8 @@ public class SiteNestedContainerTests
         using RootDesignerComponent component = new();
         container.Add(component, component.GetType().FullName);
         Assert.Equal(component.GetType().FullName, host.RootComponentClassName);
-        Assert.Throws<Exception>(() => container.Add(component));
-        Assert.Throws<Exception>(() => container.Add(new RootDesignerComponent(), host.RootComponentClassName));
+        Assert.Throws<InvalidOperationException>(() => container.Add(component));
+        Assert.Throws<InvalidOperationException>(() => container.Add(new RootDesignerComponent(), host.RootComponentClassName));
     }
 
     [WinFormsFact]

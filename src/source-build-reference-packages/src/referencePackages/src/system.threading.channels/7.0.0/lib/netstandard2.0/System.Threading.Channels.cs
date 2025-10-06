@@ -40,74 +40,52 @@ namespace System.Threading.Channels
     public sealed partial class BoundedChannelOptions : ChannelOptions
     {
         public BoundedChannelOptions(int capacity) { }
-
         public int Capacity { get { throw null; } set { } }
-
         public BoundedChannelFullMode FullMode { get { throw null; } set { } }
     }
 
     public static partial class Channel
     {
         public static Channel<T> CreateBounded<T>(int capacity) { throw null; }
-
         public static Channel<T> CreateBounded<T>(BoundedChannelOptions options, Action<T>? itemDropped) { throw null; }
-
         public static Channel<T> CreateBounded<T>(BoundedChannelOptions options) { throw null; }
-
         public static Channel<T> CreateUnbounded<T>() { throw null; }
-
         public static Channel<T> CreateUnbounded<T>(UnboundedChannelOptions options) { throw null; }
     }
-
     public partial class ChannelClosedException : InvalidOperationException
     {
         public ChannelClosedException() { }
-
         public ChannelClosedException(Exception? innerException) { }
-
         public ChannelClosedException(string? message, Exception? innerException) { }
-
         public ChannelClosedException(string? message) { }
     }
 
     public abstract partial class ChannelOptions
     {
         public bool AllowSynchronousContinuations { get { throw null; } set { } }
-
         public bool SingleReader { get { throw null; } set { } }
-
         public bool SingleWriter { get { throw null; } set { } }
     }
-
     public abstract partial class ChannelReader<T>
     {
         public virtual bool CanCount { get { throw null; } }
-
         public virtual bool CanPeek { get { throw null; } }
-
         public virtual Tasks.Task Completion { get { throw null; } }
-
         public virtual int Count { get { throw null; } }
 
         public virtual Tasks.ValueTask<T> ReadAsync(CancellationToken cancellationToken = default) { throw null; }
-
         public virtual bool TryPeek(out T item) { throw null; }
-
         public abstract bool TryRead(out T item);
         public abstract Tasks.ValueTask<bool> WaitToReadAsync(CancellationToken cancellationToken = default);
     }
-
     public abstract partial class ChannelWriter<T>
     {
         public void Complete(Exception? error = null) { }
-
         public virtual bool TryComplete(Exception? error = null) { throw null; }
-
         public abstract bool TryWrite(T item);
         public abstract Tasks.ValueTask<bool> WaitToWriteAsync(CancellationToken cancellationToken = default);
         public virtual Tasks.ValueTask WriteAsync(T item, CancellationToken cancellationToken = default) { throw null; }
     }
-
     public abstract partial class Channel<T> : Channel<T, T>
     {
     }
@@ -115,14 +93,11 @@ namespace System.Threading.Channels
     public abstract partial class Channel<TWrite, TRead>
     {
         public ChannelReader<TRead> Reader { get { throw null; } protected set { } }
-
         public ChannelWriter<TWrite> Writer { get { throw null; } protected set { } }
 
         public static implicit operator ChannelReader<TRead>(Channel<TWrite, TRead> channel) { throw null; }
-
         public static implicit operator ChannelWriter<TWrite>(Channel<TWrite, TRead> channel) { throw null; }
     }
-
     public sealed partial class UnboundedChannelOptions : ChannelOptions
     {
     }

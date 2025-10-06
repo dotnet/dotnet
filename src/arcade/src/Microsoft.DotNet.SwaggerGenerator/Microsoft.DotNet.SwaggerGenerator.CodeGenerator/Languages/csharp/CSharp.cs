@@ -193,6 +193,17 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 }
             }
 
+            [HelperMethod]
+            public string MaybeCallToString(TypeReference reference)
+            {
+                if (reference != TypeReference.String)
+                {
+                    return ".ToString()";
+                }
+
+                return string.Empty;
+            }
+
             public string GetDefaultExpression(TypeReference reference, bool required)
             {
                 string typeElement = ResolveReference(reference, null);

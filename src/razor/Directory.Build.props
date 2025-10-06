@@ -22,11 +22,20 @@
     <TreatWarningsAsErrors Condition="'$(CI)' == 'true'">true</TreatWarningsAsErrors>
     <GenerateResxSource>true</GenerateResxSource>
     <GenerateResxSourceEmitFormatMethods>true</GenerateResxSourceEmitFormatMethods>
-    <ExcludeFromSourceBuild Condition="'$(IsUnitTestProject)' == 'true'">true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild Condition="'$(IsUnitTestProject)' == 'true'">true</ExcludeFromSourceOnlyBuild>
     <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
-    <EnableWindowsTargeting Condition="'$(DotNetBuildFromSource)' != 'true'">true</EnableWindowsTargeting>
+    <EnableWindowsTargeting Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</EnableWindowsTargeting>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+
+    <!-- When building in the VMR, we still want the package project url to point to this repo -->
+    <PackageProjectUrl>https://github.com/dotnet/razor</PackageProjectUrl>
+
+    <!-- VS does not require Windows PDBs to be published anymore. -->
+    <PublishWindowsPdb>false</PublishWindowsPdb>
 
     <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\</SharedSourceRoot>
+    <SharedFilesRoot>$(SharedSourceRoot)files\</SharedFilesRoot>
 
     <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -38,9 +47,12 @@
     <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
 
     <!-- By default, nothing builds from source build. Individual projects can opt in instead -->
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
 
-    <DefaultNetFxTargetFramework>net472</DefaultNetFxTargetFramework>
+    <NetFxVS>net472</NetFxVS>
+    <NetVS>net8.0</NetVS>
+    <NetVSCode>net9.0</NetVSCode>
+    <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
   </PropertyGroup>
 
   <!--
@@ -53,32 +65,24 @@
         necessary as the output of this leg is used in other CI source build legs. Those could be
         targeting NetCurrent or NetPrevious hence we must produce both.
     -->
-    <When Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' != 'Product'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' AND '$(DotNetBuildFromVMR)' != 'true'">
       <PropertyGroup>
-        <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
-        <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);$(NetPrevious)</DefaultNetCoreTargetFrameworks>
+        <NetVS>$(NetCurrent)</NetVS>
+        <NetVSCode>$(NetCurrent)</NetVSCode>
+        <NetVSAndVSCode>$(NetVS);$(NetVSCode);$(NetPrevious)</NetVSAndVSCode>
       </PropertyGroup>
     </When>
 
     <!--
       2. Source build the product: this is the all up build of the product which needs only NetCurrent
     -->
-    <When Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' == 'Product'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' AND '$(DotNetBuildFromVMR)' == 'true'">
       <PropertyGroup>
-        <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
-        <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework)</DefaultNetCoreTargetFrameworks>
+        <NetVS>$(NetCurrent)</NetVS>
+        <NetVSCode>$(NetCurrent)</NetVSCode>
+        <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
       </PropertyGroup>
     </When>
-
-    <!--
-      3. Everything else including normal CI, developer machines and official builds.
-    -->
-    <Otherwise>
-      <PropertyGroup>
-        <DefaultNetCoreTargetFramework>net8.0</DefaultNetCoreTargetFramework>
-        <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);net7.0</DefaultNetCoreTargetFrameworks>
-      </PropertyGroup>
-    </Otherwise>
   </Choose>
 
   <ItemGroup>
@@ -89,7 +93,7 @@
       the same type that is included in Microsoft.CodeAnalysis.ExternalAccess.Razor, which allows InternalsVisibleTo access
       to Razor tooling.
     -->
-    <Compile Condition="'$(SkipLanguageSupport)' != 'true'" Include="$(MSBuildThisFileDirectory)\src\Shared\LanguageSupport\IsExternalInit.cs" Link="LanguageSupport\IsExternalInit.cs" />
+    <Compile Condition="'$(SkipLanguageSupport)' != 'true'" Include="$(SharedFilesRoot)LanguageSupport\IsExternalInit.cs" Link="LanguageSupport\IsExternalInit.cs" />
   </ItemGroup>
 
   <PropertyGroup Label="Package and Assembly Metadata">
@@ -106,6 +110,7 @@
 
   <!-- For InternalsVisibleTo items-->
   <PropertyGroup Label="Public Keys">
+    <MoqPublicKey>0024000004800000940000000602000000240000525341310004000001000100c547cac37abd99c8db225ef2f6c8a3602f3b3606cc9891605d02baa56104f4cfc0734aa39b93bf7852f7d9266654753cc297e7d2edfe0bac1cdcf9f717241550e0a7b191195b7667bb4f64bcb8e2121380fd1d9d46ad2d92d2d15605093924cceaf74c4861eff62abf69b9291ed0a340e113be11e6a7d3113e92484cf7045cc7</MoqPublicKey>
     <RazorKey>0024000004800000940000000602000000240000525341310004000001000100f33a29044fa9d740c9b3213a93e57c84b472c84e0b8a0e1ae48e67a9f8f6de9d5f7f3d52ac23e48ac51801f1dc950abe901da34d2a9e3baadb141a17c77ef3c565dd5ee5054b91cf63bb3c6ab83f72ab3aafe93d0fc3c2348b764fafb0b1c0733de51459aeab46580384bf9d74c4e28164b7cde247f891ba07891c9d872ad2bb</RazorKey>
     <VisualStudioKey>002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293</VisualStudioKey>
   </PropertyGroup>

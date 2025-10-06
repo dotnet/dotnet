@@ -11,7 +11,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
     public GraphicsPathIterator(GraphicsPath? path)
     {
         GpPathIterator* iterator;
-        PInvoke.GdipCreatePathIter(&iterator, path.Pointer()).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreatePathIter(&iterator, path.Pointer()).ThrowIfFailed();
         GC.KeepAlive(path);
         _nativeIterator = iterator;
     }
@@ -31,7 +31,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
 #if DEBUG
                 Status status = !Gdip.Initialized ? Status.Ok :
 #endif
-                PInvoke.GdipDeletePathIter(_nativeIterator);
+                PInvokeGdiPlus.GdipDeletePathIter(_nativeIterator);
 #if DEBUG
                 Debug.Assert(status == Status.Ok, $"GDI+ returned an error status: {status}");
 #endif
@@ -61,7 +61,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
 
         fixed (int* s = &startIndex, e = &endIndex)
         {
-            PInvoke.GdipPathIterNextSubpath(_nativeIterator, &resultCount, s, e, &tempIsClosed).ThrowIfFailed();
+            PInvokeGdiPlus.GdipPathIterNextSubpath(_nativeIterator, &resultCount, s, e, &tempIsClosed).ThrowIfFailed();
             isClosed = tempIsClosed;
             GC.KeepAlive(this);
             return resultCount;
@@ -72,7 +72,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
     {
         int resultCount;
         BOOL tempIsClosed;
-        PInvoke.GdipPathIterNextSubpathPath(_nativeIterator, &resultCount, path.Pointer(), &tempIsClosed).ThrowIfFailed();
+        PInvokeGdiPlus.GdipPathIterNextSubpathPath(_nativeIterator, &resultCount, path.Pointer(), &tempIsClosed).ThrowIfFailed();
         isClosed = tempIsClosed;
         GC.KeepAlive(this);
         return resultCount;
@@ -85,7 +85,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
         fixed (byte* pt = &pathType)
         fixed (int* s = &startIndex, e = &endIndex)
         {
-            PInvoke.GdipPathIterNextPathType(_nativeIterator, &resultCount, pt, s, e).ThrowIfFailed();
+            PInvokeGdiPlus.GdipPathIterNextPathType(_nativeIterator, &resultCount, pt, s, e).ThrowIfFailed();
             GC.KeepAlive(this);
             return resultCount;
         }
@@ -97,7 +97,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
 
         fixed (int* s = &startIndex, e = &endIndex)
         {
-            PInvoke.GdipPathIterNextMarker(_nativeIterator, &resultCount, s, e).ThrowIfFailed();
+            PInvokeGdiPlus.GdipPathIterNextMarker(_nativeIterator, &resultCount, s, e).ThrowIfFailed();
             GC.KeepAlive(this);
             return resultCount;
         }
@@ -106,7 +106,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
     public int NextMarker(GraphicsPath path)
     {
         int resultCount;
-        PInvoke.GdipPathIterNextMarkerPath(_nativeIterator, &resultCount, path.Pointer()).ThrowIfFailed();
+        PInvokeGdiPlus.GdipPathIterNextMarkerPath(_nativeIterator, &resultCount, path.Pointer()).ThrowIfFailed();
         GC.KeepAlive(this);
         return resultCount;
     }
@@ -116,7 +116,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
         get
         {
             int resultCount;
-            PInvoke.GdipPathIterGetCount(_nativeIterator, &resultCount).ThrowIfFailed();
+            PInvokeGdiPlus.GdipPathIterGetCount(_nativeIterator, &resultCount).ThrowIfFailed();
             GC.KeepAlive(this);
             return resultCount;
         }
@@ -127,7 +127,7 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
         get
         {
             int resultCount;
-            PInvoke.GdipPathIterGetSubpathCount(_nativeIterator, &resultCount).ThrowIfFailed();
+            PInvokeGdiPlus.GdipPathIterGetSubpathCount(_nativeIterator, &resultCount).ThrowIfFailed();
             GC.KeepAlive(this);
             return resultCount;
         }
@@ -136,30 +136,45 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
     public bool HasCurve()
     {
         BOOL hasCurve;
-        PInvoke.GdipPathIterHasCurve(_nativeIterator, &hasCurve).ThrowIfFailed();
+        PInvokeGdiPlus.GdipPathIterHasCurve(_nativeIterator, &hasCurve).ThrowIfFailed();
         GC.KeepAlive(this);
         return hasCurve;
     }
 
     public void Rewind()
     {
-        PInvoke.GdipPathIterRewind(_nativeIterator).ThrowIfFailed();
+        PInvokeGdiPlus.GdipPathIterRewind(_nativeIterator).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
+    /// <inheritdoc cref="CopyData(ref PointF[], ref byte[], int, int)"/>
     public unsafe int Enumerate(ref PointF[] points, ref byte[] types)
+        => Enumerate(points.OrThrowIfNull().AsSpan(), types.OrThrowIfNull().AsSpan());
+
+    /// <inheritdoc cref="CopyData(ref PointF[], ref byte[], int, int)"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    unsafe int Enumerate(Span<PointF> points, Span<byte> types)
     {
-        if (points.Length != types.Length)
+        if (points.Length != types.Length
+            || points.Length < Count)
+        {
             throw Status.InvalidParameter.GetException();
+        }
 
         if (points.Length == 0)
+        {
             return 0;
+        }
 
         fixed (PointF* p = points)
         fixed (byte* t = types)
         {
             int resultCount;
-            PInvoke.GdipPathIterEnumerate(
+            PInvokeGdiPlus.GdipPathIterEnumerate(
                 _nativeIterator,
                 &resultCount,
                 (GdiPlus.PointF*)p,
@@ -171,16 +186,43 @@ public sealed unsafe class GraphicsPathIterator : MarshalByRefObject, IDisposabl
         }
     }
 
+    /// <summary>
+    ///  Copies the <see cref="GraphicsPath.PathPoints"/> property and <see cref="GraphicsPath.PathTypes"/> property data
+    ///  of the associated <see cref="GraphicsPath"/>.
+    /// </summary>
+    /// <param name="points">Upon return, contains <see cref="PointF"/> structures that represent the points in the path.</param>
+    /// <param name="types">Upon return, contains bytes that represent the types of points in the path.</param>
+    /// <param name="startIndex">The index of the first point to copy.</param>
+    /// <param name="endIndex">The index of the last point to copy.</param>
+    /// <returns>The number of points copied.</returns>
     public unsafe int CopyData(ref PointF[] points, ref byte[] types, int startIndex, int endIndex)
+        => CopyData(points.OrThrowIfNull().AsSpan(), types.OrThrowIfNull().AsSpan(), startIndex, endIndex);
+
+    /// <inheritdoc cref="CopyData(ref PointF[], ref byte[], int, int)"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    unsafe int CopyData(Span<PointF> points, Span<byte> types, int startIndex, int endIndex)
     {
-        if ((points.Length != types.Length) || (endIndex - startIndex + 1 > points.Length))
+        int count = endIndex - startIndex + 1;
+
+        if ((points.Length != types.Length)
+            || endIndex < 0
+            || startIndex < 0
+            || endIndex < startIndex
+            || count > points.Length
+            || endIndex >= Count)
+        {
             throw Status.InvalidParameter.GetException();
+        }
 
         fixed (PointF* p = points)
         fixed (byte* t = types)
         {
             int resultCount;
-            PInvoke.GdipPathIterCopyData(
+            PInvokeGdiPlus.GdipPathIterCopyData(
                 _nativeIterator,
                 &resultCount,
                 (GdiPlus.PointF*)p,

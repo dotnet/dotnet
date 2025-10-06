@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
+using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
-#endif
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -21,6 +21,8 @@ using Xunit;
 
 namespace NuGet.Packaging.Test
 {
+    using HashAlgorithmName = Common.HashAlgorithmName;
+
     [Collection(SigningTestsCollection.Name)]
     public class SigningUtilityTests
     {
@@ -34,7 +36,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WhenRequestNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => SigningUtility.Verify(request: null, logger: NullLogger.Instance));
 
             Assert.Equal("request", exception.ParamName);
@@ -43,10 +45,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WhenLoggerNull_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<ArgumentNullException>(
+                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                     () => SigningUtility.Verify(request, logger: null));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -56,10 +58,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WithCertificateWithUnsupportedSignatureAlgorithm_Throws()
         {
-            using (var certificate = _fixture.GetRsaSsaPssCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetRsaSsaPssCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<SignatureException>(
+                SignatureException exception = Assert.Throws<SignatureException>(
                     () => SigningUtility.Verify(request, NullLogger.Instance));
 
                 Assert.Equal(NuGetLogCode.NU3013, exception.Code);
@@ -70,10 +72,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WithCertificateWithLifetimeSigningEku_Throws()
         {
-            using (var certificate = _fixture.GetLifetimeSigningCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetLifetimeSigningCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<SignatureException>(
+                SignatureException exception = Assert.Throws<SignatureException>(
                     () => SigningUtility.Verify(request, NullLogger.Instance));
 
                 Assert.Equal(NuGetLogCode.NU3015, exception.Code);
@@ -84,10 +86,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WithNotYetValidCertificate_Throws()
         {
-            using (var certificate = _fixture.GetNotYetValidCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetNotYetValidCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<SignatureException>(
+                SignatureException exception = Assert.Throws<SignatureException>(
                     () => SigningUtility.Verify(request, NullLogger.Instance));
 
                 Assert.Equal(NuGetLogCode.NU3017, exception.Code);
@@ -98,12 +100,12 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WhenChainBuildingFails_Throws()
         {
-            using (var certificate = _fixture.GetExpiredCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetExpiredCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
                 var logger = new TestLogger();
 
-                var exception = Assert.Throws<SignatureException>(
+                SignatureException exception = Assert.Throws<SignatureException>(
                     () => SigningUtility.Verify(request, logger));
 
                 Assert.Equal(NuGetLogCode.NU3018, exception.Code);
@@ -111,7 +113,7 @@ namespace NuGet.Packaging.Test
 
                 Assert.Equal(1, logger.Errors);
 
-#if !NETCORE5_0
+#if NETCOREAPP3_1
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);
@@ -126,8 +128,8 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Verify_WithUntrustedSelfSignedCertificate_Succeeds()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
                 var logger = new TestLogger();
 
@@ -137,7 +139,7 @@ namespace NuGet.Packaging.Test
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
 
 
-#if !NETCORE5_0
+#if NETCOREAPP3_1
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);
@@ -147,13 +149,12 @@ namespace NuGet.Packaging.Test
 
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public void CreateSignedAttributes_SignPackageRequest_WhenRequestNull_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var exception = Assert.Throws<ArgumentNullException>(
+                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                     () => SigningUtility.CreateSignedAttributes((SignPackageRequest)null, new[] { certificate }));
 
                 Assert.Equal("request", exception.ParamName);
@@ -163,10 +164,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_SignPackageRequest_WhenChainListNull_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<ArgumentException>(
+                ArgumentException exception = Assert.Throws<ArgumentException>(
                     () => SigningUtility.CreateSignedAttributes(request, chainList: null));
 
                 Assert.Equal("chainList", exception.ParamName);
@@ -177,10 +178,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_SignPackageRequest_WhenChainListEmpty_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequest(certificate))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (AuthorSignPackageRequest request = CreateRequest(certificate))
             {
-                var exception = Assert.Throws<ArgumentException>(
+                ArgumentException exception = Assert.Throws<ArgumentException>(
                     () => SigningUtility.CreateSignedAttributes(request, new X509Certificate2[0]));
 
                 Assert.Equal("chainList", exception.ParamName);
@@ -191,13 +192,13 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_SignPackageRequest_WithValidInput_ReturnsAttributes()
         {
-            using (var rootCertificate = SigningTestUtility.GetCertificate("root.crt"))
-            using (var intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
-            using (var leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
-            using (var request = CreateRequest(leafCertificate))
+            using (X509Certificate2 rootCertificate = SigningTestUtility.GetCertificate("root.crt"))
+            using (X509Certificate2 intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
+            using (X509Certificate2 leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
+            using (AuthorSignPackageRequest request = CreateRequest(leafCertificate))
             {
-                var certList = new[] { leafCertificate, intermediateCertificate, rootCertificate };
-                var attributes = SigningUtility.CreateSignedAttributes(request, certList);
+                X509Certificate2[] certList = new[] { leafCertificate, intermediateCertificate, rootCertificate };
+                CryptographicAttributeObjectCollection attributes = SigningUtility.CreateSignedAttributes(request, certList);
 
                 Assert.Equal(3, attributes.Count);
 
@@ -208,9 +209,9 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_RepositorySignPackageRequest_WhenRequestNull_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var exception = Assert.Throws<ArgumentNullException>(
+                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                     () => SigningUtility.CreateSignedAttributes(
                         (RepositorySignPackageRequest)null,
                         new[] { certificate }));
@@ -222,10 +223,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_RepositorySignPackageRequest_WhenChainListNull_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequestRepository(certificate, new Uri("https://test.test"), new[] { "a" }))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (RepositorySignPackageRequest request = CreateRequestRepository(certificate, new Uri("https://test.test"), new[] { "a" }))
             {
-                var exception = Assert.Throws<ArgumentException>(
+                ArgumentException exception = Assert.Throws<ArgumentException>(
                     () => SigningUtility.CreateSignedAttributes(request, chainList: null));
 
                 Assert.Equal("chainList", exception.ParamName);
@@ -236,10 +237,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateSignedAttributes_RepositorySignPackageRequest_WhenChainListEmpty_Throws()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequestRepository(certificate, new Uri("https://test.test"), new[] { "a" }))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (RepositorySignPackageRequest request = CreateRequestRepository(certificate, new Uri("https://test.test"), new[] { "a" }))
             {
-                var exception = Assert.Throws<ArgumentException>(
+                ArgumentException exception = Assert.Throws<ArgumentException>(
                     () => SigningUtility.CreateSignedAttributes(request, new X509Certificate2[0]));
 
                 Assert.Equal("chainList", exception.ParamName);
@@ -253,10 +254,10 @@ namespace NuGet.Packaging.Test
             var v3ServiceIndexUrl = new Uri("https://test.test", UriKind.Absolute);
             IReadOnlyList<string> packageOwners = null;
 
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (RepositorySignPackageRequest request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
             {
-                var attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
+                CryptographicAttributeObjectCollection attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
 
                 Assert.Equal(4, attributes.Count);
 
@@ -270,10 +271,10 @@ namespace NuGet.Packaging.Test
             var v3ServiceIndexUrl = new Uri("https://test.test", UriKind.Absolute);
             var packageOwners = Array.Empty<string>();
 
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (RepositorySignPackageRequest request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
             {
-                var attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
+                CryptographicAttributeObjectCollection attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
 
                 Assert.Equal(4, attributes.Count);
 
@@ -287,10 +288,10 @@ namespace NuGet.Packaging.Test
             var v3ServiceIndexUrl = new Uri("https://test.test", UriKind.Absolute);
             var packageOwners = new[] { "a" };
 
-            using (var certificate = _fixture.GetDefaultCertificate())
-            using (var request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
+            using (RepositorySignPackageRequest request = CreateRequestRepository(certificate, v3ServiceIndexUrl, packageOwners))
             {
-                var attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
+                CryptographicAttributeObjectCollection attributes = SigningUtility.CreateSignedAttributes(request, new[] { certificate });
 
                 Assert.Equal(5, attributes.Count);
 
@@ -301,7 +302,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateCmsSigner_WhenRequestNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => SigningUtility.CreateCmsSigner(request: null, logger: NullLogger.Instance));
 
             Assert.Equal("request", exception.ParamName);
@@ -312,7 +313,7 @@ namespace NuGet.Packaging.Test
         {
             using (var request = new AuthorSignPackageRequest(new X509Certificate2(), Common.HashAlgorithmName.SHA256))
             {
-                var exception = Assert.Throws<ArgumentNullException>(
+                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                     () => SigningUtility.CreateCmsSigner(request, logger: null));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -322,7 +323,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void CreateCmsSigner_WithAuthorSignPackageRequest_ReturnsInstance()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             using (var request = new AuthorSignPackageRequest(certificate, Common.HashAlgorithmName.SHA256))
             {
                 var signer = SigningUtility.CreateCmsSigner(request, NullLogger.Instance);
@@ -340,7 +341,7 @@ namespace NuGet.Packaging.Test
             var v3ServiceIndexUrl = new Uri("https://test.test", UriKind.Absolute);
             var packageOwners = new[] { "a", "b", "c" };
 
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             using (var request = new RepositorySignPackageRequest(
                 certificate,
                 Common.HashAlgorithmName.SHA256,
@@ -348,7 +349,7 @@ namespace NuGet.Packaging.Test
                 v3ServiceIndexUrl,
                 packageOwners))
             {
-                var signer = SigningUtility.CreateCmsSigner(request, NullLogger.Instance);
+                CmsSigner signer = SigningUtility.CreateCmsSigner(request, NullLogger.Instance);
 
                 Assert.Equal(request.Certificate, signer.Certificate);
                 Assert.Equal(request.SignatureHashAlgorithm.ConvertToOidString(), signer.DigestAlgorithm.Value);
@@ -378,8 +379,8 @@ namespace NuGet.Packaging.Test
                         break;
 
                     case Oids.CommitmentTypeIndication:
-                        var qualifier = CommitmentTypeQualifier.Read(attribute.Values[0].RawData);
-                        var expectedCommitmentType = AttributeUtility.GetSignatureTypeOid(request.SignatureType);
+                        CommitmentTypeQualifier qualifier = CommitmentTypeQualifier.Read(attribute.Values[0].RawData);
+                        string expectedCommitmentType = AttributeUtility.GetSignatureTypeOid(request.SignatureType);
 
                         Assert.Equal(expectedCommitmentType, qualifier.CommitmentTypeIdentifier.Value);
 
@@ -387,11 +388,11 @@ namespace NuGet.Packaging.Test
                         break;
 
                     case Oids.SigningCertificateV2:
-                        var signingCertificateV2 = SigningCertificateV2.Read(attribute.Values[0].RawData);
+                        Signing.SigningCertificateV2 signingCertificateV2 = Signing.SigningCertificateV2.Read(attribute.Values[0].RawData);
 
                         Assert.Equal(1, signingCertificateV2.Certificates.Count);
 
-                        var essCertIdV2 = signingCertificateV2.Certificates[0];
+                        Signing.EssCertIdV2 essCertIdV2 = signingCertificateV2.Certificates[0];
 
                         Assert.Equal(SigningTestUtility.GetHash(request.Certificate, request.SignatureHashAlgorithm), essCertIdV2.CertificateHash);
                         Assert.Equal(request.SignatureHashAlgorithm.ConvertToOidString(), essCertIdV2.HashAlgorithm.Algorithm.Value);
@@ -410,7 +411,7 @@ namespace NuGet.Packaging.Test
         }
 
         private static void VerifyAttributesRepository(
-            System.Security.Cryptography.CryptographicAttributeObjectCollection attributes,
+            CryptographicAttributeObjectCollection attributes,
             RepositorySignPackageRequest request)
         {
             VerifyAttributes(attributes, request);
@@ -425,7 +426,7 @@ namespace NuGet.Packaging.Test
                 switch (attribute.Oid.Value)
                 {
                     case Oids.NuGetV3ServiceIndexUrl:
-                        var nugetV3ServiceIndexUrl = NuGetV3ServiceIndexUrl.Read(attribute.Values[0].RawData);
+                        NuGetV3ServiceIndexUrl nugetV3ServiceIndexUrl = NuGetV3ServiceIndexUrl.Read(attribute.Values[0].RawData);
 
                         Assert.True(nugetV3ServiceIndexUrl.V3ServiceIndexUrl.IsAbsoluteUri);
                         Assert.Equal(request.V3ServiceIndexUrl.OriginalString, nugetV3ServiceIndexUrl.V3ServiceIndexUrl.OriginalString);
@@ -434,7 +435,7 @@ namespace NuGet.Packaging.Test
                         break;
 
                     case Oids.NuGetPackageOwners:
-                        var nugetPackageOwners = NuGetPackageOwners.Read(attribute.Values[0].RawData);
+                        NuGetPackageOwners nugetPackageOwners = NuGetPackageOwners.Read(attribute.Values[0].RawData);
 
                         Assert.Equal(request.PackageOwners, nugetPackageOwners.PackageOwners);
 
@@ -450,7 +451,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public async Task SignAsync_WhenCancellationTokenIsCancelled_ThrowsAsync()
         {
-            using (var test = SignTest.Create(new X509Certificate2(), HashAlgorithmName.SHA256))
+            using (SignTest test = SignTest.Create(new X509Certificate2(), HashAlgorithmName.SHA256))
             {
                 await Assert.ThrowsAsync<OperationCanceledException>(
                     () => SigningUtility.SignAsync(test.Options, test.Request, new CancellationToken(canceled: true)));
@@ -460,14 +461,14 @@ namespace NuGet.Packaging.Test
         [Fact]
         public async Task SignAsync_WhenCertificateSignatureAlgorithmIsUnsupported_ThrowsAsync()
         {
-            using (var certificate = SigningTestUtility.GenerateCertificate(
+            using (X509Certificate2 certificate = SigningTestUtility.GenerateCertificate(
                 "test",
                 generator => { },
-                Common.HashAlgorithmName.SHA256,
-                System.Security.Cryptography.RSASignaturePaddingMode.Pss))
-            using (var test = SignTest.Create(certificate, HashAlgorithmName.SHA256))
+                HashAlgorithmName.SHA256,
+                RSASignaturePaddingMode.Pss))
+            using (SignTest test = SignTest.Create(certificate, HashAlgorithmName.SHA256))
             {
-                var exception = await Assert.ThrowsAsync<SignatureException>(
+                SignatureException exception = await Assert.ThrowsAsync<SignatureException>(
                     () => SigningUtility.SignAsync(test.Options, test.Request, CancellationToken.None));
 
                 Assert.Equal(NuGetLogCode.NU3013, exception.Code);
@@ -478,13 +479,13 @@ namespace NuGet.Packaging.Test
         [Fact]
         public async Task SignAsync_WhenCertificatePublicKeyLengthIsUnsupported_ThrowsAsync()
         {
-            using (var certificate = SigningTestUtility.GenerateCertificate(
+            using (X509Certificate2 certificate = SigningTestUtility.GenerateCertificate(
                 "test",
                 generator => { },
                 publicKeyLength: 1024))
-            using (var test = SignTest.Create(certificate, HashAlgorithmName.SHA256))
+            using (SignTest test = SignTest.Create(certificate, HashAlgorithmName.SHA256))
             {
-                var exception = await Assert.ThrowsAsync<SignatureException>(
+                SignatureException exception = await Assert.ThrowsAsync<SignatureException>(
                     () => SigningUtility.SignAsync(test.Options, test.Request, CancellationToken.None));
 
                 Assert.Equal(NuGetLogCode.NU3014, exception.Code);
@@ -495,12 +496,12 @@ namespace NuGet.Packaging.Test
         [Fact]
         public async Task SignAsync_WhenPackageIsZip64_ThrowsAsync()
         {
-            using (var test = SignTest.Create(
+            using (SignTest test = SignTest.Create(
                 _fixture.GetDefaultCertificate(),
                 HashAlgorithmName.SHA256,
                 SigningTestUtility.GetResourceBytes("CentralDirectoryHeaderWithZip64ExtraField.zip")))
             {
-                var exception = await Assert.ThrowsAsync<SignatureException>(
+                SignatureException exception = await Assert.ThrowsAsync<SignatureException>(
                     () => SigningUtility.SignAsync(test.Options, test.Request, CancellationToken.None));
 
                 Assert.Equal(NuGetLogCode.NU3006, exception.Code);
@@ -512,14 +513,14 @@ namespace NuGet.Packaging.Test
         public async Task SignAsync_WhenChainBuildingFails_ThrowsAsync()
         {
             var package = new SimpleTestPackageContext();
-            using (var packageStream = await package.CreateAsStreamAsync())
-            using (var test = SignTest.Create(
+            using (MemoryStream packageStream = await package.CreateAsStreamAsync())
+            using (SignTest test = SignTest.Create(
                  _fixture.GetExpiredCertificate(),
                 HashAlgorithmName.SHA256,
                 packageStream.ToArray(),
                 new X509SignatureProvider(timestampProvider: null)))
             {
-                var exception = await Assert.ThrowsAsync<SignatureException>(
+                SignatureException exception = await Assert.ThrowsAsync<SignatureException>(
                     () => SigningUtility.SignAsync(test.Options, test.Request, CancellationToken.None));
 
                 Assert.Equal(NuGetLogCode.NU3018, exception.Code);
@@ -536,8 +537,8 @@ namespace NuGet.Packaging.Test
         {
             var package = new SimpleTestPackageContext();
 
-            using (var packageStream = await package.CreateAsStreamAsync())
-            using (var test = SignTest.Create(
+            using (MemoryStream packageStream = await package.CreateAsStreamAsync())
+            using (SignTest test = SignTest.Create(
                  _fixture.GetDefaultCertificate(),
                 HashAlgorithmName.SHA256,
                 packageStream.ToArray(),
@@ -559,14 +560,14 @@ namespace NuGet.Packaging.Test
 
             var package = new SimpleTestPackageContext();
 
-            var requiredFileCount = desiredFileCount - package.Files.Count;
+            int requiredFileCount = desiredFileCount - package.Files.Count;
 
             for (var i = 0; i < requiredFileCount - 1 /*nuspec*/; ++i)
             {
                 package.AddFile(i.ToString());
             }
 
-            using (var packageStream = await package.CreateAsStreamAsync())
+            using (MemoryStream packageStream = await package.CreateAsStreamAsync())
             {
                 using (var zipArchive = new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
@@ -576,13 +577,13 @@ namespace NuGet.Packaging.Test
 
                 packageStream.Position = 0;
 
-                using (var test = SignTest.Create(
+                using (SignTest test = SignTest.Create(
                      _fixture.GetDefaultCertificate(),
                     HashAlgorithmName.SHA256,
                     packageStream.ToArray(),
                     new X509SignatureProvider(timestampProvider: null)))
                 {
-                    var exception = await Assert.ThrowsAsync<SignatureException>(
+                    SignatureException exception = await Assert.ThrowsAsync<SignatureException>(
                         () => SigningUtility.SignAsync(test.Options, test.Request, CancellationToken.None));
 
                     Assert.Equal(NuGetLogCode.NU3039, exception.Code);
@@ -669,8 +670,6 @@ namespace NuGet.Packaging.Test
                     logger);
             }
         }
-#endif
-
 
         private static AuthorSignPackageRequest CreateRequest(X509Certificate2 certificate)
         {

@@ -1,5 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Configuration.Test;
 using NuGet.Packaging;
@@ -188,6 +191,7 @@ namespace NuGet.CommandLine.Test
                 r1.Success.Should().BeTrue();
                 r2.Success.Should().BeTrue();
                 File.Exists(nupkgPath).Should().BeTrue();
+                Assert.NotNull(installDir);
                 File.Exists(Path.Combine(installDir, "data", "1.txt")).Should().BeFalse("this package was uninstalled");
                 File.Exists(Path.Combine(installDir, "data", "2.txt")).Should().BeTrue("this package was installed");
 
@@ -658,7 +662,7 @@ namespace NuGet.CommandLine.Test
                     repositoryPath };
 
                 // Act
-                var envVars = new Dictionary<string, string>()
+                var envVars = new Dictionary<string, string?>()
                 {
                     { "PATH", null }
                 };
@@ -849,6 +853,35 @@ namespace NuGet.CommandLine.Test
 
                 // Assert
                 var alreadyInstalledMessage = "Package \"testPackage1.1.1.0\" is already installed.";
+                Assert.Contains(alreadyInstalledMessage, output, StringComparison.OrdinalIgnoreCase);
+                r.ExitCode.Should().Be(0);
+            }
+        }
+
+        [Fact]
+        public void InstallCommand_ExcludeVersion_HigherVersionAlreadyInstalled()
+        {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var outputDirectory = pathContext.SolutionRoot;
+                var source = pathContext.PackageSource;
+                // Arrange
+                PackageCreator.CreatePackage("testPackage", "1.2.0", source);
+                PackageCreator.CreatePackage("testPackage", "1.1.0", source);
+
+                // Act
+                var r = RunInstall(pathContext, "testPackage", 0, new[] { "-OutputDirectory", outputDirectory, "-ExcludeVersion", "-Version", "1.2.0" });
+
+                // Assert
+                Assert.Equal(0, r.ExitCode);
+
+                // Act
+                var result = RunInstall(pathContext, "testPackage", 0, new[] { "-OutputDirectory", outputDirectory, "-ExcludeVersion", "-Version", "1.1.0" });
+
+                var output = result.Output;
+
+                // Assert
+                var alreadyInstalledMessage = string.Format(CultureInfo.CurrentCulture, NuGetResources.InstallCommandHigherVersionAlreadyExists, "testPackage.1.1.0", "testPackage.1.2.0");
                 Assert.Contains(alreadyInstalledMessage, output, StringComparison.OrdinalIgnoreCase);
                 r.ExitCode.Should().Be(0);
             }
@@ -1442,7 +1475,7 @@ namespace NuGet.CommandLine.Test
         [InlineData("Highest", null, "2.0.0")]
         [InlineData("HighestMinor", "1.1", "1.2.0")]
         [InlineData("HighestPatch", "1.1", "1.1.1")]
-        public void InstallCommand_DependencyResolution(string dependencyType, string requestedVersion, string expectedVersion)
+        public void InstallCommand_DependencyResolution(string? dependencyType, string? requestedVersion, string expectedVersion)
         {
             var nugetexe = Util.GetNuGetExePath();
             using (var pathContext = new SimpleTestPathContext())
@@ -2013,7 +2046,7 @@ namespace NuGet.CommandLine.Test
         }
 
         [Fact]
-        public async Task Install_WithPackagesConfigAndHttpSource_Warns()
+        public async Task Install_WithPackagesConfigAndHttpSource_Errors()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -2039,7 +2072,7 @@ namespace NuGet.CommandLine.Test
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
 
-            var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config");
+            var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath)!, "packages.config");
             var args = new string[]
             {
                 "-OutputDirectory",
@@ -2051,18 +2084,15 @@ namespace NuGet.CommandLine.Test
 
             // Assert
             result.Success.Should().BeTrue();
-            result.AllOutput.Should().Contain($"Added package 'A.1.0.0' to folder '{pathContext.PackagesV2}'");
-            result.AllOutput.Should().Contain("You are running the 'restore' operation with an 'HTTP' source, 'http://api.source/api/v2'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.");
+            result.Errors.Should().Contain("http://api.source/api/v2");
         }
 
         [Theory]
-        [InlineData("false", true)]
-        [InlineData("FALSE", true)]
-        [InlineData("invalidString", true)]
-        [InlineData("", true)]
-        [InlineData("true", false)]
-        [InlineData("TRUE", false)]
-        public async Task Install_PackagesConfigWithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool hasHttpWarning)
+        [InlineData("false")]
+        [InlineData("FALSE")]
+        [InlineData("invalidString")]
+        [InlineData("")]
+        public async Task Install_PackagesConfigWithHttpSourceAndAllowInsecureConnectionsFalse_Errors(string allowInsecureConnections)
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -2088,7 +2118,7 @@ namespace NuGet.CommandLine.Test
             solution.Projects.Add(projectB);
             solution.Create(pathContext.SolutionRoot);
 
-            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config");
+            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]
             {
                 "-OutputDirectory",
@@ -2099,21 +2129,60 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult result = RunInstall(pathContext, config, expectedExitCode: 0, additionalArgs: args);
 
             // Assert
-            string formatString = "You are running the 'restore' operation with an 'HTTP' source, '{0}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS'";
-            string warningForHttpSource = string.Format(formatString, "http://api.source/index.json");
-            string warningForHttpsSource = string.Format(formatString, "https://api.source/index.json");
+
+            result.Success.Should().BeTrue();
+
+            Assert.DoesNotContain("https://api.source/index.json", result.Errors);
+
+            Assert.Contains("http://api.source/index.json", result.Errors);
+
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        public async Task Install_PackagesConfigWithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            // Set up solution, project, and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            var packageAPath = Path.Combine(pathContext.PackageSource, packageA.Id, packageA.Version, packageA.PackageName);
+
+            pathContext.Settings.AddSource("http-feed", "http://api.source/index.json", allowInsecureConnections);
+            pathContext.Settings.AddSource("https-feed", "https://api.source/index.json", allowInsecureConnections);
+
+            var projectB = new SimpleTestProjectContext(
+                "b",
+                ProjectStyle.PackagesConfig,
+                pathContext.SolutionRoot);
+
+            Util.CreateFile(Path.GetDirectoryName(projectB.ProjectPath), "packages.config",
+@"<packages>
+  <package id=""A"" version=""1.0.0"" targetFramework=""net461"" />
+</packages>");
+
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
+            var args = new string[]
+            {
+                "-OutputDirectory",
+                pathContext.PackagesV2
+            };
+
+            // Act
+            CommandRunnerResult result = RunInstall(pathContext, config, expectedExitCode: 0, additionalArgs: args);
+
+            // Assert
 
             result.Success.Should().BeTrue();
             result.AllOutput.Should().Contain($"Added package 'A.1.0.0' to folder '{pathContext.PackagesV2}'");
-            Assert.DoesNotContain(warningForHttpsSource, result.Output);
-            if (hasHttpWarning)
-            {
-                Assert.Contains(warningForHttpSource, result.Output);
-            }
-            else
-            {
-                Assert.DoesNotContain(warningForHttpSource, result.Output); ;
-            }
+            Assert.DoesNotContain("http://api.source/index.json", result.Errors);
+            Assert.DoesNotContain("https://api.source/index.json", result.Errors); ;
         }
 
         [Fact]

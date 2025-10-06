@@ -3,12 +3,12 @@
 
 #nullable enable
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Moq;
 using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System;
 using NuGet.Protocol.Core.Types;
-using System.Threading;
 
 namespace NuGet.Protocol.Tests.Providers
 {

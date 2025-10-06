@@ -1,6 +1,11 @@
-﻿Source Location: (23:0,23 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|OnClick|
+Generated Location: (884:23,0 [7] )
+|OnClick|
+
+Source Location: (23:0,23 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |Increment|
-Generated Location: (905:23,0 [9] )
+Generated Location: (1092:31,0 [9] )
 |Increment|
 
 Source Location: (46:2,7 [98] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -10,7 +15,7 @@ Source Location: (46:2,7 [98] x:\dir\subdir\Test\TestComponent.cshtml)
         counter++;
     }
 |
-Generated Location: (1153:34,0 [98] )
+Generated Location: (1340:42,0 [98] )
 |
     private int counter;
     private void Increment(EventArgs e) {

@@ -1,45 +1,74 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
-    <_platformIndex>$(NETCoreSdkRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
-    <RuntimeOS>$(NETCoreSdkRuntimeIdentifier.Substring(0, $(_platformIndex)))</RuntimeOS>
-
-    <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
-    <BaseOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))-$(TargetArchitecture)</BaseOS>
+    <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
+    <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
 
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
+    <!-- Pass TargetArchitecture in as a CLI switch, instead of an msbuild property. -->
+    <SkipSetTargetArchitecture>true</SkipSetTargetArchitecture>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)arch $(TargetArchitecture)</BuildArgs>
+
+    <!-- Pass TargetOS in as a CLI switch, instead of an msbuild property. -->
+    <SkipSetTargetOS>true</SkipSetTargetOS>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:TargetRid=$(TargetRid)</BuildArgs>
-    <BuildArgs Condition="'$(ShortStack)' != 'true'">$(BuildArgs) /p:RuntimeOS=$(RuntimeOS)</BuildArgs>
-    <BuildArgs Condition="'$(ShortStack)' != 'true'">$(BuildArgs) /p:BaseOS=$(BaseOS)</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildRuntimeWasmEnableThreads)' == 'true'">$(BuildArgs) /p:DotNetBuildRuntimeWasmEnableThreads=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildRuntimeNativeAOTRuntimePack)' == 'true'">$(BuildArgs) /p:DotNetBuildRuntimeNativeAOTRuntimePack=true</BuildArgs>
+
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
+
+    <!--
+      When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
+      This is generally used in source-build scenarios where the target RID is only supported on Mono
+      or Mono-LLVMAOT runtime pack builds.
+    -->
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)usemonoruntime</BuildArgs>
+
+    <!-- Mobile builds and windows host (for Android-on-windows etc.) are never "cross" builds as they don't have a rootfs-based filesystem build. -->
+    <TargetsMobile Condition="'$(TargetOS)' == 'ios' or '$(TargetOS)' == 'iossimulator' or '$(TargetOS)' == 'maccatalyst' or '$(TargetOS)' == 'tvos' or '$(TargetOS)' == 'tvossimulator' or '$(TargetOS)' == 'android' or '$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi'">true</TargetsMobile>
+    <BuildArgs Condition="'$(CrossBuild)' == 'true' or ('$(TargetOS)-$(TargetArchitecture)' != '$(TargetOS)-$(BuildArchitecture)' and '$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'windows' and '$(TargetOS)' != 'linux-bionic')">$(BuildArgs) $(FlagParameterPrefix)cross</BuildArgs>
+
+    <!--
+      Always bootstrap our build so we are building the shipping product from a cohesive commit (no LKG usage).
+      Some targets don't build any assets that use the LKG bits at from a dev build at runtime. Those platforms
+      can skip the bootstrapping build.
+    -->
+    <BuildBootstrap Condition="'$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'linux-bionic'">true</BuildBootstrap>
+    <BuildBootstrap Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">false</BuildBootstrap>
+    <BuildBootstrap Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">false</BuildBootstrap>
+    <BuildArgs Condition="'$(BuildBootstrap)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)bootstrap</BuildArgs>
+
+    <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
+
+    <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
+    <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
+
+    <!-- Pass through special build modes controlled by properties -->
+    <BuildArgs Condition="'$(WasmEnableThreads)' != ''">$(BuildArgs) /p:WasmEnableThreads=$(WasmEnableThreads)</BuildArgs>
+    <BuildArgs Condition="'$(MonoEnableLLVM)' != ''">$(BuildArgs) /p:MonoEnableLLVM=$(MonoEnableLLVM)</BuildArgs>
+    <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
+    <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <BuildNonPortable>true</BuildNonPortable>
-    <BuildNonPortable Condition="'$(PortableBuild)' == 'true'">false</BuildNonPortable>
-
-    <BuildArgs>$(BuildArgs) /p:PortableBuild=$(PortableBuild)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:SourceBuildNonPortable=$(BuildNonPortable)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:UsingToolMicrosoftNetCompilers=false</BuildArgs>
+    <!-- Handle system libraries -->
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+libunwind')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</BuildArgs>
+    <!-- TODO: llvm-libunwind -->
+    <!-- TODO: LinuxTracepoints -->
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+zlib')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('-lttng'))">$(BuildArgs) /p:FeatureXplatEventSource=false</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="cecil" />
     <RepositoryReference Include="command-line-api" />
-    <RepositoryReference Include="emsdk" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

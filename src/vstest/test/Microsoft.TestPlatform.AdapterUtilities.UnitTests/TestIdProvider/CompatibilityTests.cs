@@ -12,16 +12,16 @@ namespace Microsoft.TestPlatform.AdapterUtilities.UnitTests.TestIdProvider;
 public class CompatibilityTests
 {
     [TestMethod]
-    [DataRow(new[] { "eea339da-6b5e-0d4b-3255-bfef95601890", "" })]
-    [DataRow(new[] { "740b9afc-3350-4257-ca01-5bd47799147d", "adapter://", "name1" })]                                                                          // less than one block
-    [DataRow(new[] { "119c5b31-c0fb-1c12-6d1a-d617bb2bd996", "adapter://namesamplenam.testname" })]                                                             // 1 full block
-    [DataRow(new[] { "2a4c33ec-6115-4bd7-2e94-71f2fd3a5ee3", "adapter://namesamplenamespace.testname" })]                                                       // 1 full block and extra
-    [DataRow(new[] { "119c5b31-c0fb-1c12-6d1a-d617bb2bd996", "adapter://", "name", "samplenam", ".", "testname" })]                                             // 1 full block
-    [DataRow(new[] { "2a4c33ec-6115-4bd7-2e94-71f2fd3a5ee3", "adapter://", "name", "samplenamespace", ".", "testname" })]                                       // 1 full block and extra
-    [DataRow(new[] { "1fc07043-3d2d-1401-c732-3b507feec548", "adapter://namesamplenam.testnameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" })]                             // 2 full blocks
-    [DataRow(new[] { "24e8a50b-2766-6a12-f461-9f8e4fa1cbb5", "adapter://namesamplenamespace.testnameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" })]                       // 2 full blocks and extra
-    [DataRow(new[] { "1fc07043-3d2d-1401-c732-3b507feec548", "adapter://", "name", "samplenam", ".", "testname", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" })]         // 2 full blocks
-    [DataRow(new[] { "24e8a50b-2766-6a12-f461-9f8e4fa1cbb5", "adapter://", "name", "samplenamespace", ".", "testname", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" })]   // 2 full blocks and extra
+    [DataRow(["eea339da-6b5e-0d4b-3255-bfef95601890", ""])]
+    [DataRow(["740b9afc-3350-4257-ca01-5bd47799147d", "adapter://", "name1"])]                                                                          // less than one block
+    [DataRow(["119c5b31-c0fb-1c12-6d1a-d617bb2bd996", "adapter://namesamplenam.testname"])]                                                             // 1 full block
+    [DataRow(["2a4c33ec-6115-4bd7-2e94-71f2fd3a5ee3", "adapter://namesamplenamespace.testname"])]                                                       // 1 full block and extra
+    [DataRow(["119c5b31-c0fb-1c12-6d1a-d617bb2bd996", "adapter://", "name", "samplenam", ".", "testname"])]                                             // 1 full block
+    [DataRow(["2a4c33ec-6115-4bd7-2e94-71f2fd3a5ee3", "adapter://", "name", "samplenamespace", ".", "testname"])]                                       // 1 full block and extra
+    [DataRow(["1fc07043-3d2d-1401-c732-3b507feec548", "adapter://namesamplenam.testnameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])]                             // 2 full blocks
+    [DataRow(["24e8a50b-2766-6a12-f461-9f8e4fa1cbb5", "adapter://namesamplenamespace.testnameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])]                       // 2 full blocks and extra
+    [DataRow(["1fc07043-3d2d-1401-c732-3b507feec548", "adapter://", "name", "samplenam", ".", "testname", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])]         // 2 full blocks
+    [DataRow(["24e8a50b-2766-6a12-f461-9f8e4fa1cbb5", "adapter://", "name", "samplenamespace", ".", "testname", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])]   // 2 full blocks and extra
     public void IdCompatibilityTests(string[] data)
     {
         // Arrange

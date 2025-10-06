@@ -24,22 +24,22 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             {
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
                 }
             };
@@ -175,22 +175,22 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             {
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
                 }
             };
@@ -241,22 +241,22 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var requestResponseHelpers = new RequestResponseHelper[] {
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://dotnetcli.blob.core.windows.net/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
                 },
                 new RequestResponseHelper()
                 {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://dotnetbuilds.blob.core.windows.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
                     ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
                 }
             };

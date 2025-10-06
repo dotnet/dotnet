@@ -34,12 +34,12 @@ type public FSharpChecker =
     /// <param name="suggestNamesForErrors">Indicate whether name suggestion should be enabled</param>
     /// <param name="keepAllBackgroundSymbolUses">Indicate whether all symbol uses should be kept in background checking</param>
     /// <param name="enableBackgroundItemKeyStoreAndSemanticClassification">Indicates whether a table of symbol keys should be kept for background compilation</param>
-    /// <param name="enablePartialTypeChecking">Indicates whether to perform partial type checking. Cannot be set to true if keepAssmeblyContents is true. If set to true, can cause duplicate type-checks when richer information on a file is needed, but can skip background type-checking entirely on implementation files with signature files.</param>
+    /// <param name="enablePartialTypeChecking">Indicates whether to perform partial type checking. Cannot be set to true if keepAssemblyContents is true. If set to true, can cause duplicate type-checks when richer information on a file is needed, but can skip background type-checking entirely on implementation files with signature files.</param>
     /// <param name="parallelReferenceResolution">Indicates whether to resolve references in parallel.</param>
     /// <param name="captureIdentifiersWhenParsing">When set to true we create a set of all identifiers for each parsed file which can be used to speed up finding references.</param>
     /// <param name="documentSource">Default: FileSystem. You can use Custom source to provide a function that will return the source for a given file path instead of reading it from the file system. Note that with this option the FSharpChecker will also not monitor the file system for file changes. It will expect to be notified of changes via the NotifyFileChanged method.</param>
-    /// <param name="useSyntaxTreeCache">Default: true. Indicates whether to keep parsing results in a cache.</param>
     /// <param name="useTransparentCompiler">Default: false. Indicates whether we use a new experimental background compiler. This does not yet support all features</param>
+    /// <param name="transparentCompilerCacheSizes">Default: None. The cache sizes for the transparent compiler</param>
     static member Create:
         ?projectCacheSize: int *
         ?keepAssemblyContents: bool *
@@ -54,10 +54,10 @@ type public FSharpChecker =
         ?captureIdentifiersWhenParsing: bool *
         [<Experimental "This parameter is experimental and likely to be removed in the future.">] ?documentSource:
             DocumentSource *
-        [<Experimental "This parameter is experimental and likely to be removed in the future.">] ?useSyntaxTreeCache:
-            bool *
         [<Experimental "This parameter is experimental and likely to be removed in the future.">] ?useTransparentCompiler:
-            bool ->
+            bool *
+        [<Experimental "This parameter is experimental and likely to be removed in the future.">] ?transparentCompilerCacheSizes:
+            CacheSizes ->
             FSharpChecker
 
     [<Experimental("This FCS API is experimental and subject to change.")>]
@@ -114,7 +114,7 @@ type public FSharpChecker =
     /// <param name="fileName">The path for the file. The file name is also as a module name for implicit top level modules (e.g. in scripts).</param>
     /// <param name="source">The source to be parsed.</param>
     /// <param name="options">Parsing options for the project or script.</param>
-    /// <param name="cache">Store the parse in a size-limited cache assocaited with the FSharpChecker. Default: true</param>
+    /// <param name="cache">Store the parse in a size-limited cache associated with the FSharpChecker. Default: true</param>
     /// <param name="userOpName">An optional string used for tracing compiler operations associated with this request.</param>
     [<Obsolete("Please call checker.ParseFile instead.  To do this, you must also pass FSharpParsingOptions instead of FSharpProjectOptions. If necessary generate FSharpParsingOptions from FSharpProjectOptions by calling checker.GetParsingOptionsFromProjectOptions(options)")>]
     member ParseFileInProject:
@@ -226,6 +226,7 @@ type public FSharpChecker =
     ///
     /// <param name="fileName">Used to differentiate between scripts, to consider each script a separate project. Also used in formatted error messages.</param>
     /// <param name="source">The source for the file.</param>
+    /// <param name="caret">The editor location for the cursor if available.</param>
     /// <param name="previewEnabled">Is the preview compiler enabled.</param>
     /// <param name="loadedTimeStamp">Indicates when the script was loaded into the editing environment,
     /// so that an 'unload' and 'reload' action will cause the script to be considered as a new project,
@@ -240,6 +241,7 @@ type public FSharpChecker =
     member GetProjectOptionsFromScript:
         fileName: string *
         source: ISourceText *
+        ?caret: Position *
         ?previewEnabled: bool *
         ?loadedTimeStamp: DateTime *
         ?otherFlags: string[] *
@@ -253,6 +255,7 @@ type public FSharpChecker =
 
     /// <param name="fileName">Used to differentiate between scripts, to consider each script a separate project. Also used in formatted error messages.</param>
     /// <param name="source">The source for the file.</param>
+    /// <param name="caret">The editor location for the cursor if available.</param>
     /// <param name="documentSource">DocumentSource to load any additional files.</param>
     /// <param name="previewEnabled">Is the preview compiler enabled.</param>
     /// <param name="loadedTimeStamp">Indicates when the script was loaded into the editing environment,
@@ -269,6 +272,7 @@ type public FSharpChecker =
     member GetProjectSnapshotFromScript:
         fileName: string *
         source: ISourceTextNew *
+        ?caret: Position *
         ?documentSource: DocumentSource *
         ?previewEnabled: bool *
         ?loadedTimeStamp: DateTime *
@@ -403,11 +407,12 @@ type public FSharpChecker =
     /// Compile using the given flags.  Source files names are resolved via the FileSystem API.
     /// The output file must be given by a -o flag.
     /// The first argument is ignored and can just be "fsc.exe".
+    /// The method returns the collected diagnostics, and (possibly) a terminating exception.
     /// </summary>
     ///
     /// <param name="argv">The command line arguments for the project build.</param>
     /// <param name="userOpName">An optional string used for tracing compiler operations associated with this request.</param>
-    member Compile: argv: string[] * ?userOpName: string -> Async<FSharpDiagnostic[] * int>
+    member Compile: argv: string[] * ?userOpName: string -> Async<FSharpDiagnostic[] * exn option>
 
     /// <summary>
     /// Try to get type check results for a file. This looks up the results of recent type checks of the

@@ -217,7 +217,7 @@ public class TestRequestSender : ITestRequestSender
         // Wait until either connection is successful, handled by connected.WaitHandle
         // or operation is canceled, handled by cancellationToken.WaitHandle
         // or testhost exits unexpectedly, handled by clientExited.WaitHandle
-        var waitIndex = WaitHandle.WaitAny(new WaitHandle[] { _connected.WaitHandle, cancellationToken.WaitHandle, _clientExited.WaitHandle }, connectionTimeout);
+        var waitIndex = WaitHandle.WaitAny([_connected.WaitHandle, cancellationToken.WaitHandle, _clientExited.WaitHandle], connectionTimeout);
 
         EqtTrace.Verbose("TestRequestSender.WaitForRequestHandlerConnection: waiting took {0} ms, with timeout {1} ms, and result {2}, which is {3}.", sw.ElapsedMilliseconds, connectionTimeout, waitIndex, waitIndex == 0 ? "success" : "failure");
 

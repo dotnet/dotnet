@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -16,7 +15,6 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.LanguageService;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Simplification;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.PopulateSwitch;
 
@@ -142,8 +140,7 @@ internal abstract class AbstractPopulateSwitchCodeFixProvider<
         var hasMissingDefaultCase = bool.Parse(diagnostic.Properties[PopulateSwitchStatementHelpers.MissingDefaultCase]!);
 
         var switchLocation = diagnostic.AdditionalLocations[0];
-        var switchNode = switchLocation.FindNode(getInnermostNodeForTie: true, cancellationToken) as TSwitchSyntax;
-        if (switchNode == null)
+        if (switchLocation.FindNode(getInnermostNodeForTie: true, cancellationToken) is not TSwitchSyntax switchNode)
             return;
 
         var model = await document.GetRequiredSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -220,7 +217,7 @@ internal abstract class AbstractPopulateSwitchCodeFixProvider<
         Document document,
         ImmutableArray<Diagnostic> diagnostics,
         SyntaxEditor editor,
-        CodeActionOptionsProvider fallbackOptions, CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         // If the user is performing a fix-all, then fix up all the issues we see. i.e.
         // add missing cases and missing 'default' cases for any switches we reported an

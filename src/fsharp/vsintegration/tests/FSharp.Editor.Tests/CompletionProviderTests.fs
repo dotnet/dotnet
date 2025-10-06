@@ -34,7 +34,7 @@ module CompletionProviderTests =
 
         let results =
             let task =
-                FSharpCompletionProvider.ProvideCompletionsAsyncAux(document, caretPosition, (fun _ -> [||]))
+                FSharpCompletionProvider.ProvideCompletionsAsyncAux(document, caretPosition, (fun _ -> [||]), false)
                 |> CancellableTask.start CancellationToken.None
 
             task.Result |> Seq.map (fun result -> result.DisplayText)
@@ -82,7 +82,7 @@ module CompletionProviderTests =
 
         let actual =
             let task =
-                FSharpCompletionProvider.ProvideCompletionsAsyncAux(document, caretPosition, (fun _ -> [||]))
+                FSharpCompletionProvider.ProvideCompletionsAsyncAux(document, caretPosition, (fun _ -> [||]), false)
                 |> CancellableTask.start CancellationToken.None
 
             task.Result
@@ -101,6 +101,40 @@ module CompletionProviderTests =
 
     let VerifyCompletionListExactly (fileContents: string, marker: string, expected: string list) =
         VerifyCompletionListExactlyWithOptions(fileContents, marker, expected, [||])
+
+    /// Verify completion code. Only verify the expected completion items
+    let VerifyCompletionCode (genBodyForOverriddenMeth, fileContents: string, marker: string, expected: Map<string, string>) =
+        let getNameInCode (item: CompletionItem) =
+            match item.Properties.TryGetValue "NameInCode" with
+            | true, x -> x
+            | _ -> item.DisplayText
+
+        let caretPosition = fileContents.IndexOf(marker) + marker.Length
+
+        let document =
+            RoslynTestHelpers.CreateSolution(fileContents, extraFSharpProjectOtherOptions = [||])
+            |> RoslynTestHelpers.GetSingleDocument
+
+        let actual =
+            let task =
+                FSharpCompletionProvider.ProvideCompletionsAsyncAux(document, caretPosition, (fun _ -> [||]), genBodyForOverriddenMeth)
+                |> CancellableTask.start CancellationToken.None
+
+            task.Result
+            |> Seq.toList
+            |> List.choose (fun x ->
+                if expected.ContainsKey x.DisplayText then
+                    Some(x.DisplayText, getNameInCode x)
+                else
+                    None)
+            |> Map.ofList
+
+        if actual <> expected then
+            failwithf
+                "Expected:\n%s,\nbut was:\n%s\nactual with DisplayText:\n%s"
+                (String.Join("\n", expected.Values |> Seq.map (sprintf "\"%s\"")))
+                (String.Join("\n", actual.Values |> Seq.map (sprintf "\"%s\"")))
+                (String.Join("\n", actual |> Seq.map (fun (KeyValue(fst, snd)) -> sprintf "%s => %s" fst snd)))
 
     let VerifyNoCompletionList (fileContents: string, marker: string) =
         VerifyCompletionListExactly(fileContents, marker, [])
@@ -1499,10 +1533,10 @@ type A =
             """
 type AnotherNestedRecTy = { A: int }
 
-type NestdRecTy = { B: string; C: AnotherNestedRecTy }
+type NestedRecTy = { B: string; C: AnotherNestedRecTy }
 
 module F =
-    type RecTy = { D: NestdRecTy; E: string option }
+    type RecTy = { D: NestedRecTy; E: string option }
 
 open F
 
@@ -1526,7 +1560,7 @@ let t9 = { t2 with d }
 
 let t10 x = { x with d } 
 
-let t11 = { t2 with NestdRecTy.C. }
+let t11 = { t2 with NestedRecTy.C. }
 
 let t12 x = { x with F.RecTy.d }
 
@@ -1553,7 +1587,7 @@ let t13 x = { x with RecTy.D. }
         // The type of `x` is not known, so show fields of records in scope
         VerifyCompletionList(fileContents, "let t10 x = { x with d", [ "A"; "B"; "C"; "D"; "E" ], [])
 
-        VerifyNoCompletionList(fileContents, "let t11 = { t2 with NestdRecTy.C.")
+        VerifyNoCompletionList(fileContents, "let t11 = { t2 with NestedRecTy.C.")
 
         VerifyCompletionListExactly(fileContents, "let t12 x = { x with F.RecTy.d", [ "D"; "E" ])
 
@@ -1565,13 +1599,13 @@ let t13 x = { x with RecTy.D. }
             """
 type AnotherNestedRecTy = { A: int }
 
-type NestdRecTy = { B: string; C: {| C: AnotherNestedRecTy |} }
+type NestedRecTy = { B: string; C: {| C: AnotherNestedRecTy |} }
 
-type RecTy = { D: NestdRecTy; E: {| a: string |} }
+type RecTy = { D: NestedRecTy; E: {| a: string |} }
 
 let t1 x = { x with D.C.C.A = 12; E.a = "a" }
 
-let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with E.a = "a"; D.B = "z" |}
+let t2 (x: {| D: NestedRecTy; E: {| a: string |} |}) = {| x with E.a = "a"; D.B = "z" |}
 """
 
         VerifyCompletionListExactly(fileContents, "let t1 x = { x with D.", [ "B"; "C" ])
@@ -1580,18 +1614,18 @@ let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with E.a = "a"; D.B =
         VerifyCompletionListExactly(fileContents, "let t1 x = { x with D.C.C.A = 12; ", [ "D"; "E" ])
         VerifyCompletionListExactly(fileContents, "let t1 x = { x with D.C.C.A = 12; E.", [ "a" ])
 
-        VerifyCompletionListExactly(fileContents, "let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with ", [ "D"; "E" ])
-        VerifyCompletionListExactly(fileContents, "let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with E.", [ "a" ])
+        VerifyCompletionListExactly(fileContents, "let t2 (x: {| D: NestedRecTy; E: {| a: string |} |}) = {| x with ", [ "D"; "E" ])
+        VerifyCompletionListExactly(fileContents, "let t2 (x: {| D: NestedRecTy; E: {| a: string |} |}) = {| x with E.", [ "a" ])
 
         VerifyCompletionListExactly(
             fileContents,
-            "let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with E.a = \"a\"; ",
+            "let t2 (x: {| D: NestedRecTy; E: {| a: string |} |}) = {| x with E.a = \"a\"; ",
             [ "D"; "E" ]
         )
 
         VerifyCompletionListExactly(
             fileContents,
-            "let t2 (x: {| D: NestdRecTy; E: {| a: string |} |}) = {| x with E.a = \"a\"; D.",
+            "let t2 (x: {| D: NestedRecTy; E: {| a: string |} |}) = {| x with E.a = \"a\"; D.",
             [ "B"; "C" ]
         )
 
@@ -1853,35 +1887,49 @@ type B () =
     inherit System.Dynamic.DynamicMetaObjectBinder ()
 
     override x.
+
+let _ =
+    { new System.Dynamic.SetIndexBinder (null) with
+        member x.
+    }
+
+let _ =
+    { new System.Dynamic.DynamicMetaObjectBinder () with
+        member this.
+    }
 """
 
         // SetIndexBinder inherits from DynamicMetaObjectBinder, but overrides and seals Bind and the ReturnType property
-        VerifyCompletionListExactly(
-            fileContents,
-            "override _.a",
-            [
-                "BindDelegate"
-                "Equals"
-                "FallbackSetIndex"
-                "Finalize"
-                "GetHashCode"
-                "ToString"
-            ]
-        )
+        [ "override _.a"; "member x." ]
+        |> List.iter (fun i ->
+            VerifyCompletionListExactly(
+                fileContents,
+                i,
+                [
+                    "BindDelegate (site: System.Runtime.CompilerServices.CallSite<'T>, args: obj array): 'T"
+                    "Equals (obj: obj): bool"
+                    "FallbackSetIndex (target: System.Dynamic.DynamicMetaObject, indexes: System.Dynamic.DynamicMetaObject array, value: System.Dynamic.DynamicMetaObject, errorSuggestion: System.Dynamic.DynamicMetaObject): System.Dynamic.DynamicMetaObject"
+                    "Finalize (): unit"
+                    "GetHashCode (): int"
+                    "ToString (): string"
+                ]
+            ))
 
-        VerifyCompletionListExactly(
-            fileContents,
-            "override x.",
-            [
-                "Bind"
-                "BindDelegate"
-                "Equals"
-                "Finalize"
-                "GetHashCode"
-                "get_ReturnType"
-                "ToString"
-            ]
-        )
+        [ "override x."; "member this." ]
+        |> List.iter (fun i ->
+            VerifyCompletionListExactly(
+                fileContents,
+                i,
+                [
+                    "ReturnType with get (): System.Type"
+                    "Bind (target: System.Dynamic.DynamicMetaObject, args: System.Dynamic.DynamicMetaObject array): System.Dynamic.DynamicMetaObject"
+                    "BindDelegate (site: System.Runtime.CompilerServices.CallSite<'T>, args: obj array): 'T"
+                    "Equals (obj: obj): bool"
+                    "Finalize (): unit"
+                    "GetHashCode (): int"
+                    "ToString (): string"
+                ]
+            ))
 
     [<Fact>]
     let ``Completion list for override does not contain virtual method if it is already overridden in the same type`` () =
@@ -1914,9 +1962,83 @@ type C () =
     override A1 s = ()
 """
 
-        VerifyCompletionListExactly(fileContents, "override _.", [ "Equals"; "Finalize"; "GetHashCode" ])
-        VerifyCompletionListExactly(fileContents, "override x.b", [ "A1"; "A2"; "Equals"; "Finalize"; "GetHashCode"; "ToString" ])
-        VerifyCompletionListExactly(fileContents, "override x.c", [ "A2"; "Equals"; "Finalize"; "GetHashCode"; "ToString" ])
+        VerifyCompletionListExactly(fileContents, "override _.", [ "Equals (obj: obj): bool"; "Finalize (): unit"; "GetHashCode (): int" ])
+
+        VerifyCompletionListExactly(
+            fileContents,
+            "override x.b",
+            [
+                "A1 (arg: string): unit"
+                "A2 (): unit"
+                "Equals (obj: obj): bool"
+                "Finalize (): unit"
+                "GetHashCode (): int"
+                "ToString (): string"
+            ]
+        )
+
+        VerifyCompletionListExactly(
+            fileContents,
+            "override x.c",
+            [
+                "A2 (): unit"
+                "Equals (obj: obj): bool"
+                "Finalize (): unit"
+                "GetHashCode (): int"
+                "ToString (): string"
+            ]
+        )
+
+    [<Fact>]
+    let ``Completion list for override in interface implements does not contain method which is already overridden in the same type`` () =
+        let fileContents =
+            """
+type IA =
+    static abstract member A3: unit -> unit
+    static abstract member A4: unit -> unit
+    static abstract member P1: value: int -> int with get, set
+    static abstract member P2: int with get, set
+    
+type IB =
+    abstract member A1: unit -> unit
+    abstract member A1: string -> unit
+    abstract member A2: unit -> unit
+    abstract member P1: int * bool -> int with get, set
+    abstract member P2: int with get, set
+
+type TA() =
+    interface IA with
+        static member 
+        static member A3 (): unit = ()
+        static member P2
+            with get (): int = raise (System.NotImplementedException())
+    interface IB with
+        member this.A1 (arg1: string): unit = ()
+        member this.P2
+            with get (): int = raise (System.NotImplementedException())
+        member thisTA.
+"""
+
+        VerifyCompletionListExactly(
+            fileContents,
+            "static member ",
+            [
+                "P1 with get (value: int): int and set (value: int) (value_1: int)"
+                "P2 with set (value: int)"
+                "A4 (): unit"
+            ]
+        )
+
+        VerifyCompletionListExactly(
+            fileContents,
+            "member thisTA.",
+            [
+                "P1 with get (arg: int, arg_1: bool): int and set (arg: int, arg_1: bool) (value: int)"
+                "P2 with set (value: int)"
+                "A1 (): unit"
+                "A2 (): unit"
+            ]
+        )
 
     [<Fact>]
     let ``Completion list for override is empty when the caret is on the self identifier`` () =
@@ -1968,10 +2090,10 @@ match { A = 1; B = 2 } with
 
         VerifyCompletionList(fileContents, "| { A = 1; ", [ "B"; "R1"; "R2" ], [ "C"; "D" ])
         VerifyCompletionList(fileContents, "| { A = 2; s", [ "B"; "R1"; "R2" ], [ "C"; "D" ])
-        VerifyCompletionList(fileContents, "| { B =", [ "R1"; "R2"; "Some"; "None"; "System"; "DU" ], [ "A"; "B"; "C"; "D" ])
-        VerifyCompletionList(fileContents, "| { B = ", [ "R1"; "R2"; "Some"; "None"; "System"; "DU" ], [ "A"; "B"; "C"; "D" ])
-        VerifyCompletionList(fileContents, "| { X =", [ "R1"; "R2"; "Some"; "None"; "System"; "DU" ], [ "A"; "B"; "C"; "D" ])
-        VerifyCompletionList(fileContents, "| { X = ", [ "R1"; "R2"; "Some"; "None"; "System"; "DU" ], [ "A"; "B"; "C"; "D" ])
+        VerifyCompletionList(fileContents, "| { B =", [ "R1"; "R2"; "System" ], [ "B"; "C"; "D" ])
+        VerifyCompletionList(fileContents, "| { B = ", [ "R1"; "R2"; "System" ], [ "B"; "C"; "D" ])
+        VerifyCompletionList(fileContents, "| { X =", [ "R1"; "R2"; "System" ], [ "B"; "C"; "D" ])
+        VerifyCompletionList(fileContents, "| { X = ", [ "R1"; "R2"; "System" ], [ "B"; "C"; "D" ])
 
         // Ideally C and D should not be present here, but right now we're not able to filter fields in an empty record pattern stub
         VerifyCompletionList(fileContents, "| {  ", [ "A"; "B"; "C"; "D"; "R1"; "R2" ], [])
@@ -2007,3 +2129,50 @@ Ops.()
 
         VerifyCompletionList(fileContents, "Ops.Foo.(", [], [ "|>>"; "(|>>)" ])
         VerifyCompletionList(fileContents, "Ops.(", [], [ "|>>"; "(|>>)" ])
+
+    [<Fact>]
+    let ``Check code generation for completion to overridable slots`` () =
+        let fileContents =
+            """
+let _ =
+  { new System.IO.Stream() with
+      member x.
+  }
+"""
+
+        let nl = Environment.NewLine
+
+        let toCheckCompletionItems =
+            [
+                "CanRead with get (): bool"
+                "Position with get (): int64 and set (value: int64)"
+                "ToString (): string"
+            ]
+
+        VerifyCompletionCode(
+            true,
+            fileContents,
+            "member x.",
+            List.zip
+                toCheckCompletionItems
+                [
+                    $"CanRead{nl}        with get (): bool = raise (System.NotImplementedException())"
+                    $"Position{nl}        with get (): int64 = raise (System.NotImplementedException()){nl}         and set (value: int64) = raise (System.NotImplementedException())"
+                    $"ToString (): string = {nl}        base.ToString()"
+                ]
+            |> Map.ofList
+        )
+
+        VerifyCompletionCode(
+            false,
+            fileContents,
+            "member x.",
+            List.zip
+                toCheckCompletionItems
+                [
+                    $"CanRead{nl}        with get (): bool = "
+                    $"Position{nl}        with get (): int64 = {nl}         and set (value: int64) = "
+                    $"ToString (): string = {nl}        "
+                ]
+            |> Map.ofList
+        )

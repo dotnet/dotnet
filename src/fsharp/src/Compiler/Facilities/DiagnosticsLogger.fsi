@@ -10,13 +10,14 @@ open System.Runtime.CompilerServices
 open System.Runtime.InteropServices
 
 /// Represents the style being used to format errors
-[<RequireQualifiedAccess>]
+[<RequireQualifiedAccess; NoComparison; NoEquality>]
 type DiagnosticStyle =
     | Default
     | Emacs
     | Test
     | VisualStudio
     | Gcc
+    | Rich
 
 /// Thrown when we want to add some range information to a .NET exception
 exception WrappedError of exn * range
@@ -39,11 +40,12 @@ val NoSuggestions: Suggestions
 /// Thrown when we stop processing the F# Interactive entry or #load.
 exception StopProcessingExn of exn option
 
-val (|StopProcessing|_|): exn: exn -> unit option
+[<return: Struct>]
+val (|StopProcessing|_|): exn: exn -> unit voption
 
 val StopProcessing<'T> : exn
 
-/// Represents a diagnostic exeption whose text comes via SR.*
+/// Represents a diagnostic exception whose text comes via SR.*
 exception DiagnosticWithText of number: int * message: string * range: range
 
 /// A diagnostic that is raised when enabled manually, or by default with a language feature
@@ -53,7 +55,7 @@ exception DiagnosticEnabledWithLanguageFeature of
     range: range *
     enabledByLangFeature: bool
 
-/// Creates a diagnostic exeption whose text comes via SR.*
+/// Creates a diagnostic exception whose text comes via SR.*
 val Error: (int * string) * range -> exn
 
 exception InternalError of message: string * range: range
@@ -66,7 +68,7 @@ exception LibraryUseOnly of range: range
 
 exception Deprecated of message: string * range: range
 
-exception Experimental of message: string * range: range
+exception Experimental of message: string option * diagnosticId: string option * urlFormat: string option * range: range
 
 exception PossibleUnverifiableCode of range: range
 
@@ -85,6 +87,13 @@ exception DiagnosticWithSuggestions of
     identifier: string *
     suggestions: Suggestions
 
+exception ObsoleteDiagnostic of
+    isError: bool *
+    diagnosticId: string option *
+    message: string option *
+    urlFormat: string option *
+    range: range
+
 /// Creates a DiagnosticWithSuggestions whose text comes via SR.*
 val ErrorWithSuggestions: (int * string) * range * string * Suggestions -> exn
 
@@ -99,7 +108,7 @@ val inline protectAssemblyExplorationNoReraise: dflt1: 'T -> dflt2: 'T -> f: (un
 
 val AttachRange: m: range -> exn: exn -> exn
 
-/// Represnts an early exit from parsing, checking etc, for example because 'maxerrors' has been reached.
+/// Represents an early exit from parsing, checking etc, for example because 'maxerrors' has been reached.
 type Exiter =
     abstract Exit: int -> 'T
 
@@ -205,7 +214,11 @@ type DiagnosticsLogger =
     abstract ErrorCount: int
 
     /// Checks if ErrorCount > 0
+    [<Obsolete("This also reports if a 'WarnAsError' warning occured, leading to premature abortions of compilation checks. Use CheckForRealErrorsIgnoringWarnings instead.")>]
     member CheckForErrors: unit -> bool
+
+    abstract CheckForRealErrorsIgnoringWarnings: bool
+    default CheckForRealErrorsIgnoringWarnings: bool
 
 /// Represents a DiagnosticsLogger that discards diagnostics
 val DiscardErrorsLogger: DiagnosticsLogger
@@ -233,8 +246,6 @@ type CapturingDiagnosticsLogger =
 type DiagnosticsThreadStatics =
 
     static member BuildPhase: BuildPhase with get, set
-
-    static member BuildPhaseUnchecked: BuildPhase
 
     static member DiagnosticsLogger: DiagnosticsLogger with get, set
 
@@ -280,7 +291,7 @@ module DiagnosticsLoggerExtensions =
 val UseBuildPhase: phase: BuildPhase -> IDisposable
 
 /// NOTE: The change will be undone when the returned "unwind" object disposes
-val UseTransformedDiagnosticsLogger: transformer: (DiagnosticsLogger -> #DiagnosticsLogger) -> IDisposable
+val UseTransformedDiagnosticsLogger: transformer: (DiagnosticsLogger -> DiagnosticsLogger) -> IDisposable
 
 val UseDiagnosticsLogger: newLogger: DiagnosticsLogger -> IDisposable
 
@@ -439,12 +450,19 @@ val languageFeatureError: langVersion: LanguageVersion -> langFeature: LanguageF
 
 val checkLanguageFeatureError: langVersion: LanguageVersion -> langFeature: LanguageFeature -> m: range -> unit
 
+val tryCheckLanguageFeatureAndRecover: langVersion: LanguageVersion -> langFeature: LanguageFeature -> m: range -> bool
+
 val checkLanguageFeatureAndRecover: langVersion: LanguageVersion -> langFeature: LanguageFeature -> m: range -> unit
 
 val tryLanguageFeatureErrorOption:
     langVersion: LanguageVersion -> langFeature: LanguageFeature -> m: range -> exn option
 
 val languageFeatureNotSupportedInLibraryError: langFeature: LanguageFeature -> m: range -> 'T
+
+module internal StackGuardMetrics =
+    val Listen: unit -> IDisposable
+    val StatsToString: unit -> string
+    val CaptureStatsAndWriteToConsole: unit -> IDisposable
 
 type StackGuard =
     new: maxDepth: int * name: string -> StackGuard
@@ -457,6 +475,8 @@ type StackGuard =
         [<CallerLineNumber; Optional; DefaultParameterValue(0)>] line: int ->
             'T
 
+    member GuardCancellable: Internal.Utilities.Library.Cancellable<'T> -> Internal.Utilities.Library.Cancellable<'T>
+
     static member GetDepthOption: string -> int
 
 /// This represents the global state established as each task function runs as part of the build.
@@ -465,15 +485,21 @@ type StackGuard =
 type CompilationGlobalsScope =
     new: diagnosticsLogger: DiagnosticsLogger * buildPhase: BuildPhase -> CompilationGlobalsScope
 
+    /// When disposed, restores caller's diagnostics logger and build phase.
+    new: unit -> CompilationGlobalsScope
+
     interface IDisposable
 
     member DiagnosticsLogger: DiagnosticsLogger
 
     member BuildPhase: BuildPhase
 
-type CaptureDiagnosticsConcurrently =
-    new: unit -> CaptureDiagnosticsConcurrently
+module MultipleDiagnosticsLoggers =
 
-    member GetLoggerForTask: string -> DiagnosticsLogger
+    /// Run computations using Async.Parallel.
+    /// Captures the diagnostics from each computation and commits them to the caller's logger preserving their order.
+    /// When done, restores caller's build phase and diagnostics logger.
+    val Parallel: computations: Async<'T> seq -> Async<'T array>
 
-    interface IDisposable
+    /// Run computations sequentially starting immediately on the current thread.
+    val Sequential: computations: Async<'T> seq -> Async<'T array>

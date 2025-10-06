@@ -29,6 +29,7 @@ public class ProxyOperationManagerWithDataCollection : ProxyOperationManager
     /// <param name="requestData">The request data.</param>
     /// <param name="requestSender">The request sender.</param>
     /// <param name="testHostManager">The test host manager.</param>
+    /// <param name="testHostManagerFramework">Framework of the testhost.</param>
     /// <param name="proxyDataCollectionManager">The data collection proxy.</param>
     public ProxyOperationManagerWithDataCollection(
         IRequestData requestData,

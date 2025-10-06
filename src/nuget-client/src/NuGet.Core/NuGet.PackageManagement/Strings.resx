@@ -429,10 +429,6 @@
     <value>Package source mapping match not found for package ID '{0}'</value>
     <comment>{0} - package id</comment>
   </data>
-  <data name="Warning_HttpServerUsage" xml:space="preserve">
-    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
-    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
-  </data>
   <data name="Error_VulnerabilityDataFetch" xml:space="preserve">
     <value>Error occurred while getting package vulnerability data: {0}</value>
   </data>
@@ -442,5 +438,13 @@
 {1} - package version
 {2} - severity, for example low, moderate, high, or critical
 {3} - URL for more info on the known vulnerability</comment>
+  </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
+  </data>
+  <data name="Warning_AuditSourceWithoutData" xml:space="preserve">
+    <value>Audit source '{0}' did not provide any vulnerability data.</value>
+    <comment>{0} is the source name</comment>
   </data>
 </root>

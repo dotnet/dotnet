@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -180,9 +180,22 @@ namespace NuGet.VisualStudio
                 return default;
             }
 
+            Properties properties = envDTEProject.Properties;
             try
             {
-                var property = envDTEProject.Properties.Item(propertyName);
+                Property property;
+                if (Marshal.IsComObject(properties) && properties is INonThrowingDTEProjectProperties nonThrowingProperties)
+                {
+                    // NOTE: We purposely ignore the return code, the entire point of this path is to NOT throw for simple failures,
+                    // if the call fails the out param will be set to null, which is handled below (and is the normal return
+                    // in the throwing case).
+                    nonThrowingProperties.Item(propertyName, out property);
+                }
+                else
+                {
+                    property = properties.Item(propertyName);
+                }
+
                 if (property != null)
                 {
                     return (T)property.Value;
@@ -327,22 +340,6 @@ namespace NuGet.VisualStudio
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             return await IsWebProjectAsync(envDTEProject) ? WebConfig : AppConfig;
-        }
-
-        private class PathComparer : IEqualityComparer<string>
-        {
-            public static readonly PathComparer Default = new PathComparer();
-
-            public bool Equals(string x, string y)
-            {
-                return Path.GetFileName(x).Equals(Path.GetFileName(y), StringComparison.OrdinalIgnoreCase);
-            }
-
-            [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Existing behavior.")]
-            public int GetHashCode(string obj)
-            {
-                return Path.GetFileName(obj).ToLowerInvariant().GetHashCode();
-            }
         }
 
         /// <summary>

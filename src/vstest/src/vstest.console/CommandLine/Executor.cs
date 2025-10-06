@@ -66,7 +66,7 @@ internal class Executor
     /// </summary>
     public Executor(IOutput output) : this(output, TestPlatformEventSource.Instance, new ProcessHelper(), new PlatformEnvironment())
     {
-        if (!FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_THREADPOOL_SIZE_INCREASE))
+        if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_THREADPOOL_SIZE_INCREASE))
         {
             // TODO: Get rid of this by making vstest.console code properly async.
             // The current implementation of vstest.console is blocking many threads that just wait
@@ -91,6 +91,7 @@ internal class Executor
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment)
     {
         DebuggerBreakpoint.AttachVisualStudioDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG_ATTACHVS);
+        DebuggerBreakpoint.WaitForNativeDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_NATIVE_DEBUG);
         DebuggerBreakpoint.WaitForDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG);
 
         Output = output;
@@ -141,7 +142,7 @@ internal class Executor
         if (args == null || args.Length == 0 || args.Any(StringUtils.IsNullOrWhiteSpace))
         {
             Output.Error(true, CommandLineResources.NoArgumentsProvided);
-            args = new string[] { HelpArgumentProcessor.CommandName };
+            args = [HelpArgumentProcessor.CommandName];
             exitCode = 1;
         }
 
@@ -449,7 +450,6 @@ internal class Executor
         string assemblyVersionAndArchitecture = $"{assemblyVersion} ({_processHelper.GetCurrentProcessArchitecture().ToString().ToLowerInvariant()})";
         string commandLineBanner = string.Format(CultureInfo.CurrentCulture, CommandLineResources.MicrosoftCommandLineTitle, assemblyVersionAndArchitecture);
         Output.WriteLine(commandLineBanner, OutputLevel.Information);
-        Output.WriteLine(CommandLineResources.CopyrightCommandLineTitle, OutputLevel.Information);
         PrintWarningIfRunningEmulatedOnArm64();
         PrintWarningIfInvokedThroughDotnetVSTest(args);
         Output.WriteLine(string.Empty, OutputLevel.Information);

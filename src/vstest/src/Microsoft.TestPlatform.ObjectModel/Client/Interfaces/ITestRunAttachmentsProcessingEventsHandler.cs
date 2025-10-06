@@ -14,7 +14,7 @@ public interface ITestRunAttachmentsProcessingEventsHandler : ITestMessageEventH
     /// Dispatch TestRunAttachmentsProcessingComplete event to listeners.
     /// </summary>
     /// <param name="attachmentsProcessingCompleteEventArgs">AttachmentsProcessing Complete event args.</param>
-    /// <param name="attachments">Last set of processed attachment sets.</param>
+    /// <param name="lastChunk">Last set of processed attachment sets.</param>
     void HandleTestRunAttachmentsProcessingComplete(TestRunAttachmentsProcessingCompleteEventArgs attachmentsProcessingCompleteEventArgs, IEnumerable<AttachmentSet>? lastChunk);
 
     /// <summary>

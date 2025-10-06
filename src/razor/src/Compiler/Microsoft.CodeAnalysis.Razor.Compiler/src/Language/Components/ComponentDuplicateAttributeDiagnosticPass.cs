@@ -23,38 +23,38 @@ internal sealed class ComponentMarkupDiagnosticPass : ComponentIntermediateNodeP
 
     private class Visitor : IntermediateNodeWalker
     {
-        private readonly Dictionary<string, (string name, IntermediateNode node)> _attributes = new Dictionary<string, (string, IntermediateNode)>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, (string name, IntermediateNode node)> _attributes = new(StringComparer.OrdinalIgnoreCase);
 
         public override void VisitMarkupElement(MarkupElementIntermediateNode node)
         {
-            for (var i = 0; i < node.Children.Count; i++)
+            foreach (var child in node.Children)
             {
-                if (node.Children[i] is HtmlAttributeIntermediateNode attribute && attribute.AttributeName != null)
+                if (child is HtmlAttributeIntermediateNode attribute && attribute.AttributeName != null)
                 {
                     if (_attributes.TryGetValue(attribute.AttributeName, out var other))
                     {
+                        var otherAttribute = (HtmlAttributeIntermediateNode)other.node;
+
                         // As a special case we want to point it out explicitly where a directive or other construct
                         // has emitted an attribute that causes a conflict. We're already looking at the lowered version
                         // of this construct, so it's easy to detect. We just need the original name to report the issue.
                         //
                         // Example: `bind-value` will set `value` and `onchange`.
+                        var originalAttributeName = attribute.OriginalAttributeName ?? otherAttribute.OriginalAttributeName;
 
-                        var originalAttributeName =
-                            attribute.Annotations[ComponentMetadata.Common.OriginalAttributeName] as string ??
-                            other.node.Annotations[ComponentMetadata.Common.OriginalAttributeName] as string;
                         if (originalAttributeName != null)
                         {
-                            other.node.Diagnostics.Add(ComponentDiagnosticFactory.Create_DuplicateMarkupAttributeDirective(
+                            otherAttribute.AddDiagnostic(ComponentDiagnosticFactory.Create_DuplicateMarkupAttributeDirective(
                                 other.name,
                                 originalAttributeName,
-                                other.node.Source ?? node.Source));
+                                otherAttribute.Source ?? node.Source));
                         }
                         else
                         {
                             // This is a conflict in the code the user wrote.
-                            other.node.Diagnostics.Add(ComponentDiagnosticFactory.Create_DuplicateMarkupAttribute(
+                            otherAttribute.AddDiagnostic(ComponentDiagnosticFactory.Create_DuplicateMarkupAttribute(
                                 other.name,
-                                other.node.Source ?? node.Source));
+                                otherAttribute.Source ?? node.Source));
                         }
                     }
 
@@ -70,24 +70,25 @@ internal sealed class ComponentMarkupDiagnosticPass : ComponentIntermediateNodeP
 
         public override void VisitComponent(ComponentIntermediateNode node)
         {
-            for (var i = 0; i < node.Children.Count; i++)
+            foreach (var child in node.Children)
             {
                 // Note that we don't handle ChildContent cases here. Those have their own pass for diagnostics.
-                if (node.Children[i] is ComponentAttributeIntermediateNode attribute && attribute.AttributeName != null)
+                if (child is ComponentAttributeIntermediateNode attribute && attribute.AttributeName != null)
                 {
                     if (_attributes.TryGetValue(attribute.AttributeName, out var other))
                     {
+                        var otherAttribute = (ComponentAttributeIntermediateNode)other.node;
+
                         // As a special case we want to point it out explicitly where a directive or other construct
                         // has emitted an attribute that causes a conflict. We're already looking at the lowered version
                         // of this construct, so it's easy to detect. We just need the original name to report the issue.
                         //
                         // Example: `bind-Value` will set `Value` and `ValueChanged`.
-                        var originalAttributeName =
-                            attribute.Annotations[ComponentMetadata.Common.OriginalAttributeName] as string ??
-                            other.node.Annotations[ComponentMetadata.Common.OriginalAttributeName] as string;
+                        var originalAttributeName = attribute.OriginalAttributeName ?? otherAttribute.OriginalAttributeName;
+
                         if (originalAttributeName != null)
                         {
-                            other.node.Diagnostics.Add(ComponentDiagnosticFactory.Create_DuplicateComponentParameterDirective(
+                            other.node.AddDiagnostic(ComponentDiagnosticFactory.Create_DuplicateComponentParameterDirective(
                                 other.name,
                                 originalAttributeName,
                                 other.node.Source ?? node.Source));
@@ -95,7 +96,7 @@ internal sealed class ComponentMarkupDiagnosticPass : ComponentIntermediateNodeP
                         else
                         {
                             // This is a conflict in the code the user wrote.
-                            other.node.Diagnostics.Add(ComponentDiagnosticFactory.Create_DuplicateComponentParameter(
+                            other.node.AddDiagnostic(ComponentDiagnosticFactory.Create_DuplicateComponentParameter(
                                 other.name,
                                 other.node.Source ?? node.Source));
                         }

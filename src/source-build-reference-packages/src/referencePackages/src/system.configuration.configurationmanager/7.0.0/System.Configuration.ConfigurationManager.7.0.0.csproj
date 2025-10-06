@@ -2,24 +2,25 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>7.0.0</PackageVersion>
     <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/7.0.0/System.Security.Cryptography.ProtectedData.7.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/7.0.0/System.Security.Permissions.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Diagnostics.EventLog" Version="7.0.0" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/7.0.0/System.Diagnostics.EventLog.7.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/7.0.0/System.Security.Cryptography.ProtectedData.7.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/7.0.0/System.Security.Permissions.7.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/7.0.0/System.Security.Cryptography.ProtectedData.7.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/7.0.0/System.Security.Permissions.7.0.0.csproj" />
   </ItemGroup>
 
 </Project>

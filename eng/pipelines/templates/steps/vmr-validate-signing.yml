@@ -1,0 +1,101 @@
+parameters:
+- name: continueOnError
+  type: boolean
+  default: false
+
+- name: OS
+  type: string
+  values:
+    - Windows_NT
+    - Linux
+    - Darwin
+
+## Internal properties not to be set by the user ##
+- name: engDirectory
+  type: string
+  default: '$(Build.SourcesDirectory)/eng'
+
+- name: signCheckFilesDirectory
+  type: string
+  default: '$(Build.ArtifactStagingDirectory)/SignCheckFiles'
+
+- name: artifactsDirectory
+  type: string
+  default: '$(Build.StagingDirectory)/Artifacts'
+
+- name: outputDirectory
+  type: string
+  default: '$(Build.ArtifactStagingDirectory)/SigningValidation'
+
+steps:
+- ${{ if eq(parameters.OS, 'Darwin') }}:
+  - script: |
+      xcrun simctl runtime delete all
+    displayName: Reclaim disk space from unused simulator runtimes
+
+# Include "**SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*"
+# once https://github.com/dotnet/arcade/issues/16034 has been resolved.
+- task: DownloadPipelineArtifact@2
+  displayName: Download Vertical Build Artifacts
+  continueOnError: ${{ parameters.continueOnError }}
+  enabled: true
+  inputs:
+    patterns: |
+      **ShortStack*_Artifacts/**
+      **AzureLinux*_Artifacts/**
+      **OSX_*_Artifacts/**
+      **Windows_*_Artifacts/**
+      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
+      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
+    downloadPath: '${{ parameters.signCheckFilesDirectory }}'
+
+# This is necessary whenever we want to publish/restore to an AzDO private feed
+# Since sdk-task.ps1 tries to restore packages we need to do this authentication here
+# otherwise it'll complain about accessing a private feed.
+- task: NuGetAuthenticate@1
+  displayName: 'Authenticate to AzDO Feeds'
+
+- ${{ if eq(parameters.OS, 'Windows_NT') }}:
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        . ${{ parameters.engDirectory}}\common\tools.ps1
+
+        MSBuild -restore ${{ parameters.engDirectory}}/signing-validation.proj `
+        /t:SigningValidation `
+        /p:ArtifactDownloadDirectory=${{ parameters.signCheckFilesDirectory }} `
+        /p:SourceBranch='$(Build.SourceBranch)' `
+        /p:DotNetRootDirectory=$(Build.SourcesDirectory) `
+        /p:OutputLogsDirectory=${{ parameters.outputDirectory }} `
+        /bl:${{ parameters.outputDirectory }}/outer-signing-validation.binlog
+
+    displayName: Validate Signing
+    continueOnError: ${{ parameters.continueOnError }}
+
+- ${{ else }}:
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        . ${{ parameters.engDirectory}}/common/tools.sh
+
+        MSBuild -restore ${{ parameters.engDirectory}}/signing-validation.proj \
+        /t:SigningValidation \
+        /p:ArtifactDownloadDirectory=${{ parameters.signCheckFilesDirectory }} \
+        /p:SourceBranch='$(Build.SourceBranch)' \
+        /p:DotNetRootDirectory=$(Build.SourcesDirectory) \
+        /p:OutputLogsDirectory=${{ parameters.outputDirectory }} \
+        /bl:${{ parameters.outputDirectory }}/outer-signing-validation.binlog
+
+    displayName: Validate Signing
+    continueOnError: ${{ parameters.continueOnError }}
+
+- task: 1ES.PublishPipelineArtifact@1
+  displayName: Publish SignCheck Logs
+  continueOnError: true
+  inputs:
+    path: ${{ parameters.outputDirectory }}
+    artifactName: SignCheck_${{ parameters.OS }}
+    artifactType: Container
+    parallel: true

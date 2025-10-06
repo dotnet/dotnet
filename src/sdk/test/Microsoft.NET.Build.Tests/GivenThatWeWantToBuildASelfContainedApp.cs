@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using Microsoft.DotNet.Cli;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.NET.Build.Tasks;
@@ -13,7 +15,8 @@ namespace Microsoft.NET.Build.Tests
         {
         }
 
-        [Theory]
+        // Some netcoreapp2.0 Linux tests are no longer working on ubuntu 2404
+        [PlatformSpecificTheory(TestPlatforms.Windows | TestPlatforms.OSX)]
         [InlineData("netcoreapp1.1", false)]
         [InlineData("netcoreapp2.0", false)]
         [InlineData("netcoreapp3.0", true)]
@@ -578,6 +581,49 @@ namespace Microsoft.NET.Build.Tests
                 .Pass()
                 .And
                 .HaveStdOutContaining(Strings.Prefer32BitIgnoredForNetCoreApp);
+
+            var outputDirectory = buildCommand.GetOutputDirectory(targetFramework, runtimeIdentifier: runtimeIdentifier);
+            var selfContainedExecutable = $"HelloWorld{Constants.ExeSuffix}";
+
+            string selfContainedExecutableFullPath = Path.Combine(outputDirectory.FullName, selfContainedExecutable);
+            new RunExeCommand(Log, selfContainedExecutableFullPath)
+                .Execute()
+                .Should()
+                .Pass()
+                .And
+                .HaveStdOutContaining("Hello World!");
+        }
+
+        [Theory]
+        [InlineData(ToolsetInfo.CurrentTargetFramework)]
+        public void It_builds_a_runnable_output_with_PreferNativeArm64(string targetFramework)
+        {
+            if (!EnvironmentInfo.SupportsTargetFramework(targetFramework))
+            {
+                return;
+            }
+
+            var runtimeIdentifier = EnvironmentInfo.GetCompatibleRid(targetFramework);
+            var testAsset = _testAssetsManager
+                .CopyTestAsset("HelloWorld", identifier: targetFramework)
+                .WithSource()
+                .WithTargetFramework(targetFramework)
+                .WithProjectChanges(project =>
+                {
+                    var ns = project.Root.Name.Namespace;
+                    var propertyGroup = project.Root.Elements(ns + "PropertyGroup").First();
+                    propertyGroup.Add(new XElement(ns + "RuntimeIdentifier", runtimeIdentifier));
+                    propertyGroup.Add(new XElement(ns + "PreferNativeArm64", "true"));
+                });
+
+            var buildCommand = new BuildCommand(testAsset);
+
+            buildCommand
+                .Execute()
+                .Should()
+                .Pass()
+                .And
+                .HaveStdOutContaining(Strings.PreferNativeArm64IgnoredForNetCoreApp);
 
             var outputDirectory = buildCommand.GetOutputDirectory(targetFramework, runtimeIdentifier: runtimeIdentifier);
             var selfContainedExecutable = $"HelloWorld{Constants.ExeSuffix}";

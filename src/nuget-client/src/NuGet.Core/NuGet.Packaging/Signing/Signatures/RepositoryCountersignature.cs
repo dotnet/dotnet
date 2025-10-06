@@ -5,17 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
-#endif
 using NuGet.Common;
 
 namespace NuGet.Packaging.Signing
 {
     public sealed class RepositoryCountersignature : Signature, IRepositorySignature
     {
-#if IS_SIGNING_SUPPORTED
         private readonly PrimarySignature _primarySignature;
 
         public Uri V3ServiceIndexUrl { get; }
@@ -127,11 +124,5 @@ namespace NuGet.Packaging.Signing
 
             return ReferenceEquals(_primarySignature, primarySignature);
         }
-#else
-        public static RepositoryCountersignature GetRepositoryCountersignature(PrimarySignature primarySignature)
-        {
-            throw new NotSupportedException();
-        }
-#endif
     }
 }

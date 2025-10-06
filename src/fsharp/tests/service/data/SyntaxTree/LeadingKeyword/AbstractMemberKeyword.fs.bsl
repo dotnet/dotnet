@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/LeadingKeyword/AbstractMemberKeyword.fs", false,
-      QualifiedNameOfFile AbstractMemberKeyword, [], [],
+      QualifiedNameOfFile AbstractMemberKeyword, [],
       [SynModuleOrNamespace
          ([AbstractMemberKeyword], false, AnonModule,
           [Types
@@ -20,7 +20,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (3,4--3,27),
+                            Single None, None, (3,4--3,27),
                             { LeadingKeyword =
                                AbstractMember ((3,4--3,12), (3,13--3,19))
                               InlineKeyword = None
@@ -38,4 +38,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--3,27))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

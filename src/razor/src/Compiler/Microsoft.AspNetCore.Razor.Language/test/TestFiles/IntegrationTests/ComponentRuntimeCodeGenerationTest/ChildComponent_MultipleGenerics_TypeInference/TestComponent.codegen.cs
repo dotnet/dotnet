@@ -35,10 +35,9 @@ new List<long>()
 #nullable disable
             , 3, (context) => (__builder2) => {
                 __builder2.OpenElement(4, "div");
-                __builder2.AddContent(5, 
 #nullable restore
-#line (2,23)-(2,40) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLower()
+#line (2,23)-(2,40) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(5, context.ToLower()
 
 #line default
 #line hidden
@@ -47,10 +46,9 @@ context.ToLower()
                 __builder2.CloseElement();
             }
             , 6, (item) => (__builder2) => {
-                __builder2.AddContent(7, 
 #nullable restore
-#line (4,4)-(4,33) "x:\dir\subdir\Test\TestComponent.cshtml"
-System.Math.Max(0, item.Item)
+#line (4,4)-(4,33) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(7, System.Math.Max(0, item.Item)
 
 #line default
 #line hidden
@@ -71,8 +69,24 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem1, TItem2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem1 __arg0, int __seq1, global::System.Collections.Generic.List<TItem2> __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment<TItem1> __arg2, int __seq3, global::Microsoft.AspNetCore.Components.RenderFragment<global::Test.MyComponent<TItem1, TItem2>.Context> __arg3)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem1, TItem2>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
-        __builder.AddComponentParameter(__seq1, "Items", __arg1);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem1, TItem2>.
+#nullable restore
+#line (1,14)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.MyComponent<TItem1, TItem2>.
+#nullable restore
+#line (1,29)-(1,34) "x:\dir\subdir\Test\TestComponent.cshtml"
+Items
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg1);
         __builder.AddComponentParameter(__seq2, "ChildContent", __arg2);
         __builder.AddComponentParameter(__seq3, "AnotherChildContent", __arg3);
         __builder.CloseComponent();

@@ -5,9 +5,15 @@ namespace System.CommandLine
 {
     internal sealed class SymbolNode
     {
-        internal SymbolNode(CliSymbol symbol) => Symbol = symbol;
+        internal SymbolNode(Symbol symbol, Command? parent = null)
+        {
+            Symbol = symbol;
+            Parent = parent;
+        }
 
-        internal CliSymbol Symbol { get; }
+        internal Symbol Symbol { get; }
+
+        internal Command? Parent { get; }
 
         internal SymbolNode? Next { get; set; }
     }

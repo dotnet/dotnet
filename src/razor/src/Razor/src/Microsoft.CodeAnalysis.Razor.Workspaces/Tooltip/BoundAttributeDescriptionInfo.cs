@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor;
@@ -21,7 +21,7 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
             throw new ArgumentNullException(nameof(parentTagHelperTypeName));
         }
 
-        var propertyName = parameterAttribute.GetPropertyName();
+        var propertyName = parameterAttribute.PropertyName;
 
         return new BoundAttributeDescriptionInfo(
             parameterAttribute.TypeName,
@@ -40,15 +40,15 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
             throw new ArgumentNullException(nameof(boundAttribute));
         }
 
-        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName.AssumeNotNull() : boundAttribute.TypeName;
-        var propertyName = boundAttribute.GetPropertyName();
+        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName : boundAttribute.TypeName;
+        var propertyName = boundAttribute.PropertyName;
 
         // The BoundAttributeDescriptor does not directly have the TagHelperTypeName information available.
         // Because of this we need to resolve it from other parts of it.
         parentTagHelperTypeName ??= ResolveTagHelperTypeName(propertyName, boundAttribute.DisplayName);
 
         return new BoundAttributeDescriptionInfo(
-            returnTypeName,
+            returnTypeName.AssumeNotNull(),
             parentTagHelperTypeName,
             propertyName,
             boundAttribute.Documentation);

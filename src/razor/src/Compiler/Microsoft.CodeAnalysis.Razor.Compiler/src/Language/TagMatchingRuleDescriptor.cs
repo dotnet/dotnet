@@ -13,6 +13,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleDescriptor>
 {
+    private TagHelperDescriptor? _parent;
+
     public string TagName { get; }
     public string? ParentTag { get; }
     public TagStructure TagStructure { get; }
@@ -33,6 +35,11 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
         TagStructure = tagStructure;
         CaseSensitive = caseSensitive;
         Attributes = attributes.NullToEmpty();
+
+        foreach (var attribute in Attributes)
+        {
+            attribute.SetParent(this);
+        }
     }
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
@@ -47,6 +54,17 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
         {
             builder.AppendData(descriptor.Checksum);
         }
+    }
+
+    public TagHelperDescriptor Parent
+        => _parent ?? ThrowHelper.ThrowInvalidOperationException<TagHelperDescriptor>(Resources.Parent_has_not_been_set);
+
+    internal void SetParent(TagHelperDescriptor parent)
+    {
+        Debug.Assert(parent != null);
+        Debug.Assert(_parent == null);
+
+        _parent = parent;
     }
 
     public IEnumerable<RazorDiagnostic> GetAllDiagnostics()
@@ -75,15 +93,15 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
             var name = attribute.Name switch
             {
                 null => "*",
-                var prefix when attribute.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch => $"^{prefix}",
+                var prefix when attribute.NameComparison == RequiredAttributeNameComparison.PrefixMatch => $"^{prefix}",
                 var full => full,
             };
 
             var value = attribute.Value switch
             {
                 null => "",
-                var prefix when attribute.ValueComparison == RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch => $"^={prefix}",
-                var suffix when attribute.ValueComparison == RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch => $"$={suffix}",
+                var prefix when attribute.ValueComparison == RequiredAttributeValueComparison.PrefixMatch => $"^={prefix}",
+                var suffix when attribute.ValueComparison == RequiredAttributeValueComparison.SuffixMatch => $"$={suffix}",
                 var full => $"={full}",
             };
             return name + value;

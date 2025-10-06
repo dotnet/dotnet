@@ -14,17 +14,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Utilities;
 using Microsoft.CodeAnalysis.ErrorReporting;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 
 [ExportCompletionProvider(nameof(SpeculativeTCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(AwaitCompletionProvider))]
 [Shared]
-internal class SpeculativeTCompletionProvider : LSPCompletionProvider
+internal sealed class SpeculativeTCompletionProvider : LSPCompletionProvider
 {
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
@@ -103,7 +101,7 @@ internal class SpeculativeTCompletionProvider : LSPCompletionProvider
     {
         var token = syntaxTree.FindTokenOnLeftOfPosition(position, cancellationToken);
 
-        return syntaxTree.IsMemberDeclarationContext(position, context: null, SyntaxKindSet.AllMemberModifiers, SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: true, cancellationToken) ||
+        return syntaxTree.IsMemberDeclarationContext(position, context: null, SyntaxKindSet.AllMemberModifiers, SyntaxKindSet.NonEnumTypeDeclarations, canBePartial: true, cancellationToken) ||
                syntaxTree.IsStatementContext(position, token, cancellationToken) ||
                syntaxTree.IsGlobalMemberDeclarationContext(position, SyntaxKindSet.AllGlobalMemberModifiers, cancellationToken) ||
                syntaxTree.IsGlobalStatementContext(position, cancellationToken) ||

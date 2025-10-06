@@ -1,4 +1,67 @@
 <Project>
   <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
-  <Import Project="eng\source-build\ExcludeFromSourceBuild.AfterCommonTargets.targets" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+
+  <PropertyGroup Condition="'$(UsingToolXliff)' == 'true'">
+    <!--
+      Use Satellite assembly generation task from Microsoft.NET.Sdk even when building with
+      full Framework MSBuild. This will support public signing, is deterministic, and always
+      generates them as AnyCPU.
+    -->
+    <GenerateSatelliteAssembliesForCore Condition="'$(GenerateSatelliteAssembliesForCore)' == ''">true</GenerateSatelliteAssembliesForCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.XliffTasks" PrivateAssets="all" Condition="'$(UsingToolXliff)' == 'true'" />
+  </ItemGroup>
+
+  <!--
+    Gets a list of target frameworks that the project supports.
+  -->
+  <Target Name="GetProjectTargetFrameworks" Returns="@(ProjectTargetFramework)">
+    <ItemGroup>
+      <ProjectTargetFramework Include="$(TargetFramework);$(TargetFrameworks)" ProjectFile="$(MSBuildProjectFullPath)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Determines if a project is a test project by checking the TestProject property and returning an item with the full path to the project file and its test type.
+  -->
+  <Target Name="IsTestProject"
+          Returns="@(TestProject)"
+          Condition="'$(TestProject)' == 'true'">
+    <ItemGroup>
+      <TestProject Include="$(MSBuildProjectFullPath)"
+                   TestType="$(TestProjectType)"
+                   ProjectName="$(MSBuildProjectName)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Determines if a project supports a specified target framework.  This target first calls GetProjectTargetFrameworks to get a list of target frameworks that the project supports, then filters the list down to the specified target framework.
+    If the specified framework is supported, the target returns an item with the full path to the project file, otherwise it returns nothing which will signal that the project does not support that target framework.
+  -->
+  <Target Name="DoesProjectSupportTargetFramework"
+          DependsOnTargets="GetProjectTargetFrameworks"
+          Returns="@(_SupportedProject)">
+    <ItemGroup>
+      <_SupportedProject Include="%(ProjectTargetFramework.ProjectFile)"
+                         ProjectName="$(MSBuildProjectName)"
+                         Condition="'%(Identity)' == '$(ProjectTargetFramework)'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- By default do not include satellite DLLs in any of the packages except for NuGet.Localization. -->
+  <Target Name="RemoveSatelliteDllsFromBuildOutputInPackage"
+          BeforeTargets="GenerateNuspec"
+          Condition="'$(IncludeSatelliteOutputInPack)' != 'true'">
+    <!--
+      Could not find a way to tell NuGet to exclude the satellite assemblies from the NuGet package so this target
+      does it.
+    -->
+    <ItemGroup>
+      <_BuildOutputInPackage Remove="$(IntermediateOutputPath)%(_TargetFramework.Identity)\**\$(AssemblyName).resources.dll" />
+    </ItemGroup>
+  </Target>
+  
+  <Import Project="eng\dotnet-build\ExcludeFromDotNetBuild.AfterCommonTargets.targets" Condition="'$(DotNetBuild)' == 'true'" />
 </Project>

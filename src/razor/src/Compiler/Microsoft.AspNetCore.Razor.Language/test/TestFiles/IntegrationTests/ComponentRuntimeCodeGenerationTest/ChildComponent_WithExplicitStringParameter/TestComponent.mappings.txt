@@ -1,5 +1,10 @@
-﻿Source Location: (31:0,31 [13] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (13:0,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+|StringProperty|
+Generated Location: (884:23,0 [14] )
+|StringProperty|
+
+Source Location: (31:0,31 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |42.ToString()|
-Generated Location: (975:23,0 [13] )
+Generated Location: (1154:31,0 [13] )
 |42.ToString()|
 

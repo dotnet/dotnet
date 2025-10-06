@@ -59,15 +59,11 @@
                   HelixProperties="@(HelixProperties)">
       <Output TaskParameter="JobCorrelationId" PropertyName="HelixJobId"/>
       <Output TaskParameter="JobCancellationToken" PropertyName="HelixJobCancellationToken"/>
-      <Output TaskParameter="ResultsContainerUri" PropertyName="HelixResultsContainer"/>
-      <Output TaskParameter="ResultsContainerReadSAS" PropertyName="HelixResultsContainerReadSAS"/>
     </SendHelixJob>
     <ItemGroup>
       <SentJob Include="$(HelixJobId)">
         <WorkItemCount>@(HelixWorkItem->Count())</WorkItemCount>
         <HelixTargetQueue>$(HelixTargetQueue)</HelixTargetQueue>
-        <ResultsContainerUri>$(HelixResultsContainer)</ResultsContainerUri>
-        <ResultsContainerReadSAS>$(HelixResultsContainerReadSAS)</ResultsContainerReadSAS>
         <HelixJobCancellationToken>$(HelixJobCancellationToken)</HelixJobCancellationToken>
       </SentJob>
     </ItemGroup>
@@ -77,7 +73,7 @@
       <_AccessTokenSuffix Condition=" '$(HelixAccessToken)' != '' ">&amp;access_token={Get this from helix.dot.net}</_AccessTokenSuffix>
     </PropertyGroup>
     <Message Condition=" '$(HelixBaseUri)' == '' " Text="Sent Helix Job; see work items at https://helix.dot.net/api/jobs/$(HelixJobId)/workitems?api-version=2019-06-17$(_AccessTokenSuffix)" Importance="High" />
-    <Message Condition=" '$(HelixBaseUri)' != '' " Text="Sent Helix Job; see work items at $(HelixBaseUri)/api/jobs/$(HelixJobId)/workitems?api-version=2019-06-17$(_AccessTokenSuffix)" Importance="High" />
+    <Message Condition=" '$(HelixBaseUri)' != '' " Text="Sent Helix Job; see work items at $(HelixBaseUri.TrimEnd('/'))/api/jobs/$(HelixJobId)/workitems?api-version=2019-06-17$(_AccessTokenSuffix)" Importance="High" />
   </Target>
 
   <Target Name="Test"

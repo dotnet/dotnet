@@ -838,10 +838,11 @@ module Array =
 
         let private createMask<'a>
             (f: 'a -> bool)
-            (src: 'a array)
-            (maskArrayOut: byref<uint32 array>)
+            (src: array<'a>)
+            (maskArrayOut: byref<array<uint32> | null>)
             (leftoverMaskOut: byref<uint32>)
             =
+
             let maskArrayLength = src.Length / 0x20
 
             // null when there are less than 32 items in src array.
@@ -1031,7 +1032,8 @@ module Array =
 
             dstIdx
 
-        let private filterViaMask (maskArray: uint32 array) (leftoverMask: uint32) (count: int) (src: _ array) =
+        let private filterViaMask (maskArray: uint32 array | null) (leftoverMask: uint32) (count: int) (src: _ array) =
+
             let dst = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked count
 
             let mutable dstIdx = 0
@@ -1921,7 +1923,7 @@ module Array =
         let valuesArray = Seq.toArray values
 
         if valuesArray.Length = 0 then
-            source
+            source.Clone() :?> 'T array
         else
             let length = source.Length + valuesArray.Length
             let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked length
@@ -1935,6 +1937,223 @@ module Array =
                 Array.Copy(source, index, result, index + valuesArray.Length, source.Length - index)
 
             result
+
+    [<CompiledName("RandomShuffleWith")>]
+    let randomShuffleWith (random: Random) (source: 'T array) : 'T array =
+        checkNonNull "random" random
+        checkNonNull "source" source
+
+        let result = copy source
+
+        Microsoft.FSharp.Primitives.Basics.Random.shuffleArrayInPlaceWith random result
+
+        result
+
+    [<CompiledName("RandomShuffleBy")>]
+    let randomShuffleBy (randomizer: unit -> float) (source: 'T array) : 'T array =
+        checkNonNull "source" source
+
+        let result = copy source
+
+        Microsoft.FSharp.Primitives.Basics.Random.shuffleArrayInPlaceBy randomizer result
+
+        result
+
+    [<CompiledName("RandomShuffle")>]
+    let randomShuffle (source: 'T array) : 'T array =
+        randomShuffleWith ThreadSafeRandom.Shared source
+
+    [<CompiledName("RandomShuffleInPlaceWith")>]
+    let randomShuffleInPlaceWith (random: Random) (source: 'T array) =
+        checkNonNull "random" random
+        checkNonNull "source" source
+
+        Microsoft.FSharp.Primitives.Basics.Random.shuffleArrayInPlaceWith random source
+
+    [<CompiledName("RandomShuffleInPlaceBy")>]
+    let randomShuffleInPlaceBy (randomizer: unit -> float) (source: 'T array) =
+        checkNonNull "source" source
+
+        Microsoft.FSharp.Primitives.Basics.Random.shuffleArrayInPlaceBy randomizer source
+
+    [<CompiledName("RandomShuffleInPlace")>]
+    let randomShuffleInPlace (source: 'T array) =
+        randomShuffleInPlaceWith ThreadSafeRandom.Shared source
+
+    [<CompiledName("RandomChoiceWith")>]
+    let randomChoiceWith (random: Random) (source: 'T array) : 'T =
+        checkNonNull "random" random
+        checkNonNull "source" source
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            invalidArg "source" LanguagePrimitives.ErrorStrings.InputArrayEmptyString
+
+        let i = random.Next(0, inputLength)
+        source[i]
+
+    [<CompiledName("RandomChoiceBy")>]
+    let randomChoiceBy (randomizer: unit -> float) (source: 'T array) : 'T =
+        checkNonNull "source" source
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            invalidArg "source" LanguagePrimitives.ErrorStrings.InputArrayEmptyString
+
+        let i = Microsoft.FSharp.Primitives.Basics.Random.next randomizer 0 inputLength
+        source[i]
+
+    [<CompiledName("RandomChoice")>]
+    let randomChoice (source: 'T array) : 'T =
+        randomChoiceWith ThreadSafeRandom.Shared source
+
+    [<CompiledName("RandomChoicesWith")>]
+    let randomChoicesWith (random: Random) (count: int) (source: 'T array) : 'T array =
+        checkNonNull "random" random
+        checkNonNull "source" source
+
+        if count < 0 then
+            invalidArgInputMustBeNonNegative "count" count
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            if count = 0 then
+                [||]
+            else
+                invalidArg "source" LanguagePrimitives.ErrorStrings.InputSequenceEmptyString
+        else
+            let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked count
+
+            for i = 0 to count - 1 do
+                let j = random.Next(0, inputLength)
+                result[i] <- source[j]
+
+            result
+
+    [<CompiledName("RandomChoicesBy")>]
+    let randomChoicesBy (randomizer: unit -> float) (count: int) (source: 'T array) : 'T array =
+        checkNonNull "source" source
+
+        if count < 0 then
+            invalidArgInputMustBeNonNegative "count" count
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            if count = 0 then
+                [||]
+            else
+                invalidArg "source" LanguagePrimitives.ErrorStrings.InputSequenceEmptyString
+        else
+            let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked count
+
+            for i = 0 to count - 1 do
+                let j = Microsoft.FSharp.Primitives.Basics.Random.next randomizer 0 inputLength
+                result[i] <- source[j]
+
+            result
+
+    [<CompiledName("RandomChoices")>]
+    let randomChoices (count: int) (source: 'T array) : 'T array =
+        randomChoicesWith ThreadSafeRandom.Shared count source
+
+    [<CompiledName("RandomSampleWith")>]
+    let randomSampleWith (random: Random) (count: int) (source: 'T array) : 'T array =
+        checkNonNull "random" random
+        checkNonNull "source" source
+
+        if count < 0 then
+            invalidArgInputMustBeNonNegative "count" count
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            if count = 0 then
+                [||]
+            else
+                invalidArg "source" LanguagePrimitives.ErrorStrings.InputSequenceEmptyString
+        else
+            if count > inputLength then
+                invalidArg "count" (SR.GetString(SR.notEnoughElements))
+
+            let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked count
+
+            let setSize =
+                Microsoft.FSharp.Primitives.Basics.Random.getMaxSetSizeForSampling count
+
+            if inputLength <= setSize then
+                let pool = copy source
+
+                for i = 0 to count - 1 do
+                    let j = random.Next(0, inputLength - i)
+                    result[i] <- pool[j]
+                    pool[j] <- pool[inputLength - i - 1]
+            else
+                let selected = HashSet()
+
+                for i = 0 to count - 1 do
+                    let mutable j = random.Next(0, inputLength)
+
+                    while not (selected.Add j) do
+                        j <- random.Next(0, inputLength)
+
+                    result[i] <- source[j]
+
+            result
+
+    [<CompiledName("RandomSampleBy")>]
+    let randomSampleBy (randomizer: unit -> float) (count: int) (source: 'T array) : 'T array =
+        checkNonNull "source" source
+
+        if count < 0 then
+            invalidArgInputMustBeNonNegative "count" count
+
+        let inputLength = source.Length
+
+        if inputLength = 0 then
+            if count = 0 then
+                [||]
+            else
+                invalidArg "source" LanguagePrimitives.ErrorStrings.InputSequenceEmptyString
+        else
+            if count > inputLength then
+                invalidArg "count" (SR.GetString(SR.notEnoughElements))
+
+            let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked count
+
+            // algorithm taken from https://github.com/python/cpython/blob/69b3e8ea569faabccd74036e3d0e5ec7c0c62a20/Lib/random.py#L363-L456
+            let setSize =
+                Microsoft.FSharp.Primitives.Basics.Random.getMaxSetSizeForSampling count
+
+            if inputLength <= setSize then
+                let pool = copy source
+
+                for i = 0 to count - 1 do
+                    let j =
+                        Microsoft.FSharp.Primitives.Basics.Random.next randomizer 0 (inputLength - i)
+
+                    result[i] <- pool[j]
+                    pool[j] <- pool[inputLength - i - 1]
+            else
+                let selected = HashSet()
+
+                for i = 0 to count - 1 do
+                    let mutable j =
+                        Microsoft.FSharp.Primitives.Basics.Random.next randomizer 0 inputLength
+
+                    while not (selected.Add j) do
+                        j <- Microsoft.FSharp.Primitives.Basics.Random.next randomizer 0 inputLength
+
+                    result[i] <- source[j]
+
+            result
+
+    [<CompiledName("RandomSample")>]
+    let randomSample (count: int) (source: 'T array) : 'T array =
+        randomSampleWith ThreadSafeRandom.Shared count source
 
     module Parallel =
         open System.Threading
@@ -1961,9 +2180,8 @@ module Array =
             // Not exists $condition <==> (opposite of $condition is true forall)
             exists (predicate >> not) array |> not
 
-        [<CompiledName("TryFindIndex")>]
-        let tryFindIndex predicate (array: _ array) =
-            checkNonNull "array" array
+        let inline tryFindIndexAux predicate (array: _ array) =
+            checkNonNull (nameof array) array
 
             let pResult =
                 Parallel.For(
@@ -1974,16 +2192,30 @@ module Array =
                             pState.Break())
                 )
 
-            pResult.LowestBreakIteration |> Option.ofNullable |> Option.map int
+            pResult.LowestBreakIteration
+
+        [<CompiledName("TryFindIndex")>]
+        let tryFindIndex predicate (array: _ array) =
+            let i = tryFindIndexAux predicate array
+
+            if i.HasValue then
+                Some(int (i.GetValueOrDefault()))
+            else
+                None
 
         [<CompiledName("TryFind")>]
         let tryFind predicate (array: _ array) =
-            array |> tryFindIndex predicate |> Option.map (fun i -> array[i])
+            let i = tryFindIndexAux predicate array
+
+            if i.HasValue then
+                Some array[int (i.GetValueOrDefault())]
+            else
+                None
 
         [<CompiledName("TryPick")>]
         let tryPick chooser (array: _ array) =
             checkNonNull "array" array
-            let allChosen = new System.Collections.Concurrent.ConcurrentDictionary<_, _>()
+            let allChosen = System.Collections.Concurrent.ConcurrentDictionary()
 
             let pResult =
                 Parallel.For(
@@ -1997,9 +2229,10 @@ module Array =
                             pState.Break())
                 )
 
-            pResult.LowestBreakIteration
-            |> Option.ofNullable
-            |> Option.bind (fun i -> allChosen[int i])
+            if pResult.LowestBreakIteration.HasValue then
+                allChosen[int (pResult.LowestBreakIteration.GetValueOrDefault())]
+            else
+                None
 
         [<CompiledName("Choose")>]
         let choose chooser (array: 'T array) =
@@ -2495,12 +2728,12 @@ module Array =
                 | _ ->
                     let left, right = partitioningFunc segment
                     // If either of the two is too small, sort small segments straight away.
-                    // If the other happens to be big, leave it with all workes in it's recursive step
+                    // If the other happens to be big, leave it with all works in its recursive step
                     if left.Count <= minChunkSize || right.Count <= minChunkSize then
                         sortChunk left freeWorkers
                         sortChunk right freeWorkers
                     else
-                        // Pivot-based partitions might be inbalanced. Split  free workers for left/right proportional to their size
+                        // Pivot-based partitions might be unbalanced. Split  free workers for left/right proportional to their size
                         let itemsPerWorker = Operators.max ((left.Count + right.Count) / freeWorkers) 1
 
                         let workersForLeftTask =
@@ -2572,8 +2805,8 @@ module Array =
             let sortingComparer: IComparer<'T> =
                 LanguagePrimitives.FastGenericComparerCanBeNull<'T>
 
-            let partioningFunc = compare
-            sortInPlaceWithHelper partioningFunc sortingComparer array
+            let partitioningFunc = compare
+            sortInPlaceWithHelper partitioningFunc sortingComparer array
 
         [<CompiledName("SortWith")>]
         let sortWith (comparer: 'T -> 'T -> int) (array: 'T array) =

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">L'argomento non può essere Null o vuoto.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDependencyTarget">
+        <source>Invalid dependency target value '{0}'.</source>
+        <target state="translated">Il valore target '{0}' della dipendenza non è valido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageType">
+        <source>The pack options package type must be a string or array of strings in '{0}'.</source>
+        <target state="translated">Il tipo di pacchetto di opzioni del pacchetto deve essere una stringa o una matrice di stringhe in '{0}'.</target>
+        <note>{0} is the project.json file name.</note>
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">Il valore{0} {1} non è valido. Esempio valido: `{2}`</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingLockFile">
+        <source>Error loading lock file '{0}' : {1}</source>
+        <target state="translated">Si è verificato un errore durante il caricamento del file di blocco '{0}': {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJson">
+        <source>Error reading '{0}' : {1}</source>
+        <target state="translated">Si è verificato un errore durante la lettura di '{0}': {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJsonWithLocation">
+        <source>Error reading '{0}' at line {1} column {2} : {3}</source>
+        <target state="translated">Si è verificato un errore durante la lettura di '{0}' alla riga {1} e alla colonna {2}: {3}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidImportFramework">
+        <source>Imports contains an invalid framework: '{0}' in '{1}'.</source>
+        <target state="translated">L'importazione contiene un framework non valido: '{0}' in '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProblemReadingCacheFile">
+        <source>Problem reading the cache file {0} : {1}</source>
+        <target state="translated">Si è verificato un problema durante la lettura del file di cache {0}: {1}</target>
+        <note>{0} is the file path, {1} is the exception message</note>
+      </trans-unit>
+      <trans-unit id="MissingVersionOnDependency">
+        <source>Package dependencies must specify a version range.</source>
+        <target state="translated">Per le dipendenze del pacchetto è necessario che sia specificato un intervallo di versioni.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingVersionOnTool">
+        <source>Tools must specify a version range.</source>
+        <target state="translated">Per gli strumenti è necessario che sia specificato un intervallo di versioni.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="None">
+        <source>None</source>
+        <target state="translated">Nessuno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_CentralPackageVersionRemoved">
+        <source>Central package management file(s) doesn't contain version range for {0} package which is specified as CentralTransitive dependency in the lock file.</source>
+        <target state="translated">I file di gestione centralizzata del pacchetto non contengono l'intervallo di versioni per il pacchetto {0} che viene specificato come dipendenza CentralTransitive nel file di blocco.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_IncompatibleLockFileVersion">
+        <source>Version specified in the packages.lock.json file is incompatible. Current tooling supports version {0} and previous formats.</source>
+        <target state="translated">La versione specificata nel file packages.lock.json non è compatibile. Gli strumenti correnti supportano la versione {0} e i formati precedenti.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_MismatchedTargetFrameworks">
+        <source>The project target frameworks are different than the lock file's target frameworks. Lock file target frameworks: {0}. Project target frameworks {1}.</source>
+        <target state="translated">I framework di destinazione del progetto sono diversi da quelli del file di blocco. Framework di destinazione del file di blocco: {0}. Framework di destinazione del progetto: {1}.</target>
+        <note>0 - Semicolon delimited list of lock file target frameworks, 1 - semicolon delimited list of lock file target frameworks</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_NewTargetFramework">
+        <source>The project target framework {0} was not found in the lock file.</source>
+        <target state="translated">Il framework di destinazione del progetto {0} non è stato trovato nel file di blocco.</target>
+        <note>0 - project target framework</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceAdded">
+        <source>A new package reference was found {0} for the project target framework {1}.</source>
+        <target state="translated">È stato trovato un nuovo riferimento al pacchetto {0} per il framework di destinazione del progetto {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceVersionChanged">
+        <source>The package reference {0} version has changed from {1} to {2}.</source>
+        <target state="translated">La versione del riferimento al pacchetto {0} è stata modificata da {1} a {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferencesHaveChanged">
+        <source>The package references have changed for {0}. Lock file's package references: {1}, project's package references: {2}.</source>
+        <target state="translated">I riferimenti al pacchetto sono stati modificati per {0}. Riferimenti al pacchetto del file di blocco: {1}. Riferimenti al pacchetto del progetto: {2}.</target>
+        <note>0 - tfm, 1 - lock file package references, 2 - project package references</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceAdded">
+        <source>A new project reference to {0} was found for {1} target framework.</source>
+        <target state="translated">È stato trovato un nuovo riferimento al progetto a {0} per il framework di destinazione {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceDependenciesHasChanged">
+        <source>The project references {0} whose dependencies has changed.</source>
+        <target state="translated">Riferimenti al progetto {0} di cui sono state modificate le dipendenze.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceHasNoCompatibleTargetFramework">
+        <source>The project {0} has no compatible target framework. </source>
+        <target state="translated">Non esiste alcun framework di destinazione compatibile per il progetto {0}. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferencesHasChange">
+        <source>The project reference {0} has changed. Current dependencies: {1} lock file's dependencies: {2}.</source>
+        <target state="translated">Il riferimento al progetto {0} è stato modificato. Dipendenze correnti: {1}. Dipendenze del file di blocco: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyChanged">
+        <source>Transitive dependency {0} moved to be centraly managed invalidated the lock file.</source>
+        <target state="translated">La dipendenza transitiva {0} spostata per consentirne la gestione centralizzata ha invalidato il file di blocco.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyVersionChanged">
+        <source>Mistmatch between the requestedVersion of a lock file dependency marked as CentralTransitive and the the version specified in the central package management file. Lock file version {0}, central package management version {1}.</source>
+        <target state="translated">La versione richiesta di una dipendenza del file di blocco contrassegnata come CentralTransitive non corrisponde alla versione specificata nel file di gestione centralizzata del pacchetto. Versione del file di blocco: {0}. Versione della gestione centralizzata del pacchetto: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RestoreMetadataMissingTfms">
+        <source>Restore metadata is mising the required target frameworks list. Please file a bug with repro steps on NuGet/Home if seen.</source>
+        <target state="translated">Nei metadati di ripristino manca l'elenco dei framework di destinazione richiesti. Segnalare un bug con la procedura per riprodurre il problema in NuGet/Home se visualizzato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RuntimeIdentifiersChanged">
+        <source>The project's runtime identifiers have changed from. Project's runtime identifiers: {0}, lock file's runtime identifiers {1}.</source>
+        <target state="translated">Gli identificatori di runtime del progetto sono stati modificati. Identificatori di runtime del progetto: {0}. Identificatori di runtime del file di blocco: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_UnableToLoadPackagespec">
+        <source>Unable to load package spec for {0} project.</source>
+        <target state="translated">Non è possibile caricare le specifiche del pacchetto per il progetto {0}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

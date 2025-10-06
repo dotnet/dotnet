@@ -111,6 +111,8 @@ internal class ListTestsArgumentExecutor : IArgumentExecutor
     /// <param name="options">
     /// The options.
     /// </param>
+    /// <param name="runSettingsProvider">Runsettings provider.</param>
+    /// <param name="testRequestManager">Test request manager.</param>
     public ListTestsArgumentExecutor(
         CommandLineOptions options,
         IRunSettingsProvider runSettingsProvider,
@@ -125,6 +127,9 @@ internal class ListTestsArgumentExecutor : IArgumentExecutor
     /// <param name="options">
     /// The options.
     /// </param>
+    /// <param name="runSettingsProvider">Run setting provider.</param>
+    /// <param name="output">Output such as console.</param>
+    /// <param name="testRequestManager">Test request manager</param>
     internal ListTestsArgumentExecutor(
         CommandLineOptions options,
         IRunSettingsProvider runSettingsProvider,

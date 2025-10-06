@@ -32,8 +32,8 @@ internal class ProxyOutOfProcDataCollectionManager
     /// <param name="dataCollectionTestCaseEventSender">
     /// The data collection test case event sender.
     /// </param>
-    /// <param name="dataCollectionTestCaseEventManager">
-    /// The data collection test case event manager.
+    /// <param name="testEventsPublisher">
+    /// Test events publisher.
     /// </param>
     public ProxyOutOfProcDataCollectionManager(IDataCollectionTestCaseEventSender dataCollectionTestCaseEventSender, ITestEventsPublisher testEventsPublisher)
     {

@@ -1,23 +1,25 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, ICollaborationService, IDisposable
 {
+    // AsyncSemaphore is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
+#pragma warning disable RS0030 // Do not use banned APIs
+
     private readonly CollaborationSession _session;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-    private readonly IProjectSnapshotManager _projectSnapshotManager;
+    private readonly ProjectSnapshotManager _projectSnapshotManager;
     private readonly JoinableTaskFactory _jtf;
     private readonly AsyncSemaphore _latestStateSemaphore;
     private bool _disposed;
@@ -27,12 +29,10 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 
     public ProjectSnapshotManagerProxy(
         CollaborationSession session,
-        IProjectSnapshotManager projectSnapshotManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
+        ProjectSnapshotManager projectSnapshotManager,
         JoinableTaskFactory jtf)
     {
         _session = session;
-        _dispatcher = dispatcher;
         _projectSnapshotManager = projectSnapshotManager;
         _jtf = jtf;
 
@@ -66,7 +66,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
     }
 
     // Internal for testing
-    internal async Task<IReadOnlyList<IProjectSnapshot>> GetLatestProjectsAsync()
+    internal async Task<IReadOnlyList<ProjectSnapshot>> GetLatestProjectsAsync()
     {
         if (!_jtf.Context.IsOnMainThread)
         {
@@ -77,7 +77,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
     }
 
     // Internal for testing
-    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<IProjectSnapshot> projects)
+    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<ProjectSnapshot> projects)
     {
         using (await _latestStateSemaphore.EnterAsync().ConfigureAwait(false))
         {
@@ -93,25 +93,23 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
         }
     }
 
-    private async Task<ProjectSnapshotHandleProxy?> ConvertToProxyAsync(IProjectSnapshot? project)
+    private Task<ProjectSnapshotHandleProxy?> ConvertToProxyAsync(ProjectSnapshot? project)
     {
         if (project is null)
         {
-            return null;
+            return SpecializedTasks.Null<ProjectSnapshotHandleProxy>();
         }
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, project.CSharpLanguageVersion);
         var projectFilePath = _session.ConvertLocalPathToSharedUri(project.FilePath);
         var intermediateOutputPath = _session.ConvertLocalPathToSharedUri(project.IntermediateOutputPath);
-        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, intermediateOutputPath, project.Configuration, project.RootNamespace, projectWorkspaceState);
-        return projectHandleProxy;
+        var projectHandleProxy = new ProjectSnapshotHandleProxy(
+            projectFilePath, intermediateOutputPath, project.Configuration, project.RootNamespace, project.ProjectWorkspaceState);
+
+        return Task.FromResult(projectHandleProxy).AsNullable();
     }
 
     private void ProjectSnapshotManager_Changed(object sender, ProjectChangeEventArgs args)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
         if (_disposed)
         {
             return;

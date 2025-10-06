@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,70 +12,107 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
-internal class RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSnapshot projectSnapshot) : IDocumentSnapshot
+internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
 {
-    private readonly TextDocument _textDocument = textDocument;
-    private readonly RemoteProjectSnapshot _projectSnapshot = projectSnapshot;
+    public TextDocument TextDocument { get; }
+    public RemoteProjectSnapshot ProjectSnapshot { get; }
 
     private RazorCodeDocument? _codeDocument;
+    private SourceGeneratedDocument? _generatedDocument;
 
-    public TextDocument TextDocument => _textDocument;
-
-    public string? FileKind => FileKinds.GetFileKindFromFilePath(FilePath);
-
-    public string? FilePath => _textDocument.FilePath;
-
-    public string? TargetPath => _textDocument.FilePath;
-
-    public IProjectSnapshot Project => _projectSnapshot;
-
-    public bool SupportsOutput => true;
-
-    public Task<SourceText> GetTextAsync() => _textDocument.GetTextAsync();
-
-    public Task<VersionStamp> GetTextVersionAsync() => _textDocument.GetTextVersionAsync();
-
-    public bool TryGetText([NotNullWhen(true)] out SourceText? result) => _textDocument.TryGetText(out result);
-
-    public bool TryGetTextVersion(out VersionStamp result) => _textDocument.TryGetTextVersion(out result);
-
-    public async Task<RazorCodeDocument> GetGeneratedOutputAsync()
+    public RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSnapshot projectSnapshot)
     {
-        // TODO: We don't need to worry about locking if we get called from the didOpen/didChange LSP requests, as CLaSP
-        //       takes care of that for us, and blocks requests until those are complete. If that doesn't end up happening,
-        //       then a locking mechanism here would prevent concurrent compilations.
+        if (!textDocument.IsRazorDocument())
+        {
+            throw new ArgumentException(SR.Document_is_not_a_Razor_document);
+        }
+
+        TextDocument = textDocument;
+        ProjectSnapshot = projectSnapshot;
+    }
+
+    public RazorFileKind FileKind => FileKinds.GetFileKindFromPath(FilePath);
+    public string FilePath => TextDocument.FilePath.AssumeNotNull();
+    public string TargetPath => TextDocument.FilePath.AssumeNotNull();
+
+    public IProjectSnapshot Project => ProjectSnapshot;
+
+    public int Version => -999; // We don't expect to use this in cohosting, but plenty of existing code logs it's value
+
+    public ValueTask<SourceText> GetTextAsync(CancellationToken cancellationToken)
+    {
+        return TryGetText(out var result)
+            ? new(result)
+            : new(TextDocument.GetTextAsync(cancellationToken));
+    }
+
+    public ValueTask<VersionStamp> GetTextVersionAsync(CancellationToken cancellationToken)
+    {
+        return TryGetTextVersion(out var result)
+            ? new(result)
+            : new(TextDocument.GetTextVersionAsync(cancellationToken));
+    }
+
+    public bool TryGetText([NotNullWhen(true)] out SourceText? result)
+        => TextDocument.TryGetText(out result);
+
+    public bool TryGetTextVersion(out VersionStamp result)
+        => TextDocument.TryGetTextVersion(out result);
+
+    public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
+        => (result = _codeDocument) is not null;
+
+    public async ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(CancellationToken cancellationToken)
+    {
         if (_codeDocument is not null)
         {
             return _codeDocument;
         }
 
-        // The non-cohosted DocumentSnapshot implementation uses DocumentState to get the generated output, and we could do that too
-        // but most of that code is optimized around caching pre-computed results when things change that don't affect the compilation.
-        // We can't do that here because we are using Roslyn's project snapshots, which don't contain the info that Razor needs. We could
-        // in future provide a side-car mechanism so we can cache things, but still take advantage of snapshots etc. but the working
-        // assumption for this code is that the source generator will be used, and it will do all of that, so this implementation is naive
-        // and simply compiles when asked, and if a new document snapshot comes in, we compile again. This is presumably worse for perf
-        // but since we don't expect users to ever use cohosting without source generators, it's fine for now.
-
-        var projectEngine = _projectSnapshot.GetProjectEngine_CohostOnly();
-        var tagHelpers = await _projectSnapshot.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
-        var imports = await DocumentState.ComputedStateTracker.GetImportsAsync(this, projectEngine).ConfigureAwait(false);
-        _codeDocument = await DocumentState.ComputedStateTracker.GenerateCodeDocumentAsync(tagHelpers, projectEngine, this, imports).ConfigureAwait(false);
-
-        return _codeDocument;
-    }
-
-    public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
-    {
-        result = _codeDocument;
-        return result is not null;
+        var document = await ProjectSnapshot.GetRequiredCodeDocumentAsync(this, cancellationToken).ConfigureAwait(false);
+        return InterlockedOperations.Initialize(ref _codeDocument, document);
     }
 
     public IDocumentSnapshot WithText(SourceText text)
     {
-        var id = _textDocument.Id;
-        var newDocument = _textDocument.Project.Solution.WithAdditionalDocumentText(id, text).GetAdditionalDocument(id).AssumeNotNull();
+        var id = TextDocument.Id;
+        var newDocument = TextDocument.Project.Solution
+            .WithAdditionalDocumentText(id, text)
+            .GetAdditionalDocument(id)
+            .AssumeNotNull();
 
-        return new RemoteDocumentSnapshot(newDocument, _projectSnapshot);
+        var snapshotManager = ProjectSnapshot.SolutionSnapshot.SnapshotManager;
+        return snapshotManager.GetSnapshot(newDocument);
+    }
+
+    public async ValueTask<SourceGeneratedDocument> GetGeneratedDocumentAsync(CancellationToken cancellationToken)
+    {
+        if (_generatedDocument is not null)
+        {
+            return _generatedDocument;
+        }
+
+        var generatedDocument = await ProjectSnapshot.GetRequiredGeneratedDocumentAsync(this, cancellationToken).ConfigureAwait(false);
+        return InterlockedOperations.Initialize(ref _generatedDocument, generatedDocument);
+    }
+
+    public ValueTask<SyntaxTree> GetCSharpSyntaxTreeAsync(CancellationToken cancellationToken)
+    {
+        var document = _generatedDocument;
+        if (document is not null &&
+            document.TryGetSyntaxTree(out var tree))
+        {
+            return new(tree.AssumeNotNull());
+        }
+
+        return GetCSharpSyntaxTreeCoreAsync(document, cancellationToken);
+
+        async ValueTask<SyntaxTree> GetCSharpSyntaxTreeCoreAsync(Document? document, CancellationToken cancellationToken)
+        {
+            document ??= await GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+            return tree.AssumeNotNull();
+        }
     }
 }

@@ -86,27 +86,6 @@ namespace NuGet.Commands
                 isManagementPackProject: false);
         }
 
-        [Obsolete("If you need ClrSupport support parameter to be accounted for in the calculation, the method with the windowsTargetPlatformMinVersion is the only correct one.")]
-        public static NuGetFramework GetProjectFramework(
-            string projectFilePath,
-            string targetFrameworkMoniker,
-            string targetPlatformMoniker,
-            string targetPlatformMinVersion,
-            string clrSupport)
-        {
-            return GetProjectFramework(
-                projectFilePath,
-                targetFrameworkMoniker,
-                targetPlatformMoniker,
-                targetPlatformIdentifier: null,
-                targetPlatformVersion: null,
-                targetPlatformMinVersion,
-                clrSupport,
-                windowsTargetPlatformMinVersion: null,
-                isXnaWindowsPhoneProject: false,
-                isManagementPackProject: false);
-        }
-
         /// <summary>
         /// Determine the target framework of an msbuild project.
         /// Returns the <see cref="FrameworkName"/> equivalent representation.

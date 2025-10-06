@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -21,23 +18,23 @@ internal class ComponentLayoutDirectivePass : IntermediateNodePassBase, IRazorDi
         }
 
         var directives = documentNode.FindDirectiveReferences(ComponentLayoutDirective.Directive);
-        if (directives.Count == 0)
+        if (directives.Length == 0)
         {
             return;
         }
 
-        var token = ((DirectiveIntermediateNode)directives[0].Node).Tokens.FirstOrDefault();
+        var token = directives[0].Node.Tokens.FirstOrDefault();
         if (token == null)
         {
             return;
         }
 
         var attributeNode = new CSharpCodeIntermediateNode();
-        attributeNode.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = $"[global::{ComponentsApi.LayoutAttribute.FullTypeName}(typeof({token.Content}))]",
-        });
+        attributeNode.Children.AddRange([
+            IntermediateNodeFactory.CSharpToken($"[global::{ComponentsApi.LayoutAttribute.FullTypeName}(typeof("),
+            IntermediateNodeFactory.CSharpToken(token.Content, documentNode.Options.DesignTime ? null : token.Source),
+            IntermediateNodeFactory.CSharpToken("))]")
+        ]);
 
         // Insert the new attribute on top of the class
         for (var i = 0; i < @namespace.Children.Count; i++)

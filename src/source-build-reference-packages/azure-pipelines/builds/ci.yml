@@ -4,12 +4,20 @@ trigger:
     include:
     - main
     - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
 
 pr:
   branches:
     include:
     - main
     - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
 
 variables:
 - template: /azure-pipelines/templates/variables/common.yml
@@ -25,16 +33,28 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      binskim:
+        enabled: true
+      componentgovernance:
+        # All of the SBRPs must be ignored because it is possible some of them are for vulnerable versions.
+        # Because they are reference only packages they are not vulnerable themselves.
+        ignoreDirectories: |
+          artifacts/sb,
+          src/referencePackages
+      policheck:
+        enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
+      tsa:
+        enabled: true
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppressions.json
     pool:
       name: $(DncEngInternalBuildPool)
-      image: 1es-ubuntu-2204-pt
+      image: 1es-ubuntu-2204
       os: linux
-    customBuildTags:
-    - ES365AIMigrationTooling
     stages:
     - template: /azure-pipelines/templates/stages/build.yml@self
       parameters:

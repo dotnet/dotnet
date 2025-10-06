@@ -181,7 +181,7 @@ namespace Microsoft.Build.Shared
             /// Lock to prevent two threads from using this object at the same time.
             /// Since we fill up internal structures with what is in the assembly
             /// </summary>
-            private readonly Object _lockObject = new Object();
+            private readonly LockType _lockObject = new();
 
             /// <summary>
             /// Type filter to pick the correct types out of an assembly
@@ -221,7 +221,7 @@ namespace Microsoft.Build.Shared
             internal AssemblyInfoToLoadedTypes(TypeFilter typeFilter, AssemblyLoadInfo loadInfo)
             {
                 ErrorUtilities.VerifyThrowArgumentNull(typeFilter, "typefilter");
-                ErrorUtilities.VerifyThrowArgumentNull(loadInfo, nameof(loadInfo));
+                ErrorUtilities.VerifyThrowArgumentNull(loadInfo);
 
                 _isDesiredType = typeFilter;
                 _assemblyLoadInfo = loadInfo;
@@ -234,7 +234,7 @@ namespace Microsoft.Build.Shared
             /// </summary>
             internal LoadedType GetLoadedTypeByTypeName(string typeName)
             {
-                ErrorUtilities.VerifyThrowArgumentNull(typeName, nameof(typeName));
+                ErrorUtilities.VerifyThrowArgumentNull(typeName);
 
                 // Only one thread should be doing operations on this instance of the object at a time.
 

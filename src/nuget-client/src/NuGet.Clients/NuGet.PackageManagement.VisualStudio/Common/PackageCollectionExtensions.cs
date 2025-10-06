@@ -41,14 +41,5 @@ namespace NuGet.PackageManagement.VisualStudio
                 .GroupById()
                 .Select(g => g.OrderBy(x => x.Version).First());
         }
-
-        /// <summary>
-        /// True if any package reference is AutoReferenced=true.
-        /// </summary>
-        public static bool IsAutoReferenced(this IEnumerable<PackageCollectionItem> packages, string id)
-        {
-            return packages.Where(e => StringComparer.OrdinalIgnoreCase.Equals(id, e.Id))
-                .Any(e => e.IsAutoReferenced());
-        }
     }
 }

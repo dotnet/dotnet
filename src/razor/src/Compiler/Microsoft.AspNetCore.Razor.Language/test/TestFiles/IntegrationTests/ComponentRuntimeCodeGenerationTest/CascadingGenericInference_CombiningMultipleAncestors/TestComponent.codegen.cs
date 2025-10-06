@@ -60,7 +60,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateParentOne_0<TOne>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TOne __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.ParentOne<TOne>>(seq);
-        __builder.AddComponentParameter(__seq0, "Value", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.ParentOne<TOne>.
+#nullable restore
+#line (1,12)-(1,17) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }
@@ -72,7 +80,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateParentTwo_1<TTwo>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TTwo __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.ParentTwo<TTwo>>(seq);
-        __builder.AddComponentParameter(__seq0, "Value", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.ParentTwo<TTwo>.
+#nullable restore
+#line (2,16)-(2,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }

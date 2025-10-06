@@ -1,16 +1,24 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
-        UsingDirective - (1:0,1 [17] Usings_OutOfOrder.cshtml) - System.IO
-        UsingDirective - (60:6,1 [34] Usings_OutOfOrder.cshtml) - Foo = System.Text.Encoding
-        UsingDirective - (136:12,1 [14] Usings_OutOfOrder.cshtml) - System
-        UsingDirective - (153:14,1 [21] Usings_OutOfOrder.cshtml) - static System
-        UsingDirective - (175:15,1 [29] Usings_OutOfOrder.cshtml) - static System.Console
-        UsingDirective - (246:21,1 [43] Usings_OutOfOrder.cshtml) - static global::System.Text.Encoding
-        UsingDirective - (576:31,1 [19] Usings_OutOfOrder.cshtml) - System.Text
+    NamespaceDeclaration -  - AspNetCoreGeneratedDocument
+        UsingDirective - (24:1,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [25] ) - global::System.Linq
+        UsingDirective - (95:3,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [38] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [48] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [51] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
+        UsingDirective - (1:0,1 [15] Usings_OutOfOrder.cshtml) - System.IO
+        UsingDirective - (60:6,1 [32] Usings_OutOfOrder.cshtml) - Foo = System.Text.Encoding
+        UsingDirective - (136:12,1 [12] Usings_OutOfOrder.cshtml) - System
+        UsingDirective - (153:14,1 [19] Usings_OutOfOrder.cshtml) - static System
+        UsingDirective - (175:15,1 [27] Usings_OutOfOrder.cshtml) - static System.Console
+        UsingDirective - (246:21,1 [41] Usings_OutOfOrder.cshtml) - static global::System.Text.Encoding
+        UsingDirective - (576:31,1 [17] Usings_OutOfOrder.cshtml) - System.Text
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Usings_OutOfOrder_Runtime -  - 
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Usings_OutOfOrder - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 HtmlContent - (18:1,0 [2] Usings_OutOfOrder.cshtml)
                     LazyIntermediateToken - (18:1,0 [2] Usings_OutOfOrder.cshtml) - Html - \n
                 HtmlContent - (57:5,0 [2] Usings_OutOfOrder.cshtml)
@@ -53,3 +61,8 @@
                 LazyIntermediateToken - (108:8,12 [22] Usings_OutOfOrder.cshtml) - CSharp - \n    // functions 2\n
             CSharpCode - (218:17,12 [22] Usings_OutOfOrder.cshtml)
                 LazyIntermediateToken - (218:17,12 [22] Usings_OutOfOrder.cshtml) - CSharp - \n    // functions 3\n
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 

@@ -41,7 +41,7 @@ module internal CodeGenerationUtils =
         member _.Unindent i =
             indentWriter.Indent <- max 0 (indentWriter.Indent - i)
 
-        member _.Dump() = indentWriter.InnerWriter.ToString()
+        member _.Dump() = !!indentWriter.InnerWriter.ToString()
 
         interface IDisposable with
             member _.Dispose() =
@@ -154,7 +154,7 @@ module InterfaceStubGenerator =
             Writer: ColumnIndentedTextWriter
 
             /// Map generic types to specific instances for specialized interface implementation
-            TypeInstantations: Map<string, string>
+            TypeInstantiations: Map<string, string>
 
             /// Data for interface instantiation
             ArgInstantiations: (FSharpGenericParameter * FSharpType) seq
@@ -192,7 +192,7 @@ module InterfaceStubGenerator =
         let genericDefinition =
             ty.Instantiate(Seq.toList ctx.ArgInstantiations).Format(ctx.DisplayContext)
 
-        (genericDefinition, ctx.TypeInstantations)
+        (genericDefinition, ctx.TypeInstantiations)
         ||> Map.fold (fun s k v -> s.Replace(k, v))
 
     // Format each argument, including its name and type
@@ -351,7 +351,12 @@ module InterfaceStubGenerator =
                 // Ordinary instance members
                 | _, true, _, name -> name + parArgs
                 // Ordinary functions or values
-                | false, _, _, name when not (v.ApparentEnclosingEntity.HasAttribute<RequireQualifiedAccessAttribute>()) ->
+                | false, _, _, name when
+                    v.ApparentEnclosingEntity
+                    |> Option.map _.HasAttribute<RequireQualifiedAccessAttribute>()
+                    |> Option.defaultValue false
+                    |> not
+                    ->
                     name + " " + parArgs
                 // Ordinary static members or things (?) that require fully qualified access
                 | _, _, _, name -> name + parArgs
@@ -680,7 +685,7 @@ module InterfaceStubGenerator =
         let ctx =
             {
                 Writer = writer
-                TypeInstantations = instantiations
+                TypeInstantiations = instantiations
                 ArgInstantiations = Seq.empty
                 Indentation = indentation
                 ObjectIdent = objectIdent
@@ -825,7 +830,7 @@ module InterfaceStubGenerator =
                 | SynMemberDefn.Open _
                 | SynMemberDefn.ImplicitCtor _
                 | SynMemberDefn.Inherit _ -> None
-                | SynMemberDefn.ImplicitInherit(_, expr, _, _) -> walkExpr expr
+                | SynMemberDefn.ImplicitInherit(_, expr, _, _, _) -> walkExpr expr
 
         and walkBinding (SynBinding(expr = expr)) = walkExpr expr
 
@@ -952,18 +957,9 @@ module InterfaceStubGenerator =
                 | SynExpr.Null _range
                 | SynExpr.ImplicitZero _range -> None
 
-                | SynExpr.YieldOrReturn(_, synExpr, _range)
-                | SynExpr.YieldOrReturnFrom(_, synExpr, _range)
-                | SynExpr.DoBang(synExpr, _range) -> walkExpr synExpr
-
-                | SynExpr.LetOrUseBang(rhs = synExpr1; andBangs = synExprAndBangs; body = synExpr2) ->
-                    [
-                        yield synExpr1
-                        for SynExprAndBang(body = eAndBang) in synExprAndBangs do
-                            yield eAndBang
-                        yield synExpr2
-                    ]
-                    |> List.tryPick walkExpr
+                | SynExpr.YieldOrReturn(expr = synExpr)
+                | SynExpr.YieldOrReturnFrom(expr = synExpr)
+                | SynExpr.DoBang(expr = synExpr) -> walkExpr synExpr
 
                 | SynExpr.LibraryOnlyILAssembly _
                 | SynExpr.LibraryOnlyStaticOptimization _

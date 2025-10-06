@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引数を null または空にすることはできません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorOccurredRestoringPackages">
+        <source>Error occurred while restoring NuGet packages: {0}</source>
+        <target state="translated">NuGet パッケージの復元中にエラーが発生しました: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}{1}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkMessage">
+        <source>Manage NuGet Packages</source>
+        <target state="translated">NuGet パッケージの管理</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoBar_TextMessage">
+        <source>This solution contains packages with vulnerabilities.</source>
+        <target state="translated">このソリューションには、脆弱性のあるパッケージが含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ItemValuesAreDifferentAcrossTargetFrameworks">
+        <source>'{0}' items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for '{0}' items.</source>
+        <target state="translated">'{0}' 項目が、すべてのターゲット フレームワークで同じ値になっていません。'{0}' 項目の MSBuild ファイルから条件を削除します。</target>
+        <note>{0} - MSBuild item type. For example, NuGetAuditSuppress</note>
+      </trans-unit>
+      <trans-unit id="NU1105">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">'{0}' のプロジェクト情報を読み取ることができません: {1}</target>
+        <note>0 - The name of the project with the error.
+1 - Message explaining what couldn't be read. Typically an exception's message</note>
+      </trans-unit>
+      <trans-unit id="NothingToRestore">
+        <source>All packages are already installed and there is nothing to restore.</source>
+        <target state="translated">すべてのパッケージが既にインストールされており、復元するパッケージはありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_Finished">
+        <source>========== Finished ==========</source>
+        <target state="translated">========== 終了 ==========</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">経過した時間: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotRestoredBecauseOfNoConsent">
+        <source>One or more NuGet packages need to be restored but couldn't be because consent has not been granted. To give consent, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also give consent by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.
+
+Missing packages: {0}</source>
+        <target state="translated">1 つ以上の NuGet パッケージを復元する必要がありますが、許可されていないため復元できませんでした。この操作を許可するには、Visual Studio の [オプション] ダイアログ ボックスを開き、NuGet の [パッケージ マネージャー] ノードをクリックして、[ビルド中に足りないパッケージをダウンロードすることを NuGet に許可] チェック ボックスをオンにします。環境変数 'EnableNuGetPackageRestore' を 'true' に設定して許可を与えることもできます。
+
+足りないパッケージ: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRefNotRestoredBecauseOfNoConsent">
+        <source>NuGet restore is currently disabled. To enable it, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also enable it by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">NuGet の復元は現在無効です。これを有効にするには、Visual Studio の [オプション] ダイアログ ボックスを開き、NuGet の [パッケージ マネージャー] ノードをクリックして [ビルド中に足りないパッケージをダウンロードすることを NuGet に許可] チェックボックスをオンにします。また、環境変数 'EnableNuGetPackageRestore' を 'true' を設定することで有効にできます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreCanceled">
+        <source>NuGet package restore canceled.</source>
+        <target state="translated">NuGet パッケージの復元がキャンセルされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFailedForProject">
+        <source>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">プロジェクト {0} の NuGet パッケージの復元に失敗しました: {1}。警告とエラーの詳細は、[エラー一覧] ウィンドウを参照してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinished">
+        <source>NuGet package restore finished.</source>
+        <target state="translated">NuGet パッケージの復元が終了しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedForProject">
+        <source>NuGet Package restore finished for project '{0}'.</source>
+        <target state="translated">NuGet パッケージの復元がプロジェクト '{0}' に対して終了しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedWithError">
+        <source>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">NuGet パッケージの復元に失敗しました。警告とエラーの詳細は、[エラー一覧] ウィンドウを参照してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</source>
+        <target state="translated">NuGet パッケージを復元しています...
+NuGet がビルド中にパッケージを復元しないようにするには、Visual Studio の [オプション] ダイアログ ボックスを開き、NuGet の [パッケージ マネージャー] ノードをクリックして、[ビルド中に足りないパッケージをダウンロードすることを NuGet に許可] チェック ボックスをオフにします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyDoesNotHaveSingleValue">
+        <source>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</source>
+        <target state="translated">プロパティ {0} には、すべてのターゲット フレームワークに対して 1 つの値が必要ですが、代わりに次の値が指定されていました: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RelativeGlobalPackagesFolder">
+        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
+        <target state="translated">nuget.config ファイルの 'globalPackagesFolder' または環境変数に相対パスの '{0}' が指定されており、ソリューションが保存されていません。ソリューションを保存するか、'globalPackagesFolder' を完全なパスで構成してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoredPackage">
+        <source>Restored NuGet package {0}.</source>
+        <target state="translated">NuGet パッケージ {0} を復元しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackages">
+        <source>Restoring NuGet packages...</source>
+        <target state="translated">NuGet パッケージを復元しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">ソリューションが保存されていません。ソリューションを保存してから NuGet パッケージを管理してください。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

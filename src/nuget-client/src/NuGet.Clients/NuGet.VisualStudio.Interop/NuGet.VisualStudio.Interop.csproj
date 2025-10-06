@@ -15,8 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Styles" />
     <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" />
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>

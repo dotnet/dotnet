@@ -1,31 +1,129 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Buffers;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis;
 
 internal static class ProjectExtensions
 {
-    internal static Document GetRequiredDocument(this Project project, DocumentId documentId)
+    private const string GetTagHelpersEventName = "taghelperresolver/gettaghelpers";
+    private const string PropertySuffix = ".elapsedtimems";
+
+    /// <summary>
+    ///  Gets the available <see cref="TagHelperDescriptor">tag helpers</see> from the specified
+    ///  <see cref="Project"/> using the given <see cref="RazorProjectEngine"/>.
+    /// </summary>
+    /// <remarks>
+    ///  A telemetry event will be reported to <paramref name="telemetryReporter"/>.
+    /// </remarks>
+    public static async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+        this Project project,
+        RazorProjectEngine projectEngine,
+        ITelemetryReporter telemetryReporter,
+        CancellationToken cancellationToken)
     {
-        if (project is null)
+        var providers = GetTagHelperDescriptorProviders(projectEngine);
+
+        if (providers is [])
         {
-            throw new ArgumentNullException(nameof(project));
+            return [];
         }
 
-        if (documentId is null)
+        var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+        if (compilation is null || !CompilationTagHelperFeature.IsValidCompilation(compilation))
         {
-            throw new ArgumentNullException(nameof(documentId));
+            return [];
         }
 
-        var document = project.GetDocument(documentId);
+        using var pooledHashSet = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var results);
+        using var pooledWatch = StopwatchPool.GetPooledObject(out var watch);
+        using var pooledSpan = ArrayPool<Property>.Shared.GetPooledArraySpan(minimumLength: providers.Length, out var properties);
 
-        if (document is null)
+        var context = new TagHelperDescriptorProviderContext(compilation, results)
         {
-            throw new InvalidOperationException($"The document {documentId} did  not exist in {project.Name}");
+            ExcludeHidden = true,
+            IncludeDocumentation = true
+        };
+
+        var writeProperties = properties;
+
+        foreach (var provider in providers)
+        {
+            watch.Restart();
+            provider.Execute(context, cancellationToken);
+            watch.Stop();
+
+            writeProperties[0] = new(provider.GetType().Name + PropertySuffix, watch.ElapsedMilliseconds);
+            writeProperties = writeProperties[1..];
         }
 
-        return document;
+        telemetryReporter.ReportEvent(GetTagHelpersEventName, Severity.Normal, properties);
+
+        return [.. results];
+    }
+
+    private static ImmutableArray<ITagHelperDescriptorProvider> GetTagHelperDescriptorProviders(RazorProjectEngine projectEngine)
+        => projectEngine.Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static x => x.Order);
+
+    public static Task<SourceGeneratedDocument?> TryGetCSharpDocumentFromGeneratedDocumentUriAsync(this Project project, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    {
+        if (!TryGetHintNameFromGeneratedDocumentUri(project, generatedDocumentUri, out var hintName))
+        {
+            return SpecializedTasks.Null<SourceGeneratedDocument>();
+        }
+
+        return TryGetSourceGeneratedDocumentFromHintNameAsync(project, hintName, cancellationToken);
+    }
+
+    /// <summary>
+    /// Finds source generated documents by iterating through all of them. In OOP there are better options!
+    /// </summary>
+    public static async Task<SourceGeneratedDocument?> TryGetSourceGeneratedDocumentFromHintNameAsync(this Project project, string? hintName, CancellationToken cancellationToken)
+    {
+        // TODO: use this when the location is case-insensitive on windows (https://github.com/dotnet/roslyn/issues/76869)
+        //var generator = typeof(RazorSourceGenerator);
+        //var generatorAssembly = generator.Assembly;
+        //var generatorName = generatorAssembly.GetName();
+        //var generatedDocuments = await _project.GetSourceGeneratedDocumentsForGeneratorAsync(generatorName.Name!, generatorAssembly.Location, generatorName.Version!, generator.Name, cancellationToken).ConfigureAwait(false);
+
+        var generatedDocuments = await project.GetSourceGeneratedDocumentsAsync(cancellationToken).ConfigureAwait(false);
+        return generatedDocuments.SingleOrDefault(d => d.HintName == hintName);
+    }
+
+    /// <summary>
+    /// Finds source generated documents by iterating through all of them. In OOP there are better options!
+    /// </summary>
+    public static bool TryGetHintNameFromGeneratedDocumentUri(this Project project, Uri generatedDocumentUri, [NotNullWhen(true)] out string? hintName)
+    {
+        if (!RazorUri.IsGeneratedDocumentUri(generatedDocumentUri))
+        {
+            hintName = null;
+            return false;
+        }
+
+        var identity = RazorUri.GetIdentityOfGeneratedDocument(project.Solution, generatedDocumentUri);
+
+        if (!identity.IsRazorSourceGeneratedDocument())
+        {
+            // This is not a Razor source generated document, so we don't know the hint name.
+            hintName = null;
+            return false;
+        }
+
+        hintName = identity.HintName;
+        return true;
     }
 }

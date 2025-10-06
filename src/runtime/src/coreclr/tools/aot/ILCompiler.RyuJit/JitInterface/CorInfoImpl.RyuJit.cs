@@ -75,8 +75,11 @@ namespace Internal.JitInterface
                 // https://github.com/dotnet/runtimelab/issues/1128
                 for (int i = 0; i < _codeRelocs.Count; i++)
                 {
-                    Debug.Assert(_codeRelocs[i].Target.GetType() != typeof(EETypeNode)
-                        || _compilation.NecessaryTypeSymbolIfPossible(((EETypeNode)_codeRelocs[i].Target).Type) == _codeRelocs[i].Target);
+                    if (_codeRelocs[i].Target is EETypeNode eetype)
+                    {
+                        IEETypeNode expectedeetype = _compilation.NecessaryTypeSymbolIfPossible(eetype.Type);
+                        Debug.Assert(expectedeetype == eetype);
+                    }
                 }
 #endif
 
@@ -363,7 +366,7 @@ namespace Internal.JitInterface
             // In debug, write some bogus data to the struct to ensure we have filled everything
             // properly.
             fixed (CORINFO_LOOKUP* tmp = &pLookup)
-                MemoryHelper.FillMemory((byte*)tmp, 0xcc, sizeof(CORINFO_LOOKUP));
+                NativeMemory.Fill(tmp, (nuint)sizeof(CORINFO_LOOKUP), 0xcc);
 #endif
 
             MethodDesc expectedTargetMethod = HandleToObject(pTargetMethod.hMethod);
@@ -420,7 +423,7 @@ namespace Internal.JitInterface
                 }
                 else if (staticResolution is DefaultInterfaceMethodResolution.Diamond or DefaultInterfaceMethodResolution.Reabstraction)
                 {
-                    // TODO
+                    // TODO: https://github.com/dotnet/runtime/issues/72589
                     ThrowHelper.ThrowInvalidProgramException();
                 }
             }
@@ -436,10 +439,17 @@ namespace Internal.JitInterface
             {
                 pLookup.lookupKind.needsRuntimeLookup = true;
 
-                MethodDesc contextMethod = HandleToObject(callerHandle);
-                pLookup.lookupKind.runtimeLookupKind = GetGenericRuntimeLookupKind(contextMethod);
-                pLookup.lookupKind.runtimeLookupFlags = (ushort)ReadyToRunHelperId.DelegateCtor;
-                pLookup.lookupKind.runtimeLookupArgs = (void*)ObjectToHandle(delegateInfo);
+                if (pTargetMethod.tokenContext != contextFromMethodBeingCompiled())
+                {
+                    pLookup.lookupKind.runtimeLookupKind = CORINFO_RUNTIME_LOOKUP_KIND.CORINFO_LOOKUP_NOT_SUPPORTED;
+                }
+                else
+                {
+                    MethodDesc contextMethod = HandleToObject(callerHandle);
+                    pLookup.lookupKind.runtimeLookupKind = GetGenericRuntimeLookupKind(contextMethod);
+                    pLookup.lookupKind.runtimeLookupFlags = (ushort)ReadyToRunHelperId.DelegateCtor;
+                    pLookup.lookupKind.runtimeLookupArgs = (void*)ObjectToHandle(delegateInfo);
+                }
             }
             else
             {
@@ -496,6 +506,9 @@ namespace Internal.JitInterface
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_CHECKED_ASSIGN_REF:
                     id = ReadyToRunHelper.CheckedWriteBarrier;
+                    break;
+                case CorInfoHelpFunc.CORINFO_HELP_BULK_WRITEBARRIER:
+                    id = ReadyToRunHelper.BulkWriteBarrier;
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_ASSIGN_BYREF:
                     id = ReadyToRunHelper.ByRefWriteBarrier;
@@ -576,6 +589,9 @@ namespace Internal.JitInterface
                 case CorInfoHelpFunc.CORINFO_HELP_UNBOX:
                     id = ReadyToRunHelper.Unbox;
                     break;
+                case CorInfoHelpFunc.CORINFO_HELP_UNBOX_TYPETEST:
+                    id = ReadyToRunHelper.Unbox_TypeTest;
+                    break;
                 case CorInfoHelpFunc.CORINFO_HELP_UNBOX_NULLABLE:
                     id = ReadyToRunHelper.Unbox_Nullable;
                     break;
@@ -589,28 +605,30 @@ namespace Internal.JitInterface
                     id = ReadyToRunHelper.NewObject;
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_NEWSFAST:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewFast");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewFast");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWSFAST_FINALIZE:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewFinalizable");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewFinalizable");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWSFAST_ALIGN8:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewFastAlign8");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewFastAlign8");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWSFAST_ALIGN8_FINALIZE:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewFinalizableAlign8");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewFinalizableAlign8");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWSFAST_ALIGN8_VC:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewFastMisalign");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewFastMisalign");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_DIRECT:
                     id = ReadyToRunHelper.NewArray;
                     break;
+                case CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_PTR:
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewPtrArrayFast");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_ALIGN8:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewArrayAlign8");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewArrayFastAlign8");
                 case CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_VC:
-                    return _compilation.NodeFactory.ExternSymbol("RhpNewArray");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpNewArrayFast");
 
                 case CorInfoHelpFunc.CORINFO_HELP_STACK_PROBE:
-                    return _compilation.NodeFactory.ExternSymbol("RhpStackProbe");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpStackProbe");
 
                 case CorInfoHelpFunc.CORINFO_HELP_POLL_GC:
-                    return _compilation.NodeFactory.ExternSymbol("RhpGcPoll");
+                    return _compilation.NodeFactory.ExternFunctionSymbol("RhpGcPoll");
 
                 case CorInfoHelpFunc.CORINFO_HELP_LMUL:
                     id = ReadyToRunHelper.LMul;
@@ -662,9 +680,6 @@ namespace Internal.JitInterface
                     id = ReadyToRunHelper.UMod;
                     break;
 
-                case CorInfoHelpFunc.CORINFO_HELP_DBL2INT:
-                    id = ReadyToRunHelper.Dbl2Int;
-                    break;
                 case CorInfoHelpFunc.CORINFO_HELP_DBL2INT_OVF:
                     id = ReadyToRunHelper.Dbl2IntOvf;
                     break;
@@ -673,9 +688,6 @@ namespace Internal.JitInterface
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_DBL2LNG_OVF:
                     id = ReadyToRunHelper.Dbl2LngOvf;
-                    break;
-                case CorInfoHelpFunc.CORINFO_HELP_DBL2UINT:
-                    id = ReadyToRunHelper.Dbl2UInt;
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_DBL2UINT_OVF:
                     id = ReadyToRunHelper.Dbl2UIntOvf;
@@ -686,18 +698,18 @@ namespace Internal.JitInterface
                 case CorInfoHelpFunc.CORINFO_HELP_DBL2ULNG_OVF:
                     id = ReadyToRunHelper.Dbl2ULngOvf;
                     break;
+                case CorInfoHelpFunc.CORINFO_HELP_LNG2FLT:
+                    id = ReadyToRunHelper.Lng2Flt;
+                    break;
+                case CorInfoHelpFunc.CORINFO_HELP_ULNG2FLT:
+                    id = ReadyToRunHelper.ULng2Flt;
+                    break;
 
                 case CorInfoHelpFunc.CORINFO_HELP_FLTREM:
                     id = ReadyToRunHelper.FltRem;
                     break;
                 case CorInfoHelpFunc.CORINFO_HELP_DBLREM:
                     id = ReadyToRunHelper.DblRem;
-                    break;
-                case CorInfoHelpFunc.CORINFO_HELP_FLTROUND:
-                    id = ReadyToRunHelper.FltRound;
-                    break;
-                case CorInfoHelpFunc.CORINFO_HELP_DBLROUND:
-                    id = ReadyToRunHelper.DblRound;
                     break;
 
                 case CorInfoHelpFunc.CORINFO_HELP_JIT_PINVOKE_BEGIN:
@@ -746,17 +758,10 @@ namespace Internal.JitInterface
                     id = ReadyToRunHelper.MonitorExit;
                     break;
 
-                case CorInfoHelpFunc.CORINFO_HELP_MON_ENTER_STATIC:
-                    id = ReadyToRunHelper.MonitorEnterStatic;
-                    break;
-                case CorInfoHelpFunc.CORINFO_HELP_MON_EXIT_STATIC:
-                    id = ReadyToRunHelper.MonitorExitStatic;
-                    break;
-
                 case CorInfoHelpFunc.CORINFO_HELP_GETSYNCFROMCLASSHANDLE:
-                    return _compilation.NodeFactory.MethodEntrypoint(_compilation.NodeFactory.TypeSystemContext.GetHelperEntryPoint("SynchronizedMethodHelpers", "GetSyncFromClassHandle"));
+                    return _compilation.NodeFactory.MethodEntrypoint(_compilation.NodeFactory.TypeSystemContext.GetHelperEntryPoint("SynchronizedMethodHelpers"u8, "GetSyncFromClassHandle"u8));
                 case CorInfoHelpFunc.CORINFO_HELP_GETCLASSFROMMETHODPARAM:
-                    return _compilation.NodeFactory.MethodEntrypoint(_compilation.NodeFactory.TypeSystemContext.GetHelperEntryPoint("SynchronizedMethodHelpers", "GetClassFromMethodParam"));
+                    return _compilation.NodeFactory.MethodEntrypoint(_compilation.NodeFactory.TypeSystemContext.GetHelperEntryPoint("SynchronizedMethodHelpers"u8, "GetClassFromMethodParam"u8));
 
                 case CorInfoHelpFunc.CORINFO_HELP_GVMLOOKUP_FOR_SLOT:
                     id = ReadyToRunHelper.GVMLookupForSlot;
@@ -777,9 +782,9 @@ namespace Internal.JitInterface
                     break;
 
                 case CorInfoHelpFunc.CORINFO_HELP_VALIDATE_INDIRECT_CALL:
-                    return _compilation.NodeFactory.ExternIndirectSymbol("__guard_check_icall_fptr");
+                    return _compilation.NodeFactory.ExternIndirectFunctionSymbol("__guard_check_icall_fptr");
                 case CorInfoHelpFunc.CORINFO_HELP_DISPATCH_INDIRECT_CALL:
-                    return _compilation.NodeFactory.ExternIndirectSymbol("__guard_dispatch_icall_fptr");
+                    return _compilation.NodeFactory.ExternIndirectFunctionSymbol("__guard_dispatch_icall_fptr");
 
                 default:
                     throw new NotImplementedException(ftnNum.ToString());
@@ -792,7 +797,7 @@ namespace Internal.JitInterface
 
             ISymbolNode entryPoint;
             if (mangledName != null)
-                entryPoint = _compilation.NodeFactory.ExternSymbol(mangledName);
+                entryPoint = _compilation.NodeFactory.ExternFunctionSymbol(mangledName);
             else
                 entryPoint = _compilation.NodeFactory.MethodEntrypoint(methodDesc);
 
@@ -833,8 +838,11 @@ namespace Internal.JitInterface
 
                 if (caller.IsNoInlining)
                 {
-                    // Do not tailcall from methods that are marked as noinline (people often use no-inline
+                    // Do not tailcall from methods that are marked as NoInlining (people often use no-inline
                     // to mean "I want to always see this method in stacktrace")
+                    //
+                    // NOTE: we don't have to handle NoOptimization here, because JIT is not expected
+                    // to emit fast tail calls if optimizations are disabled.
                     result = false;
                 }
             }
@@ -949,9 +957,6 @@ namespace Internal.JitInterface
                             RelocType rel = (_compilation.NodeFactory.Target.IsWindows) ?
                                 RelocType.IMAGE_REL_BASED_ABSOLUTE :
                                 RelocType.IMAGE_REL_BASED_RELPTR32;
-
-                            if (_compilation.NodeFactory.Target.Abi == TargetAbi.Jit)
-                                rel = RelocType.IMAGE_REL_BASED_REL32;
 
                             builder.EmitReloc(typeSymbol, rel);
                         }
@@ -1153,6 +1158,11 @@ namespace Internal.JitInterface
 
             Debug.Assert(type.IsArray);
 
+            TypeDesc elementType = ((ArrayType)type).ElementType;
+
+            if (elementType.GetElementSize().AsInt == _compilation.TypeSystemContext.Target.PointerSize)
+                return CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_PTR;
+
             if (type.RequiresAlign8())
                 return CorInfoHelpFunc.CORINFO_HELP_NEWARR_1_ALIGN8;
 
@@ -1193,7 +1203,7 @@ namespace Internal.JitInterface
 #if DEBUG
             // In debug, write some bogus data to the struct to ensure we have filled everything
             // properly.
-            MemoryHelper.FillMemory((byte*)pResult, 0xcc, Marshal.SizeOf<CORINFO_CALL_INFO>());
+            NativeMemory.Fill(pResult, (nuint)sizeof(CORINFO_CALL_INFO), 0xcc);
 #endif
             MethodDesc method = HandleToObject(pResolvedToken.hMethod);
 
@@ -1370,7 +1380,7 @@ namespace Internal.JitInterface
                 ThrowHelper.ThrowBadImageFormatException();
             }
 
-            if (directCall && resolvedConstraint && pResult->exactContextNeedsRuntimeLookup)
+            if (directCall && resolvedConstraint && (pResult->exactContextNeedsRuntimeLookup || forceUseRuntimeLookup))
             {
                 // We want to do a direct call to a shared method on a type. We need to provide
                 // a generic context, but the JitInterface doesn't provide a way for us to do it from here.
@@ -1380,39 +1390,43 @@ namespace Internal.JitInterface
                 pResult->codePointerOrStubLookup.constLookup.accessType = InfoAccessType.IAT_VALUE;
                 pResult->nullInstanceCheck = !targetMethod.Signature.IsStatic;
 
-                // We have the canonical version of the method - find the runtime determined version.
-                // For now simplify it by assuming the resolved method is on the same type as the constraint.
-                Debug.Assert(targetMethod.OwningType.GetTypeDefinition() == constrainedType.GetTypeDefinition());
                 TypeDesc runtimeDeterminedConstrainedType = (TypeDesc)GetRuntimeDeterminedObjectForToken(ref *pConstrainedResolvedToken);
 
+                object targetOfLookup;
+                ReadyToRunHelperId lookupHelper;
                 if (forceUseRuntimeLookup)
                 {
-                    // The below logic would incorrectly resolve the lookup into the first match we found,
-                    // but there was a compile-time ambiguity due to shared code. The correct fix should
-                    // use the ConstrainedMethodUseLookupResult dictionary entry so that the exact
-                    // dispatch can be computed with the help of the generic dictionary.
-                    // We fail the compilation here to avoid bad codegen. This is not actually an invalid program.
-                    // https://github.com/dotnet/runtimelab/issues/1431
-                    ThrowHelper.ThrowInvalidProgramException();
+                    MethodDesc runtimeDeterminedInterfaceMethod = (MethodDesc)GetRuntimeDeterminedObjectForToken(ref pResolvedToken);
+                    targetOfLookup = new ConstrainedCallInfo(runtimeDeterminedConstrainedType, runtimeDeterminedInterfaceMethod);
+                    lookupHelper = ReadyToRunHelperId.ConstrainedDirectCall;
                 }
-
-                MethodDesc targetOfLookup;
-                if (runtimeDeterminedConstrainedType.IsRuntimeDeterminedType)
-                    targetOfLookup = _compilation.TypeSystemContext.GetMethodForRuntimeDeterminedType(targetMethod.GetTypicalMethodDefinition(), (RuntimeDeterminedType)runtimeDeterminedConstrainedType);
-                else if (runtimeDeterminedConstrainedType.HasInstantiation)
-                    targetOfLookup = _compilation.TypeSystemContext.GetMethodForInstantiatedType(targetMethod.GetTypicalMethodDefinition(), (InstantiatedType)runtimeDeterminedConstrainedType);
                 else
-                    targetOfLookup = targetMethod.GetMethodDefinition();
-                if (targetOfLookup.HasInstantiation)
                 {
-                    var methodToGetInstantiation = (MethodDesc)GetRuntimeDeterminedObjectForToken(ref pResolvedToken);
-                    targetOfLookup = targetOfLookup.MakeInstantiatedMethod(methodToGetInstantiation.Instantiation);
+                    // We have the canonical version of the method - find the runtime determined version.
+                    // For now simplify it by assuming the resolved method is on the same type as the constraint.
+                    Debug.Assert(targetMethod.OwningType.GetTypeDefinition() == constrainedType.GetTypeDefinition());
+
+                    MethodDesc lookupMethod;
+                    if (runtimeDeterminedConstrainedType.IsRuntimeDeterminedType)
+                        lookupMethod = _compilation.TypeSystemContext.GetMethodForRuntimeDeterminedType(targetMethod.GetTypicalMethodDefinition(), (RuntimeDeterminedType)runtimeDeterminedConstrainedType);
+                    else if (runtimeDeterminedConstrainedType.HasInstantiation)
+                        lookupMethod = _compilation.TypeSystemContext.GetMethodForInstantiatedType(targetMethod.GetTypicalMethodDefinition(), (InstantiatedType)runtimeDeterminedConstrainedType);
+                    else
+                        lookupMethod = targetMethod.GetMethodDefinition();
+                    if (lookupMethod.HasInstantiation)
+                    {
+                        var methodToGetInstantiation = (MethodDesc)GetRuntimeDeterminedObjectForToken(ref pResolvedToken);
+                        lookupMethod = lookupMethod.MakeInstantiatedMethod(methodToGetInstantiation.Instantiation);
+                    }
+                    Debug.Assert(lookupMethod.GetCanonMethodTarget(CanonicalFormKind.Specific) == targetMethod.GetCanonMethodTarget(CanonicalFormKind.Specific));
+
+                    targetOfLookup = lookupMethod;
+                    lookupHelper = ReadyToRunHelperId.MethodEntry;
                 }
-                Debug.Assert(targetOfLookup.GetCanonMethodTarget(CanonicalFormKind.Specific) == targetMethod.GetCanonMethodTarget(CanonicalFormKind.Specific));
 
                 ComputeLookup(ref pResolvedToken,
                     targetOfLookup,
-                    ReadyToRunHelperId.MethodEntry,
+                    lookupHelper,
                     HandleToObject(callerHandle),
                     ref pResult->codePointerOrStubLookup);
 
@@ -1615,31 +1629,14 @@ namespace Internal.JitInterface
 
                 pResult->nullInstanceCheck = false;
             }
-            else if ((flags & CORINFO_CALLINFO_FLAGS.CORINFO_CALLINFO_LDFTN) == 0
-                // Canonically-equivalent types have the same vtable layout. Check the canonical form.
-                // We don't want to accidentally ask about Foo<object, __Canon> that may or may not
-                // be available to ask vtable questions about.
-                // This can happen in inlining that the scanner didn't expect.
-                && _compilation.HasFixedSlotVTable(targetMethod.OwningType.ConvertToCanonForm(CanonicalFormKind.Specific)))
+            else if ((flags & CORINFO_CALLINFO_FLAGS.CORINFO_CALLINFO_LDFTN) == 0)
             {
                 pResult->kind = CORINFO_CALL_KIND.CORINFO_VIRTUALCALL_VTABLE;
                 pResult->nullInstanceCheck = true;
             }
             else
             {
-                ReadyToRunHelperId helperId;
-                if ((flags & CORINFO_CALLINFO_FLAGS.CORINFO_CALLINFO_LDFTN) != 0)
-                {
-                    pResult->kind = CORINFO_CALL_KIND.CORINFO_VIRTUALCALL_LDVIRTFTN;
-                    helperId = ReadyToRunHelperId.ResolveVirtualFunction;
-                }
-                else
-                {
-                    // CORINFO_CALL_CODE_POINTER tells the JIT that this is indirect
-                    // call that should not be inlined.
-                    pResult->kind = CORINFO_CALL_KIND.CORINFO_CALL_CODE_POINTER;
-                    helperId = ReadyToRunHelperId.VirtualCall;
-                }
+                pResult->kind = CORINFO_CALL_KIND.CORINFO_VIRTUALCALL_LDVIRTFTN;
 
                 // If this is a non-interface call, we actually don't need a runtime lookup to find the target.
                 // We don't even need to keep track of the runtime-determined method being called because the system ensures
@@ -1650,9 +1647,8 @@ namespace Internal.JitInterface
                     // We need JitInterface changes to fully support this.
                     // If this is LDVIRTFTN of an interface method that is part of a verifiable delegate creation sequence,
                     // RyuJIT is not going to use this value.
-                    Debug.Assert(helperId == ReadyToRunHelperId.ResolveVirtualFunction);
                     pResult->exactContextNeedsRuntimeLookup = false;
-                    pResult->codePointerOrStubLookup.constLookup = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternSymbol("NYI_LDVIRTFTN"));
+                    pResult->codePointerOrStubLookup.constLookup = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternFunctionSymbol("NYI_LDVIRTFTN"));
                 }
                 else
                 {
@@ -1666,7 +1662,7 @@ namespace Internal.JitInterface
 
                     pResult->codePointerOrStubLookup.constLookup =
                         CreateConstLookupToSymbol(
-                            _compilation.NodeFactory.ReadyToRunHelper(helperId, slotDefiningMethod));
+                            _compilation.NodeFactory.ReadyToRunHelper(ReadyToRunHelperId.ResolveVirtualFunction, slotDefiningMethod));
                 }
 
                 // The current NativeAOT ReadyToRun helpers do not handle null thisptr - ask the JIT to emit explicit null checks
@@ -1719,7 +1715,7 @@ namespace Internal.JitInterface
             // In debug, write some bogus data to the struct to ensure we have filled everything
             // properly.
             fixed (CORINFO_GENERICHANDLE_RESULT* tmp = &pResult)
-                MemoryHelper.FillMemory((byte*)tmp, 0xcc, Marshal.SizeOf<CORINFO_GENERICHANDLE_RESULT>());
+                NativeMemory.Fill(tmp, (nuint)sizeof(CORINFO_GENERICHANDLE_RESULT), 0xcc);
 #endif
             ReadyToRunHelperId helperId = ReadyToRunHelperId.Invalid;
             object target = null;
@@ -1784,7 +1780,8 @@ namespace Internal.JitInterface
                 if (pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_NewObj
                         || pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Newarr
                         || pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Box
-                        || pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Constrained)
+                        || pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Constrained
+                        || pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Method)
                 {
                     helperId = ReadyToRunHelperId.TypeHandle;
                 }
@@ -1794,7 +1791,26 @@ namespace Internal.JitInterface
                 }
                 else if (pResolvedToken.tokenType == CorInfoTokenKind.CORINFO_TOKENKIND_Ldtoken)
                 {
-                    helperId = _compilation.GetLdTokenHelperForType(td);
+                    if (((TypeDesc)target).IsRuntimeDeterminedSubtype)
+                    {
+                        // If we're in a generic context and the type is canonical, Compilation cannot give
+                        // us a good answer on what handle kind to use because we don't track canonical forms.
+                        // If we already have a fixed generic dictionary layout (a build with a scanner pass),
+                        // ask for NecessaryTypeSymbol - it will get upgraded as needed.
+                        // If we don't have a fixed dictionary layout, ask for a full type symbol because that's
+                        // always correct.
+                        MethodDesc callerContextMethod = HandleToObject(callerHandle);
+                        DictionaryLayoutNode contextLayout = _compilation.NodeFactory.GenericDictionaryLayout(
+                            callerContextMethod.RequiresInstMethodDescArg() ? callerContextMethod : callerContextMethod.OwningType);
+                        if (contextLayout.HasFixedSlots)
+                            helperId = ReadyToRunHelperId.NecessaryTypeHandle;
+                        else
+                            helperId = ReadyToRunHelperId.TypeHandle;
+                    }
+                    else
+                    {
+                        helperId = _compilation.GetLdTokenHelperForType(td);
+                    }
                 }
                 else
                 {
@@ -1840,11 +1856,15 @@ namespace Internal.JitInterface
             // Canonically-equivalent types have the same slots, so ask for Foo<__Canon, __Canon>.
             methodDesc = methodDesc.GetCanonMethodTarget(CanonicalFormKind.Specific);
 
-            int slot = VirtualMethodSlotHelper.GetVirtualMethodSlot(_compilation.NodeFactory, methodDesc, methodDesc.OwningType);
+            TypeDesc owningType = methodDesc.OwningType;
+            int slot = VirtualMethodSlotHelper.GetVirtualMethodSlot(_compilation.NodeFactory, methodDesc, owningType);
             if (slot == -1)
             {
                 throw new InvalidOperationException(methodDesc.ToString());
             }
+
+            if (_compilation.NeedsSlotUseTracking(owningType))
+                (_additionalDependencies ??= new ILCompiler.DependencyAnalysisFramework.DependencyNodeCore<NodeFactory>.DependencyList()).Add(_compilation.NodeFactory.VirtualMethodUse(methodDesc), "Virtual method call");
 
             offsetAfterIndirection = (uint)(EETypeNode.GetVTableOffset(pointerSize) + slot * pointerSize);
         }
@@ -1856,7 +1876,7 @@ namespace Internal.JitInterface
 
             pResult.compileTimeHandle = null;
 
-            switch (method.Name)
+            switch (method.GetName())
             {
                 case "Of":
                     ComputeLookup(ref pResolvedToken, method.Instantiation[0], ReadyToRunHelperId.TypeHandle, HandleToObject(callerHandle), ref pResult.lookup);
@@ -1881,26 +1901,6 @@ namespace Internal.JitInterface
             return getMethodAttribsInternal(HandleToObject(ftn));
         }
 
-        private void* getMethodSync(CORINFO_METHOD_STRUCT_* ftn, ref void* ppIndirection)
-        {
-            MethodDesc method = HandleToObject(ftn);
-            TypeDesc type = method.OwningType;
-            ISymbolNode methodSync = _compilation.NecessaryTypeSymbolIfPossible(type);
-
-            void* result = (void*)ObjectToHandle(methodSync);
-
-            if (methodSync.RepresentsIndirectionCell)
-            {
-                ppIndirection = result;
-                return null;
-            }
-            else
-            {
-                ppIndirection = null;
-                return result;
-            }
-        }
-
         private unsafe HRESULT allocPgoInstrumentationBySchema(CORINFO_METHOD_STRUCT_* ftnHnd, PgoInstrumentationSchema* pSchema, uint countSchemaItems, byte** pInstrumentationData)
         {
             throw new NotImplementedException("allocPgoInstrumentationBySchema");
@@ -1920,7 +1920,7 @@ namespace Internal.JitInterface
             string externName = _compilation.PInvokeILProvider.GetDirectCallExternName(md);
             externName = _compilation.NodeFactory.NameMangler.NodeMangler.ExternMethod(externName, md);
 
-            pLookup = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternSymbol(externName));
+            pLookup = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternFunctionSymbol(externName));
         }
 
         private void getGSCookie(IntPtr* pCookieVal, IntPtr** ppCookieVal)
@@ -2008,12 +2008,12 @@ namespace Internal.JitInterface
                 //  m_RIP (1)
                 //  m_FramePointer (1)
                 //  m_pThread
-                //  m_Flags + align (no align for ARM64 that has 64 bit m_Flags)
+                //  m_Flags + align (no align for ARM64/LoongArch64/RiscV64 that has 64 bit m_Flags)
                 //  m_PreservedRegs - RSP / R9 (2)
                 //      No need to save other preserved regs because of the JIT ensures that there are
                 //      no live GC references in callee saved registers around the PInvoke callsite.
                 //
-                // (1) On ARM32/ARM64 the order of m_RIP and m_FramePointer is reverse
+                // (1) On ARM32/ARM64/LoongArch64/RiscV64 the order of m_RIP and m_FramePointer is reverse
                 // (2) R9 is saved for ARM32 because it needs to be preserved for methods with stackalloc
                 int size = 5 * this.PointerSize;
 
@@ -2025,9 +2025,6 @@ namespace Internal.JitInterface
                 return size;
             }
         }
-
-        private bool canGetCookieForPInvokeCalliSig(CORINFO_SIG_INFO* szMetaSig)
-        { throw new NotImplementedException("canGetCookieForPInvokeCalliSig"); }
 
 #pragma warning disable CA1822 // Mark members as static
         private void classMustBeLoadedBeforeCodeIsRun(CORINFO_CLASS_STRUCT_* cls)
@@ -2074,7 +2071,7 @@ namespace Internal.JitInterface
 #if DEBUG
             // In debug, write some bogus data to the struct to ensure we have filled everything
             // properly.
-            MemoryHelper.FillMemory((byte*)pResult, 0xcc, Marshal.SizeOf<CORINFO_FIELD_INFO>());
+            NativeMemory.Fill(pResult, (nuint)sizeof(CORINFO_FIELD_INFO), 0xcc);
 #endif
 
             Debug.Assert(((int)flags & ((int)CORINFO_ACCESS_FLAGS.CORINFO_ACCESS_GET |
@@ -2172,7 +2169,7 @@ namespace Internal.JitInterface
                     else if (field.IsThreadStatic)
                     {
                         var target = MethodBeingCompiled.Context.Target;
-                        if ((target.IsWindows && target.Architecture is TargetArchitecture.X64) ||
+                        if ((target.IsWindows && target.Architecture is TargetArchitecture.X64 or TargetArchitecture.ARM64) ||
                             ((target.OperatingSystem == TargetOS.Linux) &&
                             (target.Architecture is TargetArchitecture.X64 or TargetArchitecture.ARM64)))
                         {
@@ -2258,6 +2255,10 @@ namespace Internal.JitInterface
             if (!ConstructedEETypeNode.CreationAllowed(type))
                 return false;
 
+            // We don't track information that would allow us to deal with array variance
+            if (_compilation.TypeSystemContext.IsArrayVariantCastable(type))
+                return false;
+
             TypeDesc canonType = type.ConvertToCanonForm(CanonicalFormKind.Specific);
 
             // If we don't have a constructed MethodTable for the exact type or for its template,
@@ -2336,12 +2337,16 @@ namespace Internal.JitInterface
 
                     if (value == null)
                     {
-                        Debug.Assert(valueOffset == 0);
-                        Debug.Assert(bufferSize == targetPtrSize);
-
-                        // Write "null" to buffer
-                        new Span<byte>(buffer, targetPtrSize).Clear();
-                        return true;
+                        if ((valueOffset == 0) && (bufferSize == targetPtrSize))
+                        {
+                            // Write "null" to buffer
+                            new Span<byte>(buffer, targetPtrSize).Clear();
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
 
                     if (value.GetRawData(_compilation.NodeFactory, out object data))
@@ -2357,13 +2362,14 @@ namespace Internal.JitInterface
                                 return false;
 
                             case FrozenObjectNode:
-                                Debug.Assert(valueOffset == 0);
-                                Debug.Assert(bufferSize == targetPtrSize);
-
-                                // save handle's value to buffer
-                                nint handle = ObjectToHandle(data);
-                                new Span<byte>(&handle, targetPtrSize).CopyTo(new Span<byte>(buffer, targetPtrSize));
-                                return true;
+                                if ((valueOffset == 0) && (bufferSize == targetPtrSize))
+                                {
+                                    // save handle's value to buffer
+                                    nint handle = ObjectToHandle(data);
+                                    new Span<byte>(&handle, targetPtrSize).CopyTo(new Span<byte>(buffer, targetPtrSize));
+                                    return true;
+                                }
+                                return false;
                         }
                     }
                 }
@@ -2416,6 +2422,9 @@ namespace Internal.JitInterface
         private CORINFO_OBJECT_STRUCT_* getRuntimeTypePointer(CORINFO_CLASS_STRUCT_* cls)
         {
             TypeDesc type = HandleToObject(cls);
+            if (type.IsCanonicalSubtype(CanonicalFormKind.Any))
+                return null;
+
             return ObjectToHandle(_compilation.NecessaryRuntimeTypeIfPossible(type));
         }
 
@@ -2467,10 +2476,10 @@ namespace Internal.JitInterface
         private void getThreadLocalStaticInfo_NativeAOT(CORINFO_THREAD_STATIC_INFO_NATIVEAOT* pInfo)
         {
             pInfo->offsetOfThreadLocalStoragePointer = (uint)(11 * PointerSize); // Offset of ThreadLocalStoragePointer in the TEB
-            pInfo->tlsIndexObject = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternSymbol("_tls_index"));
+            pInfo->tlsIndexObject = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternDataSymbol("_tls_index"));
             pInfo->tlsRootObject = CreateConstLookupToSymbol(_compilation.NodeFactory.TlsRoot);
             pInfo->threadStaticBaseSlow = CreateConstLookupToSymbol(_compilation.NodeFactory.HelperEntrypoint(HelperEntrypoint.GetInlinedThreadStaticBaseSlow));
-            pInfo->tlsGetAddrFtnPtr = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternSymbol("__tls_get_addr"));
+            pInfo->tlsGetAddrFtnPtr = CreateConstLookupToSymbol(_compilation.NodeFactory.ExternFunctionSymbol("__tls_get_addr"));
         }
 
 #pragma warning disable CA1822 // Mark members as static

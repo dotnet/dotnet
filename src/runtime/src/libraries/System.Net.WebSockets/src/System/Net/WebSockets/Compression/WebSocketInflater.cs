@@ -161,7 +161,7 @@ namespace System.Net.WebSockets.Compression
         /// Finishes the decoding by flushing any outstanding data to the output.
         /// </summary>
         /// <returns>true if the flush completed, false to indicate that there is more outstanding data.</returns>
-        private unsafe bool Finish(Span<byte> output, ref int written)
+        private bool Finish(Span<byte> output, ref int written)
         {
             Debug.Assert(_stream is not null && _stream.AvailIn == 0);
             Debug.Assert(_available == 0);
@@ -210,12 +210,12 @@ namespace System.Net.WebSockets.Compression
             }
         }
 
-        private static unsafe bool IsFinished(ZLibStreamHandle stream, out byte? remainingByte)
+        private static bool IsFinished(ZLibStreamHandle stream, out byte? remainingByte)
         {
             // There is no other way to make sure that we've consumed all data
             // but to try to inflate again with at least one byte of output buffer.
-            byte b;
-            if (Inflate(stream, new Span<byte>(&b, 1), FlushCode.SyncFlush) == 0)
+            byte b = 0;
+            if (Inflate(stream, new Span<byte>(ref b), FlushCode.SyncFlush) == 0)
             {
                 remainingByte = null;
                 return true;

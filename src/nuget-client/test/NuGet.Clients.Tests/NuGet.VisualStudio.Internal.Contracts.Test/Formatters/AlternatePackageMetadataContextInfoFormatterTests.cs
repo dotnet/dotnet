@@ -19,7 +19,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.VersionRange, actualResult.VersionRange);
         }
 
-        public static TheoryData TestData => new TheoryData<AlternatePackageMetadataContextInfo>
+        public static TheoryData<AlternatePackageMetadataContextInfo> TestData => new()
             {
                 { new AlternatePackageMetadataContextInfo(packageId: "packageid", new VersionRange(new NuGetVersion("1.0"))) }
             };

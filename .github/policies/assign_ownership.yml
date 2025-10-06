@@ -1,0 +1,16 @@
+name: Assign Reviewers
+description: Assign reviewers based on file paths changed.
+resource: repository
+
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/arcade/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: dnceng

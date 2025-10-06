@@ -1,35 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
+  <Source Mapping="scenario-tests" Uri="https://github.com/dotnet/dotnet" Sha="8b29a1682219da555ee27e4fdda55dc3884b316f" BarId="277635" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.23307.1">
-      <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
+    <Dependency Name="System.CommandLine" Version="2.0.0-rc.1.25401.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>8b29a1682219da555ee27e4fdda55dc3884b316f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.430701">
-      <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
-      <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24055.2">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>bab85ba4579526962b0dbb0aa4db625c50da8859</Sha>
-      <SourceBuild RepoName="arcade" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24055.2">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>bab85ba4579526962b0dbb0aa4db625c50da8859</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24055.1">
-      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>ef691e3c401949dab9986a50d8288a6e489f72bb</Sha>
-      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24054.2">
-      <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>8263b543a5ceb0cd864cdb9e9011f1289c0dd246</Sha>
-      <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25401.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>8b29a1682219da555ee27e4fdda55dc3884b316f</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

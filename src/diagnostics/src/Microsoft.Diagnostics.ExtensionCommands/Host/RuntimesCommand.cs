@@ -9,7 +9,7 @@ using Microsoft.Diagnostics.Runtime;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name = "runtimes", Help = "Lists the runtimes in the target or changes the default runtime.")]
+    [Command(Name = "runtimes", Aliases = new string[] { "setruntime" }, Help = "Lists the runtimes in the target or changes the default runtime.")]
     public class RuntimesCommand : CommandBase
     {
         [ServiceImport]
@@ -17,6 +17,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
         [ServiceImport]
         public IContextService ContextService { get; set; }
+
+        [ServiceImport]
+        public ISettingsService SettingsService { get; set; }
 
         [ServiceImport]
         public ITarget Target { get; set; }
@@ -30,16 +33,62 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         [Option(Name = "--netcore", Aliases = new string[] { "-netcore", "-c" }, Help = "Switches to the .NET Core or .NET 5+ runtime if exists.")]
         public bool NetCore { get; set; }
 
+        [Option(Name = "--all", Aliases = new string[] { "-a" }, Help = "Forces all runtimes to be enumerated.")]
+        public bool All { get; set; }
+
+        [Option(Name = "--usecdac", Help = "Use the CDAC if available and requested (true/false).")]
+        public bool? UseContractReader { get; set; }
+
+        [Option(Name = "--forceusecdac", Help = "Always use the CDAC (true/false).")]
+        public bool? ForceUseContractReader { get; set; }
+
+        [Option(Name = "--DacSignatureVerification", Aliases = new string[] { "-v" }, Help = "Enforce the proper DAC certificate signing when loaded (true/false).")]
+        public bool? DacSignatureVerification { get; set; }
+
         public override void Invoke()
         {
             if (NetFx && NetCore)
             {
                 throw new DiagnosticsException("Cannot specify both -netfx and -netcore options");
             }
+
+            bool flush = false;
+            if (UseContractReader.HasValue)
+            {
+                SettingsService.UseContractReader = UseContractReader.Value;
+                flush = true;
+            }
+
+            if (ForceUseContractReader.HasValue)
+            {
+                SettingsService.UseContractReader = ForceUseContractReader.Value;
+                SettingsService.ForceUseContractReader = ForceUseContractReader.Value;
+                flush = true;
+            }
+
+            if (DacSignatureVerification.HasValue)
+            {
+                SettingsService.DacSignatureVerificationEnabled = DacSignatureVerification.Value;
+                flush = true;
+            }
+
+            RuntimeEnumerationFlags flags = RuntimeEnumerationFlags.Default;
+            if (All)
+            {
+                // Force all runtimes to be enumerated. This requires a target flush.
+                flags = RuntimeEnumerationFlags.All;
+                flush = true;
+            }
+
+            if (flush)
+            {
+                Target.Flush();
+            }
+
             if (NetFx || NetCore)
             {
                 string name = NetFx ? "desktop .NET Framework" : ".NET Core";
-                foreach (IRuntime runtime in RuntimeService.EnumerateRuntimes())
+                foreach (IRuntime runtime in RuntimeService.EnumerateRuntimes(flags))
                 {
                     if (NetFx && runtime.RuntimeType == RuntimeType.Desktop ||
                         NetCore && runtime.RuntimeType == RuntimeType.NetCore)
@@ -59,10 +108,10 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             else
             {
                 // Display the current runtime star ("*") only if there is more than one runtime and it is the current one
-                bool displayStar = RuntimeService.EnumerateRuntimes().Count() > 1;
+                bool displayStar = RuntimeService.EnumerateRuntimes(flags).Count() > 1;
                 IRuntime currentRuntime = ContextService.GetCurrentRuntime();
 
-                foreach (IRuntime runtime in RuntimeService.EnumerateRuntimes())
+                foreach (IRuntime runtime in RuntimeService.EnumerateRuntimes(flags))
                 {
                     string current = displayStar ? (runtime == currentRuntime ? "*" : " ") : "";
                     Write(current);
@@ -80,6 +129,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                     this.DisplayResources(runtime.RuntimeModule, all: false, indent: "    ");
                     this.DisplayRuntimeExports(runtime.RuntimeModule, error: true, indent: "    ");
                 }
+                this.DisplaySettingService();
             }
         }
     }

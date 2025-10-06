@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/LeadingKeyword/StaticAbstractKeyword.fs", false,
-      QualifiedNameOfFile StaticAbstractKeyword, [], [],
+      QualifiedNameOfFile StaticAbstractKeyword, [],
       [SynModuleOrNamespace
          ([StaticAbstractKeyword], false, AnonModule,
           [Types
@@ -24,7 +24,7 @@ ImplFile
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
                             PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (3,4--3,34),
+                            Single None, None, (3,4--3,34),
                             { LeadingKeyword =
                                StaticAbstract ((3,4--3,10), (3,11--3,19))
                               InlineKeyword = None
@@ -42,6 +42,7 @@ ImplFile
                                  WithKeyword = None })], (2,0--3,34))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))
 
 (3,4)-(3,19) parse warning Declaring "interfaces with static abstract methods" is an advanced feature. See https://aka.ms/fsharp-iwsams for guidance. You can disable this warning by using '#nowarn "3535"' or '--nowarn:3535'.

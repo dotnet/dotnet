@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -275,6 +275,10 @@
 }
 .assembly /*20000001*/ System.Net.Sockets
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000003:0A000002*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000008*/::.ctor() /* 0A000002 */ = ( 01 00 00 00 ) 
   .custom /*0C000004:0A000046*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000019*/::.ctor(int32) /* 0A000046 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000005:0A000047*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*0100001A*/::.ctor() /* 0A000047 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -441,7 +445,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F59E4B66000
+// Image base: 0x00007F7BEAC4D000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================

@@ -79,11 +79,6 @@ namespace Microsoft.Build.UnitTests
             */
         };
 
-        private const int NoParallelismThreadCount = 1;
-        private const int DefaultParallelismThreadCount = int.MaxValue;
-
-        private int GetParallelismThreadCount(bool isUseSingleThreadedCopy) => isUseSingleThreadedCopy ? NoParallelismThreadCount : DefaultParallelismThreadCount;
-
         /// <summary>
         /// Temporarily save off the value of MSBUILDALWAYSOVERWRITEREADONLYFILES, so that we can run
         /// the tests isolated from the current state of the environment, but put it back how it belongs
@@ -110,8 +105,8 @@ namespace Microsoft.Build.UnitTests
             _alwaysOverwriteReadOnlyFiles = Environment.GetEnvironmentVariable(Copy.AlwaysOverwriteReadOnlyFilesEnvVar);
             _alwaysRetry = Environment.GetEnvironmentVariable(Copy.AlwaysRetryEnvVar);
 
-            Environment.SetEnvironmentVariable(Copy.AlwaysOverwriteReadOnlyFilesEnvVar, String.Empty);
-            Environment.SetEnvironmentVariable(Copy.AlwaysRetryEnvVar, String.Empty);
+            Environment.SetEnvironmentVariable(Copy.AlwaysOverwriteReadOnlyFilesEnvVar, null);
+            Environment.SetEnvironmentVariable(Copy.AlwaysRetryEnvVar, null);
 
             Copy.RefreshInternalEnvironmentValues();
         }
@@ -509,7 +504,7 @@ namespace Microsoft.Build.UnitTests
                     UseSymboliclinksIfPossible = isUseSymbolicLinks,
                 };
 
-                t.Execute(m.CopyFile, GetParallelismThreadCount(isUseSingleThreadedCopy));
+                t.Execute(m.CopyFile, !isUseSingleThreadedCopy);
 
                 // Expect for there to have been no copies.
                 Assert.Equal(0, m.copyCount);
@@ -557,7 +552,7 @@ namespace Microsoft.Build.UnitTests
                     FailIfNotIncremental = true,
                 };
 
-                Assert.False(t.Execute(m.CopyFile, GetParallelismThreadCount(isUseSingleThreadedCopy)));
+                Assert.False(t.Execute(m.CopyFile, !isUseSingleThreadedCopy));
 
                 // Expect for there to have been no copies.
                 Assert.Equal(0, m.copyCount);
@@ -617,7 +612,7 @@ namespace Microsoft.Build.UnitTests
                     SkipUnchangedFiles = true,
                     FailIfNotIncremental = true,
                 };
-                Assert.True(t.Execute(m.CopyFile, GetParallelismThreadCount(isUseSingleThreadedCopy)));
+                Assert.True(t.Execute(m.CopyFile, !isUseSingleThreadedCopy));
 
                 // Expect for there to have been no copies.
                 Assert.Equal(0, m.copyCount);
@@ -670,7 +665,7 @@ namespace Microsoft.Build.UnitTests
                     FailIfNotIncremental = true,
                 };
 
-                Assert.False(t.Execute(m.CopyFile, GetParallelismThreadCount(isUseSingleThreadedCopy)));
+                Assert.False(t.Execute(m.CopyFile, !isUseSingleThreadedCopy));
 
                 // Expect for there to have been no copies.
                 Assert.Equal(0, m.copyCount);
@@ -2015,7 +2010,7 @@ namespace Microsoft.Build.UnitTests
                     filesActuallyCopied.Add(new KeyValuePair<FileState, FileState>(source, dest));
                 }
                 return true;
-            }, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            }, !isUseSingleThreadedCopy);
 
             Assert.True(success);
             Assert.Equal(2, filesActuallyCopied.Count);
@@ -2082,7 +2077,7 @@ namespace Microsoft.Build.UnitTests
                     filesActuallyCopied.Add(new KeyValuePair<FileState, FileState>(source, dest));
                 }
                 return true;
-            }, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            }, !isUseSingleThreadedCopy);
 
             Assert.True(success);
             Assert.Equal(4, filesActuallyCopied.Count);
@@ -2352,7 +2347,7 @@ namespace Microsoft.Build.UnitTests
             };
 
             var copyFunctor = new CopyFunctor(2, false /* do not throw on failure */);
-            bool result = t.Execute(copyFunctor.Copy, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            bool result = t.Execute(copyFunctor.Copy, !isUseSingleThreadedCopy);
 
             Assert.False(result);
             engine.AssertLogDoesntContain("MSB3026");
@@ -2419,7 +2414,7 @@ namespace Microsoft.Build.UnitTests
             };
 
             var copyFunctor = new CopyFunctor(2, false /* do not throw on failure */);
-            bool result = t.Execute(copyFunctor.Copy, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            bool result = t.Execute(copyFunctor.Copy, !isUseSingleThreadedCopy);
 
             Assert.True(result);
             engine.AssertLogContains("MSB3026");
@@ -2446,7 +2441,7 @@ namespace Microsoft.Build.UnitTests
             };
 
             var copyFunctor = new CopyFunctor(2, false /* do not throw on failure */);
-            bool result = t.Execute(copyFunctor.Copy, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            bool result = t.Execute(copyFunctor.Copy, !isUseSingleThreadedCopy);
 
             Assert.True(result);
             engine.AssertLogContains("MSB3026");
@@ -2478,7 +2473,7 @@ namespace Microsoft.Build.UnitTests
             };
 
             var copyFunctor = new CopyFunctor(4, false /* do not throw */);
-            bool result = t.Execute(copyFunctor.Copy, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            bool result = t.Execute(copyFunctor.Copy, !isUseSingleThreadedCopy);
 
             Assert.False(result);
             engine.AssertLogContains("MSB3026");
@@ -2507,7 +2502,7 @@ namespace Microsoft.Build.UnitTests
             };
 
             var copyFunctor = new CopyFunctor(3, true /* throw */);
-            bool result = t.Execute(copyFunctor.Copy, GetParallelismThreadCount(isUseSingleThreadedCopy));
+            bool result = t.Execute(copyFunctor.Copy, !isUseSingleThreadedCopy);
 
             Assert.False(result);
             engine.AssertLogContains("MSB3026");
@@ -3028,7 +3023,7 @@ namespace Microsoft.Build.UnitTests
             /// <summary>
             /// Protects the counts and lists below.
             /// </summary>
-            private readonly object _lockObj = new object();
+            private readonly LockType _lockObj = new LockType();
 
             /// <summary>
             /// On what attempt count should we stop failing?
@@ -3083,6 +3078,86 @@ namespace Microsoft.Build.UnitTests
                 }
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Test that Copy task correctly handles case-sensitive paths on Unix systems.
+        /// On Unix, "CS" and "cs" are different paths and should not conflict.
+        /// This reproduces the issue mentioned in GitHub issue #12146.
+        /// </summary>
+        [Fact]
+        public void CopyToFileWithSameCaseInsensitiveNameAsExistingDirectoryOnUnix()
+        {
+            // Skip this test on case-insensitive file systems (Windows, macOS with default APFS/HFS+)
+            if (!FileUtilities.GetIsFileSystemCaseSensitive())
+            {
+                return;
+            }
+
+            string tempPath = Path.GetTempPath();
+            string tempDir = Path.Combine(tempPath, "CopyTestDir" + Guid.NewGuid().ToString("N"));
+
+            try
+            {
+                Directory.CreateDirectory(tempDir);
+
+                // Create a subdirectory structure to match the real scenario
+                string outputDir = Path.Combine(tempDir, "bin", "Debug", "net10.0");
+                Directory.CreateDirectory(outputDir);
+
+                // Create a directory named "cs" (lowercase) in the output directory
+                string lowercaseDir = Path.Combine(outputDir, "cs");
+                Directory.CreateDirectory(lowercaseDir);
+
+                // Create a few source files to copy (representing multiple files being copied to same dest dir)
+                string sourceDir = Path.Combine(tempDir, "CS", "obj", "Debug", "net10.0");
+                Directory.CreateDirectory(sourceDir);
+                
+                string sourceFile1 = Path.Combine(sourceDir, "apphost");
+                string sourceFile2 = Path.Combine(sourceDir, "app.dll");
+                File.WriteAllText(sourceFile1, "test apphost content");
+                File.WriteAllText(sourceFile2, "test dll content");
+
+                // Try to copy files to the output directory - one should be "CS", the other some other file
+                string destFile1 = Path.Combine(outputDir, "CS");
+                string destFile2 = Path.Combine(outputDir, "app.dll");
+
+                Copy t = new Copy();
+                MockEngine engine = new MockEngine();
+                t.BuildEngine = engine;
+                t.SourceFiles = new ITaskItem[] { 
+                    new TaskItem(sourceFile1),
+                    new TaskItem(sourceFile2)
+                };
+                t.DestinationFiles = new ITaskItem[] { 
+                    new TaskItem(destFile1),
+                    new TaskItem(destFile2)
+                };
+
+                // This should succeed on Unix because "cs" (directory) and "CS" (file) are different
+                bool result = t.Execute();
+
+                if (!result)
+                {
+                    // Log the error to see what went wrong
+                    string log = engine.Log;
+                    Console.WriteLine("Copy failed with log: " + log);
+                }
+
+                Assert.True(result, "Copy should succeed on Unix when destination file name differs in case from existing directory");
+                Assert.True(File.Exists(destFile1), "Destination file CS should be created");
+                Assert.True(File.Exists(destFile2), "Destination file app.dll should be created");
+                
+                // Ensure the directory still exists and wasn't corrupted
+                Assert.True(Directory.Exists(lowercaseDir), "The cs directory should still exist");
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, true);
+                }
             }
         }
     }

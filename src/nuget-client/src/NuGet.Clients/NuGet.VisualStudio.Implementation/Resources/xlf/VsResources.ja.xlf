@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../VsResources.resx">
+    <body>
+      <trans-unit id="CouldNotGetShortFrameworkName">
+        <source>The framework name '{0}' cannot be converted to a short framework name.</source>
+        <target state="translated">フレームワーク名 '{0}' を短いフレームワーク名に変換できません。</target>
+        <note>Arguments in order:
+The string representation of the user's input framework name.</note>
+      </trans-unit>
+      <trans-unit id="DiagnosticBrowseObjectClassName">
+        <source>Diagnostic</source>
+        <target state="translated">診断</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticCodeDescription">
+        <source>The diagnostic's identifying code.</source>
+        <target state="translated">診断の識別コードです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticCodeDisplayName">
+        <source>Code</source>
+        <target state="translated">コード</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLevelDescription">
+        <source>The diagnostic's level.</source>
+        <target state="translated">診断のレベルです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLevelDisplayName">
+        <source>Level</source>
+        <target state="translated">レベル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLibraryNameDescription">
+        <source>The name of the package or project this diagnostic applies to.</source>
+        <target state="translated">この診断が適用されるパッケージまたはプロジェクトの名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLibraryNameDisplayName">
+        <source>Library</source>
+        <target state="translated">ライブラリ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticMessageDescription">
+        <source>The diagnostic's descriptive message.</source>
+        <target state="translated">診断の説明メッセージです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticMessageDisplayName">
+        <source>Message</source>
+        <target state="translated">メッセージ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticWarningLevelDescription">
+        <source>The diagnostic's warning level. Only applies to warnings.</source>
+        <target state="translated">診断の警告レベルです。警告にのみ適用されます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticWarningLevelDisplayName">
+        <source>Warning Level</source>
+        <target state="translated">警告レベル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>The project file '{0}' does not exist on disk.</source>
+        <target state="translated">プロジェクト ファイル '{0}' がディスクに存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectNotInCache">
+        <source>Project {0} does not exist in the project system cache.</source>
+        <target state="translated">プロジェクト {0} はプロジェクト システム キャッシュに存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNetStandardFramework">
+        <source>The specified framework name '{0}' must be .NETStandard.</source>
+        <target state="translated">指定されたフレームワーク名 '{0}' は、.NETStandard でなければなりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNuGetVersionString">
+        <source>The provided version string is not a valid nuget version.</source>
+        <target state="translated">指定したバージョン文字列は、有効な NuGet バージョンではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
+        <target state="translated">指定されたソース '{0}' が正しくありません。有効なソースを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyBrowseObjectClassName">
+        <source>Assembly</source>
+        <target state="translated">アセンブリ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyNameDescription">
+        <source>The assembly's name.</source>
+        <target state="translated">アセンブリの名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyNameDisplayName">
+        <source>Name</source>
+        <target state="translated">名前</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyPathDescription">
+        <source>The assembly's path.</source>
+        <target state="translated">アセンブリのパスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyPathDisplayName">
+        <source>Path</source>
+        <target state="translated">パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileBrowseObjectClassName">
+        <source>Build File</source>
+        <target state="translated">ビルド ファイル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileGroupName">
+        <source>Build Files</source>
+        <target state="translated">ビルド ファイル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileNameDescription">
+        <source>The build file's name.</source>
+        <target state="translated">ビルド ファイルの名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileNameDisplayName">
+        <source>Name</source>
+        <target state="translated">名前</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFilePathDescription">
+        <source>The build file's path.</source>
+        <target state="translated">ビルド ファイルのパスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFilePathDisplayName">
+        <source>Path</source>
+        <target state="translated">パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildMultiTargetingFileGroupName">
+        <source>Build Files (Multi-targeting)</source>
+        <target state="translated">ビルド ファイル (マルチターゲット)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCompileTimeAssemblyGroupName">
+        <source>Compile Time Assemblies</source>
+        <target state="translated">コンパイル時のアセンブリ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBrowseObjectClassName">
+        <source>Content File</source>
+        <target state="translated">コンテンツ ファイル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBuildActionDescription">
+        <source>The content file's build action.</source>
+        <target state="translated">コンテンツ ファイルのビルド アクションです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBuildActionDisplayName">
+        <source>Build Action</source>
+        <target state="translated">ビルド アクション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCodeLanguageDescription">
+        <source>Controls whether this file should be included in the referencing project based on that project's language.</source>
+        <target state="translated">プロジェクトの言語に基づいて、このファイルを参照元のプロジェクトに含めるかどうかを制御します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCodeLanguageDisplayName">
+        <source>Code Language</source>
+        <target state="translated">コード言語</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCopyToOutputDescription">
+        <source>Whether the content file is copied to the output directory during build.</source>
+        <target state="translated">ビルド中にコンテンツ ファイルを出力ディレクトリにコピーするかどうかを指定します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCopyToOutputDisplayName">
+        <source>Copy to Output</source>
+        <target state="translated">出力にコピー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileOutputPathDescription">
+        <source>The content file's output path.</source>
+        <target state="translated">コンテンツ ファイルの出力パスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileOutputPathDisplayName">
+        <source>Output Path</source>
+        <target state="translated">出力パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePPOutputPathDescription">
+        <source>The content file's preprocessed output path.</source>
+        <target state="translated">コンテンツ ファイルの前処理された出力パスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePPOutputPathDisplayName">
+        <source>Preprocessed Output Path</source>
+        <target state="translated">前処理済みの出力パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePathDescription">
+        <source>The content file's path.</source>
+        <target state="translated">コンテンツ ファイルのパスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePathDisplayName">
+        <source>Path</source>
+        <target state="translated">パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilesGroupName">
+        <source>Content Files</source>
+        <target state="translated">コンテンツ ファイル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentBrowseObjectClassName">
+        <source>Package Document</source>
+        <target state="translated">パッケージ ドキュメント</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentGroupName">
+        <source>Documents</source>
+        <target state="translated">ドキュメント</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentPathDescription">
+        <source>The document's path.</source>
+        <target state="translated">ドキュメントのパス。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentPathDisplayName">
+        <source>Path</source>
+        <target state="translated">パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageFrameworkAssemblyGroupName">
+        <source>Framework Assemblies</source>
+        <target state="translated">フレームワーク アセンブリ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceBrowseObjectClassName">
+        <source>Package Reference</source>
+        <target state="translated">パッケージ参照</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceNameDescription">
+        <source>The package's name.</source>
+        <target state="translated">パッケージの名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceNameDisplayName">
+        <source>Name</source>
+        <target state="translated">名前</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferencePathDescription">
+        <source>The package's resolved full path.</source>
+        <target state="translated">パッケージの解決された完全なパスです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferencePathDisplayName">
+        <source>Path</source>
+        <target state="translated">パス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceVersionDescription">
+        <source>The package's version.</source>
+        <target state="translated">パッケージのバージョンです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceVersionDisplayName">
+        <source>Version</source>
+        <target state="translated">バージョン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PathContext_CreateContextError">
+        <source>Failed creating a path context for "{0}". Reason: {1}</source>
+        <target state="translated">"{0}" のパス コンテキストの作成に失敗しました。理由: {1}</target>
+        <note>{0} is the project name or full path, {1} is the error message generated earlier</note>
+      </trans-unit>
+      <trans-unit id="PathContext_LockFileError">
+        <source>The lock file doesn't exist or it's an older format that doesn't have the package folders property persisted.</source>
+        <target state="translated">ロック ファイルは存在しないか、パッケージ フォルダーが正しく保持されていない古い形式です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PathContext_PackageDirectoryNotFound">
+        <source>Package directory for "{0}" is not found.</source>
+        <target state="translated">"{0}" のパッケージ ディレクトリが見つかりません。</target>
+        <note>{0} is the package ID</note>
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_ExtensionManagerError">
+        <source>Error accessing Extension Manager.</source>
+        <target state="translated">拡張機能マネージャーへのアクセス中にエラーが発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
+        <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
+        <target state="translated">必要なすべてのパッケージをプロジェクトに追加できませんでした。'{0}' からの次のパッケージのインストールが失敗しました: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_InvalidExtensionId">
+        <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
+        <target state="translated">プレインストールされているパッケージに、不足している拡張機能への参照があります。ID '{0}' の拡張機能が見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
+        <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
+        <target state="translated">プレインストールされているパッケージに、不足しているレジストリ値への参照があります。'{0}' という名前のレジストリ キーが '{1}' に見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_PackageInstallStatus">
+        <source>Adding {0}.{1} to project...</source>
+        <target state="translated">{0}.{1} をプロジェクトに追加しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_RegistryKeyError">
+        <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
+        <target state="translated">プレインストールされているパッケージがレジストリ提供のパッケージ リポジトリを使用するように構成されていますが、レジストリ キー '{0}' へのアクセスでエラーが発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_VersionConflict">
+        <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
+        <target state="translated">'{0}' のバージョン '{1}' のインストールを試みましたが、プロジェクトには既に異なるバージョンが含まれています。スキップしています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceBrowseObjectClassName">
+        <source>Project Reference</source>
+        <target state="translated">プロジェクト参照</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceNameDescription">
+        <source>The project's name.</source>
+        <target state="translated">プロジェクトの名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceNameDisplayName">
+        <source>Name</source>
+        <target state="translated">名前</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}' を NULL にすることはできません。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="TemplateWizard_ErrorDialogTitle">
+        <source>Package Installation Error</source>
+        <target state="translated">パッケージ インストール エラー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
+        <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
+        <target state="translated">プロジェクト テンプレートに列記されている 1 つ以上のパッケージの "id" または "version" 属性の値が、ないか、空か、または無効です。どちらの属性も必須であり、有効な値が必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
+        <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
+        <target state="translated">パッケージ要素の "repository" 属性の値が無効です: '{0}'。有効な値は、'template' または 'extension' です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidWizardRunKind">
+        <source>This template wizard can only be applied to single-project or project-item templates.</source>
+        <target state="translated">このテンプレート ウィザードは、単一のプロジェクト テンプレートまたはプロジェクト アイテム テンプレートにのみ適用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_MissingExtensionId">
+        <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
+        <target state="translated">プロジェクト テンプレートは拡張機能固有のパッケージ リポジトリを使用するように構成されていますが、拡張機能 ID が指定されていません。"repositoryId" 属性を使用して拡張機能 ID を指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_MissingRegistryKeyName">
+        <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
+        <target state="translated">プロジェクト テンプレートはレジストリ提供のパッケージ リポジトリを使用するように構成されていますが、レジストリ値の名前が指定されていません。"keyName" 属性を使用してレジストリ値を指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackage">
+        <source>Unable to find package '{0}'.</source>
+        <target state="translated">パッケージ '{0}' が見つかりません。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

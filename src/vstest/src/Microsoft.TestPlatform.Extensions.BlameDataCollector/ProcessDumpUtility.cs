@@ -60,7 +60,7 @@ internal class ProcessDumpUtility : IProcessDumpUtility
 
         IEnumerable<string> hangDumps = _fileHelper.DirectoryExists(_hangDumpDirectory)
             ? _fileHelper.GetFiles(_hangDumpDirectory, "*_hangdump*.dmp", SearchOption.TopDirectoryOnly)
-            : Array.Empty<string>();
+            : [];
 
         var foundDumps = new List<string>();
         foreach (var dumpPath in crashDumps.Concat(hangDumps))

@@ -266,11 +266,6 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
                 versionRange: _versionRange);
 
             action.ActionAndContextList.Should().HaveCount(2);
-#pragma warning disable CS0618 // Type or member is obsolete
-            action.OriginalActions.Should().HaveCount(2);
-            action.OriginalActions[0].Should().Be(firstProjectAction);
-            action.InstallationContext.Should().Be(firstInstallationContext);
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Fact]

@@ -364,6 +364,38 @@ internal static class RazorDiagnosticFactory
     public static RazorDiagnostic CreateParsing_DirectiveExpectsIdentifierOrExpression(SourceSpan location, string directiveName)
         => RazorDiagnostic.Create(Parsing_DirectiveExpectsIdentifierOrExpression, location, directiveName);
 
+    internal static readonly RazorDiagnosticDescriptor Parsing_VoidElement =
+        new($"{DiagnosticPrefix}1042",
+            Resources.TagHelpersParseTreeRewriter_VoidElement,
+            RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateParsing_VoidElement(SourceSpan location, string tagName)
+        => RazorDiagnostic.Create(Parsing_VoidElement, location, tagName);
+
+    internal static readonly RazorDiagnosticDescriptor Parsing_PreprocessorDirectivesMustBeAtTheStartOfLine =
+        new($"{DiagnosticPrefix}1043",
+            Resources.Directives_must_be_at_the_start_of_the_line,
+            RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateParsing_PreprocessorDirectivesMustBeAtTheStartOfLine(SourceSpan location)
+        => RazorDiagnostic.Create(Parsing_PreprocessorDirectivesMustBeAtTheStartOfLine, location);
+
+    internal static readonly RazorDiagnosticDescriptor Parsing_PossibleMisplacedPreprocessorDirective =
+        new($"{DiagnosticPrefix}1044",
+            Resources.Possible_preprocessor_directive_is_misplaced,
+            RazorDiagnosticSeverity.Warning);
+
+    public static RazorDiagnostic CreateParsing_PossibleMisplacedPreprocessorDirective(SourceSpan location)
+        => RazorDiagnostic.Create(Parsing_PossibleMisplacedPreprocessorDirective, location);
+
+    internal static readonly RazorDiagnosticDescriptor Parsing_DefineAndUndefNotAllowed =
+        new($"{DiagnosticPrefix}1045",
+            Resources.Define_and_undef_cannot_be_used_in_razor_markup,
+            RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateParsing_DefineAndUndefNotAllowed(SourceSpan location)
+        => RazorDiagnostic.Create(Parsing_DefineAndUndefNotAllowed, location);
+
     #endregion
 
     #region Semantic Errors
@@ -613,14 +645,6 @@ internal static class RazorDiagnosticFactory
     public static RazorDiagnostic CreateTagHelper_InvalidBoundDirectiveAttributeName(string tagHelperDisplayName, string propertyDisplayName, string invalidName)
         => RazorDiagnostic.Create(TagHelper_InvalidBoundDirectiveAttributeName, tagHelperDisplayName, propertyDisplayName, invalidName);
 
-    internal static readonly RazorDiagnosticDescriptor TagHelper_InvalidBoundDirectiveAttributePrefix =
-        new($"{DiagnosticPrefix}3015",
-            Resources.TagHelper_InvalidBoundDirectiveAttributePrefix,
-            RazorDiagnosticSeverity.Error);
-
-    public static RazorDiagnostic CreateTagHelper_InvalidBoundDirectiveAttributePrefix(string tagHelperDisplayName, string propertyDisplayName, string invalidName)
-        => RazorDiagnostic.Create(TagHelper_InvalidBoundDirectiveAttributePrefix, tagHelperDisplayName, propertyDisplayName, invalidName);
-
     internal static readonly RazorDiagnosticDescriptor TagHelper_InvalidRequiredDirectiveAttributeName =
         new($"{DiagnosticPrefix}3016",
             Resources.TagHelper_InvalidRequiredDirectiveAttributeName,
@@ -628,6 +652,14 @@ internal static class RazorDiagnosticFactory
 
     public static RazorDiagnostic CreateTagHelper_InvalidRequiredDirectiveAttributeName(string propertyDisplayName, string invalidName)
         => RazorDiagnostic.Create(TagHelper_InvalidRequiredDirectiveAttributeName, propertyDisplayName, invalidName);
+
+    internal static readonly RazorDiagnosticDescriptor TagHelper_InvalidBoundDirectiveAttributePrefix =
+        new($"{DiagnosticPrefix}3017",
+            Resources.TagHelper_InvalidBoundDirectiveAttributePrefix,
+            RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateTagHelper_InvalidBoundDirectiveAttributePrefix(string tagHelperDisplayName, string propertyDisplayName, string invalidName)
+        => RazorDiagnostic.Create(TagHelper_InvalidBoundDirectiveAttributePrefix, tagHelperDisplayName, propertyDisplayName, invalidName);
 
     #endregion
 

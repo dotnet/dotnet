@@ -31,6 +31,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         /// <summary>
+        /// Separate pool for assembly symbols as these collections commonly exceed ArrayBuilder's size threshold.
+        /// </summary>
+        private static readonly ObjectPool<ArrayBuilder<AssemblySymbol>> s_symbolPool = new ObjectPool<ArrayBuilder<AssemblySymbol>>(() => new ArrayBuilder<AssemblySymbol>());
+
+        /// <summary>
         /// The system assembly, which provides primitive types like Object, String, etc., e.g. mscorlib.dll. 
         /// The value is provided by ReferenceManager and must not be modified. For SourceAssemblySymbol, non-missing 
         /// coreLibrary must match one of the referenced assemblies returned by GetReferencedAssemblySymbols() method of 
@@ -377,7 +382,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// Lookup declaration for predefined CorLib type in this Assembly.
         /// </summary>
         /// <returns>The symbol for the pre-defined type or an error type if the type is not defined in the core library.</returns>
-        internal abstract NamedTypeSymbol GetDeclaredSpecialType(SpecialType type);
+        internal abstract NamedTypeSymbol GetDeclaredSpecialType(ExtendedSpecialType type);
 
         /// <summary>
         /// Register declaration of predefined CorLib type in this Assembly.
@@ -427,6 +432,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return this.RuntimeSupportsStaticAbstractMembersInInterfaces;
                 case RuntimeCapability.InlineArrayTypes:
                     return this.RuntimeSupportsInlineArrayTypes;
+                case RuntimeCapability.ByRefLikeGenerics:
+                    return this.RuntimeSupportsByRefLikeGenerics;
+                case RuntimeCapability.RuntimeAsyncMethods:
+                    return this.RuntimeSupportsAsyncMethods;
             }
 
             return false;
@@ -477,10 +486,31 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
+        /// <summary>
+        /// Figure out if the target runtime supports inline array types.
+        /// </summary>
+        internal bool RuntimeSupportsByRefLikeGenerics
+        {
+            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsByRefLikeGenerics
+            get
+            {
+                // CorLibrary should never be null, but that invariant is broken in some cases for MissingAssemblySymbol.
+                // Tracked by https://github.com/dotnet/roslyn/issues/61262
+                return CorLibrary is not null &&
+                    RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__ByRefLikeGenerics);
+            }
+        }
+
+#nullable enable
+        // Keep in sync with VB's AssemblySymbol.RuntimeSupportsAsyncMethods
+        internal bool RuntimeSupportsAsyncMethods
+            => GetSpecialType(InternalSpecialType.System_Runtime_CompilerServices_AsyncHelpers) is { TypeKind: TypeKind.Class, IsStatic: true };
+#nullable disable
+
         protected bool RuntimeSupportsFeature(SpecialMember feature)
         {
             // Keep in sync with VB's AssemblySymbol.RuntimeSupportsFeature
-            Debug.Assert((SpecialType)SpecialMembers.GetDescriptor(feature).DeclaringTypeId == SpecialType.System_Runtime_CompilerServices_RuntimeFeature);
+            Debug.Assert(SpecialMembers.GetDescriptor(feature).DeclaringSpecialType == SpecialType.System_Runtime_CompilerServices_RuntimeFeature);
             return GetSpecialType(SpecialType.System_Runtime_CompilerServices_RuntimeFeature) is { TypeKind: TypeKind.Class, IsStatic: true } &&
                    GetSpecialTypeMember(feature) is object;
         }
@@ -584,7 +614,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// Gets the symbol for the pre-defined type from core library associated with this assembly.
         /// </summary>
         /// <returns>The symbol for the pre-defined type or an error type if the type is not defined in the core library.</returns>
-        internal NamedTypeSymbol GetSpecialType(SpecialType type)
+        internal NamedTypeSymbol GetSpecialType(ExtendedSpecialType type)
         {
             return CorLibrary.GetDeclaredSpecialType(type);
         }
@@ -923,7 +953,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(this is SourceAssemblySymbol,
                 "Never include references for a non-source assembly, because they don't know about aliases.");
 
-            var assemblies = ArrayBuilder<AssemblySymbol>.GetInstance();
+            var assemblies = s_symbolPool.Allocate();
 
             // ignore reference aliases if searching for a type from a specific assembly:
             if (assemblyOpt != null)
@@ -990,7 +1020,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 result = candidate;
             }
 
-            assemblies.Free();
+            assemblies.Clear();
+
+            // Do not call assemblies.Free, as the ArrayBuilder isn't associated with our pool and even if it were, we don't
+            // want the default freeing behavior of limiting pooled array size to ArrayBuilder.PooledArrayLengthLimitExclusive.
+            // Instead, we need to explicitly add this item back to our pool.
+            s_symbolPool.Free(assemblies);
+
             Debug.Assert(result?.IsErrorType() != true);
             return result;
 

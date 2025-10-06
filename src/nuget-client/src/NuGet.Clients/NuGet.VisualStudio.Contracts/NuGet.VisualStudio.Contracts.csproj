@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
-    <!-- Preview version of Microsoft.ServiceHub.Framework causes a NU5104 warning. When upgrading to a stable version of this package, remove the below NoWarn="NU5104". -->
-    <NoWarn>$(NoWarn);NU5104;RS0041</NoWarn>
+    <NoWarn>$(NoWarn);RS0041</NoWarn>
     <SkipShared>true</SkipShared>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
@@ -17,6 +16,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ServiceHub.Framework" />
+  </ItemGroup>
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      These packages are dependencies of directly referenced PackageReferences.
+      When the above PackageReferences are upgraded to newer versions, try deleting the below PackageReferences
+      -->
     <!-- We do this to avoid the warning our build raises about keeping a consistent newtonsoft.json version. We don't need newtonsonft.json type in here, we don't use it. -->
     <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>

@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -290,6 +290,10 @@
 }
 .assembly /*20000001*/ System.Runtime.InteropServices.RuntimeInformation
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000001:0A000001*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000001*/::.ctor(int32) /* 0A000001 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000002:0A000002*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000002*/::.ctor() /* 0A000002 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                           63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -355,7 +359,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F90FFE9E000
+// Image base: 0x00007F9F4AB9D000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -377,11 +381,6 @@
       .field /*0400002E*/ assembly  marshal( fixed sysstring [128]) string szCSDVersion
     } // end of class RTL_OSVERSIONINFOEX
 
-    .method /*0600001E*/ private hidebysig static pinvokeimpl("ntdll.dll" winapi) 
-            int32  RtlGetVersion([out] valuetype Interop/*02000002*//NtDll/*02000008*//RTL_OSVERSIONINFOEX/*0200000B*/& lpVersionInformation) cil managed preservesig
-    // SIG: 00 01 08 10 11 2C
-    {
-    }
     .method /*0600001F*/ assembly hidebysig static 
             string  RtlGetVersion() cil managed
     // SIG: 00 00 0E
@@ -510,16 +509,6 @@
       .field /*04000040*/ public static literal valuetype Interop/*02000002*//Kernel32/*0200000A*//ProcessorArchitecture/*0200000D*/ Processor_Architecture_UNKNOWN = uint16(0xFFFF)
     } // end of class ProcessorArchitecture
 
-    .method /*06000021*/ assembly hidebysig static pinvokeimpl("kernel32.dll" winapi) 
-            void  GetNativeSystemInfo([out] valuetype Interop/*02000002*//Kernel32/*0200000A*//SYSTEM_INFO/*0200000C*/& lpSystemInfo) cil managed preservesig
-    // SIG: 00 01 01 10 11 30
-    {
-    }
-    .method /*06000022*/ assembly hidebysig static pinvokeimpl("kernel32.dll" winapi) 
-            void  GetSystemInfo([out] valuetype Interop/*02000002*//Kernel32/*0200000A*//SYSTEM_INFO/*0200000C*/& lpSystemInfo) cil managed preservesig
-    // SIG: 00 01 01 10 11 30
-    {
-    }
     .method /*06000023*/ public hidebysig specialname rtspecialname 
             instance void  .ctor() cil managed
     // SIG: 20 00 01
@@ -818,20 +807,22 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000015*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000015*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000015*/ System.SR/*02000004*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string Argument_EmptyValue()
+  .property /*17000002*/ callconv(8) string
+          Argument_EmptyValue()
   {
     .get string System.SR/*02000004*/::get_Argument_EmptyValue() /* 06000008 */
   } // end of property SR::Argument_EmptyValue
-  .property /*17000003*/ string PlatformNotSupported_RuntimeInformation()
+  .property /*17000003*/ callconv(8) string
+          PlatformNotSupported_RuntimeInformation()
   {
     .get string System.SR/*02000004*/::get_PlatformNotSupported_RuntimeInformation() /* 06000009 */
   } // end of property SR::PlatformNotSupported_RuntimeInformation
-  .property /*17000004*/ class [mscorlib/*23000001*/]System.Type/*01000018*/
+  .property /*17000004*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000018*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000018*/ System.SR/*02000004*/::get_ResourceType() /* 0600000A */
@@ -1111,21 +1102,23 @@
     IL_0030:  /* 2A   |                  */ ret
   } // end of method RuntimeInformation::.cctor
 
-  .property /*17000005*/ string OSDescription()
+  .property /*17000005*/ callconv(8) string
+          OSDescription()
   {
     .get string System.Runtime.InteropServices.RuntimeInformation/*02000005*/::get_OSDescription() /* 0600000C */
   } // end of property RuntimeInformation::OSDescription
-  .property /*17000006*/ valuetype System.Runtime.InteropServices.Architecture/*02000006*/
+  .property /*17000006*/ callconv(8) valuetype System.Runtime.InteropServices.Architecture/*02000006*/
           OSArchitecture()
   {
     .get valuetype System.Runtime.InteropServices.Architecture/*02000006*/ System.Runtime.InteropServices.RuntimeInformation/*02000005*/::get_OSArchitecture() /* 0600000D */
   } // end of property RuntimeInformation::OSArchitecture
-  .property /*17000007*/ valuetype System.Runtime.InteropServices.Architecture/*02000006*/
+  .property /*17000007*/ callconv(8) valuetype System.Runtime.InteropServices.Architecture/*02000006*/
           ProcessArchitecture()
   {
     .get valuetype System.Runtime.InteropServices.Architecture/*02000006*/ System.Runtime.InteropServices.RuntimeInformation/*02000005*/::get_ProcessArchitecture() /* 0600000E */
   } // end of property RuntimeInformation::ProcessArchitecture
-  .property /*17000008*/ string FrameworkDescription()
+  .property /*17000008*/ callconv(8) string
+          FrameworkDescription()
   {
     .get string System.Runtime.InteropServices.RuntimeInformation/*02000005*/::get_FrameworkDescription() /* 0600000F */
   } // end of property RuntimeInformation::FrameworkDescription
@@ -1373,17 +1366,17 @@
     IL_002d:  /* 2A   |                  */ ret
   } // end of method OSPlatform::.cctor
 
-  .property /*17000009*/ valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
+  .property /*17000009*/ callconv(8) valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
           Linux()
   {
     .get valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/ System.Runtime.InteropServices.OSPlatform/*02000007*/::get_Linux() /* 06000011 */
   } // end of property OSPlatform::Linux
-  .property /*1700000A*/ valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
+  .property /*1700000A*/ callconv(8) valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
           OSX()
   {
     .get valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/ System.Runtime.InteropServices.OSPlatform/*02000007*/::get_OSX() /* 06000012 */
   } // end of property OSPlatform::OSX
-  .property /*1700000B*/ valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
+  .property /*1700000B*/ callconv(8) valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/
           Windows()
   {
     .get valuetype System.Runtime.InteropServices.OSPlatform/*02000007*/ System.Runtime.InteropServices.OSPlatform/*02000007*/::get_Windows() /* 06000013 */

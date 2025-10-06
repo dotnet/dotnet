@@ -1,22 +1,27 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // These tests are really integration tests. There isn't a good way to unit test this functionality since
 // the only thing in here is threading.
@@ -24,23 +29,17 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 {
     private static readonly HostDocument[] s_documents = [TestProjectData.SomeProjectFile1, TestProjectData.AnotherProjectFile1];
 
-    private static readonly HostProject s_hostProject1 = new(
-        TestProjectData.SomeProject.FilePath,
-        TestProjectData.SomeProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_1_0,
-        TestProjectData.SomeProject.RootNamespace);
+    private static readonly HostProject s_hostProject1 = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
+    private static readonly HostProject s_hostProject2 = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
 
-    private static readonly HostProject s_hostProject2 = new(
-        TestProjectData.AnotherProject.FilePath,
-        TestProjectData.AnotherProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_1_0,
-        TestProjectData.AnotherProject.RootNamespace);
+    private static IFallbackProjectManager s_fallbackProjectManager = StrictMock.Of<IFallbackProjectManager>(x =>
+        x.IsFallbackProject(It.IsAny<ProjectKey>()) == false);
 
     private readonly TestDynamicFileInfoProvider _dynamicFileInfoProvider = new();
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
     {
-        builder.SetImportFeature(new TestImportProjectFeature());
+        builder.SetImportFeature(new TestImportProjectFeature(HierarchicalImports.Legacy));
     }
 
     [UIFact]
@@ -51,7 +50,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
+            updater.AddProject(s_hostProject1);
         });
 
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
@@ -62,12 +61,10 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Returns(tcs.Task);
         var hostDocument = s_documents[0];
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
+        var project = projectManager.GetRequiredProject(s_hostProject1.Key);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
-            Delay = TimeSpan.FromMilliseconds(1),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundCapturedWorkload = new ManualResetEventSlim(initialState: false),
+            NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false)
         };
 
         // We trigger enqueued notifications via adding/opening to the project manager
@@ -75,14 +72,14 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Act & Assert
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentAdded(s_hostProject1.Key, hostDocument, textLoader.Object);
+            updater.AddDocument(s_hostProject1.Key, hostDocument, textLoader.Object);
         });
 
-        queue.NotifyBackgroundCapturedWorkload.Wait();
+        generator.NotifyBackgroundWorkStarting.Wait();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentOpened(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.OpenDocument(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Verify document was suppressed because it was opened
@@ -91,7 +88,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Unblock document processing
         tcs.SetResult(TextAndVersion.Create(SourceText.From(string.Empty), VersionStamp.Default));
 
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
+        await generator.WaitUntilCurrentBatchCompletesAsync();
 
         // Validate that even though document parsing took a significant amount of time that the dynamic document wasn't "unsuppressed"
         Assert.Null(_dynamicFileInfoProvider.DynamicDocuments[hostDocument.FilePath]);
@@ -105,8 +102,18 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
+            updater.AddProject(s_hostProject1);
         });
+
+        var loggerMock = new StrictMock<ILogger>();
+        loggerMock
+            .Setup(x => x.Log(It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<IOException>()))
+            .Throws<InvalidOperationException>(); // If this is thrown, the test fails
+
+        var loggerFactoryMock = new StrictMock<ILoggerFactory>();
+        loggerFactoryMock
+            .Setup(x => x.GetOrCreateLogger(It.IsAny<string>()))
+            .Returns(loggerMock.Object);
 
         var textLoader = new StrictMock<TextLoader>();
         textLoader
@@ -115,27 +122,17 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.AddDocument(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
-        {
-            Delay = TimeSpan.FromMilliseconds(1),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
-            NotifyErrorBeingReported = new ManualResetEventSlim(initialState: false),
-        };
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
-        {
-            queue.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
-        });
+        generator.EnqueueIfNecessary(documentKey1);
 
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-
-        Assert.False(queue.NotifyErrorBeingReported.IsSet);
+        await generator.WaitUntilCurrentBatchCompletesAsync();
     }
 
     [UIFact]
@@ -146,184 +143,142 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
+            updater.AddProject(s_hostProject1);
         });
 
-        var textLoader = new StrictMock<TextLoader>();
-        textLoader
+        var loggerMock = new StrictMock<ILogger>();
+        loggerMock
+            .Setup(x => x.Log(It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<UnauthorizedAccessException>()))
+            .Throws<InvalidOperationException>(); // If this is thrown, the test fails
+
+        var loggerFactoryMock = new StrictMock<ILoggerFactory>();
+        loggerFactoryMock
+            .Setup(x => x.GetOrCreateLogger(It.IsAny<string>()))
+            .Returns(loggerMock.Object);
+
+        var textLoaderMock = new StrictMock<TextLoader>();
+        textLoaderMock
             .Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<UnauthorizedAccessException>();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.AddDocument(s_hostProject1.Key, s_documents[0], textLoaderMock.Object);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
-        {
-            Delay = TimeSpan.FromMilliseconds(1),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
-            NotifyErrorBeingReported = new ManualResetEventSlim(initialState: false),
-        };
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
-        {
-            queue.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
-        });
+        generator.EnqueueIfNecessary(documentKey1);
 
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-
-        Assert.False(queue.NotifyErrorBeingReported.IsSet);
+        await generator.WaitUntilCurrentBatchCompletesAsync();
     }
 
     [UIFact]
-    public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
+    public async Task ProcessWorkAndGoBackToSleep()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
-            updater.ProjectAdded(s_hostProject2);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.AddProject(s_hostProject1);
+            updater.AddProject(s_hostProject2);
+            updater.AddDocument(s_hostProject1.Key, s_documents[0], EmptyTextLoader.Instance);
+            updater.AddDocument(s_hostProject1.Key, s_documents[1], EmptyTextLoader.Instance);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(s_hostProject1.Key, s_documents[0].FilePath);
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
-        {
-            Delay = TimeSpan.FromMilliseconds(1),
-            BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false),
-            BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
-        };
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
-        {
-            queue.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
-        });
 
-        Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
-        Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
+        // Enqueue some work.
+        generator.EnqueueIfNecessary(documentKey1);
 
-        // Allow the background work to proceed.
-        queue.BlockBackgroundWorkStart.Set();
-        queue.BlockBackgroundWorkCompleting.Set();
+        // Wait for the work to complete.
+        await generator.WaitUntilCurrentBatchCompletesAsync();
+        Assert.False(generator.HasPendingWork);
+        Assert.Single(generator.CompletedWork, documentKey1);
 
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-
-        Assert.False(queue.IsScheduledOrRunning, "Queue should not have restarted");
-        Assert.False(queue.HasPendingNotifications, "Queue should have processed all notifications");
+        await generator.WaitUntilCurrentBatchCompletesAsync();
+        Assert.False(generator.HasPendingWork);
+        Assert.Single(generator.CompletedWork, documentKey1);
     }
 
     [UIFact]
-    public async Task Queue_ProcessesNotifications_AndRestarts()
+    public async Task ProcessWorkAndRestart()
     {
+        var hostProject1 = TestProjectData.SomeProject;
+        var hostProject2 = TestProjectData.AnotherProject;
+        var hostDocument1 = TestProjectData.SomeProjectFile1;
+        var hostDocument2 = TestProjectData.SomeProjectFile2;
+
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
-            updater.ProjectAdded(s_hostProject2);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.AddProject(hostProject1);
+            updater.AddProject(hostProject2);
+            updater.AddDocument(hostProject1.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject1.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
+        var documentKey1 = new DocumentKey(hostProject1.Key, hostDocument1.FilePath);
+        var documentKey2 = new DocumentKey(hostProject1.Key, hostDocument2.FilePath);
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
-        {
-            Delay = TimeSpan.FromMilliseconds(1),
-            BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundCapturedWorkload = new ManualResetEventSlim(initialState: false),
-            BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
-        };
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
-        {
-            queue.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
-        });
 
-        Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
-        Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
+        // First, enqueue some work.
+        generator.EnqueueIfNecessary(documentKey1);
 
-        // Allow the background work to start.
-        queue.BlockBackgroundWorkStart.Set();
+        // Wait for the work to complete.
+        await generator.WaitUntilCurrentBatchCompletesAsync();
 
-        await Task.Run(() => queue.NotifyBackgroundWorkStarting.Wait(TimeSpan.FromSeconds(1)));
+        Assert.False(generator.HasPendingWork);
+        Assert.Single(generator.CompletedWork, documentKey1);
 
-        Assert.True(queue.IsScheduledOrRunning, "Worker should be processing now");
+        // Enqueue more work.
+        generator.EnqueueIfNecessary(documentKey2);
 
-        await Task.Run(() => queue.NotifyBackgroundCapturedWorkload.Wait(TimeSpan.FromSeconds(1)));
-        Assert.False(queue.HasPendingNotifications, "Worker should have taken all notifications");
+        // Wait for the work to complete.
+        await generator.WaitUntilCurrentBatchCompletesAsync();
 
-        await RunOnDispatcherAsync(() =>
-        {
-            queue.Enqueue(project, project.GetDocument(s_documents[1].FilePath).AssumeNotNull());
-        });
-
-        Assert.True(queue.HasPendingNotifications); // Now we should see the worker restart when it finishes.
-
-        // Allow work to complete, which should restart the timer.
-        queue.BlockBackgroundWorkCompleting.Set();
-
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-        queue.NotifyBackgroundWorkCompleted.Reset();
-
-        // It should start running again right away.
-        Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
-        Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
-
-        // Allow the background work to proceed.
-        queue.BlockBackgroundWorkStart.Set();
-
-        queue.BlockBackgroundWorkCompleting.Set();
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-
-        Assert.False(queue.IsScheduledOrRunning, "Queue should not have restarted");
-        Assert.False(queue.HasPendingNotifications, "Queue should have processed all notifications");
+        Assert.Collection(generator.CompletedWork.OrderBy(key => key.FilePath),
+            key => Assert.Equal(documentKey1, key),
+            key => Assert.Equal(documentKey2, key));
     }
 
     [UIFact]
-    public async Task DocumentChanged_ReparsesRelatedFiles()
+    public async Task UpdateDocumentText_ReparsesRelatedFiles()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
         var documents = new[]
         {
+            TestProjectData.SomeProjectImportFile,
             TestProjectData.SomeProjectComponentFile1,
-            TestProjectData.SomeProjectImportFile
         };
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
+            updater.AddProject(s_hostProject1);
             for (var i = 0; i < documents.Length; i++)
             {
-                updater.DocumentAdded(s_hostProject1.Key, documents[i], null!);
+                updater.AddDocument(s_hostProject1.Key, documents[i], EmptyTextLoader.Instance);
             }
         });
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
-            Delay = TimeSpan.FromMilliseconds(1),
-            BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundCapturedWorkload = new ManualResetEventSlim(initialState: false),
-            BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
+            BlockBatchProcessing = true
         };
 
         var changedSourceText = SourceText.From("@inject DateTime Time");
@@ -331,90 +286,134 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Act & Assert
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentChanged(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
+            updater.UpdateDocumentText(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
         });
 
-        Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
-        Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
+        Assert.True(generator.HasPendingWork);
 
-        for (var i = 0; i < documents.Length; i++)
-        {
-            var key = new DocumentKey(s_hostProject1.Key, documents[i].FilePath);
-            Assert.True(queue.Work.ContainsKey(key));
-        }
+        Assert.Collection(generator.PendingWork.OrderBy(key => key.FilePath),
+            key => Assert.Equal(new(s_hostProject1.Key, documents[0].FilePath), key),
+            key => Assert.Equal(new(s_hostProject1.Key, documents[1].FilePath), key));
 
         // Allow the background work to start.
-        queue.BlockBackgroundWorkStart.Set();
+        generator.UnblockBatchProcessing();
 
-        await Task.Run(() => queue.NotifyBackgroundWorkStarting.Wait(TimeSpan.FromSeconds(1)));
+        await generator.WaitUntilCurrentBatchCompletesAsync();
 
-        Assert.True(queue.IsScheduledOrRunning, "Worker should be processing now");
+        Assert.False(generator.HasPendingWork);
 
-        await Task.Run(() => queue.NotifyBackgroundCapturedWorkload.Wait(TimeSpan.FromSeconds(1)));
-        Assert.False(queue.HasPendingNotifications, "Worker should have taken all notifications");
-
-        // Allow work to complete
-        queue.BlockBackgroundWorkCompleting.Set();
-
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
-
-        Assert.False(queue.HasPendingNotifications, "Queue should have processed all notifications");
-        Assert.False(queue.IsScheduledOrRunning, "Queue should not have restarted");
+        Assert.Collection(generator.CompletedWork.OrderBy(key => key.FilePath),
+            key => Assert.Equal(new(s_hostProject1.Key, documents[0].FilePath), key),
+            key => Assert.Equal(new(s_hostProject1.Key, documents[1].FilePath), key));
     }
 
     [UIFact]
-    public async Task DocumentRemoved_ReparsesRelatedFiles()
+    public async Task RemoveDocument_ReparsesRelatedFiles()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
-            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
-            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
+            updater.AddProject(s_hostProject1);
+            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, EmptyTextLoader.Instance);
+            updater.AddDocument(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, EmptyTextLoader.Instance);
         });
 
-        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, s_fallbackProjectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
-            Delay = TimeSpan.FromMilliseconds(1),
-            BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundCapturedWorkload = new ManualResetEventSlim(initialState: false),
-            BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
-            NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
+            BlockBatchProcessing = true
         };
 
         // Act & Assert
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentRemoved(s_hostProject1.Key, TestProjectData.SomeProjectImportFile);
+            updater.RemoveDocument(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath);
         });
 
-        Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
-        Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
+        Assert.True(generator.HasPendingWork, "Queue should have a notification created during Enqueue");
 
-        var kvp = Assert.Single(queue.Work);
         var expectedKey = new DocumentKey(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1.FilePath);
-        Assert.Equal(expectedKey, kvp.Key);
+        Assert.Single(generator.PendingWork, expectedKey);
 
         // Allow the background work to start.
-        queue.BlockBackgroundWorkStart.Set();
+        generator.UnblockBatchProcessing();
 
-        await Task.Run(() => queue.NotifyBackgroundWorkStarting.Wait(TimeSpan.FromSeconds(1)));
+        await generator.WaitUntilCurrentBatchCompletesAsync();
 
-        Assert.True(queue.IsScheduledOrRunning, "Worker should be processing now");
+        Assert.Single(generator.CompletedWork, expectedKey);
+    }
 
-        await Task.Run(() => queue.NotifyBackgroundCapturedWorkload.Wait(TimeSpan.FromSeconds(1)));
-        Assert.False(queue.HasPendingNotifications, "Worker should have taken all notifications");
+    private class TestBackgroundDocumentGenerator(
+        ProjectSnapshotManager projectManager,
+        IFallbackProjectManager fallbackProjectManager,
+        IRazorDynamicFileInfoProviderInternal dynamicFileInfoProvider,
+        ILoggerFactory loggerFactory)
+        : BackgroundDocumentGenerator(projectManager, fallbackProjectManager, dynamicFileInfoProvider, loggerFactory, delay: TimeSpan.FromMilliseconds(1))
+    {
+        public readonly List<DocumentKey> PendingWork = [];
+        public readonly List<DocumentKey> CompletedWork = [];
 
-        // Allow work to complete
-        queue.BlockBackgroundWorkCompleting.Set();
+        public ManualResetEventSlim? NotifyBackgroundWorkStarting { get; set; }
 
-        await Task.Run(() => queue.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
+        private ManualResetEventSlim? _blockBatchProcessingSource;
 
-        Assert.False(queue.HasPendingNotifications, "Queue should have processed all notifications");
-        Assert.False(queue.IsScheduledOrRunning, "Queue should not have restarted");
+        public bool HasPendingWork => PendingWork.Count > 0;
+
+        [MemberNotNullWhen(true, nameof(_blockBatchProcessingSource))]
+        public bool BlockBatchProcessing
+        {
+            get => _blockBatchProcessingSource is not null;
+
+            init
+            {
+                _blockBatchProcessingSource = new ManualResetEventSlim(initialState: false);
+            }
+        }
+
+        public new Task WaitUntilCurrentBatchCompletesAsync()
+            => base.WaitUntilCurrentBatchCompletesAsync();
+
+        public void UnblockBatchProcessing()
+        {
+            Assert.True(BlockBatchProcessing);
+            _blockBatchProcessingSource.Set();
+        }
+
+        protected override async ValueTask ProcessBatchAsync(ImmutableArray<DocumentKey> items, CancellationToken token)
+        {
+            if (_blockBatchProcessingSource is { } blockEvent)
+            {
+                blockEvent.Wait();
+                blockEvent.Reset();
+            }
+
+            if (NotifyBackgroundWorkStarting is { } resetEvent)
+            {
+                resetEvent.Set();
+            }
+
+            await base.ProcessBatchAsync(items, token);
+        }
+
+        public override void EnqueueIfNecessary(DocumentKey documentKey)
+        {
+            PendingWork.Add(documentKey);
+
+            base.EnqueueIfNecessary(documentKey);
+        }
+
+        protected override Task ProcessDocumentAsync(DocumentSnapshot document, CancellationToken cancellationToken)
+        {
+            var key = document.Key;
+            PendingWork.Remove(key);
+
+            var task = base.ProcessDocumentAsync(document, cancellationToken);
+
+            CompletedWork.Add(key);
+
+            return task;
+        }
     }
 
     private class TestDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInternal
@@ -428,9 +427,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         public IReadOnlyDictionary<string, IDynamicDocumentContainer?> DynamicDocuments => _dynamicDocuments;
 
-        public void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
+        public void SuppressDocument(DocumentKey documentKey)
         {
-            _dynamicDocuments[documentFilePath] = null;
+            _dynamicDocuments[documentKey.FilePath] = null;
         }
 
         public void UpdateFileInfo(ProjectKey projectKey, IDynamicDocumentContainer documentContainer)

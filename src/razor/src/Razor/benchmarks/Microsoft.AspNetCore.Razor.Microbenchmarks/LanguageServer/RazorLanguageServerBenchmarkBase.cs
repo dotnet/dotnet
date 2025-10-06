@@ -1,25 +1,23 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Nerdbank.Streams;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
@@ -29,17 +27,18 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
     public RazorLanguageServerBenchmarkBase()
     {
         var (_, serverStream) = FullDuplexStream.CreatePair();
-        Logger = new NoopLogger();
-        var razorLoggerFactory = new NoopLoggerFactory();
-        RazorLanguageServer = RazorLanguageServerWrapper.Create(
+        var razorLoggerFactory = EmptyLoggerFactory.Instance;
+        Logger = razorLoggerFactory.GetOrCreateLogger(GetType());
+        RazorLanguageServerHost = RazorLanguageServerHost.Create(
             serverStream,
             serverStream,
             razorLoggerFactory,
             NoOpTelemetryReporter.Instance,
-            configure: (collection) =>
+            configureServices: (collection) =>
             {
-                collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
-                collection.AddSingleton<IClientConnection, NoopClientNotifierService>();
+                collection.AddSingleton<IOnInitialized, NoOpClientNotifierService>();
+                collection.AddSingleton<IClientConnection, NoOpClientNotifierService>();
+                collection.AddSingleton<IRazorProjectInfoDriver, NoOpRazorProjectInfoDriver>();
                 Builder(collection);
             },
             featureOptions: BuildFeatureOptions());
@@ -54,40 +53,36 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         return null;
     }
 
-    private protected RazorLanguageServerWrapper RazorLanguageServer { get; }
+    private protected RazorLanguageServerHost RazorLanguageServerHost { get; }
 
-    private protected NoopLogger Logger { get; }
+    private protected ILogger Logger { get; }
 
-    internal async Task<IDocumentSnapshot> GetDocumentSnapshotAsync(string projectFilePath, string filePath, string targetPath)
+    internal async Task<IDocumentSnapshot> GetDocumentSnapshotAsync(string projectFilePath, string filePath, string targetPath, string rootNamespace = null)
     {
         var intermediateOutputPath = Path.Combine(Path.GetDirectoryName(projectFilePath), "obj");
-        var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
+        var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace);
         using var fileStream = new FileStream(filePath, FileMode.Open);
         var text = SourceText.From(fileStream);
-        var textLoader = TextLoader.From(TextAndVersion.Create(text, VersionStamp.Create()));
-        var hostDocument = new HostDocument(filePath, targetPath, FileKinds.Component);
+        var hostDocument = new HostDocument(filePath, targetPath, RazorFileKind.Component);
 
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(
             updater =>
             {
-                updater.ProjectAdded(hostProject);
-                var tagHelpers = CommonResources.LegacyTagHelpers;
-                var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp11);
-                updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
-                updater.DocumentAdded(hostProject.Key, hostDocument, textLoader);
+                updater.AddProject(hostProject);
+                var projectWorkspaceState = ProjectWorkspaceState.Create(CommonResources.LegacyTagHelpers);
+                updater.UpdateProjectWorkspaceState(hostProject.Key, projectWorkspaceState);
+                updater.AddDocument(hostProject.Key, hostDocument, text);
             },
             CancellationToken.None);
 
-        var projectSnapshot = projectManager.GetLoadedProject(hostProject.Key);
-
-        return projectSnapshot.GetDocument(filePath);
+        return projectManager.GetRequiredDocument(hostProject.Key, filePath);
     }
 
-    private class NoopClientNotifierService : IClientConnection, IOnInitialized
+    private sealed class NoOpClientNotifierService : IClientConnection, IOnInitialized
     {
-        public Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+        public Task OnInitializedAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
@@ -108,58 +103,16 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         }
     }
 
-    internal class NoopLoggerFactory() : AbstractRazorLoggerFactory([new NoopLoggerProvider()]);
-
-    internal class NoopLoggerProvider : IRazorLoggerProvider
+    private sealed class NoOpRazorProjectInfoDriver : IRazorProjectInfoDriver
     {
-        public ILogger CreateLogger(string categoryName)
-        {
-            return new NoopLogger();
-        }
-
-        public void Dispose()
-        {
-        }
-    }
-
-    internal class NoopLogger : ILogger, ILspLogger
-    {
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return true;
-        }
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void AddListener(IRazorProjectInfoListener listener)
         {
         }
 
-        public void LogEndContext(string message, params object[] @params)
-        {
-        }
+        public ImmutableArray<RazorProjectInfo> GetLatestProjectInfo()
+            => [];
 
-        public void LogError(string message, params object[] @params)
-        {
-        }
-
-        public void LogException(Exception exception, string message = null, params object[] @params)
-        {
-        }
-
-        public void LogInformation(string message, params object[] @params)
-        {
-        }
-
-        public void LogStartContext(string message, params object[] @params)
-        {
-        }
-
-        public void LogWarning(string message, params object[] @params)
-        {
-        }
+        public Task WaitForInitializationAsync()
+            => Task.CompletedTask;
     }
 }

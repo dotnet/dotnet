@@ -42,15 +42,20 @@ parameters:
   displayName: "Run SDL validation"
   type: boolean
   default: False
+# This option should be used with caution. This is useful for unblocking circular deps issue with testanywhere
+- name: SkipTests
+  displayName: "Skip tests"
+  type: boolean
+  default: False
 
 - name: otherOsPools
   type: object
   default:
-  - name: netcore1espool-internal
-    image: 1es-ubuntu-2204-pt
+  - name: $(DncEngInternalBuildPool)
+    image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
-    image: macOS-11
+    image: macos-14
     os: macOS
 
 variables:
@@ -95,8 +100,6 @@ variables:
   - name: VisualStudioDropName
     value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
   - name: _InternalBuildArgs
-    # IncludeSourceRevisionInInformationalVersion prevents ProductVersion (on file), and AssemblyInformationalVersion
-    # from appending +<commitId>, which breaks DTAAgent.
     value: /p:DotNetSignType=$(_SignType)
       /p:TeamName=$(_TeamName)
       /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
@@ -106,7 +109,6 @@ variables:
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
       /p:VisualStudioDropName=$(VisualStudioDropName)
       /p:GenerateSbom=true
-      /p:IncludeSourceRevisionInInformationalVersion=false
 
 resources:
   repositories:
@@ -118,9 +120,14 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
     pool:
-      name: netcore1espool-internal
-      image: 1es-windows-2022-pt
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2022preview.amd64
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -143,8 +150,9 @@ extends:
           - job: Windows
             timeoutInMinutes: 120
             pool:
-              name: netcore1espool-internal
-              demands: ImageOverride -equals 1es-windows-2022-pt
+              name: $(DncEngInternalBuildPool)
+              image: windows.vs2022preview.amd64
+              os: windows
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
             # which is useful to diagnose some governance issues.
@@ -166,32 +174,33 @@ extends:
               name: Build
               displayName: Build
 
-            # -ci is allowing to import some environment variables and some required configurations
-            # -nobl avoid overwriting binlog of the main Build
-            - script: Test.cmd
-                -configuration Release
-                -ci
-                -nobl
-                -integrationTest
-                -performanceTest
-              name: Test
-              displayName: Test
+            - ${{ if eq(parameters.SkipTests, False) }}:
+              # -ci is allowing to import some environment variables and some required configurations
+              # -nobl avoid overwriting binlog of the main Build
+              - script: Test.cmd
+                  -configuration Release
+                  -ci
+                  -nobl
+                  -integrationTest
+                  -performanceTest
+                name: Test
+                displayName: Test
 
-            # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-            # through the console or trx
-            - task: 1ES.PublishBuildArtifacts@1
-              displayName: 'Publish Test Results folders'
-              inputs:
-                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                ArtifactName: TestResults
-              condition: failed()
+              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+              # through the console or trx
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: 'Publish Test Results folders'
+                inputs:
+                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                  ArtifactName: TestResults
+                condition: failed()
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
               inputs:
                 PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
                 ArtifactName: VSSetupArtifacts
-          
+
           - ${{ each pool in parameters.otherOsPools }}:
             - job: ${{ pool.os }}
               dependsOn: Windows
@@ -222,30 +231,31 @@ extends:
                   artifactName: PackageArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
 
-              - script: ./test.sh
-                  --configuration Release
-                  --ci
-                  --integrationTest
-                  --performanceTest
-                name: Test
-                displayName: Test
+              - ${{ if eq(parameters.SkipTests, False) }}:
+                - script: ./test.sh
+                    --configuration Release
+                    --ci
+                    --integrationTest
+                    --performanceTest
+                  name: Test
+                  displayName: Test
 
-              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-              # through the console or trx
-              - task: 1ES.PublishBuildArtifacts@1
-                displayName: 'Publish Test Results folders'
-                inputs:
-                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                  ArtifactName: TestResults
-                condition: failed()
+                # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+                # through the console or trx
+                - task: 1ES.PublishBuildArtifacts@1
+                  displayName: 'Publish Test Results folders'
+                  inputs:
+                    PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                    ArtifactName: TestResults
+                  condition: failed()
 
           - job: Publish
-            dependsOn: 
+            dependsOn:
               - ${{ each pool in parameters.otherOsPools }}:
                 - ${{ pool.os }}
             pool:
                 name: $(DncEngInternalBuildPool)
-                demands: ImageOverride -equals 1es-windows-2022-pt
+                image: windows.vs2022preview.amd64
                 os: windows
             steps:
               # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for

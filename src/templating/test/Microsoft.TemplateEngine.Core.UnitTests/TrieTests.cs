@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Core.Contracts;
 using Microsoft.TemplateEngine.Core.Util;
@@ -30,7 +29,7 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
                     new MockOperationProvider(
                         new MockOperation(
                             null,
-                            (IProcessorState processor, int bufferLength, ref int currentBufferPosition, int token) =>
+                            (processor, bufferLength, ref currentBufferPosition, token) =>
                             {
                                 testActivated = true;
                                 return 0;
@@ -59,7 +58,7 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
                     new MockOperationProvider(
                         new MockOperation(
                             null,
-                            (IProcessorState processor, int bufferLength, ref int currentBufferPosition, int token) =>
+                            (processor, bufferLength, ref currentBufferPosition, token) =>
                             {
                                 testActivated = true;
                                 return 0;
@@ -84,7 +83,7 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
                     new MockOperationProvider(
                         new MockOperation(
                             null,
-                            (IProcessorState processor, int bufferLength, ref int currentBufferPosition, int token) =>
+                            (processor, bufferLength, ref currentBufferPosition, token) =>
                             {
                                 testActivated = true;
                                 return 0;
@@ -109,7 +108,7 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
                     new MockOperationProvider(
                         new MockOperation(
                             null,
-                            (IProcessorState processor, int bufferLength, ref int currentBufferPosition, int token) =>
+                            (processor, bufferLength, ref currentBufferPosition, token) =>
                             {
                                 testActivated = true;
                                 return 0;

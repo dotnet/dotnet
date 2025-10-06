@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,12 +12,12 @@ namespace NuGet.Internal.Tools.ShipPublicApis
         {
             var nugetSlnDirectory = FindNuGetSlnDirectory();
             var pathArgument = nugetSlnDirectory == null
-                ? new CliArgument<DirectoryInfo>("path")
-                : new CliArgument<DirectoryInfo>("path") { DefaultValueFactory = _ => nugetSlnDirectory };
+                ? new Argument<DirectoryInfo>("path")
+                : new Argument<DirectoryInfo>("path") { DefaultValueFactory = _ => nugetSlnDirectory };
 
-            var resortOption = new CliOption<bool>("--resort");
+            var resortOption = new Option<bool>("--resort");
 
-            var rootCommand = new CliRootCommand()
+            var rootCommand = new RootCommand()
             {
                 pathArgument,
                 resortOption
@@ -30,7 +29,7 @@ namespace NuGet.Internal.Tools.ShipPublicApis
             {
                 var path_Argument = ParseResult.GetValue<DirectoryInfo>(pathArgument);
                 var resort_Option = ParseResult.GetValue<bool>(resortOption);
-                if (path_Argument is not null && resort_Option)
+                if (path_Argument is not null)
                 {
                     await MainAsync(path_Argument, resort_Option);
                 }

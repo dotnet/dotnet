@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/SynType/SynTypeOrInsideSynExprTraitCall.fs", false,
-      QualifiedNameOfFile SynTypeOrInsideSynExprTraitCall, [], [],
+      QualifiedNameOfFile SynTypeOrInsideSynExprTraitCall, [],
       [SynModuleOrNamespace
          ([SynTypeOrInsideSynExprTraitCall], false, AnonModule,
           [Let
@@ -58,7 +58,7 @@ ImplFile
                                    ([[SynArgInfo ([], false, None)]],
                                     SynArgInfo ([], false, None)), false, false,
                                  PreXmlDoc ((2,45), FSharp.Compiler.Xml.XmlDocCollector),
-                                 None, None, (2,45--2,80),
+                                 Single None, None, (2,45--2,80),
                                  { LeadingKeyword =
                                     StaticMember ((2,45--2,51), (2,52--2,58))
                                    InlineKeyword = None
@@ -79,4 +79,5 @@ ImplFile
                     EqualsRange = Some (2,29--2,30) })], (2,0--2,84))],
           PreXmlDocEmpty, [], None, (2,0--3,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

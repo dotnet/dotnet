@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -14,6 +12,11 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
+    }
+
     [Fact]
     public void WriteUsingDirective_NoSource_WritesContent()
     {
@@ -23,14 +26,14 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
 
         var node = new UsingDirectiveIntermediateNode()
         {
-            Content = "System",
+            Content = "System"
         };
 
         // Act
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"using System;
 ",
@@ -51,16 +54,17 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
         var node = new UsingDirectiveIntermediateNode()
         {
             Content = "System",
-            Source = originalSpan,
+            Source = originalSpan
         };
 
         // Act
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
-        var csharp = context.CodeWriter.GenerateCode();
+
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -94,9 +98,10 @@ using System;
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
-        var csharp = context.CodeWriter.GenerateCode();
+
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -120,17 +125,13 @@ using System;
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"__o = i++;
 ",
@@ -149,18 +150,16 @@ using System;
         {
             Source = new SourceSpan("test.cshtml", 0, 0, 0, 3),
         };
+
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-        });
+
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -184,23 +183,18 @@ __o = i++;
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp,
-        });
+
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
+
         builder.Add(new MyExtensionIntermediateNode());
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp,
-        });
+
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"__o = iRender Children
 ++;
@@ -220,24 +214,19 @@ __o = i++;
         {
             Source = new SourceSpan("test.cshtml", 8, 0, 8, 3),
         };
+
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp,
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
+
         builder.Add(new MyExtensionIntermediateNode());
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp,
-        });
+
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -262,20 +251,17 @@ __o = i++;
 
         var node = new CSharpCodeIntermediateNode()
         {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3)
         };
+
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    "
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    "));
 
         // Act
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -299,17 +285,13 @@ __o = i++;
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }"
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"if (true) { }
 ",
@@ -326,20 +308,17 @@ __o = i++;
 
         var node = new CSharpCodeIntermediateNode()
         {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 13),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 13)
         };
+
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -363,20 +342,17 @@ if (true) { }
 
         var node = new CSharpCodeIntermediateNode()
         {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 17),
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 17)
         };
+
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -397,18 +373,19 @@ if (true) { }
         var writer = new DesignTimeNodeWriter();
 
         var content = "<input checked=\"hello-world @false\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpExpressionAttributeValueIntermediateNode;
 
-        using var context = TestCodeRenderingContext.CreateDesignTime(source: sourceDocument);
+        using var context = TestCodeRenderingContext.CreateDesignTime(source: source);
 
         // Act
         writer.WriteCSharpExpressionAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -429,8 +406,9 @@ if (true) { }
         var writer = new DesignTimeNodeWriter();
         var content = "<input checked=\"hello-world @if(@true){ }\" />";
         var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var codeDocument = ProjectEngine.CreateCodeDocument(sourceDocument);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateDesignTime(source: sourceDocument);
@@ -439,7 +417,7 @@ if (true) { }
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -459,18 +437,19 @@ if (true) { }
     {
         var writer = new DesignTimeNodeWriter();
         var content = "<input checked=\"hello-world @if(@true){ @false }\" />";
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var documentNode = Lower(codeDocument);
+        var source = TestRazorSourceDocument.Create(content);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
+        var documentNode = processor.GetDocumentNode();
         var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
 
-        using var context = TestCodeRenderingContext.CreateDesignTime(source: sourceDocument);
+        using var context = TestCodeRenderingContext.CreateDesignTime(source: source);
 
         // Act
         writer.WriteCSharpCodeAttributeValue(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"
 #nullable restore
@@ -493,7 +472,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
+    [ConditionalTheory(Is.Windows)]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]
@@ -506,24 +485,21 @@ Render Children
     public void LinePragma_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
         var writer = new DesignTimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
 
         var node = new CSharpExpressionIntermediateNode()
         {
-            Source = new SourceSpan(fileName, 0, 0, 0, 3),
+            Source = new SourceSpan(fileName, 0, 0, 0, 3)
         };
+
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         writer.WriteCSharpExpression(context, node);
 
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
             $"""
 
@@ -540,7 +516,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
+    [ConditionalTheory(Is.Windows)]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]
@@ -553,24 +529,20 @@ Render Children
     public void LinePragma_Enhanced_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
         var writer = new RuntimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime(source: RazorSourceDocument.Create("", fileName));
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
         Assert.True(context.Options.UseEnhancedLinePragma);
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-            // Create a fake source span, so we can check it correctly maps in the #line below
-            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
-        });
+
+        // Create a fake source span, so we can check it correctly maps in the #line below
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++", new SourceSpan(fileName, 0, 2, 3, 6, 1, 2)));
 
         writer.WriteCSharpExpression(context, node);
 
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
             $"""
             Write(
@@ -586,31 +558,8 @@ Render Children
             """,
             csharp,
             ignoreLineEndingDifferences: true);
-    }
 
-
-    private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
-    {
-        var projectEngine = CreateProjectEngine();
-        return Lower(codeDocument, projectEngine);
-    }
-
-    private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine projectEngine)
-    {
-        foreach (var phase in projectEngine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorIntermediateNodeLoweringPhase)
-            {
-                break;
-            }
-        }
-
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
-        Assert.NotNull(documentNode);
-
-        return documentNode;
+        Assert.Single(context.GetSourceMappings());
     }
 
     private class MyExtensionIntermediateNode : ExtensionIntermediateNode

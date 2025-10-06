@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             return false;
         }
 
-        internal override bool IsMetadataVirtual(bool ignoreInterfaceImplementationChanges = false)
+        internal override bool IsMetadataVirtual(IsMetadataVirtualOption option = IsMetadataVirtualOption.None)
         {
             return false;
         }
@@ -290,11 +290,15 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             get { return false; }
         }
 
-        internal override bool TryGetThisParameter(out ParameterSymbol thisParameter)
+#nullable enable
+
+        internal override bool TryGetThisParameter(out ParameterSymbol? thisParameter)
         {
             thisParameter = null;
             return true;
         }
+
+#nullable disable
 
         public override bool HidesBaseMethodsByName
         {
@@ -457,6 +461,8 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         }
 
         internal sealed override UnmanagedCallersOnlyAttributeData GetUnmanagedCallersOnlyAttributeData(bool forceComplete) => throw ExceptionUtilities.Unreachable();
+
+        internal sealed override bool HasSpecialNameAttribute => throw ExceptionUtilities.Unreachable();
 
         internal override bool HasUnscopedRefAttribute => false;
 
@@ -764,5 +770,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             builderArgument = null;
             return false;
         }
+
+        internal override int TryGetOverloadResolutionPriority() => 0;
     }
 }

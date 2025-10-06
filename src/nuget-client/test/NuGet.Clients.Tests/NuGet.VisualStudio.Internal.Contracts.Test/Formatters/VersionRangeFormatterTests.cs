@@ -22,7 +22,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult, actualResult);
         }
 
-        public static TheoryData VersionRanges => new TheoryData<VersionRange>
+        public static TheoryData<VersionRange> VersionRanges => new()
             {
                 { new VersionRange(MinVersion) },
                 { new VersionRange(MinVersion, FloatRange) },

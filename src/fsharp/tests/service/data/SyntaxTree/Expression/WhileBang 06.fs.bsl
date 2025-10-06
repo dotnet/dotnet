@@ -1,7 +1,6 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Expression/WhileBang 06.fs", false, QualifiedNameOfFile Module, [],
-      [],
       [SynModuleOrNamespace
          ([Module], false, NamedModule,
           [Let
@@ -20,7 +19,9 @@ ImplFile
                           (false,
                            YieldOrReturn
                              ((false, true), Const (Bool true, (4,26--4,30)),
-                              (4,19--4,30)), (4,17--4,32)), (4,11--4,32)),
+                              (4,19--4,30),
+                              { YieldOrReturnKeyword = (4,19--4,25) }),
+                           (4,17--4,32)), (4,11--4,32)),
                      Const (Int32 2, (5,4--5,5)), (4,4--5,5)), (3,4--3,5),
                   Yes (3,0--5,5), { LeadingKeyword = Let (3,0--3,3)
                                     InlineKeyword = None
@@ -29,4 +30,5 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--7,1), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

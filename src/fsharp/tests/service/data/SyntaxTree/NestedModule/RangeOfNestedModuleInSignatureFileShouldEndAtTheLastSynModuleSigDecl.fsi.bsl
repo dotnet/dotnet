@@ -3,7 +3,6 @@ SigFile
      ("/root/NestedModule/RangeOfNestedModuleInSignatureFileShouldEndAtTheLastSynModuleSigDecl.fsi",
       QualifiedNameOfFile
         RangeOfNestedModuleInSignatureFileShouldEndAtTheLastSynModuleSigDecl, [],
-      [],
       [SynModuleOrNamespaceSig
          ([Microsoft; FSharp; Core], false, DeclaredNamespace,
           [Open
@@ -125,7 +124,7 @@ SigFile
                                      SynArgInfo ([], false, None)]],
                                    SynArgInfo ([], false, None)), false, false,
                                 PreXmlDoc ((17,8), FSharp.Compiler.Xml.XmlDocCollector),
-                                None, None, (17,8--17,61),
+                                Single None, None, (17,8--17,61),
                                 { LeadingKeyword = New (17,8--17,11)
                                   InlineKeyword = None
                                   WithKeyword = None
@@ -145,7 +144,7 @@ SigFile
                                 SynValInfo ([], SynArgInfo ([], false, None)),
                                 false, false,
                                 PreXmlDoc ((18,8), FSharp.Compiler.Xml.XmlDocCollector),
-                                None, None, (18,8--18,35),
+                                Single None, None, (18,8--18,35),
                                 { LeadingKeyword = Member (18,8--18,14)
                                   InlineKeyword = None
                                   WithKeyword = Some (18,27--18,31)
@@ -165,7 +164,7 @@ SigFile
                                 SynValInfo ([], SynArgInfo ([], false, None)),
                                 false, false,
                                 PreXmlDoc ((19,8), FSharp.Compiler.Xml.XmlDocCollector),
-                                None, None, (19,8--19,35),
+                                Single None, None, (19,8--19,35),
                                 { LeadingKeyword = Member (19,8--19,14)
                                   InlineKeyword = None
                                   WithKeyword = Some (19,27--19,31)
@@ -185,7 +184,7 @@ SigFile
                                 SynValInfo ([], SynArgInfo ([], false, None)),
                                 false, false,
                                 PreXmlDoc ((20,8), FSharp.Compiler.Xml.XmlDocCollector),
-                                None, None, (20,8--20,35),
+                                Single None, None, (20,8--20,35),
                                 { LeadingKeyword = Member (20,8--20,14)
                                   InlineKeyword = None
                                   WithKeyword = Some (20,27--20,31)
@@ -205,7 +204,7 @@ SigFile
                                 SynValInfo ([], SynArgInfo ([], false, None)),
                                 false, false,
                                 PreXmlDoc ((21,8), FSharp.Compiler.Xml.XmlDocCollector),
-                                None, None, (21,8--21,35),
+                                Single None, None, (21,8--21,35),
                                 { LeadingKeyword = Member (21,8--21,14)
                                   InlineKeyword = None
                                   WithKeyword = Some (21,27--21,31)
@@ -429,7 +428,7 @@ SigFile
                              SynValInfo ([], SynArgInfo ([], false, None)),
                              false, false,
                              PreXmlDoc ((51,8), FSharp.Compiler.Xml.XmlDocCollector),
-                             None, None, (50,8--52,28),
+                             Single None, None, (50,8--52,28),
                              { LeadingKeyword = Member (52,8--52,14)
                                InlineKeyword = None
                                WithKeyword = None
@@ -463,7 +462,7 @@ SigFile
                              SynValInfo ([], SynArgInfo ([], false, None)),
                              false, false,
                              PreXmlDoc ((54,8), FSharp.Compiler.Xml.XmlDocCollector),
-                             None, None, (53,8--55,28),
+                             Single None, None, (53,8--55,28),
                              { LeadingKeyword = Member (55,8--55,14)
                                InlineKeyword = None
                                WithKeyword = None
@@ -496,7 +495,7 @@ SigFile
                              SynValInfo ([], SynArgInfo ([], false, None)),
                              false, false,
                              PreXmlDoc ((57,8), FSharp.Compiler.Xml.XmlDocCollector),
-                             None, None, (56,8--58,26),
+                             Single None, None, (56,8--58,26),
                              { LeadingKeyword = Member (58,8--58,14)
                                InlineKeyword = None
                                WithKeyword = None
@@ -529,7 +528,7 @@ SigFile
                              SynValInfo ([], SynArgInfo ([], false, None)),
                              false, false,
                              PreXmlDoc ((60,8), FSharp.Compiler.Xml.XmlDocCollector),
-                             None, None, (59,8--61,26),
+                             Single None, None, (59,8--61,26),
                              { LeadingKeyword = Member (61,8--61,14)
                                InlineKeyword = None
                                WithKeyword = None
@@ -549,4 +548,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--61,26),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

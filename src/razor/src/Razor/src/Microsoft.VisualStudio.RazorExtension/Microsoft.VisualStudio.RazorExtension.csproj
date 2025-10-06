@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
 
@@ -16,10 +16,9 @@
     <!-- Don't automatically include dependencies -->
     <IncludePackageReferencesInVSIXContainer>false</IncludePackageReferencesInVSIXContainer>
 
-    <!-- Update the VSToolsPath to ensure VSIX builds -->
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <IsPackable>false</IsPackable>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <IsPackable>true</IsPackable>
+    <IsShippingAssembly>true</IsShippingAssembly>
 
     <GenerateResourceUsePreserializedResources Condition="'$(MSBuildRuntimeType)' == 'Core'">true</GenerateResourceUsePreserializedResources>
 
@@ -32,7 +31,12 @@
          Without this the Razor Extension won't be deployed for IntegrationTests
          to use in the "build.cmd" scenario -->
     <DeployExtension>true</DeployExtension>
+
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
   </PropertyGroup>
+
+  <!-- Import the list of service hub services we proffer, to generate various files to include in the VSIX -->
+  <Import Project="$(RepositoryEngineeringDir)targets\Services.props" />
 
   <!-- Include Razor SDK design time assets in the VSIX -->
   <ItemGroup>
@@ -61,54 +65,6 @@
   <!-- Misc other content -->
   <ItemGroup>
     <Content Include="$(RepositoryRoot)NOTICE.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.SemanticTokens64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.SemanticTokens64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.ClientInitialization64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.ClientInitialization64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.TagHelperProvider64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.TagHelperProvider64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="$(ServiceHubCoreSubPath)\Microsoft.VisualStudio.Razor.TagHelperProviderCore64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="$(ServiceHubCoreSubPath)\Microsoft.VisualStudio.Razor.TagHelperProviderCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.SemanticTokensCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.SemanticTokensCore64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64S.servicehub.service.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -174,24 +130,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--
-    ***************************************************************************************************************************************
-      NOTE: Adding OSS components to this list must be reviewed against our component governance standards. For now this is a curated list. You can read more about the CG process at https://aka.ms/component-governance
-    ***************************************************************************************************************************************
-    -->
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.ObjectPool.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Options.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Primitives.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.DependencyInjection.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Configuration.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Configuration.Abstractions.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Logging.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Logging.Abstractions.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)System.IO.Pipelines.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)System.Runtime.CompilerServices.Unsafe.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)System.Threading.Channels.dll" />
-
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Extensions.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Internal.dll" />
@@ -224,20 +162,17 @@
   <ItemGroup>
     <!-- Don't trim this list. It is used to feed into the binding redirects -->
     <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
+      <NgenPriority>2</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
 
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
-    </ProjectReference>
-
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.csproj">
@@ -253,13 +188,11 @@
       <!-- Disable NGEN. Core assemblies are crossgened. -->
       <Ngen>false</Ngen>
     </ProjectReference>
-
-    <ProjectReference Include="..\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
+    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" >
+      <NgenPriority>2</NgenPriority>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.VisualStudio.LegacyEditor.Razor\Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServerClient.Razor\Microsoft.VisualStudio.LanguageServerClient.Razor.csproj" />
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Protocol\Microsoft.AspNetCore.Razor.LanguageServer.Protocol.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj">
       <Name>Microsoft.CodeAnalysis.Razor.Compiler</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
@@ -267,28 +200,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Razor" Version="$(MicrosoftNETSdkRazorPackageVersion)" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="System.Resources.Extensions" Version="$(SystemResourcesExtensionsPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150PackageVersion)" />
+    <PackageReference Include="Microsoft.NET.Sdk.Razor" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="System.Resources.Extensions" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.
       CI builds here: https://github.com/dotnet/razor-tooling/issues/4327
       Now we aren't sure why this exposes a "flaky" issue; however, to workaround the break we pin the following packages to workaround the issue.
     -->
-    <PackageReference Include="Microsoft.VisualStudio.RpcContracts" Version="$(MicrosoftVisualStudioRpcContractsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.RpcContracts" />
   </ItemGroup>
 
   <!-- Include our Razor package dependency dlls in our extension -->
   <ItemGroup>
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CommonLanguageServerProtocol.Framework.dll" />
-
-    <VSIXSourceItem Include="@(RazorNgendVSIXSourceItem)">
-      <Ngen>$(Ngen)</Ngen>
-      <NgenApplication>$(NgenApplication)</NgenApplication>
-      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
-      <NgenPriority>$(NgenPriority)</NgenPriority>
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll">
+      <Ngen>true</Ngen>
+      <NgenPriority>2</NgenPriority>
     </VSIXSourceItem>
   </ItemGroup>
 

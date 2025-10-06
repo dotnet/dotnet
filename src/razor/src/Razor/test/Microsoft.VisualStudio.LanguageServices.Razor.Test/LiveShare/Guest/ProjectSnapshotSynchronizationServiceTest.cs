@@ -1,21 +1,20 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LiveShare.Razor.Test;
+using Microsoft.VisualStudio.LiveShare;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTestBase
 {
@@ -31,7 +30,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         _projectManager = CreateProjectSnapshotManager();
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(
-            tagHelpers: [TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
+            tagHelpers: [TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build()]);
     }
 
     [UIFact]
@@ -54,8 +53,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             hostProjectManagerProxyMock.Object,
             _projectManager,
-            Dispatcher,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
 
         // Act
@@ -67,7 +65,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {
@@ -89,8 +87,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            Dispatcher,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var args = new ProjectChangeEventProxyArgs(older: null, newHandle, ProjectProxyChangeKind.ProjectAdded);
 
@@ -103,7 +100,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {
@@ -125,14 +122,13 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            Dispatcher,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
+            updater.AddProject(hostProject);
         });
 
         var args = new ProjectChangeEventProxyArgs(olderHandle, newer: null, ProjectProxyChangeKind.ProjectRemoved);
@@ -146,7 +142,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
     }
 
     [UIFact]
-    public async Task UpdateGuestProjectManager_ProjectChanged_ConfigurationChange()
+    public async Task UpdateGuestProjectManager_ProjectChanged_UpdateProjectConfiguration()
     {
         // Arrange
         var oldHandle = new ProjectSnapshotHandleProxy(
@@ -166,15 +162,14 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            Dispatcher,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.ProjectConfigurationChanged(hostProject);
+            updater.AddProject(hostProject);
+            updater.UpdateProjectConfiguration(hostProject);
         });
 
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
@@ -187,11 +182,11 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(newConfiguration, project.Configuration);
-        Assert.Empty(await project.GetTagHelpersAsync(CancellationToken.None));
+        Assert.Empty(await project.GetTagHelpersAsync(DisposalToken));
     }
 
     [UIFact]
-    public async Task UpdateGuestProjectManager_ProjectChanged_ProjectWorkspaceStateChange()
+    public async Task UpdateGuestProjectManager_ProjectChanged_UpdateProjectWorkspaceState()
     {
         // Arrange
         var oldHandle = new ProjectSnapshotHandleProxy(
@@ -211,15 +206,14 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            Dispatcher,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(hostProject);
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, oldHandle.ProjectWorkspaceState);
+            updater.AddProject(hostProject);
+            updater.UpdateProjectWorkspaceState(hostProject.Key, oldHandle.ProjectWorkspaceState);
         });
 
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
@@ -233,7 +227,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {

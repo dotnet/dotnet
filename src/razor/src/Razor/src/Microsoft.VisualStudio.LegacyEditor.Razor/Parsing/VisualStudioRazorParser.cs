@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.Extensions.Internal;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using static Microsoft.VisualStudio.LegacyEditor.Razor.Parsing.BackgroundParser;
@@ -40,7 +40,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
     private readonly IVisualStudioDocumentTracker _documentTracker;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
-    private readonly IErrorReporter _errorReporter;
+    private readonly ILogger _logger;
     private readonly List<CodeDocumentRequest> _codeDocumentRequests;
     private readonly TaskScheduler _uiThreadScheduler;
     private RazorProjectEngine? _projectEngine;
@@ -55,12 +55,12 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         IVisualStudioDocumentTracker documentTracker,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ICompletionBroker completionBroker,
-        IErrorReporter errorReporter,
+        ILoggerFactory loggerFactory,
         JoinableTaskContext joinableTaskContext)
     {
         _joinableTaskContext = joinableTaskContext;
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
-        _errorReporter = errorReporter;
+        _logger = loggerFactory.GetOrCreateLogger<VisualStudioRazorParser>();
         _completionBroker = completionBroker;
         _documentTracker = documentTracker;
         _codeDocumentRequests = new List<CodeDocumentRequest>();
@@ -220,14 +220,17 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
 
         var projectSnapshot = _documentTracker.ProjectSnapshot.AssumeNotNull();
 
-        _projectEngine = _projectEngineFactoryProvider.Create(projectSnapshot, ConfigureProjectEngine).AssumeNotNull();
+        _projectEngine = _projectEngineFactoryProvider.Create(
+            projectSnapshot.Configuration,
+            rootDirectoryPath: Path.GetDirectoryName(projectSnapshot.FilePath).AssumeNotNull(),
+            ConfigureProjectEngine);
 
         Debug.Assert(_projectEngine.Engine is not null);
         Debug.Assert(_projectEngine.FileSystem is not null);
 
         // We might not have a document snapshot in the case of an ephemeral project.
         // If we don't have a document then infer the FileKind from the FilePath.
-        var fileKind = projectSnapshot.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromFilePath(_documentTracker.FilePath);
+        var fileKind = projectSnapshot.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromPath(_documentTracker.FilePath);
 
         var projectDirectory = Path.GetDirectoryName(_documentTracker.ProjectPath);
         _parser = new BackgroundParser(_projectEngine, FilePath, projectDirectory, fileKind);
@@ -326,15 +329,15 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
                 return;
             }
 
-            var codeDocument = RazorCodeDocument.Create(currentCodeDocument.Source, currentCodeDocument.Imports);
+            Assumed.NotNull(partialParseSyntaxTree, $"Expected new {nameof(RazorSyntaxTree)} when parser result is not '{result}'.");
 
-            foreach (var item in currentCodeDocument.Items)
-            {
-                codeDocument.Items[item.Key] = item.Value;
-            }
+#pragma warning disable CS0618 // Type or member is obsolete
+            var newCodeDocument = currentCodeDocument.Clone();
+            currentCodeDocument.CloneCachedData(newCodeDocument);
+#pragma warning restore CS0618 // Type or member is obsolete
 
-            codeDocument.SetSyntaxTree(partialParseSyntaxTree);
-            TryUpdateLatestParsedSyntaxTreeSnapshot(codeDocument, snapshot);
+            newCodeDocument.SetSyntaxTree(partialParseSyntaxTree);
+            TryUpdateLatestParsedSyntaxTreeSnapshot(newCodeDocument, snapshot);
         }
 
         if ((result & PartialParseResultInternal.Provisional) == PartialParseResultInternal.Provisional)
@@ -413,7 +416,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         catch (Exception ex)
         {
             // This is something totally unexpected, let's just send it over to the workspace.
-            _errorReporter.ReportError(ex);
+            _logger.LogError(ex);
         }
 
         async Task OnIdle_QueueOnUIThreadAsync()
@@ -496,9 +499,19 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         }
 
         builder.SetRootNamespace(projectSnapshot?.RootNamespace);
-        builder.Features.Add(new VisualStudioParserOptionsFeature(_documentTracker.EditorSettings));
+
+        var settings = _documentTracker.EditorSettings;
+
+        builder.ConfigureCodeGenerationOptions(builder =>
+        {
+            builder.IndentSize = settings.IndentSize;
+            builder.IndentWithTabs = settings.IndentWithTabs;
+            builder.RemapLinePragmaPathsOnWindows = true;
+        });
+
         builder.Features.Add(new VisualStudioTagHelperFeature(_documentTracker.TagHelpers));
-        builder.Features.Add(new VisualStudioEnableTagHelpersFeature());
+
+        builder.ConfigureParserOptions(ConfigureParserOptions);
     }
 
     private void UpdateParserState(RazorCodeDocument codeDocument, ITextSnapshot snapshot)
@@ -514,7 +527,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
 
             _codeDocument = codeDocument;
             _snapshot = snapshot;
-            _partialParser = new RazorSyntaxTreePartialParser(_codeDocument.GetSyntaxTree());
+            _partialParser = new RazorSyntaxTreePartialParser(_codeDocument.GetRequiredSyntaxTree());
             TryUpdateLatestParsedSyntaxTreeSnapshot(_codeDocument, _snapshot);
         }
     }
@@ -547,7 +560,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
                 return;
             }
 
-            var matchingRequests = new List<CodeDocumentRequest>();
+            using var matchingRequests = new PooledArrayBuilder<CodeDocumentRequest>();
             for (var i = _codeDocumentRequests.Count - 1; i >= 0; i--)
             {
                 var request = _codeDocumentRequests[i];
@@ -568,26 +581,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         }
     }
 
-    private class VisualStudioParserOptionsFeature : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-    {
-        private readonly ClientSpaceSettings _settings;
-
-        public VisualStudioParserOptionsFeature(ClientSpaceSettings settings)
-        {
-            _settings = settings;
-        }
-
-        public int Order { get; set; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.IndentSize = _settings.IndentSize;
-            options.IndentWithTabs = _settings.IndentWithTabs;
-            options.RemapLinePragmaPathsOnWindows = true;
-        }
-    }
-
-    private class VisualStudioTagHelperFeature : ITagHelperFeature
+    private class VisualStudioTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
     {
         private readonly IReadOnlyList<TagHelperDescriptor>? _tagHelpers;
 
@@ -596,23 +590,17 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
             _tagHelpers = tagHelpers;
         }
 
-        public RazorEngine? Engine { get; set; }
-
-        public IReadOnlyList<TagHelperDescriptor>? GetDescriptors()
+        public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
         {
-            return _tagHelpers;
+            return _tagHelpers ?? [];
         }
     }
 
     // Internal for testing
-    internal class VisualStudioEnableTagHelpersFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
+    internal static void ConfigureParserOptions(RazorParserOptions.Builder builder)
     {
-        public int Order => 0;
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.EnableSpanEditHandlers = true;
-        }
+        builder.EnableSpanEditHandlers = true;
+        builder.UseRoslynTokenizer = false;
     }
 
     // Internal for testing

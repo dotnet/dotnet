@@ -96,7 +96,7 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
     /// <summary>
     /// Separators for multiple paths in argument.
     /// </summary>
-    internal readonly static char[] ArgumentSeparators = new[] { ';' };
+    internal readonly static char[] ArgumentSeparators = [';'];
 
     public const string RunSettingsPath = "RunConfiguration.TestAdaptersPaths";
 
@@ -104,7 +104,9 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
     /// Default constructor.
     /// </summary>
     /// <param name="options"> The options. </param>
-    /// <param name="testPlatform">The test platform</param>
+    /// <param name="runSettingsManager">Run setting manager.</param>
+    /// <param name="output">Output such as console.</param>
+    /// <param name="fileHelper">File helper</param>
     public TestAdapterPathArgumentExecutor(CommandLineOptions options, IRunSettingsProvider runSettingsManager, IOutput output, IFileHelper fileHelper)
     {
         _commandLineOptions = options ?? throw new ArgumentNullException(nameof(options));
@@ -132,7 +134,7 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
         // VSTS task add double quotes around TestAdapterpath. For example if user has given TestAdapter path C:\temp,
         // Then VSTS task will add TestAdapterPath as "/TestAdapterPath:\"C:\Temp\"".
         // Remove leading and trailing ' " ' chars...
-        argument = argument.Trim().Trim(new char[] { '\"' });
+        argument = argument.Trim().Trim(['\"']);
 
         // Get test adapter paths from RunSettings.
         var testAdapterPathsInRunSettings = _runSettingsManager.QueryRunSettingsNode(RunSettingsPath);
@@ -167,6 +169,6 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
     /// <returns>Paths.</returns>
     internal static string[] SplitPaths(string? paths)
     {
-        return paths.IsNullOrWhiteSpace() ? new string[0] : paths.Split(ArgumentSeparators, StringSplitOptions.RemoveEmptyEntries);
+        return paths.IsNullOrWhiteSpace() ? [] : paths.Split(ArgumentSeparators, StringSplitOptions.RemoveEmptyEntries);
     }
 }

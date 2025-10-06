@@ -53,6 +53,7 @@ namespace NuGet.Protocol.Core.Types
                 yield return new Lazy<INuGetResourceProvider>(() => new RegistrationResourceV3Provider());
                 yield return new Lazy<INuGetResourceProvider>(() => new SymbolPackageUpdateResourceV3Provider());
                 yield return new Lazy<INuGetResourceProvider>(() => new ReportAbuseResourceV3Provider());
+                yield return new Lazy<INuGetResourceProvider>(() => new ReadmeUriTemplateResourceProvider());
                 yield return new Lazy<INuGetResourceProvider>(() => new PackageDetailsUriResourceV3Provider());
                 yield return new Lazy<INuGetResourceProvider>(() => new ServiceIndexResourceV3Provider());
                 yield return new Lazy<INuGetResourceProvider>(() => new ODataServiceDocumentResourceV2Provider());
@@ -81,6 +82,7 @@ namespace NuGet.Protocol.Core.Types
                 yield return new Lazy<INuGetResourceProvider>(() => new PluginResourceProvider());
                 yield return new Lazy<INuGetResourceProvider>(() => new RepositorySignatureResourceProvider());
                 yield return new Lazy<INuGetResourceProvider>(() => new VulnerabilityInfoResourceV3Provider());
+                yield return new Lazy<INuGetResourceProvider>(() => new OwnerDetailsUriResourceV3Provider());
 
                 // Local repository providers
                 yield return new Lazy<INuGetResourceProvider>(() => new FindLocalPackagesResourceUnzippedProvider());

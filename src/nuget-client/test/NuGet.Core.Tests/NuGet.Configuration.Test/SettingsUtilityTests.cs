@@ -4,9 +4,12 @@
 using System;
 using System.IO;
 using FluentAssertions;
-using NuGet.Common;
 using NuGet.Test.Utility;
 using Xunit;
+
+#if IS_CORECLR
+using NuGet.Common;
+#endif
 
 namespace NuGet.Configuration.Test
 {

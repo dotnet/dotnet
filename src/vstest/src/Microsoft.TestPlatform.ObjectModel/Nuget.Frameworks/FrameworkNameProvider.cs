@@ -341,7 +341,7 @@ namespace NuGetClone.Frameworks
                 {
                     result.Add(framework);
 
-                    // Add in the existing framework (included here) and all equivalent frameworks  
+                    // Add in the existing framework (included here) and all equivalent frameworks
                     var equivalentFrameworks = GetAllEquivalentFrameworks(framework);
 
                     UnionWith(existingFrameworks, equivalentFrameworks);
@@ -351,13 +351,13 @@ namespace NuGetClone.Frameworks
             return result;
         }
 
-        /// <summary>  
-        /// Get all equivalent frameworks including the given framework  
-        /// </summary>  
+        /// <summary>
+        /// Get all equivalent frameworks including the given framework
+        /// </summary>
         private HashSet<NuGetFramework> GetAllEquivalentFrameworks(NuGetFramework framework)
         {
-            // Loop through the frameworks, all frameworks that are not in results yet   
-            // will be added to toProcess to get the equivalent frameworks  
+            // Loop through the frameworks, all frameworks that are not in results yet
+            // will be added to toProcess to get the equivalent frameworks
             var toProcess = new Stack<NuGetFramework>();
             var results = new HashSet<NuGetFramework>();
 
@@ -486,7 +486,7 @@ namespace NuGetClone.Frameworks
                 throw new ArgumentNullException(nameof(shortPortableProfiles));
             }
 
-            var shortNames = shortPortableProfiles.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+            var shortNames = shortPortableProfiles.Split(['+'], StringSplitOptions.RemoveEmptyEntries);
 
             var result = new List<NuGetFramework>();
             foreach (var name in shortNames)
@@ -545,7 +545,7 @@ namespace NuGetClone.Frameworks
                     return true;
                 }
 
-                frameworks = Enumerable.Empty<NuGetFramework>();
+                frameworks = [];
                 return false;
             }
 

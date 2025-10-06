@@ -6,16 +6,13 @@
       - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md
   
     Optional variables:
-      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
+      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for signing.
                                         Defaults to true.
+      EnableDefaultRidSpecificArtifacts Do not sign *.nupkg packages under "/artifacts/packages/**" that do not contain the current TargetRid.
+      DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
 
     Optional items:
       Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
-        - ChecksumPath                    The destination path to generate a checksum file for the artifact. Set the `RelativeBlobPathParent`
-                                          property if the RelativeBlobPath for the generate checksum should be automatically set.
-        - PublishFlatContainer            By default artifacts are published to blob artifacts. Set to false to publish to package artifacts.
-        - RelativeBlobPath                The relative blob path when publishing to blob artifacts.
-        - IsShipping                      Set to true to mark a package as shipping when publishing to package artifacts. Defaults to false.
         - SkipPublish                     If true, skips publishing the artifact.
   -->
 
@@ -25,9 +22,12 @@
   </PropertyGroup>
 
   <Import Project="BuildStep.props" />
+  <Import Project="TargetFrameworkDefaults.props" />
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
 
+  <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
+  <Import Project="StrongName.props" />
   <Import Project="Sign.props" />
 
   <!-- Import the wix props to get the install path -->
@@ -49,31 +49,30 @@
 
     <PropertyGroup>
       <_DryRun>true</_DryRun>
-      <_DryRun Condition="'$(OfficialBuild)' == 'true'">false</_DryRun>
+      <!-- Allow an official build to force dry run signing. This allows the VMR's build to test signing in CI without changing versions. -->
+      <_DryRun Condition="'$(OfficialBuild)' == 'true' and '$(ForceDryRunSigning)' != 'true'">false</_DryRun>
 
       <_TestSign>false</_TestSign>
       <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
 
-      <_DesktopMSBuildRequired>false</_DesktopMSBuildRequired>
-      <_DesktopMSBuildRequired Condition="'$(_DryRun)' != 'true' and '$(MSBuildRuntimeType)' == 'Core'">true</_DesktopMSBuildRequired>
+      <_DotNetCoreRequired>false</_DotNetCoreRequired>
+      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true'">true</_DotNetCoreRequired>
+
+      <!-- SN is only available on Windows -->
+      <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
+      
+      <!-- .pkgs and .app bundle tooling is only available on MacOS -->
+      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
            Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
 
-    <!-- We only need this if we are going to use the executable version. -->
-    <Exec Command='"$(NuGetPackageRoot)vswhere\$(VSWhereVersion)\tools\vswhere.exe" -latest -prerelease -property installationPath -requires Microsoft.Component.MSBuild'
-          ConsoleToMsBuild="true"
-          StandardErrorImportance="high"
-          Condition="$(_DesktopMSBuildRequired)">
-      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallDir" />
-    </Exec>
-
-    <PropertyGroup Condition="$(_DesktopMSBuildRequired)">
-      <_DesktopMSBuildPath>$(_VSInstallDir)\MSBuild\Current\Bin\msbuild.exe</_DesktopMSBuildPath>
-      <_DesktopMSBuildPath Condition="!Exists('$(_DesktopMSBuildPath)')">$(_VSInstallDir)\MSBuild\15.0\Bin\msbuild.exe</_DesktopMSBuildPath>
+    <PropertyGroup Condition="$(_DotNetCoreRequired)">
+      <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
     </PropertyGroup>
 
+    <!-- Keep TarToolPath TFM in sync with TarTool project TFM. -->
     <Microsoft.DotNet.SignTool.SignToolTask
         DryRun="$(_DryRun)"
         TestSign="$(_TestSign)"
@@ -83,16 +82,21 @@
         ItemsToSign="@(ItemsToSign)"
         StrongNameSignInfo="@(StrongNameSignInfo)"
         FileSignInfo="@(FileSignInfo)"
+        ItemsToSkip3rdPartyCheck="@(ItemsToSkip3rdPartyCheck)"
         FileExtensionSignInfo="@(FileExtensionSignInfo)"
         TempDir="$(ArtifactsTmpDir)"
         LogDir="$(ArtifactsLogDir)"
-        MSBuildPath="$(_DesktopMSBuildPath)"
-        SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
-        MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
-        WixToolsPath="$(WixInstallPath)"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net9.0\any\Microsoft.Dotnet.Tar.dll"
+        DotNetPath="$(_DotNetCorePath)"
+        SNBinaryPath="$(SNBinaryPath)"
+        MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
+        Wix3ToolsPath="$(WixInstallPath)"
+        WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
+        PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"
-        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)" />
+        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
+        DotNetTimeout="$(SignToolDotNetTimeout)"
+        MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
   </Target>
 
 </Project>

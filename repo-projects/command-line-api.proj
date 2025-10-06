@@ -1,9 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
   <ItemGroup>

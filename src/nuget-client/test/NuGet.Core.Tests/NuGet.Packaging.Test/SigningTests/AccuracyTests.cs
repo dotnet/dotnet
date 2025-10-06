@@ -1,15 +1,15 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Math;
 using Xunit;
-using BcAccuracy = Org.BouncyCastle.Asn1.Tsp.Accuracy;
 
 namespace NuGet.Packaging.Test
 {
+    using Asn1Tags = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.Asn1Tags;
+
     public class AccuracyTests
     {
         [Fact]
@@ -22,10 +22,9 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithInvalidSeconds_Throws()
         {
-            var bcAccuracy = new DerSequence(new DerInteger(-1));
-            var bytes = bcAccuracy.GetDerEncoded();
+            byte[] bytes = GetAccuracyBytes(seconds: -1, milliseconds: null, microseconds: null);
 
-            var exception = Assert.Throws<CryptographicException>(
+            CryptographicException exception = Assert.Throws<CryptographicException>(
                 () => Accuracy.Read(bytes));
 
             Assert.Equal("The ASN.1 data is invalid.", exception.Message);
@@ -36,14 +35,9 @@ namespace NuGet.Packaging.Test
         [InlineData(1000)]
         public void Read_WithInvalidMilliseconds_Throws(int milliseconds)
         {
-            var derMilliseconds = new DerTaggedObject(
-                explicitly: false,
-                tagNo: 0,
-                obj: new DerInteger(BigInteger.ValueOf(milliseconds)));
-            var bcAccuracy = new DerSequence(derMilliseconds);
-            var bytes = bcAccuracy.GetDerEncoded();
+            byte[] bytes = GetAccuracyBytes(seconds: null, milliseconds, microseconds: null);
 
-            var exception = Assert.Throws<CryptographicException>(
+            CryptographicException exception = Assert.Throws<CryptographicException>(
                 () => Accuracy.Read(bytes));
 
             Assert.Equal("The ASN.1 data is invalid.", exception.Message);
@@ -54,14 +48,9 @@ namespace NuGet.Packaging.Test
         [InlineData(1000)]
         public void Read_WithInvalidMicroseconds_Throws(int microseconds)
         {
-            var derMicroseconds = new DerTaggedObject(
-                explicitly: false,
-                tagNo: 1,
-                obj: new DerInteger(BigInteger.ValueOf(microseconds)));
-            var bcAccuracy = new DerSequence(derMicroseconds);
-            var bytes = bcAccuracy.GetDerEncoded();
+            byte[] bytes = GetAccuracyBytes(seconds: null, milliseconds: null, microseconds);
 
-            var exception = Assert.Throws<CryptographicException>(
+            CryptographicException exception = Assert.Throws<CryptographicException>(
                 () => Accuracy.Read(bytes));
 
             Assert.Equal("The ASN.1 data is invalid.", exception.Message);
@@ -80,44 +69,41 @@ namespace NuGet.Packaging.Test
         [InlineData(int.MaxValue, 999, 999)]
         public void Read_WithValidInput_ReturnsInstance(int? seconds, int? milliseconds, int? microseconds)
         {
-            var bcAccuracy = GetBcAccuracy(seconds, milliseconds, microseconds);
-            var bytes = bcAccuracy.GetDerEncoded();
-
-            var accuracy = Accuracy.Read(bytes);
+            byte[] bytes = GetAccuracyBytes(seconds, milliseconds, microseconds);
+            Accuracy accuracy = Accuracy.Read(bytes);
 
             Assert.Equal(seconds, accuracy.Seconds);
             Assert.Equal(milliseconds, accuracy.Milliseconds);
             Assert.Equal(microseconds, accuracy.Microseconds);
 
-            Assert.Equal(bcAccuracy.Seconds == null, accuracy.Seconds == null);
+            Assert.Equal(seconds is null, accuracy.Seconds is null);
 
-            if (bcAccuracy.Seconds != null)
+            if (seconds is not null)
             {
-                Assert.Equal(bcAccuracy.Seconds.Value.IntValue, accuracy.Seconds.Value);
+                Assert.Equal(seconds.Value, accuracy.Seconds.Value);
             }
 
-            Assert.Equal(bcAccuracy.Millis == null, accuracy.Milliseconds == null);
+            Assert.Equal(milliseconds is null, accuracy.Milliseconds is null);
 
-            if (bcAccuracy.Millis != null)
+            if (milliseconds is not null)
             {
-                Assert.Equal(bcAccuracy.Millis.Value.IntValue, accuracy.Milliseconds.Value);
+                Assert.Equal(milliseconds.Value, accuracy.Milliseconds.Value);
             }
 
-            Assert.Equal(bcAccuracy.Micros == null, accuracy.Microseconds == null);
+            Assert.Equal(microseconds is null, accuracy.Microseconds is null);
 
-            if (bcAccuracy.Micros != null)
+            if (microseconds is not null)
             {
-                Assert.Equal(bcAccuracy.Micros.Value.IntValue, accuracy.Microseconds.Value);
+                Assert.Equal(microseconds.Value, accuracy.Microseconds.Value);
             }
         }
 
         [Fact]
         public void GetTotalMicroseconds_WithDefaultValues_ReturnsZero()
         {
-            var bcAccuracy = GetBcAccuracy(seconds: null, milliseconds: null, microseconds: null);
-            var bytes = bcAccuracy.GetDerEncoded();
+            byte[] bytes = GetAccuracyBytes(seconds: null, milliseconds: null, microseconds: null);
 
-            var accuracy = Accuracy.Read(bytes);
+            Accuracy accuracy = Accuracy.Read(bytes);
 
             Assert.Equal(0, accuracy.GetTotalMicroseconds());
         }
@@ -125,31 +111,36 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void GetTotalMicroseconds_WithDifferentValues_ReturnsValue()
         {
-            var bcAccuracy = GetBcAccuracy(seconds: 1, milliseconds: 2, microseconds: 3);
-            var bytes = bcAccuracy.GetDerEncoded();
+            byte[] bytes = GetAccuracyBytes(seconds: 1, milliseconds: 2, microseconds: 3);
 
-            var accuracy = Accuracy.Read(bytes);
+            Accuracy accuracy = Accuracy.Read(bytes);
 
             Assert.Equal(1_002_003, accuracy.GetTotalMicroseconds());
         }
 
-        private static BcAccuracy GetBcAccuracy(int? seconds, int? milliseconds, int? microseconds)
+        private static byte[] GetAccuracyBytes(int? seconds, int? milliseconds, int? microseconds)
         {
-            var derSeconds = GetOptionalInteger(seconds);
-            var derMilliseconds = GetOptionalInteger(milliseconds);
-            var derMicroseconds = GetOptionalInteger(microseconds);
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            return new BcAccuracy(derSeconds, derMilliseconds, derMicroseconds);
-        }
-
-        private static DerInteger GetOptionalInteger(long? value)
-        {
-            if (value == null)
+            using (writer.PushSequence())
             {
-                return null;
+                if (seconds is not null)
+                {
+                    writer.WriteInteger((long)seconds);
+                }
+
+                if (milliseconds is not null)
+                {
+                    writer.WriteInteger((long)milliseconds, Asn1Tags.ContextSpecific0);
+                }
+
+                if (microseconds is not null)
+                {
+                    writer.WriteInteger((long)microseconds, Asn1Tags.ContextSpecific1);
+                }
             }
 
-            return new DerInteger(BigInteger.ValueOf(value.Value));
+            return writer.Encode();
         }
     }
 }

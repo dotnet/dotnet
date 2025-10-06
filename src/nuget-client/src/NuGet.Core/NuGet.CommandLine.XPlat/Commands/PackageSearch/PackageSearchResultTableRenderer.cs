@@ -68,6 +68,7 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <param name="results">An enumerable of package search metadata to be processed and added to the table.</param>
         /// <param name="table">The table where the results will be added as rows.</param>
+        /// <param name="verbosity">The verbosity level for the search results.</param>
         private static async void PopulateTableWithResultsAsync(IEnumerable<IPackageSearchMetadata> results, Table table, PackageSearchVerbosity verbosity)
         {
             CultureInfo culture = CultureInfo.CurrentCulture;

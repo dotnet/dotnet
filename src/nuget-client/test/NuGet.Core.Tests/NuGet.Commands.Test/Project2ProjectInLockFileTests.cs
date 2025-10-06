@@ -66,61 +66,29 @@ namespace NuGet.Commands.Test
               }
             }";
 
-            var globalJson = @"
+            using (var pathContext = new SimpleTestPathContext())
             {
-                ""projects"": [
-                    ""projects""
-                ]
-            }";
-
-            using (var packagesDir = TestDirectory.Create())
-            using (var workingDir = TestDirectory.Create())
-            {
-                var project1 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project1"));
-                var project2 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project2"));
-                var project3 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project3"));
+                var project1 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project1"));
+                var project2 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project2"));
+                var project3 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project3"));
                 project1.Create();
                 project2.Create();
                 project3.Create();
 
-                File.WriteAllText(Path.Combine(project1.FullName, "project.json"), projectJson);
-                File.WriteAllText(Path.Combine(project2.FullName, "project.json"), project2Json);
-                File.WriteAllText(Path.Combine(project3.FullName, "project.json"), project3Json);
-                File.WriteAllText(Path.Combine(workingDir, "global.json"), globalJson);
-
                 File.WriteAllText(Path.Combine(project1.FullName, "project1.csproj"), string.Empty);
-                File.WriteAllText(Path.Combine(project2.FullName, "project2.xproj"), string.Empty);
-                File.WriteAllText(Path.Combine(project2.FullName, "project3.xproj"), string.Empty);
+                File.WriteAllText(Path.Combine(project2.FullName, "project2.csproj"), string.Empty);
+                File.WriteAllText(Path.Combine(project2.FullName, "project3.csproj"), string.Empty);
 
-                var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var specPath2 = Path.Combine(project2.FullName, "project.json");
-                var specPath3 = Path.Combine(project3.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", specPath2).EnsureProjectJsonRestoreMetadata();
-                var spec3 = JsonPackageSpecReader.GetPackageSpec(project3Json, "project3", specPath3).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project1", project1.FullName).WithTestRestoreMetadata();
+                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", project2.FullName).WithTestRestoreMetadata();
+                var spec3 = JsonPackageSpecReader.GetPackageSpec(project3Json, "project3", project3.FullName).WithTestRestoreMetadata();
+
+                spec1 = spec1.WithTestProjectReference(spec2);
+                spec2 = spec2.WithTestProjectReference(spec3);
 
                 var logger = new TestLogger();
-                var request = new TestRestoreRequest(spec1, sources, packagesDir, logger);
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project1",
-                    spec1,
-                    Path.Combine(project1.FullName, "project1.csproj"),
-                    new string[] { "project2" }));
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2, spec3);
 
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project2",
-                    spec2,
-                    Path.Combine(project2.FullName, "project2.xproj"),
-                    new string[] { "project3" }));
-
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project3",
-                    spec3,
-                    Path.Combine(project2.FullName, "project3.xproj"),
-                    new string[] { }));
-
-
-                request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
                 var format = new LockFileFormat();
 
                 // Act
@@ -199,8 +167,8 @@ namespace NuGet.Commands.Test
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var specPath2 = Path.Combine(project2.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", specPath2).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
+                var spec2 = JsonPackageSpecReader.GetPackageSpec(project2Json, "project2", specPath2).WithTestRestoreMetadata();
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(spec1, sources, packagesDir, logger);
@@ -233,58 +201,28 @@ namespace NuGet.Commands.Test
         public async Task Project2ProjectInLockFile_VerifyP2PWithNonProjectJsonReference()
         {
             // Arrange
-            var sources = new List<PackageSource>();
-
-            var projectJson = @"
+            using (var pathContext = new SimpleTestPathContext())
             {
-                ""version"": ""1.0.0"",
-                ""dependencies"": {
-                },
-                ""frameworks"": {
-                    ""net45"": {}
-                }
-            }";
-
-            using (var packagesDir = TestDirectory.Create())
-            using (var workingDir = TestDirectory.Create())
-            {
-                var project1 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project1"));
-                var project2 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project2"));
-                var project3 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project3"));
+                var project1 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project1"));
+                var project2 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project2"));
+                var project3 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project3"));
                 project1.Create();
                 project2.Create();
                 project3.Create();
-
-                File.WriteAllText(Path.Combine(project1.FullName, "project.json"), projectJson);
 
                 File.WriteAllText(Path.Combine(project1.FullName, "project1.csproj"), string.Empty);
                 File.WriteAllText(Path.Combine(project2.FullName, "project2.csproj"), string.Empty);
                 File.WriteAllText(Path.Combine(project3.FullName, "project3.csproj"), string.Empty);
 
-                var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = ProjectTestHelpers.GetPackageSpec("project1", pathContext.SolutionRoot, framework: "net45");
+                var spec2 = ProjectTestHelpers.GetPackagesConfigPackageSpec("project2", pathContext.SolutionRoot, framework: "net45");
+                var spec3 = ProjectTestHelpers.GetPackagesConfigPackageSpec("project3", pathContext.SolutionRoot, framework: "net45");
+
+                spec1 = spec1.WithTestProjectReference(spec2);
+                spec2 = spec2.WithTestProjectReference(spec3);
 
                 var logger = new TestLogger();
-                var request = new TestRestoreRequest(spec1, sources, packagesDir, logger);
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project1",
-                    spec1,
-                    Path.Combine(project1.FullName, "project1.xproj"),
-                    new string[] { "project2" }));
-
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project2",
-                    null,
-                    Path.Combine(project2.FullName, "project2.csproj"),
-                    new string[] { "project3" }));
-
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project3",
-                    null,
-                    Path.Combine(project3.FullName, "project3.csproj"),
-                    new string[] { }));
-
-                request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2, spec3);
                 var format = new LockFileFormat();
 
                 // Act
@@ -300,13 +238,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);
@@ -315,11 +251,11 @@ namespace NuGet.Commands.Test
                 Assert.Equal("project", project2Lib.Type);
                 Assert.Equal("project", project3Lib.Type);
 
-                Assert.Null(project2Lib.Path);
-                Assert.Null(project3Lib.Path);
+                Assert.Equal("../../project2/project2.csproj", project2Lib.Path);
+                Assert.Equal("../../project3/project3.csproj", project3Lib.Path);
 
-                Assert.Equal("../project2/project2.csproj", project2Lib.MSBuildProject);
-                Assert.Equal("../project3/project3.csproj", project3Lib.MSBuildProject);
+                Assert.Equal("../../project2/project2.csproj", project2Lib.MSBuildProject);
+                Assert.Equal("../../project3/project3.csproj", project3Lib.MSBuildProject);
 
                 Assert.Equal(1, project2Target.Dependencies.Count);
                 Assert.Equal("project3", project2Target.Dependencies.Single().Id);
@@ -336,64 +272,48 @@ namespace NuGet.Commands.Test
         public async Task Project2ProjectInLockFile_VerifyProjectsUnderProjectFileDependencyGroups_External()
         {
             // Arrange
-            var sources = new List<PackageSource>();
-
-            var projectJson = @"
+            using (var pathContext = new SimpleTestPathContext())
             {
-                ""version"": ""1.0.0"",
-                ""dependencies"": {
-                },
-                ""frameworks"": {
-                    ""net45"": {}
-                }
-            }";
-
-            using (var packagesDir = TestDirectory.Create())
-            using (var workingDir = TestDirectory.Create())
-            {
-                var project1 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project1"));
-                var project2 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project2"));
-                var project3 = new DirectoryInfo(Path.Combine(workingDir, "projects", "project3"));
+                var project1 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project1"));
+                var project2 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project2"));
+                var project3 = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "project3"));
                 project1.Create();
                 project2.Create();
                 project3.Create();
-
-                File.WriteAllText(Path.Combine(project1.FullName, "project.json"), projectJson);
-                File.WriteAllText(Path.Combine(project2.FullName, "project.json"), projectJson);
-                File.WriteAllText(Path.Combine(project3.FullName, "project.json"), projectJson);
 
                 File.WriteAllText(Path.Combine(project1.FullName, "project1.csproj"), string.Empty);
                 File.WriteAllText(Path.Combine(project2.FullName, "project2.csproj"), string.Empty);
                 File.WriteAllText(Path.Combine(project3.FullName, "project3.csproj"), string.Empty);
 
-                var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var specPath2 = Path.Combine(project2.FullName, "project.json");
-                var specPath3 = Path.Combine(project3.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project2", specPath2).EnsureProjectJsonRestoreMetadata();
-                var spec3 = JsonPackageSpecReader.GetPackageSpec(projectJson, "project3", specPath3).EnsureProjectJsonRestoreMetadata();
+                var spec1 = ProjectTestHelpers.GetPackageSpec("project1", pathContext.SolutionRoot, framework: "net45");
+                var spec2 = ProjectTestHelpers.GetPackageSpec("project2", pathContext.SolutionRoot, framework: "net45");
+                var spec3 = ProjectTestHelpers.GetPackageSpec("project3", pathContext.SolutionRoot, framework: "net45");
+
+                spec1 = spec1.WithTestProjectReference(spec2);
+                spec2 = spec2.WithTestProjectReference(spec3);
 
                 var logger = new TestLogger();
-                var request = new TestRestoreRequest(spec1, sources, packagesDir, logger);
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project1",
-                    spec1,
-                    Path.Combine(project1.FullName, "project1.xproj"),
-                    new string[] { "project2" }));
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, spec1, spec2, spec3);
 
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project2",
-                    spec2,
-                    Path.Combine(project2.FullName, "project2.csproj"),
-                    new string[] { "project3" }));
+                //request.ExternalProjects.Add(new ExternalProjectReference(
+                //    "project1",
+                //    spec1,
+                //    Path.Combine(project1.FullName, "project1.xproj"),
+                //    new string[] { "project2" }));
 
-                request.ExternalProjects.Add(new ExternalProjectReference(
-                    "project3",
-                    spec3,
-                    Path.Combine(project3.FullName, "project3.csproj"),
-                    new string[] { }));
+                //request.ExternalProjects.Add(new ExternalProjectReference(
+                //    "project2",
+                //    spec2,
+                //    Path.Combine(project2.FullName, "project2.csproj"),
+                //    new string[] { "project3" }));
 
-                request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
+                //request.ExternalProjects.Add(new ExternalProjectReference(
+                //    "project3",
+                //    spec3,
+                //    Path.Combine(project3.FullName, "project3.csproj"),
+                //    new string[] { }));
+
+                //request.LockFilePath = Path.Combine(project1.FullName, "project.lock.json");
                 var format = new LockFileFormat();
 
                 // Act
@@ -409,13 +329,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);
@@ -424,11 +342,11 @@ namespace NuGet.Commands.Test
                 Assert.Equal("project", project2Lib.Type);
                 Assert.Equal("project", project3Lib.Type);
 
-                Assert.Equal("../project2/project.json", project2Lib.Path);
-                Assert.Equal("../project3/project.json", project3Lib.Path);
+                Assert.Equal("../../project2/project2/project2.csproj", project2Lib.Path);
+                Assert.Equal("../../project3/project3/project3.csproj", project3Lib.Path);
 
-                Assert.Equal("../project2/project2.csproj", project2Lib.MSBuildProject);
-                Assert.Equal("../project3/project3.csproj", project3Lib.MSBuildProject);
+                Assert.Equal("../../project2/project2/project2.csproj", project2Lib.MSBuildProject);
+                Assert.Equal("../../project3/project3/project3.csproj", project3Lib.MSBuildProject);
 
                 Assert.Equal(1, project2Target.Dependencies.Count);
                 Assert.Equal("project3", project2Target.Dependencies.Single().Id);
@@ -548,13 +466,11 @@ namespace NuGet.Commands.Test
 
                 var project2Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project2")
-                    .Single();
+                    .Single(lib => lib.Name == "project2");
 
                 var project3Target = lockFile.GetTarget(FrameworkConstants.CommonFrameworks.Net45, runtimeIdentifier: null)
                     .Libraries
-                    .Where(lib => lib.Name == "project3")
-                    .Single();
+                    .Single(lib => lib.Name == "project3");
 
                 // Assert
                 Assert.True(result.Success);

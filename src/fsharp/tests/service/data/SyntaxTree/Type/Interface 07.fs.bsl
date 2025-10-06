@@ -1,6 +1,6 @@
 ImplFile
   (ParsedImplFileInput
-     ("/root/Type/Interface 07.fs", false, QualifiedNameOfFile Module, [], [],
+     ("/root/Type/Interface 07.fs", false, QualifiedNameOfFile Module, [],
       [SynModuleOrNamespace
          ([Module], false, NamedModule,
           [Types
@@ -21,7 +21,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (5,4--5,19),
+                            Single None, None, (5,4--5,19),
                             { LeadingKeyword = Abstract (5,4--5,12)
                               InlineKeyword = None
                               WithKeyword = None
@@ -39,6 +39,7 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--5,19), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
 
 (4,14)-(5,4) parse error Incomplete structured construct at or before this point in member definition

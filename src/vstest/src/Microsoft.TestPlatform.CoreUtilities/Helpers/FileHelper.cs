@@ -50,7 +50,7 @@ public class FileHelper : IFileHelper
     {
         if (endsWithSearchPatterns == null || endsWithSearchPatterns.Length == 0)
         {
-            return Enumerable.Empty<string>();
+            return [];
         }
 
         var files = Directory.EnumerateFiles(directory, "*", searchOption);

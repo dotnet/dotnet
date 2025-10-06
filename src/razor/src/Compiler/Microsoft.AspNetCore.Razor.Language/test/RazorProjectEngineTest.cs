@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Moq;
 using Xunit;
 
@@ -47,7 +46,7 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultFeatures(RazorProjectEngine engine)
     {
-        var features = engine.EngineFeatures.OrderBy(f => f.GetType().Name).ToArray();
+        var features = engine.Engine.Features.OrderByAsArray(static x => x.GetType().Name);
         Assert.Collection(
             features,
             feature => Assert.IsType<AttributeDirectivePass>(feature),
@@ -73,13 +72,11 @@ public class RazorProjectEngineTest
             feature => Assert.IsType<ComponentSplatLoweringPass>(feature),
             feature => Assert.IsType<ComponentTemplateDiagnosticPass>(feature),
             feature => Assert.IsType<ComponentWhitespacePass>(feature),
+            feature => Assert.IsType<ConfigureDirectivesFeature>(feature),
             feature => Assert.IsType<DefaultDirectiveSyntaxTreePass>(feature),
             feature => Assert.IsType<DefaultDocumentClassifierPass>(feature),
             feature => Assert.IsType<DefaultDocumentClassifierPassFeature>(feature),
             feature => Assert.IsType<DefaultMetadataIdentifierFeature>(feature),
-            feature => Assert.IsType<DefaultRazorCodeGenerationOptionsFeature>(feature),
-            feature => Assert.IsType<DefaultRazorDirectiveFeature>(feature),
-            feature => Assert.IsType<DefaultRazorParserOptionsFeature>(feature),
             feature => Assert.IsType<DefaultRazorTargetExtensionFeature>(feature),
             feature => Assert.IsType<DefaultTagHelperOptimizationPass>(feature),
             feature => Assert.IsType<DesignTimeDirectivePass>(feature),
@@ -96,10 +93,10 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultDirectives(RazorProjectEngine engine)
     {
-        var feature = engine.EngineFeatures.OfType<IRazorDirectiveFeature>().FirstOrDefault();
+        var feature = engine.Engine.GetFeatures<ConfigureDirectivesFeature>().FirstOrDefault();
         Assert.NotNull(feature);
         Assert.Collection(
-            feature.Directives,
+            feature.GetDirectives(),
             directive => Assert.Same(FunctionsDirective.Directive, directive),
             directive => Assert.Same(ImplementsDirective.Directive, directive),
             directive => Assert.Same(InheritsDirective.Directive, directive),
@@ -109,7 +106,7 @@ public class RazorProjectEngineTest
 
     private static void AssertDefaultTargetExtensions(RazorProjectEngine engine)
     {
-        var feature = engine.EngineFeatures.OfType<IRazorTargetExtensionFeature>().FirstOrDefault();
+        var feature = engine.Engine.GetFeatures<IRazorTargetExtensionFeature>().FirstOrDefault();
         Assert.NotNull(feature);
 
         var extensions = feature.TargetExtensions.OrderBy(f => f.GetType().Name).ToArray();
@@ -127,10 +124,10 @@ public class RazorProjectEngineTest
         // Arrange
         var existingItem = new TestRazorProjectItem("Index.cshtml");
         var nonExistentItem = Mock.Of<RazorProjectItem>(item => item.Exists == false);
-        var items = ImmutableArray.Create(existingItem, nonExistentItem);
+        using PooledArrayBuilder<RazorProjectItem> items = [existingItem, nonExistentItem];
 
         // Act
-        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items);
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(in items);
 
         // Assert
         var sourceDocument = Assert.Single(sourceDocuments);
@@ -141,14 +138,15 @@ public class RazorProjectEngineTest
     public void GetImportSourceDocuments_UnreadableItem_Throws()
     {
         // Arrange
-        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
-        projectItem.SetupGet(p => p.Exists).Returns(true);
-        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        var items = ImmutableArray.Create(projectItem.Object);
+        var projectItem = new TestRazorProjectItem(
+            filePath: "path/to/file.cshtml",
+            physicalPath: "path/to/file.cshtml",
+            relativePhysicalPath: "path/to/file.cshtml",
+            onRead: () => throw new IOException("Couldn't read file."));
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem];
 
         // Act & Assert
-        var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(items));
+        var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(in items));
         Assert.Equal("Couldn't read file.", exception.Message);
     }
 
@@ -156,16 +154,15 @@ public class RazorProjectEngineTest
     public void GetImportSourceDocuments_WithSuppressExceptions_UnreadableItem_DoesNotThrow()
     {
         // Arrange
-        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
-        projectItem.SetupGet(p => p.Exists).Returns(true);
-        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.SetupGet(p => p.FilePath).Returns("path/to/file.cshtml");
-        projectItem.SetupGet(p => p.RelativePhysicalPath).Returns("path/to/file.cshtml");
-        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
-        var items = ImmutableArray.Create(projectItem.Object);
+        var projectItem = new TestRazorProjectItem(
+            filePath: "path/to/file.cshtml",
+            physicalPath: "path/to/file.cshtml",
+            relativePhysicalPath: "path/to/file.cshtml",
+            onRead: () => throw new IOException("Couldn't read file."));
+        using PooledArrayBuilder<RazorProjectItem> items = [projectItem];
 
         // Act
-        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items, suppressExceptions: true);
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(in items, suppressExceptions: true);
 
         // Assert - Does not throw
         Assert.Empty(sourceDocuments);

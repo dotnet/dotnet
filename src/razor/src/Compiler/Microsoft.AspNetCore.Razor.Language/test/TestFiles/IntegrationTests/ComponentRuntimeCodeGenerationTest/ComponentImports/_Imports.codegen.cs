@@ -9,31 +9,38 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\_Imports.razor"
+#line (1,2)-(1,19) "x:\dir\subdir\Test\_Imports.razor"
 using System.Text
 
 #nullable disable
     ;
 #nullable restore
-#line (2,2)-(3,1) "x:\dir\subdir\Test\_Imports.razor"
+#line (2,2)-(2,25) "x:\dir\subdir\Test\_Imports.razor"
 using System.Reflection
+
+#nullable disable
+    ;
+    #line default
+    #line hidden
+    [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(
+#nullable restore
+#line (4,9)-(4,19) "x:\dir\subdir\Test\_Imports.razor"
+MainLayout
 
 #line default
 #line hidden
 #nullable disable
-    ;
-    [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    ))]
     #nullable restore
-    public partial class _Imports : System.Object
+    public partial class _Imports : object
     #nullable disable
     {
         #pragma warning disable 1998
         protected void Execute()
         {
-            __builder.AddContent(0, 
 #nullable restore
-#line (5,2)-(5,5) "x:\dir\subdir\Test\_Imports.razor"
-Foo
+#line (5,2)-(5,5) 24 "x:\dir\subdir\Test\_Imports.razor"
+__builder.AddContent(0, Foo
 
 #line default
 #line hidden

@@ -1,8 +1,17 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+    NamespaceDeclaration -  - AspNetCoreGeneratedDocument
+        UsingDirective - (1:0,1 [20] ) - global::System
+        UsingDirective - (24:1,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [25] ) - global::System.Linq
+        UsingDirective - (95:3,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [38] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [48] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [51] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MinimizedTagHelpers_Runtime -  - 
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MinimizedTagHelpers - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
             PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_0 - class - btn - HtmlAttributeValueStyle.DoubleQuotes
             PreallocatedTagHelperPropertyValue -  - __tagHelperAttribute_1 - input-bound-required-string - hello - HtmlAttributeValueStyle.DoubleQuotes
             PreallocatedTagHelperPropertyValue -  - __tagHelperAttribute_2 - catchall-bound-string - world - HtmlAttributeValueStyle.DoubleQuotes
@@ -14,7 +23,7 @@
             FieldDeclaration -  - private - global::TestNamespace.CatchAllTagHelper - __TestNamespace_CatchAllTagHelper
             FieldDeclaration -  - private - global::TestNamespace.InputTagHelper - __TestNamespace_InputTagHelper
             FieldDeclaration -  - private - global::DivTagHelper - __DivTagHelper
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 HtmlContent - (33:1,0 [2] MinimizedTagHelpers.cshtml)
                     LazyIntermediateToken - (33:1,0 [2] MinimizedTagHelpers.cshtml) - Html - \n
                 TagHelper - (35:2,0 [762] MinimizedTagHelpers.cshtml) - p - TagMode.StartTagAndEndTag
@@ -88,3 +97,8 @@
                     DefaultTagHelperCreate -  - TestNamespace.CatchAllTagHelper
                     DefaultTagHelperHtmlAttribute -  - catchall-unbound-required - HtmlAttributeValueStyle.Minimized
                     DefaultTagHelperExecute - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 

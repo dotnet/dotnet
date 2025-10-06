@@ -509,7 +509,7 @@ namespace Microsoft.FSharp.Core.CompilerServices
         /// <remarks>Resolver should return a type called <c>name</c> in namespace <c>NamespaceName</c> or <c>null</c> if the type is unknown.
         /// </remarks>
         /// <returns></returns>
-        abstract ResolveTypeName : typeName: string -> Type
+        abstract ResolveTypeName : typeName: string -> (Type|null)
 
     /// <summary>
     /// Represents an instantiation of a type provider component.
@@ -542,7 +542,7 @@ namespace Microsoft.FSharp.Core.CompilerServices
         /// <param name="staticArguments">the static parameters, indexed by name</param>
         ///
         /// <returns></returns>
-        abstract ApplyStaticArguments : typeWithoutArguments:Type * typePathWithArguments:string array * staticArguments:obj array -> Type 
+        abstract ApplyStaticArguments : typeWithoutArguments:Type * typePathWithArguments:string array * staticArguments:objnull array -> Type 
 
         /// <summary>
         /// Called by the compiler to ask for an Expression tree to replace the given MethodBase with.
@@ -586,4 +586,4 @@ namespace Microsoft.FSharp.Core.CompilerServices
         /// <param name="staticArguments">the values of the static parameters, indexed by name</param>
         ///
         /// <returns>The provided method definition corresponding to the given static parameter values</returns>
-        abstract ApplyStaticArgumentsForMethod : methodWithoutArguments:MethodBase * methodNameWithArguments:string * staticArguments:obj array -> MethodBase
+        abstract ApplyStaticArgumentsForMethod : methodWithoutArguments:MethodBase * methodNameWithArguments:string * staticArguments:objnull array -> MethodBase

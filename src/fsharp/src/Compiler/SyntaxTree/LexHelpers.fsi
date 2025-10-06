@@ -13,8 +13,6 @@ open FSharp.Compiler.UnicodeLexing
 open FSharp.Compiler.Parser
 open FSharp.Compiler.Text
 
-val stdinMockFileName: string
-
 /// Lexer args: status of #light processing.  Mutated when a #light
 /// directive is processed. This alters the behaviour of the lexfilter.
 [<Sealed>]
@@ -97,9 +95,11 @@ val stringBufferAsString: ByteBuffer -> string
 
 val stringBufferAsBytes: ByteBuffer -> byte[]
 
-val stringBufferIsBytes: ByteBuffer -> bool
+type LargerThanOneByte = int
+type LargerThan127ButInsideByte = int
+val errorsInByteStringBuffer: ByteBuffer -> Option<LargerThanOneByte * LargerThan127ButInsideByte>
 
-val newline: Lexing.LexBuffer<'a> -> unit
+val incrLine: Lexing.LexBuffer<'a> -> unit
 
 val advanceColumnBy: Lexing.LexBuffer<'a> -> n: int -> unit
 

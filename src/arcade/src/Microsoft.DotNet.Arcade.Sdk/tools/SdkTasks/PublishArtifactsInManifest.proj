@@ -16,12 +16,13 @@
       - BARBuildId                              : BAR ID of the build being published.
       - MaestroApiEndpoint                      : Maestro API/Token. Used for updating asset locations.
       - BuildAssetRegistryToken
-      - NugetPath                               : Full path to nuget.exe. Used for pushing to AzDO feeds.
       - PublishInstallersAndChecksums           : Whether installers & checksums should be published.
       - AzureDevOpsFeedsKey                     : Token used to publish to *any* AzDO feed in dnceng.
       - PublishSpecialClrFiles                  : If true, the special coreclr module indexed files like DBI, DAC and SOS are published
-      - MsdlToken                               : Token used to publish symbol blobs, dll and pdb to Msdl
-      - SymWebToken                             : Token used to publish symbol blobs, dll and pdb to Symweb
+      - TempSymbolsAzureDevOpsOrg               : Azure DevOps org to use as staging ground for publishing symbols
+      - TempSymbolsAzureDevOpsOrgToken          : Token for the Azure DevOps org to use as staging ground for publishing symbols. Must have symbol_manage scope.
+      - SymbolRequestProject                    : Project to use for symbol publishing requests. This must be created with symt team and will hold publishing policies for public servers.
+      - ManagedIdentityClientId                 : Client ID of the managed identity to use for symbolrequest and asset publishing.
       - SymbolPublishingExclusionsFile          : Files that have to be excluded from symbol publishing 
       - PdbArtifactsBasePath                    : Path to dlls and pdbs
       - AzdoApiToken                            : Token used to call the Azure Api to download artifacts and symbols
@@ -30,8 +31,8 @@
                                                   else all the artifacts and symbols are downloaded before publishing.
 
       Optional aka.ms link generation parameters:
-        - AkaMSClientId                         : Client ID for the aka.ms AD application
-        - AkaMSClientSecret                     : Client secret for the aka.ms AD application
+        - AkaMSClientId                         : Client ID for the aka.ms Entra 
+        - AkaMSClientCertificate                : Client certificate for the aka.ms Entra application
         - AkaMSTenant                           : Tenant ID for aka.ms link generation. Defaults to ncd
         - AkaMSOwners                           : Semi-colon delimited list of aliases of the owners of generated links. Defaults to dn-bot
         - AkaMSCreatedBy                        : Semi-colon delimited list of aliases of the creator/updator links. Defaults to dn-bot
@@ -74,8 +75,10 @@
   -->
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
+    <!-- Do not treat warnings as errors, so that we can surface audit issues. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <Target Name="Execute">
@@ -104,20 +107,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <!-- These stay for .NET 5 for now -->
       <FeedKey Include="https://pkgs.dev.azure.com/dnceng" Key="$(AzureDevOpsFeedsKey)"/>
-      <FeedSasUri Include="$(ChecksumsFeedOverride)" Base64Uri="$(ChecksumsFeedBase64SasUri)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedSasUri Include="$(InstallersFeedOverride)" Base64Uri="$(InstallersFeedBase64SasUri)" Condition="'$(InstallersFeedOverride)' != ''"/>
-      <FeedSasUri Include="https://dotnetclimsrc.blob.core.windows.net/dotnet" Key="$(DotNetCliMsrcDotNetUriBase64)"/>
-      <FeedSasUri Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet" Key="$(DotNetCliChecksumsMsrcDotNetUriBase64)"/>
-      <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/public" Base64Uri="$(DotNetBuildsPublicUriBase64)"/>
-      <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Base64Uri="$(DotNetBuildsPublicChecksumsUriBase64)"/>
-      <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/internal" Base64Uri="$(DotNetBuildsInternalUriBase64)"/>
-      <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/internal-checksums" Base64Uri="$(DotNetBuildsInternalChecksumsUriBase64)"/>
-      <FeedOverride Include="https://dotnetclichecksums.blob.core.windows.net/dotnet" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetcli.blob.core.windows.net/dotnet" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetclimsrc.blob.core.windows.net/dotnet" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/internal-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
@@ -144,18 +134,19 @@
       AssetManifestPaths="@(ManifestFiles)"
       BlobAssetsBasePath="$(BlobBasePath)"
       PackageAssetsBasePath="$(PackageBasePath)"
-      NugetPath="$(NugetPath)"
       AkaMSClientId="$(AkaMSClientId)"
-      AkaMSClientSecret="$(AkaMSClientSecret)"
+      AkaMSClientCertificate="$(AkaMSClientCertificate)"
       AkaMSTenant="$(AkaMSTenant)"
       AkaMSOwners="$(AkaMSOwners)"
       AkaMSGroupOwner="$(AkaMSGroupOwner)"
       AkaMSCreatedBy="$(AkaMSCreatedBy)" 
-      MsdlToken="$(MsdlToken)"
-      SymWebToken="$(SymWebToken)"
+      ManagedIdentityClientId="$(ManagedIdentityClientId)"
       SymbolPublishingExclusionsFile="$(SymbolPublishingExclusionsFile)"
       PdbArtifactsBasePath="$(PDBArtifactsBasePath)"
       PublishSpecialClrFiles="$(PublishSpecialClrFiles)"
+      TempSymbolsAzureDevOpsOrg="$(TempSymbolsAzureDevOpsOrg)"
+      TempSymbolsAzureDevOpsOrgToken="$(TempSymbolsAzureDevOpsOrgToken)"
+      SymbolRequestProject="$(SymbolRequestProject)"
       BuildQuality="$(BuildQuality)"
       AllowFeedOverrides="$(AllowFeedOverrides)"
       AzdoApiToken="$(AzdoApiToken)"
@@ -167,7 +158,6 @@
       StreamingPublishingMaxClients="$(StreamingPublishingMaxClients)"
       NonStreamingPublishingMaxClients="$(NonStreamingPublishingMaxClients)"
       FeedKeys="@(FeedKey)"
-      FeedSasUris="@(FeedSasUri)"
       FeedOverrides="@(FeedOverride)"
       />
   </Target>

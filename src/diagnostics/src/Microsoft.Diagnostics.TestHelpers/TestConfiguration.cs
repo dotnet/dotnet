@@ -79,7 +79,8 @@ namespace Microsoft.Diagnostics.TestHelpers
                 ["IsAlpine"] = OS.IsAlpine.ToString().ToLowerInvariant(),
                 ["TargetRid"] = GetRid(),
                 ["TargetArchitecture"] = OS.TargetArchitecture.ToString().ToLowerInvariant(),
-                ["NuGetPackageCacheDir"] = nugetPackages
+                ["NuGetPackageCacheDir"] = nugetPackages,
+                ["TestCDAC"] = Environment.GetEnvironmentVariable("SOS_TEST_CDAC")
             };
             if (OS.Kind == OSKind.Windows)
             {
@@ -377,14 +378,16 @@ namespace Microsoft.Diagnostics.TestHelpers
     /// <summary>
     /// Represents the current test configuration
     /// </summary>
-    public class TestConfiguration
+    public partial class TestConfiguration
     {
         private const string DebugTypeKey = "DebugType";
         private const string DebuggeeBuildRootKey = "DebuggeeBuildRoot";
 
+        public static TestConfiguration Empty { get; } = new TestConfiguration();
+
         public static string BaseDir { get; set; } = Path.GetFullPath(".");
 
-        private static readonly Regex versionRegex = new(@"^(\d+\.\d+\.\d+)(-.*)?", RegexOptions.Compiled);
+        private static readonly Regex versionRegex = GetVersionRegex();
 
         private readonly ReadOnlyDictionary<string, string> _settings;
         private readonly string _configStringView;
@@ -459,6 +462,10 @@ namespace Microsoft.Diagnostics.TestHelpers
             {
                 sb.Append(".singlefile");
             }
+            if (TestCDAC)
+            {
+                sb.Append(".cdac");
+            }
             if (!string.IsNullOrEmpty(version))
             {
                 sb.Append('.');
@@ -486,10 +493,9 @@ namespace Microsoft.Diagnostics.TestHelpers
             }
         }
 
-        public IReadOnlyDictionary<string, string> AllSettings
-        {
-            get { return _settings; }
-        }
+        public bool IsEmpty => _settings.Count == 0;
+
+        public IReadOnlyDictionary<string, string> AllSettings => _settings;
 
         /// <summary>
         /// Creates a new test config with the new PDB type (full, portable or embedded)
@@ -552,6 +558,14 @@ namespace Microsoft.Diagnostics.TestHelpers
         public bool IsDesktop
         {
             get { return TestProduct.Equals("desktop"); }
+        }
+
+        /// <summary>
+        /// Returns true if test should use the cDAC.
+        /// </summary>
+        public bool TestCDAC
+        {
+            get { return string.Equals(GetValue("TestCDAC"), "true", StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -672,7 +686,7 @@ namespace Microsoft.Diagnostics.TestHelpers
         }
 
         /// <summary>
-        /// The framework type/version used to build the debuggee like "net6.0" or "net7.0"
+        /// The framework type/version used to build the debuggee like "net8.0" or "net10.0"
         /// </summary>
         public string BuildProjectFramework
         {
@@ -901,6 +915,9 @@ namespace Microsoft.Diagnostics.TestHelpers
         {
             return _configStringView;
         }
+
+        [GeneratedRegex(@"^(\d+\.\d+\.\d+)(-.*)?", RegexOptions.Compiled)]
+        private static partial Regex GetVersionRegex();
     }
 
     /// <summary>

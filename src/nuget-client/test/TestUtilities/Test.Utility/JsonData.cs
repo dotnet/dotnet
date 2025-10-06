@@ -4833,5 +4833,136 @@ namespace Test.Utility
     ""version"": ""0.0.0""
 }";
         #endregion
+
+        #region Package with dependency with empty range
+        public const string PackageDependencyWithNullAndEmptyRange = @"{
+  ""@id"": ""https://api.nuget.org/v3/registration0/deepequal/index.json"",
+  ""@type"": [
+    ""catalog:CatalogRoot"",
+    ""PackageRegistration"",
+    ""catalog:Permalink""
+  ],
+  ""commitId"": ""9f98eb89-f078-4af9-bcaf-5e27b5f26b59"",
+  ""commitTimeStamp"": ""2015-03-27T00:11:46.2598338Z"",
+  ""count"": 1,
+  ""items"": [
+    {
+      ""@id"": ""https://api.nuget.org/v3/registration0/dependencyedgecases/index.json#page/0.1.0/1.4.0.1-rc"",
+      ""@type"": ""catalog:CatalogPage"",
+      ""commitId"": ""9f98eb89-f078-4af9-bcaf-5e27b5f26b59"",
+      ""commitTimeStamp"": ""2015-03-27T00:11:46.2598338Z"",
+      ""count"": 1,
+      ""items"": [
+        {
+          ""@id"": ""https://api.nuget.org/v3/registration0/dependencyedgecases/0.1.0.json"",
+          ""@type"": ""Package"",
+          ""commitId"": ""1361eaec-6572-4f85-8c5e-af3bb6be1b35"",
+          ""commitTimeStamp"": ""2015-02-03T19:51:09.2502454Z"",
+          ""catalogEntry"": {
+            ""@id"": ""https://api.nuget.org/v3/catalog0/data/2015.02.03.09.41.00/dependencyedgecases.0.1.0.json"",
+            ""@type"": ""PackageDetails"",
+            ""authors"": ""James Foster"",
+            ""dependencyGroups"": [
+                {
+                    ""@id"": ""https://api.nuget.org/v3/catalog0/data/2015.02.03.09.41.00/dependencyedgecases.0.1.0.json#dependencygroup"",
+                    ""@type"": ""PackageDependencyGroup"",
+                    ""dependencies"": [
+                        {
+                            ""@id"": ""https://api.nuget.org/v3/catalog0/data/2015.02.03.09.41.00/dependencyedgecases.0.1.0.json#dependencygroup/sampledependency"",
+                            ""@type"": ""PackageDependency"",
+                            ""id"": ""SampleDependency1"",
+                            ""range"": """",
+                            ""registration"": ""https://apidev.nugettest.org/v3-registration3-gz-semver2/sampledependency1/index.json""
+                        },
+                        {
+                            ""@id"": ""https://api.nuget.org/v3/catalog0/data/2015.02.03.09.41.00/dependencyedgecases.0.1.0.json#dependencygroup/sampledependency"",
+                            ""@type"": ""PackageDependency"",
+                            ""id"": ""SampleDependency2"",
+                            ""registration"": ""https://apidev.nugettest.org/v3-registration3-gz-semver2/sampledependency2/index.json""
+                        },
+                        {
+                            ""@id"": ""https://api.nuget.org/v3/catalog0/data/2015.02.03.09.41.00/dependencyedgecases.0.1.0.json#dependencygroup/sampledependency"",
+                            ""@type"": ""PackageDependency"",
+                            ""id"": ""SampleDependency3"",
+                            ""range"": null,
+                            ""registration"": ""https://apidev.nugettest.org/v3-registration3-gz-semver2/sampledependency3/index.json""
+                        }
+                    ]
+                }
+            ],
+            ""description"": ""A package that tests dependency range edge cases"",
+            ""iconUrl"": """",
+            ""id"": ""DependencyEdgeCases"",
+            ""language"": """",
+            ""licenseUrl"": """",
+            ""minClientVersion"": """",
+            ""projectUrl"": ""http://git.test/DependencyEdgeCases"",
+            ""published"": ""2013-05-20T09:03:13.56Z"",
+            ""requireLicenseAcceptance"": false,
+            ""summary"": """",
+            ""tags"": [
+            ],
+            ""title"": ""DependencyEdgeCases"",
+            ""version"": ""0.1.0""
+          },
+          ""packageContent"": ""https://api.nuget.org/packages/dependencyedgecases.0.1.0.nupkg"",
+          ""registration"": ""https://api.nuget.org/v3/registration0/dependencyedgecases/index.json""
+        }
+      ],
+      ""parent"": ""https://api.nuget.org/v3/registration0/dependencyedgecases/index.json"",
+      ""lower"": ""0.1.0"",
+      ""upper"": ""0.1.0""
+    }
+  ],
+  ""@context"": {
+    ""@vocab"": ""http://schema.nuget.org/schema#"",
+    ""catalog"": ""http://schema.nuget.org/catalog#"",
+    ""xsd"": ""http://www.w3.org/2001/XMLSchema#"",
+    ""items"": {
+      ""@id"": ""catalog:item"",
+      ""@container"": ""@set""
+    },
+    ""commitTimeStamp"": {
+      ""@id"": ""catalog:commitTimeStamp"",
+      ""@type"": ""xsd:dateTime""
+    },
+    ""commitId"": {
+      ""@id"": ""catalog:commitId""
+    },
+    ""count"": {
+      ""@id"": ""catalog:count""
+    },
+    ""parent"": {
+      ""@id"": ""catalog:parent"",
+      ""@type"": ""@id""
+    },
+    ""tags"": {
+      ""@container"": ""@set"",
+      ""@id"": ""tag""
+    },
+    ""packageTargetFrameworks"": {
+      ""@container"": ""@set"",
+      ""@id"": ""packageTargetFramework""
+    },
+    ""dependencyGroups"": {
+      ""@container"": ""@set"",
+      ""@id"": ""dependencyGroup""
+    },
+    ""dependencies"": {
+      ""@container"": ""@set"",
+      ""@id"": ""dependency""
+    },
+    ""packageContent"": {
+      ""@type"": ""@id""
+    },
+    ""published"": {
+      ""@type"": ""xsd:dateTime""
+    },
+    ""registration"": {
+      ""@type"": ""@id""
+    }
+  }
+}";
+        #endregion
     }
 }

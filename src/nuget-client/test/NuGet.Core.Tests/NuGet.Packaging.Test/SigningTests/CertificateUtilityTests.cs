@@ -4,12 +4,9 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1.X509;
-using Test.Utility.Signing;
 using Xunit;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 
 namespace NuGet.Packaging.Test
 {
@@ -215,7 +212,7 @@ namespace NuGet.Packaging.Test
             using (var certificate = SigningTestUtility.GenerateCertificate("test",
                 generator =>
                 {
-                    var usages = new OidCollection { new Oid(TestOids.IdKpEmailProtection) };
+                    var usages = new OidCollection { TestOids.EmailProtectionEku };
 
                     generator.Extensions.Add(
                         new X509EnhancedKeyUsageExtension(
@@ -234,7 +231,7 @@ namespace NuGet.Packaging.Test
             using (var certificate = SigningTestUtility.GenerateCertificate("test",
                 generator =>
                 {
-                    var usages = new OidCollection { new Oid(TestOids.IdKpEmailProtection), new Oid(TestOids.AnyExtendedKeyUsage) };
+                    var usages = new OidCollection { TestOids.EmailProtectionEku, TestOids.AnyEku };
 
                     generator.Extensions.Add(
                         new X509EnhancedKeyUsageExtension(
@@ -343,6 +340,33 @@ namespace NuGet.Packaging.Test
                 Assert.Throws<ArgumentException>(() => CertificateUtility.GetHashString(certificate, (Common.HashAlgorithmName)46));
             }
         }
+
+        [Theory]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA1)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA256)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA384)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA512)]
+        public void TryDeduceHashAlgorithm_ValidInputs_ReturnsCorrectAlgorithm(string certificateFingerprint, Common.HashAlgorithmName expectedAlgorithm)
+        {
+            bool result = CertificateUtility.TryDeduceHashAlgorithm(certificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName);
+
+            Assert.True(result);
+            Assert.Equal(expectedAlgorithm, hashAlgorithmName);
+        }
+
+        [Theory]
+        [InlineData("GHIJKLMNOPQRSTUVWXYZ")] // Non-hex characters
+        [InlineData("ABCD")]
+        [InlineData(null)]
+        [InlineData("")]
+        public void TryDeduceHashAlgorithm_InvalidInputs_ReturnsFalse(string certificateFingerprint)
+        {
+            bool result = CertificateUtility.TryDeduceHashAlgorithm(certificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName);
+
+            Assert.False(result);
+            Assert.Equal(Common.HashAlgorithmName.Unknown, hashAlgorithmName);
+        }
+
 
         private static int GetExtendedKeyUsageCount(X509Certificate2 certificate)
         {

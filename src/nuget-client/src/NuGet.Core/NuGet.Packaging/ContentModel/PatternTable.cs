@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace NuGet.ContentModel
 {
@@ -12,8 +14,8 @@ namespace NuGet.ContentModel
     /// </summary>
     public class PatternTable
     {
-        private readonly Dictionary<string, Dictionary<string, object>> _table
-            = new Dictionary<string, Dictionary<string, object>>(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<ReadOnlyMemory<char>, object>> _table
+            = new Dictionary<string, Dictionary<ReadOnlyMemory<char>, object>>(StringComparer.Ordinal);
 
         public PatternTable()
             : this(Enumerable.Empty<PatternTableEntry>())
@@ -29,14 +31,14 @@ namespace NuGet.ContentModel
 
             foreach (var entry in entries)
             {
-                Dictionary<string, object> byProp;
+                Dictionary<ReadOnlyMemory<char>, object> byProp;
                 if (!_table.TryGetValue(entry.PropertyName, out byProp))
                 {
-                    byProp = new Dictionary<string, object>(StringComparer.Ordinal);
+                    byProp = new Dictionary<ReadOnlyMemory<char>, object>(ReadOnlyMemoryCharComparerOrdinal.Instance);
                     _table.Add(entry.PropertyName, byProp);
                 }
 
-                byProp.Add(entry.Name, entry.Value);
+                byProp.Add(entry.Name.AsMemory(), entry.Value);
             }
         }
 
@@ -46,19 +48,15 @@ namespace NuGet.ContentModel
         /// <param name="propertyName">Property moniker</param>
         /// <param name="name">Token name</param>
         /// <param name="value">Replacement value</param>
-        public bool TryLookup(string propertyName, string name, out object value)
+        internal bool TryLookup(string propertyName, ReadOnlyMemory<char> name, out object value)
         {
             if (propertyName == null)
             {
                 throw new ArgumentNullException(nameof(propertyName));
             }
+            Debug.Assert(MemoryMarshal.TryGetString(name, out _, out _, out _));
 
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            Dictionary<string, object> byProp;
+            Dictionary<ReadOnlyMemory<char>, object> byProp;
             if (_table.TryGetValue(propertyName, out byProp))
             {
                 return byProp.TryGetValue(name, out value);

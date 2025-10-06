@@ -34,7 +34,7 @@
     <TargetVsixContainerName Condition="'$(TargetVsixContainerName)' == ''">$(TargetName).vsix</TargetVsixContainerName>
     <TargetVsixContainer Condition="'$(TargetVsixContainer)' == ''">$(_TargetVsixContainerDir)$(TargetVsixContainerName)</TargetVsixContainer>
 
-    <DeployExtension Condition="'$(DeployProjectOutput)' == 'true'">true</DeployExtension>
+    <DeployExtension Condition="'$(DeployProjectOutput)' == 'true' and '$(DeployExtension)' != 'false'">true</DeployExtension>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VisualStudioInsertionComponent)' != ''">
@@ -43,14 +43,12 @@
     <IsProductComponent>true</IsProductComponent>
 
     <Ngen Condition="'$(Ngen)' == ''">true</Ngen>
-    <NgenArchitecture Condition="'$(NgenArchitecture)' == ''">All</NgenArchitecture>
     <NgenPriority Condition="'$(NgenPriority)' == ''">3</NgenPriority>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(VisualStudioInsertionComponent)' != ''">
     <ProjectReference Update="@(ProjectReference)">
       <Ngen Condition="'%(Ngen)' == ''">true</Ngen>
-      <NgenArchitecture Condition="'%(NgenArchitecture)' == '' and '%(Ngen)' != 'false'">All</NgenArchitecture>
       <NgenPriority Condition="'%(NgenPriority)' == '' and '%(Ngen)' != 'false'">3</NgenPriority>
     </ProjectReference>
   </ItemGroup>
@@ -276,5 +274,4 @@
   <PropertyGroup>
     <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);_GetVsixTemplateItems</GetVsixSourceItemsDependsOn>
   </PropertyGroup>
-
 </Project>

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.ObjectModel;
@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -31,7 +32,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
     private const string TestProjectPath = @"C:\This\Path\Is\Just\For\Project.csproj";
 
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
-    private readonly IProjectSnapshot _projectSnapshot;
+    private readonly ILegacyProjectSnapshot _projectSnapshot;
     private readonly CodeAnalysis.Workspace _workspace;
 
     public VisualStudioRazorParserIntegrationTest(ITestOutputHelper testOutput)
@@ -60,10 +61,11 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
             Assert.Equal(1, manager._parseCount);
 
             var codeDocument = await manager.InnerParser.GetLatestCodeDocumentAsync(snapshot);
-            Assert.Equal(FileKinds.Component, codeDocument.GetFileKind());
+            Assert.NotNull(codeDocument);
+            Assert.Equal(RazorFileKind.Component, codeDocument.FileKind);
 
             // @code is only applicable in component files so we're verifying that `@code` was treated as a directive.
-            var directiveNodes = manager.CurrentSyntaxTree!.Root.DescendantNodes().Where(child => child.Kind == SyntaxKind.RazorDirective);
+            var directiveNodes = manager.CurrentSyntaxTree!.Root.DescendantNodes().Where(node => node.Kind == SyntaxKind.RazorDirective);
             Assert.Single(directiveNodes);
         }
     }
@@ -546,12 +548,12 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
         if (expectedCode != null)
         {
             // Verify if the syntax tree represents the expected input.
-            var syntaxTreeContent = manager.PartialParsingSyntaxTreeRoot.ToFullString();
+            var syntaxTreeContent = manager.PartialParsingSyntaxTreeRoot.ToString();
             Assert.Contains(expectedCode, syntaxTreeContent, StringComparison.Ordinal);
         }
 
         var sourceDocument = TestRazorSourceDocument.Create(content);
-        var syntaxTree = RazorSyntaxTree.Create(manager.PartialParsingSyntaxTreeRoot, sourceDocument, manager.CurrentSyntaxTree!.Diagnostics, manager.CurrentSyntaxTree.Options);
+        var syntaxTree = new RazorSyntaxTree(manager.PartialParsingSyntaxTreeRoot, sourceDocument, manager.CurrentSyntaxTree!.Diagnostics, manager.CurrentSyntaxTree.Options);
         BaselineTest(syntaxTree);
     }
 
@@ -566,7 +568,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
             documentTracker,
             _projectEngineFactoryProvider,
             new TestCompletionBroker(),
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory.Context)
         {
             // We block idle work with the below reset events. Therefore, make tests fast and have the idle timer fire as soon as possible.
@@ -597,7 +599,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
 
             builder.AddDefaultImports("@addTagHelper *, Test");
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         var factoryMock = new StrictMock<IProjectEngineFactory>();

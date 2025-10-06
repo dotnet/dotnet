@@ -79,18 +79,6 @@ namespace Microsoft.DotNet.Helix.Sdk
         public string JobCancellationToken { get; set; }
 
         /// <summary>
-        ///   When the task finishes, the results container uri should be available in case we want to download files.
-        /// </summary>
-        [Output]
-        public string ResultsContainerUri { get; set; }
-
-        /// <summary>
-        ///   If the job is internal, we need to give the DownloadFromResultsContainer task the Write SAS to download files.
-        /// </summary>
-        [Output]
-        public string ResultsContainerReadSAS { get; set; }
-
-        /// <summary>
         ///   A collection of commands that will run for each work item before any work item commands.
         ///   Use a semicolon to delimit these and escape semicolons by percent coding them ('%3B').
         ///   NOTE: This is different behavior from the WorkItem PreCommands, where semicolons are escaped
@@ -270,8 +258,6 @@ namespace Microsoft.DotNet.Helix.Sdk
                 ISentJob job = await def.SendAsync(msg => Log.LogMessageFromText(msg, MessageImportance.Normal), cancellationToken);
                 JobCorrelationId = job.CorrelationId;
                 JobCancellationToken = job.HelixCancellationToken;
-                ResultsContainerUri = job.ResultsContainerUri;
-                ResultsContainerReadSAS = job.ResultsContainerReadSAS;
                 cancellationToken.ThrowIfCancellationRequested();
             }
 

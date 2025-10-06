@@ -14,7 +14,7 @@ open FSharp.Compiler.Text
 open FSharp.Compiler.Text.Range
 
 module SourceFileImpl =
-    let IsSignatureFile file =
+    let IsSignatureFile (file: string) =
         let ext = Path.GetExtension file
         0 = String.Compare(".fsi", ext, StringComparison.OrdinalIgnoreCase)
 
@@ -96,7 +96,7 @@ type FSharpParseFileResults(diagnostics: FSharpDiagnostic[], input: ParsedInput,
             match expr with
 
             // This lets us dive into subexpressions that may contain the binding we're after
-            | SynExpr.Sequential(_, _, expr1, expr2, _) ->
+            | SynExpr.Sequential(expr1 = expr1; expr2 = expr2) ->
                 if rangeContainsPos expr1.Range pos then
                     walkBinding expr1 workingRange
                 else
@@ -573,12 +573,12 @@ type FSharpParseFileResults(diagnostics: FSharpDiagnostic[], input: ParsedInput,
                             yield! checkRange m
                             yield! walkExpr isControlFlow innerExpr
 
-                        | SynExpr.YieldOrReturn(_, e, m) ->
+                        | SynExpr.YieldOrReturn(_, e, m, _) ->
                             yield! checkRange m
                             yield! walkExpr false e
 
-                        | SynExpr.YieldOrReturnFrom(_, e, _)
-                        | SynExpr.DoBang(e, _) ->
+                        | SynExpr.YieldOrReturnFrom(_, e, _, _)
+                        | SynExpr.DoBang(expr = e) ->
                             yield! checkRange e.Range
                             yield! walkExpr false e
 
@@ -714,7 +714,7 @@ type FSharpParseFileResults(diagnostics: FSharpDiagnostic[], input: ParsedInput,
                             yield! walkFinallySeqPt spFinally
 
                         | SynExpr.SequentialOrImplicitYield(spSeq, e1, e2, _, _)
-                        | SynExpr.Sequential(spSeq, _, e1, e2, _) ->
+                        | SynExpr.Sequential(debugPoint = spSeq; expr1 = e1; expr2 = e2) ->
                             let implicit1 =
                                 match spSeq with
                                 | DebugPointAtSequential.SuppressExpr
@@ -762,15 +762,6 @@ type FSharpParseFileResults(diagnostics: FSharpDiagnostic[], input: ParsedInput,
                             yield! walkExpr false e2
                             yield! walkExpr false e3
 
-                        | SynExpr.LetOrUseBang(spBind, _, _, _, rhsExpr, andBangs, bodyExpr, _, _) ->
-                            yield! walkBindSeqPt spBind
-                            yield! walkExpr true rhsExpr
-
-                            for SynExprAndBang(debugPoint = andBangSpBind; body = eAndBang) in andBangs do
-                                yield! walkBindSeqPt andBangSpBind
-                                yield! walkExpr true eAndBang
-
-                            yield! walkExpr true bodyExpr
                 ]
 
             // Process a class declaration or F# type declaration
@@ -814,10 +805,10 @@ type FSharpParseFileResults(diagnostics: FSharpDiagnostic[], input: ParsedInput,
                         | SynMemberDefn.Interface(members = Some membs) ->
                             for m in membs do
                                 yield! walkMember m
-                        | SynMemberDefn.Inherit(_, _, m) ->
+                        | SynMemberDefn.Inherit(range = m) ->
                             // can break on the "inherit" clause
                             yield! checkRange m
-                        | SynMemberDefn.ImplicitInherit(_, arg, _, m) ->
+                        | SynMemberDefn.ImplicitInherit(_, arg, _, m, _) ->
                             // can break on the "inherit" clause
                             yield! checkRange m
                             yield! walkExpr true arg

@@ -9,6 +9,8 @@
 #nowarn "69" // Interface implementations should normally be given on the initial declaration of a type. Interface implementations in augmentations may lead to accessing static bindings before they are initialized, though only if the interface implementation is invoked during initialization of the static data, and in turn access the static data. You may remove this warning using #nowarn "69" if you have checked this is not the case.
 #nowarn "77" // Member constraints with the name 'Exp' are given special status by the F# compiler...
 #nowarn "3218" // mismatch of parameter name for 'fst' and 'snd'
+#nowarn "3244" // no nullness checking
+#nowarn "3245" // no nullness checking
 
 namespace Microsoft.FSharp.Core
 
@@ -23,11 +25,11 @@ namespace Microsoft.FSharp.Core
     type Unit() =
         override _.GetHashCode() = 0
 
-        override _.Equals(obj:obj) = 
+        override _.Equals(obj:objnull) = 
             match obj with null -> true | :? Unit -> true | _ -> false
 
         interface System.IComparable with 
-            member _.CompareTo(_obj:obj) = 0
+            member _.CompareTo(_obj:objnull) = 0
         
     and unit = Unit
 
@@ -76,7 +78,7 @@ namespace Microsoft.FSharp.Core
     type ComparisonConditionalOnAttribute() =
         inherit Attribute()
       
-    [<AttributeUsage(AttributeTargets.Class, AllowMultiple=false)>]
+    [<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Interface, AllowMultiple=false)>]
     [<Sealed>]
     type AllowNullLiteralAttribute(value: bool) =
         inherit Attribute()
@@ -88,7 +90,7 @@ namespace Microsoft.FSharp.Core
     type VolatileFieldAttribute() =
         inherit Attribute()
       
-    [<AttributeUsage (AttributeTargets.Class, AllowMultiple=false)>]  
+    [<AttributeUsage (AttributeTargets.Class ||| AttributeTargets.Struct, AllowMultiple=false)>]  
     [<Sealed>]
     type DefaultAugmentationAttribute(value:bool) = 
         inherit Attribute()
@@ -99,12 +101,12 @@ namespace Microsoft.FSharp.Core
     type CLIEventAttribute() = 
         inherit Attribute()
 
-    [<AttributeUsage (AttributeTargets.Class, AllowMultiple=false)>]  
+    [<AttributeUsage (AttributeTargets.Class ||| AttributeTargets.Struct, AllowMultiple=false)>]  
     [<Sealed>]
     type CLIMutableAttribute() = 
         inherit Attribute()
 
-    [<AttributeUsage (AttributeTargets.Class ||| AttributeTargets.Struct , AllowMultiple=false)>]
+    [<AttributeUsage (AttributeTargets.Class ||| AttributeTargets.Struct, AllowMultiple=false)>]
     [<Sealed>]
     type AutoSerializableAttribute(value:bool) = 
         inherit Attribute()
@@ -165,6 +167,7 @@ namespace Microsoft.FSharp.Core
                       AttributeTargets.Parameter ||| AttributeTargets.Method |||
                       AttributeTargets.Property ||| AttributeTargets.Constructor |||
                       AttributeTargets.Delegate, AllowMultiple=false)>]  
+                      
     [<Sealed>]
     type ReflectedDefinitionAttribute(includeValue: bool) =
         inherit Attribute()
@@ -180,7 +183,7 @@ namespace Microsoft.FSharp.Core
         inherit Attribute()
         member _.CompiledName = compiledName
 
-    [<AttributeUsage (AttributeTargets.Struct ||| AttributeTargets.ReturnValue, AllowMultiple=false)>]  
+    [<AttributeUsage (AttributeTargets.Class ||| AttributeTargets.Struct ||| AttributeTargets.ReturnValue ||| AttributeTargets.Parameter ,AllowMultiple=false)>]  
     [<Sealed>]
     type StructAttribute() =
         inherit Attribute()
@@ -218,7 +221,7 @@ namespace Microsoft.FSharp.Core
         member _.Minor = minor
         member _.Release = release
 
-    [<AttributeUsage(AttributeTargets.All, AllowMultiple=false)>]
+    [<AttributeUsage(AttributeTargets.All, AllowMultiple=true)>]
     [<Sealed>]
     type CompilationMappingAttribute(sourceConstructFlags:SourceConstructFlags,
                                      variantNumber:int,
@@ -376,10 +379,31 @@ namespace Microsoft.FSharp.Core
     type NoCompilerInliningAttribute() =
         inherit Attribute()
 
+    [<AttributeUsage (AttributeTargets.Method, AllowMultiple=false)>]  
+    [<Sealed>]
+    type WarnOnWithoutNullArgumentAttribute(warningMessage:string) =
+        inherit Attribute()
+        member _.WarningMessage = warningMessage
+        member val internal Localize = false with get, set
+        
     [<AttributeUsage(AttributeTargets.Method,AllowMultiple=false)>]
     [<Sealed>]
     type TailCallAttribute() =
         inherit System.Attribute()
+
+namespace Microsoft.FSharp.Core.CompilerServices
+
+    open System.ComponentModel
+    open Microsoft.FSharp.Core
+
+    /// <summary>
+    /// A marker type that only compilers that support the <c>when 'T : Enum</c>
+    /// library-only static optimization constraint will recognize.
+    /// </summary>
+    [<Sealed; AbstractClass>]
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompilerMessage("This type is for compiler use and should not be used directly", 1204, IsHidden = true)>]
+    type SupportsWhenTEnum = class end
 
 #if !NET5_0_OR_GREATER
 namespace System.Diagnostics.CodeAnalysis
@@ -495,8 +519,8 @@ namespace Microsoft.FSharp.Core
     type outref<'T> = byref<'T, ByRefKinds.Out>
 
     module internal BasicInlinedOperations =  
-        let inline unboxPrim<'T>(x:obj) = (# "unbox.any !0" type ('T) x : 'T #)
-        let inline box     (x:'T) = (# "box !0" type ('T) x : obj #)
+        let inline unboxPrim<'T>(x:objnull) = (# "unbox.any !0" type ('T) x : 'T #)
+        let inline box     (x:'T) = (# "box !0" type ('T) x : objnull #)
         let inline convPrim<'T1, 'T2>(x: 'T1) : 'T2 = unboxPrim<'T2> (box x) 
         let inline not     (b:bool) = (# "ceq" b false : bool #)
         let inline (=)     (x:int)   (y:int)    = (# "ceq" x y : bool #) 
@@ -531,7 +555,7 @@ namespace Microsoft.FSharp.Core
         let set (arr: 'T array) (n:int) (x:'T) =  (# "stelem.any !0" type ('T) arr n x #)
 
 
-        let inline objEq (xobj:obj) (yobj:obj) = (# "ceq" xobj yobj : bool #)
+        let inline objEq (xobj:objnull) (yobj:objnull) = (# "ceq" xobj yobj : bool #)
         let inline int64Eq (x:int64) (y:int64) = (# "ceq" x y : bool #) 
         let inline int32Eq (x:int32) (y:int32) = (# "ceq" x y : bool #) 
         let inline floatEq (x:float) (y:float) = (# "ceq" x y : bool #) 
@@ -556,16 +580,19 @@ namespace Microsoft.FSharp.Core
             (# "sizeof !0" type('T) : int #) 
 
         let inline unsafeDefault<'T> : 'T = (# "ilzero !0" type ('T) : 'T #)
-        let inline isinstPrim<'T>(x:obj) = (# "isinst !0" type ('T) x : obj #)
+        let inline isinstPrim<'T>(x:objnull) = (# "isinst !0" type ('T) x : objnull #)
         let inline castclassPrim<'T>(x:obj) = (# "castclass !0" type ('T) x : 'T #)
         let inline notnullPrim<'T when 'T : not struct>(x:'T) = (# "ldnull cgt.un" x : bool #)
 
-        let inline iscastPrim<'T when 'T : not struct>(x:obj) = (# "isinst !0" type ('T) x : 'T #)
+        let inline iscastPrim<'T when 'T : not struct>(x:objnull) = (# "isinst !0" type ('T) x : 'T #)
 
         let inline mask (n:int) (m:int) = (# "and" n m : int #)
 
     open BasicInlinedOperations
 
+    // This exists solely so that it can be used in the CollectionBuilderAttribute on List<'T> in prim-types.fsi.
+    module internal TypeOfUtils =
+        let inline typeof<'T> = typeof<'T>
     
     module TupleUtils =
     
@@ -703,7 +730,7 @@ namespace Microsoft.FSharp.Core
             //  IL_0006:  brtrue.s   IL_000e
 
             // worst case: nothing known about source or destination
-            let UnboxGeneric<'T>(source: obj) = 
+            let UnboxGeneric<'T>(source: objnull) = 
                 if notnullPrim(source) or TypeInfo<'T>.TypeInfo <> TypeNullnessSemantics_NullNotLiked then 
                     unboxPrim<'T>(source)
                 else
@@ -711,23 +738,23 @@ namespace Microsoft.FSharp.Core
                     raise (System.NullReferenceException()) 
 
             // better: source is NOT TypeNullnessSemantics_NullNotLiked 
-            let inline UnboxFast<'T>(source: obj) = 
+            let inline UnboxFast<'T>(source: objnull) = 
                 // assert not(TypeInfo<'T>.TypeInfo = TypeNullnessSemantics_NullNotLiked)
                 unboxPrim<'T>(source)
 
 
             // worst case: nothing known about source or destination
-            let TypeTestGeneric<'T>(source: obj) = 
+            let TypeTestGeneric<'T>(source: objnull) = 
                 if notnullPrim(isinstPrim<'T>(source)) then true
                 elif notnullPrim(source) then false
                 else (TypeInfo<'T>.TypeInfo = TypeNullnessSemantics_NullTrueValue)
 
             // quick entry: source is NOT TypeNullnessSemantics_NullTrueValue 
-            let inline TypeTestFast<'T>(source: obj) = 
+            let inline TypeTestFast<'T>(source: objnull) = 
                 //assert not(TypeInfo<'T>.TypeInfo = TypeNullnessSemantics_NullTrueValue)
                 notnullPrim(isinstPrim<'T>(source)) 
 
-            let Dispose<'T when 'T :> IDisposable >(resource:'T) = 
+            let Dispose<'T when 'T :> IDisposable >(resource:'T|null) = 
                 match box resource with 
                 | null -> ()
                 | _ -> resource.Dispose()
@@ -752,17 +779,17 @@ namespace Microsoft.FSharp.Core
 
             let inline SetArray (target: 'T array) (index:int) (value:'T) =  (# "stelem.any !0" type ('T) target index value #)  
 
-            let inline GetArraySub arr (start:int) (len:int) =
-                let len = if len < 0 then 0 else len
-                let dst = zeroCreate len   
-                for i = 0 to len - 1 do 
-                    SetArray dst i (GetArray arr (start + i))
-                dst
+            let inline GetArraySub (arr: 'a array) (start:int) (len:int) : 'a array =
+                if len <= 0 then
+                    [||]
+                else
+                    let dst = zeroCreate len
+                    Array.Copy(arr, start, dst, 0, len)
+                    dst
 
-            let inline SetArraySub arr (start:int) (len:int) (src:_ array) =
-                for i = 0 to len - 1 do 
-                    SetArray arr (start+i) (GetArray src i)
-
+            let inline SetArraySub (arr: 'T array) (start:int) (len:int) (src: 'T array) =
+                if len > 0 then
+                    Array.Copy(src, 0, arr, start, len)
 
             let inline GetArray2D (source: 'T[,]) (index1: int) (index2: int) = (# "ldelem.multi 2 !0" type ('T) source index1 index2 : 'T #)  
 
@@ -877,11 +904,16 @@ namespace Microsoft.FSharp.Core
                           for m = 0 to len4 - 1 do
                             SetArray4D dst (src1+i) (src2+j) (src3+k) (src4+m) (GetArray4D src i j k m)
 
+        let inline defaultIfNull (defaultStr:string) x =
+            match x with
+            | null -> defaultStr
+            | nonNullString -> nonNullString
+
         let inline anyToString nullStr x = 
             match box x with 
-            | :? IFormattable as f -> f.ToString(null, CultureInfo.InvariantCulture)
+            | :? IFormattable as f -> defaultIfNull nullStr (f.ToString(null, CultureInfo.InvariantCulture))
             | null -> nullStr
-            | _ ->  x.ToString()
+            | _ ->  defaultIfNull nullStr (x.ToString())
 
         let anyToStringShowingNull x = anyToString "null" x
 
@@ -923,7 +955,7 @@ namespace Microsoft.FSharp.Core
              
             let inline HashCombine nr x y = (x <<< 1) + y + 631 * nr
 
-            let GenericHashObjArray (iec : IEqualityComparer) (x: obj array) : int =
+            let GenericHashObjArray (iec : IEqualityComparer) (x: objnull array) : int =
                   let len = x.Length 
                   let mutable i = len - 1 
                   if i > defaultHashNodes then i <- defaultHashNodes // limit the hash
@@ -989,7 +1021,7 @@ namespace Microsoft.FSharp.Core
             // Arrays are structurally hashed through a separate technique.
             //
             // "iec" is either fsEqualityComparerUnlimitedHashingER, fsEqualityComparerUnlimitedHashingPER or a CountLimitedHasherPER.
-            let rec GenericHashParamObj (iec : IEqualityComparer) (x: obj) : int =
+            let rec GenericHashParamObj (iec : IEqualityComparer) (x: objnull) : int =
                   match x with 
                   | null -> 0 
                   | (:? System.Array as a) -> 
@@ -1053,7 +1085,7 @@ namespace Microsoft.FSharp.Core
                     
             /// Implements generic comparison between two objects. This corresponds to the pseudo-code in the F#
             /// specification.  The treatment of NaNs is governed by "comp".
-            let rec GenericCompare (comp:GenericComparer) (xobj:obj, yobj:obj) = 
+            let rec GenericCompare (comp:GenericComparer) (xobj:objnull, yobj:objnull) = 
                   match xobj,yobj with 
                    | null,null -> 0
                    | null,_ -> -1
@@ -1185,7 +1217,7 @@ namespace Microsoft.FSharp.Core
                     check 0
 
             /// optimized case: Core implementation of structural comparison on object arrays.
-            and GenericComparisonObjArrayWithComparer (comp:GenericComparer) (x:obj array) (y:obj array) : int =
+            and GenericComparisonObjArrayWithComparer (comp:GenericComparer) (x:objnull array) (y:objnull array) : int =
                 let lenx = x.Length 
                 let leny = y.Length 
                 let c = intOrder lenx leny 
@@ -1216,7 +1248,7 @@ namespace Microsoft.FSharp.Core
 
             type GenericComparer with
                 interface IComparer with
-                    override c.Compare(x:obj,y:obj) = GenericCompare c (x,y)
+                    override c.Compare(x:objnull,y:objnull) = GenericCompare c (x,y)
 
             /// The unique object for comparing values in PER mode (where local exceptions are thrown when NaNs are compared)
             let fsComparerPER = GenericComparer(true)  
@@ -1552,7 +1584,7 @@ namespace Microsoft.FSharp.Core
             //
             // If "er" is true the "iec" is fsEqualityComparerUnlimitedHashingER
             // If "er" is false the "iec" is fsEqualityComparerUnlimitedHashingPER
-            let rec GenericEqualityObj (er:bool) (iec:IEqualityComparer) ((xobj:obj),(yobj:obj)) : bool = 
+            let rec GenericEqualityObj (er:bool) (iec:IEqualityComparer) ((xobj:objnull),(yobj:objnull)) : bool = 
                 (*if objEq xobj yobj then true else  *)
                 match xobj,yobj with 
                  | null,null -> true
@@ -1641,7 +1673,7 @@ namespace Microsoft.FSharp.Core
                     check 0
 
             /// optimized case: Core implementation of structural equality on object arrays.
-            and GenericEqualityObjArray er iec (x:obj array) (y:obj array) : bool =
+            and GenericEqualityObjArray er iec (x:objnull array) (y:objnull array) : bool =
                 let lenx = x.Length 
                 let leny = y.Length 
                 let c = (lenx = leny )
@@ -1744,12 +1776,12 @@ namespace Microsoft.FSharp.Core
                 checkType 0 [| rootType |]
 
             let arrayEqualityComparer<'T> er comparer =
-                let arrayEquals (er: bool) (iec: IEqualityComparer) (xobj: obj) (yobj: obj) : bool = 
+                let arrayEquals (er: bool) (iec: IEqualityComparer) (xobj: objnull) (yobj: objnull) : bool = 
                     match xobj, yobj with 
                     | null, null -> true
                     | null, _ -> false
                     | _, null -> false
-                    | (:? (obj array)      as arr1), (:? (obj array)      as arr2) -> GenericEqualityObjArray    er iec arr1 arr2
+                    | (:? (objnull array)  as arr1), (:? (objnull array)  as arr2) -> GenericEqualityObjArray    er iec arr1 arr2
                     | (:? (byte array)     as arr1), (:? (byte array)     as arr2) -> GenericEqualityByteArray          arr1 arr2
                     | (:? (int32 array)    as arr1), (:? (int32 array)    as arr2) -> GenericEqualityInt32Array         arr1 arr2
                     | (:? (int64 array)    as arr1), (:? (int64 array)    as arr2) -> GenericEqualityInt64Array         arr1 arr2
@@ -1759,10 +1791,10 @@ namespace Microsoft.FSharp.Core
                     | (:? Array            as arr1), (:? Array            as arr2) -> GenericEqualityArbArray    er iec arr1 arr2
                     | _ -> raise (Exception "invalid logic - expected array")
 
-                let getHashCode (iec, xobj: obj) =
+                let getHashCode (iec, xobj: objnull) =
                     match xobj with 
                     | null -> 0 
-                    | :? (obj array)      as oa -> GenericHashObjArray iec oa 
+                    | :? (objnull array)      as oa -> GenericHashObjArray iec oa 
                     | :? (byte array)     as ba -> GenericHashByteArray ba 
                     | :? (int array)      as ia -> GenericHashInt32Array ia 
                     | :? (int64 array)    as ia -> GenericHashInt64Array ia 
@@ -1948,9 +1980,9 @@ namespace Microsoft.FSharp.Core
             type CountLimitedHasherPER with
                 
                 interface IEqualityComparer with
-                    override iec.Equals(x:obj,y:obj) =
+                    override iec.Equals(x:objnull,y:objnull) =
                         GenericEqualityObj false iec (x,y)
-                    override iec.GetHashCode(x:obj) =
+                    override iec.GetHashCode(x:objnull) =
                         iec.nodeCount <- iec.nodeCount - 1
                         if iec.nodeCount > 0 then
                             GenericHashParamObj iec  x
@@ -1961,14 +1993,14 @@ namespace Microsoft.FSharp.Core
             type UnlimitedHasherER with
                 
                 interface IEqualityComparer with
-                    override iec.Equals(x:obj,y:obj) = GenericEqualityObj true iec (x,y)
-                    override iec.GetHashCode(x:obj) = GenericHashParamObj iec  x
+                    override iec.Equals(x:objnull,y:objnull) = GenericEqualityObj true iec (x,y)
+                    override iec.GetHashCode(x:objnull) = GenericHashParamObj iec  x
                    
             /// Fill in the implementation of UnlimitedHasherPER
             type UnlimitedHasherPER with
                 interface IEqualityComparer with
-                    override iec.Equals(x:obj,y:obj) = GenericEqualityObj false iec (x,y)
-                    override iec.GetHashCode(x:obj) = GenericHashParamObj iec x
+                    override iec.Equals(x:objnull,y:objnull) = GenericEqualityObj false iec (x,y)
+                    override iec.GetHashCode(x:objnull) = GenericHashParamObj iec x
 
             /// Intrinsic for calls to depth-unlimited structural hashing that were not optimized by static conditionals.
             //
@@ -4069,6 +4101,23 @@ namespace Microsoft.FSharp.Core
 
     and 'T voption = ValueOption<'T>
 
+// These attributes only exist in .NET 8 and up.
+namespace System.Runtime.CompilerServices
+    open System
+    open Microsoft.FSharp.Core
+
+    [<Sealed>]
+    [<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Struct ||| AttributeTargets.Interface, Inherited = false)>]
+    type internal CollectionBuilderAttribute (builderType: Type, methodName: string) =
+        inherit Attribute ()
+        member _.BuilderType = builderType
+        member _.MethodName = methodName
+
+    [<Sealed>]
+    [<AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)>]
+    type internal ScopedRefAttribute () =
+        inherit Attribute ()
+
 namespace Microsoft.FSharp.Collections
 
     //-------------------------------------------------------------------------
@@ -4086,6 +4135,9 @@ namespace Microsoft.FSharp.Collections
     open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicFunctions
     open Microsoft.FSharp.Core.BasicInlinedOperations
 
+#if NETSTANDARD2_1_OR_GREATER
+    [<System.Runtime.CompilerServices.CollectionBuilder(typeof<List>, "Create")>]
+#endif
     [<DefaultAugmentation(false)>]
     [<DebuggerTypeProxyAttribute(typedefof<ListDebugView<_>>)>]
     [<DebuggerDisplay("{DebugDisplay,nq}")>]
@@ -4110,6 +4162,19 @@ namespace Microsoft.FSharp.Collections
        interface IReadOnlyList<'T>
         
     and 'T list = List<'T>
+
+#if NETSTANDARD2_1_OR_GREATER
+    and [<CompilerMessage("This type is for compiler use and should not be used directly", 1204, IsHidden=true);
+          Sealed;
+          AbstractClass;
+          CompiledName("FSharpList")>] List =
+        [<CompilerMessage("This method is for compiler use and should not be used directly", 1204, IsHidden=true)>]
+        static member Create([<System.Runtime.CompilerServices.ScopedRef>] items: System.ReadOnlySpan<'T>) =
+            let mutable list : 'T list = []
+            for i = items.Length - 1 downto 0 do
+                list <- items[i] :: list
+            list
+#endif
 
     //-------------------------------------------------------------------------
     // List (debug view)
@@ -4342,20 +4407,20 @@ namespace Microsoft.FSharp.Core
         let seq (sequence: seq<'T>) = sequence 
 
         [<CompiledName("Unbox")>]
-        let inline unbox (value: obj) = UnboxGeneric(value)
+        let inline unbox (value: objnull) = UnboxGeneric(value)
 
         [<CompiledName("Box")>]
-        let inline box (value: 'T) = (# "box !0" type ('T) value : obj #)
+        let inline box (value: 'T) = (# "box !0" type ('T) value : objnull #)
 
         [<CompiledName("TryUnbox")>]
-        let inline tryUnbox (value:obj) = 
+        let inline tryUnbox (value:objnull) = 
             match value with 
             | :? 'T as v -> Some v
             | _ -> None
 
         [<CompiledName("IsNull")>]
-        let inline isNull (value : 'T) = 
-            match value with 
+        let inline isNull (value : 'T when 'T : null) = 
+            match box value with 
             | null -> true 
             | _ -> false
 
@@ -4364,6 +4429,59 @@ namespace Microsoft.FSharp.Core
             match value with 
             | null -> false 
             | _ -> true
+
+        [<CompiledName("IsNullV")>]
+        let inline isNullV (value : Nullable<'T>) = not value.HasValue
+
+        [<CompiledName("NonNull")>]
+        let inline nonNull (value : 'T | null when 'T : not null and 'T : not struct) = 
+            match box value with 
+            | null -> raise (NullReferenceException()) 
+            | _ -> (# "" value : 'T #)
+
+        [<CompiledName("NonNullV")>]
+        let inline nonNullV (value : Nullable<'T>) = 
+            if value.HasValue then 
+                value.Value
+            else 
+                raise (NullReferenceException())
+
+        [<CompiledName("NullMatchPattern")>]
+        let inline (|Null|NonNull|) (value : 'T | null when 'T : not null and 'T : not struct) = 
+            match value with 
+            | null -> Null () 
+            | _ -> NonNull (# "" value : 'T #)
+
+        [<CompiledName("NullValueMatchPattern")>]
+        let inline (|NullV|NonNullV|) (value : Nullable<'T>) = 
+            if value.HasValue then NonNullV value.Value
+            else NullV ()
+
+        [<CompiledName("NonNullQuickPattern")>]
+        let inline (|NonNullQuick|) (value : 'T | null when 'T : not null and 'T : not struct) =
+            match box value with 
+            | null -> raise (NullReferenceException()) 
+            | _ -> (# "" value : 'T #)
+
+        [<CompiledName("NonNullQuickValuePattern")>]
+        let inline (|NonNullQuickV|) (value : Nullable<'T>) =
+            if value.HasValue then value.Value
+            else raise (NullReferenceException()) 
+
+        [<CompiledName("WithNull")>]
+        let inline withNull (value : 'T when 'T : not null and 'T : not struct) = (# "" value : 'T | null #)
+
+        [<CompiledName("WithNullV")>]
+        let inline withNullV (value : 'T) : Nullable<'T> = Nullable<'T>(value)
+
+        [<CompiledName("NullV")>]
+        let inline nullV<'T when 'T : struct and 'T : (new : unit -> 'T) and 'T :> ValueType>  = Nullable<'T>()
+
+        [<CompiledName("NullArgCheck")>]
+        let inline nullArgCheck (argumentName:string) (value: 'T | null when 'T : not null and 'T : not struct) = 
+            match value with 
+            | null -> raise (new ArgumentNullException(argumentName))        
+            | _ ->  (# "" value : 'T #)
 
         [<CompiledName("Raise")>]
         let inline raise (exn: exn) =
@@ -4456,6 +4574,14 @@ namespace Microsoft.FSharp.Core
         
         [<CompiledName("DefaultValueArg")>]
         let defaultValueArg arg defaultValue = match arg with ValueNone -> defaultValue | ValueSome v -> v
+
+        [<CompiledName("DefaultIfNull")>]
+        let inline defaultIfNull defaultValue (arg: 'T | null when 'T : not null and 'T : not struct) = 
+            match arg with null -> defaultValue | _ -> (# "" arg : 'T #)
+        
+        [<CompiledName("DefaultIfNullV")>]
+        let inline defaultIfNullV defaultValue (arg: Nullable<'T>) = 
+            if arg.HasValue then arg.Value else defaultValue
 
         [<NoDynamicInvocation(isLegacy=true)>]
         let inline (~-) (n: ^T) : ^T = 
@@ -5037,11 +5163,10 @@ namespace Microsoft.FSharp.Core
              when ^T : decimal    = (# "conv.i" (int64 (# "" value : decimal #)) : unativeint #)
              when ^T : ^T = (^T : (static member op_Explicit: ^T -> nativeint) (value))
 
-        [<CompiledName("ToString")>]
-        let inline string (value: 'T) = 
-             anyToString "" value
+        let inline defaultString (value : 'T) =
+            anyToString "" value
 
-             when 'T : string =
+            when 'T : string =
                 if value = unsafeDefault<'T> then ""
                 else (# "" value : string #)     // force no-op
 
@@ -5058,10 +5183,9 @@ namespace Microsoft.FSharp.Core
              when 'T : nativeint  = let x = (# "" value : nativeint #)  in x.ToString()
              when 'T : unativeint = let x = (# "" value : unativeint #) in x.ToString()
 
-             // Integral types can be enum:
-             // It is not possible to distinguish statically between Enum and (any type of) int. For signed types we have 
-             // to use IFormattable::ToString, as the minus sign can be overridden. Using boxing we'll print their symbolic
-             // value if it's an enum, e.g.: 'ConsoleKey.Backspace' gives "Backspace", rather than "8")
+             // These rules for signed integer types will no longer be used when built with a compiler version that
+             // supports `when 'T : Enum`, but we must keep them to remain compatible with compiler versions that do not.
+             // Once all compiler versions that do not understand `when 'T : Enum` are out of support, these four rules can be removed.
              when 'T : sbyte      = (box value :?> IFormattable).ToString(null, CultureInfo.InvariantCulture)
              when 'T : int16      = (box value :?> IFormattable).ToString(null, CultureInfo.InvariantCulture)
              when 'T : int32      = (box value :?> IFormattable).ToString(null, CultureInfo.InvariantCulture)
@@ -5074,7 +5198,6 @@ namespace Microsoft.FSharp.Core
              when 'T : uint32     = let x = (# "" value : 'T #) in x.ToString()
              when 'T : uint64     = let x = (# "" value : 'T #) in x.ToString()
 
-
              // other common mscorlib System struct types
              when 'T : DateTime       = let x = (# "" value : DateTime #) in x.ToString(null, CultureInfo.InvariantCulture)
              when 'T : DateTimeOffset = let x = (# "" value : DateTimeOffset #) in x.ToString(null, CultureInfo.InvariantCulture)
@@ -5082,17 +5205,49 @@ namespace Microsoft.FSharp.Core
              when 'T : Guid           = let x = (# "" value : Guid #) in x.ToString(null, CultureInfo.InvariantCulture)
              when 'T struct = 
                 match box value with
-                | :? IFormattable as f -> f.ToString(null, CultureInfo.InvariantCulture)
-                | _ -> value.ToString()
+                | :? IFormattable as f -> defaultIfNull "" (f.ToString(null, CultureInfo.InvariantCulture))
+                | _ -> defaultIfNull "" (value.ToString())
 
-             // other commmon mscorlib reference types
+             // other common mscorlib reference types
              when 'T : StringBuilder =
                 if value = unsafeDefault<'T> then ""
                 else let x = (# "" value : StringBuilder #) in x.ToString()
 
              when 'T : IFormattable =
                 if value = unsafeDefault<'T> then ""
-                else let x = (# "" value : IFormattable #) in x.ToString(null, CultureInfo.InvariantCulture)
+                else let x = (# "" value : IFormattable #) in defaultIfNull "" (x.ToString(null, CultureInfo.InvariantCulture))
+
+        [<CompiledName("ToString")>]
+        let inline string (value: 'T) = 
+             defaultString value
+
+             // Only compilers that understand `when 'T : SupportsWhenTEnum` will understand `when 'T : Enum`.
+             when 'T : CompilerServices.SupportsWhenTEnum =
+                (
+                    let inline string (value : 'T) =
+                        defaultString value
+
+                        // Special handling is required for enums, since:
+                        //
+                        // - The runtime value may be outside the defined members of the enum.
+                        // - Their underlying type may be a signed integral type.
+                        // - The negative sign may be overridden.
+                        //
+                        // For example:
+                        //
+                        //     string DayOfWeek.Wednesday   →  "Wednesday"
+                        //     string (enum<DayOfWeek> -3)  →  "-3" // The negative sign is culture-dependent.
+                        //     string (enum<DayOfWeek> -3)  →  "⁒3" // E.g., the negative sign for the current culture could be overridden to "⁒".
+                        when 'T : Enum  = let x = (# "" value : 'T #) in x.ToString() // Use 'T to constrain the call to the specific enum type.
+
+                        // For compilers that understand `when 'T : Enum`, we can safely make a constrained call on the integral type itself here.
+                        when 'T : sbyte = let x = (# "" value : sbyte #) in x.ToString(null, CultureInfo.InvariantCulture)
+                        when 'T : int16 = let x = (# "" value : int16 #) in x.ToString(null, CultureInfo.InvariantCulture)
+                        when 'T : int32 = let x = (# "" value : int32 #) in x.ToString(null, CultureInfo.InvariantCulture)
+                        when 'T : int64 = let x = (# "" value : int64 #) in x.ToString(null, CultureInfo.InvariantCulture)
+
+                    string value
+                )
 
         [<NoDynamicInvocation(isLegacy=true)>]
         [<CompiledName("ToChar")>]
@@ -5387,7 +5542,7 @@ namespace Microsoft.FSharp.Core
         module Unchecked =
 
             [<CompiledName("Unbox")>]
-            let inline unbox<'T> (v:obj) = unboxPrim<'T> v
+            let inline unbox<'T> (v:objnull) = unboxPrim<'T> v
 
             [<CompiledName("DefaultOf")>]
             let inline defaultof<'T> = unsafeDefault<'T>
@@ -5400,6 +5555,12 @@ namespace Microsoft.FSharp.Core
 
             [<CompiledName("Hash")>]
             let inline hash x = GenericHash x
+
+            [<CompiledName("NonNull")>]
+            let inline nonNull (x: 'T | null when 'T : not null and 'T : not struct) : 'T = (# "" x : 'T #)
+
+            [<CompiledName("NonNullQuickPattern")>]
+            let inline (|NonNullQuick|) (value : 'T | null when 'T : not null and 'T : not struct) = nonNull value
 
         module Checked = 
         
@@ -5710,7 +5871,7 @@ namespace Microsoft.FSharp.Core
 
             // Notes on "inline" with range ienumerable generation.
             // "inline" is used to ensure that primitive ops like add,sub etc. are direct calls.
-            // However, it is not used to ensure all explicit lambda arguments can be reduced by the optimiser.
+            // However, it is not used to ensure all explicit lambda arguments can be reduced by the optimizer.
 
             type Mode = 
                 | NotStarted = 0
@@ -5720,7 +5881,7 @@ namespace Microsoft.FSharp.Core
             [<AbstractClass>]
             type BaseRangeEnumerator<'T>() =
                 // Generate enumerator from mutable state "z".
-                // Marked "inline" to ensure argument functions are reduced (by optimiser).
+                // Marked "inline" to ensure argument functions are reduced (by optimizer).
                 let mutable mode = Mode.NotStarted
                 let getCurrent(x:BaseRangeEnumerator<'T>) = 
                     match mode with
@@ -5974,7 +6135,7 @@ namespace Microsoft.FSharp.Core
                     else                                               false              
 
                 // NOTE: The ordering Before is an argument. It will be < or > depending on direction.
-                // We assume assume "Before n m" 
+                // We assume "Before n m" 
                 abstract Before: 'T -> 'T -> bool
                 abstract Equal: 'T -> 'T -> bool
                 abstract Step: 'T -> 'T 
@@ -7196,7 +7357,7 @@ namespace Microsoft.FSharp.Control
         inherit IObservable<'Args>
 
     [<CompiledName("FSharpHandler`1")>]
-    type Handler<'Args> =  delegate of sender:obj * args:'Args -> unit 
+    type Handler<'Args> =  delegate of sender:objnull * args:'Args -> unit 
 
     type IEvent<'Args> = IEvent<Handler<'Args>, 'Args>
 

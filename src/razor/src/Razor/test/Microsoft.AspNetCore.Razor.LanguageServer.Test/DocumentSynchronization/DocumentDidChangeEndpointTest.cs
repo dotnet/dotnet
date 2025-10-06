@@ -1,12 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,21 +22,17 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
     public void ApplyContentChanges_SingleChange()
     {
         // Arrange
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService, LoggerFactory);
+        var endpoint = new DocumentDidChangeEndpoint(_projectService, LoggerFactory);
         var sourceText = SourceText.From("Hello World");
         var change = new TextDocumentContentChangeEvent()
         {
-            Range = new Range
-            {
-                Start = new Position(0, 5),
-                End = new Position(0, 5),
-            },
+            Range = LspFactory.CreateZeroWidthRange(0, 5),
             RangeLength = 0,
             Text = "!"
         };
 
         // Act
-        var result = endpoint.ApplyContentChanges(new[] { change }, sourceText);
+        var result = endpoint.ApplyContentChanges([change], sourceText);
 
         // Assert
         Assert.Equal("Hello! World", result.ToString());
@@ -45,15 +42,12 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
     public void ApplyContentChanges_MultipleChanges()
     {
         // Arrange
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService, LoggerFactory);
+        var endpoint = new DocumentDidChangeEndpoint(_projectService, LoggerFactory);
         var sourceText = SourceText.From("Hello World");
         var changes = new[] {
             new TextDocumentContentChangeEvent()
             {
-                Range = new Range{
-                    Start = new Position(0, 5),
-                    End = new Position(0, 5)
-                },
+                Range = LspFactory.CreateZeroWidthRange(0, 5),
                 RangeLength = 0,
                 Text = Environment.NewLine
             },
@@ -62,10 +56,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
 
             new TextDocumentContentChangeEvent()
             {
-                Range = new Range{
-                    Start = new Position(1, 0),
-                    End = new Position(1, 0),
-                },
+                Range = LspFactory.CreateZeroWidthRange(1, 0),
                 RangeLength = 0,
                 Text = "!"
             },
@@ -74,10 +65,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
 
             new TextDocumentContentChangeEvent()
             {
-                Range = new Range{
-                    Start = new Position(0, 1),
-                    End = new Position(0, 1)
-                },
+                Range = LspFactory.CreateZeroWidthRange(0, 1),
                 RangeLength = 4,
                 Text = """
                     i!
@@ -107,38 +95,35 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var sourceText = "<p>";
         var codeDocument = CreateCodeDocument(sourceText);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.UpdateDocument(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>()))
-            .Callback<string, SourceText, int>((path, text, version) =>
+        var projectService = new StrictMock<IRazorProjectService>();
+        projectService
+            .Setup(service => service.UpdateDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Callback((string path, SourceText text, CancellationToken cancellationToken) =>
             {
                 Assert.Equal("<p></p>", text.ToString());
                 Assert.Equal(documentPath.OriginalString, path);
-                Assert.Equal(1337, version);
             });
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, projectService.Object, LoggerFactory);
+        var endpoint = new DocumentDidChangeEndpoint(projectService.Object, LoggerFactory);
         var change = new TextDocumentContentChangeEvent()
         {
-            Range = new Range
-            {
-                Start = new Position(0, 3),
-                End = new Position(0, 3),
-            },
+            Range = LspFactory.CreateZeroWidthRange(0, 3),
             RangeLength = 0,
             Text = "</p>"
         };
         var request = new DidChangeTextDocumentParams()
         {
-            ContentChanges = new TextDocumentContentChangeEvent[] { change },
+            ContentChanges = [change],
             TextDocument = new VersionedTextDocumentIdentifier()
             {
-                Uri = documentPath,
+                DocumentUri = new(documentPath),
                 Version = 1337,
             }
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        await endpoint.HandleNotificationAsync(request, requestContext, default);
+        await endpoint.HandleNotificationAsync(request, requestContext, DisposalToken);
 
         // Assert
         projectService.VerifyAll();

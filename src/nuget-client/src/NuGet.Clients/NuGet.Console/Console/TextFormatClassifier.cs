@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Language.StandardClassification;

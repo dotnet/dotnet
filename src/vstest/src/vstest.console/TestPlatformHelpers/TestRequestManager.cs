@@ -78,6 +78,13 @@ internal class TestRequestManager : ITestRequestManager
     /// Assumption: There can only be one active discovery request.
     /// </summary>
     private IDiscoveryRequest? _currentDiscoveryRequest;
+    /// <summary>
+    /// Guards cancellation of the current discovery request, by resetting when the request is received,
+    /// because the request needs time to setup and populate the _currentTestRunRequest. This might take a relatively
+    /// long time when the machine is slow, because the setup is called as an async task, so it needs to be processed by thread pool
+    /// and there might be a queue of existing tasks.
+    /// </summary>
+    private readonly ManualResetEvent _discoveryStarting = new(true);
 
     /// <summary>
     /// Maintains the current active test run attachments processing cancellation token source.
@@ -163,105 +170,118 @@ internal class TestRequestManager : ITestRequestManager
         ITestDiscoveryEventsRegistrar discoveryEventsRegistrar,
         ProtocolConfig protocolConfig)
     {
-        EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests started.");
-
-        // TODO: Normalize rest of the data on the request as well
-        discoveryPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(discoveryPayload.Sources?.Distinct().ToList());
-        discoveryPayload.RunSettings ??= "<RunSettings></RunSettings>";
-
-        var runsettings = discoveryPayload.RunSettings;
-
-        if (discoveryPayload.TestPlatformOptions != null)
+        try
         {
-            _telemetryOptedIn = discoveryPayload.TestPlatformOptions.CollectMetrics;
-        }
+            // Flag that that discovery is being initialized, so all requests to cancel discovery will wait till we set the discovery up.
+            _discoveryStarting.Reset();
 
-        var requestData = GetRequestData(protocolConfig);
-        if (UpdateRunSettingsIfRequired(
-                runsettings,
-                discoveryPayload.Sources.ToList(),
-                discoveryEventsRegistrar,
-                isDiscovery: true,
-                out string updatedRunsettings,
-                out IDictionary<string, Architecture> sourceToArchitectureMap,
-                out IDictionary<string, Framework> sourceToFrameworkMap))
-        {
-            runsettings = updatedRunsettings;
-        }
-
-        var sourceToSourceDetailMap = discoveryPayload.Sources.Select(source => new SourceDetail
-        {
-            Source = source,
-            Architecture = sourceToArchitectureMap[source],
-            Framework = sourceToFrameworkMap[source],
-        }).ToDictionary(k => k.Source!);
-
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettings);
-        var batchSize = runConfiguration.BatchSize;
-        var testCaseFilterFromRunsettings = runConfiguration.TestCaseFilter;
-
-        if (requestData.IsTelemetryOptedIn)
-        {
-            // Collect metrics.
-            CollectMetrics(requestData, runConfiguration);
-
-            // Collect commands.
-            LogCommandsTelemetryPoints(requestData);
-        }
-
-        // Create discovery request.
-        var criteria = new DiscoveryCriteria(
-            discoveryPayload.Sources,
-            batchSize,
-            _commandLineOptions.TestStatsEventTimeout,
-            runsettings,
-            discoveryPayload.TestSessionInfo)
-        {
-            TestCaseFilter = _commandLineOptions.TestCaseFilterValue
-                             ?? testCaseFilterFromRunsettings
-        };
-
-        // Make sure to run the run request inside a lock as the below section is not thread-safe.
-        // There can be only one discovery or execution request at a given point in time.
-        lock (_syncObject)
-        {
-            try
+            // Make sure to run the run request inside a lock as the below section is not thread-safe.
+            // There can be only one discovery or execution request at a given point in time.
+            lock (_syncObject)
             {
-                EqtTrace.Info("TestRequestManager.DiscoverTests: Synchronization context taken");
+                EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests started.");
 
-                _currentDiscoveryRequest = _testPlatform.CreateDiscoveryRequest(
-                    requestData,
-                    criteria,
-                    discoveryPayload.TestPlatformOptions,
-                    sourceToSourceDetailMap,
-                    new EventRegistrarToWarningLoggerAdapter(discoveryEventsRegistrar));
-                discoveryEventsRegistrar?.RegisterDiscoveryEvents(_currentDiscoveryRequest);
+                // TODO: Normalize rest of the data on the request as well
+                discoveryPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(discoveryPayload.Sources?.Distinct().ToList());
+                discoveryPayload.RunSettings ??= "<RunSettings></RunSettings>";
 
-                // Notify start of discovery start.
-                _testPlatformEventSource.DiscoveryRequestStart();
+                var runsettings = discoveryPayload.RunSettings;
 
-                // Start the discovery of tests and wait for completion.
-                _currentDiscoveryRequest.DiscoverAsync();
-                _currentDiscoveryRequest.WaitForCompletion();
-            }
-            finally
-            {
-                if (_currentDiscoveryRequest != null)
+                if (discoveryPayload.TestPlatformOptions != null)
                 {
-                    // Dispose the discovery request and unregister for events.
-                    discoveryEventsRegistrar?.UnregisterDiscoveryEvents(_currentDiscoveryRequest);
-                    _currentDiscoveryRequest.Dispose();
-                    _currentDiscoveryRequest = null;
+                    _telemetryOptedIn = discoveryPayload.TestPlatformOptions.CollectMetrics;
                 }
 
-                EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests completed.");
-                _testPlatformEventSource.DiscoveryRequestStop();
+                var requestData = GetRequestData(protocolConfig);
+                if (UpdateRunSettingsIfRequired(
+                        runsettings,
+                        discoveryPayload.Sources.ToList(),
+                        discoveryEventsRegistrar,
+                        isDiscovery: true,
+                        out string updatedRunsettings,
+                        out IDictionary<string, Architecture> sourceToArchitectureMap,
+                        out IDictionary<string, Framework> sourceToFrameworkMap))
+                {
+                    runsettings = updatedRunsettings;
+                }
 
-                // Posts the discovery complete event.
-                _metricsPublisher.Result.PublishMetrics(
-                    TelemetryDataConstants.TestDiscoveryCompleteEvent,
-                    requestData.MetricsCollection.Metrics!);
+                var sourceToSourceDetailMap = discoveryPayload.Sources.Select(source => new SourceDetail
+                {
+                    Source = source,
+                    Architecture = sourceToArchitectureMap[source],
+                    Framework = sourceToFrameworkMap[source],
+                }).ToDictionary(k => k.Source!);
+
+                var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettings);
+                var batchSize = runConfiguration.BatchSize;
+                var testCaseFilterFromRunsettings = runConfiguration.TestCaseFilter;
+
+                if (requestData.IsTelemetryOptedIn)
+                {
+                    // Collect metrics.
+                    CollectMetrics(requestData, runConfiguration);
+
+                    // Collect commands.
+                    LogCommandsTelemetryPoints(requestData);
+                }
+
+                // Create discovery request.
+                var criteria = new DiscoveryCriteria(
+                    discoveryPayload.Sources,
+                    batchSize,
+                    _commandLineOptions.TestStatsEventTimeout,
+                    runsettings,
+                    discoveryPayload.TestSessionInfo)
+                {
+                    TestCaseFilter = _commandLineOptions.TestCaseFilterValue
+                                     ?? testCaseFilterFromRunsettings
+                };
+
+
+                try
+                {
+                    EqtTrace.Info("TestRequestManager.DiscoverTests: Synchronization context taken");
+
+                    _currentDiscoveryRequest = _testPlatform.CreateDiscoveryRequest(
+                        requestData,
+                        criteria,
+                        discoveryPayload.TestPlatformOptions,
+                        sourceToSourceDetailMap,
+                        new EventRegistrarToWarningLoggerAdapter(discoveryEventsRegistrar));
+                    // Discovery started, allow cancellations to proceed.
+                    _currentDiscoveryRequest.OnDiscoveryStart += (s, e) => _discoveryStarting.Set();
+                    discoveryEventsRegistrar?.RegisterDiscoveryEvents(_currentDiscoveryRequest);
+
+                    // Notify start of discovery start.
+                    _testPlatformEventSource.DiscoveryRequestStart();
+
+                    // Start the discovery of tests and wait for completion.
+                    _currentDiscoveryRequest.DiscoverAsync();
+                    _currentDiscoveryRequest.WaitForCompletion();
+                }
+                finally
+                {
+                    if (_currentDiscoveryRequest != null)
+                    {
+                        // Dispose the discovery request and unregister for events.
+                        discoveryEventsRegistrar?.UnregisterDiscoveryEvents(_currentDiscoveryRequest);
+                        _currentDiscoveryRequest.Dispose();
+                        _currentDiscoveryRequest = null;
+                    }
+
+                    EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests completed.");
+                    _testPlatformEventSource.DiscoveryRequestStop();
+
+                    // Posts the discovery complete event.
+                    _metricsPublisher.Result.PublishMetrics(
+                        TelemetryDataConstants.TestDiscoveryCompleteEvent,
+                        requestData.MetricsCollection.Metrics!);
+                }
             }
+        }
+        finally
+        {
+            _discoveryStarting.Set();
         }
     }
 
@@ -624,6 +644,12 @@ internal class TestRequestManager : ITestRequestManager
     public void CancelDiscovery()
     {
         EqtTrace.Info("TestRequestManager.CancelDiscovery: Sending cancel request.");
+
+        // Wait for discovery request to initialize, before cancelling it, otherwise the
+        // _currentDiscoveryRequest might be null, because discovery did not have enough time to
+        // initialize and did not manage to populate _currentDiscoveryRequest yet, leading to hanging run
+        // that "ignores" the cancellation.
+        _discoveryStarting.WaitOne(3000);
         _currentDiscoveryRequest?.Abort();
     }
 
@@ -710,7 +736,7 @@ internal class TestRequestManager : ITestRequestManager
         // After MULTI_TFM  sourceToArchitectureMap and sourceToFrameworkMap are the source of truth, and are propagated forward,
         // so when we want to revert to the older behavior we need to re-enable the check, and unify all the architecture and
         // framework entries to the same chosen value.
-        var disableMultiTfm = FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_MULTI_TFM_RUN);
+        var disableMultiTfm = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_MULTI_TFM_RUN);
 
         // Choose default architecture based on the framework.
         // For a run with mixed tfms enabled, or .NET "Core", the default platform architecture should be based on the process.
@@ -1278,7 +1304,6 @@ internal class TestRequestManager : ITestRequestManager
     /// This method either looks at runsettings directly when running as a server (DesignMode / IDE / via VSTestConsoleWrapper, or how you wanna call it)
     /// or uses the pre-parsed runsettings when in console mode.
     /// </summary>
-    /// <param name="navigator"></param>
     /// <returns></returns>
     private bool IsFrameworkSetByRunSettings(
         XPathNavigator navigator,
@@ -1314,7 +1339,6 @@ internal class TestRequestManager : ITestRequestManager
     /// This method either looks at runsettings directly when running as a server (DesignMode / IDE / via VSTestConsoleWrapper, or how you wanna call it)
     /// or uses the pre-parsed runsettings when in console mode.
     /// </summary>
-    /// <param name="navigator"></param>
     /// <returns></returns>
     private bool IsPlatformSetByRunSettings(
         XPathNavigator navigator, out Architecture chosenPlatform)
@@ -1510,23 +1534,21 @@ internal class TestRequestManager : ITestRequestManager
     private static List<string> GetSources(TestRunRequestPayload testRunRequestPayload)
     {
         // TODO: This should also use hashset to only return distinct sources.
-        List<string> sources = new();
-        if (testRunRequestPayload.Sources != null
-            && testRunRequestPayload.Sources.Count > 0)
+        if (testRunRequestPayload.Sources is { Count: > 0 })
         {
-            sources = testRunRequestPayload.Sources;
+            return testRunRequestPayload.Sources;
         }
-        else if (testRunRequestPayload.TestCases != null
-                 && testRunRequestPayload.TestCases.Count > 0)
+
+        if (testRunRequestPayload.TestCases is { Count: > 0 })
         {
-            ISet<string> sourcesSet = new HashSet<string>();
+            var sourcesSet = new HashSet<string>();
             foreach (var testCase in testRunRequestPayload.TestCases)
             {
                 sourcesSet.Add(testCase.Source);
             }
-            sources = sourcesSet.ToList();
+            return sourcesSet.ToList();
         }
-        return sources;
+        return [];
     }
 }
 
@@ -1567,6 +1589,37 @@ internal static class KnownPlatformSourceFilter
         "Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll",
         "Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
         "Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll",
+
+        // Testing platform
+        "Microsoft.Testing.Extensions.CodeCoverage.dll",
+        "Microsoft.Testing.Extensions.CodeCoverage.resources.dll",
+        "Microsoft.Testing.Extensions.CrashDump.dll",
+        "Microsoft.Testing.Extensions.CrashDump.resources.dll",
+        "Microsoft.Testing.Extensions.Experimental.dll",
+        "Microsoft.Testing.Extensions.HangDump.dll",
+        "Microsoft.Testing.Extensions.HangDump.resources.dll",
+        "Microsoft.Testing.Extensions.HotReload.dll",
+        "Microsoft.Testing.Extensions.HotReload.resources.dll",
+        "Microsoft.Testing.Extensions.MSBuild.dll",
+        "Microsoft.Testing.Extensions.Retry.dll",
+        "Microsoft.Testing.Extensions.Retry.resources.dll",
+        "Microsoft.Testing.Extensions.Telemetry.dll",
+        "Microsoft.Testing.Extensions.Telemetry.resources.dll",
+        "Microsoft.Testing.Extensions.TrxReport.Abstractions.dll",
+        "Microsoft.Testing.Extensions.TrxReport.dll",
+        "Microsoft.Testing.Extensions.TrxReport.resources.dll",
+        "Microsoft.Testing.Extensions.VSTestBridge.dll",
+        "Microsoft.Testing.Extensions.VSTestBridge.resources.dll",
+        "Microsoft.Testing.Internal.Framework.dll",
+        "Microsoft.Testing.Internal.Framework.SourceGeneration.dll",
+        "Microsoft.Testing.Internal.VersionSourceGeneration.dll",
+        "Microsoft.Testing.Platform.dll",
+        "Microsoft.Testing.Platform.Extensions.dll",
+        "Microsoft.Testing.Platform.Extensions.VSTestBridge.dll",
+        "Microsoft.Testing.Platform.MSBuild.dll",
+        "Microsoft.Testing.Platform.MSBuild.resources.dll",
+        "Microsoft.Testing.Platform.resources.dll",
+
         // For MSTest up to v3
         "Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll",
         "Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll",

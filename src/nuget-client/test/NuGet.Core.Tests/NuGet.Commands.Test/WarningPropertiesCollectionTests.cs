@@ -260,7 +260,7 @@ namespace NuGet.Commands.Test
 
             var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, new List<NuGetFramework> { targetFramework });
 
-            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
 
             // Act && Assert
             Assert.True(warningPropertiesCollection.ApplyWarningProperties(suppressedMessage));
@@ -344,7 +344,7 @@ namespace NuGet.Commands.Test
                 packageSpecificWarningProperties,
                 null);
 
-            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
 
             // Act && Assert
             Assert.True(warningPropertiesCollection.ApplyWarningProperties(suppressedMessage));
@@ -376,7 +376,7 @@ namespace NuGet.Commands.Test
                 new List<NuGetFramework> { targetFramework });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
-            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
             var unaffectedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId, frameworkString);
 
             // Act && Assert
@@ -412,7 +412,7 @@ namespace NuGet.Commands.Test
                 new List<NuGetFramework> { targetFramework });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
-            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
             var upgradedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId, frameworkString);
 
             // Act && Assert
@@ -449,9 +449,12 @@ namespace NuGet.Commands.Test
                 packageSpecificWarningProperties,
                 new List<NuGetFramework> { targetFramework });
 
-            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
-            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
-            var unaffectedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId);
+            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning");
+            suppressedMessage.LibraryId = libraryId;
+            var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning");
+            suppressedMessage2.LibraryId = libraryId;
+            var unaffectedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning");
+            unaffectedMessage.LibraryId = libraryId;
 
             // Act && Assert
             Assert.True(warningPropertiesCollection.ApplyWarningProperties(suppressedMessage));
@@ -490,7 +493,8 @@ namespace NuGet.Commands.Test
                 packageSpecificWarningProperties,
                 new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
 
-            var nonSuppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var nonSuppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning");
+            nonSuppressedMessage.LibraryId = libraryId;
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, firstFrameworkString);
 
             // Act && Assert
@@ -529,7 +533,7 @@ namespace NuGet.Commands.Test
                 packageSpecificWarningProperties,
                 new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
 
-            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId);
+            var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, firstFrameworkString, secondFrameworkString);
 
             // Act && Assert
             Assert.True(warningPropertiesCollection.ApplyWarningProperties(suppressedMessage));

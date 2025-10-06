@@ -8,6 +8,7 @@ using System.CommandLine.Help;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.CommandLine.XPlat.Commands;
 using NuGet.Configuration;
 using NuGet.Credentials;
 
@@ -15,70 +16,70 @@ namespace NuGet.CommandLine.XPlat
 {
     internal class PackageSearchCommand
     {
-        public static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger)
+        public static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger)
         {
             Register(rootCommand, getLogger, SetupSettingsAndRunSearchAsync);
         }
 
-        public static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger, Func<PackageSearchArgs, string, CancellationToken, Task<int>> setupSettingsAndRunSearchAsync)
+        public static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger, Func<PackageSearchArgs, string, CancellationToken, Task<int>> setupSettingsAndRunSearchAsync)
         {
-            var searchCommand = new CliCommand("search", Strings.pkgSearch_Description);
+            var searchCommand = new DocumentedCommand("search", Strings.pkgSearch_Description, "https://aka.ms/dotnet/package/search");
 
-            var searchTerm = new CliArgument<string>("Search Term")
+            var searchTerm = new Argument<string>("Search Term")
             {
                 Description = Strings.pkgSearch_termDescription,
                 Arity = ArgumentArity.ZeroOrOne,
             };
 
-            var sources = new CliOption<List<string>>("--source")
+            var sources = new Option<List<string>>("--source")
             {
                 Description = Strings.pkgSearch_SourceDescription,
                 Arity = ArgumentArity.OneOrMore
             };
 
-            var exactMatch = new CliOption<bool>("--exact-match")
+            var exactMatch = new Option<bool>("--exact-match")
             {
                 Description = Strings.pkgSearch_ExactMatchDescription,
                 Arity = ArgumentArity.Zero
             };
 
-            var prerelease = new CliOption<bool>("--prerelease")
+            var prerelease = new Option<bool>("--prerelease")
             {
                 Description = Strings.pkgSearch_PrereleaseDescription,
                 Arity = ArgumentArity.Zero
             };
 
-            var interactive = new CliOption<bool>("--interactive")
+            var interactive = new Option<bool>("--interactive")
             {
                 Description = Strings.pkgSearch_InteractiveDescription,
                 Arity = ArgumentArity.Zero
             };
 
-            var take = new CliOption<string>("--take")
+            var take = new Option<string>("--take")
             {
                 Description = Strings.pkgSearch_TakeDescription,
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            var skip = new CliOption<string>("--skip")
+            var skip = new Option<string>("--skip")
             {
                 Description = Strings.pkgSearch_SkipDescription,
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            var format = new CliOption<string>("--format")
+            var format = new Option<string>("--format")
             {
                 Description = Strings.pkgSearch_FormatDescription,
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            var verbosity = new CliOption<string>("--verbosity")
+            var verbosity = new Option<string>("--verbosity")
             {
                 Description = Strings.pkgSearch_VerbosityDescription,
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            var configFile = new CliOption<string>("--configfile")
+            var configFile = new Option<string>("--configfile")
             {
                 Description = Strings.Option_ConfigFile,
                 Arity = ArgumentArity.ExactlyOne

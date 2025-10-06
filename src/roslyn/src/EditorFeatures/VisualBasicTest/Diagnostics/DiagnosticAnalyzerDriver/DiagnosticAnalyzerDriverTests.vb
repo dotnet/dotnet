@@ -4,19 +4,16 @@
 
 Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Editor.UnitTests
-Imports Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics
-Imports Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces
 Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.CodeAnalysis.UnitTests.Diagnostics
 
 <[UseExportProvider]>
 Public Class DiagnosticAnalyzerDriverTests
 
-    Private Shared ReadOnly s_compositionWithMockDiagnosticUpdateSourceRegistrationService As TestComposition = EditorTestCompositions.EditorFeatures _
-        .AddExcludedPartTypes(GetType(IDiagnosticUpdateSourceRegistrationService)) _
-        .AddParts(GetType(MockDiagnosticUpdateSourceRegistrationService))
+    Private Shared ReadOnly s_compositionWithMockDiagnosticUpdateSourceRegistrationService As TestComposition = EditorTestCompositions.EditorFeatures
 
     <Fact>
     Public Async Function DiagnosticAnalyzerDriverAllInOne() As Task
@@ -99,7 +96,7 @@ End Class
 
     Private Shared Sub AccessSupportedDiagnostics(analyzer As DiagnosticAnalyzer)
         Dim diagnosticService = New HostDiagnosticAnalyzers({New AnalyzerImageReference(ImmutableArray.Create(analyzer))})
-        diagnosticService.GetDiagnosticDescriptorsPerReference(New DiagnosticAnalyzerInfoCache())
+        diagnosticService.GetDiagnosticDescriptorsPerReference(New DiagnosticAnalyzerInfoCache(), project:=Nothing)
     End Sub
 
     <Fact>

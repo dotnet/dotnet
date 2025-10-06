@@ -31,17 +31,14 @@ public sealed class DefaultTagHelperHtmlAttributeIntermediateNode : ExtensionInt
             Children.Add(htmlAttributeNode.Children[i]);
         }
 
-        for (var i = 0; i < htmlAttributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(htmlAttributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(htmlAttributeNode);
     }
 
     public string AttributeName { get; set; }
 
     public AttributeStructure AttributeStructure { get; set; }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

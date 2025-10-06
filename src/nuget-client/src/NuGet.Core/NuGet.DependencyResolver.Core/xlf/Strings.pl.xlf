@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
+    <body>
+      <trans-unit id="Error_PackageNotFoundWhenExpected">
+        <source>The feed '{0}' lists package '{1}' but multiple attempts to download the nupkg have failed. The feed is either invalid or required packages were removed while the current operation was in progress. Verify the package exists on the feed and try again.</source>
+        <target state="translated">Lista kanału informacyjnego „{0}” zawiera pakiet „{1}”, ale żadna z wielu podjętych prób pobrania pliku nupkg nie zakończyła się powodzeniem. Kanał informacyjny jest nieprawidłowy lub wymagane pakiety zostały usunięte w trakcie wykonywania bieżącej operacji. Sprawdź, czy pakiet istnieje w kanale informacyjnym i spróbuj ponownie.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MatchingSourceFoundForPackage">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'.</source>
+        <target state="translated">Znalezione dopasowania mapowania źródła pakietu dla identyfikatora pakietu "{0}": "{1}".</target>
+        <note>{0} - Package id {1} - list of sources</note>
+      </trans-unit>
+      <trans-unit id="Log_NoMatchingSourceFoundForPackage">
+        <source>Package source mapping match not found for package ID '{0}'.</source>
+        <target state="translated">Nie znaleziono dopasowania mapowania źródła pakietu dla identyfikatora pakietu "{0}".</target>
+        <note>{0} - Package id</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

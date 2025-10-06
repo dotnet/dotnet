@@ -60,6 +60,12 @@ internal class DefaultEngineInvoker :
 
     private const string RemotePath = "--remote-path";
 
+    private static readonly bool EnableParentProcessQuery =
+        AppContext.TryGetSwitch(
+            switchName: "MSTest.EnableParentProcessQuery",
+            isEnabled: out bool value)
+        ? value : true;
+
     private readonly ITestRequestHandler _requestHandler;
 
     private readonly IDataCollectionTestCaseEventSender _dataCollectionTestCaseEventSender;
@@ -211,6 +217,12 @@ internal class DefaultEngineInvoker :
         if (!hasParentProcessArgument)
         {
             throw new ArgumentException($"Argument {ParentProcessIdArgument} was not specified.");
+        }
+
+        if (!EnableParentProcessQuery)
+        {
+            EqtTrace.Info("DefaultEngineInvoker.SetParentProcessExitCallback: Skipping querying parent process with id: '{0}'", parentProcessId);
+            return;
         }
 
         EqtTrace.Info("DefaultEngineInvoker.SetParentProcessExitCallback: Monitoring parent process with id: '{0}'", parentProcessId);

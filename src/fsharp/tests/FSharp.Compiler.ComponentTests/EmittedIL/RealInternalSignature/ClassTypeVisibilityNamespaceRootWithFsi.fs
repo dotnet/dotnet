@@ -33,10 +33,9 @@ type TypeFour () = class end
 type HiddenType () = class end
         """))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 """
 .class public auto ansi serializable RealInternalSignature.TypeOne
@@ -243,10 +242,9 @@ type TypeFour () = class end
 type HiddenType () = class end
         """))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
                 """
 .class private auto ansi serializable RealInternalSignature.TypeOne
        extends [runtime]System.Object
@@ -362,10 +360,9 @@ type TestType () =
     member _.DefaultMethod() = ()
     member _.HiddenMethod() = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig instance void PublicMethod() cil managed"
                 ".method assembly hidebysig instance void InternalMethod() cil managed"
@@ -405,10 +402,9 @@ type TestType () =
     member _.DefaultMethod() = ()
     member _.HiddenMethod() = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig instance void PublicMethod() cil managed"
                 ".method assembly hidebysig instance void InternalMethod() cil managed"
@@ -452,10 +448,9 @@ type TestType () =
     member val DefaultProperty = 0 with get, set
     member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32 get_PublicProperty() cil managed"
                 ".method public hidebysig specialname instance void set_PublicProperty(int32 v) cil managed"
@@ -509,10 +504,9 @@ type TestType () =
     member val DefaultProperty = 0 with get, set
     member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32 get_PublicProperty() cil managed"
                 ".method public hidebysig specialname instance void set_PublicProperty(int32 v) cil managed"
@@ -589,10 +583,9 @@ type public TestType () =
     member _.MixedPropertyEleven with get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with get() = 0 and set (_:int) = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public specialname rtspecialname instance void  .ctor() cil managed"
                 ".method public hidebysig specialname instance int32 get_MixedPropertyOne() cil managed"
@@ -699,10 +692,9 @@ type public TestType () =
     member _.MixedPropertyEleven with get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with get() = 0 and set (_:int) = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32 get_MixedPropertyOne() cil managed"
                 ".method assembly hidebysig specialname instance void  set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -779,10 +771,9 @@ type TestType () =
     static member DefaultMethod() = ()
     static member HiddenMethod() = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
@@ -814,10 +805,9 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
@@ -859,10 +849,9 @@ type TestType () =
     static member val DefaultProperty = 0 with get, set
     static member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_PublicProperty() cil managed"
                 ".method public specialname static void set_PublicProperty(int32 v) cil managed"
@@ -916,10 +905,9 @@ type TestType () =
     static member val DefaultProperty = 0 with get, set
     static member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_PublicProperty() cil managed"
                 ".method public specialname static void set_PublicProperty(int32 v) cil managed"
@@ -997,10 +985,9 @@ type public TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_MixedPropertyOne() cil managed"
                 ".method assembly specialname static void set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -1107,10 +1094,9 @@ type private TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_MixedPropertyOne() cil managed"
                 ".method assembly specialname static void set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -1186,10 +1172,9 @@ type TestType () =
     static member DefaultMethod() = ()
     static member HiddenMethod() = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyILContains [
             if realSig then
                 ".method public static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
@@ -1231,23 +1216,12 @@ type TestType () =
         static member DefaultMethod() = ()
         static member HiddenMethod() = ()"""))
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
-        |> compile
-        |> withILContains [
-            if realSig then
-                ".method public static void  PublicMethod() cil managed"
-                ".method assembly static void  InternalMethod() cil managed"
-                ".method assembly static void  PrivateMethod() cil managed"
-                ".method assembly static void  DefaultMethod() cil managed"
-                ".method assembly static void  HiddenMethod() cil managed"
-            else
-                ".method public static void  PublicMethod() cil managed"
-                ".method assembly static void  InternalMethod() cil managed"
-                ".method assembly static void  PrivateMethod() cil managed"
-                ".method assembly static void  DefaultMethod() cil managed"
-                ".method assembly static void  HiddenMethod() cil managed"
-
-            ]
-        |> shouldSucceed
+        |> typecheck
+        |> withDiagnostics [
+            (Error 10, Line 4, Col 12, Line 4, Col 13, "Unexpected symbol ':' in member definition");
+            (Error 58, Line 5, Col 9, Line 5, Col 13, "Nested type definitions are not allowed. Types must be defined at module or namespace level.");
+            (Error 3567, Line 6, Col 23, Line 6, Col 25, "Expecting member body");
+            (Error 3567, Line 7, Col 1, Line 7, Col 53, "Expecting member body")
+        ]
 

@@ -3,11 +3,14 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.TestHostRuntimeProvider</AssemblyName>
-    <TargetFrameworks>net7.0;net6.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <!--
+      This project is client that is used only by runners, and shipped only in runner packages.
+    -->
+    <TargetFrameworks>$(NetFrameworkRunnerTargetFramework);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Configuration" />
@@ -26,7 +29,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="NullableHelpers.cs">

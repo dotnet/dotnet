@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -11,306 +8,277 @@ using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAs
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-public class MetadataAttributePassTest
+public class MetadataAttributePassTest : RazorProjectEngineTestBase
 {
+    protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
+
+    protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
+    {
+        builder.Features.Add(new DefaultMetadataIdentifierFeature());
+    }
+
     [Fact]
     public void Execute_NullCodeGenerationOptions_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
-
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode();
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
+        var documentNode = new DocumentIntermediateNode();
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        NoChildren(irDocument);
+        NoChildren(documentNode);
     }
 
     [Fact]
     public void Execute_SuppressMetadataAttributes_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
+        var projectEngine = CreateProjectEngine(builder =>
         {
-            Engine = engine,
-        };
-
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode()
-        {
-            Options = RazorCodeGenerationOptions.Create(o =>
+            builder.ConfigureCodeGenerationOptions(builder =>
             {
-                o.SuppressMetadataAttributes = true;
-            }),
+                builder.SuppressMetadataAttributes = true;
+            });
+        });
+
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
+
+        var documentNode = new DocumentIntermediateNode()
+        {
+            Options = codeDocument.CodeGenerationOptions
         };
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        projectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        NoChildren(irDocument);
+        NoChildren(documentNode);
     }
 
     [Fact]
     public void Execute_ComponentDocumentKind_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
+        var projectEngine = CreateProjectEngine(builder =>
         {
-            Engine = engine,
-        };
+            builder.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.SuppressMetadataAttributes = true;
+            });
+        });
 
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
 
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = ComponentDocumentClassifierPass.ComponentDocumentKind,
-            Options = RazorCodeGenerationOptions.Create(o =>
-            {
-                o.SuppressMetadataAttributes = true;
-            }),
+            Options = codeDocument.CodeGenerationOptions
         };
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        projectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        NoChildren(irDocument);
+        NoChildren(documentNode);
     }
 
     [Fact]
     public void Execute_NoNamespaceSet_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create((o) => { }),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
+            IsPrimaryNamespace = true,
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test"
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        SingleChild<NamespaceDeclarationIntermediateNode>(irDocument);
+        Assert.Equal(2, documentNode.Children.Count);
+
+        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(documentNode.Children[0]);
+        Assert.Equal("/test.cshtml", item.Identifier);
+        Assert.Equal("test", item.Kind);
+        Assert.Equal("Test", item.TypeName);
+
+        Assert.Equal(2, @namespace.Children.Count);
+        var checksum = Assert.IsType<RazorSourceChecksumAttributeIntermediateNode>(@namespace.Children[0]);
+        Assert.Equal(CodeAnalysis.Text.SourceHashAlgorithm.Sha256, checksum.ChecksumAlgorithm);
+        Assert.Equal("/test.cshtml", checksum.Identifier);
+
+        var foundClass = Assert.IsType<ClassDeclarationIntermediateNode>(@namespace.Children[1]);
+        Assert.Equal("Test", foundClass.Name);
     }
 
     [Fact]
     public void Execute_NoClassNameSet_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create((o) => { }),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
+            IsPrimaryClass = true,
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        SingleChild<NamespaceDeclarationIntermediateNode>(irDocument);
+        SingleChild<NamespaceDeclarationIntermediateNode>(documentNode);
     }
 
     [Fact]
     public void Execute_NoDocumentKind_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create();
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+        var documentNode = new DocumentIntermediateNode();
 
-        var irDocument = new DocumentIntermediateNode();
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test"
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        SingleChild<NamespaceDeclarationIntermediateNode>(irDocument);
+        SingleChild<NamespaceDeclarationIntermediateNode>(documentNode);
     }
 
     [Fact]
     public void Execute_NoIdentifier_Noops()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create((o) => { }),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test"
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        SingleChild<NamespaceDeclarationIntermediateNode>(irDocument);
+        SingleChild<NamespaceDeclarationIntermediateNode>(documentNode);
     }
 
     [Fact]
     public void Execute_HasRequiredInfo_AddsItemAndSourceChecksum()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
+        var codeDocument = ProjectEngine.CreateCodeDocument(source);
 
-        var sourceDocument = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create((o) => { }),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test",
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        Assert.Equal(2, irDocument.Children.Count);
+        Assert.Equal(2, documentNode.Children.Count);
 
-        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(irDocument.Children[0]);
+        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(documentNode.Children[0]);
         Assert.Equal("/Foo/Bar.cshtml", item.Identifier);
         Assert.Equal("test", item.Kind);
         Assert.Equal("Some.Namespace.Test", item.TypeName);
@@ -325,48 +293,40 @@ public class MetadataAttributePassTest
     public void Execute_HasRequiredInfo_AndImport_AddsItemAndSourceChecksum()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
-        {
-            Engine = engine,
-        };
+        var source = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
+        var importSource = TestRazorSourceDocument.Create("@using System", RazorSourceDocumentProperties.Create(null, "Foo\\Import.cshtml"));
+        var codeDocument = ProjectEngine.CreateCodeDocument(source, [importSource]);
 
-        var sourceDocument = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
-        var import = TestRazorSourceDocument.Create("@using System", RazorSourceDocumentProperties.Create(null, "Foo\\Import.cshtml"));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument, ImmutableArray.Create(import));
-
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create((o) => { }),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test",
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        ProjectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        Assert.Equal(2, irDocument.Children.Count);
+        Assert.Equal(2, documentNode.Children.Count);
 
-        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(irDocument.Children[0]);
+        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(documentNode.Children[0]);
         Assert.Equal("/Foo/Bar.cshtml", item.Identifier);
         Assert.Equal("test", item.Kind);
         Assert.Equal("Some.Namespace.Test", item.TypeName);
@@ -385,61 +345,53 @@ public class MetadataAttributePassTest
     public void Execute_SuppressMetadataSourceChecksumAttributes_DoesNotGenerateSourceChecksumAttributes()
     {
         // Arrange
-        var engine = CreateEngine();
-        var pass = new MetadataAttributePass()
+        var projectEngine = CreateProjectEngine(builder =>
         {
-            Engine = engine,
-        };
+            builder.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.SuppressMetadataSourceChecksumAttributes = true;
+            });
+        });
 
-        var sourceDocument = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
-        var import = TestRazorSourceDocument.Create("@using System", RazorSourceDocumentProperties.Create(null, "Foo\\Import.cshtml"));
-        var codeDocument = RazorCodeDocument.Create(sourceDocument, ImmutableArray.Create(import));
+        var source = TestRazorSourceDocument.Create("", RazorSourceDocumentProperties.Create(null, "Foo\\Bar.cshtml"));
+        var importSource = TestRazorSourceDocument.Create("@using System", RazorSourceDocumentProperties.Create(null, "Foo\\Import.cshtml"));
+        var codeDocument = projectEngine.CreateCodeDocument(source, [importSource]);
 
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
-            Options = RazorCodeGenerationOptions.Create(o => o.SuppressMetadataSourceChecksumAttributes = true),
+            Options = codeDocument.CodeGenerationOptions
         };
-        var builder = IntermediateNodeBuilder.Create(irDocument);
+
+        var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace,
-                },
-            Content = "Some.Namespace"
+            IsPrimaryNamespace = true,
+            Name = "Some.Namespace"
         };
+
         builder.Push(@namespace);
+
         var @class = new ClassDeclarationIntermediateNode
         {
-            Annotations =
-                {
-                    [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-                },
-            ClassName = "Test",
+            IsPrimaryClass = true,
+            Name = "Test"
         };
+
         builder.Add(@class);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        projectEngine.ExecutePass<MetadataAttributePass>(codeDocument, documentNode);
 
         // Assert
-        Assert.Equal(2, irDocument.Children.Count);
+        Assert.Equal(2, documentNode.Children.Count);
 
-        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(irDocument.Children[0]);
+        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(documentNode.Children[0]);
         Assert.Equal("/Foo/Bar.cshtml", item.Identifier);
         Assert.Equal("test", item.Kind);
         Assert.Equal("Some.Namespace.Test", item.TypeName);
 
         var child = Assert.Single(@namespace.Children);
         Assert.IsType<ClassDeclarationIntermediateNode>(child);
-    }
-
-    private static RazorEngine CreateEngine()
-    {
-        return RazorProjectEngine.Create(b =>
-        {
-            b.Features.Add(new DefaultMetadataIdentifierFeature());
-        }).Engine;
     }
 }

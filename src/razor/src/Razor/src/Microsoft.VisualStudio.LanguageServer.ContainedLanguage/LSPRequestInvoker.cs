@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -42,6 +42,7 @@ internal abstract class LSPRequestInvoker
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <remarks>When operating on a document the <see cref="ITextBuffer"/> overload should be used, since it guarantees ordering.</remarks>
+    [Obsolete("Use the overload that doesn't take a capability filter")]
     public abstract Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
@@ -58,6 +59,7 @@ internal abstract class LSPRequestInvoker
         CancellationToken cancellationToken)
         where TIn : notnull;
 
+    [Obsolete("Use the overload that doesn't take a capability filter")]
     public abstract Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
@@ -78,6 +80,7 @@ internal abstract class LSPRequestInvoker
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <remarks>When operating on a document the <see cref="ITextBuffer"/> overload should be used, since it guarantees ordering.</remarks>
+    [Obsolete("New callers should use a method that returns a ReinvocationResponse rather than an a ReinvokeResponse")]
     public abstract Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         string method,
         string contentType,
@@ -97,6 +100,7 @@ internal abstract class LSPRequestInvoker
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <remarks>When operating on a document the <see cref="ITextBuffer"/> overload should be used, since it guarantees ordering.</remarks>
+    [Obsolete("New callers should use a method that returns a ReinvocationResponse rather than an a ReinvokeResponse")]
     public abstract Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         string method,
         string contentType,
@@ -112,6 +116,7 @@ internal abstract class LSPRequestInvoker
         CancellationToken cancellationToken)
         where TIn : notnull;
 
+    [Obsolete("New callers should use a method that doesn't have a capabilities filter")]
     public abstract IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,

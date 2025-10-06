@@ -1,17 +1,15 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,114 +18,49 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
-    public async Task ExecuteAsync_LanguageKindCSharp_Noops()
-    {
-        // Arrange
-        var source = SourceText.From(@"
-@code {
-    public class Foo { }
-}
-");
-        using var context = CreateFormattingContext(source);
-        var badEdit = new TextEdit()
-        {
-            NewText = "@ ",
-            Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) }
-        };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.CSharp);
-        var pass = GetPass();
-
-        // Act
-        var result = await pass.ExecuteAsync(context, input, DisposalToken);
-
-        // Assert
-        Assert.Equal(input, result);
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_LanguageKindHtml_Noops()
-    {
-        // Arrange
-        var source = SourceText.From(@"
-@code {
-    public class Foo { }
-}
-");
-        using var context = CreateFormattingContext(source);
-        var badEdit = new TextEdit()
-        {
-            NewText = "@ ",
-            Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) }
-        };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.Html);
-        var pass = GetPass();
-
-        // Act
-        var result = await pass.ExecuteAsync(context, input, DisposalToken);
-
-        // Assert
-        Assert.Equal(input, result);
-    }
-
-    [Fact]
     public async Task ExecuteAsync_NonDestructiveEdit_Allowed()
     {
         // Arrange
-        var source = SourceText.From(@"
-@code {
-public class Foo { }
-}
-");
-        using var context = CreateFormattingContext(source);
-        var edits = new[]
-        {
-            new TextEdit()
-            {
-                NewText = "    ",
-                Range = new Range{ Start = new Position(2, 0), End = new Position(2, 0) }
+        TestCode source = """
+            @code {
+            [||]public class Foo { }
             }
-        };
-        var input = new FormattingResult(edits, RazorLanguageKind.Razor);
+            """;
+        var context = CreateFormattingContext(source);
+        var edits = ImmutableArray.Create(new TextChange(source.Span, "    "));
         var pass = GetPass();
 
         // Act
-        var result = await pass.ExecuteAsync(context, input, DisposalToken);
+        var result = await pass.IsValidAsync(context, edits, DisposalToken);
 
         // Assert
-        Assert.Equal(input, result);
+        Assert.True(result);
     }
 
     [Fact]
     public async Task ExecuteAsync_DestructiveEdit_Rejected()
     {
         // Arrange
-        var source = SourceText.From(@"
-@code {
-public class Foo { }
-}
-");
-        using var context = CreateFormattingContext(source);
-        var badEdit = new TextEdit()
-        {
-            NewText = "@ ", // Creates a diagnostic
-            Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
-        };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.Razor);
+        // Arrange
+        TestCode source = """
+            [||]@code {
+            public class Foo { }
+            }
+            """;
+        var context = CreateFormattingContext(source);
+        var badEdit = new TextChange(source.Span, "@ "); // Creates a diagnostic
         var pass = GetPass();
 
         // Act
-        var result = await pass.ExecuteAsync(context, input, DisposalToken);
+        var result = await pass.IsValidAsync(context, [badEdit], DisposalToken);
 
         // Assert
-        Assert.Empty(result.Edits);
+        Assert.False(result);
     }
 
     private FormattingDiagnosticValidationPass GetPass()
     {
-        var mappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
-
-        var clientConnection = Mock.Of<IClientConnection>(MockBehavior.Strict);
-        var pass = new FormattingDiagnosticValidationPass(mappingService, clientConnection, LoggerFactory)
+        var pass = new FormattingDiagnosticValidationPass(LoggerFactory)
         {
             DebugAssertsEnabled = false
         };
@@ -135,30 +68,52 @@ public class Foo { }
         return pass;
     }
 
-    private static FormattingContext CreateFormattingContext(SourceText source, int tabSize = 4, bool insertSpaces = true, string? fileKind = null)
+    private static FormattingContext CreateFormattingContext(
+        TestCode input,
+        int tabSize = 4,
+        bool insertSpaces = true,
+        RazorFileKind? fileKind = null)
     {
+        var source = SourceText.From(input.Text);
         var path = "file:///path/to/document.razor";
         var uri = new Uri(path);
         var (codeDocument, documentSnapshot) = CreateCodeDocumentAndSnapshot(source, uri.AbsolutePath, fileKind: fileKind);
-        var options = new FormattingOptions()
+        var options = new RazorFormattingOptions()
         {
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
 
-        var context = FormattingContext.Create(uri, documentSnapshot, codeDocument, options, TestAdhocWorkspaceFactory.Instance);
+        var context = FormattingContext.Create(
+            documentSnapshot,
+            codeDocument,
+            options);
         return context;
     }
 
-    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? fileKind = default)
+    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(
+        SourceText text,
+        string path,
+        ImmutableArray<TagHelperDescriptor> tagHelpers = default,
+        RazorFileKind? fileKind = null)
     {
-        fileKind ??= FileKinds.Component;
+        var fileKindValue = fileKind ?? RazorFileKind.Component;
         tagHelpers = tagHelpers.NullToEmpty();
-        var sourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(path, path));
-        var projectEngine = RazorProjectEngine.Create(builder => builder.SetRootNamespace("Test"));
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
-        var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(path, tagHelpers, fileKind, ImmutableArray<RazorSourceDocument>.Empty, ImmutableArray<IDocumentSnapshot>.Empty, projectEngine, codeDocument);
+        var sourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(path, path));
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.SetRootNamespace("Test");
+
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers);
+
+        var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(
+            path, fileKindValue, codeDocument, projectEngine, imports: [], importDocuments: [], tagHelpers, inGlobalNamespace: false);
 
         return (codeDocument, documentSnapshot);
     }

@@ -28,10 +28,10 @@ namespace System.CommandLine.Invocation
 
                         switch (action)
                         {
-                            case SynchronousCliAction syncAction:
+                            case SynchronousCommandLineAction syncAction:
                                 syncAction.Invoke(parseResult);
                                 break;
-                            case AsynchronousCliAction asyncAction:
+                            case AsynchronousCommandLineAction asyncAction:
                                 await asyncAction.InvokeAsync(parseResult, cts.Token);
                                 break;
                         }
@@ -40,14 +40,17 @@ namespace System.CommandLine.Invocation
 
                 switch (parseResult.Action)
                 {
-                    case SynchronousCliAction syncAction:
+                    case SynchronousCommandLineAction syncAction:
                         return syncAction.Invoke(parseResult);
 
-                    case AsynchronousCliAction asyncAction:
+                    case AsynchronousCommandLineAction asyncAction:
                         var startedInvocation = asyncAction.InvokeAsync(parseResult, cts.Token);
-                        if (parseResult.Configuration.ProcessTerminationTimeout.HasValue)
+
+                        var timeout = parseResult.InvocationConfiguration.ProcessTerminationTimeout;
+
+                        if (timeout.HasValue)
                         {
-                            terminationHandler = new(cts, startedInvocation, parseResult.Configuration.ProcessTerminationTimeout.Value);
+                            terminationHandler = new(cts, startedInvocation, timeout.Value);
                         }
 
                         if (terminationHandler is null)
@@ -67,9 +70,9 @@ namespace System.CommandLine.Invocation
                         throw new ArgumentOutOfRangeException(nameof(parseResult.Action));
                 }
             }
-            catch (Exception ex) when (parseResult.Configuration.EnableDefaultExceptionHandler)
+            catch (Exception ex) when (parseResult.InvocationConfiguration.EnableDefaultExceptionHandler)
             {
-                return DefaultExceptionHandler(ex, parseResult.Configuration);
+                return DefaultExceptionHandler(ex, parseResult);
             }
             finally
             {
@@ -84,7 +87,7 @@ namespace System.CommandLine.Invocation
                 case null:
                     return ReturnCodeForMissingAction(parseResult);
 
-                case SynchronousCliAction syncAction:
+                case SynchronousCommandLineAction syncAction:
                     try
                     {
                         if (parseResult.PreActions is not null)
@@ -94,18 +97,18 @@ namespace System.CommandLine.Invocation
                             {
                                 var action = parseResult.PreActions[i];
 
-                                if (action is not SynchronousCliAction)
+                                if (action is not SynchronousCommandLineAction)
                                 {
-                                    parseResult.Configuration.EnableDefaultExceptionHandler = false;
+                                    parseResult.InvocationConfiguration.EnableDefaultExceptionHandler = false;
                                     throw new Exception(
-                                        $"This should not happen. An instance of {nameof(AsynchronousCliAction)} ({action}) was called within {nameof(InvocationPipeline)}.{nameof(Invoke)}. This is supposed to be detected earlier resulting in a call to {nameof(InvocationPipeline)}{nameof(InvokeAsync)}");
+                                        $"This should not happen. An instance of {nameof(AsynchronousCommandLineAction)} ({action}) was called within {nameof(InvocationPipeline)}.{nameof(Invoke)}. This is supposed to be detected earlier resulting in a call to {nameof(InvocationPipeline)}{nameof(InvokeAsync)}");
                                 }
                             }
 #endif
 
                             for (var i = 0; i < parseResult.PreActions.Count; i++)
                             {
-                                if (parseResult.PreActions[i] is SynchronousCliAction syncPreAction)
+                                if (parseResult.PreActions[i] is SynchronousCommandLineAction syncPreAction)
                                 {
                                     syncPreAction.Invoke(parseResult);
                                 }
@@ -114,25 +117,27 @@ namespace System.CommandLine.Invocation
 
                         return syncAction.Invoke(parseResult);
                     }
-                    catch (Exception ex) when (parseResult.Configuration.EnableDefaultExceptionHandler)
+                    catch (Exception ex) when (parseResult.InvocationConfiguration.EnableDefaultExceptionHandler)
                     {
-                        return DefaultExceptionHandler(ex, parseResult.Configuration);
+                        return DefaultExceptionHandler(ex, parseResult);
                     }
 
                 default:
-                    throw new InvalidOperationException($"{nameof(AsynchronousCliAction)} called within non-async invocation.");
+                    throw new InvalidOperationException($"{nameof(AsynchronousCommandLineAction)} called within non-async invocation.");
             }
         }
 
-        private static int DefaultExceptionHandler(Exception exception, CliConfiguration config)
+        private static int DefaultExceptionHandler(Exception exception, ParseResult parseResult)
         {
             if (exception is not OperationCanceledException)
             {
                 ConsoleHelpers.ResetTerminalForegroundColor();
                 ConsoleHelpers.SetTerminalForegroundRed();
 
-                config.Error.Write(LocalizationResources.ExceptionHandlerHeader());
-                config.Error.WriteLine(exception.ToString());
+                var error = parseResult.InvocationConfiguration.Error;
+
+                error.Write(LocalizationResources.ExceptionHandlerHeader());
+                error.WriteLine(exception.ToString());
 
                 ConsoleHelpers.ResetTerminalForegroundColor();
             }

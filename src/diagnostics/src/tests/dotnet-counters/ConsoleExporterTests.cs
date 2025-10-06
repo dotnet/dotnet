@@ -70,10 +70,11 @@ namespace DotnetCounters.UnitTests
                                      "    Status: Running",
                                      "",
                                      "Name                                           Current Value",
-                                     "[System.Runtime]",
-                                     "    Allocation Rate (B / 1 sec)                    1,731",
                                      "[Provider2]",
-                                     "    CounterXyz (Doodads)                               0.076");
+                                     "    CounterXyz (Doodads)                               0.076",
+                                     "[System.Runtime]",
+                                     "    Allocation Rate (B / 1 sec)                    1,731");
+
         }
 
         [Fact]
@@ -239,11 +240,15 @@ namespace DotnetCounters.UnitTests
                                      "Name                                 Current Value",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                          87",
-                                     "        color=red                            0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                                87",
+                                     "        red                                  0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                              14",
-                                     "        temp=hot                           160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                   14",
+                                     "             hot                           160");
         }
 
         [Fact]
@@ -263,11 +268,15 @@ namespace DotnetCounters.UnitTests
                                      "Name                                 Current Value",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue,LongNameTag=Thi          87",
-                                     "        color=red                            0.1",
+                                     "        color LongNameTag   herOne",
+                                     "        ----- ------------- ------",
+                                     "        blue  ThisDoesNotFi Hi              87",
+                                     "        red                                  0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                              14",
-                                     "        temp=hot                           160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                   14",
+                                     "             hot                           160");
         }
 
         [Fact]
@@ -287,7 +296,7 @@ namespace DotnetCounters.UnitTests
                                      "Name                                 Current Value",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                          87");
+                                     "        color");
         }
 
         [Fact]
@@ -302,7 +311,6 @@ namespace DotnetCounters.UnitTests
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter2", "{widget}", "size=1", 14), false);
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter2", "{widget}", "temp=hot", 160), false);
             exporter.SetErrorText("Uh-oh, a bad thing happened");
-
             console.AssertLinesEqual("Press p to pause, r to resume, q to quit.",
                                      "    Status: Running",
                                      "Uh-oh, a bad thing happened",
@@ -310,11 +318,15 @@ namespace DotnetCounters.UnitTests
                                      "Name                                 Current Value",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                          87",
-                                     "        color=red                            0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                                87",
+                                     "        red                                  0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                              14",
-                                     "        temp=hot                           160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                   14",
+                                     "             hot                           160");
         }
 
         [Fact]
@@ -329,20 +341,24 @@ namespace DotnetCounters.UnitTests
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter1", "{widget}", "color=blue", 87), false);
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter2", "{widget}", "size=1", 14), false);
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter2", "{widget}", "temp=hot", 160), false);
-            
+
             console.AssertLinesEqual("Press p to pause, r to resume, q to quit.",
                                      "    Status: Running",
                                      "",
                                      "Name                               Current Value      Last Delta",
-                                     "[System.Runtime]",
-                                     "    Allocation Rate (B / 1 sec)        1,731",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                        87",
-                                     "        color=red                          0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                              87",
+                                     "        red                                0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                            14",
-                                     "        temp=hot                         160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                 14",
+                                     "             hot                         160",
+                                     "[System.Runtime]",
+                                     "    Allocation Rate (B / 1 sec)        1,731");
         }
 
         [Fact]
@@ -361,15 +377,19 @@ namespace DotnetCounters.UnitTests
                                      "    Status: Running",
                                      "",
                                      "Name                               Current Value      Last Delta",
-                                     "[System.Runtime]",
-                                     "    Allocation Rate (B / 1 sec)        1,731",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                        87",
-                                     "        color=red                          0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                              87",
+                                     "        red                                0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                            14",
-                                     "        temp=hot                         160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                 14",
+                                     "             hot                         160",
+                                     "[System.Runtime]",
+                                     "    Allocation Rate (B / 1 sec)        1,731");
 
             exporter.CounterPayloadReceived(CreateIncrementingEventCounter("System.Runtime", "Allocation Rate", "B", 1732), false);
             exporter.CounterPayloadReceived(CreateMeterCounterPreNet8("Provider1", "Counter1", "{widget}", "color=red", 0.2), false);
@@ -379,15 +399,19 @@ namespace DotnetCounters.UnitTests
                                      "    Status: Running",
                                      "",
                                      "Name                               Current Value      Last Delta",
-                                     "[System.Runtime]",
-                                     "    Allocation Rate (B / 1 sec)        1,732               1",
                                      "[Provider1]",
                                      "    Counter1 ({widget} / 1 sec)",
-                                     "        color=blue                        87               0",
-                                     "        color=red                          0.2             0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                              87               0",
+                                     "        red                                0.2             0.1",
                                      "    Counter2 ({widget} / 1 sec)",
-                                     "        size=1                            10              -4",
-                                     "        temp=hot                         160");
+                                     "        size temp",
+                                     "        ---- ----",
+                                     "        1                                 10              -4",
+                                     "             hot                         160",
+                                     "[System.Runtime]",
+                                     "    Allocation Rate (B / 1 sec)        1,732               1");
         }
 
         // Starting in .NET 8 MetricsEventSource, Meter counter instruments report both rate of change and
@@ -411,8 +435,10 @@ namespace DotnetCounters.UnitTests
                                      "Name                               Current Value      Last Delta",
                                      "[Provider1]",
                                      "    Counter1 ({widget})",                                            // There is no longer (unit / 1 sec) here
-                                     "        color=blue                        87",
-                                     "        color=red                          0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                              87",
+                                     "        red                                0.1",
                                      "    Counter2 ({widget})                   14");
 
             exporter.CounterPayloadReceived(CreateMeterCounterPostNet8("Provider1", "Counter1", "{widget}", "color=red", 0.2), false);
@@ -425,8 +451,10 @@ namespace DotnetCounters.UnitTests
                                      "Name                               Current Value      Last Delta",
                                      "[Provider1]",
                                      "    Counter1 ({widget})",                                            // There is no longer (unit / 1 sec) here
-                                     "        color=blue                        87               0",
-                                     "        color=red                          0.2             0.1",
+                                     "        color",
+                                     "        -----",
+                                     "        blue                              87               0",
+                                     "        red                                0.2             0.1",
                                      "    Counter2 ({widget})                   10              -4");
         }
 
@@ -443,12 +471,12 @@ namespace DotnetCounters.UnitTests
 
         private static CounterPayload CreateMeterCounterPreNet8(string meterName, string instrumentName, string unit, string tags, double value)
         {
-            return new RatePayload(new CounterMetadata(meterName, instrumentName, null, null, null), instrumentName, unit, tags, value, 1, DateTime.MinValue);
+            return new RatePayload(new CounterMetadata(meterName, instrumentName, unit), displayName: null, displayUnits: null, tags, value, 1, DateTime.MinValue);
         }
 
         private static CounterPayload CreateMeterCounterPostNet8(string meterName, string instrumentName, string unit, string tags, double value)
         {
-            return new CounterRateAndValuePayload(new CounterMetadata(meterName, instrumentName, null, null, null), instrumentName, unit, tags, rate:double.NaN, value, DateTime.MinValue);
+            return new CounterRateAndValuePayload(new CounterMetadata(meterName, instrumentName, unit), displayName: null, displayUnits: null, tags, rate: double.NaN, value, DateTime.MinValue);
         }
     }
 }

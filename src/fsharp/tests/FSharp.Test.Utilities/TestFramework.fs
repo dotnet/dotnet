@@ -4,34 +4,57 @@ module TestFramework
 
 open System
 open System.IO
-open System.Reflection
 open System.Diagnostics
+open System.Reflection
 open Scripting
-open NUnit.Framework
+open Xunit
 open FSharp.Compiler.IO
 
-let inline getTestsDirectory src dir = src ++ dir
+let getShortId() = Guid.NewGuid().ToString().[..7]
 
-// Temporary directory is TempPath + "/FSharp.Test.Utilities/" date ("yyy-MM-dd")
-// Throws exception if it Fails
-let tryCreateTemporaryDirectory () =
-    let date() = DateTime.Now.ToString("yyyy-MM-dd")
-    let now() = $"{date()}-{Guid.NewGuid().ToString()}"
-    let directory = Path.Combine(Path.GetTempPath(), now()).Replace('-', '_')
-    Directory.CreateDirectory(directory).FullName
+// Temporary directory is TempPath + "/FSharp.Test.Utilities/xxxxxxx/"
+let tempDirectoryOfThisTestRun =
+    let temp = DirectoryInfo(Path.Combine(__SOURCE_DIRECTORY__, @"../../artifacts/Temp/FSharp.Test.Utilities", $"{getShortId()}"))
+    lazy (temp.Create(); temp)
 
-// Create a temporaryFileName -- newGuid is random --- there is no point validating the file alread exists because: threading and Path.ChangeExtension() is commonly used after this API
-let tryCreateTemporaryFileName () =
-    let directory = tryCreateTemporaryDirectory ()
-    let fileName = ("Temp-" + Guid.NewGuid().ToString() + ".tmp").Replace('-', '_')
-    let filePath = Path.Combine(directory, fileName)
-    filePath
+let cleanUpTemporaryDirectoryOfThisTestRun () =
+    if tempDirectoryOfThisTestRun.IsValueCreated then
+        ()//try tempDirectoryOfThisTestRun.Value.Delete(true) with _ -> ()
 
-// Create a temporaryFileName -- newGuid is random --- there is no point validating the file alread exists because: threading and Path.ChangeExtension() is commonly used after this API
-let tryCreateTemporaryFileNameInDirectory (directory: DirectoryInfo) =
-    let fileName = ("Temp-" + Guid.NewGuid().ToString() + ".tmp").Replace('-', '_')
-    let filePath = Path.Combine(directory.FullName, fileName)
-    filePath
+let createTemporaryDirectory () =
+    tempDirectoryOfThisTestRun.Value
+        .CreateSubdirectory($"{getShortId()}")
+
+let getTemporaryFileName () =
+    createTemporaryDirectory().FullName ++ getShortId()
+
+let changeExtension path extension = Path.ChangeExtension(path, extension)
+
+let getTemporaryFileNameInDirectory (directory: DirectoryInfo) =
+    directory.FullName ++ getShortId()
+
+// Well, this function is AI generated.
+let rec copyDirectory (sourceDir: string) (destinationDir: string) (recursive: bool) =
+    // Get information about the source directory
+    let dir = DirectoryInfo(sourceDir)
+
+    // Check if the source directory exists
+    if not dir.Exists then
+        raise (DirectoryNotFoundException($"Source directory not found: {dir.FullName}"))
+
+    // Create the destination directory
+    Directory.CreateDirectory(destinationDir) |> ignore
+
+    // Get the files in the source directory and copy to the destination directory
+    for file in dir.EnumerateFiles() do
+        let targetFilePath = Path.Combine(destinationDir, file.Name)
+        file.CopyTo(targetFilePath) |> ignore
+
+    // If recursive and copying subdirectories, recursively call this method
+    if recursive then
+        for subDir in dir.EnumerateDirectories() do
+            let newDestinationDir = Path.Combine(destinationDir, subDir.Name)
+            copyDirectory subDir.FullName newDestinationDir true
 
 [<RequireQualifiedAccess>]
 module Commands =
@@ -40,70 +63,39 @@ module Commands =
 
     // Execute the process pathToExe passing the arguments: arguments with the working directory: workingDir timeout after timeout milliseconds -1 = wait forever
     // returns exit code, stdio and stderr as string arrays
-    let executeProcess pathToExe arguments workingDir (timeout:int) =
-        match pathToExe with
-        | Some path ->
-            let commandLine = ResizeArray()
-            let errorsList = ResizeArray()
-            let outputList = ResizeArray()
-            let mutable errorslock = obj
-            let mutable outputlock = obj
-            let outputDataReceived (message: string) =
-                if not (isNull message) then
-                    lock outputlock (fun () -> outputList.Add(message))
+    let executeProcess pathToExe arguments workingDir =
+        let commandLine = ResizeArray()
 
-            let errorDataReceived (message: string) =
-                if not (isNull message) then
-                    lock errorslock (fun () -> errorsList.Add(message))
+        commandLine.Add $"cd {workingDir}"
+        commandLine.Add $"{pathToExe} {arguments} /bl"
 
-            commandLine.Add $"cd {workingDir}"
-            commandLine.Add $"{path} {arguments} /bl"
+        let psi = ProcessStartInfo()
+        psi.FileName <- pathToExe
+        psi.WorkingDirectory <- workingDir
+        psi.RedirectStandardOutput <- true
+        psi.RedirectStandardError <- true
+        psi.Arguments <- arguments
+        psi.CreateNoWindow <- true
 
-            let psi = ProcessStartInfo()
-            psi.FileName <- path
-            psi.WorkingDirectory <- workingDir
-            psi.RedirectStandardOutput <- true
-            psi.RedirectStandardError <- true
-            psi.Arguments <- arguments
-            psi.CreateNoWindow <- true
-            // When running tests, we want to roll forward to minor versions (including previews).
-            psi.EnvironmentVariables["DOTNET_ROLL_FORWARD"] <- "LatestMajor"
-            psi.EnvironmentVariables["DOTNET_ROLL_FORWARD_TO_PRERELEASE"] <- "1"
-            psi.EnvironmentVariables.Remove("MSBuildSDKsPath")          // Host can sometimes add this, and it can break things
-            psi.UseShellExecute <- false
+        // When running tests, we want to roll forward to minor versions (including previews).
+        psi.EnvironmentVariables["DOTNET_ROLL_FORWARD"] <- "LatestMajor"
+        psi.EnvironmentVariables["DOTNET_ROLL_FORWARD_TO_PRERELEASE"] <- "1"
 
-            use p = new Process()
-            p.StartInfo <- psi
+        // Host can sometimes add this, and it can break things
+        psi.EnvironmentVariables.Remove("MSBuildSDKsPath")
+        psi.UseShellExecute <- false
 
-            p.OutputDataReceived.Add(fun a -> outputDataReceived a.Data)
-            p.ErrorDataReceived.Add(fun a ->  errorDataReceived a.Data)
+        use p = new Process()
+        p.StartInfo <- psi
 
-            if p.Start() then
-                p.BeginOutputReadLine()
-                p.BeginErrorReadLine()
-                if not(p.WaitForExit(timeout)) then
-                    // Timed out resolving throw a diagnostic.
-                    raise (new TimeoutException(sprintf "Timeout executing command '%s' '%s'" (psi.FileName) (psi.Arguments)))
-                else
-                    p.WaitForExit()
-    #if DEBUG
-            let workingDir' =
-                if workingDir = ""
-                then
-                    // Assign working dir to prevent default to C:\Windows\System32
-                    let executionLocation = Assembly.GetExecutingAssembly().Location
-                    Path.GetDirectoryName executionLocation
-                else
-                    workingDir
+        if not (p.Start()) then failwith "new process did not start"
 
-            lock gate (fun () ->
-                File.WriteAllLines(Path.Combine(workingDir', "commandline.txt"), commandLine)
-                File.WriteAllLines(Path.Combine(workingDir', "StandardOutput.txt"), outputList)
-                File.WriteAllLines(Path.Combine(workingDir', "StandardError.txt"), errorsList)
-            )
-    #endif
-            p.ExitCode, outputList.ToArray(), errorsList.ToArray()
-        | None -> -1, Array.empty, Array.empty
+        let readOutput = backgroundTask { return! p.StandardOutput.ReadToEndAsync() }
+        let readErrors = backgroundTask { return! p.StandardError.ReadToEndAsync() }
+
+        p.WaitForExit()
+
+        p.ExitCode, readOutput.Result, readErrors.Result
 
     let getfullpath workDir (path:string) =
         let rooted =
@@ -120,7 +112,7 @@ module Commands =
     let copy workDir source dest =
         log "copy /y %s %s" source dest
         File.Copy( source |> getfullpath workDir, dest |> getfullpath workDir, true)
-        CmdResult.Success
+        CmdResult.Success ""
 
     let mkdir_p workDir dir =
         log "mkdir %s" dir
@@ -162,19 +154,6 @@ module Commands =
     let fsc workDir exec (dotNetExe: FilePath) (fscExe: FilePath) flags srcFiles =
         let args = (sprintf "%s %s" flags (srcFiles |> Seq.ofList |> String.concat " "))
 
-#if FSC_IN_PROCESS
-        // This is not yet complete
-        printfn "Hosted Compiler:"
-        printfn "workdir: %A\nargs: %A"workdir args
-        let fscCompiler = FSharp.Compiler.Hosted.FscCompiler()
-        let exitCode, _stdin, _stdout = FSharp.Compiler.Hosted.CompilerHelpers.fscCompile workDir (FSharp.Compiler.Hosted.CompilerHelpers.parseCommandLine args)
-
-        match exitCode with
-        | 0 -> CmdResult.Success
-        | err ->
-            let msg = sprintf "Error running command '%s' with args '%s' in directory '%s'" fscExe args workDir
-            CmdResult.ErrorLevel (msg, err)
-#else
         ignore workDir
 #if NETCOREAPP
         exec dotNetExe (fscExe + " " + args)
@@ -183,7 +162,6 @@ module Commands =
         printfn "fscExe: %A" fscExe
         printfn "args: %A" args
         exec fscExe args
-#endif
 #endif
 
     let csc exec cscExe flags srcFiles =
@@ -210,12 +188,6 @@ module Commands =
 
     let peverify exec peverifyExe flags path =
         exec peverifyExe (sprintf "%s %s" (quotepath path) flags)
-
-    let createTempDir () =
-        let path = tryCreateTemporaryFileName  ()
-        File.Delete path
-        Directory.CreateDirectory path |> ignore
-        path
 
 type TestConfig =
     { EnvironmentVariables : Map<string, string>
@@ -302,7 +274,7 @@ let config configurationName envVars =
     let fsharpCoreArchitecture = "netstandard2.0"
     let fsharpBuildArchitecture = "netstandard2.0"
     let fsharpCompilerInteractiveSettingsArchitecture = "netstandard2.0"
-    let dotnetArchitecture = "net8.0"
+    let dotnetArchitecture = "net10.0"
 #if NET472
     let fscArchitecture = "net472"
     let fsiArchitecture = "net472"
@@ -333,7 +305,7 @@ let config configurationName envVars =
     let ILASM_EXE = if operatingSystem = "win" then "ilasm.exe" else "ilasm"
     let ILASM = requirePackage (("runtime." + operatingSystem + "-" + architectureMoniker + ".Microsoft.NETCore.ILAsm") ++ coreClrRuntimePackageVersion ++ "runtimes" ++ (operatingSystem + "-" + architectureMoniker) ++ "native" ++ ILASM_EXE)
     //let PEVERIFY_EXE = if operatingSystem = "win" then "PEVerify.exe" elif operatingSystem = "osx" then "PEVerify.dll" else "PEVerify"
-    let PEVERIFY = "dummy" //requireArtifact ("PEVerify" ++ configurationName ++ peverifyArchitecture ++ PEVERIFY_EXE)
+    let PEVERIFY = "ilverify" //requireArtifact ("PEVerify" ++ configurationName ++ peverifyArchitecture ++ PEVERIFY_EXE)
 //    let FSI_FOR_SCRIPTS = artifactsBinPath ++ "fsi" ++ configurationName ++ fsiArchitecture ++ "fsi.exe"
     let FSharpBuild = requireArtifact ("FSharp.Build" ++ configurationName ++ fsharpBuildArchitecture ++ "FSharp.Build.dll")
     let FSharpCompilerInteractiveSettings = requireArtifact ("FSharp.Compiler.Interactive.Settings" ++ configurationName ++ fsharpCompilerInteractiveSettingsArchitecture ++ "FSharp.Compiler.Interactive.Settings.dll")
@@ -412,7 +384,7 @@ let logConfig (cfg: TestConfig) =
     log "FSCOREDLLPATH            = %s" cfg.FSCOREDLLPATH
     log "FSI                      = %s" cfg.FSI
 #if NETCOREAPP
-    log "DotNetExe                =%s" cfg.DotNetExe
+    log "DotNetExe                = %s" cfg.DotNetExe
     log "DOTNET_MULTILEVEL_LOOKUP = %s" cfg.DotNetMultiLevelLookup
     log "DOTNET_ROOT              = %s" cfg.DotNetRoot
 #else
@@ -426,15 +398,22 @@ let logConfig (cfg: TestConfig) =
     log "PEVERIFY                 = %s" cfg.PEVERIFY
     log "---------------------------------------------------------------"
 
+let outputPassed (output: string) = output.Contains "TEST PASSED OK"
+
+let checkResultPassed result =
+    match result with
+    | CmdResult.ErrorLevel (msg1, err) -> Assert.Fail (sprintf "%s. ERRORLEVEL %d" msg1 err)
+    | CmdResult.Success output -> Assert.True(outputPassed output, "Output does not contain 'TEST PASSED OK'")
+
 let checkResult result =
     match result with
     | CmdResult.ErrorLevel (msg1, err) -> Assert.Fail (sprintf "%s. ERRORLEVEL %d" msg1 err)
-    | CmdResult.Success -> ()
+    | CmdResult.Success _ -> ()
 
 let checkErrorLevel1 result =
     match result with
     | CmdResult.ErrorLevel (_,1) -> ()
-    | CmdResult.Success | CmdResult.ErrorLevel _ -> Assert.Fail (sprintf "Command passed unexpectedly")
+    | CmdResult.Success _ | CmdResult.ErrorLevel _ -> Assert.Fail (sprintf "Command passed unexpectedly")
 
 let envVars () =
     System.Environment.GetEnvironmentVariables ()
@@ -442,7 +421,7 @@ let envVars () =
     |> Seq.map (fun d -> d.Key :?> string, d.Value :?> string)
     |> Map.ofSeq
 
-let initializeSuite () =
+let initialConfig =
 
 #if DEBUG
     let configurationName = "Debug"
@@ -456,58 +435,29 @@ let initializeSuite () =
         let usedEnvVars = c.EnvironmentVariables  |> Map.add "FSC" c.FSC
         { c with EnvironmentVariables = usedEnvVars }
 
-    logConfig cfg
-
     cfg
 
+let testConfig sourceDir (relativePathToTestFixture: string) =
+    let testFixtureFullPath = Path.GetFullPath(sourceDir ++ relativePathToTestFixture)
 
-let suiteHelpers = lazy (initializeSuite ())
+    let tempTestDir =
+        createTemporaryDirectory()
+            .CreateSubdirectory(relativePathToTestFixture)
+            .FullName
+    copyDirectory testFixtureFullPath tempTestDir true
 
-[<AttributeUsage(AttributeTargets.Assembly)>]
-type public InitializeSuiteAttribute () =
-    inherit TestActionAttribute()
+    { initialConfig with Directory = tempTestDir }
 
-    override x.BeforeTest details =
-        try
-            if details.IsSuite
-            then suiteHelpers.Force() |> ignore
-        with
-        | e -> raise (Exception("failed test suite initialization, debug code in InitializeSuiteAttribute", e))
-    override x.AfterTest _details =
-        ()
-
-    override x.Targets = ActionTargets.Test ||| ActionTargets.Suite
-
-let testConfig (testDir: string) =
-    let cfg = suiteHelpers.Value
-    if not (Path.IsPathRooted testDir) then
-      failwith $"path is not rooted: {testDir}"
-    let testDir = Path.GetFullPath testDir // mostly used to normalize / and \
-    log "------------------ %s ---------------" testDir
-    log "cd %s" testDir
-    { cfg with Directory = testDir }
-
-[<AllowNullLiteral>]
-type FileGuard(path: string) =
-    let remove path = if FileSystem.FileExistsShim(path) then Commands.rm (Path.GetTempPath()) path
-    do if not (Path.IsPathRooted(path)) then failwithf "path '%s' must be absolute" path
-    do remove path
-    member x.Path = path
-    member x.Exists = x.Path |> FileSystem.FileExistsShim
-    member x.CheckExists() =
-        if not x.Exists then
-             failwith (sprintf "exit code 0 but %s file doesn't exists" (x.Path |> Path.GetFileName))
-
-    interface IDisposable with
-        member x.Dispose () = remove path
-
+let createConfigWithEmptyDirectory() =
+    { initialConfig with Directory = createTemporaryDirectory().FullName }
 
 type RedirectToType =
     | Overwrite of FilePath
     | Append of FilePath
 
 type RedirectTo =
-    | Inherit
+    | Ignore
+    | Collect
     | Output of RedirectToType
     | OutputAndError of RedirectToType * RedirectToType
     | OutputAndErrorToSameFile of RedirectToType
@@ -531,8 +481,8 @@ module Command =
         let redirectType = function Overwrite x -> sprintf ">%s" x | Append x -> sprintf ">>%s" x
         let outF =
             function
-            | Inherit -> ""
-            | Output r-> sprintf " 1%s" (redirectType r)
+            | Ignore | Collect -> ""
+            | Output r -> sprintf " 1%s" (redirectType r)
             | OutputAndError (r1, r2) -> sprintf " 1%s 2%s" (redirectType r1)  (redirectType r2)
             | OutputAndErrorToSameFile r -> sprintf " 1%s 2>1" (redirectType r)
             | Error r -> sprintf " 2%s" (redirectType r)
@@ -569,14 +519,16 @@ module Command =
 
         let outF fCont cmdArgs =
             match redirect.Output with
-            | RedirectTo.Inherit ->
-                use toLog = redirectToLog ()
-                fCont { cmdArgs with RedirectOutput = Some (toLog.Post); RedirectError = Some (toLog.Post) }
+            | Ignore ->
+                fCont { cmdArgs with RedirectOutput = Some ignore; RedirectError = Some ignore }
+            | Collect ->
+                use out = redirectTo (new StringWriter())
+                use error = redirectTo (new StringWriter())
+                fCont { cmdArgs with RedirectOutput = Some out.Post; RedirectError = Some error.Post }
             | Output r ->
                 use writer = openWrite r
                 use outFile = redirectTo writer
-                use toLog = redirectToLog ()
-                fCont { cmdArgs with RedirectOutput = Some (outFile.Post); RedirectError = Some (toLog.Post) }
+                fCont { cmdArgs with RedirectOutput = Some (outFile.Post); RedirectError = Some ignore }
             | OutputAndError (r1,r2) ->
                 use writer1 = openWrite r1
                 use writer2 = openWrite r2
@@ -590,11 +542,10 @@ module Command =
             | Error r ->
                 use writer = openWrite r
                 use outFile = redirectTo writer
-                use toLog = redirectToLog ()
-                fCont { cmdArgs with RedirectOutput = Some (toLog.Post); RedirectError = Some (outFile.Post) }
+                fCont { cmdArgs with RedirectOutput = Some ignore; RedirectError = Some (outFile.Post) }
 
         let exec cmdArgs =
-            log "%s" (logExec dir path args redirect)
+            printfn "%s" (logExec dir path args redirect)
             Process.exec cmdArgs dir envVars path args
 
         { RedirectOutput = None; RedirectError = None; RedirectInput = None }
@@ -602,18 +553,21 @@ module Command =
 
 let alwaysSuccess _ = ()
 
-let execArgs = { Output = Inherit; Input = None; }
+let execArgs = { Output = Ignore; Input = None; }
 let execAppend cfg stdoutPath stderrPath p = Command.exec cfg.Directory cfg.EnvironmentVariables { execArgs with Output = OutputAndError(Append(stdoutPath), Append(stderrPath)) } p >> checkResult
 let execAppendIgnoreExitCode cfg stdoutPath stderrPath p = Command.exec cfg.Directory cfg.EnvironmentVariables { execArgs with Output = OutputAndError(Append(stdoutPath), Append(stderrPath)) } p >> alwaysSuccess
 let exec cfg p = Command.exec cfg.Directory cfg.EnvironmentVariables execArgs p >> checkResult
+let execAndCheckPassed cfg p = Command.exec cfg.Directory cfg.EnvironmentVariables { execArgs with Output = Collect } p >> checkResultPassed
 let execExpectFail cfg p = Command.exec cfg.Directory cfg.EnvironmentVariables execArgs p >> checkErrorLevel1
 let execIn cfg workDir p = Command.exec workDir cfg.EnvironmentVariables execArgs p >> checkResult
-let execBothToOutNoCheck cfg workDir outFile p = Command.exec workDir  cfg.EnvironmentVariables { execArgs with Output = OutputAndErrorToSameFile(Overwrite(outFile)) } p
+let execBothToOutNoCheck cfg workDir outFile p = Command.exec workDir cfg.EnvironmentVariables { execArgs with Output = OutputAndErrorToSameFile(Overwrite(outFile)) } p
 let execBothToOut cfg workDir outFile p = execBothToOutNoCheck cfg workDir outFile p >> checkResult
+let execBothToOutCheckPassed cfg workDir outFile p = execBothToOutNoCheck cfg workDir outFile p >> checkResultPassed
 let execBothToOutExpectFail cfg workDir outFile p = execBothToOutNoCheck cfg workDir outFile p >> checkErrorLevel1
 let execAppendOutIgnoreExitCode cfg workDir outFile p = Command.exec workDir  cfg.EnvironmentVariables { execArgs with Output = Output(Append(outFile)) } p >> alwaysSuccess
 let execAppendErrExpectFail cfg errPath p = Command.exec cfg.Directory cfg.EnvironmentVariables { execArgs with Output = Error(Overwrite(errPath)) } p >> checkErrorLevel1
-let execStdin cfg l p = Command.exec cfg.Directory cfg.EnvironmentVariables { Output = Inherit; Input = Some(RedirectInput(l)) } p >> checkResult
+let execStdin cfg l p = Command.exec cfg.Directory cfg.EnvironmentVariables { Output = Ignore; Input = Some(RedirectInput(l)) } p >> checkResult
+let execStdinCheckPassed cfg l p = Command.exec cfg.Directory cfg.EnvironmentVariables { Output = Collect; Input = Some(RedirectInput(l)) } p >> checkResultPassed
 let execStdinAppendBothIgnoreExitCode cfg stdoutPath stderrPath stdinPath p = Command.exec cfg.Directory cfg.EnvironmentVariables { Output = OutputAndError(Append(stdoutPath), Append(stderrPath)); Input = Some(RedirectInput(stdinPath)) } p >> alwaysSuccess
 let fsc cfg arg = Printf.ksprintf (Commands.fsc cfg.Directory (exec cfg) cfg.DotNetExe cfg.FSC) arg
 let fscIn cfg workDir arg = Printf.ksprintf (Commands.fsc workDir (execIn cfg workDir) cfg.DotNetExe  cfg.FSC) arg
@@ -629,6 +583,7 @@ let ilasm cfg arg = Printf.ksprintf (Commands.ilasm (exec cfg) cfg.ILASM) arg
 let peverify _cfg _test = printfn "PEVerify is disabled, need to migrate to ILVerify instead, see https://github.com/dotnet/fsharp/issues/13854" //Commands.peverify (exec cfg) cfg.PEVERIFY "/nologo"
 let peverifyWithArgs _cfg _args _test = printfn "PEVerify is disabled, need to migrate to ILVerify instead, see https://github.com/dotnet/fsharp/issues/13854" //Commands.peverify (exec cfg) cfg.PEVERIFY args
 let fsi cfg = Printf.ksprintf (Commands.fsi (exec cfg) cfg.FSI)
+let fsiCheckPassed cfg = Printf.ksprintf (Commands.fsi (execAndCheckPassed cfg) cfg.FSI)
 #if !NETCOREAPP
 let fsiAnyCpu cfg = Printf.ksprintf (Commands.fsi (exec cfg) cfg.FSIANYCPU)
 let sn cfg = Printf.ksprintf (Commands.sn (exec cfg) cfg.SN)
@@ -636,10 +591,10 @@ let sn cfg = Printf.ksprintf (Commands.sn (exec cfg) cfg.SN)
 let fsi_script cfg = Printf.ksprintf (Commands.fsi (exec cfg) cfg.FSI_FOR_SCRIPTS)
 let fsiExpectFail cfg = Printf.ksprintf (Commands.fsi (execExpectFail cfg) cfg.FSI)
 let fsiAppendIgnoreExitCode cfg stdoutPath stderrPath = Printf.ksprintf (Commands.fsi (execAppendIgnoreExitCode cfg stdoutPath stderrPath) cfg.FSI)
-let fileguard cfg fileName = Commands.getfullpath cfg.Directory fileName |> (fun x -> new FileGuard(x))
 let getfullpath cfg = Commands.getfullpath cfg.Directory
 let fileExists cfg fileName = Commands.fileExists cfg.Directory fileName |> Option.isSome
 let fsiStdin cfg stdinPath = Printf.ksprintf (Commands.fsi (execStdin cfg stdinPath) cfg.FSI)
+let fsiStdinCheckPassed cfg stdinPath = Printf.ksprintf (Commands.fsi (execStdinCheckPassed cfg stdinPath) cfg.FSI)
 let fsiStdinAppendBothIgnoreExitCode cfg stdoutPath stderrPath stdinPath = Printf.ksprintf (Commands.fsi (execStdinAppendBothIgnoreExitCode cfg stdoutPath stderrPath stdinPath) cfg.FSI)
 let rm cfg x = Commands.rm cfg.Directory x
 let rmdir cfg x = Commands.rmdir cfg.Directory x

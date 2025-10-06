@@ -1,45 +1,47 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RazorLSPOptionsMonitorTest : ToolingTestBase
+public class RazorLSPOptionsMonitorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
-
-    public RazorLSPOptionsMonitorTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        var services = new ServiceCollection().AddOptions();
-        _cache = services.BuildServiceProvider().GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>();
-    }
+    private static RazorLSPOptions s_expectedOptions = new RazorLSPOptions(
+        FormattingFlags.Disabled,
+        AutoClosingTags: true,
+        InsertSpaces: true,
+        TabSize: 4,
+        AutoShowCompletion: true,
+        AutoListParams: true,
+        AutoInsertAttributeQuotes: true,
+        ColorBackground: false,
+        CodeBlockBraceOnNextLine: false,
+        CommitElementsWithSpace: true,
+        TaskListDescriptors: []);
 
     [Fact]
     public async Task UpdateAsync_Invokes_OnChangeRegistration()
     {
         // Arrange
-        var expectedOptions = new RazorLSPOptions(EnableFormatting: false, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: true);
         var configService = Mock.Of<IConfigurationSyncService>(
-            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(expectedOptions),
+            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(s_expectedOptions),
             MockBehavior.Strict);
-        var optionsMonitor = new RazorLSPOptionsMonitor(configService, _cache, RazorLSPOptions.Default);
+        var optionsMonitor = new RazorLSPOptionsMonitor(configService, RazorLSPOptions.Default);
         var called = false;
 
         // Act & Assert
         optionsMonitor.OnChange(options =>
         {
             called = true;
-            Assert.Same(expectedOptions, options);
+            Assert.Same(s_expectedOptions, options);
         });
 
         await optionsMonitor.UpdateAsync(DisposalToken);
@@ -50,11 +52,10 @@ public class RazorLSPOptionsMonitorTest : ToolingTestBase
     public async Task UpdateAsync_DoesNotInvoke_OnChangeRegistration_AfterDispose()
     {
         // Arrange
-        var expectedOptions = new RazorLSPOptions(EnableFormatting: false, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: true);
         var configService = Mock.Of<IConfigurationSyncService>(
-            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(expectedOptions),
+            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(s_expectedOptions),
             MockBehavior.Strict);
-        var optionsMonitor = new RazorLSPOptionsMonitor(configService, _cache, RazorLSPOptions.Default);
+        var optionsMonitor = new RazorLSPOptionsMonitor(configService, RazorLSPOptions.Default);
         var called = false;
         var onChangeToken = optionsMonitor.OnChange(options => called = true);
 
@@ -81,7 +82,7 @@ public class RazorLSPOptionsMonitorTest : ToolingTestBase
         Mock.Get(configService)
             .Setup(s => s.GetLatestOptionsAsync(DisposalToken))
             .ReturnsAsync(value: null);
-        var optionsMonitor = new RazorLSPOptionsMonitor(configService, _cache, RazorLSPOptions.Default);
+        var optionsMonitor = new RazorLSPOptionsMonitor(configService, RazorLSPOptions.Default);
         var called = false;
         var onChangeToken = optionsMonitor.OnChange(options => called = true);
 
@@ -96,13 +97,12 @@ public class RazorLSPOptionsMonitorTest : ToolingTestBase
     public void InitializedOptionsAreCurrent()
     {
         // Arrange
-        var expectedOptions = new RazorLSPOptions(EnableFormatting: false, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: true);
         var configService = Mock.Of<IConfigurationSyncService>(
-            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(expectedOptions),
+            f => f.GetLatestOptionsAsync(DisposalToken) == Task.FromResult(s_expectedOptions),
             MockBehavior.Strict);
-        var optionsMonitor = new RazorLSPOptionsMonitor(configService, _cache, expectedOptions);
+        var optionsMonitor = new RazorLSPOptionsMonitor(configService, s_expectedOptions);
 
         // Act & Assert
-        Assert.Same(expectedOptions, optionsMonitor.CurrentValue);
+        Assert.Same(s_expectedOptions, optionsMonitor.CurrentValue);
     }
 }

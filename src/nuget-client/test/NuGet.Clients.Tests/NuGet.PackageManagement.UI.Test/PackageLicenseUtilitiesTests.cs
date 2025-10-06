@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
@@ -83,7 +82,7 @@ namespace NuGet.PackageManagement.UI.Test
             var links = PackageLicenseUtilities.GenerateLicenseLinks(licenseData, licenseFileHeader: null, packagePath: null, packageIdentity: null);
 
             Assert.True(links[0] is WarningText);
-            Assert.Empty(links.Where(e => e is LicenseText));
+            Assert.DoesNotContain(links, e => e is LicenseText);
         }
 
         [Fact]

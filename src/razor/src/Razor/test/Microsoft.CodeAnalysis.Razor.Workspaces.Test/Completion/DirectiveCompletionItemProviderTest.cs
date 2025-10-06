@@ -1,41 +1,36 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
-
-#nullable disable
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveCompletionItemProviderTest : ToolingTestBase
+public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private static readonly Action<RazorCompletionItem>[] s_defaultDirectiveCollectionVerifiers;
+    private static readonly Action<RazorCompletionItem>[] s_mvcDirectiveCollectionVerifiers = GetDirectiveVerifies(DirectiveCompletionItemProvider.MvcDefaultDirectives);
+    private static readonly Action<RazorCompletionItem>[] s_componentDirectiveCollectionVerifiers = GetDirectiveVerifies(DirectiveCompletionItemProvider.ComponentDefaultDirectives);
 
-    static DirectiveCompletionItemProviderTest()
+    private static Action<RazorCompletionItem>[] GetDirectiveVerifies(ImmutableArray<DirectiveDescriptor> directiveDescriptors)
     {
-        var defaultDirectiveList = new List<Action<RazorCompletionItem>>(DirectiveCompletionItemProvider.DefaultDirectives.Count() * 2);
+        using var builder = new PooledArrayBuilder<Action<RazorCompletionItem>>(directiveDescriptors.Length * 2);
 
-        foreach (var directive in DirectiveCompletionItemProvider.DefaultDirectives)
+        foreach (var directive in directiveDescriptors)
         {
-            defaultDirectiveList.Add(item => AssertRazorCompletionItem(directive, item, isSnippet: false));
-            defaultDirectiveList.Add(item => AssertRazorCompletionItem(directive, item, isSnippet: true));
+            builder.Add(item => AssertRazorCompletionItem(directive, item, isSnippet: false));
+            builder.Add(item => AssertRazorCompletionItem(directive, item, isSnippet: true));
         }
 
-        s_defaultDirectiveCollectionVerifiers = defaultDirectiveList.ToArray();
-    }
-
-    public DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
+        return builder.ToArray();
     }
 
     [Fact]
@@ -51,7 +46,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
         // Assert
         Assert.Collection(
             completionItems,
-            s_defaultDirectiveCollectionVerifiers
+            s_mvcDirectiveCollectionVerifiers
         );
     }
 
@@ -71,7 +66,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             completionItems,
             [
                 item => AssertRazorCompletionItem(customDirective, item), ..
-                s_defaultDirectiveCollectionVerifiers
+                s_mvcDirectiveCollectionVerifiers
             ]
         );
     }
@@ -96,7 +91,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             completionItems,
             [
                 item => AssertRazorCompletionItem("different", customDirective, item), ..
-                s_defaultDirectiveCollectionVerifiers
+                s_mvcDirectiveCollectionVerifiers
             ]
         );
     }
@@ -121,7 +116,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             completionItems,
             [
                 item => AssertRazorCompletionItem("code", customDirective, item, DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters), ..
-                s_defaultDirectiveCollectionVerifiers
+                s_mvcDirectiveCollectionVerifiers
             ]
         );
     }
@@ -145,7 +140,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             completionItems,
             [
                 item => AssertRazorCompletionItem("section", customDirective, item, DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters), ..
-                s_defaultDirectiveCollectionVerifiers
+                s_mvcDirectiveCollectionVerifiers
             ]
         );
     }
@@ -164,12 +159,13 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
     public void GetDirectiveCompletionItems_ReturnsKnownDirectivesAsSnippets_SingleLine_Component(string knownDirective)
     {
         // Arrange
+        var usingDirective = DirectiveCompletionItemProvider.ComponentDefaultDirectives.First();
         var customDirective = DirectiveDescriptor.CreateRazorBlockDirective(knownDirective, builder =>
         {
             builder.DisplayName = knownDirective;
             builder.Description = string.Empty; // Doesn't matter for this test. Just need to provide something to avoid ArgumentNullException
         });
-        var syntaxTree = CreateSyntaxTree("@", FileKinds.Component, customDirective);
+        var syntaxTree = CreateSyntaxTree("@", RazorFileKind.Component, customDirective);
 
         // Act
         var completionItems = DirectiveCompletionItemProvider.GetDirectiveCompletionItems(syntaxTree);
@@ -178,7 +174,9 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
         Assert.Collection(
             completionItems,
             item => AssertRazorCompletionItem(knownDirective, customDirective, item, commitCharacters: DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters, isSnippet: false),
-            item => AssertRazorCompletionItem(knownDirective + " directive ...", customDirective, item, commitCharacters: DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters, isSnippet: true));
+            item => AssertRazorCompletionItem(knownDirective + " directive ...", customDirective, item, commitCharacters: DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters, isSnippet: true),
+            item => AssertRazorCompletionItem(usingDirective.Directive, usingDirective, item, commitCharacters: DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters, isSnippet: false),
+            item => AssertRazorCompletionItem(usingDirective.Directive + " directive ...", usingDirective, item, commitCharacters: DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters, isSnippet: true));
     }
 
     [Fact]
@@ -191,7 +189,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             builder.DisplayName = "model"; // Currently "model" is the only cshtml-only single-line directive. "add(remove)TagHelper" and "tagHelperPrefix" are there by default
             builder.Description = string.Empty; // Doesn't matter for this test. Just need to provide something to avoid ArgumentNullException
         });
-        var syntaxTree = CreateSyntaxTree("@", FileKinds.Legacy, customDirective);
+        var syntaxTree = CreateSyntaxTree("@", RazorFileKind.Legacy, customDirective);
 
         // Act
         var completionItems = DirectiveCompletionItemProvider.GetDirectiveCompletionItems(syntaxTree);
@@ -202,22 +200,26 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             [
                 item => AssertRazorCompletionItem("model", customDirective, item, commitCharacters: DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters, isSnippet: false),
                 item => AssertRazorCompletionItem("model directive ...", customDirective, item, commitCharacters: DirectiveCompletionItemProvider.BlockDirectiveCommitCharacters, isSnippet: true), ..
-                s_defaultDirectiveCollectionVerifiers
+                s_mvcDirectiveCollectionVerifiers
             ]
         );
     }
 
     [Fact]
-    public void GetDirectiveCompletionItems_ComponentDocument_DoesNotReturnsDefaultDirectivesAsCompletionItems()
+    public void GetDirectiveCompletionItems_ComponentDocument_ReturnsDefaultComponentDirectivesAsCompletionItems()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@addTag", FileKinds.Component);
+        var syntaxTree = CreateSyntaxTree("@addTag", RazorFileKind.Component);
 
         // Act
         var completionItems = DirectiveCompletionItemProvider.GetDirectiveCompletionItems(syntaxTree);
 
         // Assert
-        Assert.Empty(completionItems);
+        // Assert
+        Assert.Collection(
+            completionItems,
+            s_componentDirectiveCollectionVerifiers
+        );
     }
 
     [Fact]
@@ -434,14 +436,14 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
         return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext, reason);
     }
 
-    private static void AssertRazorCompletionItem(string completionDisplayText, DirectiveDescriptor directive, RazorCompletionItem item, IReadOnlyList<RazorCommitCharacter> commitCharacters = null, bool isSnippet = false)
+    private static void AssertRazorCompletionItem(string completionDisplayText, DirectiveDescriptor directive, RazorCompletionItem item, ImmutableArray<RazorCommitCharacter> commitCharacters = default, bool isSnippet = false)
     {
         Assert.Equal(item.DisplayText, completionDisplayText);
-        var completionDescription = item.GetDirectiveCompletionDescription();
+        var completionDescription = Assert.IsType<DirectiveCompletionDescription>(item.DescriptionInfo);
 
         if (isSnippet)
         {
-            var (insertText, displayText) = DirectiveCompletionItemProvider.s_singleLineDirectiveSnippets[directive.Directive];
+            var (insertText, displayText) = DirectiveCompletionItemProvider.SingleLineDirectiveSnippets[directive.Directive];
 
             Assert.StartsWith(directive.Directive, item.InsertText);
             Assert.Equal(item.InsertText, insertText);
@@ -453,7 +455,7 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             Assert.Equal(directive.Description, completionDescription.Description);
         }
 
-        Assert.Equal(item.CommitCharacters, commitCharacters ?? DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters);
+        Assert.Equal(item.CommitCharacters, commitCharacters.IsDefault ? DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters : commitCharacters);
     }
 
     private static void AssertRazorCompletionItem(DirectiveDescriptor directive, RazorCompletionItem item, bool isSnippet = false) =>
@@ -461,19 +463,20 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
 
     private static RazorSyntaxTree CreateSyntaxTree(string text, params DirectiveDescriptor[] directives)
     {
-        return CreateSyntaxTree(text, FileKinds.Legacy, directives);
+        return CreateSyntaxTree(text, RazorFileKind.Legacy, directives);
     }
 
-    private static RazorSyntaxTree CreateSyntaxTree(string text, string fileKind, params DirectiveDescriptor[] directives)
+    private static RazorSyntaxTree CreateSyntaxTree(string text, RazorFileKind fileKind, params DirectiveDescriptor[] directives)
     {
         var sourceDocument = TestRazorSourceDocument.Create(text);
-        var options = RazorParserOptions.Create(builder =>
+
+        var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Latest, fileKind)
         {
-            foreach (var directive in directives)
-            {
-                builder.Directives.Add(directive);
-            }
-        }, fileKind);
+            Directives = [.. directives]
+        };
+
+        var options = builder.ToOptions();
+
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, options);
         return syntaxTree;
     }

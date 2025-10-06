@@ -1,10 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.IO;
-using System.Linq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -12,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 // Integration tests focused on file path handling for class/namespace names
 public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
 {
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     [Fact]
     public void FileNameIsInvalidClassName_SanitizesInvalidClassName()
@@ -23,11 +20,10 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         var result = CompileToAssembly("Filename with spaces.cshtml", "");
 
         // Assert
-        Assert.Empty(result.Diagnostics);
+        Assert.Empty(result.CSharpDiagnostics);
 
-        var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
-        Assert.Equal(DefaultRootNamespace, type.Namespace);
-        Assert.Equal("Filename_with_spaces", type.Name);
+        var type = result.Compilation.GetTypeByMetadataName($"{DefaultRootNamespace}.Filename_with_spaces");
+        Assert.NotNull(type);
     }
 
     [Theory]
@@ -43,10 +39,9 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         var result = CompileToAssembly(relativePath, "");
 
         // Assert
-        Assert.Empty(result.Diagnostics);
+        Assert.Empty(result.CSharpDiagnostics);
 
-        var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
-        Assert.Equal(expectedNamespace, type.Namespace);
-        Assert.Equal(expectedClassName, type.Name);
+        var type = result.Compilation.GetTypeByMetadataName($"{expectedNamespace}.{expectedClassName}");
+        Assert.NotNull(type);
     }
 }

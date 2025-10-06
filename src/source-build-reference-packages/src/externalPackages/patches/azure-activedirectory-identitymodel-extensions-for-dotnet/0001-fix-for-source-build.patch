@@ -1,0 +1,319 @@
+From ca7d4e4aa8911c8f847dafa487ffc7d80da909a0 Mon Sep 17 00:00:00 2001
+From: wtgodbe <wigodbe@microsoft.com>
+Date: Wed, 17 Jul 2024 10:41:04 -0700
+Subject: [PATCH] fix for source build
+
+---
+ build/common.props                                         | 6 ------
+ build/dependencies.props                                   | 4 ++--
+ build/targets.props                                        | 2 +-
+ buildConfiguration.xml                                     | 2 +-
+ .../Microsoft.IdentityModel.Abstractions.csproj            | 7 -------
+ .../Microsoft.IdentityModel.JsonWebTokens.csproj           | 7 -------
+ .../Microsoft.IdentityModel.Logging.csproj                 | 7 -------
+ .../Microsoft.IdentityModel.LoggingExtensions.csproj       | 7 -------
+ .../Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj | 7 -------
+ ...rosoft.IdentityModel.Protocols.SignedHttpRequest.csproj | 7 -------
+ .../Microsoft.IdentityModel.Protocols.WsFederation.csproj  | 7 -------
+ .../Microsoft.IdentityModel.Protocols.csproj               | 7 -------
+ .../Microsoft.IdentityModel.Tokens.Saml.csproj             | 7 -------
+ .../Microsoft.IdentityModel.Tokens.csproj                  | 7 -------
+ .../Microsoft.IdentityModel.Validators.csproj              | 7 -------
+ .../Microsoft.IdentityModel.Xml.csproj                     | 7 -------
+ .../System.IdentityModel.Tokens.Jwt.csproj                 | 7 -------
+ 17 files changed, 4 insertions(+), 101 deletions(-)
+
+diff --git a/build/common.props b/build/common.props
+index efd7e90e..a0cf3de7 100644
+--- a/build/common.props
++++ b/build/common.props
+@@ -59,10 +59,4 @@
+     <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-     <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
+-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" PrivateAssets="all" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
+-  </ItemGroup>
+-
+ </Project>
+diff --git a/build/dependencies.props b/build/dependencies.props
+index 1e6f60cc..3287409f 100644
+--- a/build/dependencies.props
++++ b/build/dependencies.props
+@@ -2,12 +2,12 @@
+ 
+   <PropertyGroup>
+     <AspNetCoreMinSupportedVersion>2.1.1</AspNetCoreMinSupportedVersion>
+-    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
++    <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
+     <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+     <NetStandardVersion>2.0.3</NetStandardVersion>
+     <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
+     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
+-    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
++    <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
+-    <SystemTextJson>8.0.4</SystemTextJson>
++    <SystemTextJson>8.0.5</SystemTextJson>
+   </PropertyGroup>
+ 
+ </Project>
+diff --git a/build/targets.props b/build/targets.props
+index 6f92780d..1c48acfb 100644
+--- a/build/targets.props
++++ b/build/targets.props
+@@ -1,6 +1,6 @@
+ <Project>
+   <PropertyGroup>
+-    <SrcTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;netstandard2.0;net6.0;net8.0</SrcTargets>
++    <SrcTargets Condition="'$(LocalBuild)' != 'True'">netstandard2.0;net6.0;net8.0</SrcTargets>
+     <SrcTargets Condition="'$(LocalBuild)' == 'True'">netstandard2.0;net8.0</SrcTargets>
+     <SrcTargets Condition="'$(TargetNet9)' == 'True'">$(SrcTargets);net9.0</SrcTargets>
+     <SrcStandardTargets>netstandard2.0</SrcStandardTargets>
+diff --git a/buildConfiguration.xml b/buildConfiguration.xml
+index 0abda703..7c0862e5 100644
+--- a/buildConfiguration.xml
++++ b/buildConfiguration.xml
+@@ -1,7 +1,7 @@
+ <root>
+   <dotnetArchitecture>x64</dotnetArchitecture>
+   <nugetVersion>3.5.0-rc-1285</nugetVersion>
+-  <runtimes>net461,netstandard2.0</runtimes>
++  <runtimes>netstandard2.0</runtimes>
+   <projects>
+     <src>
+       <project name="Microsoft.IdentityModel.Logging" />
+diff --git a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
+index f7a11afe..4a87af91 100644
+--- a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
++++ b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
+@@ -17,11 +17,4 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+ </Project>
+diff --git a/src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj b/src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj
+index 33293983..f4cdb39c 100644
+--- a/src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj
++++ b/src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj
+@@ -16,13 +16,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+   </ItemGroup>
+diff --git a/src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj b/src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj
+index 60d18120..050a90d4 100644
+--- a/src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj
++++ b/src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj
+@@ -25,13 +25,6 @@
+     <Reference Include="System.Net.Http" />
+   </ItemGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Abstractions\Microsoft.IdentityModel.Abstractions.csproj" />
+   </ItemGroup>
+diff --git a/src/Microsoft.IdentityModel.LoggingExtensions/Microsoft.IdentityModel.LoggingExtensions.csproj b/src/Microsoft.IdentityModel.LoggingExtensions/Microsoft.IdentityModel.LoggingExtensions.csproj
+index 08c93085..f91d554a 100644
+--- a/src/Microsoft.IdentityModel.LoggingExtensions/Microsoft.IdentityModel.LoggingExtensions.csproj
++++ b/src/Microsoft.IdentityModel.LoggingExtensions/Microsoft.IdentityModel.LoggingExtensions.csproj
+@@ -17,13 +17,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Abstractions\Microsoft.IdentityModel.Abstractions.csproj" />
+   </ItemGroup>
+diff --git a/src/Microsoft.IdentityModel.Protocols.OpenIdConnect/Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj b/src/Microsoft.IdentityModel.Protocols.OpenIdConnect/Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj
+index 96c2cd43..5fd678a0 100644
+--- a/src/Microsoft.IdentityModel.Protocols.OpenIdConnect/Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj
++++ b/src/Microsoft.IdentityModel.Protocols.OpenIdConnect/Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Protocols\Microsoft.IdentityModel.Protocols.csproj" />
+     <ProjectReference Include="..\System.IdentityModel.Tokens.Jwt\System.IdentityModel.Tokens.Jwt.csproj" />
+diff --git a/src/Microsoft.IdentityModel.Protocols.SignedHttpRequest/Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj b/src/Microsoft.IdentityModel.Protocols.SignedHttpRequest/Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj
+index 6c35d877..4908f92c 100644
+--- a/src/Microsoft.IdentityModel.Protocols.SignedHttpRequest/Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj
++++ b/src/Microsoft.IdentityModel.Protocols.SignedHttpRequest/Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.JsonWebTokens\Microsoft.IdentityModel.JsonWebTokens.csproj" />
+     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Protocols\Microsoft.IdentityModel.Protocols.csproj" />
+diff --git a/src/Microsoft.IdentityModel.Protocols.WsFederation/Microsoft.IdentityModel.Protocols.WsFederation.csproj b/src/Microsoft.IdentityModel.Protocols.WsFederation/Microsoft.IdentityModel.Protocols.WsFederation.csproj
+index 0e283fce..d599a4b1 100644
+--- a/src/Microsoft.IdentityModel.Protocols.WsFederation/Microsoft.IdentityModel.Protocols.WsFederation.csproj
++++ b/src/Microsoft.IdentityModel.Protocols.WsFederation/Microsoft.IdentityModel.Protocols.WsFederation.csproj
+@@ -16,13 +16,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Protocols\Microsoft.IdentityModel.Protocols.csproj" />
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Saml\Microsoft.IdentityModel.Tokens.Saml.csproj" />
+diff --git a/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj b/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
+index b0cdcc2e..7f0bb67d 100644
+--- a/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
++++ b/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+   </ItemGroup>
+diff --git a/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj b/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj
+index 8859880f..0deb3a3a 100644
+--- a/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj
++++ b/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+     <ProjectReference Include="..\Microsoft.IdentityModel.Xml\Microsoft.IdentityModel.Xml.csproj" />
+diff --git a/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj b/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
+index 7739dce8..2ecece20 100644
+--- a/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
++++ b/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
+@@ -49,11 +49,4 @@
+     <PackageReference Include="System.Text.Json" Version="$(SystemTextJson)" />
+   </ItemGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+ </Project>
+diff --git a/src/Microsoft.IdentityModel.Validators/Microsoft.IdentityModel.Validators.csproj b/src/Microsoft.IdentityModel.Validators/Microsoft.IdentityModel.Validators.csproj
+index 33067d0a..574a5f51 100644
+--- a/src/Microsoft.IdentityModel.Validators/Microsoft.IdentityModel.Validators.csproj
++++ b/src/Microsoft.IdentityModel.Validators/Microsoft.IdentityModel.Validators.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Protocols.OpenIdConnect\Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj" />
+     <ProjectReference Include="..\Microsoft.IdentityModel.Protocols\Microsoft.IdentityModel.Protocols.csproj" />
+diff --git a/src/Microsoft.IdentityModel.Xml/Microsoft.IdentityModel.Xml.csproj b/src/Microsoft.IdentityModel.Xml/Microsoft.IdentityModel.Xml.csproj
+index 5131f40a..a3670b9d 100644
+--- a/src/Microsoft.IdentityModel.Xml/Microsoft.IdentityModel.Xml.csproj
++++ b/src/Microsoft.IdentityModel.Xml/Microsoft.IdentityModel.Xml.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+   </ItemGroup>
+diff --git a/src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj b/src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj
+index bbb9ef2c..448ece2d 100644
+--- a/src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj
++++ b/src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj
+@@ -15,13 +15,6 @@
+     <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <ItemGroup>
+     <ProjectReference Include="..\Microsoft.IdentityModel.JsonWebTokens\Microsoft.IdentityModel.JsonWebTokens.csproj" />
+     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+-- 
+2.30.1 (Apple Git-130)
+

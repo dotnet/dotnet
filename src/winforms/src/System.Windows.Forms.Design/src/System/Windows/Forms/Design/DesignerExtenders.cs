@@ -1,21 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.ComponentModel;
 using System.ComponentModel.Design;
 
 namespace System.Windows.Forms.Design;
 
 /// <summary>
-///  This class provides the Modifiers property to components.  It is shared between
+///  This class provides the Modifiers property to components. It is shared between
 ///  the document designer and the component document designer.
 /// </summary>
 internal partial class DesignerExtenders
 {
-    private IExtenderProvider[] _providers;
-    private IExtenderProviderService _extenderService;
+    private IExtenderProvider[]? _providers;
+    private IExtenderProviderService? _extenderService;
 
     /// <summary>
     ///  This is called by a root designer to add the correct extender providers.

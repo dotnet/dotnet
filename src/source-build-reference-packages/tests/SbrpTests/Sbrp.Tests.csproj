@@ -15,12 +15,12 @@
       <Value>$(RepoRoot)</Value>
     </RuntimeHostConfigurationOption>
 
-    <RuntimeHostConfigurationOption Include="SbrpTests.Configuration">
-      <Value>$(Configuration)</Value>
+    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsPackagesDir">
+      <Value>$(ArtifactsPackagesDir)</Value>
     </RuntimeHostConfigurationOption>
 
-    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsDir">
-      <Value>$(ArtifactsDir)</Value>
+    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsReferenceOnlyPackagesDir">
+      <Value>$(ArtifactsReferenceOnlyPackagesDir)</Value>
     </RuntimeHostConfigurationOption>
   </ItemGroup>
 

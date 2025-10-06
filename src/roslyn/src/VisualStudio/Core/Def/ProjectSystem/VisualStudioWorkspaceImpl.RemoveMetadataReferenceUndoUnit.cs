@@ -6,14 +6,13 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.VisualStudio.OLE.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private class RemoveMetadataReferenceUndoUnit : AbstractAddRemoveUndoUnit
+    private sealed class RemoveMetadataReferenceUndoUnit : AbstractAddRemoveUndoUnit
     {
         private readonly string _filePath;
 

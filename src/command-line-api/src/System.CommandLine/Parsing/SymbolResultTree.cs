@@ -1,20 +1,20 @@
-﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
+// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 
 namespace System.CommandLine.Parsing
 {
-    internal sealed class SymbolResultTree : Dictionary<CliSymbol, SymbolResult>
+    internal sealed class SymbolResultTree : Dictionary<Symbol, SymbolResult>
     {
-        private readonly CliCommand _rootCommand;
+        private readonly Command? _rootCommand;
         internal List<ParseError>? Errors;
-        internal List<CliToken>? UnmatchedTokens;
+        internal List<Token>? UnmatchedTokens;
         private Dictionary<string, SymbolNode>? _symbolsByName;
 
         internal SymbolResultTree(
-            CliCommand rootCommand, 
-            List<string>? tokenizeErrors)
+            Command? rootCommand = null, 
+            List<string>? tokenizeErrors = null)
         {
             _rootCommand = rootCommand;
 
@@ -31,23 +31,23 @@ namespace System.CommandLine.Parsing
 
         internal int ErrorCount => Errors?.Count ?? 0;
 
-        internal ArgumentResult? GetResult(CliArgument argument)
+        internal ArgumentResult? GetResult(Argument argument)
             => TryGetValue(argument, out SymbolResult? result) ? (ArgumentResult)result : default;
 
-        internal CommandResult? GetResult(CliCommand command)
+        internal CommandResult? GetResult(Command command)
             => TryGetValue(command, out var result) ? (CommandResult)result : default;
 
-        internal OptionResult? GetResult(CliOption option)
+        internal OptionResult? GetResult(Option option)
             => TryGetValue(option, out SymbolResult? result) ? (OptionResult)result : default;
 
-        internal DirectiveResult? GetResult(CliDirective directive)
+        internal DirectiveResult? GetResult(Directive directive)
             => TryGetValue(directive, out SymbolResult? result) ? (DirectiveResult)result : default;
 
         internal IEnumerable<SymbolResult> GetChildren(SymbolResult parent)
         {
             if (parent is not ArgumentResult)
             {
-                foreach (KeyValuePair<CliSymbol, SymbolResult> pair in this)
+                foreach (KeyValuePair<Symbol, SymbolResult> pair in this)
                 {
                     if (ReferenceEquals(parent, pair.Value.Parent))
                     {
@@ -61,7 +61,7 @@ namespace System.CommandLine.Parsing
 
         internal void InsertFirstError(ParseError parseError) => (Errors ??= new()).Insert(0, parseError);
 
-        internal void AddUnmatchedToken(CliToken token, CommandResult commandResult, CommandResult rootCommandResult)
+        internal void AddUnmatchedToken(Token token, CommandResult commandResult, CommandResult rootCommandResult)
         {
             (UnmatchedTokens ??= new()).Add(token);
 
@@ -78,13 +78,13 @@ namespace System.CommandLine.Parsing
 
         public SymbolResult? GetResult(string name)
         {
-            if (_symbolsByName is null)
+            if (_symbolsByName is null && _rootCommand is not null)
             {
                 _symbolsByName = new();  
                 PopulateSymbolsByName(_rootCommand);
             }
           
-            if (!_symbolsByName.TryGetValue(name, out SymbolNode? node))
+            if (!_symbolsByName!.TryGetValue(name, out SymbolNode? node))
             {
                 throw new ArgumentException($"No symbol result found with name \"{name}\".");
             }
@@ -102,13 +102,13 @@ namespace System.CommandLine.Parsing
             return null;
         }
 
-        private void PopulateSymbolsByName(CliCommand command)
+        private void PopulateSymbolsByName(Command command)
         {
             if (command.HasArguments)
             {
                 for (var i = 0; i < command.Arguments.Count; i++)
                 {
-                    AddToSymbolsByName(command.Arguments[i]);
+                    AddToSymbolsByName(command.Arguments[i], command);
                 }
             }
 
@@ -116,7 +116,7 @@ namespace System.CommandLine.Parsing
             {
                 for (var i = 0; i < command.Options.Count; i++)
                 {
-                    AddToSymbolsByName(command.Options[i]);
+                    AddToSymbolsByName(command.Options[i], command);
                 }
             }
 
@@ -125,30 +125,35 @@ namespace System.CommandLine.Parsing
                 for (var i = 0; i < command.Subcommands.Count; i++)
                 {
                     var childCommand = command.Subcommands[i];
-                    AddToSymbolsByName(childCommand);
+                    AddToSymbolsByName(childCommand, command);
                     PopulateSymbolsByName(childCommand);
                 }
             }
 
-            void AddToSymbolsByName(CliSymbol symbol)
+            void AddToSymbolsByName(Symbol symbol, Command parent)
             {
                 if (_symbolsByName!.TryGetValue(symbol.Name, out var node))
                 {
-                    if (symbol.Name == node.Symbol.Name &&
-                        symbol.FirstParent?.Symbol is { } parent &&
-                        parent == node.Symbol.FirstParent?.Symbol)
+                    var current = node;
+                    do
                     {
-                        throw new InvalidOperationException($"Command {parent.Name} has more than one child named \"{symbol.Name}\".");
-                    }
+                        // The same symbol can be added to multiple commands and have multiple parents.
+                        // We can't allow for name duplicates within the same command.
+                        if (ReferenceEquals(current.Parent, parent))
+                        {
+                            throw new InvalidOperationException($"Command {parent.Name} has more than one child named \"{symbol.Name}\".");
+                        }
+                        current = current.Next;
+                    } while (current is not null);
 
-                    _symbolsByName[symbol.Name] = new(symbol)
+                    _symbolsByName[symbol.Name] = new(symbol, parent)
                     {
                         Next = node
                     };
                 }
                 else
                 {
-                    _symbolsByName[symbol.Name] = new(symbol);
+                    _symbolsByName[symbol.Name] = new(symbol, parent);
                 }
             }
         }

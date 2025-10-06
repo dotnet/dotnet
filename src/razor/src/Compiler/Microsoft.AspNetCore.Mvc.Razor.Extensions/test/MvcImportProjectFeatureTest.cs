@@ -1,10 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -15,13 +13,13 @@ public class MvcImportProjectFeatureTest
     public void AddDefaultDirectivesImport_AddsSingleDynamicImport()
     {
         // Arrange
-        var imports = new List<RazorProjectItem>();
+        using var imports = new PooledArrayBuilder<RazorProjectItem>();
 
         // Act
-        MvcImportProjectFeature.AddDefaultDirectivesImport(imports);
+        MvcImportProjectFeature.AddDefaultDirectivesImport(ref imports.AsRef());
 
         // Assert
-        var import = Assert.Single(imports);
+        var import = Assert.Single(imports.ToImmutable());
         Assert.Null(import.FilePath);
     }
 
@@ -29,7 +27,7 @@ public class MvcImportProjectFeatureTest
     public void AddHierarchicalImports_AddsViewImportSourceDocumentsOnDisk()
     {
         // Arrange
-        var imports = new List<RazorProjectItem>();
+        using var imports = new PooledArrayBuilder<RazorProjectItem>();
         var projectItem = new TestRazorProjectItem("/Contact/Index.cshtml");
         var testFileSystem = new TestRazorProjectFileSystem(new[]
         {
@@ -44,10 +42,10 @@ public class MvcImportProjectFeatureTest
         };
 
         // Act
-        mvcImportFeature.AddHierarchicalImports(projectItem, imports);
+        mvcImportFeature.AddHierarchicalImports(projectItem, ref imports.AsRef());
 
         // Assert
-        Assert.Collection(imports,
+        Assert.Collection(imports.ToImmutable(),
             import => Assert.Equal("/_ViewImports.cshtml", import.FilePath),
             import => Assert.Equal("/Contact/_ViewImports.cshtml", import.FilePath));
     }
@@ -56,7 +54,7 @@ public class MvcImportProjectFeatureTest
     public void AddHierarchicalImports_AddsViewImportSourceDocumentsNotOnDisk()
     {
         // Arrange
-        var imports = new List<RazorProjectItem>();
+        using var imports = new PooledArrayBuilder<RazorProjectItem>();
         var projectItem = new TestRazorProjectItem("/Pages/Contact/Index.cshtml");
         var testFileSystem = new TestRazorProjectFileSystem(new[] { projectItem });
         var mvcImportFeature = new MvcImportProjectFeature()
@@ -65,10 +63,10 @@ public class MvcImportProjectFeatureTest
         };
 
         // Act
-        mvcImportFeature.AddHierarchicalImports(projectItem, imports);
+        mvcImportFeature.AddHierarchicalImports(projectItem, ref imports.AsRef());
 
         // Assert
-        Assert.Collection(imports,
+        Assert.Collection(imports.ToImmutable(),
             import => Assert.Equal("/_ViewImports.cshtml", import.FilePath),
             import => Assert.Equal("/Pages/_ViewImports.cshtml", import.FilePath),
             import => Assert.Equal("/Pages/Contact/_ViewImports.cshtml", import.FilePath));

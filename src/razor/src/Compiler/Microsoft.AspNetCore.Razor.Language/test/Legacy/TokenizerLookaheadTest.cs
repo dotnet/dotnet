@@ -63,7 +63,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
     public void LookaheadUntil_PassesThePreviousTokensInTheSameOrder()
     {
         // Arrange
-        var tokenizer = CreateContentTokenizer("asdf--fvd--<");
+        using var tokenizer = CreateContentTokenizer("asdf--fvd--<");
 
         // Act
         var i = 3;
@@ -89,7 +89,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
     public void LookaheadUntil_ReturnsFalseAfterIteratingOverAllTokensIfConditionIsNotMet()
     {
         // Arrange
-        var tokenizer = CreateContentTokenizer("asdf--fvd");
+        using var tokenizer = CreateContentTokenizer("asdf--fvd");
 
         // Act
         var tokens = new Stack<SyntaxToken>();
@@ -111,7 +111,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
     public void LookaheadUntil_ReturnsTrueAndBreaksIteration()
     {
         // Arrange
-        var tokenizer = CreateContentTokenizer("asdf--fvd");
+        using var tokenizer = CreateContentTokenizer("asdf--fvd");
 
         // Act
         var tokens = new Stack<SyntaxToken>();
@@ -131,11 +131,10 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
     private static TestTokenizerBackedParser CreateContentTokenizer(string content)
     {
         var source = TestRazorSourceDocument.Create(content);
-        var options = RazorParserOptions.CreateDefault();
+        var options = RazorParserOptions.Default;
         var context = new ParserContext(source, options);
 
-        var tokenizer = new TestTokenizerBackedParser(HtmlLanguageCharacteristics.Instance, context);
-        return tokenizer;
+        return new TestTokenizerBackedParser(HtmlLanguageCharacteristics.Instance, context);
     }
 
     private static void AssertTokenEqual(SyntaxToken expected, SyntaxToken actual)
@@ -204,10 +203,17 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
         }
     }
 
-    private class TestTokenizerBackedParser : TokenizerBackedParser<HtmlTokenizer>
+    private class TestTokenizerBackedParser : TokenizerBackedParser<HtmlTokenizer>, IDisposable
     {
-        internal TestTokenizerBackedParser(LanguageCharacteristics<HtmlTokenizer> language, ParserContext context) : base(language, context)
+        internal TestTokenizerBackedParser(LanguageCharacteristics<HtmlTokenizer> language, ParserContext context)
+            : base(language, context)
         {
+        }
+
+        void IDisposable.Dispose()
+        {
+            Context.Dispose();
+            base.Dispose();
         }
 
         internal new bool LookaheadUntil(Func<SyntaxToken, IEnumerable<SyntaxToken>, bool> condition)

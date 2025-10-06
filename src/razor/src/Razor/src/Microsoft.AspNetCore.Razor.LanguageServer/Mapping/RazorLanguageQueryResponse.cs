@@ -1,24 +1,22 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Runtime.Serialization;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-[DataContract]
 internal class RazorLanguageQueryResponse
 {
-    [DataMember(Name = "kind")]
+    [JsonPropertyName("kind")]
     public RazorLanguageKind Kind { get; set; }
 
-    [DataMember(Name = "positionIndex")]
+    [JsonPropertyName("positionIndex")]
     public int PositionIndex { get; set; }
 
-    [DataMember(Name = "position")]
+    [JsonPropertyName("position")]
     public required Position Position { get; set; }
 
-    [DataMember(Name = "hostDocumentVersion")]
+    [JsonPropertyName("hostDocumentVersion")]
     public int? HostDocumentVersion { get; set; }
 }

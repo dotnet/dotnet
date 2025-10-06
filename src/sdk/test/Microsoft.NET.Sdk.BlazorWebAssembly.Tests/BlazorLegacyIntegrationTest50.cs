@@ -1,16 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.NET.Sdk.Razor.Tests;
+using Microsoft.NET.Sdk.StaticWebAssets.Tests;
 
 namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 {
-    public class BlazorLegacyIntegrationTest50 : AspNetSdkBaselineTest
+    public class BlazorLegacyIntegrationTest50(ITestOutputHelper log)
+        : IsolatedNuGetPackageFolderAspNetSdkBaselineTest(log, nameof(BlazorLegacyIntegrationTest50))
     {
-        public BlazorLegacyIntegrationTest50(ITestOutputHelper log) : base(log)
-        {
-        }
-
         [CoreMSBuildOnlyFact]
         public void Build50Hosted_Works()
         {
@@ -19,8 +16,8 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             var targetFramework = "net5.0";
             var testInstance = CreateAspNetSdkTestAsset(testAsset);
 
-            var build = new BuildCommand(testInstance, "Server");
-            build.Execute()
+            var build = CreateBuildCommand(testInstance, "Server");
+            ExecuteCommand(build)
                 .Should()
                 .Pass();
 
@@ -51,13 +48,20 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
         [CoreMSBuildOnlyFact]
         public void Publish50Hosted_Works()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                //  https://github.com/dotnet/sdk/issues/49665
+                //   tried: '/private/tmp/helix/working/A452091E/p/d/shared/Microsoft.NETCore.App/7.0.0/libhostpolicy.dylib' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), 
+                return;
+            }
+
             // Arrange
             var testAsset = "BlazorWasmHosted50";
             var targetFramework = "net5.0";
             var testInstance = CreateAspNetSdkTestAsset(testAsset);
 
-            var publish = new PublishCommand(testInstance, "Server");
-            publish.Execute()
+            var publish = CreatePublishCommand(testInstance, "Server");
+            ExecuteCommand(publish)
                 .Should()
                 .Pass()
                 .And.NotHaveStdOutContaining("warning IL");

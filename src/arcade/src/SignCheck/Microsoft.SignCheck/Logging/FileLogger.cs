@@ -3,6 +3,8 @@
 
 using System;
 using System.IO;
+using System.Xml;
+using Microsoft.SignCheck.Verification;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -20,13 +22,19 @@ namespace Microsoft.SignCheck.Logging
             set;
         }
 
+        internal XmlWriter ResultsWriter
+        {
+            get;
+            set;
+        }
+
         internal long Lines
         {
             get;
             set;
         }
 
-        public FileLogger(LogVerbosity verbosity, string messageFile, string errorFile) : base(verbosity)
+        public FileLogger(LogVerbosity verbosity, string messageFile, string errorFile, string resultsFile) : base(verbosity)
         {
             if (!String.IsNullOrEmpty(messageFile))
             {
@@ -47,6 +55,22 @@ namespace Microsoft.SignCheck.Logging
                 ErrorWriter.AutoFlush = true;
             }
 
+            if (!String.IsNullOrEmpty(resultsFile))
+            {
+                if (!Directory.Exists(resultsFile))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(resultsFile)));
+                }
+                ResultsWriter = XmlWriter.Create(resultsFile, new XmlWriterSettings()
+                {
+                    Indent = true,
+                    IndentChars = "\t",
+                    OmitXmlDeclaration = true
+                });
+                ResultsWriter.WriteStartDocument();
+                ResultsWriter.WriteStartElement("SignCheckResults");
+            }
+
             Lines = 0;
         }
 
@@ -62,6 +86,12 @@ namespace Microsoft.SignCheck.Logging
             {
                 ErrorWriter.Flush();
                 ErrorWriter.Close();
+            }
+
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteEndElement();
+                ResultsWriter.Close();
             }
         }
 
@@ -132,6 +162,37 @@ namespace Microsoft.SignCheck.Logging
                 {
                     MessageWriter.Flush();
                 }
+            }
+        }
+
+        public void WriteStartResult(SignatureVerificationResult result, string outcome)
+        {
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteStartElement("File");
+                ResultsWriter.WriteAttributeString("Name", result.VirtualPath);
+                ResultsWriter.WriteAttributeString("Outcome", outcome);
+                foreach (var detail in DetailKeys.ResultKeysVerbose)
+                {
+                    if (detail == DetailKeys.File)
+                    {
+                        // Skip the file detail because it's already written as an attribute
+                        continue;
+                    }
+                    string value = result.ToString(detail);
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        ResultsWriter.WriteAttributeString(detail.ToString(), value);
+                    }
+                }
+            }
+        }
+
+        public void WriteEndResult()
+        {
+            if (ResultsWriter != null)
+            {
+                ResultsWriter.WriteEndElement();
             }
         }
     }

@@ -5,9 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetVS)</TargetFramework>
     <PackageId>testSdkRSG</PackageId>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+
+    <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
 
     <!-- Not yet annotated -->
@@ -21,10 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Basic.Reference.Assemblies.AspNet80" />
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
     <PackageReference Include="xunit.extensibility.execution" />
   </ItemGroup>
@@ -47,6 +52,11 @@
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_win-x64)\runtimes\win-x64\lib\net8.0\*.dll" />
       </ItemGroup>
     </When>
+    <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'win-arm64'">
+      <ItemGroup>
+        <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_win-arm64)\runtimes\win-arm64\lib\net8.0\*.dll" />
+      </ItemGroup>
+    </When>
     <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'linux-x64'">
       <ItemGroup>
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_linux-x64)\runtimes\linux-x64\lib\net8.0\*.dll" />
@@ -55,6 +65,11 @@
     <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'osx-x64'">
       <ItemGroup>
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_osx-x64)\runtimes\osx-x64\lib\net8.0\*.dll" />
+      </ItemGroup>
+    </When>
+    <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'osx-arm64'">
+      <ItemGroup>
+        <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_osx-arm64)\runtimes\osx-arm64\lib\net8.0\*.dll" />
       </ItemGroup>
     </When>
   </Choose>

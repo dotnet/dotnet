@@ -3,7 +3,6 @@
 
 using System;
 using System.Globalization;
-using System.IO;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;

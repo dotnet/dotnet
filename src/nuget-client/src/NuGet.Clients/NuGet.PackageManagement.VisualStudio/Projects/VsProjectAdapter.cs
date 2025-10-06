@@ -161,15 +161,17 @@ namespace NuGet.PackageManagement.VisualStudio
 
         #region Getters
 
-        public async Task<string[]> GetProjectTypeGuidsAsync()
+        public string[] GetProjectTypeGuids()
         {
-            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
             return VsHierarchyUtility.GetProjectTypeGuidsFromHierarchy(VsHierarchy);
         }
 
         public async Task<FrameworkName> GetDotNetFrameworkNameAsync()
         {
-            var targetFrameworkMoniker = await GetTargetFrameworkStringAsync();
+            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var targetFrameworkMoniker = GetTargetFrameworkString();
 
             if (!string.IsNullOrEmpty(targetFrameworkMoniker))
             {
@@ -197,9 +199,10 @@ namespace NuGet.PackageManagement.VisualStudio
             return Enumerable.Empty<string>();
         }
 
-        public async Task<NuGetFramework> GetTargetFrameworkAsync()
+        public NuGetFramework GetTargetFramework()
         {
-            var frameworkString = await GetTargetFrameworkStringAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var frameworkString = GetTargetFrameworkString();
 
             if (!string.IsNullOrEmpty(frameworkString))
             {
@@ -209,18 +212,18 @@ namespace NuGet.PackageManagement.VisualStudio
             return NuGetFramework.UnsupportedFramework;
         }
 
-        public async Task<IEnumerable<(string ItemId, string[] ItemMetadata)>> GetBuildItemInformationAsync(string itemName, params string[] metadataNames)
+        public IEnumerable<(string ItemId, string[] ItemMetadata)> GetBuildItemInformation(string itemName, params string[] metadataNames)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (itemName == null)
             {
                 throw new ArgumentNullException(nameof(itemName));
             }
             if (metadataNames == null)
             {
-                throw new ArgumentNullException(nameof(itemName));
+                throw new ArgumentNullException(nameof(metadataNames));
             }
-
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var itemStorage = VsHierarchy as IVsBuildItemStorage;
             if (itemStorage != null)
@@ -234,9 +237,9 @@ namespace NuGet.PackageManagement.VisualStudio
             return Enumerable.Empty<(string ItemId, string[] ItemMetadata)>();
         }
 
-        private async Task<string> GetTargetFrameworkStringAsync()
+        private string GetTargetFrameworkString()
         {
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var projectPath = FullName;
 #pragma warning disable CS0618 // Type or member is obsolete

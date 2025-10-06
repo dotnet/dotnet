@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.Runtime;
 using Microsoft.Diagnostics.Runtime.Utilities;
 using SOS.Hosting.DbgEng.Interop;
 
-namespace SOS.Hosting
-{
+namespace SOS.Hosting {
     internal sealed unsafe class DataTargetWrapper : COMCallableIUnknown
     {
         private static readonly Guid IID_ICLRDataTarget = new("3E11CCEE-D08B-43e5-AF01-32717A64DA03");
@@ -18,6 +18,7 @@ namespace SOS.Hosting
         private static readonly Guid IID_ICLRDataTarget4 = new("E799DC06-E099-4713-BDD9-906D3CC02CF2");
         private static readonly Guid IID_ICLRMetadataLocator = new("aa8fa804-bc05-4642-b2c5-c353ed22fc63");
         private static readonly Guid IID_ICLRRuntimeLocator = new("b760bf44-9377-4597-8be7-58083bdc5146");
+        private static readonly Guid IID_ICLRContractLocator = new("17d5b8c6-34a9-407f-af4f-a930201d4e02");
 
         // For ClrMD's magic hand shake
         private const ulong MagicCallbackConstant = 0x43;
@@ -68,6 +69,10 @@ namespace SOS.Hosting
             builder.AddMethod(new GetRuntimeBaseDelegate(GetRuntimeBase));
             builder.Complete();
 
+            builder = AddInterface(IID_ICLRContractLocator, false);
+            builder.AddMethod(new GetContractDescriptorDelegate(GetContractDescriptor));
+            builder.Complete();
+
             AddRef();
         }
 
@@ -110,8 +115,9 @@ namespace SOS.Hosting
             {
                 Architecture.X64 => IMAGE_FILE_MACHINE.AMD64,
                 Architecture.X86 => IMAGE_FILE_MACHINE.I386,
-                Architecture.Arm => IMAGE_FILE_MACHINE.THUMB2,
+                Architecture.Arm => IMAGE_FILE_MACHINE.ARMNT,
                 Architecture.Arm64 => IMAGE_FILE_MACHINE.ARM64,
+                (Architecture)6 /* Architecture.LoongArch64 */ => IMAGE_FILE_MACHINE.LOONGARCH64,
                 (Architecture)9 /* Architecture.RiscV64 */ => IMAGE_FILE_MACHINE.RISCV64,
                 _ => IMAGE_FILE_MACHINE.UNKNOWN,
             };
@@ -220,23 +226,13 @@ namespace SOS.Hosting
             int contextSize,
             IntPtr context)
         {
-            byte[] registerContext;
             try
             {
-                registerContext = _threadService.GetThreadFromId(threadId).GetThreadContext();
+                _threadService.GetThreadFromId(threadId).GetThreadContext(context, contextSize);
             }
-            catch (DiagnosticsException)
+            catch (Exception ex) when (ex is DiagnosticsException or ArgumentOutOfRangeException)
             {
                 Trace.TraceError($"DataTargetWrapper.GetThreadContext({threadId:X8}) FAILED");
-                return HResult.E_FAIL;
-            }
-            try
-            {
-                Marshal.Copy(registerContext, 0, context, Math.Min(registerContext.Length, contextSize));
-            }
-            catch (Exception ex) when (ex is ArgumentOutOfRangeException or ArgumentNullException)
-            {
-                Trace.TraceError($"DataTargetWrapper.GetThreadContext Marshal.Copy FAILED {ex}");
                 return HResult.E_INVALIDARG;
             }
             return HResult.S_OK;
@@ -310,7 +306,7 @@ namespace SOS.Hosting
         private int VirtualUnwind(
             IntPtr self,
             uint threadId,
-            uint contextSize,
+            int contextSize,
             byte[] context)
         {
             try
@@ -319,7 +315,7 @@ namespace SOS.Hosting
                 {
                     return HResult.E_NOTIMPL;
                 }
-                return _threadUnwindService.Unwind(threadId, contextSize, context);
+                return _threadUnwindService.Unwind(threadId, context.AsSpan(0, contextSize));
             }
             catch (DiagnosticsException)
             {
@@ -355,6 +351,28 @@ namespace SOS.Hosting
             out ulong address)
         {
             address = _runtime.RuntimeModule.ImageBase;
+            return HResult.S_OK;
+        }
+
+        #endregion
+
+        #region ICLRContractLocator
+
+        private int GetContractDescriptor(
+            IntPtr self,
+            out ulong address)
+        {
+            address = 0;
+            ClrInfo clrInfo = _runtime.Services.GetService<ClrInfo>();
+            if (clrInfo is null)
+            {
+                return HResult.E_FAIL;
+            }
+            address = clrInfo.ContractDescriptorAddress;
+            if (address == 0)
+            {
+                return HResult.E_FAIL;
+            }
             return HResult.S_OK;
         }
 
@@ -465,7 +483,7 @@ namespace SOS.Hosting
         private delegate int VirtualUnwindDelegate(
             [In] IntPtr self,
             [In] uint threadId,
-            [In] uint contextSize,
+            [In] int contextSize,
             [In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] context);
 
         #endregion
@@ -491,6 +509,15 @@ namespace SOS.Hosting
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
         private delegate int GetRuntimeBaseDelegate(
+            [In] IntPtr self,
+            [Out] out ulong address);
+
+        #endregion
+
+        #region ICLRContractLocator delegate
+
+        [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+        private delegate int GetContractDescriptorDelegate(
             [In] IntPtr self,
             [Out] out ulong address);
 

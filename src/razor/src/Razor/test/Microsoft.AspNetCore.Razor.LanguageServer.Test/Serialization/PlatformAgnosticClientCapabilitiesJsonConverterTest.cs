@@ -1,12 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
-using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
@@ -76,10 +74,9 @@ public class PlatformAgnosticClientCapabilitiesJsonConverterTest
     }
   }
 }";
-        var stringReader = new StringReader(rawJson);
 
         // Act
-        var capabilities = JsonSerializer.CreateDefault().Deserialize<VSInternalClientCapabilities>(new JsonTextReader(stringReader));
+        var capabilities = JsonSerializer.Deserialize<VSInternalClientCapabilities>(rawJson);
 
         // Assert
         Assert.True(capabilities.Workspace.ApplyEdit);

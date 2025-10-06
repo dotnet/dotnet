@@ -19,23 +19,27 @@ namespace Microsoft.Diagnostics.DebugServices
         bool IsSymbolStoreEnabled { get; }
 
         /// <summary>
+        /// The default symbol server URL (normally msdl) when not overridden in AddSymbolServer.
+        /// </summary>
+        string DefaultSymbolPath { get; }
+
+        /// <summary>
         /// The default symbol cache path:
-        ///
         /// * dbgeng on Windows uses the dbgeng symbol cache path: %PROGRAMDATA%\dbg\sym
         /// * dotnet-dump on Windows uses the VS symbol cache path: %TEMPDIR%\SymbolCache
         /// * dotnet-dump/lldb on Linux/MacOS uses: $HOME/.dotnet/symbolcache
         /// </summary>
-        string DefaultSymbolCache { get; set; }
+        string DefaultSymbolCache { get; }
 
         /// <summary>
         /// The time out in minutes passed to the HTTP symbol store when not overridden in AddSymbolServer.
         /// </summary>
-        int DefaultTimeout { get; set; }
+        int DefaultTimeout { get; }
 
         /// <summary>
         /// The retry count passed to the HTTP symbol store when not overridden in AddSymbolServer.
         /// </summary>
-        int DefaultRetryCount { get; set; }
+        int DefaultRetryCount { get; }
 
         /// <summary>
         /// Reset any HTTP symbol stores marked with a client failure
@@ -50,16 +54,42 @@ namespace Microsoft.Diagnostics.DebugServices
         bool ParseSymbolPath(string symbolPath);
 
         /// <summary>
-        /// Add symbol server to search path.
+        /// Add the cloud symweb symbol server with authentication.
         /// </summary>
-        /// <param name="msdl">if true, use the public Microsoft server</param>
-        /// <param name="symweb">if true, use symweb internal server and protocol (file.ptr)</param>
-        /// <param name="symbolServerPath">symbol server url (optional)</param>
-        /// <param name="authToken">PAT for secure symbol server (optional)</param>
+        /// <param name="includeInteractiveCredentials">specifies whether credentials requiring user interaction will be included in the default authentication flow</param>
         /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
         /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
         /// <returns>if false, failure</returns>
-        bool AddSymbolServer(bool msdl, bool symweb, string symbolServerPath = null, string authToken = null, int? timeoutInMinutes = null, int? retryCount = null);
+        public bool AddSymwebSymbolServer(
+            bool includeInteractiveCredentials = false,
+            int? timeoutInMinutes = null,
+            int? retryCount = null);
+
+        /// <summary>
+        /// Add symbol server to search path with a PAT.
+        /// </summary>
+        /// <param name="accessToken">PAT or access token</param>
+        /// <param name="symbolServerPath">symbol server url (optional, uses <see cref="DefaultSymbolPath"/> if null)</param>
+        /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
+        /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
+        /// <returns>if false, failure</returns>
+        public bool AddAuthenticatedSymbolServer(
+            string accessToken,
+            string symbolServerPath = null,
+            int? timeoutInMinutes = null,
+            int? retryCount = null);
+
+        /// <summary>
+        /// Add symbol server to search path.
+        /// </summary>
+        /// <param name="symbolServerPath">symbol server url (optional, uses <see cref="DefaultSymbolPath"/> if null)</param>
+        /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
+        /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
+        /// <returns>if false, failure</returns>
+        public bool AddSymbolServer(
+            string symbolServerPath = null,
+            int? timeoutInMinutes = null,
+            int? retryCount = null);
 
         /// <summary>
         /// Add cache path to symbol search path
@@ -98,15 +128,6 @@ namespace Microsoft.Diagnostics.DebugServices
         /// <param name="index">index to lookup on symbol server</param>
         /// <param name="file">the full path name of the file</param>
         string DownloadFile(string index, string file);
-
-        /// <summary>
-        /// Returns the metadata for the assembly
-        /// </summary>
-        /// <param name="imagePath">file name and path to module</param>
-        /// <param name="imageTimestamp">module timestamp</param>
-        /// <param name="imageSize">size of PE image</param>
-        /// <returns>metadata</returns>
-        ImmutableArray<byte> GetMetadata(string imagePath, uint imageTimestamp, uint imageSize);
 
         /// <summary>
         /// Returns the portable PDB reader for the assembly path

@@ -61,11 +61,11 @@ namespace NuGet.Protocol.Tests
         public void PackageIdentityComparer_Compare()
         {
             // Test Compare is Reflexive
-            Assert.True(comp.Compare(A100, A100) == 0);
+            Assert.Equal(0, comp.Compare(A100, A100));
 
             // Test compare is symmetric
-            Assert.True(comp.Compare(A100, A100DUP) == 0);
-            Assert.True(comp.Compare(A100DUP, A100) == 0);
+            Assert.Equal(0, comp.Compare(A100, A100DUP));
+            Assert.Equal(0, comp.Compare(A100DUP, A100));
             Assert.True(comp.Compare(A100, A200) < 0);
             Assert.True(comp.Compare(A200, A100) > 0);
             Assert.True(comp.Compare(B100, B200) < 0);
@@ -82,11 +82,11 @@ namespace NuGet.Protocol.Tests
 
             //Run all tests again to check for consistency
             // Test Compare is Reflexive
-            Assert.True(comp.Compare(A100, A100) == 0);
+            Assert.Equal(0, comp.Compare(A100, A100));
 
             // Test compare is symmetric
-            Assert.True(comp.Compare(A100, A100DUP) == 0);
-            Assert.True(comp.Compare(A100DUP, A100) == 0);
+            Assert.Equal(0, comp.Compare(A100, A100DUP));
+            Assert.Equal(0, comp.Compare(A100DUP, A100));
             Assert.True(comp.Compare(A100, A200) < 0);
             Assert.True(comp.Compare(A200, A100) > 0);
             Assert.True(comp.Compare(B100, B200) < 0);

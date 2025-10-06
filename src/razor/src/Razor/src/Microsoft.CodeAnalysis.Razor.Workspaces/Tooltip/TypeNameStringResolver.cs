@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
 internal static class TypeNameStringResolver
 {
-    private static readonly IReadOnlyDictionary<string, string> s_primitiveDisplayTypeNameLookups = new Dictionary<string, string>(StringComparer.Ordinal)
+    private static readonly Dictionary<string, string> s_primitiveDisplayTypeNameLookups = new(StringComparer.Ordinal)
     {
         [typeof(byte).FullName] = "byte",
         [typeof(sbyte).FullName] = "sbyte",

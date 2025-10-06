@@ -38,6 +38,20 @@ namespace System.Text.Json.SourceGeneration.Tests
         { }
 
         [Fact]
+        public static void ContextWithStrictSerializerDefaults_GeneratesExpectedOptions()
+        {
+            JsonSerializerOptions expected = new(JsonSerializerDefaults.Strict) { TypeInfoResolver = ContextWithStrictSerializerDefaults.Default };
+            JsonSerializerOptions options = ContextWithStrictSerializerDefaults.Default.Options;
+
+            JsonTestHelper.AssertOptionsEqual(expected, options);
+        }
+
+        [JsonSourceGenerationOptions(JsonSerializerDefaults.Strict)]
+        [JsonSerializable(typeof(PersonStruct))]
+        public partial class ContextWithStrictSerializerDefaults : JsonSerializerContext
+        { }
+
+        [Fact]
         public static void ContextWithWebDefaultsAndOverriddenPropertyNamingPolicy_GeneratesExpectedOptions()
         {
             JsonSerializerOptions expected = new(JsonSerializerDefaults.Web)
@@ -71,16 +85,21 @@ namespace System.Text.Json.SourceGeneration.Tests
                 IgnoreReadOnlyProperties = true,
                 IncludeFields = true,
                 MaxDepth = 1024,
+                NewLine = "\n",
                 NumberHandling = JsonNumberHandling.WriteAsString,
                 PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = JsonNamingPolicy.KebabCaseUpper,
                 ReadCommentHandling = JsonCommentHandling.Skip,
+                ReferenceHandler = ReferenceHandler.Preserve,
+                RespectNullableAnnotations = true,
+                RespectRequiredConstructorParameters = true,
                 UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
                 UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
                 WriteIndented = true,
                 IndentCharacter = '\t',
                 IndentSize = 1,
+                AllowDuplicateProperties = false,
 
                 TypeInfoResolver = ContextWithAllOptionsSet.Default,
             };
@@ -101,16 +120,21 @@ namespace System.Text.Json.SourceGeneration.Tests
             IgnoreReadOnlyProperties = true,
             IncludeFields = true,
             MaxDepth = 1024,
+            NewLine = "\n",
             NumberHandling = JsonNumberHandling.WriteAsString,
             PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
             PropertyNameCaseInsensitive = true,
             PropertyNamingPolicy = JsonKnownNamingPolicy.KebabCaseUpper,
             ReadCommentHandling = JsonCommentHandling.Skip,
+            ReferenceHandler = JsonKnownReferenceHandler.Preserve,
+            RespectNullableAnnotations = true,
+            RespectRequiredConstructorParameters = true,
             UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
             UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
             WriteIndented = true,
             IndentCharacter = '\t',
-            IndentSize = 1)]
+            IndentSize = 1,
+            AllowDuplicateProperties = false)]
         [JsonSerializable(typeof(PersonStruct))]
         public partial class ContextWithAllOptionsSet : JsonSerializerContext
         { }

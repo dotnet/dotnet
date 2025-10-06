@@ -5,21 +5,22 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using Test.Utility.Signing;
 using Xunit;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
+using Test.Utility.Signing;
 
 namespace NuGet.Packaging.Test
 {
     [Collection(SigningTestsCollection.Name)]
     public class SignedPackageArchiveUtilityTests
     {
-        private static readonly byte[] _signatureFileName = Encoding.ASCII.GetBytes(SigningSpecifications.V1.SignaturePath);
+        private static readonly byte[] SignatureFileName = Encoding.ASCII.GetBytes(SigningSpecifications.V1.SignaturePath);
         private readonly CertificatesFixture _fixture;
 
         public SignedPackageArchiveUtilityTests(CertificatesFixture fixture)
@@ -258,7 +259,6 @@ namespace NuGet.Packaging.Test
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public async Task RemoveRepositorySignaturesAsync_WithNullInput_Throws()
         {
@@ -434,7 +434,6 @@ namespace NuGet.Packaging.Test
                 package.SetValue((byte)0, offsetOfCentralDirectoryHeaderLastModifiedDateTime + i);
             }
         }
-#endif
 
         private static byte[] GetEmptyZip()
         {
@@ -493,7 +492,7 @@ namespace NuGet.Packaging.Test
 
                 while (Signing.CentralDirectoryHeader.TryRead(reader, out centralDirectoryHeader))
                 {
-                    if (_signatureFileName.SequenceEqual(centralDirectoryHeader.FileName))
+                    if (SignatureFileName.SequenceEqual(centralDirectoryHeader.FileName))
                     {
                         centralDirectoryHeaderOffset = centralDirectoryHeader.OffsetFromStart;
 
@@ -543,7 +542,6 @@ namespace NuGet.Packaging.Test
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         private sealed class RemoveTest : IDisposable
         {
             private bool _isDisposed;
@@ -707,6 +705,6 @@ namespace NuGet.Packaging.Test
                 }
             }
         }
-#endif
+
     }
 }

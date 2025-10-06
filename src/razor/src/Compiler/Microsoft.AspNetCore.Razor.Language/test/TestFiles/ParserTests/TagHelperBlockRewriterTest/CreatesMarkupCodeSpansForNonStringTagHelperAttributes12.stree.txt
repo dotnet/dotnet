@@ -25,17 +25,17 @@
                                             CSharpStatementLiteral - [15..34)::19 - [flag == 0 ? 11 : 12] - Gen<Stmt>
                                                 Identifier;[flag];
                                                 Whitespace;[ ];
-                                                Equals;[==];
+                                                CSharpOperator;[==];
                                                 Whitespace;[ ];
-                                                IntegerLiteral;[0];
+                                                NumericLiteral;[0];
                                                 Whitespace;[ ];
                                                 QuestionMark;[?];
                                                 Whitespace;[ ];
-                                                IntegerLiteral;[11];
+                                                NumericLiteral;[11];
                                                 Whitespace;[ ];
                                                 Colon;[:];
                                                 Whitespace;[ ];
-                                                IntegerLiteral;[12];
+                                                NumericLiteral;[12];
                                         RazorMetaCode - [34..35)::1 - Gen<None>
                                             RightBrace;[}];
                     MarkupTextLiteral - [35..36)::1 - ["] - Gen<Markup>

@@ -62,7 +62,9 @@ namespace NuGet.PackageManagement.VisualStudio
         public override Task<bool> ReferenceExistsAsync(string name)
         {
             // References aren't allowed for WiX projects
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
             return TaskResult.True;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
         }
 
         public override bool IsSupportedFile(string path)

@@ -1,8 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Design;
@@ -63,8 +63,8 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
     }
 
     /// <summary>
-    /// Shadow the <see cref="ToolStripContainer.RightToolStripPanelVisible"/> property at design-time
-    /// so that we only set the visibility at design time if the user sets it directly.
+    ///  Shadow the <see cref="ToolStripContainer.RightToolStripPanelVisible"/> property at design-time
+    ///  so that we only set the visibility at design time if the user sets it directly.
     /// </summary>
     private bool RightToolStripPanelVisible
     {
@@ -77,8 +77,8 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
     }
 
     /// <summary>
-    /// Shadow the <see cref="ToolStripContainer.BottomToolStripPanelVisible"/> property at design-time
-    /// so that we only set the visibility at design time if the user sets it directly.
+    ///  Shadow the <see cref="ToolStripContainer.BottomToolStripPanelVisible"/> property at design-time
+    ///  so that we only set the visibility at design time if the user sets it directly.
     /// </summary>
     private bool BottomToolStripPanelVisible
     {
@@ -108,8 +108,8 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
     }
 
     /// <summary>
-    /// The ToolStripContainerDesigner will re-parent any controls that are within it's lasso at
-    /// creation time.
+    ///  The ToolStripContainerDesigner will re-parent any controls that are within it's lasso at
+    ///  creation time.
     /// </summary>
     protected override bool AllowControlLasso => false;
 
@@ -231,7 +231,7 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
         for (int i = 0; i <= 4; i++)
         {
             Control currentPanel = _panels![i];
-            Rectangle translatedBounds = BehaviorService.ControlRectInAdornerWindow(currentPanel);
+            Rectangle translatedBounds = BehaviorService?.ControlRectInAdornerWindow(currentPanel) ?? Rectangle.Empty;
             ControlDesigner? panelDesigner = InternalControlDesigner(i);
             OnSetCursor();
 
@@ -295,7 +295,7 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
         }
 
         Rectangle glyphBounds = childGlyph.Bounds;
-        Rectangle controlBounds = BehaviorService.ControlRectInAdornerWindow(dropDownItem.DropDown);
+        Rectangle controlBounds = BehaviorService?.ControlRectInAdornerWindow(dropDownItem.DropDown) ?? Rectangle.Empty;
         if (!glyphBounds.IntersectsWith(controlBounds))
         {
             glyphs.Insert(0, childGlyph);
@@ -325,7 +325,7 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
                 && !PInvoke.IsChild(_toolStripContainer, associatedControl))
             {
                 Rectangle glyphBounds = childGlyph.Bounds;
-                Rectangle controlBounds = BehaviorService.ControlRectInAdornerWindow(associatedControl);
+                Rectangle controlBounds = BehaviorService?.ControlRectInAdornerWindow(associatedControl) ?? Rectangle.Empty;
                 if ((component == _designerHost.RootComponent) || !glyphBounds.IntersectsWith(controlBounds))
                 {
                     glyphs.Insert(0, childGlyph);
@@ -422,7 +422,7 @@ internal class ToolStripContainerDesigner : ParentControlDesigner
     /// <summary>
     ///  Allows a designer to filter the set of properties
     ///  the component it is designing will expose through the
-    ///  TypeDescriptor object.  This method is called
+    ///  TypeDescriptor object. This method is called
     ///  immediately before its corresponding "Post" method.
     ///  If you are overriding this method you should call
     ///  the base implementation before you perform your own

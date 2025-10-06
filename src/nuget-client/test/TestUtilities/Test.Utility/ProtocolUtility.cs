@@ -2,16 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Test.Utility
 {
@@ -19,7 +11,7 @@ namespace Test.Utility
     {
         public static string GetResource(string name, Type type)
         {
-            using (var reader = new StreamReader(type.GetTypeInfo().Assembly.GetManifestResourceStream(name)))
+            using (var reader = new StreamReader(type.Assembly.GetManifestResourceStream(name)))
             {
                 return reader.ReadToEnd();
             }
@@ -28,6 +20,11 @@ namespace Test.Utility
         public static string CreateServiceAddress()
         {
             return string.Format(CultureInfo.InvariantCulture, "http://{0}/", Guid.NewGuid());
+        }
+
+        public static string CreateHttpsServiceAddress()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "https://{0}/", Guid.NewGuid());
         }
     }
 }

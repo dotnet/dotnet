@@ -1,24 +1,22 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class TestRazorLSPOptionsMonitor : RazorLSPOptionsMonitor
 {
-    private readonly IConfigurationSyncService _configuruationSyncService;
+    private readonly IConfigurationSyncService _configurationSyncService;
 
     private TestRazorLSPOptionsMonitor(
-        IConfigurationSyncService configurationService,
-        IOptionsMonitorCache<RazorLSPOptions> cache)
-        : base(configurationService, cache, RazorLSPOptions.Default)
+        IConfigurationSyncService configurationService)
+        : base(configurationService, RazorLSPOptions.Default)
     {
-        _configuruationSyncService = configurationService;
+        _configurationSyncService = configurationService;
     }
 
     public bool Called { get; private set; }
@@ -31,7 +29,7 @@ internal class TestRazorLSPOptionsMonitor : RazorLSPOptionsMonitor
 
     public Task UpdateAsync(RazorLSPOptions options, CancellationToken cancellationToken)
     {
-        if (_configuruationSyncService is not ConfigurationSyncService configurationSyncService)
+        if (_configurationSyncService is not ConfigurationSyncService configurationSyncService)
         {
             throw new InvalidOperationException();
         }
@@ -41,13 +39,11 @@ internal class TestRazorLSPOptionsMonitor : RazorLSPOptionsMonitor
     }
 
     public static TestRazorLSPOptionsMonitor Create(
-        IConfigurationSyncService? configurationService = null,
-        IOptionsMonitorCache<RazorLSPOptions>? cache = null)
+        IConfigurationSyncService? configurationService = null)
     {
         configurationService ??= new ConfigurationSyncService();
-        cache ??= new ServiceCollection().AddOptions().BuildServiceProvider().GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>();
 
-        return new(configurationService, cache);
+        return new(configurationService);
     }
 
     private class ConfigurationSyncService : IConfigurationSyncService

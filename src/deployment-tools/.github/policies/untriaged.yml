@@ -1,0 +1,41 @@
+id: untriaged
+name: "Manage the 'untriaged' label for issues"
+resource: repository
+
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+    - description: "Add untriaged label to new/reopened issues without a milestone or assignee"
+      if:
+      - payloadType: Issues
+      - isOpen
+      - not:
+          isPartOfAnyMilestone
+      - not:
+          isAssignedToSomeone
+      - not:
+          hasLabel:
+            label: untriaged
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Reopened
+
+      then:
+      - addLabel:
+          label: untriaged
+
+    - description: "Remove untriaged label from issues when closed, added to a milestone, or assigned"
+      if:
+      - payloadType: Issues
+      - or:
+        - isAction:
+            action: Closed
+        - isPartOfAnyMilestone
+        - isAssignedToSomeone
+      - hasLabel:
+          label: untriaged
+      then:
+      - removeLabel:
+          label: untriaged

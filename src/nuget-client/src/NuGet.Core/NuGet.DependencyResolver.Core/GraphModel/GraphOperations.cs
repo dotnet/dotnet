@@ -10,6 +10,10 @@ using NuGet.LibraryModel;
 using NuGet.Shared;
 using NuGet.Versioning;
 
+#if NET8_0_OR_GREATER
+using System.Globalization;
+#endif
+
 namespace NuGet.DependencyResolver
 {
     public static class GraphOperations
@@ -868,7 +872,7 @@ namespace NuGet.DependencyResolver
                 // Some node were marked ambiguous, thus we need another run to check if nodes previously not marked ambiguous should be marked ambiguous this time.
                 if (!nodeMarkedAmbiguous)
                     break;
-            };
+            }
         }
 
         private static void RejectCentralTransitiveBecauseOfRejectedParents<TItem>(this GraphNode<TItem> root, Tracker<TItem> tracker, List<GraphNode<TItem>> centralTransitiveNodes)
@@ -953,12 +957,21 @@ namespace NuGet.DependencyResolver
                 output.Append(" ");
             }
 
-            output.Append($"{node.GetIdAndRange()} ({node.Disposition})");
+            output.Append(
+#if NET8_0_OR_GREATER
+                CultureInfo.CurrentCulture,
+#endif
+                $"{node.GetIdAndRange()} ({node.Disposition})");
+
 
             if (node.Item != null
                 && node.Item.Key != null)
             {
-                output.Append($" => {node.Item.Key.ToString()}");
+                output.Append(
+#if NET8_0_OR_GREATER
+                    CultureInfo.CurrentCulture,
+#endif
+                    $" => {node.Item.Key.ToString()}");
             }
             else
             {

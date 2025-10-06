@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 using Xunit.Sdk;
 using System.Runtime.InteropServices;
 using System.Collections.Immutable;
+using System.Globalization;
 
 namespace ScenarioTests
 {
@@ -19,39 +20,39 @@ namespace ScenarioTests
 
         public static async Task<int> Main(string[] args)
         {
-            var rootCommand = new CliRootCommand("Scenario test runner");
+            var rootCommand = new RootCommand("Scenario test runner");
 
-            CliOption<bool> listTestsOption = new("--list")
+            Option<bool> listTestsOption = new("--list")
             {
                 Description = "List tests that would be run, without running them."
             };
-            CliOption<List<string>> noTraitsOption = new("--no-traits")
+            Option<List<string>> noTraitsOption = new("--no-traits")
             {
                 Description = "Do not run tests with the following traits. Format X=Y"
             };
-            CliOption<List<string>> traitsOption = new("--traits")
+            Option<List<string>> traitsOption = new("--traits")
             {
                 Description = "Only run tests with the following traits. Format X=Y"
             };
-            CliOption<bool> offlineOnlyOption = new("--offline-only")
+            Option<bool> offlineOnlyOption = new("--offline-only")
             {
                 Description = "Only run tests that can be run in offline mode. Implies --notraits 'resources=online'"
             };
-            CliOption<string> xmlResultsPathOption = new("--xml")
+            Option<string> xmlResultsPathOption = new("--xml")
             {
                 Description = "XML result file."
             };
-            CliOption<string> testRootOption = new("--test-root")
+            Option<string> testRootOption = new("--test-root")
             {
                 DefaultValueFactory = (_) => Directory.CreateTempSubdirectory().FullName,
                 Description = "Directory used for temporary files when running tests"
             };
-            CliOption<bool> noCleanTestRoot = new("--no-cleanup")
+            Option<bool> noCleanTestRoot = new("--no-cleanup")
             {
                 Description = "Do not cleanup the test root after execution."
             };
 
-            CliOption<string> dotnetRootOption = new("--dotnet-root")
+            Option<string> dotnetRootOption = new("--dotnet-root")
             {
                 Description = "dotnet root to run tests against.",
                 Required = true
@@ -65,28 +66,39 @@ namespace ScenarioTests
                 }
             });
 
-            CliOption<string> sdkVersionOption = new("--sdk-version")
+            Option<string> sdkVersionOption = new("--sdk-version")
             {
                 Description = "Version of SDK to use to run tests against. Optional. Otherwise uses the default SDK at the dotnet root."
             };
 
-            CliOption<string> targetRidOption = new("--target-rid")
+            Option<string> targetRidOption = new("--target-rid")
             {
                 Description = "Target rid for tests requiring one (e.g. self-contained publish). If omitted, uses the target rid of the executing application",
                 DefaultValueFactory = (_) => RuntimeInformation.RuntimeIdentifier
             };
 
+            Option<string> portableRidOption = new("--portable-rid")
+            {
+                Description = "Portable rid for tests requiring one (e.g. self-contained publish)."
+            };
+
+            Option<string> binlogDirOption = new("--binlog-dir")
+            {
+                Description = "Directory to store binlogs in. If omitted, binlogs are stored in the generated projecgt directory."
+            };
+
             rootCommand.Options.Add(dotnetRootOption);
             rootCommand.Options.Add(testRootOption);
             rootCommand.Options.Add(sdkVersionOption);
+            rootCommand.Options.Add(targetRidOption);
+            rootCommand.Options.Add(portableRidOption);
+            rootCommand.Options.Add(binlogDirOption);
             rootCommand.Options.Add(listTestsOption);
             rootCommand.Options.Add(offlineOnlyOption);
             rootCommand.Options.Add(noTraitsOption);
             rootCommand.Options.Add(traitsOption);
             rootCommand.Options.Add(xmlResultsPathOption);
             rootCommand.Options.Add(noCleanTestRoot);
-            rootCommand.Options.Add(targetRidOption);
-
 
             rootCommand.SetAction((ParseResult parseResult) =>
             {
@@ -94,6 +106,8 @@ namespace ScenarioTests
                        parseResult.GetValue(testRootOption)!,
                        parseResult.GetValue(sdkVersionOption),
                        parseResult.GetValue(targetRidOption)!,
+                       parseResult.GetValue(portableRidOption),
+                       parseResult.GetValue(binlogDirOption),
                        parseResult.GetValue(listTestsOption),
                        parseResult.GetValue(offlineOnlyOption),
                        parseResult.GetValue(noTraitsOption) ?? (IList<string>)ImmutableList<string>.Empty,
@@ -109,6 +123,8 @@ namespace ScenarioTests
                                  string testRoot,
                                  string? sdkVersion,
                                  string targetRid,
+                                 string? portableRid,
+                                 string? binlogDir,
                                  bool listOnly,
                                  bool offlineOnly,
                                  IList<string> noTraits,
@@ -121,11 +137,17 @@ namespace ScenarioTests
             var diagnosticSink = new ConsoleDiagnosticMessageSink();
             var testsFinished = new TaskCompletionSource();
             var testSink = new TestMessageSink();
+#pragma warning disable CS0618 // Delegating*Sink types are marked obsolete, but we can't move to ExecutionSink yet: https://github.com/dotnet/arcade/issues/14375
             var summarySink = new DelegatingExecutionSummarySink(testSink,
                 () => false,
                 (completed, summary) => Console.WriteLine($"Tests run: {summary.Total}, Errors: {summary.Errors}, Failures: {summary.Failed}, Skipped: {summary.Skipped}. Time: {TimeSpan.FromSeconds((double)summary.Time).TotalSeconds}s"));
+#pragma warning restore CS0618
+            var resultsXmlAssemblies = new XElement("assemblies");
             var resultsXmlAssembly = new XElement("assembly");
+            resultsXmlAssemblies.Add(resultsXmlAssembly);
+#pragma warning disable CS0618 // Delegating*Sink types are marked obsolete, but we can't move to ExecutionSink yet: https://github.com/dotnet/arcade/issues/14375
             var resultsSink = new DelegatingXmlCreationSink(summarySink, resultsXmlAssembly);
+#pragma warning restore CS0618
             var platform = OperatingSystemFinder.GetPlatform();
 
             testSink.Execution.TestSkippedEvent += args => { Console.WriteLine($"[SKIP] {args.Message.Test.DisplayName}"); };
@@ -133,6 +155,7 @@ namespace ScenarioTests
 
             testSink.Execution.TestAssemblyFinishedEvent += args =>
             {
+                resultsXmlAssemblies.Add(new XAttribute("timestamp", DateTime.Now.ToString(CultureInfo.InvariantCulture)));
                 Console.WriteLine($"Finished {args.Message.TestAssembly.Assembly}{Environment.NewLine}");
                 testsFinished.SetResult();
             };
@@ -152,7 +175,7 @@ namespace ScenarioTests
             discoverer.Find(false, discoverySink, TestFrameworkOptions.ForDiscovery(assemblyConfig));
             discoverySink.Finished.WaitOne();
 
-            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform);
+            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform, dotnetRoot, targetRid);
 
             var filteredTestCases = discoverySink.TestCases.Where(filters.Filter).ToList();
 
@@ -160,8 +183,20 @@ namespace ScenarioTests
             Console.WriteLine($"  Dotnet Root: {dotnetRoot}");
             Console.WriteLine($"  Test root: {testRoot}");
             Console.WriteLine($"  Target RID: {targetRid}");
+            Console.WriteLine($"  Portable RID: {portableRid}");
             Console.WriteLine($"  Sdk Version: {sdkVersion ?? "latest"}");
             Console.WriteLine($"  Platform: {platform}");
+
+            string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
+            if (!string.IsNullOrWhiteSpace(restoreConfigFile))
+            {
+                Console.WriteLine($"  RestoreConfigFile: {restoreConfigFile}");
+            }
+
+            if (binlogDir is not null)
+            {
+                Console.WriteLine($"  Binlog Directory: {binlogDir}");
+            }
 
             if (listOnly)
             {
@@ -178,7 +213,7 @@ namespace ScenarioTests
                 return 0;
             }
 
-            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid);
+            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid, portableRid, binlogDir);
 
             var executor = xunitTestFx.CreateExecutor(asmName);
             executor.RunTests(filteredTestCases, resultsSink, TestFrameworkOptions.ForExecution(assemblyConfig));
@@ -187,7 +222,7 @@ namespace ScenarioTests
 
             if (xmlResultsPath != null)
             {
-                resultsXmlAssembly.Save(xmlResultsPath); 
+                resultsXmlAssemblies.Save(xmlResultsPath); 
             }
 
             if (!noCleanTestRoot)
@@ -199,7 +234,7 @@ namespace ScenarioTests
             return failed ? 1 : 0;
         }
 
-        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid)
+        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid, string? portableRid, string? binlogDir)
         {
             // Verify that the input parameters 
             // Create any directories as necessary
@@ -210,10 +245,11 @@ namespace ScenarioTests
             Environment.SetEnvironmentVariable(ScenarioTestFixture.TestRootEnvironmentVariable, testRoot);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.SdkVersionEnvironmentVariable, sdkVersion);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.TargetRidEnvironmentVariable, targetRid);
+            Environment.SetEnvironmentVariable(ScenarioTestFixture.PortableRidEnvironmentVariable, portableRid);
+            Environment.SetEnvironmentVariable(ScenarioTestFixture.BinlogDirEnvironmentVariable, binlogDir);
         }
 
-
-        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform)
+        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform, string dotnetRoot, string targetRid)
         {
             XunitFilters filters = new XunitFilters();
 
@@ -228,7 +264,8 @@ namespace ScenarioTests
                 filters.ExcludedTraits.Add(kvp.Key, kvp.Value);
             }
 
-            filters.ExcludedTraits.Add("SkipIfPlatform", new List<string>() {$"{platform}"});
+            UpdateOrAddToDictionary("SkipIfPlatform", [platform.ToString()], filters.ExcludedTraits);
+            UpdateOrAddToDictionary("SkipIfBuild", CreateBuildTraits(dotnetRoot, targetRid), filters.ExcludedTraits);
 
             Dictionary<string, List<string>> includedTraitsMap = ParseTraitKeyValuePairs(includedTraits);
             foreach (KeyValuePair<string, List<string>> kvp in includedTraitsMap)
@@ -237,6 +274,70 @@ namespace ScenarioTests
             }
 
             return filters;
+        }
+
+        private static void UpdateOrAddToDictionary(
+            string key, List<string> value, Dictionary<string, List<string>> dictionary)
+        {
+            if (dictionary.TryGetValue(key, out List<string>? list))
+            {
+                list.AddRange(value);
+            }
+            else
+            {
+                dictionary.Add(key, value);
+            }
+        }
+
+        private static List<string> CreateBuildTraits(string dotnetRoot, string targetRid)
+        {
+            List<string> buildTraits = new();
+
+            int archSeparatorPos = targetRid.LastIndexOf('-');
+            string ridWithoutArch = targetRid.Substring(0, archSeparatorPos != -1 ? archSeparatorPos : 0);
+            string arch = targetRid.Substring(archSeparatorPos + 1);
+
+            // Mono
+            if (DetermineIsMonoRuntime(dotnetRoot))
+            {
+                buildTraits.Add("Mono");
+            }
+
+            // Portable
+            string[] portableRids = [ "linux", "linux-musl" ];
+            if (Array.IndexOf(portableRids, ridWithoutArch) != -1)
+            {
+                buildTraits.Add("Portable");
+            }
+
+            // CommunityArchitecture
+            string[] communityArchitectures = [ "s390x", "ppc64le", "loongarch64", "riscv64" ];
+            if (Array.IndexOf(communityArchitectures, arch) != -1)
+            {
+                buildTraits.Add("CommunityArchitecture");
+            }
+
+            return buildTraits;
+        }
+
+        private static bool DetermineIsMonoRuntime(string dotnetRoot)
+        {
+            string sharedFrameworkRoot = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
+            if (!Directory.Exists(sharedFrameworkRoot))
+            {
+                return false;
+            }
+
+            string? version = Directory.GetDirectories(sharedFrameworkRoot).FirstOrDefault();
+            if (version is null)
+            {
+                return false;
+            }
+
+            string sharedFramework = Path.Combine(sharedFrameworkRoot, version);
+
+            // Check the presence of one of the mono header files.
+            return File.Exists(Path.Combine(sharedFramework, "mono-gc.h"));
         }
 
         private static Dictionary<string, List<string>> ParseTraitKeyValuePairs(IList<string> excludedTraits)

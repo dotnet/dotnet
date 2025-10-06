@@ -58,10 +58,7 @@ internal class ToolStripContainerActionList : DesignerActionList
 
             if (!(bool)value)
             {
-                if (panel is not null)
-                {
-                    panel.Padding = new Padding(0);
-                }
+                panel?.Padding = new Padding(0);
 
                 if (panelDesigner?.ToolStripPanelSelectorGlyph is not null)
                 {
@@ -113,7 +110,7 @@ internal class ToolStripContainerActionList : DesignerActionList
         }
 
         // Change the Parent only if its not parented to the form.
-        if (_designerHost.RootComponent is Control root && _toolStripContainer.Parent is not Control)
+        if (_designerHost.RootComponent is Control root && _toolStripContainer.Parent is null)
         {
             root.Controls.Add(_toolStripContainer);
         }
@@ -196,19 +193,13 @@ internal class ToolStripContainerActionList : DesignerActionList
         }
         catch
         {
-            if (changeParent is not null)
-            {
-                changeParent.Cancel();
-                changeParent = null;
-            }
+            changeParent?.Cancel();
+            changeParent = null;
         }
         finally
         {
-            if (changeParent is not null)
-            {
-                changeParent.Commit();
-                changeParent = null;
-            }
+            changeParent?.Commit();
+            changeParent = null;
 
             // Set the Selection on the new Parent, so that the selection is restored to the new item
             ISelectionService? selectionService = _serviceProvider?.GetService<ISelectionService>();

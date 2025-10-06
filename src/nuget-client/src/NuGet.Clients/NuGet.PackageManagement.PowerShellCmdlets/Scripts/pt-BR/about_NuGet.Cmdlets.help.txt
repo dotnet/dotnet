@@ -1,0 +1,48 @@
+﻿TÓPICO
+    about_NuGet
+    
+DESCRIÇÃO CURTA
+    Fornece informações sobre os comandos do Gerenciador de Pacotes NuGet.
+           
+DESCRIÇÃO LONGA
+    Esse tópico descreve os comandos do Gerenciador de Pacotes NuGet. O NuGet é uma ferramenta de gerenciamento 
+    de pacotes integrada para adicionar bibliotecas e ferramentas aos projetos do .NET.
+
+                 
+    Os cmdlets do NuGet a seguir estão inclusos.
+
+        Cmdlet					Descrição
+        ------------------		----------------------------------------------
+        Get-Package				Obtém o conjunto de pacotes instalados.  Com o -ListAvailable, 
+                                obtém o conjunto de pacotes disponíveis a partir de uma origem de pacote.
+
+        Install-Package			Instala um pacote e suas dependências dentro do projeto.
+
+        Uninstall-Package		Desinstala um pacote. Se outros pacotes dependerem desse pacote, 
+                                o comando falhará a menos que a opção –Force seja especificada.
+
+        Update-Package			Atualiza um pacote e suas dependências com uma versão mais recente.
+
+        Add-BindingRedirect		Examina todos os assemblies dentro do caminho de saída para um projeto
+                                e adiciona redirecionamentos de associação ao arquivo de configuração 
+                                do aplicativo (ou Web) quando necessário.
+                            
+        Get-Project				Retorna uma referência ao DTE (Ambiente de Ferramentas de Desenvolvimento) 
+                                para o projeto especificado. Caso não haja especificação, retorna 
+                                o projeto padrão selecionado no Console do Gerenciador de Pacotes.
+
+        Open-PackagePage        Abre o navegador com ProjectUrl, LicenseUrl or 
+                                ReportAbuseUrl do pacote especificado.
+
+        Register-TabExpansion	Registra uma expansão de guia para parâmetros de um comando.
+
+CONSULTE TAMBÉM
+    Documentação online: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

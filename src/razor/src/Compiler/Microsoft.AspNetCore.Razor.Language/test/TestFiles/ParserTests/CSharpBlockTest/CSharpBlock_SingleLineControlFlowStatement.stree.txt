@@ -13,7 +13,7 @@
                         CSharpStatementLiteral - [2..68)::66 - [LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[time];
                             Whitespace;[ ];
@@ -34,13 +34,13 @@
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                            Modulo;[%];
+                            CSharpOperator;[%];
                             Whitespace;[ ];
-                            IntegerLiteral;[2];
+                            NumericLiteral;[2];
                             Whitespace;[ ];
-                            Equals;[==];
+                            CSharpOperator;[==];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightParenthesis;[)];
                             Whitespace;[ ];
                         CSharpCodeBlock - [68..73)::5

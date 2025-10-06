@@ -12,8 +12,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using MSTest.TestFramework.AssertExtensions;
-
 using OMResources = Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources;
 
 namespace Microsoft.TestPlatform.Utilities.UnitTests;
@@ -42,8 +40,8 @@ public class InferRunSettingsHelperTests
 
         Action action = () => InferRunSettingsHelper.UpdateRunSettingsWithUserProvidedSwitches(xmlDocument, Architecture.X86, Framework.DefaultFramework, "temp");
 
-        Assert.That.Throws<XmlException>(action)
-            .WithMessage("An error occurred while loading the settings.  Error: Could not find 'RunSettings' node..");
+        var exception = Assert.ThrowsExactly<XmlException>(action);
+        Assert.AreEqual("An error occurred while loading the settings.  Error: Could not find 'RunSettings' node..", exception.Message);
     }
 
     [TestMethod]
@@ -54,8 +52,8 @@ public class InferRunSettingsHelperTests
 
         Action action = () => InferRunSettingsHelper.UpdateRunSettingsWithUserProvidedSwitches(xmlDocument, Architecture.X86, Framework.DefaultFramework, "temp");
 
-        Assert.That.Throws<XmlException>(action)
-            .WithMessage("An error occurred while loading the settings.  Error: Invalid setting 'RunConfiguration'. Invalid value 'foo' specified for 'TargetPlatform'.");
+        var exception = Assert.ThrowsExactly<XmlException>(action);
+        Assert.AreEqual("An error occurred while loading the settings.  Error: Invalid setting 'RunConfiguration'. Invalid value 'foo' specified for 'TargetPlatform'..", exception.Message);
     }
 
     [TestMethod]
@@ -66,8 +64,8 @@ public class InferRunSettingsHelperTests
 
         Action action = () => InferRunSettingsHelper.UpdateRunSettingsWithUserProvidedSwitches(xmlDocument, Architecture.X86, Framework.DefaultFramework, "temp");
 
-        Assert.That.Throws<XmlException>(action)
-            .WithMessage("An error occurred while loading the settings.  Error: Invalid setting 'RunConfiguration'. Invalid value 'foo' specified for 'TargetFrameworkVersion'.");
+        var exception = Assert.ThrowsExactly<XmlException>(action);
+        Assert.AreEqual("An error occurred while loading the settings.  Error: Invalid setting 'RunConfiguration'. Invalid value 'foo' specified for 'TargetFrameworkVersion'..", exception.Message);
     }
 
     [TestMethod]

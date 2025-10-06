@@ -1,0 +1,21 @@
+<Project DefaultTargets="Build">
+  <PropertyGroup>
+    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == ''">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <MSBuild Projects="Wilson.sln" Targets="Build" Properties="PreviewVersionSuffix=$(PreviewVersionSuffix)" />
+  </Target>
+  <Target Name="restore">
+    <MSBuild Projects="Wilson.sln" Targets="restore" Properties="PreviewVersionSuffix=$(PreviewVersionSuffix)" />
+  </Target>
+  <Target Name="clean">
+    <MSBuild Projects="Wilson.sln" Targets="clean" Properties="PreviewVersionSuffix=$(PreviewVersionSuffix)" />
+  </Target>
+  <Target Name="pack">
+    <MSBuild Projects="Wilson.sln" Targets="pack" Properties="PreviewVersionSuffix=$(PreviewVersionSuffix)" />
+  </Target>
+  <Target Name="VSTest">
+    <MSBuild Projects="Wilson.sln" Targets="VSTest" Properties="PreviewVersionSuffix=$(PreviewVersionSuffix)" />
+  </Target>
+</Project>

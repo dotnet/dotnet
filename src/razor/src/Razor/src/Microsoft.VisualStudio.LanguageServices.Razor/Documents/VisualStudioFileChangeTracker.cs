@@ -1,23 +1,25 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.Editor.Razor.Documents;
+namespace Microsoft.VisualStudio.Razor.Documents;
 
 internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThreadedFileChangeEvents2
 {
     private const _VSFILECHANGEFLAGS FileChangeFlags = _VSFILECHANGEFLAGS.VSFILECHG_Time | _VSFILECHANGEFLAGS.VSFILECHG_Size | _VSFILECHANGEFLAGS.VSFILECHG_Del | _VSFILECHANGEFLAGS.VSFILECHG_Add;
 
-    private readonly IErrorReporter _errorReporter;
+    private readonly ILogger _logger;
     private readonly IVsAsyncFileChangeEx _fileChangeService;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
+
+    private readonly object _gate = new();
 
     // Internal for testing
     internal JoinableTask<uint>? _fileChangeAdviseTask;
@@ -30,9 +32,8 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
 
     public VisualStudioFileChangeTracker(
         string filePath,
-        IErrorReporter errorReporter,
+        ILoggerFactory loggerFactory,
         IVsAsyncFileChangeEx fileChangeService,
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext)
     {
         if (string.IsNullOrEmpty(filePath))
@@ -41,87 +42,88 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
         }
 
         FilePath = filePath;
-        _errorReporter = errorReporter;
+        _logger = loggerFactory.GetOrCreateLogger<VisualStudioFileChangeTracker>();
         _fileChangeService = fileChangeService;
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _joinableTaskContext = joinableTaskContext;
     }
 
     public void StartListening()
     {
-        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
-
-        if (_fileChangeAdviseTask is not null)
+        lock (_gate)
         {
-            // Already listening
-            return;
+            if (_fileChangeAdviseTask is not null)
+            {
+                // Already listening
+                return;
+            }
+
+            if (_fileChangeUnadviseTask is not { IsCompleted: false } fileChangeUnadviseTaskToJoin)
+            {
+                fileChangeUnadviseTaskToJoin = null;
+            }
+
+            _fileChangeAdviseTask = _joinableTaskContext.Factory.RunAsync(async () =>
+            {
+                try
+                {
+                    // If an unadvise operation is still processing, we don't start listening until it completes.
+                    if (fileChangeUnadviseTaskToJoin is not null)
+                        await fileChangeUnadviseTaskToJoin.JoinAsync().ConfigureAwait(true);
+
+                    return await _fileChangeService.AdviseFileChangeAsync(FilePath, FileChangeFlags, this).ConfigureAwait(true);
+                }
+                catch (PathTooLongException)
+                {
+                    // Don't report PathTooLongExceptions but don't fault either.
+                }
+                catch (Exception exception)
+                {
+                    // Don't explode on actual exceptions, just report gracefully.
+                    _logger.LogError(exception);
+                }
+
+                return VSConstants.VSCOOKIE_NIL;
+            });
         }
-
-        if (_fileChangeUnadviseTask is not { IsCompleted: false } fileChangeUnadviseTaskToJoin)
-        {
-            fileChangeUnadviseTaskToJoin = null;
-        }
-
-        _fileChangeAdviseTask = _joinableTaskContext.Factory.RunAsync(async () =>
-        {
-            try
-            {
-                // If an unadvise operation is still processing, we don't start listening until it completes.
-                if (fileChangeUnadviseTaskToJoin is not null)
-                    await fileChangeUnadviseTaskToJoin.JoinAsync().ConfigureAwait(true);
-
-                return await _fileChangeService.AdviseFileChangeAsync(FilePath, FileChangeFlags, this).ConfigureAwait(true);
-            }
-            catch (PathTooLongException)
-            {
-                // Don't report PathTooLongExceptions but don't fault either.
-            }
-            catch (Exception exception)
-            {
-                // Don't explode on actual exceptions, just report gracefully.
-                _errorReporter.ReportError(exception);
-            }
-
-            return VSConstants.VSCOOKIE_NIL;
-        });
     }
 
     public void StopListening()
     {
-        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
-
-        if (_fileChangeAdviseTask is null || _fileChangeUnadviseTask?.IsCompleted == false)
+        lock (_gate)
         {
-            // Already not listening or trying to stop listening
-            return;
-        }
-
-        _fileChangeUnadviseTask = _joinableTaskContext.Factory.RunAsync(async () =>
-        {
-            try
+            if (_fileChangeAdviseTask is null || _fileChangeUnadviseTask?.IsCompleted == false)
             {
-                var fileChangeCookie = await _fileChangeAdviseTask;
+                // Already not listening or trying to stop listening
+                return;
+            }
 
-                if (fileChangeCookie == VSConstants.VSCOOKIE_NIL)
+            _fileChangeUnadviseTask = _joinableTaskContext.Factory.RunAsync(async () =>
+            {
+                try
                 {
-                    // Wasn't able to listen for file change events. This typically happens when some sort of exception (i.e. access exceptions)
-                    // is thrown when attempting to listen for file changes.
-                    return;
-                }
+                    var fileChangeCookie = await _fileChangeAdviseTask;
 
-                await _fileChangeService.UnadviseFileChangeAsync(fileChangeCookie).ConfigureAwait(true);
-                _fileChangeAdviseTask = null;
-            }
-            catch (PathTooLongException)
-            {
-                // Don't report PathTooLongExceptions but don't fault either.
-            }
-            catch (Exception exception)
-            {
-                // Don't explode on actual exceptions, just report gracefully.
-                _errorReporter.ReportError(exception);
-            }
-        });
+                    if (fileChangeCookie == VSConstants.VSCOOKIE_NIL)
+                    {
+                        // Wasn't able to listen for file change events. This typically happens when some sort of exception (i.e. access exceptions)
+                        // is thrown when attempting to listen for file changes.
+                        return;
+                    }
+
+                    await _fileChangeService.UnadviseFileChangeAsync(fileChangeCookie).ConfigureAwait(true);
+                    _fileChangeAdviseTask = null;
+                }
+                catch (PathTooLongException)
+                {
+                    // Don't report PathTooLongExceptions but don't fault either.
+                }
+                catch (Exception ex)
+                {
+                    // Don't explode on actual exceptions, just report gracefully.
+                    _logger.LogError(ex);
+                }
+            });
+        }
     }
 
     public int FilesChanged(uint fileCount, string[] filePaths, uint[] fileChangeFlags)

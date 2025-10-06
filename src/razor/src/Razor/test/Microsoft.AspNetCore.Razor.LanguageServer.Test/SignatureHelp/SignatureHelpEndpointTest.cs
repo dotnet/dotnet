@@ -1,17 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -92,31 +89,30 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         return VerifySignatureHelpWithContextAndOptionsAsync(input, optionsMonitor: null, signatureHelpContext: null, signatures);
     }
 
-    private async Task VerifySignatureHelpWithContextAndOptionsAsync(string input, IOptionsMonitor<RazorLSPOptions> optionsMonitor = null, SignatureHelpContext signatureHelpContext = null, params string[] signatures)
+    private async Task VerifySignatureHelpWithContextAndOptionsAsync(string input, RazorLSPOptionsMonitor optionsMonitor = null, SignatureHelpContext signatureHelpContext = null, params string[] signatures)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(input, out var output, out int cursorPosition, out ImmutableArray<TextSpan> _);
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         optionsMonitor ??= GetOptionsMonitor();
         var endpoint = new SignatureHelpEndpoint(
             LanguageServerFeatureOptions, DocumentMappingService, languageServer, optionsMonitor, LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new SignatureHelpParams
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
-            Position = new Position(line, offset),
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             Context = signatureHelpContext
         };
 
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
 
         var requestContext = CreateRazorRequestContext(documentContext);
 

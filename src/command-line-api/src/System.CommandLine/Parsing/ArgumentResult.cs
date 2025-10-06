@@ -15,7 +15,7 @@ namespace System.CommandLine.Parsing
         private bool _onlyTakeHasBeenCalled;
 
         internal ArgumentResult(
-            CliArgument argument,
+            Argument argument,
             SymbolResultTree symbolResultTree,
             SymbolResult? parent) : base(symbolResultTree, parent)
         {
@@ -25,9 +25,11 @@ namespace System.CommandLine.Parsing
         /// <summary>
         /// The argument to which the result applies.
         /// </summary>
-        public CliArgument Argument { get; }
+        public Argument Argument { get; }
 
         internal bool ArgumentLimitReached => Argument.Arity.MaximumNumberOfValues == (_tokens?.Count ?? 0);
+
+        public bool Implicit { get; private set; }
 
         internal ArgumentConversionResult GetArgumentConversionResult() =>
             _conversionResult ??= ValidateAndConvert(useValidators: true);
@@ -62,7 +64,7 @@ namespace System.CommandLine.Parsing
 
             if (Parent is OptionResult)
             {
-                throw new NotSupportedException($"{nameof(OnlyTake)} is supported only for a {nameof(CliCommand)}-owned {nameof(ArgumentResult)}");
+                throw new NotSupportedException($"{nameof(OnlyTake)} is supported only for a {nameof(Command)}-owned {nameof(ArgumentResult)}");
             }
 
             _onlyTakeHasBeenCalled = true;
@@ -80,7 +82,7 @@ namespace System.CommandLine.Parsing
 
             while (tokensToPass > 0 && nextArgumentIndex < arguments.Count)
             {
-                CliArgument nextArgument = parent.Command.Arguments[nextArgumentIndex];
+                Argument nextArgument = parent.Command.Arguments[nextArgumentIndex];
                 ArgumentResult nextArgumentResult;
 
                 if (SymbolResultTree.TryGetValue(nextArgument, out SymbolResult? symbolResult))
@@ -96,7 +98,7 @@ namespace System.CommandLine.Parsing
 
                 while (!nextArgumentResult.ArgumentLimitReached && tokensToPass > 0)
                 {
-                    CliToken toPass = _tokens[numberOfTokens];
+                    Token toPass = _tokens[numberOfTokens];
                     _tokens.RemoveAt(numberOfTokens);
                     nextArgumentResult.AddToken(toPass);
                     --tokensToPass;
@@ -109,7 +111,7 @@ namespace System.CommandLine.Parsing
             // When_tokens_are_passed_on_by_custom_parser_on_last_argument_then_they_become_unmatched_tokens
             while (tokensToPass > 0)
             {
-                CliToken unmatched = _tokens[numberOfTokens];
+                Token unmatched = _tokens[numberOfTokens];
                 _tokens.RemoveAt(numberOfTokens);
                 SymbolResultTree.AddUnmatchedToken(unmatched, parent, rootCommand);
                 --tokensToPass;
@@ -151,12 +153,19 @@ namespace System.CommandLine.Parsing
                 }
             }
 
-            if (Parent!.UseDefaultValueFor(this))
+            if (Argument.HasDefaultValue && Parent!.UseDefaultValueFor(this))
             {
                 var defaultValue = Argument.GetDefaultValue(this);
 
+                Implicit = true;
+
                 // default value factory provided by the user might report an error, which sets _conversionResult
-                return _conversionResult ?? ArgumentConversionResult.Success(this, defaultValue);
+                if (_conversionResult is not null)
+                {
+                    return _conversionResult;
+                }
+
+                return ArgumentConversionResult.Success(this, defaultValue);
             }
 
             if (Argument.ConvertArguments is null)

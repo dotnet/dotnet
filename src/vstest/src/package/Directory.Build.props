@@ -2,6 +2,6 @@
   <Import Project="../../Directory.Build.props" />
 
   <PropertyGroup>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 </Project>

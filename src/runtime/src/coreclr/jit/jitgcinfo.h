@@ -27,7 +27,9 @@ struct RegSlotIdKey
     {
     }
 
-    RegSlotIdKey(unsigned short regNum, unsigned flags) : m_regNum(regNum), m_flags((unsigned short)flags)
+    RegSlotIdKey(unsigned short regNum, unsigned flags)
+        : m_regNum(regNum)
+        , m_flags((unsigned short)flags)
     {
         assert(m_flags == flags);
     }
@@ -54,7 +56,9 @@ struct StackSlotIdKey
     }
 
     StackSlotIdKey(int offset, bool fpRel, unsigned flags)
-        : m_offset(offset), m_fpRel(fpRel), m_flags((unsigned short)flags)
+        : m_offset(offset)
+        , m_fpRel(fpRel)
+        , m_flags((unsigned short)flags)
     {
         assert(flags == m_flags);
     }
@@ -158,14 +162,20 @@ public:
                 regMaskSmall rpdDel; // regptr bitset being removed
             } rpdCompiler;
 
-            unsigned short rpdPtrArg; // arg offset or popped arg count
+            struct
+            {
+                // Registers after call containing GC/byref (index 0 = REG_INT_FIRST)
+                unsigned int   rpdCallGCrefRegs;
+                unsigned int   rpdCallByrefRegs;
+                unsigned short rpdPtrArg; // arg offset or popped arg count
+            };
         };
 
 #ifndef JIT32_GCENCODER
         unsigned char rpdCallInstrSize; // Length of the call instruction.
 #endif
 
-        unsigned short rpdArg : 1;     // is this an argument descriptor?
+        unsigned short rpdArg     : 1; // is this an argument descriptor?
         unsigned short rpdArgType : 2; // is this an argument push,pop, or kill?
         rpdArgType_t   rpdArgTypeGet()
         {
@@ -178,11 +188,8 @@ public:
             return (GCtype)rpdGCtype;
         }
 
-        unsigned short rpdIsThis : 1;                       // is it the 'this' pointer
-        unsigned short rpdCall : 1;                         // is this a true call site?
-        unsigned short : 1;                                 // Padding bit, so next two start on a byte boundary
-        unsigned short rpdCallGCrefRegs : CNT_CALLEE_SAVED; // Callee-saved registers containing GC pointers.
-        unsigned short rpdCallByrefRegs : CNT_CALLEE_SAVED; // Callee-saved registers containing byrefs.
+        unsigned short rpdIsThis : 1; // is it the 'this' pointer
+        unsigned short rpdCall   : 1; // is this a true call site?
 
 #ifndef JIT32_GCENCODER
         bool rpdIsCallInstr()
@@ -261,7 +268,8 @@ public:
 
         unsigned short cdArgCnt;
 
-        union {
+        union
+        {
             struct // used if cdArgCnt == 0
             {
                 unsigned cdArgMask;      // ptr arg bitfield
@@ -278,10 +286,12 @@ public:
     CallDsc* gcCallDescList;
     CallDsc* gcCallDescLast;
 
-//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
 #ifdef JIT32_GCENCODER
-    void gcCountForHeader(UNALIGNED unsigned int* pUntrackedCount, UNALIGNED unsigned int* pVarPtrTableSize);
+    void gcCountForHeader(UNALIGNED unsigned int* pUntrackedCount,
+                          UNALIGNED unsigned int* pVarPtrTableSize,
+                          UNALIGNED unsigned int* pNoGCRegionCount);
 
     bool gcIsUntrackedLocalOrNonEnregisteredArg(unsigned varNum, bool* pThisKeptAliveIsInUntracked = nullptr);
 
@@ -303,7 +313,7 @@ public:
 
 #ifdef JIT32_GCENCODER
     size_t gcPtrTableSize(const InfoHdr& header, unsigned codeSize, size_t* pArgTabOffset);
-    BYTE* gcPtrTableSave(BYTE* destPtr, const InfoHdr& header, unsigned codeSize, size_t* pArgTabOffset);
+    BYTE*  gcPtrTableSave(BYTE* destPtr, const InfoHdr& header, unsigned codeSize, size_t* pArgTabOffset);
 #endif
     void gcRegPtrSetInit();
     /*****************************************************************************/
@@ -335,7 +345,6 @@ public:
     //
     //  These record the info about the procedure in the info-block
     //
-    CLANG_FORMAT_COMMENT_ANCHOR;
 
 #ifdef JIT32_GCENCODER
 private:
@@ -356,12 +365,12 @@ public:
 
 private:
     static size_t gcRecordEpilog(void* pCallBackData, unsigned offset);
+
+    ReturnKind getReturnKind();
 #else // JIT32_GCENCODER
     void gcInfoBlockHdrSave(GcInfoEncoder* gcInfoEncoder, unsigned methodSize, unsigned prologSize);
 
 #endif // JIT32_GCENCODER
-
-#if !defined(JIT32_GCENCODER) || defined(FEATURE_EH_FUNCLETS)
 
     // This method expands the tracked stack variables lifetimes so that any lifetimes within filters
     // are reported as pinned.
@@ -374,15 +383,13 @@ private:
     void gcDumpVarPtrDsc(varPtrDsc* desc);
 #endif // DEBUG
 
-#endif // !defined(JIT32_GCENCODER) || defined(FEATURE_EH_FUNCLETS)
-
 #if DUMP_GC_TABLES
 
     void gcFindPtrsInFrame(const void* infoBlock, const void* codeBlock, unsigned offs);
 
 #ifdef JIT32_GCENCODER
     size_t gcInfoBlockHdrDump(const BYTE* table,
-                              InfoHdr*    header,      /* OUT */
+                              InfoHdr*    header,    /* OUT */
                               unsigned*   methodSize); /* OUT */
 
     size_t gcDumpPtrTable(const BYTE* table, const InfoHdr& header, unsigned methodSize);
@@ -393,9 +400,6 @@ private:
 public:
     // This method updates the appropriate reg masks when a variable is moved.
     void gcUpdateForRegVarMove(regMaskTP srcMask, regMaskTP dstMask, LclVarDsc* varDsc);
-
-private:
-    ReturnKind getReturnKind();
 };
 
 inline unsigned char encodeUnsigned(BYTE* dest, unsigned value)

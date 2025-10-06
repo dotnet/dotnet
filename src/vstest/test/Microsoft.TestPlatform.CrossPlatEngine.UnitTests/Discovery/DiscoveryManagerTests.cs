@@ -160,7 +160,7 @@ public class DiscoveryManagerTests
     public void DiscoverTestsShouldLogIfTheSameSourceIsSpecifiedTwice()
     {
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
+            [typeof(DiscovererEnumeratorTests).Assembly.Location],
             () => { });
 
         var sources = new List<string>
@@ -187,7 +187,7 @@ public class DiscoveryManagerTests
     public void DiscoverTestsShouldDiscoverTestsInTheSpecifiedSource()
     {
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
+            [typeof(DiscovererEnumeratorTests).Assembly.Location],
             () => { });
 
         var sources = new List<string>
@@ -215,7 +215,7 @@ public class DiscoveryManagerTests
         DiscoveryCompleteEventArgs? receivedDiscoveryCompleteEventArgs = null;
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
+            [typeof(DiscovererEnumeratorTests).Assembly.Location],
             () => { });
 
         var sources = new List<string>
@@ -253,7 +253,7 @@ public class DiscoveryManagerTests
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(mockMetricsCollector.Object);
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
+            [typeof(DiscovererEnumeratorTests).Assembly.Location],
             () => { });
 
         var sources = new List<string>
@@ -278,7 +278,7 @@ public class DiscoveryManagerTests
         var assemblyLocation = typeof(DiscoveryManagerTests).Assembly.Location;
         var mockLogger = new Mock<ITestDiscoveryEventsHandler2>();
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { assemblyLocation },
+            [assemblyLocation],
             () => { });
 
         //Act

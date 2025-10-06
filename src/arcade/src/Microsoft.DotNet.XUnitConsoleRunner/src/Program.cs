@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Xunit.ConsoleClient
 {
@@ -16,7 +17,13 @@ namespace Xunit.ConsoleClient
             var internalDiagnosticsMessageSink = DiagnosticMessageSink.ForInternalDiagnostics(consoleLock, args.Contains("-internaldiagnostics"), args.Contains("-nocolor"));
 
             using (AssemblyHelper.SubscribeResolveForAssembly(typeof(Program), internalDiagnosticsMessageSink))
-                return new ConsoleRunner(consoleLock).EntryPoint(args);
+                return CallEntryPoint(consoleLock, args);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)] // separate method to workaround Mono JIT eagerly resolving types of ConsoleRunner fields
+        private static int CallEntryPoint(object consoleLock, string[] args)
+        {
+            return new ConsoleRunner(consoleLock).EntryPoint(args);
         }
     }
 }

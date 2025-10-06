@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,20 +15,22 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
 {
     public ComponentDuplicateAttributeDiagnosticPassTest()
     {
-        Pass = new ComponentMarkupDiagnosticPass();
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
             b =>
             {
-                    // Don't run the markup mutating passes.
-                    b.Features.Remove(b.Features.OfType<ComponentMarkupDiagnosticPass>().Single());
+                // Don't run the markup mutating passes.
+                b.Features.Remove(b.Features.OfType<ComponentMarkupDiagnosticPass>().Single());
                 b.Features.Remove(b.Features.OfType<ComponentMarkupBlockPass>().Single());
                 b.Features.Remove(b.Features.OfType<ComponentMarkupEncodingPass>().Single());
             });
         Engine = ProjectEngine.Engine;
 
-        Pass.Engine = Engine;
+        Pass = new ComponentMarkupDiagnosticPass()
+        {
+            Engine = Engine
+        };
     }
 
     private RazorProjectEngine ProjectEngine { get; }
@@ -141,7 +141,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         var diagnostics = documentNode.GetAllDiagnostics();
         var nodes = documentNode.FindDescendantNodes<HtmlAttributeIntermediateNode>().Where(n => n.HasDiagnostics).ToArray();
 
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(2, diagnostics.Length);
         Assert.Equal(2, nodes.Length);
 
         for (var i = 0; i < 2; i++)
@@ -162,7 +162,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         content = content.Replace("\n", "\r\n");
 
         var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return ProjectEngine.CreateCodeDocumentCore(source, FileKinds.Component);
+        return ProjectEngine.CreateCodeDocument(source, RazorFileKind.Component);
     }
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
@@ -177,20 +177,8 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
             phase.Execute(codeDocument);
         }
 
-        var document = codeDocument.GetDocumentIntermediateNode();
-        Engine.Features.OfType<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
+        var document = codeDocument.GetRequiredDocumentNode();
+        Engine.GetFeatures<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
         return document;
-    }
-
-    private class StaticTagHelperFeature : ITagHelperFeature
-    {
-        public RazorEngine Engine { get; set; }
-
-        public List<TagHelperDescriptor> TagHelpers { get; set; }
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
-        {
-            return TagHelpers;
-        }
     }
 }

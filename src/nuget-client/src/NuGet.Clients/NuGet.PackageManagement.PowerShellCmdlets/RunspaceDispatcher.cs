@@ -30,7 +30,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         private static bool IHaveTheLock;
 
         private readonly Runspace _runspace;
+#pragma warning disable RS0030 // Do not used banned APIs
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         public RunspaceAvailability RunspaceAvailability
         {
@@ -203,7 +205,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         public void Dispose()
         {
             _runspace.Dispose();
+#pragma warning disable RS0030 // Do not used banned APIs
             _dispatcherLock.Dispose();
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         // Dispatcher synchronization methods
@@ -215,7 +219,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
             }
             else
             {
+#pragma warning disable RS0030 // Do not used banned APIs
                 _dispatcherLock.Wait();
+#pragma warning restore RS0030 // Do not used banned APIs
                 try
                 {
                     IHaveTheLock = true;
@@ -224,7 +230,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                 finally
                 {
                     IHaveTheLock = false;
+#pragma warning disable RS0030 // Do not used banned APIs
                     _dispatcherLock.Release();
+#pragma warning restore RS0030 // Do not used banned APIs
                 }
             }
         }
@@ -249,7 +257,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                     if (finished && !hadTheLockAlready)
                     {
                         // Release the dispatcher lock
+#pragma warning disable RS0030 // Do not used banned APIs
                         _dispatcherLock.Release();
+#pragma warning restore RS0030 // Do not used banned APIs
                     }
 
                     pipelineStateChanged.Raise(sender, e);
@@ -277,7 +287,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
             }
             else
             {
+#pragma warning disable RS0030 // Do not used banned APIs
                 _dispatcherLock.Wait();
+#pragma warning restore RS0030 // Do not used banned APIs
                 try
                 {
                     IHaveTheLock = true;
@@ -287,7 +299,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                 {
                     // Don't care about the exception, rethrow it, but first release the lock
                     IHaveTheLock = false;
+#pragma warning disable RS0030 // Do not used banned APIs
                     _dispatcherLock.Release();
+#pragma warning restore RS0030 // Do not used banned APIs
                     throw;
                 }
             }

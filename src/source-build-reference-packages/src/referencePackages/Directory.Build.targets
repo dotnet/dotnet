@@ -1,87 +1,62 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(ManualNuspecTargets)" />
+
+  <!-- netstandard2.0's targeting pack uses the old package reference model which doesn't support using a local layout.
+       Therefore disable the package reference download via DisableImplicitFrameworkReferences and manually import the
+       packages' targets file to receive the references. -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <NETStandardLibraryArtifactsDir>$(ArtifactsBinDir)NETStandard.Library.2.0.3\pack\</NETStandardLibraryArtifactsDir>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+  <Import Project="$(NETStandardLibraryArtifactsDir)build\netstandard2.0\NETStandard.Library.targets" Condition="'$(TargetFramework)' == 'netstandard2.0' and '$(ExcludeRestorePackageImports)' != 'true' and Exists('$(NETStandardLibraryArtifactsDir)')" />
 
   <PropertyGroup>
-    <NetStandard1xPackage>
-      Microsoft.NETCore.Platforms;
-      Microsoft.Win32.Primitives;
-      System.AppContext;
-      System.Collections;
-      System.Collections.Concurrent;
-      System.Console;
-      System.Diagnostics.Debug;
-      System.Diagnostics.DiagnosticSource;
-      System.Diagnostics.Tools;
-      System.Diagnostics.Tracing;
-      System.Globalization;
-      System.Globalization.Calendars;
-      System.IO;
-      System.IO.Compression;
-      System.IO.Compression.ZipFile;
-      System.IO.FileSystem;
-      System.IO.FileSystem.Primitives;
-      System.Linq;
-      System.Linq.Expressions;
-      System.Net.Http;
-      System.Net.Primitives;
-      System.Net.Sockets;
-      System.ObjectModel;
-      System.Reflection;
-      System.Reflection.Extensions;
-      System.Reflection.Primitives;
-      System.Resources.ResourceManager;
-      System.Runtime;
-      System.Runtime.Extensions;
-      System.Runtime.Handles;
-      System.Runtime.InteropServices;
-      System.Runtime.InteropServices.RuntimeInformation;
-      System.Runtime.Numerics;
-      System.Security.Cryptography.Algorithms;
-      System.Security.Cryptography.Cng;
-      System.Security.Cryptography.Encoding;
-      System.Security.Cryptography.Primitives;
-      System.Security.Cryptography.OpenSsl;
-      System.Security.Cryptography.X509Certificates;
-      System.Text.Encoding;
-      System.Text.Encoding.Extensions;
-      System.Text.RegularExpressions;
-      System.Threading;
-      System.Threading.Tasks;
-      System.Threading.Timer;
-      System.Xml.ReaderWriter;
-      System.Xml.XDocument;
-    </NetStandard1xPackage>
+    <EnableTargetingPackDownload>false</EnableTargetingPackDownload>
+    <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
+
+    <!-- Avoid transitive framework reference downloads to minimize the number of targeting packs and prebuilts. -->
+    <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
+
+    <!-- Disable RAR from transitively discovering dependencies for references. This is required as we don't copy
+         dependencies over into the output directory which means RAR can't resolve them.
+         This is also necessary to make P2Ps with same package ids but different versions work. -->
+    <_FindDependencies>false</_FindDependencies>
+
+    <CustomizationsPropsPath>$(MSBuildProjectDirectory)\$(CustomizationsPropsFile)</CustomizationsPropsPath>
+    <CustomizationsSourcePath>$(MSBuildProjectDirectory)\$(CustomizationsSourceFile)</CustomizationsSourcePath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
-    <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and ($(TargetFramework.StartsWith('netstandard1')) or '$(TargetFramework)' == 'netcoreapp1.1') and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
-  </PropertyGroup>
+  <!-- Project references don't need to be copied to the output. That makes the build significantly faster. -->
+  <ItemDefinitionGroup>
+    <ProjectReference>
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemDefinitionGroup>
 
   <ItemGroup>
     <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
     <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+
+    <!-- Attributes for all Reference Packages -->
+    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+
+    <!-- Customization extension point -->
+    <Compile Include="$(CustomizationsSourcePath)" Condition="Exists('$(CustomizationsSourcePath)')" />
   </ItemGroup>
 
-  <!--
-    ### Targeting Packs section ###
-    Keep in sync with available targeting packs under src/targetPacks/ILsrc.
-  -->
+  <!-- Customization extension point -->
+  <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
 
-  <PropertyGroup>
-    <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
-    <!-- The SDK already sets the NETStandardImplicitPackageVersion and we don't expect it to change anymore. Hence, we don't encode it here. -->
-  </PropertyGroup>
-
+  <!-- Keep in sync with available targeting packs under src/targetPacks/ILsrc. -->
   <ItemGroup>
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.0'">3.0.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.1'">3.1.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net5.0'">5.0.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net7.0'">7.0.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net8.0'">8.0.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
     </KnownFrameworkReference>
 
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
@@ -89,29 +64,27 @@
     </KnownFrameworkReference>
   </ItemGroup>
 
+  <!-- Conflict resolution doesn't see P2Ps: https://github.com/dotnet/sdk/issues/2674. -->
+  <Target Name="PassProjectReferencesToConflictResolution"
+          BeforeTargets="_HandlePackageFileConflicts"
+          DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <Reference Include="@(_ResolvedProjectReferencePaths)" />
+      <_ResolvedProjectReferencePaths Remove="@(_ResolvedProjectReferencePaths)" />
+    </ItemGroup>
+  </Target>
+
   <!-- Filter out conflicting implicit assembly references. -->
   <Target Name="FilterImplicitAssemblyReferences"
-          Condition="'$(DisableImplicitFrameworkReferences)' != 'true'"
           DependsOnTargets="ResolveProjectReferences"
           AfterTargets="ResolveTargetingPackAssets">
     <ItemGroup>
-      <_targetingPackReferenceExclusion Include="$(TargetName)" />
-      <_targetingPackReferenceExclusion Include="@(_ResolvedProjectReferencePaths->Metadata('Filename'))" />
-    </ItemGroup>
-    <ItemGroup>
-      <_targetingPackReferenceWithProjectName Include="@(Reference->WithMetadataValue('ExternallyResolved', 'true')->Metadata('Filename'))"
-                                              OriginalIdentity="%(Identity)" />
-      <_targetingPackIncludedReferenceWithProjectName Include="@(_targetingPackReferenceWithProjectName)"
-                                                      Exclude="@(_targetingPackReferenceExclusion)" />
-      <_targetingPackExcludedReferenceWithProjectName Include="@(_targetingPackReferenceWithProjectName)"
-                                                      Exclude="@(_targetingPackIncludedReferenceWithProjectName)" />
-      <Reference Remove="@(_targetingPackExcludedReferenceWithProjectName->Metadata('OriginalIdentity'))" />
+      <Reference Remove="@(Reference->WithMetadataValue('ExternallyResolved', 'true')->WithMetadataValue('Filename', '$(TargetName)'))" />
     </ItemGroup>
   </Target>
 
   <Target Name="CopyBuildOutputToTempOutput"
           AfterTargets="CopyFilesToOutputDirectory">
-
     <ItemGroup>
       <CompileWithRelativePath Include="@(Compile)" Condition="!$([System.String]::new('%(Identity)').StartsWith('%(RootDir)'))" />
     </ItemGroup>
@@ -131,6 +104,15 @@
         '$(TFMPackTempOutputDir)',
         '%(RelativeCompileDir.Identity)',
         '$(TargetFileName)'))" />
+  </Target>
+
+  <!-- Use local targeting packs -->
+  <Target Name="UseLocalTargetingPack" AfterTargets="ResolveFrameworkReferences">
+    <ItemGroup>
+      <ResolvedTargetingPack Path="$(ArtifactsBinDir)%(ResolvedTargetingPack.NuGetPackageId).%(ResolvedTargetingPack.NuGetPackageVersion)\pack"
+                             PackageDirectory="$(ArtifactsBinDir)%(ResolvedTargetingPack.NuGetPackageId).%(ResolvedTargetingPack.NuGetPackageVersion)\pack" />
+      <ResolvedFrameworkReference TargetingPackPath="$(ArtifactsBinDir)%(ResolvedFrameworkReference.TargetingPackName).%(ResolvedFrameworkReference.TargetingPackVersion)\pack" />
+    </ItemGroup>
   </Target>
 
 </Project>

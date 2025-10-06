@@ -11,11 +11,11 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 public static class FilterHelper
 {
     public const char EscapeCharacter = '\\';
-    private static readonly char[] SpecialCharacters = { '\\', '(', ')', '&', '|', '=', '!', '~' };
+    private static readonly char[] SpecialCharacters = ['\\', '(', ')', '&', '|', '=', '!', '~'];
     private static readonly HashSet<char> SpecialCharactersSet = new(SpecialCharacters);
 
     /// <summary>
-    /// Escapes a set of special characters for filter (%, (, ), &, |, =, !, ~) by replacing them with their escape sequences.
+    /// Escapes a set of special characters for filter (%, (, ), &amp;, |, =, !, ~) by replacing them with their escape sequences.
     /// </summary>
     /// <param name="str">The input string that contains the text to convert.</param>
     /// <returns>A string of characters with special characters converted to their escaped form.</returns>

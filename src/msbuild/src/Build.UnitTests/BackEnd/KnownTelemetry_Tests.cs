@@ -35,19 +35,22 @@ public class KnownTelemetry_Tests
     {
         BuildTelemetry buildTelemetry = new BuildTelemetry();
 
-        buildTelemetry.DisplayVersion.ShouldBeNull();
+        buildTelemetry.BuildEngineDisplayVersion.ShouldBeNull();
         buildTelemetry.EventName.ShouldBe("build");
         buildTelemetry.FinishedAt.ShouldBeNull();
-        buildTelemetry.FrameworkName.ShouldBeNull();
-        buildTelemetry.Host.ShouldBeNull();
-        buildTelemetry.InitialServerState.ShouldBeNull();
+        buildTelemetry.BuildEngineFrameworkName.ShouldBeNull();
+        buildTelemetry.BuildEngineHost.ShouldBeNull();
+        buildTelemetry.InitialMSBuildServerState.ShouldBeNull();
         buildTelemetry.InnerStartAt.ShouldBeNull();
-        buildTelemetry.Project.ShouldBeNull();
+        buildTelemetry.ProjectPath.ShouldBeNull();
         buildTelemetry.ServerFallbackReason.ShouldBeNull();
         buildTelemetry.StartAt.ShouldBeNull();
-        buildTelemetry.Success.ShouldBeNull();
-        buildTelemetry.Target.ShouldBeNull();
-        buildTelemetry.Version.ShouldBeNull();
+        buildTelemetry.BuildSuccess.ShouldBeNull();
+        buildTelemetry.BuildTarget.ShouldBeNull();
+        buildTelemetry.BuildEngineVersion.ShouldBeNull();
+        buildTelemetry.BuildCheckEnabled.ShouldBeNull();
+        buildTelemetry.MultiThreadedModeEnabled.ShouldBeNull();
+        buildTelemetry.SACEnabled.ShouldBeNull();
 
         buildTelemetry.GetProperties().ShouldBeEmpty();
     }
@@ -61,22 +64,25 @@ public class KnownTelemetry_Tests
         DateTime innerStartAt = new DateTime(2023, 01, 02, 10, 20, 30);
         DateTime finishedAt = new DateTime(2023, 12, 13, 14, 15, 16);
 
-        buildTelemetry.DisplayVersion = "Some Display Version";
+        buildTelemetry.BuildEngineDisplayVersion = "Some Display Version";
         buildTelemetry.FinishedAt = finishedAt;
-        buildTelemetry.FrameworkName = "new .NET";
-        buildTelemetry.Host = "Host description";
-        buildTelemetry.InitialServerState = "hot";
+        buildTelemetry.BuildEngineFrameworkName = "new .NET";
+        buildTelemetry.BuildEngineHost = "Host description";
+        buildTelemetry.InitialMSBuildServerState = "hot";
         buildTelemetry.InnerStartAt = innerStartAt;
-        buildTelemetry.Project = @"C:\\dev\\theProject";
+        buildTelemetry.ProjectPath = @"C:\\dev\\theProject";
         buildTelemetry.ServerFallbackReason = "busy";
         buildTelemetry.StartAt = startAt;
-        buildTelemetry.Success = true;
-        buildTelemetry.Target = "clean";
-        buildTelemetry.Version = new Version(1, 2, 3, 4);
+        buildTelemetry.BuildSuccess = true;
+        buildTelemetry.BuildTarget = "clean";
+        buildTelemetry.BuildEngineVersion = new Version(1, 2, 3, 4);
+        buildTelemetry.BuildCheckEnabled = true;
+        buildTelemetry.MultiThreadedModeEnabled = false;
+        buildTelemetry.SACEnabled = true;
 
         var properties = buildTelemetry.GetProperties();
 
-        properties.Count.ShouldBe(11);
+        properties.Count.ShouldBe(14);
 
         properties["BuildEngineDisplayVersion"].ShouldBe("Some Display Version");
         properties["BuildEngineFrameworkName"].ShouldBe("new .NET");
@@ -87,6 +93,9 @@ public class KnownTelemetry_Tests
         properties["BuildSuccess"].ShouldBe("True");
         properties["BuildTarget"].ShouldBe("clean");
         properties["BuildEngineVersion"].ShouldBe("1.2.3.4");
+        properties["BuildCheckEnabled"].ShouldBe("True");
+        properties["MultiThreadedModeEnabled"].ShouldBe("False");
+        properties["SACEnabled"].ShouldBe("True");
 
         // verify computed
         properties["BuildDurationInMilliseconds"] = (finishedAt - startAt).TotalMilliseconds.ToString(CultureInfo.InvariantCulture);

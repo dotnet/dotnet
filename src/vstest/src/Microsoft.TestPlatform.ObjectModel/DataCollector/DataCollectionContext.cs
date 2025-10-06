@@ -119,7 +119,7 @@ public class DataCollectionContext
 
         return other != null
                && SessionId.Equals(other.SessionId)
-               && (TestExecId == null ? other.TestExecId == null : TestExecId.Equals(other.TestExecId));
+               && (TestExecId?.Equals(other.TestExecId) ?? other.TestExecId == null);
     }
 
     public override int GetHashCode()

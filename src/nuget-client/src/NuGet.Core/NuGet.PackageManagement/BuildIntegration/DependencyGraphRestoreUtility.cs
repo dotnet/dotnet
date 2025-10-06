@@ -59,40 +59,6 @@ namespace NuGet.PackageManagement
         /// <summary>
         /// Restore a solution and cache the dg spec to context.
         /// </summary>
-        [Obsolete("This method will be removed in a future release. Use other one of the other RestoreAsync methods.")]
-        public static Task<IReadOnlyList<RestoreSummary>> RestoreAsync(
-            ISolutionManager solutionManager,
-            DependencyGraphSpec dgSpec,
-            DependencyGraphCacheContext context,
-            RestoreCommandProvidersCache providerCache,
-            Action<SourceCacheContext> cacheContextModifier,
-            IEnumerable<SourceRepository> sources,
-            Guid parentId,
-            bool forceRestore,
-            bool isRestoreOriginalAction,
-            IReadOnlyList<IAssetsLogMessage> additionalMessages,
-            ILogger log,
-            CancellationToken token)
-        {
-            return RestoreAsync(
-                dgSpec,
-                context,
-                providerCache,
-                cacheContextModifier,
-                sources,
-                parentId,
-                forceRestore,
-                isRestoreOriginalAction,
-                additionalMessages,
-                progressReporter: null,
-                log,
-                token
-                );
-        }
-
-        /// <summary>
-        /// Restore a solution and cache the dg spec to context.
-        /// </summary>
         public static async Task<IReadOnlyList<RestoreSummary>> RestoreAsync(
             DependencyGraphSpec dgSpec,
             DependencyGraphCacheContext context,
@@ -137,15 +103,6 @@ namespace NuGet.PackageManagement
             }
 
             return new List<RestoreSummary>();
-        }
-
-        [Obsolete]
-        public static string GetDefaultDGSpecFileName()
-        {
-            return Path.Combine(
-                        NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
-                        "nuget-dg",
-                        "nugetSpec.dg");
         }
 
         /// <summary>
@@ -251,53 +208,6 @@ namespace NuGet.PackageManagement
             }
         }
 
-        /// <summary>
-        /// Restore a build integrated project(PackageReference and Project.Json only) and update the assets file
-        /// </summary>
-        [Obsolete("This is an unused method and will be removed in a future release.")]
-        public static async Task<RestoreResult> RestoreProjectAsync(
-            ISolutionManager solutionManager,
-            BuildIntegratedNuGetProject project,
-            DependencyGraphCacheContext context,
-            RestoreCommandProvidersCache providerCache,
-            Action<SourceCacheContext> cacheContextModifier,
-            IEnumerable<SourceRepository> sources,
-            Guid parentId,
-            ILogger log,
-            CancellationToken token)
-        {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-
-            // Restore
-            var specs = await project.GetPackageSpecsAsync(context);
-            var spec = specs.Single(e => e.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference
-                || e.RestoreMetadata.ProjectStyle == ProjectStyle.ProjectJson); // Do not restore global tools Project Style in VS. 
-
-            var result = await PreviewRestoreAsync(
-                solutionManager,
-                project,
-                spec,
-                context,
-                providerCache,
-                cacheContextModifier,
-                sources,
-                parentId,
-                token);
-
-            // Throw before writing if this has been canceled
-            token.ThrowIfCancellationRequested();
-
-            // Write out the lock file and msbuild files
-            var summary = await RestoreRunner.CommitAsync(result, token);
-
-            RestoreSummary.Log(log, new[] { summary });
-
-            return result.Result;
-        }
-
         public static bool IsRestoreRequired(
             DependencyGraphSpec solutionDgSpec)
         {
@@ -314,9 +224,8 @@ namespace NuGet.PackageManagement
         {
             var specs = await project.GetPackageSpecsAsync(context);
 
-            var projectSpec = specs.Where(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.Standalone
-               && e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool)
-                .FirstOrDefault();
+            var projectSpec = specs
+                .FirstOrDefault(e => e.RestoreMetadata.ProjectStyle != ProjectStyle.DotnetCliTool);
 
             return projectSpec;
         }
@@ -359,8 +268,7 @@ namespace NuGet.PackageManagement
 
                     if (packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference ||
                         packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.ProjectJson ||
-                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool ||
-                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.Standalone) // Don't add global tools to restore specs for solutions
+                        packageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool) // Don't add global tools to restore specs for solutions
                     {
                         dgSpec.AddRestore(packageSpec.RestoreMetadata.ProjectUniqueName);
 

@@ -71,12 +71,6 @@ namespace NuGet.RuntimeModel
                 && RuntimeDependencySets.OrderedEquals(other.RuntimeDependencySets, p => p.Key, StringComparer.OrdinalIgnoreCase);
         }
 
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
-        public RuntimeDescription Clone()
-        {
-            return this;
-        }
-
         /// <summary>
         /// Merges the content of the other runtime description in to this runtime description
         /// </summary>

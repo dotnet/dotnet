@@ -377,8 +377,9 @@ namespace NuGet.ProjectManagement
             var anyFrameworkToolsGroup = toolItemGroups.FirstOrDefault(g => g.TargetFramework.Equals(NuGetFramework.AnyFramework));
             if (anyFrameworkToolsGroup != null)
             {
-                var initPS1RelativePath = anyFrameworkToolsGroup.Items.Where(p =>
-                    p.StartsWith(PowerShellScripts.InitPS1RelativePath, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var initPS1RelativePath = anyFrameworkToolsGroup.Items
+                    .FirstOrDefault(p =>
+                        p.StartsWith(PowerShellScripts.InitPS1RelativePath, StringComparison.OrdinalIgnoreCase));
                 if (!string.IsNullOrEmpty(initPS1RelativePath))
                 {
                     initPS1RelativePath = PathUtility.ReplaceAltDirSeparatorWithDirSeparator(
@@ -659,7 +660,7 @@ namespace NuGet.ProjectManagement
             {
                 packageSpec = new PackageSpec(new List<TargetFrameworkInformation>
                 {
-                    new TargetFrameworkInformation
+                    new TargetFrameworkInformation()
                     {
                         FrameworkName = ProjectSystem.TargetFramework
                     }

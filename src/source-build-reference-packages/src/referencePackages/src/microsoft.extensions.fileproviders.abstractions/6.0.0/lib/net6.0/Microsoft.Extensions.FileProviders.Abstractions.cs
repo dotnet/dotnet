@@ -60,28 +60,20 @@ namespace Microsoft.Extensions.FileProviders
     public partial class NotFoundDirectoryContents : IDirectoryContents, System.Collections.Generic.IEnumerable<IFileInfo>, System.Collections.IEnumerable
     {
         public bool Exists { get { throw null; } }
-
         public static NotFoundDirectoryContents Singleton { get { throw null; } }
 
         public System.Collections.Generic.IEnumerator<IFileInfo> GetEnumerator() { throw null; }
-
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
     }
 
     public partial class NotFoundFileInfo : IFileInfo
     {
         public NotFoundFileInfo(string name) { }
-
         public bool Exists { get { throw null; } }
-
         public bool IsDirectory { get { throw null; } }
-
         public System.DateTimeOffset LastModified { get { throw null; } }
-
         public long Length { get { throw null; } }
-
         public string Name { get { throw null; } }
-
         public string PhysicalPath { get { throw null; } }
 
         public System.IO.Stream CreateReadStream() { throw null; }
@@ -90,11 +82,8 @@ namespace Microsoft.Extensions.FileProviders
     public partial class NullChangeToken : Primitives.IChangeToken
     {
         internal NullChangeToken() { }
-
         public bool ActiveChangeCallbacks { get { throw null; } }
-
         public bool HasChanged { get { throw null; } }
-
         public static NullChangeToken Singleton { get { throw null; } }
 
         public System.IDisposable RegisterChangeCallback(System.Action<object> callback, object state) { throw null; }
@@ -103,9 +92,7 @@ namespace Microsoft.Extensions.FileProviders
     public partial class NullFileProvider : IFileProvider
     {
         public IDirectoryContents GetDirectoryContents(string subpath) { throw null; }
-
         public IFileInfo GetFileInfo(string subpath) { throw null; }
-
         public Primitives.IChangeToken Watch(string filter) { throw null; }
     }
 }

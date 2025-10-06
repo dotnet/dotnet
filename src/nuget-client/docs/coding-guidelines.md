@@ -44,6 +44,8 @@ The general rule we follow is "use Visual Studio defaults".
 
 1. Avoid more than one empty line at any time. For example, do not have two blank lines between members of a type.
 
+1. Avoid lines of code longer than 120 characters.
+
 1. Avoid spurious free spaces. For example avoid `if (someVar == 0)...`, where the dots mark the spurious free spaces. Consider enabling "View White Space (Ctrl+R, Ctrl+W)" or "Edit -> Advanced -> View White Space" if using Visual Studio to aid detection.
 
 1. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member` rather than `_member`), the existing style in that file takes precedence. Changes/refactorings are possible, but depending on the complexity, change frequency of the file, might need to be considered on their own merits in a separate pull request.
@@ -274,6 +276,64 @@ For example the following are correct:
 
 Many of the guidelines, wherever possible, and potentially some not listed here, are enforced by an [EditorConfig](https://editorconfig.org "EditorConfig homepage") file (`.editorconfig`) at the root of the repository.
 
+### Getting or Setting Environment Variables
+
+Environment variables apply to the entire process and are considered static state which can cause test issues since multiple tests can be running in parallel reading or updating the same variable.
+All components that use environment variables should use the `IEnvironmentVariableReader` interface.
+
+**NOTE:** It's preferred that any projects that are part of the NuGet Client SDK do not use environment variables directly.
+Instead, we prefer method parameters or class properties that developers using our packages can use themselves, and read the environment variable in the code not part of packages that we publish.
+
+An instance type should have a public constructor and an internal constructor which accepts an environment variable provider:
+
+```cs
+public class SomeClass
+{
+    private readonly IEnvironmentVariableReader _environmentVariableProvider;
+
+    public SomeClass()
+        : this(EnvironmentVariableWrapper.Instance)
+    {
+    }
+
+    internal SomeClass(IEnvironmentVariableReader environmentVariableProvider)
+    {
+        _environmentVariableProvider = environmentVariableProvider ?? throw new ArgumentNullException(nameof(environmentVariableProvider));
+    }
+
+    public string DetermineSomeValue()
+    {
+        return _environmentVariableProvider.GetEnvironmentVariable("SomeVariable");
+    }
+}
+```
+
+Public static methods should have an internal overload that accepts an `IEnvironmentVariableReader`:
+```cs
+public static string DetermineSomeValue()
+{
+    return DetermineSomeValue(EnvironmentVariableWrapper.Instance);
+}
+
+internal static string DetermineSomeValue(IEnvironmentVariableReader environmentVariableProvider)
+{
+    return environmentVariableProvider.GetEnvironmentVariable("SomeVariable");
+}
+```
+
+The `EnvironmentVariableWrapper.Instance` is the default implementation of `IEnvironmentVariableReader` which uses `Environment.GetEnvironmentVariable`.
+
+We try to avoid setting environment variables in our product, if setting an environment variable is necessary, please seek an exception and add a `#pragma warning disable RS0030` to your call:
+
+```cs
+public void MyMethod()
+{
+    #pragma warning disable RS0030 // Do not used banned APIs (Give a reason for you exception)
+    Environment.SetEnvironmentVariable("SomeVariable", "SomeValue");
+    #pragma warning restore RS0030 // Do not used banned APIs
+})
+```
+
 ### When to use internals vs. public and when to use InternalsVisibleTo
 
 Usage of internal types and members is allowed. Do consider whether external customers could benefit from having said internal class public.
@@ -497,7 +557,8 @@ Assert.Equal(
 
 #### Test assertions
 
-Both xunit.net and FluentAssertions are allowed. FluentAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
+Both [xunit.net](https://xunit.net/#documentation) and [AwesomeAssertions](https://awesomeassertions.org/) are allowed.
+AwesomeAssertions do not truncate the equality messages, thus sometimes making it easier to diagnose the failure.
 Both of these will make the tests a lot more readable and also allow the test runner report the best possible errors. For example, these are bad:
 
 ```cs
@@ -527,7 +588,7 @@ Assert.Equal("abc123", someString);
 Assert.Equal(list1, list2, StringComparer.OrdinalIgnoreCase);
 ```
 
-Some places where FluentAssetion shine are:
+Some places where AwesomeAssertions shine are:
 
 ```cs
 
@@ -536,9 +597,9 @@ RestoreResult restoreResult = await RestoreRunner.RestoreAsync(restoreRequest);
 // xunit assertions
 Assert.True(restoreResult.Success);
 
-// fluent assertions
-
+// AwesomeAssertions
 restoreResult.Success.Should().BeTrue(because: restoreResult.AllOutput);
+
 ```
 
 #### Parallel tests

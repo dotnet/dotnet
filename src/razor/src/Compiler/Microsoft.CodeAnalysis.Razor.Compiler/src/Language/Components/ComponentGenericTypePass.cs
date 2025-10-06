@@ -3,10 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -16,26 +21,9 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 // 3. Rewrites the type names of parameters/child content to substitute generic type arguments
 internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
-    private TypeNameFeature? _typeNameFeature;
-
     // Runs after components/eventhandlers/ref/bind/templates. We want to validate every component
     // and it's usage of ChildContent.
     public override int Order => 160;
-
-    private TypeNameFeature TypeNameFeature
-    {
-        get
-        {
-            // Doing lazy initialization here to avoid making things really complicated when we don't
-            // need to exercise this code in tests.
-            if (_typeNameFeature == null)
-            {
-                _typeNameFeature = GetRequiredFeature<TypeNameFeature>();
-            }
-
-            return _typeNameFeature;
-        }
-    }
 
     protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
@@ -44,21 +32,14 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             return;
         }
 
-        var visitor = new Visitor(this);
+        var visitor = new Visitor();
         visitor.Visit(documentNode);
     }
 
-    private class Visitor : IntermediateNodeWalker
+    internal sealed class Visitor : IntermediateNodeWalker
     {
-        private readonly ComponentGenericTypePass _pass;
-
         // Incrementing ID for type inference method names
         private int _id;
-
-        public Visitor(ComponentGenericTypePass pass)
-        {
-            _pass = pass;
-        }
 
         public override void VisitComponent(ComponentIntermediateNode node)
         {
@@ -95,7 +76,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
                 var binding = bindings[typeArgumentNode.TypeParameterName];
                 binding.Node = typeArgumentNode;
-                binding.Content = GetContent(typeArgumentNode);
+                binding.Content = typeArgumentNode.Value;
 
                 // Offer this explicit type argument to descendants too
                 if (supplyCascadingTypeParameters.Contains(typeArgumentNode.TypeParameterName))
@@ -105,7 +86,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     {
                         GenericTypeNames = new[] { typeArgumentNode.TypeParameterName },
                         ValueType = typeArgumentNode.TypeParameterName,
-                        ValueExpression = $"default({binding.Content})",
+                        ValueExpression = $"default({binding.Content.Content})",
                     };
                 }
             }
@@ -116,8 +97,8 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 // Either they specified everything and its OK to rewrite, or its an error.
                 if (ValidateTypeArguments(node, bindings))
                 {
-                    var mappings = bindings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Content);
-                    RewriteTypeNames(_pass.TypeNameFeature.CreateGenericTypeRewriter(mappings), node, hasTypeArgumentSpecified);
+                    var mappings = bindings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Node);
+                    RewriteTypeNames(new GenericTypeNameRewriter(mappings), node, hasTypeArgumentSpecified);
                 }
 
                 return;
@@ -131,7 +112,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             // Since we're generating code in a different namespace, we need to 'global qualify' all of the types
             // to avoid clashes with our generated code.
-            RewriteTypeNames(_pass.TypeNameFeature.CreateGlobalQualifiedTypeNameRewriter(bindings.Keys), node, hasTypeArgumentSpecified: false, bindings);
+            RewriteTypeNames(new GlobalQualifiedTypeNameRewriter(bindings.Keys), node, hasTypeArgumentSpecified: false, bindings);
 
             //
             // We need to verify that an argument was provided that 'covers' each type parameter.
@@ -145,7 +126,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     // Keep only type parameters defined by this component.
                     typeParameters = typeParameters.Where(bindings.ContainsKey).ToArray();
 
-                    var attributeValueIsLambda = _pass.TypeNameFeature.IsLambda(GetContent(attribute));
+                    var attributeValueIsLambda = SyntaxFactory.ParseExpression(GetContent(attribute)) is LambdaExpressionSyntax;
                     var provideCascadingGenericTypes = new CascadingGenericTypeParameter
                     {
                         GenericTypeNames = typeParameters,
@@ -195,8 +176,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes = null;
             foreach (var uncoveredBindingKey in bindings.Keys.ToList())
             {
-                foreach (var candidateAncestor in Ancestors.OfType<ComponentIntermediateNode>())
+                foreach (var ancestor in Ancestors)
                 {
+                    if (ancestor is not ComponentIntermediateNode candidateAncestor)
+                    {
+                        continue;
+                    }
+
                     if (candidateAncestor.ProvidesCascadingGenericTypes != null
                         && candidateAncestor.ProvidesCascadingGenericTypes.TryGetValue(uncoveredBindingKey, out var genericTypeProvider))
                     {
@@ -258,16 +244,16 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 // However we still want to generate 'type inference' code because we want the errors to be as
                 // helpful as possible. So let's substitute 'object' for all of those type parameters, and add
                 // an error.
-                var mappings = bindings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Content);
-                RewriteTypeNames(_pass.TypeNameFeature.CreateGenericTypeRewriter(mappings), node, bindings: bindings);
+                var mappings = bindings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Node);
+                RewriteTypeNames(new GenericTypeNameRewriter(mappings), node, bindings: bindings);
 
-                node.Diagnostics.Add(ComponentDiagnosticFactory.Create_GenericComponentTypeInferenceUnderspecified(node.Source, node, node.Component.GetTypeParameters()));
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_GenericComponentTypeInferenceUnderspecified(node.Source, node, node.Component.GetTypeParameters()));
             }
 
             // Next we need to generate a type inference 'method' node. This represents a method that we will codegen that
             // contains all of the operations on the render tree building. Calling a method to operate on the builder
             // will allow the C# compiler to perform type inference.
-            var documentNode = (DocumentIntermediateNode)Ancestors[Ancestors.Count - 1];
+            var documentNode = (DocumentIntermediateNode)Ancestors[^1];
             CreateTypeInferenceMethod(documentNode, node, receivesCascadingGenericTypes);
         }
 
@@ -290,7 +276,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // Two cases;
             // 1. name is a simple identifier like TItem
             // 2. name contains type parameters like Dictionary<string, TItem>
-            typeParameters = _pass.TypeNameFeature.ParseTypeParameters(globallyQualifiedTypeName ?? boundAttribute.TypeName);
+            typeParameters = ParseTypeParameters(globallyQualifiedTypeName ?? boundAttribute.TypeName);
             if (typeParameters.Count == 0)
             {
                 typeParameters = new[] { boundAttribute.TypeName };
@@ -299,24 +285,19 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             return true;
         }
 
-        private string GetContent(ComponentTypeArgumentIntermediateNode node)
+        private static string GetContent(ComponentAttributeIntermediateNode node)
         {
-            return string.Join(string.Empty, node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp).Select(t => t.Content));
-        }
-
-        private string GetContent(ComponentAttributeIntermediateNode node)
-        {
-            return string.Join(string.Empty, node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp).Select(t => t.Content));
+            return string.Join(string.Empty, node.FindDescendantNodes<CSharpIntermediateToken>().Select(t => t.Content));
         }
 
         private static bool ValidateTypeArguments(ComponentIntermediateNode node, Dictionary<string, Binding> bindings)
         {
             var missing = new List<BoundAttributeDescriptor>();
-            foreach (var binding in bindings)
+            foreach (var (_, binding) in bindings)
             {
-                if (binding.Value.Node == null || string.IsNullOrWhiteSpace(binding.Value.Content))
+                if (binding.Node == null || string.IsNullOrWhiteSpace(binding.Content?.Content))
                 {
-                    missing.Add(binding.Value.Attribute);
+                    missing.Add(binding.Attribute);
                 }
             }
 
@@ -325,7 +306,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 // We add our own error for this because its likely the user will see other errors due
                 // to incorrect codegen without the types. Our errors message will pretty clearly indicate
                 // what to do, whereas the other errors might be confusing.
-                node.Diagnostics.Add(ComponentDiagnosticFactory.Create_GenericComponentMissingTypeArgument(node.Source, node, missing));
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_GenericComponentMissingTypeArgument(node.Source, node, missing));
                 return false;
             }
 
@@ -334,13 +315,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void RewriteTypeNames(TypeNameRewriter rewriter, ComponentIntermediateNode node, bool? hasTypeArgumentSpecified = null, IDictionary<string, Binding>? bindings = null)
         {
-            var typeNameFeature = _pass.TypeNameFeature;
-
             // Rewrite the component type name
-            node.TypeName = rewriter.Rewrite(node.TypeName);
+            rewriter.RewriteComponentTypeName(node);
 
             foreach (var attribute in node.Attributes)
             {
+                attribute.ConcreteContainingType = node.TypeName;
+
                 var globallyQualifiedTypeName = attribute.BoundAttribute?.GetGloballyQualifiedTypeName();
 
                 if (attribute.TypeName != null)
@@ -365,17 +346,18 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     Debug.Assert(bindings != null || hasTypeArgumentSpecified == true);
                     if (hasTypeArgumentSpecified == true)
                     {
-                        attribute.Annotations.Add(ComponentMetadata.Component.ExplicitTypeNameKey, true);
+                        attribute.HasExplicitTypeName = true;
                     }
-                    else if(attribute.BoundAttribute?.IsEventCallbackProperty() ?? false)
+                    else if (attribute.BoundAttribute?.IsEventCallbackProperty() ?? false)
                     {
-                        var typeParameters = typeNameFeature.ParseTypeParameters(attribute.TypeName);
+                        Debug.Assert(attribute.TypeName is not null);
+                        var typeParameters = ParseTypeParameters(attribute.TypeName);
                         for (int i = 0; i < typeParameters.Count; i++)
                         {
                             var parameter = typeParameters[i];
                             if (bindings!.ContainsKey(parameter))
                             {
-                                attribute.Annotations.Add(ComponentMetadata.Component.OpenGenericKey, true);
+                                attribute.IsOpenGeneric = true;
                                 break;
                             }
                         }
@@ -400,13 +382,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var capture in node.Captures)
             {
-                if (capture.IsComponentCapture && capture.ComponentCaptureTypeName != null)
+                if (capture.IsComponentCapture)
                 {
-                    capture.ComponentCaptureTypeName = rewriter.Rewrite(capture.ComponentCaptureTypeName);
-                }
-                else if (capture.IsComponentCapture)
-                {
-                    capture.ComponentCaptureTypeName = "System.Object";
+                    capture.UpdateComponentCaptureTypeName(rewriter.Rewrite(capture.ComponentCaptureTypeName));
                 }
             }
 
@@ -432,13 +410,19 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void CreateTypeInferenceMethod(DocumentIntermediateNode documentNode, ComponentIntermediateNode node, List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes)
         {
-            var @namespace = documentNode.FindPrimaryNamespace().Content;
+            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Name;
             @namespace = string.IsNullOrEmpty(@namespace) ? "__Blazor" : "__Blazor." + @namespace;
-            @namespace += "." + documentNode.FindPrimaryClass().ClassName;
+            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().Name;
 
-            var genericTypeConstraints = node.Component.BoundAttributes
-                .Where(t => t.Metadata.ContainsKey(ComponentMetadata.Component.TypeParameterConstraintsKey))
-                .Select(t => t.Metadata[ComponentMetadata.Component.TypeParameterConstraintsKey]);
+            using var genericTypeConstraints = new PooledArrayBuilder<string>();
+
+            foreach (var attribute in node.Component.BoundAttributes)
+            {
+                if (attribute.Metadata is TypeParameterMetadata { Constraints: string constraints })
+                {
+                    genericTypeConstraints.Add(constraints);
+                }
+            }
 
             var typeInferenceNode = new ComponentTypeInferenceMethodIntermediateNode()
             {
@@ -450,7 +434,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 FullTypeName = @namespace + ".TypeInference",
 
                 ReceivesCascadingGenericTypes = receivesCascadingGenericTypes,
-                GenericTypeConstraints = genericTypeConstraints
+                GenericTypeConstraints = genericTypeConstraints.ToArrayAndClear()
             };
 
             node.TypeInferenceNode = typeInferenceNode;
@@ -458,16 +442,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // Now we need to insert the type inference node into the tree.
             var namespaceNode = documentNode.Children
                 .OfType<NamespaceDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.Annotations.Contains(new KeyValuePair<object, object>(ComponentMetadata.Component.GenericTypedKey, bool.TrueString)));
+                .FirstOrDefault(n => n.IsGenericTyped);
             if (namespaceNode == null)
             {
                 namespaceNode = new NamespaceDeclarationIntermediateNode()
                 {
-                    Annotations =
-                        {
-                            { ComponentMetadata.Component.GenericTypedKey, bool.TrueString },
-                        },
-                    Content = @namespace,
+                    Name = @namespace,
+                    IsGenericTyped = true,
                 };
 
                 documentNode.Children.Add(namespaceNode);
@@ -475,24 +456,81 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             var classNode = namespaceNode.Children
                 .OfType<ClassDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.ClassName == "TypeInference");
+                .FirstOrDefault(n => n.Name == "TypeInference");
             if (classNode == null)
             {
                 classNode = new ClassDeclarationIntermediateNode()
                 {
-                    ClassName = "TypeInference",
-                    Modifiers =
-                        {
-                            "internal",
-                            "static",
-                        },
+                    Name = "TypeInference",
+                    Modifiers = CommonModifiers.InternalStatic
                 };
                 namespaceNode.Children.Add(classNode);
             }
 
             classNode.Children.Add(typeInferenceNode);
         }
+
+        public IReadOnlyList<string> ParseTypeParameters(string typeName)
+        {
+            if (typeName == null)
+            {
+                throw new ArgumentNullException(nameof(typeName));
+            }
+
+            var parsed = SyntaxFactory.ParseTypeName(typeName);
+
+            if (parsed is IdentifierNameSyntax identifier)
+            {
+                return Array.Empty<string>();
+            }
+
+            if (TryParseCore(parsed) is { IsDefault: false } list)
+            {
+                return list;
+            }
+
+            return parsed.DescendantNodesAndSelf()
+                .OfType<TypeArgumentListSyntax>()
+                .SelectMany(arg => arg.Arguments)
+                .SelectMany(t => ParseCore(t)).ToArray();
+
+            static ImmutableArray<string> TryParseCore(TypeSyntax parsed)
+            {
+                if (parsed is ArrayTypeSyntax array)
+                {
+                    return ParseCore(array.ElementType);
+                }
+
+                if (parsed is TupleTypeSyntax tuple)
+                {
+                    return tuple.Elements.SelectManyAsArray(a => ParseCore(a.Type));
+                }
+
+                return default;
+            }
+
+            static ImmutableArray<string> ParseCore(TypeSyntax parsed)
+            {
+                // Recursively drill into arrays `T[]` and tuples `(T, T)`.
+                if (TryParseCore(parsed) is { IsDefault: false } list)
+                {
+                    return list;
+                }
+
+                // When we encounter an identifier, we assume it's a type parameter.
+                if (parsed is IdentifierNameSyntax identifier)
+                {
+                    return ImmutableArray.Create(identifier.Identifier.Text);
+                }
+
+                // Generic names like `C<T>` are ignored here because we will visit their type argument list
+                // via the `.DescendantNodesAndSelf().OfType<TypeArgumentListSyntax>()` call above.
+                return ImmutableArray<string>.Empty;
+            }
+        }
     }
+
+
 
     private class Binding
     {
@@ -500,7 +538,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         public BoundAttributeDescriptor Attribute { get; }
 
-        public string? Content { get; set; }
+        public IntermediateToken? Content { get; set; }
 
         public ComponentTypeArgumentIntermediateNode? Node { get; set; }
 

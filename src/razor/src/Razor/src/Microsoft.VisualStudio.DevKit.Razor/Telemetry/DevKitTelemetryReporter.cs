@@ -1,13 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.VisualStudio.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.DevKit.Razor.Telemetry;
@@ -20,14 +20,12 @@ internal sealed class DevKitTelemetryReporter : TelemetryReporter, ITelemetryRep
 
     [ImportingConstructor]
     public DevKitTelemetryReporter()
-        : base(telemetrySessions: default)
+        : base(null)
     {
     }
 
     public void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession)
     {
-        Debug.Assert(TelemetrySessions.IsDefaultOrEmpty);
-
         var sessionSettingsJson = CreateSessionSettingsJson(telemetryLevel, sessionId);
         var session = new TelemetrySession(sessionSettingsJson);
 
@@ -39,7 +37,7 @@ internal sealed class DevKitTelemetryReporter : TelemetryReporter, ITelemetryRep
         session.Start();
         session.RegisterForReliabilityEvent();
 
-        TelemetrySessions = ImmutableArray.Create<TelemetrySession>(session);
+        SetSession(session);
     }
 
     private static string CreateSessionSettingsJson(string telemetryLevel, string? sessionId)

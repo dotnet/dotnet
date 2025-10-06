@@ -8,8 +8,8 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.Utilities;
 
 internal class ArgumentProcessorUtilities
 {
-    public static readonly char[] SemiColonArgumentSeparator = { ';' };
-    public static readonly char[] EqualNameValueSeparator = { '=' };
+    public static readonly char[] SemiColonArgumentSeparator = [';'];
+    public static readonly char[] EqualNameValueSeparator = ['='];
 
     /// <summary>
     /// Get argument list from raw argument using argument separator.
@@ -18,12 +18,19 @@ internal class ArgumentProcessorUtilities
     /// <param name="argumentSeparator">Argument separator.</param>
     /// <param name="exceptionMessage">Exception Message.</param>
     /// <returns>Argument list.</returns>
-    public static string[] GetArgumentList(string? rawArgument, char[] argumentSeparator, string exceptionMessage)
+    public static string[] GetArgumentList(string rawArgument, char[] argumentSeparator, string exceptionMessage)
     {
-        var argumentList = rawArgument?.Split(argumentSeparator, StringSplitOptions.RemoveEmptyEntries);
+        var argumentList = rawArgument.Split(argumentSeparator, StringSplitOptions.RemoveEmptyEntries);
 
         // Throw error in case of invalid argument.
-        return argumentList == null || argumentList.Length <= 0 ? throw new CommandLineException(exceptionMessage) : argumentList;
+        if (argumentList.Length <= 0)
+        {
+            throw new CommandLineException(exceptionMessage);
+        }
+        else
+        {
+            return argumentList;
+        }
     }
 
     /// <summary>

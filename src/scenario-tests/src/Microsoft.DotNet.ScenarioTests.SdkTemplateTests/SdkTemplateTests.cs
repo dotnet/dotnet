@@ -6,9 +6,8 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
 public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 {
-    ScenarioTestFixture _scenarioTestInput;
-    ITestOutputHelper _testOutputHelper;
-    DotNetSdkHelper _sdkHelper;
+    private readonly ScenarioTestFixture _scenarioTestInput;
+    private readonly DotNetSdkHelper _sdkHelper;
 
     public SdkTemplateTests(ScenarioTestFixture testInput, ITestOutputHelper outputHelper)
     {
@@ -18,8 +17,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         }
 
         _scenarioTestInput = testInput;
-        _testOutputHelper = outputHelper;
-        _sdkHelper = new DotNetSdkHelper(outputHelper, _scenarioTestInput.DotNetRoot, _scenarioTestInput.SdkVersion);
+        _sdkHelper = new DotNetSdkHelper(outputHelper, _scenarioTestInput.DotNetRoot, _scenarioTestInput.SdkVersion, _scenarioTestInput.BinlogDir);
     }
     
     [Theory]
@@ -28,6 +26,25 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     {
         var newTest = new SdkTemplateTest(
             nameof(SdkTemplateTests) + "Complex", language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetLanguages))]
+    [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
+    [Trait("SkipIfBuild", "SourceOnlyUnofficialBuild")] // Portable assets are not available for source-only unofficial builds.
+    [Trait("Category", "RequiresPortableAssets")]
+    public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
+    {
+        // This uses the wrong portable RID for non linux platforms when running the tests without supplying
+        // a portable RID. The VMR will supply one so the incorrectness applies to the test execution inside the
+        // scenario-tests repository only. https://github.com/dotnet/scenario-tests/issues/190 tracks removing this
+        // default.
+        string portableRid = _scenarioTestInput.PortableRid ?? $"linux-{_scenarioTestInput.TargetArchitecture}";
+
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests) + "ComplexPortable", language, portableRid, DotNetSdkTemplate.Console,
             DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex | DotNetSdkActions.PublishR2R);
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
@@ -84,7 +101,8 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
     
-    [Theory]
+    // Disabled due to https://github.com/dotnet/source-build/issues/4361
+    //[Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.VB)]
     [Trait("Category", "Offline")]
@@ -157,6 +175,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
+    [Trait("Category", "RequiresPortableAssets")]
     public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -168,6 +187,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
+    [Trait("Category", "RequiresPortableAssets")]
     public void VerifyWebAPITemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -188,6 +208,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Theory]
+    [Trait("Category", "RequiresNonTargetRidPackages")]
     [InlineData(DotNetLanguage.CSharp)]
     public void VerifyBlazorWasmTemplate(DotNetLanguage language)
     {
@@ -195,6 +216,57 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
             nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.BlazorWasm,
             DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [InlineData(DotNetLanguage.CSharp)]
+    public void VerifyRazorTemplate(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Razor,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Fact]
+    [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
+    [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
+    public void VerifyWebTemplatePublishBundledAot()
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests) + "Aot", DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Web,
+            DotNetSdkActions.PublishAot);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Fact(Skip = "https://github.com/dotnet/scenario-tests/issues/132")]
+    [Trait("Category", "Workload")]
+    [Trait("SkipIfBuild", "CommunityArchitecture")]     // SDK has no workloads that support community architectures.
+    public void VerifyWorkloadCmd()
+    {
+        var newTest = new DotnetWorkloadTest(
+            nameof(SdkTemplateTest), _scenarioTestInput.TargetRid,
+            DotNetSdkActions.FullWorkloadTest);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, "wasm-tools");
+    }
+
+    [Fact(Skip="https://github.com/dotnet/scenario-tests/issues/103")]
+    [Trait("Category", "Workload")]
+    [Trait("Category", "InProgress")]
+    public void VerifyAspireTemplate()
+    {
+        var setup = new DotnetWorkloadTest(
+            nameof(SdkTemplateTest), _scenarioTestInput.TargetRid,
+            DotNetSdkActions.WorkloadInstall);
+        setup.Execute(_sdkHelper, _scenarioTestInput.TestRoot, "aspire");
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Aspire,
+            DotNetSdkActions.Build | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+        var cleanup = new DotnetWorkloadTest(
+            nameof(SdkTemplateTest), _scenarioTestInput.TargetRid,
+            DotNetSdkActions.WorkloadUninstall);
+        cleanup.Execute(_sdkHelper, _scenarioTestInput.TestRoot, "aspire");
     }
 
     [Fact]

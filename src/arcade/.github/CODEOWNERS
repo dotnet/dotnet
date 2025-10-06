@@ -1,4 +1,5 @@
 # Users referenced in this file will automatically be requested as reviewers for PRs that modify the given paths.
 # See https://help.github.com/articles/about-code-owners/
 
-/eng/SourceBuild*                                                                 @dotnet/source-build-internal
+/eng/**/source-build.yml                                                          @dotnet/source-build
+/**/SourceBuild/                                                                  @dotnet/source-build

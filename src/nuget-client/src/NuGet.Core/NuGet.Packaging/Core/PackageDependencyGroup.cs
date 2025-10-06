@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Newtonsoft.Json;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.Shared;
@@ -17,6 +18,21 @@ namespace NuGet.Packaging
     {
         private readonly NuGetFramework _targetFramework;
         private readonly IEnumerable<PackageDependency> _packages;
+
+        [JsonConstructor]
+        private PackageDependencyGroup(NuGetFramework targetFramework)
+        {
+            if (targetFramework == null)
+            {
+                _targetFramework = NuGetFramework.AnyFramework;
+            }
+            else
+            {
+                _targetFramework = targetFramework;
+            }
+
+            _packages = new List<PackageDependency>();
+        }
 
         /// <summary>
         /// Dependency group
@@ -42,6 +58,7 @@ namespace NuGet.Packaging
         /// <summary>
         /// Dependency group target framework
         /// </summary>
+        [JsonProperty(PropertyName = "targetFramework")]
         public NuGetFramework TargetFramework
         {
             get { return _targetFramework; }
@@ -50,6 +67,7 @@ namespace NuGet.Packaging
         /// <summary>
         /// Package dependencies
         /// </summary>
+        [JsonProperty(PropertyName = "dependencies")]
         public IEnumerable<PackageDependency> Packages
         {
             get { return _packages; }

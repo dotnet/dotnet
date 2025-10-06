@@ -8,7 +8,7 @@ and the licenses under which Microsoft received such components are set forth be
 informational purposes only. Microsoft reserves all rights not expressly granted herein, whether by 
 implication, estoppel or otherwise.
 
-1. Newtonsoft version 13.0.1 (https://github.com/JamesNK/Newtonsoft.Json)
+1. Newtonsoft version 13.0.3 (https://github.com/JamesNK/Newtonsoft.Json)
 2. Mono.Cecil version 0.11.3 (https://github.com/jbevain/cecil)
 3. Nuget.Client version 6.8.0.117 \(https://github.com/NuGet/NuGet.Client)
 

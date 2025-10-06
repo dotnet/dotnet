@@ -23,7 +23,7 @@
                                         Whitespace;[ ];
                                         LeftBrace;[{];
                                         Whitespace;[ ];
-                                        Identifier;[var];
+                                        Keyword;[var];
                                         Whitespace;[ ];
                                         Identifier;[foo];
                                         Whitespace;[ ];
@@ -48,7 +48,7 @@
                                     CSharpStatementLiteral - [47..74)::27 - [ foo++; } while (foo<bar>);] - Gen<Stmt>
                                         Whitespace;[ ];
                                         Identifier;[foo];
-                                        Increment;[++];
+                                        CSharpOperator;[++];
                                         Semicolon;[;];
                                         Whitespace;[ ];
                                         RightBrace;[}];
@@ -83,7 +83,7 @@
                                         Whitespace;[ ];
                                         LeftBrace;[{];
                                         Whitespace;[ ];
-                                        Identifier;[var];
+                                        Keyword;[var];
                                         Whitespace;[ ];
                                         Identifier;[foo];
                                         Whitespace;[ ];
@@ -108,7 +108,7 @@
                                     CSharpStatementLiteral - [120..147)::27 - [ foo++; } while (foo<bar>);] - Gen<Stmt>
                                         Whitespace;[ ];
                                         Identifier;[foo];
-                                        Increment;[++];
+                                        CSharpOperator;[++];
                                         Semicolon;[;];
                                         Whitespace;[ ];
                                         RightBrace;[}];

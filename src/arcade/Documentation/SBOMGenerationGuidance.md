@@ -1,5 +1,7 @@
 # SBOM Generation Guidance
 
+### Note: this document needs an update, it is not up to date with respect to 1ES PT changes.  See https://github.com/dotnet/arcade/issues/16012
+
 ## Background
 
 An SBOM (Software Bill of Materials) is a formal record containing the details and supply chain
@@ -76,7 +78,7 @@ Arcade configurations. The template allows customization of behavior via the fol
 - `ManifestDirPath`: Determines where in the build agent the SBOM will be generated to, defaults to
   `$(Build.ArtifactStagingDirectory)/sbom`
 - `BuildDropPath` : Determines the directory that the SBOM tooling will use to find build outputs.
-  Defaults to $`(Build.SourcesDirectory)/artifacts` to match Arcade's convention. 
+  Defaults to $`(System.DefaultWorkingDirectory)/artifacts` to match Arcade's convention. 
 - `sbomContinueOnError`: By default the tasks are set up to not break the build and instead continue
   on error if anything goes wrong in the generation process.
 
@@ -244,7 +246,7 @@ for your release builds:
   ```
 
   It means that your build outputs might not match with the expected location for Arcade:
-  `$(Build.SourcesDirectory)/Artifacts`. In this case you should modify the `BuildDropPath`
+  `$(System.DefaultWorkingDirectory)/Artifacts`. In this case you should modify the `BuildDropPath`
   parameter of the template to point to your build's output directory. 
 
 - For any other problems with the tasks or templates, you can reach out to the [.NET Engineering

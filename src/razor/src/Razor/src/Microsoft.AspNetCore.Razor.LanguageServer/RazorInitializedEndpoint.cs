@@ -1,12 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -18,14 +18,10 @@ internal class RazorInitializedEndpoint : INotificationHandler<InitializedParams
     public async Task HandleNotificationAsync(InitializedParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         var onStartedItems = requestContext.LspServices.GetRequiredServices<IOnInitialized>();
-        var capabilitiesService = requestContext.GetRequiredService<IClientCapabilitiesService>();
-
-        var fileChangeDetectorManager = requestContext.LspServices.GetRequiredService<RazorFileChangeDetectorManager>();
-        await fileChangeDetectorManager.InitializedAsync().ConfigureAwait(false);
 
         foreach (var onStartedItem in onStartedItems)
         {
-            await onStartedItem.OnInitializedAsync(capabilitiesService.ClientCapabilities, cancellationToken).ConfigureAwait(false);
+            await onStartedItem.OnInitializedAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

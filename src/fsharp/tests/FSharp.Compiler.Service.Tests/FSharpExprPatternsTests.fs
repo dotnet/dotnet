@@ -8,7 +8,7 @@ open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.Service.Tests.Common
 open FSharp.Compiler.Text
 open FSharp.Compiler.Symbols
-open NUnit.Framework
+open Xunit
 
 module TASTCollecting =
 
@@ -25,7 +25,7 @@ module TASTCollecting =
         | Application (funcExpr, _typeArgs, argExprs) ->
             visitExpr handler funcExpr
             visitExprs handler argExprs
-        | Call (objExprOpt, memberOrFunc, _typeArgs1, _typeArgs2, argExprs) ->
+        | Call (objExprOpt, _memberOrFunc, _typeArgs1, _typeArgs2, argExprs) ->
             visitObjArg handler objExprOpt
             visitExprs handler argExprs
         | Coerce (_targetType, inpExpr) -> visitExpr handler inpExpr
@@ -132,7 +132,7 @@ let testPatterns handler source =
         Map.tryFind fileName files |> async.Return
 
     let projectOptions =
-        let _, projectOptions = mkTestFileAndOptions "" Array.empty
+        let _, projectOptions = mkTestFileAndOptions Array.empty
 
         { projectOptions with
             SourceFiles = [| "A.fs" |]
@@ -155,7 +155,7 @@ let testPatterns handler source =
         | _ -> ()
     | _, _ -> ()
 
-[<Test>]
+[<Fact>]
 let ``union case with type`` () =
     let implSource =
         """
@@ -171,5 +171,5 @@ let x = Case1 "bla"
     let handler: TASTCollecting.Handler =
         TASTCollecting.Handler.NewUnionCaseHandler lst.Add
 
-    Assert.DoesNotThrow(fun _ -> testPatterns handler implSource)
+    testPatterns handler implSource // check this doesn't throw
     Assert.Contains("Case1", lst)

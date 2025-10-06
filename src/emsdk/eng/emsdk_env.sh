@@ -7,7 +7,7 @@ if [ -z "${EMSDK_PATH}" ]; then
   exit 1
 fi
 TOADD_PATH_EMSCRIPTEN="$(realpath ${EMSDK_PATH}/emscripten)"
-echo "PATH += ${TOADD_PATH_EMSCRIPTEN}"
+echo "Prepending to PATH: ${TOADD_PATH_EMSCRIPTEN}"
 export PATH=${TOADD_PATH_EMSCRIPTEN}:$PATH
 
 # llvm (clang, etc)
@@ -17,7 +17,7 @@ if [ -z "${DOTNET_EMSCRIPTEN_LLVM_ROOT}" ]; then
 fi
 TOADD_PATH_LLVM="$(realpath ${DOTNET_EMSCRIPTEN_LLVM_ROOT})"
 if [ "${TOADD_PATH_EMSCRIPTEN}" != "${TOADD_PATH_LLVM}" ]; then
-  echo "PATH += ${TOADD_PATH_LLVM}"
+  echo "Prepending to PATH: ${TOADD_PATH_LLVM}"
   export PATH=${TOADD_PATH_LLVM}:$PATH
 fi
 
@@ -28,7 +28,7 @@ if [ -z "${DOTNET_EMSCRIPTEN_NODE_JS}" ]; then
 fi
 TOADD_PATH_NODEJS="$(dirname ${DOTNET_EMSCRIPTEN_NODE_JS})"
 if [ "${TOADD_PATH_EMSCRIPTEN}" != "${TOADD_PATH_NODEJS}" ] && [ "${TOADD_PATH_LLVM}" != "${TOADD_PATH_NODEJS}" ]; then
-  echo "PATH += ${TOADD_PATH_NODEJS}"
+  echo "Prepending to PATH: ${TOADD_PATH_NODEJS}"
   export PATH=${TOADD_PATH_NODEJS}:$PATH
 fi
 
@@ -39,6 +39,6 @@ if [ -z "${DOTNET_EMSCRIPTEN_BINARYEN_ROOT}" ]; then
 fi
 TOADD_PATH_BINARYEN="$(realpath ${DOTNET_EMSCRIPTEN_BINARYEN_ROOT}/bin)"
 if [ "${TOADD_PATH_EMSCRIPTEN}" != "${TOADD_PATH_BINARYEN}" ] && [ "${TOADD_PATH_LLVM}" != "${TOADD_PATH_BINARYEN}" ] && [ "${TOADD_PATH_NODEJS}" != "${TOADD_PATH_BINARYEN}" ]; then
-  echo "PATH += ${TOADD_PATH_BINARYEN}"
+  echo "Prepending to PATH: ${TOADD_PATH_BINARYEN}"
   export PATH=${TOADD_PATH_BINARYEN}:$PATH
 fi

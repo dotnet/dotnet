@@ -211,6 +211,20 @@ interface ICLRRuntimeLocator : IUnknown
     HRESULT GetRuntimeBase([out] CLRDATA_ADDRESS* baseAddress);
 };
 
+[
+    object,
+    local,
+    uuid(17d5b8c6-34a9-407f-af4f-a930201d4e02),
+    pointer_default(unique)
+]
+interface ICLRContractLocator : IUnknown
+{
+    /*
+     Returns the address of the runtime's contract descriptor.
+     */
+    HRESULT GetContractDescriptor([out] CLRDATA_ADDRESS* contractAddress);
+}
+
 /*
  * Interface used by the data access services layer to locate metadata
  * of assemblies in a target.
@@ -308,10 +322,12 @@ interface ICLRDataLoggingCallback : IUnknown
 typedef enum CLRDataEnumMemoryFlags
 {
     CLRDATA_ENUM_MEM_DEFAULT = 0x0,
-    CLRDATA_ENUM_MEM_MINI = CLRDATA_ENUM_MEM_DEFAULT,       // generating skinny mini-dump
-    CLRDATA_ENUM_MEM_HEAP = 0x1,        // generating heap dump
-    CLRDATA_ENUM_MEM_TRIAGE = 0x2,      // generating triage mini-dump
-
+    CLRDATA_ENUM_MEM_MINI = CLRDATA_ENUM_MEM_DEFAULT,   // generating skinny mini-dump
+    CLRDATA_ENUM_MEM_HEAP = 0x1,                        // generating heap dump
+    CLRDATA_ENUM_MEM_TRIAGE = 0x2,                      // generating triage mini-dump
+    /* Generate heap dumps faster with less memory usage than CLRDATA_ENUM_MEM_HEAP by adding
+       the loader heaps instead of traversing all the individual runtime data structures. */
+    CLRDATA_ENUM_MEM_HEAP2 = 0x3,
     /* More bits to be added here later */
 } CLRDataEnumMemoryFlags;
 

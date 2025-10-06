@@ -3,7 +3,6 @@
 
 using System.Text.RegularExpressions;
 
-using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.TestPlatform.Build.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,7 +46,7 @@ public class TestTaskUtilsTests
     {
         const string codeCoverageOption = "Code Coverage";
 
-        _vsTestTask.VSTestCollect = new string[] { codeCoverageOption };
+        _vsTestTask.VSTestCollect = [codeCoverageOption];
         _vsTestTask.VSTestBlame = true;
 
         const string arg1 = "RunConfiguration.ResultsDirectory=Path having Space";
@@ -79,7 +78,7 @@ public class TestTaskUtilsTests
     public void CreateArgumentShouldNotSetConsoleLoggerVerbosityIfConsoleLoggerIsGivenInArgs()
     {
         _vsTestTask.VSTestVerbosity = "diag";
-        _vsTestTask.VSTestLogger = new string[] { "Console;Verbosity=quiet" };
+        _vsTestTask.VSTestLogger = ["Console;Verbosity=quiet"];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -210,7 +209,7 @@ public class TestTaskUtilsTests
     [TestMethod]
     public void CreateArgumentShouldPreserveWhiteSpaceInLogger()
     {
-        _vsTestTask.VSTestLogger = new string[] { "trx;LogFileName=foo bar.trx" };
+        _vsTestTask.VSTestLogger = ["trx;LogFileName=foo bar.trx"];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -234,7 +233,7 @@ public class TestTaskUtilsTests
     [TestMethod]
     public void CreateArgumentShouldAddMultipleTestAdapterPaths()
     {
-        _vsTestTask.VSTestTestAdapterPath = new ITaskItem[] { new TaskItem("path1"), new TaskItem("path2") };
+        _vsTestTask.VSTestTestAdapterPath = [new TaskItem("path1"), new TaskItem("path2")];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -245,7 +244,7 @@ public class TestTaskUtilsTests
     [TestMethod]
     public void CreateArgumentShouldAddMultipleLoggers()
     {
-        _vsTestTask.VSTestLogger = new string[] { "trx;LogFileName=foo bar.trx", "console" };
+        _vsTestTask.VSTestLogger = ["trx;LogFileName=foo bar.trx", "console"];
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
         StringAssert.Contains(commandline, "--logger:\"trx;LogFileName=foo bar.trx\"");
@@ -257,7 +256,7 @@ public class TestTaskUtilsTests
     {
         const string traceDataCollectorDirectoryPath = @"c:\path\to\tracedata collector";
         _vsTestTask.VSTestTraceDataCollectorDirectoryPath = new TaskItem(traceDataCollectorDirectoryPath);
-        _vsTestTask.VSTestCollect = new string[] { "code coverage" };
+        _vsTestTask.VSTestCollect = ["code coverage"];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -270,7 +269,7 @@ public class TestTaskUtilsTests
     {
         const string traceDataCollectorDirectoryPath = @"c:\path\to\tracedata collector";
         _vsTestTask.VSTestTraceDataCollectorDirectoryPath = new TaskItem(traceDataCollectorDirectoryPath);
-        _vsTestTask.VSTestCollect = new string[] { "not code coverage" };
+        _vsTestTask.VSTestCollect = ["not code coverage"];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -296,7 +295,7 @@ public class TestTaskUtilsTests
     {
         _vsTestTask.VSTestTraceDataCollectorDirectoryPath = null;
         _vsTestTask.VSTestSetting = @"c:\path\to\sample.runsettings";
-        _vsTestTask.VSTestCollect = new string[] { "code coverage" };
+        _vsTestTask.VSTestCollect = ["code coverage"];
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 

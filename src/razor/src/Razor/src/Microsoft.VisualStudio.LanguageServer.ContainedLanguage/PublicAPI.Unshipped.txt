@@ -1,6 +1,21 @@
 #nullable enable
+abstract Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericMessageInterceptor.ApplyChangesAsync<TJsonToken>(TJsonToken message, string! containedLanguageName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>>!
 Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocument.TryGetVirtualDocument<TVirtualDocument>(System.Uri! virtualDocumentUri, out TVirtualDocument? virtualDocument) -> bool
 Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentSnapshot.TryGetAllVirtualDocuments<TVirtualDocument>(out TVirtualDocument![]? virtualDocuments) -> bool
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionMiddleLayer<TJsonToken>
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionMiddleLayer<TJsonToken>.CanHandle(string! methodName) -> bool
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionMiddleLayer<TJsonToken>.GenericInterceptionMiddleLayer(Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.InterceptorManager! interceptorManager, string! contentType) -> void
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionMiddleLayer<TJsonToken>.HandleNotificationAsync(string! methodName, TJsonToken methodParam, System.Func<TJsonToken, System.Threading.Tasks.Task!>! sendNotification) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionMiddleLayer<TJsonToken>.HandleRequestAsync(string! methodName, TJsonToken methodParam, System.Func<TJsonToken, System.Threading.Tasks.Task<TJsonToken?>!>! sendRequest) -> System.Threading.Tasks.Task<TJsonToken?>!
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>.ChangedDocumentUri.get -> bool
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>.GenericInterceptionResult() -> void
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>.GenericInterceptionResult(TJsonToken? newToken, bool changedDocumentUri) -> void
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>.UpdatedToken.get -> TJsonToken?
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericMessageInterceptor
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericMessageInterceptor.GenericMessageInterceptor() -> void
+static readonly Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>.NoChange -> Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.GenericInterceptionResult<TJsonToken>
 virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocument.UpdateVirtualDocument<TVirtualDocument>(TVirtualDocument! virtualDocument, System.Collections.Generic.IReadOnlyList<Microsoft.VisualStudio.Text.ITextChange!>! changes, int hostDocumentVersion, object? state) -> Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentSnapshot!
 virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentManager.RefreshVirtualDocuments() -> void
+virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception.InterceptorManager.ProcessGenericInterceptorsAsync<TJsonToken>(string! methodName, TJsonToken message, string! contentType, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TJsonToken?>!
 virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.VirtualDocumentFactory.TryCreateMultipleFor(Microsoft.VisualStudio.Text.ITextBuffer! hostDocumentBuffer, out Microsoft.VisualStudio.LanguageServer.ContainedLanguage.VirtualDocument![]? virtualDocuments) -> bool

@@ -30,23 +30,19 @@ type internal History() =
         list.Clear()
         current <- -1
 
-    member _.Add line =
+    member _.Add(line: string | null) =
         match line with
         | null
         | "" -> ()
         | _ -> list.Add(line)
 
-    member _.AddLast line =
+    member _.AddLast(line: string | null) =
         match line with
         | null
         | "" -> ()
         | _ ->
             list.Add(line)
             current <- list.Count
-
-    // Dead code
-    // member x.First() = current <- 0; x.Current
-    // member x.Last() = current <- list.Count - 1; x.Current
 
     member x.Previous() =
         if (list.Count > 0) then
@@ -191,7 +187,7 @@ module internal Utils =
     ///
     /// if BufferWidth = Console.BufferWidth - 1, the output will be
     ///
-    /// #> 一二三四五六七八九零一二三四五六七八九零# (零 is printed, but will not correctly cauculate cursor position)
+    /// #> 一二三四五六七八九零一二三四五六七八九零# (零 is printed, but will not correctly calculate cursor position)
     ///
     /// #一二三四五六七八九零                      # (cursor may appear in the middle of the character)
     ///

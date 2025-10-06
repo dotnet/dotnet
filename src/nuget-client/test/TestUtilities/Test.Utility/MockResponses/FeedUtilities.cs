@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Versioning;
 
@@ -95,7 +96,7 @@ namespace Test.Utility
         /// <summary>
         /// Create a registration blob for a package
         /// </summary>
-        public static JObject CreatePackageRegistrationBlob(string serverUri, string id, IEnumerable<KeyValuePair<string, bool>> versionToListedMap)
+        public static JObject CreatePackageRegistrationBlob(string serverUri, string id, IEnumerable<KeyValuePair<string, bool>> versionToListedMap, ISet<PackageIdentity> deprecatedPackages)
         {
             var indexUrl = string.Format(CultureInfo.InvariantCulture,
                                     "{0}reg/{1}/index.json", serverUri, id);
@@ -132,13 +133,18 @@ namespace Test.Utility
             page.Add(new JProperty("items", items));
             foreach (var versionToListed in versionToListedMap)
             {
-                var item = GetPackageRegistrationItem(serverUri, id, version: versionToListed.Key, listed: versionToListed.Value, indexUrl);
+                var item = GetPackageRegistrationItem(serverUri,
+                    id,
+                    version: versionToListed.Key,
+                    listed: versionToListed.Value,
+                    isDeprecated: deprecatedPackages.Contains(new PackageIdentity(id, new NuGetVersion(versionToListed.Key))),
+                    indexUrl);
                 items.Add(item);
             }
             return regBlob;
         }
 
-        private static JObject GetPackageRegistrationItem(string serverUri, string id, string version, bool listed, string indexUrl)
+        private static JObject GetPackageRegistrationItem(string serverUri, string id, string version, bool listed, bool isDeprecated, string indexUrl)
         {
             var item = new JObject();
 
@@ -157,6 +163,10 @@ namespace Test.Utility
             catalogEntry.Add(new JProperty("@id",
                 string.Format(CultureInfo.InvariantCulture, "{0}catalog/{1}/{2}.json", serverUri, id, version)));
 
+            if (isDeprecated)
+            {
+                catalogEntry.Add(GetDeprecatedEntry());
+            }
             catalogEntry.Add(new JProperty("@type", "PackageDetails"));
             catalogEntry.Add(new JProperty("authors", "test"));
             catalogEntry.Add(new JProperty("description", "test"));
@@ -175,6 +185,20 @@ namespace Test.Utility
             catalogEntry.Add(new JProperty("tags", new JArray()));
 
             return item;
+
+            static JProperty GetDeprecatedEntry()
+            {
+                return new JProperty(
+                        "deprecation",
+                        new JObject
+                        {
+                            new JProperty("reasons", new JArray
+                            {
+                                "CriticalBugs"
+                            }),
+                            new JProperty("message", "This package is unstable and broken!")
+                        });
+            }
         }
 
         public static void AddVulnerabilitiesResource(JObject index, string serverUri)

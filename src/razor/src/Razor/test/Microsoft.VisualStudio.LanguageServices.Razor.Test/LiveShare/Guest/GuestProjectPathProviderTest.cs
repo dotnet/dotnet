@@ -1,15 +1,16 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 public class GuestProjectPathProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
@@ -97,7 +98,7 @@ public class GuestProjectPathProviderTest(ITestOutputHelper testOutput) : Toolin
 
         var proxy = new StrictMock<IProjectHierarchyProxy>();
         proxy
-            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, CancellationToken.None))
+            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Uri?)null);
 
         var proxyAccessor = StrictMock.Of<IProxyAccessor>(a =>
@@ -146,7 +147,7 @@ public class GuestProjectPathProviderTest(ITestOutputHelper testOutput) : Toolin
 
         var proxy = new StrictMock<IProjectHierarchyProxy>();
         proxy
-            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, CancellationToken.None))
+            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, It.IsAny<CancellationToken>()))
             .ReturnsAsync(projectFilePathUri)
             .Verifiable();
 

@@ -22,8 +22,8 @@ public class SelfContainedAppTests : AcceptanceTestBase
         // see https://github.com/dotnet/runtime/issues/3569#issuecomment-595820524 and below for description of how it works
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        // the app is published to win10-x64 because of the runtime identifier in the project
-        var assemblyPath = GetAssetFullPath($@"win10-x64{Path.DirectorySeparatorChar}SelfContainedAppTestProject.dll");
+        // the app is published to win-x64 because of the runtime identifier in the project
+        var assemblyPath = GetAssetFullPath($@"win-x64{Path.DirectorySeparatorChar}SelfContainedAppTestProject.dll");
         var arguments = PrepareArguments(assemblyPath, null, null, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         InvokeVsTest(arguments);
 

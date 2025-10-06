@@ -4,12 +4,11 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Threading;
+using System.Linq;
 using System.Xml;
 
 using Microsoft.CodeCoverage.Core;
-using Microsoft.CodeCoverage.IO;
-using Microsoft.CodeCoverage.IO.Coverage;
+using Microsoft.CodeCoverage.Core.Reports.Coverage;
 using Microsoft.TestPlatform.TestUtilities;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,18 +29,12 @@ public class CodeCoverageAcceptanceTestBase : AcceptanceTestBase
             $"Microsoft.CodeCoverage.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "build", "netstandard2.0");
     }
 
-    protected static XmlNode? GetModuleNode(XmlNode node, string name)
+    protected static ModuleData? GetModule(CoverageReport coverageReport, string name)
     {
-        var moduleNode = GetNode(node, "module", name);
+        var module = coverageReport.Modules.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
+        module ??= coverageReport.Modules.FirstOrDefault(m => string.Equals(m.Name, Path.GetFileNameWithoutExtension(name), StringComparison.OrdinalIgnoreCase));
 
-        if (moduleNode == null)
-        {
-            moduleNode = GetNode(node, "package", name);
-
-            moduleNode ??= GetNode(node, "package", Path.GetFileNameWithoutExtension(name));
-        }
-
-        return moduleNode;
+        return module;
     }
 
     protected static XmlNode? GetNode(XmlNode node, string type, string name)
@@ -49,30 +42,18 @@ public class CodeCoverageAcceptanceTestBase : AcceptanceTestBase
         return node.SelectSingleNode($"//{type}[@name='{name}']") ?? node.SelectSingleNode($"//{type}[@name='{name.ToLower(CultureInfo.CurrentCulture)}']");
     }
 
-    protected static XmlDocument GetXmlCoverage(string coverageResult, TempDirectory tempDirectory)
+    protected static CoverageReport GetCoverageReport(string coverageResult)
     {
-        var coverage = new XmlDocument();
-
-        if (coverageResult.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-        {
-            coverage.Load(coverageResult);
-            return coverage;
-        }
-
         CoverageFileUtilityV2 utility = new(new TpCoverageFileConfiguration());
-        var output = Path.Combine(tempDirectory.Path, Guid.NewGuid().ToString() + ".xml");
-        utility.ToXmlFileAsync(coverageResult, output, CancellationToken.None).Wait();
-        coverage.Load(output);
-        return coverage;
+        return utility.ReadCoverageReportAsync(coverageResult, default).Result;
     }
 
-    protected static void AssertCoverage(XmlNode node, double expectedCoverage)
+    protected static void AssertCoverage(ModuleData module, double expectedCoverage)
     {
-        var coverage = node.Attributes!["block_coverage"] != null
-            ? double.Parse(node.Attributes!["block_coverage"]!.Value, CultureInfo.InvariantCulture)
-            : double.Parse(node.Attributes!["line-rate"]!.Value, CultureInfo.InvariantCulture) * 100;
-        Console.WriteLine($"Checking coverage for {node.Name} {node.Attributes!["name"]!.Value}. Expected at least: {expectedCoverage}. Result: {coverage}");
-        Assert.IsTrue(coverage > expectedCoverage, $"Coverage check failed for {node.Name} {node.Attributes!["name"]!.Value}. Expected at least: {expectedCoverage}. Found: {coverage}");
+        string coverageData = module.CoverageBuffer.Length == 0 ? module.LineCoverage : module.BlockCoverage;
+        var coverage = double.Parse(coverageData, CultureInfo.InvariantCulture);
+        Console.WriteLine($"Checking coverage for {module.Name}. Expected at least: {expectedCoverage}. Result: {coverage}");
+        Assert.IsTrue(coverage > expectedCoverage, $"Coverage check failed for {module.Name}. Expected at least: {expectedCoverage}. Found: {coverage}");
     }
 
     protected static string GetCoverageFileNameFromTrx(string trxFilePath, string resultsDirectory)

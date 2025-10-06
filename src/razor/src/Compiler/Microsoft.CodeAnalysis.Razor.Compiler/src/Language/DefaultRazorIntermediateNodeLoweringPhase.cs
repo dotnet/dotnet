@@ -4,11 +4,13 @@
 #nullable disable
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -18,17 +20,9 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-#pragma warning disable CS0618 // Type or member is obsolete
 internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase, IRazorIntermediateNodeLoweringPhase
 {
-    private IRazorCodeGenerationOptionsFeature _optionsFeature;
-
-    protected override void OnInitialized()
-    {
-        _optionsFeature = GetRequiredFeature<IRazorCodeGenerationOptionsFeature>();
-    }
-
-    protected override void ExecuteCore(RazorCodeDocument codeDocument)
+    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var syntaxTree = codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
@@ -36,34 +30,36 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         // This might not have been set if there are no tag helpers.
         var tagHelperContext = codeDocument.GetTagHelperContext();
 
-        var document = new DocumentIntermediateNode();
-        var builder = IntermediateNodeBuilder.Create(document);
+        var documentNode = new DocumentIntermediateNode();
+        var builder = IntermediateNodeBuilder.Create(documentNode);
 
-        document.Options = codeDocument.GetCodeGenerationOptions() ?? _optionsFeature.GetOptions();
+        documentNode.Options = codeDocument.CodeGenerationOptions;
 
         // The import documents should be inserted logically before the main document.
         var imports = codeDocument.GetImportSyntaxTrees();
-        var importedUsings = ImportDirectives(document, builder, syntaxTree.Options, imports);
+        var importedUsings = !imports.IsEmpty
+            ? ImportDirectives(documentNode, builder, syntaxTree.Options, imports)
+            : [];
 
         // Lower the main document, appending after the imported directives.
         //
         // We need to decide up front if this document is a "component" file. This will affect how
         // lowering behaves.
         LoweringVisitor visitor;
-        if (FileKinds.IsComponentImport(codeDocument.GetFileKind()) &&
-            syntaxTree.Options.FeatureFlags.AllowComponentFileKind)
+        if (codeDocument.FileKind.IsComponentImport() &&
+            syntaxTree.Options.AllowComponentFileKind)
         {
-            visitor = new ComponentImportFileKindVisitor(document, builder, syntaxTree.Options.FeatureFlags)
+            visitor = new ComponentImportFileKindVisitor(documentNode, builder, syntaxTree.Options)
             {
                 SourceDocument = syntaxTree.Source,
             };
 
             visitor.Visit(syntaxTree.Root);
         }
-        else if (FileKinds.IsComponent(codeDocument.GetFileKind()) &&
-            syntaxTree.Options.FeatureFlags.AllowComponentFileKind)
+        else if (codeDocument.FileKind.IsComponent() &&
+            syntaxTree.Options.AllowComponentFileKind)
         {
-            visitor = new ComponentFileKindVisitor(document, builder, syntaxTree.Options.FeatureFlags)
+            visitor = new ComponentFileKindVisitor(documentNode, builder, syntaxTree.Options)
             {
                 SourceDocument = syntaxTree.Source,
             };
@@ -72,7 +68,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         }
         else
         {
-            visitor = new LegacyFileKindVisitor(document, builder, tagHelperContext?.Prefix, syntaxTree.Options.FeatureFlags)
+            visitor = new LegacyFileKindVisitor(documentNode, builder, tagHelperContext?.Prefix, syntaxTree.Options)
             {
                 SourceDocument = syntaxTree.Source,
             };
@@ -126,27 +122,24 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             lastDirective.AppendLineDefaultAndHidden = true;
         }
 
-        PostProcessImportedDirectives(document);
+        PostProcessImportedDirectives(documentNode);
 
         // The document should contain all errors that currently exist in the system. This involves
         // adding the errors from the primary and imported syntax trees.
-        for (var i = 0; i < syntaxTree.Diagnostics.Count; i++)
+        foreach (var diagnostic in syntaxTree.Diagnostics)
         {
-            document.Diagnostics.Add(syntaxTree.Diagnostics[i]);
+            documentNode.AddDiagnostic(diagnostic);
         }
 
-        if (imports is { IsDefault: false } importsArray)
+        foreach (var import in imports)
         {
-            foreach (var import in importsArray)
+            foreach (var diagnostic in import.Diagnostics)
             {
-                for (var j = 0; j < import.Diagnostics.Count; j++)
-                {
-                    document.Diagnostics.Add(import.Diagnostics[j]);
-                }
+                documentNode.AddDiagnostic(diagnostic);
             }
         }
 
-        codeDocument.SetDocumentIntermediateNode(document);
+        codeDocument.SetDocumentNode(documentNode);
 
         static bool TryRemoveGlobalPrefixFromDefaultUsing(in UsingReference usingReference, out ReadOnlySpan<char> trimmedNamespace)
         {
@@ -180,12 +173,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         RazorParserOptions options,
         ImmutableArray<RazorSyntaxTree> imports)
     {
-        if (imports.IsDefaultOrEmpty)
-        {
-            return Array.Empty<UsingReference>();
-        }
+        Debug.Assert(!imports.IsDefaultOrEmpty);
 
-        var importsVisitor = new ImportsVisitor(document, builder, options.FeatureFlags);
+        var importsVisitor = new ImportsVisitor(document, builder, options);
         foreach (var import in imports)
         {
             importsVisitor.SourceDocument = import.Source;
@@ -197,16 +187,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
     private static void PostProcessImportedDirectives(DocumentIntermediateNode document)
     {
-        var directives = document.FindDescendantReferences<DirectiveIntermediateNode>();
-        using var _ = HashSetPool<DirectiveDescriptor>.GetPooledObject(out var seenDirectives);
-        for (var i = directives.Count - 1; i >= 0; i--)
+        using var _ = ReferenceEqualityHashSetPool<DirectiveDescriptor>.GetPooledObject(out var seenDirectives);
+        var references = document.FindDescendantReferences<DirectiveIntermediateNode>();
+
+        for (var i = references.Length - 1; i >= 0; i--)
         {
-            var reference = directives[i];
-            var directive = (DirectiveIntermediateNode)reference.Node;
+            var reference = references[i];
+            var directive = reference.Node;
             var descriptor = directive.Directive;
             var seenDirective = !seenDirectives.Add(descriptor);
 
-            if (!directive.IsImported())
+            if (!directive.IsImported)
             {
                 continue;
             }
@@ -230,7 +221,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         if (descriptor.Usage == DirectiveUsage.FileScopedSinglyOccurring)
                         {
                             // A block directive cannot be imported.
-                            document.Diagnostics.Add(
+                            document.AddDiagnostic(
                                 RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported(descriptor.Directive));
                         }
 
@@ -288,14 +279,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         protected readonly IntermediateNodeBuilder _builder;
         protected readonly DocumentIntermediateNode _document;
         protected readonly List<UsingReference> _usings;
-        protected readonly RazorParserFeatureFlags _featureFlags;
+        protected readonly RazorParserOptions _options;
 
-        public LoweringVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, RazorParserFeatureFlags featureFlags)
+        public LoweringVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, RazorParserOptions options)
         {
             _document = document;
             _builder = builder;
             _usings = new List<UsingReference>();
-            _featureFlags = featureFlags;
+            _options = options;
         }
 
         public IReadOnlyList<UsingReference> Usings => _usings;
@@ -333,7 +324,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                 for (var i = 0; i < diagnostics.Length; i++)
                 {
-                    directiveNode.Diagnostics.Add(diagnostics[i]);
+                    directiveNode.AddDiagnostic(diagnostics[i]);
                 }
 
                 _builder.Push(directiveNode);
@@ -391,7 +382,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                         for (var i = 0; i < addTagHelperChunkGenerator.Diagnostics.Count; i++)
                         {
-                            directiveNode.Diagnostics.Add(addTagHelperChunkGenerator.Diagnostics[i]);
+                            directiveNode.AddDiagnostic(addTagHelperChunkGenerator.Diagnostics[i]);
                         }
 
                         _builder.Push(directiveNode);
@@ -430,7 +421,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                         for (var i = 0; i < removeTagHelperChunkGenerator.Diagnostics.Count; i++)
                         {
-                            directiveNode.Diagnostics.Add(removeTagHelperChunkGenerator.Diagnostics[i]);
+                            directiveNode.AddDiagnostic(removeTagHelperChunkGenerator.Diagnostics[i]);
                         }
 
                         _builder.Push(directiveNode);
@@ -469,7 +460,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                         for (var i = 0; i < tagHelperPrefixChunkGenerator.Diagnostics.Count; i++)
                         {
-                            directiveNode.Diagnostics.Add(tagHelperPrefixChunkGenerator.Diagnostics[i]);
+                            directiveNode.AddDiagnostic(tagHelperPrefixChunkGenerator.Diagnostics[i]);
                         }
 
                         _builder.Push(directiveNode);
@@ -499,38 +490,57 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             return node.GetSourceSpan(SourceDocument);
         }
 
-        protected static SyntaxList<SyntaxToken> MergeLiterals(
-            SyntaxList<SyntaxToken>? literal1,
-            SyntaxList<SyntaxToken>? literal2,
-            SyntaxList<SyntaxToken>? literal3 = null,
-            SyntaxList<SyntaxToken>? literal4 = null,
-            SyntaxList<SyntaxToken>? literal5 = null)
+        protected static SyntaxTokenList MergeTokenLists(
+            SyntaxTokenList? literal1,
+            SyntaxTokenList? literal2,
+            SyntaxTokenList? literal3 = null,
+            SyntaxTokenList? literal4 = null,
+            SyntaxTokenList? literal5 = null)
         {
-            using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+            using var _ = ArrayPool<SyntaxTokenList>.Shared.GetPooledArraySpan(5, out var tokenLists);
+            var tokenListsCount = 0;
+            var count = 0;
 
             if (literal1 is { } tokens1)
             {
-                builder.AddRange(tokens1);
+                tokenLists[tokenListsCount++] = tokens1;
+                count += tokens1.Count;
             }
 
             if (literal2 is { } tokens2)
             {
-                builder.AddRange(tokens2);
+                tokenLists[tokenListsCount++] = tokens2;
+                count += tokens2.Count;
             }
 
             if (literal3 is { } tokens3)
             {
-                builder.AddRange(tokens3);
+                tokenLists[tokenListsCount++] = tokens3;
+                count += tokens3.Count;
             }
 
             if (literal4 is { } tokens4)
             {
-                builder.AddRange(tokens4);
+                tokenLists[tokenListsCount++] = tokens4;
+                count += tokens4.Count;
             }
 
             if (literal5 is { } tokens5)
             {
-                builder.AddRange(tokens5);
+                tokenLists[tokenListsCount++] = tokens5;
+                count += tokens5.Count;
+            }
+
+            if (count == 0)
+            {
+                return default;
+            }
+
+            using var builder = new PooledArrayBuilder<SyntaxToken>(count);
+
+            foreach (var tokenList in tokenLists[..tokenListsCount])
+            {
+                builder.AddRange(tokenList);
             }
 
             return builder.ToList();
@@ -544,14 +554,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         {
             public int Count { get; } = Math.Max(list.Count - start, 0);
 
-            public SyntaxNode this[int index] => list[start + index];
+            public SyntaxNodeOrToken this[int index] => list[start + index];
 
             public ChildNodesHelper Skip(int count)
             {
                 return new ChildNodesHelper(list, start + count);
             }
 
-            public SyntaxNode FirstOrDefault() => Count > 0 ? this[0] : null;
+            public SyntaxNodeOrToken FirstOrDefault() => Count > 0 ? this[0] : default;
 
             public bool TryCast<TNode>(out ImmutableArray<TNode> result)
             {
@@ -565,7 +575,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                 for (var i = start; i < list.Count; i++)
                 {
-                    if (list[i] is not TNode node)
+                    if (list[i].AsNode() is not TNode node)
                     {
                         result = default;
                         return false;
@@ -574,14 +584,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.Add(node);
                 }
 
-                result = builder.DrainToImmutable();
+                result = builder.ToImmutableAndClear();
                 return true;
             }
         }
 
         protected static MarkupTextLiteralSyntax MergeAttributeValue(MarkupLiteralAttributeValueSyntax node)
         {
-            var valueTokens = MergeLiterals(node.Prefix?.LiteralTokens, node.Value?.LiteralTokens);
+            var valueTokens = MergeTokenLists(
+                node.Prefix?.LiteralTokens,
+                node.Value?.LiteralTokens);
+
             var rewritten = node.Prefix?.Update(valueTokens, node.Prefix.ChunkGenerator) ?? node.Value?.Update(valueTokens, node.Value.ChunkGenerator);
             rewritten = (MarkupTextLiteralSyntax)rewritten?.Green.CreateRed(node, node.Position);
 
@@ -600,8 +613,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         private readonly HashSet<string> _renderedBoundAttributeNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly string _tagHelperPrefix;
 
-        public LegacyFileKindVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, string tagHelperPrefix, RazorParserFeatureFlags featureFlags)
-            : base(document, builder, featureFlags)
+        public LegacyFileKindVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, string tagHelperPrefix, RazorParserOptions options)
+            : base(document, builder, options)
         {
             _tagHelperPrefix = tagHelperPrefix;
         }
@@ -613,16 +626,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         //  Suffix="
         public override void VisitMarkupAttributeBlock(MarkupAttributeBlockSyntax node)
         {
-            var prefixTokens = MergeLiterals(
+            var prefixTokens = MergeTokenLists(
                 node.NamePrefix?.LiteralTokens,
                 node.Name.LiteralTokens,
                 node.NameSuffix?.LiteralTokens,
-                node.EqualsToken != null ? new SyntaxList<SyntaxToken>(node.EqualsToken) : default,
+                new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
+
             var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
-            if (!_featureFlags.AllowConditionalDataDashAttributes && name.StartsWith("data-", StringComparison.OrdinalIgnoreCase))
+            if (!_options.AllowConditionalDataDashAttributes && name.StartsWith("data-", StringComparison.OrdinalIgnoreCase))
             {
                 Visit(prefix);
                 Visit(node.Value);
@@ -632,11 +646,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 if (node.Value is { } blockSyntax)
                 {
-                    var children = new ChildNodesHelper(blockSyntax.ChildNodes());
+                    var children = new ChildNodesHelper(blockSyntax.ChildNodesAndTokens());
 
                     if (children.TryCast<MarkupLiteralAttributeValueSyntax>(out var attributeLiteralArray))
                     {
-                        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                        using var builder = new PooledArrayBuilder<SyntaxToken>();
 
                         foreach (var literal in attributeLiteralArray)
                         {
@@ -646,7 +660,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
                         var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
-                        var mergedLiterals = MergeLiterals(prefix?.LiteralTokens, rewritten.LiteralTokens, node.ValueSuffix?.LiteralTokens);
+                        var mergedLiterals = MergeTokenLists(
+                            prefix?.LiteralTokens,
+                            rewritten.LiteralTokens,
+                            node.ValueSuffix?.LiteralTokens);
+
                         var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
                         Visit(mergedAttribute);
 
@@ -670,7 +688,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
         {
-            if (!_featureFlags.AllowConditionalDataDashAttributes)
+            if (!_options.AllowConditionalDataDashAttributes)
             {
                 var name = node.Name.GetContent();
 
@@ -682,9 +700,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
 
             // Minimized attributes are just html content.
-            var literals = MergeLiterals(
+            var literals = MergeTokenLists(
                 node.NamePrefix?.LiteralTokens,
                 node.Name?.LiteralTokens);
+
             var literal = SyntaxFactory.MarkupTextLiteral(literals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
 
             Visit(literal);
@@ -697,11 +716,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public override void VisitMarkupDynamicAttributeValue(MarkupDynamicAttributeValueSyntax node)
         {
             var containsExpression = false;
-            var descendantNodes = node.DescendantNodes(n =>
-            {
-                // Don't go into sub block. They may contain expressions but we only care about the top level.
-                return !(n.Parent is CSharpCodeBlockSyntax);
-            });
+
+            // Don't go into sub block. They may contain expressions but we only care about the top level.
+            var descendantNodes = node.DescendantNodes(static n => n.Parent is not CSharpCodeBlockSyntax);
+
             foreach (var child in descendantNodes)
             {
                 if (child is CSharpImplicitExpressionSyntax || child is CSharpExplicitExpressionSyntax)
@@ -740,13 +758,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 Source = BuildSourceSpanFromNode(node),
             });
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((MarkupLiteralAttributeValueSyntax)node).Value?.GetContent() ?? string.Empty,
-                Kind = TokenKind.Html,
-                Source = BuildSourceSpanFromNode(node.Value)
-            });
+            _builder.Add(IntermediateNodeFactory.HtmlToken(
+                arg: node,
+                contentFactory: static node => node.Value?.GetContent() ?? string.Empty,
+                source: BuildSourceSpanFromNode(node.Value)));
 
             _builder.Pop();
         }
@@ -879,13 +894,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((CSharpExpressionLiteralSyntax)node).GetContent(),
-                Kind = TokenKind.CSharp,
-                Source = BuildSourceSpanFromNode(node),
-            });
+            _builder.Add(IntermediateNodeFactory.CSharpToken(
+                arg: node,
+                contentFactory: static node => node.GetContent(),
+                source: BuildSourceSpanFromNode(node)));
 
             base.VisitCSharpExpressionLiteral(node);
         }
@@ -905,13 +917,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     _builder.Push(statementNode);
                 }
 
-                _builder.Add(new LazyIntermediateToken()
-                {
-                    FactoryArgument = node,
-                    ContentFactory = static node => ((CSharpStatementLiteralSyntax)node).GetContent(),
-                    Kind = TokenKind.CSharp,
-                    Source = BuildSourceSpanFromNode(node),
-                });
+                _builder.Add(IntermediateNodeFactory.CSharpToken(
+                    arg: node,
+                    contentFactory: static node => node.GetContent(),
+                    source: BuildSourceSpanFromNode(node)));
 
                 if (!isAttributeValue)
                 {
@@ -929,16 +938,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            if (node.LiteralTokens.Count == 1)
+            if (node.LiteralTokens is [{ Kind: SyntaxKind.Marker, Content.Length: 0 }])
             {
-                var token = node.LiteralTokens[0];
-                if (token != null &&
-                    token.Kind == SyntaxKind.Marker &&
-                    token.Content.Length == 0)
-                {
-                    // We don't want to create IR nodes for marker tokens.
-                    return;
-                }
+                // We don't want to create IR nodes for marker tokens.
+                return;
             }
 
             VisitHtmlContent(node);
@@ -974,7 +977,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         private void VisitHtmlContent(SyntaxNode node)
         {
-            if (node == null || (node is SyntaxToken token && token.IsMissing))
+            if (node == null)
             {
                 return;
             }
@@ -1005,15 +1008,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 Source = source
             };
+
             _builder.Push(contentNode);
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((SyntaxNode)node).GetContent(),
-                Kind = TokenKind.Html,
-                Source = source,
-            });
+            _builder.Add(IntermediateNodeFactory.HtmlToken(
+                arg: node,
+                contentFactory: static node => node.GetContent(),
+                source));
 
             _builder.Pop();
         }
@@ -1031,13 +1032,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 TagName = tagName,
                 TagMode = info.TagMode,
-                Source = BuildSourceSpanFromNode(node)
+                Source = BuildSourceSpanFromNode(node),
+                TagHelpers = info.BindingResult.Descriptors
             };
-
-            foreach (var tagHelper in info.BindingResult.Descriptors)
-            {
-                tagHelperNode.TagHelpers.Add(tagHelper);
-            }
 
             _builder.Push(tagHelperNode);
 
@@ -1073,7 +1070,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupMinimizedTagHelperAttribute(MarkupMinimizedTagHelperAttributeSyntax node)
         {
-            if (!_featureFlags.AllowMinimizedBooleanTagHelperAttributes)
+            if (!_options.AllowMinimizedBooleanTagHelperAttributes)
             {
                 // Minimized attributes are not valid for non-boolean bound attributes. TagHelperBlockRewriter
                 // has already logged an error if it was a non-boolean bound attribute; so we can skip.
@@ -1083,34 +1080,25 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    var associatedAttributeDescriptor = associatedDescriptor.BoundAttributes.First(a =>
-                    {
-                        return TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, a);
-                    });
-
-                    var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-
-                    if (!expectsBooleanValue)
+                    if (!match.ExpectsBooleanValue)
                     {
                         // We do not allow minimized non-boolean bound attributes.
                         return;
                     }
 
-                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
                         AttributeName = attributeName,
-                        BoundAttribute = associatedAttributeDescriptor,
-                        TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = null,
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Add(setTagHelperProperty);
@@ -1134,26 +1122,19 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
             var attributeValueNode = node.Value;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    var associatedAttributeDescriptor = associatedDescriptor.BoundAttributes.First(a =>
-                    {
-                        return TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, a);
-                    });
-
-                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
                         AttributeName = attributeName,
-                        BoundAttribute = associatedAttributeDescriptor,
-                        TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = BuildSourceSpanFromNode(attributeValueNode),
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Push(setTagHelperProperty);
@@ -1182,9 +1163,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            var children = new ChildNodesHelper(node.ChildNodes());
+            var children = new ChildNodesHelper(node.ChildNodesAndTokens());
             var position = node.Position;
-            if (children.FirstOrDefault() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
+            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
             {
                 // This is a special case when we have an attribute like attr="@@foo".
                 // In this case, we want the foo to be written out as HtmlContent and not HtmlAttributeValue.
@@ -1195,7 +1176,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             if (children.TryCast<MarkupLiteralAttributeValueSyntax>(out var attributeLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                using PooledArrayBuilder<SyntaxToken> builder = [];
 
                 foreach (var literal in attributeLiteralArray)
                 {
@@ -1208,7 +1189,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                using PooledArrayBuilder<SyntaxToken> builder = [];
 
                 foreach (var literal in markupLiteralArray)
                 {
@@ -1220,7 +1201,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                using PooledArrayBuilder<SyntaxToken> builder = [];
 
                 SpanEditHandler editHandler = null;
                 ISpanChunkGenerator generator = null;
@@ -1243,24 +1224,21 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         private void Combine(HtmlContentIntermediateNode node, SyntaxNode item)
         {
-            node.Children.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = item,
-                ContentFactory = static item => ((SyntaxNode)item).GetContent(),
-                Kind = TokenKind.Html,
-                Source = BuildSourceSpanFromNode(item),
-            });
+            node.Children.Add(IntermediateNodeFactory.HtmlToken(
+                arg: item,
+                contentFactory: static item => item.GetContent(),
+                source: BuildSourceSpanFromNode(item)));
 
-            if (node.Source != null)
+            if (node.Source is SourceSpan source)
             {
                 node.Source = new SourceSpan(
-                    node.Source.Value.FilePath,
-                    node.Source.Value.AbsoluteIndex,
-                    node.Source.Value.LineIndex,
-                    node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.FullWidth,
-                    node.Source.Value.LineCount,
-                    node.Source.Value.EndCharacterIndex);
+                    source.FilePath,
+                    source.AbsoluteIndex,
+                    source.LineIndex,
+                    source.CharacterIndex,
+                    source.Length + item.Width,
+                    source.LineCount,
+                    source.EndCharacterIndex);
             }
         }
     }
@@ -1273,8 +1251,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public ComponentFileKindVisitor(
             DocumentIntermediateNode document,
             IntermediateNodeBuilder builder,
-            RazorParserFeatureFlags featureFlags)
-            : base(document, builder, featureFlags)
+            RazorParserOptions options)
+            : base(document, builder, options)
         {
         }
 
@@ -1299,24 +1277,24 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 Source = BuildSourceSpanFromNode(node),
 
                 // Could be empty while the tag is being typed in.
-                TagName = node.StartTag?.Name?.Content ?? node.EndTag?.Name?.Content ?? string.Empty,
+                TagName = node.StartTag?.Name.Content ?? node.EndTag?.Name.Content ?? string.Empty,
             };
 
             if (node.StartTag != null && node.EndTag != null && node.StartTag.IsVoidElement())
             {
-                element.Diagnostics.Add(
-                        ComponentDiagnosticFactory.Create_UnexpectedClosingTagForVoidElement(
-                            BuildSourceSpanFromNode(node.EndTag), node.EndTag.GetTagNameWithOptionalBang()));
+                element.AddDiagnostic(
+                    ComponentDiagnosticFactory.Create_UnexpectedClosingTagForVoidElement(
+                        BuildSourceSpanFromNode(node.EndTag), node.EndTag.GetTagNameWithOptionalBang()));
             }
             else if (node.StartTag != null && node.EndTag == null && !node.StartTag.IsVoidElement() && !node.StartTag.IsSelfClosing())
             {
-                element.Diagnostics.Add(
+                element.AddDiagnostic(
                     ComponentDiagnosticFactory.Create_UnclosedTag(
                         BuildSourceSpanFromNode(node.StartTag), node.StartTag.GetTagNameWithOptionalBang()));
             }
             else if (node.StartTag == null && node.EndTag != null)
             {
-                element.Diagnostics.Add(
+                element.AddDiagnostic(
                     ComponentDiagnosticFactory.Create_UnexpectedClosingTag(
                         BuildSourceSpanFromNode(node.EndTag), node.EndTag.GetTagNameWithOptionalBang()));
             }
@@ -1327,7 +1305,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 var startTagName = node.StartTag.GetTagNameWithOptionalBang();
                 if (!string.IsNullOrEmpty(startTagName) && LooksLikeAComponentName(_document, startTagName))
                 {
-                    element.Diagnostics.Add(
+                    element.AddDiagnostic(
                         ComponentDiagnosticFactory.Create_UnexpectedMarkupElement(startTagName, BuildSourceSpanFromNode(node.StartTag)));
                 }
             }
@@ -1395,12 +1373,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             // building Prefix and Suffix, even though we don't really use them. If we
             // end up using another node type in the future this can be simplified quite
             // a lot.
-            var prefixTokens = MergeLiterals(
+            var prefixTokens = MergeTokenLists(
                 node.NamePrefix?.LiteralTokens,
                 node.Name.LiteralTokens,
                 node.NameSuffix?.LiteralTokens,
-                node.EqualsToken == null ? new SyntaxList<SyntaxToken>() : new SyntaxList<SyntaxToken>(node.EqualsToken),
+                new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
+
             var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
@@ -1419,7 +1398,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
         {
-            var prefixTokens = MergeLiterals(node.NamePrefix?.LiteralTokens, node.Name.LiteralTokens);
+            var prefixTokens = MergeTokenLists(
+                node.NamePrefix?.LiteralTokens,
+                node.Name.LiteralTokens);
+
             var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
@@ -1439,11 +1421,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public override void VisitMarkupDynamicAttributeValue(MarkupDynamicAttributeValueSyntax node)
         {
             var containsExpression = false;
-            var descendantNodes = node.DescendantNodes(n =>
-            {
-                // Don't go into sub block. They may contain expressions but we only care about the top level.
-                return !(n.Parent is CSharpCodeBlockSyntax);
-            });
+
+            // Don't go into sub block. They may contain expressions but we only care about the top level.
+            var descendantNodes = node.DescendantNodes(n => n.Parent is not CSharpCodeBlockSyntax);
+
             foreach (var child in descendantNodes)
             {
                 if (child is CSharpImplicitExpressionSyntax || child is CSharpExplicitExpressionSyntax)
@@ -1482,13 +1463,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 Source = BuildSourceSpanFromNode(node),
             });
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((MarkupLiteralAttributeValueSyntax)node).Value?.GetContent() ?? string.Empty,
-                Kind = TokenKind.Html,
-                Source = BuildSourceSpanFromNode(node.Value)
-            });
+            _builder.Add(IntermediateNodeFactory.HtmlToken(
+                arg: node,
+                contentFactory: static node => node.Value?.GetContent() ?? string.Empty,
+                source: BuildSourceSpanFromNode(node.Value)));
 
             _builder.Pop();
         }
@@ -1504,13 +1482,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     Source = BuildSourceSpanFromNode(node),
                 });
 
-                _builder.Add(new LazyIntermediateToken()
-                {
-                    FactoryArgument = node,
-                    ContentFactory = static node => ((MarkupTextLiteralSyntax)node).GetContent() ?? string.Empty,
-                    Kind = TokenKind.Html,
-                    Source = BuildSourceSpanFromNode(node),
-                });
+                _builder.Add(IntermediateNodeFactory.HtmlToken(
+                    arg: node,
+                    contentFactory: static node => node.GetContent() ?? string.Empty,
+                    source: BuildSourceSpanFromNode(node)));
 
                 _builder.Pop();
 
@@ -1523,16 +1498,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            if (node.LiteralTokens.Count == 1)
+            if (node.LiteralTokens is [{ Kind: SyntaxKind.Marker, Content.Length: 0 }])
             {
-                var token = node.LiteralTokens[0];
-                if (token != null &&
-                    token.Kind == SyntaxKind.Marker &&
-                    token.Content.Length == 0)
-                {
-                    // We don't want to create IR nodes for marker tokens.
-                    return;
-                }
+                // We don't want to create IR nodes for marker tokens.
+                return;
             }
 
             // Combine chunks of HTML literal text if possible.
@@ -1561,15 +1530,12 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 Source = source,
                 Children =
-                    {
-                        new LazyIntermediateToken()
-                        {
-                            FactoryArgument = node,
-                            ContentFactory = static node => ((MarkupTextLiteralSyntax)node).GetContent(),
-                            Kind = TokenKind.Html,
-                            Source = source,
-                        }
-                    }
+                {
+                    IntermediateNodeFactory.HtmlToken(
+                        arg: node,
+                        contentFactory: static node => node.GetContent(),
+                        source)
+                }
             });
         }
 
@@ -1738,13 +1704,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((CSharpExpressionLiteralSyntax)node).GetContent(),
-                Kind = TokenKind.CSharp,
-                Source = BuildSourceSpanFromNode(node),
-            });
+            _builder.Add(IntermediateNodeFactory.CSharpToken(
+                arg: node,
+                contentFactory: static node => node.GetContent(),
+                source: BuildSourceSpanFromNode(node)));
 
             base.VisitCSharpExpressionLiteral(node);
         }
@@ -1764,13 +1727,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     _builder.Push(statementNode);
                 }
 
-                _builder.Add(new LazyIntermediateToken()
-                {
-                    FactoryArgument = node,
-                    ContentFactory = static node => ((CSharpStatementLiteralSyntax)node).GetContent(),
-                    Kind = TokenKind.CSharp,
-                    Source = BuildSourceSpanFromNode(node),
-                });
+                _builder.Add(IntermediateNodeFactory.CSharpToken(
+                    arg: node,
+                    contentFactory: static node => node.GetContent(),
+                    source: BuildSourceSpanFromNode(node)));
 
                 if (!isAttributeValue)
                 {
@@ -1789,13 +1749,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 TagName = tagName,
                 TagMode = info.TagMode,
-                Source = BuildSourceSpanFromNode(node)
+                Source = BuildSourceSpanFromNode(node),
+                TagHelpers = info.BindingResult.Descriptors
             };
-
-            foreach (var tagHelper in info.BindingResult.Descriptors)
-            {
-                tagHelperNode.TagHelpers.Add(tagHelper);
-            }
 
             if (node.StartTag != null &&
                 // We only want this error during the second phase of the two phase compilation.
@@ -1805,7 +1761,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 if (!string.IsNullOrEmpty(tagName) && LooksLikeAComponentName(_document, tagName))
                 {
-                    tagHelperNode.Diagnostics.Add(
+                    tagHelperNode.AddDiagnostic(
                         ComponentDiagnosticFactory.Create_UnexpectedMarkupElement(tagName, BuildSourceSpanFromNode(node.StartTag)));
                 }
             }
@@ -1832,13 +1788,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             if (node.StartTag != null && node.EndTag != null)
             {
-                var startTagName = node.StartTag.Name?.Content;
-                var endTagName = node.EndTag.Name?.Content;
+                var startTagName = node.StartTag.Name.Content;
+                var endTagName = node.EndTag.Name.Content;
                 if (!string.Equals(startTagName, endTagName, StringComparison.Ordinal))
                 {
                     // This is most likely a case mismatch in start and end tags. Otherwise the parser wouldn't have grouped them together.
                     // But we can't have case mismatch in start and end tags in components. Add a diagnostic.
-                    tagHelperNode.Diagnostics.Add(
+                    tagHelperNode.AddDiagnostic(
                         ComponentDiagnosticFactory.Create_InconsistentStartAndEndTagName(startTagName, endTagName, BuildSourceSpanFromNode(node.EndTag)));
                 }
             }
@@ -1860,7 +1816,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupMinimizedTagHelperAttribute(MarkupMinimizedTagHelperAttributeSyntax node)
         {
-            if (!_featureFlags.AllowMinimizedBooleanTagHelperAttributes)
+            if (!_options.AllowMinimizedBooleanTagHelperAttributes)
             {
                 // Minimized attributes are not valid for non-boolean bound attributes. TagHelperBlockRewriter
                 // has already logged an error if it was a non-boolean bound attribute; so we can skip.
@@ -1870,43 +1826,29 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out _,
-                        out _))
+                    if (!match.ExpectsBooleanValue)
                     {
-                        var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-
-                        if (!expectsBooleanValue)
-                        {
-                            // We do not allow minimized non-boolean bound attributes.
-                            return;
-                        }
-
-                        var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
-                        {
-                            AttributeName = attributeName,
-                            BoundAttribute = associatedAttributeDescriptor,
-                            TagHelper = associatedDescriptor,
-                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                            Source = null,
-                            IsIndexerNameMatch = indexerMatch,
-                        };
-
-                        setTagHelperProperty.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
-
-                        _builder.Add(setTagHelperProperty);
+                        // We do not allow minimized non-boolean bound attributes.
+                        return;
                     }
+
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
+                    {
+                        AttributeName = attributeName,
+                        AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                        Source = null,
+                        OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                    };
+
+                    _builder.Add(setTagHelperProperty);
                 }
             }
             else
@@ -1923,7 +1865,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupMinimizedTagHelperDirectiveAttribute(MarkupMinimizedTagHelperDirectiveAttributeSyntax node)
         {
-            if (!_featureFlags.AllowMinimizedBooleanTagHelperAttributes)
+            if (!_options.AllowMinimizedBooleanTagHelperAttributes)
             {
                 // Minimized attributes are not valid for non-boolean bound attributes. TagHelperBlockRewriter
                 // has already logged an error if it was a non-boolean bound attribute; so we can skip.
@@ -1933,72 +1875,40 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.FullName;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                var directiveAttributeName = new DirectiveAttributeName(attributeName);
+
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out var parameterMatch,
-                        out var associatedAttributeParameterDescriptor))
+                    if (!match.ExpectsBooleanValue)
                     {
-                        // Directive attributes should start with '@' unless the descriptors are misconfigured.
-                        // In that case, we would have already logged an error.
-                        var actualAttributeName = attributeName.StartsWith("@", StringComparison.Ordinal) ? attributeName.Substring(1) : attributeName;
-
-                        IntermediateNode attributeNode;
-                        if (parameterMatch &&
-                            TagHelperMatchingConventions.TryGetBoundAttributeParameter(actualAttributeName, out var attributeNameWithoutParameter))
-                        {
-                            var expectsBooleanValue = associatedAttributeParameterDescriptor.IsBooleanProperty;
-                            if (!expectsBooleanValue)
-                            {
-                                // We do not allow minimized non-boolean bound attributes.
-                                return;
-                            }
-
-                            attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
-                                OriginalAttributeName = attributeName,
-                                BoundAttributeParameter = associatedAttributeParameterDescriptor,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                IsIndexerNameMatch = indexerMatch,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = null,
-                            };
-                        }
-                        else
-                        {
-                            var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-                            if (!expectsBooleanValue)
-                            {
-                                // We do not allow minimized non-boolean bound attributes.
-                                return;
-                            }
-
-                            attributeNode = new TagHelperDirectiveAttributeIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                OriginalAttributeName = attributeName,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = null,
-                                IsIndexerNameMatch = indexerMatch,
-                            };
-                        }
-
-                        _builder.Add(attributeNode);
+                        // We do not allow minimized non-boolean bound attributes.
+                        return;
                     }
+
+                    IntermediateNode attributeNode = match.IsParameterMatch && directiveAttributeName.HasParameter
+                        ? new TagHelperDirectiveAttributeParameterIntermediateNode(match)
+                        {
+                            AttributeName = directiveAttributeName.Text,
+                            AttributeNameWithoutParameter = directiveAttributeName.TextWithoutParameter,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = null
+                        }
+                        : new TagHelperDirectiveAttributeIntermediateNode(match)
+                        {
+                            AttributeName = directiveAttributeName.Text,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = null,
+                        };
+
+                    _builder.Add(attributeNode);
                 }
             }
             else
@@ -2019,37 +1929,25 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
             var attributeValueNode = node.Value;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out _,
-                        out _))
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
-                        var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
-                        {
-                            AttributeName = attributeName,
-                            BoundAttribute = associatedAttributeDescriptor,
-                            TagHelper = associatedDescriptor,
-                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                            Source = BuildSourceSpanFromNode(attributeValueNode),
-                            IsIndexerNameMatch = indexerMatch,
-                        };
+                        AttributeName = attributeName,
+                        AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                        Source = BuildSourceSpanFromNode(attributeValueNode),
+                        OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                    };
 
-                        setTagHelperProperty.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
-
-                        _builder.Push(setTagHelperProperty);
-                        VisitAttributeValue(attributeValueNode);
-                        _builder.Pop();
-                    }
+                    _builder.Push(setTagHelperProperty);
+                    VisitAttributeValue(attributeValueNode);
+                    _builder.Pop();
                 }
             }
             else
@@ -2073,62 +1971,37 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var attributeName = node.FullName;
             var attributeValueNode = node.Value;
 
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                var directiveAttributeName = new DirectiveAttributeName(attributeName);
+
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out var parameterMatch,
-                        out var associatedAttributeParameterDescriptor))
-                    {
-                        // Directive attributes should start with '@' unless the descriptors are misconfigured.
-                        // In that case, we would have already logged an error.
-                        var actualAttributeName = attributeName.StartsWith("@", StringComparison.Ordinal) ? attributeName.Substring(1) : attributeName;
-
-                        IntermediateNode attributeNode;
-                        if (parameterMatch &&
-                            TagHelperMatchingConventions.TryGetBoundAttributeParameter(actualAttributeName, out var attributeNameWithoutParameter))
+                    IntermediateNode attributeNode = match.IsParameterMatch && directiveAttributeName.HasParameter
+                        ? new TagHelperDirectiveAttributeParameterIntermediateNode(match)
                         {
-                            attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
-                                OriginalAttributeName = attributeName,
-                                BoundAttributeParameter = associatedAttributeParameterDescriptor,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                IsIndexerNameMatch = indexerMatch,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = BuildSourceSpanFromNode(attributeValueNode),
-                            };
+                            AttributeName = directiveAttributeName.Text,
+                            AttributeNameWithoutParameter = directiveAttributeName.TextWithoutParameter,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = BuildSourceSpanFromNode(attributeValueNode),
+                            OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
                         }
-                        else
+                        : new TagHelperDirectiveAttributeIntermediateNode(match)
                         {
-                            attributeNode = new TagHelperDirectiveAttributeIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                OriginalAttributeName = attributeName,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = BuildSourceSpanFromNode(attributeValueNode),
-                                IsIndexerNameMatch = indexerMatch,
-                            };
-                        }
+                            AttributeName = directiveAttributeName.Text,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = BuildSourceSpanFromNode(attributeValueNode),
+                            OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                        };
 
-                        attributeNode.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
-
-                        _builder.Push(attributeNode);
-                        VisitAttributeValue(attributeValueNode);
-                        _builder.Pop();
-                    }
+                    _builder.Push(attributeNode);
+                    VisitAttributeValue(attributeValueNode);
+                    _builder.Pop();
                 }
             }
             else
@@ -2152,9 +2025,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            var children = new ChildNodesHelper(node.ChildNodes());
+            var children = new ChildNodesHelper(node.ChildNodesAndTokens());
             var position = node.Position;
-            if (children.FirstOrDefault() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
+            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
             {
                 // This is a special case when we have an attribute like attr="@@foo".
                 // In this case, we want the foo to be written out as HtmlContent and not HtmlAttributeValue.
@@ -2165,7 +2038,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             if (children.TryCast<MarkupLiteralAttributeValueSyntax>(out var attributeLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var valueTokens);
+                using PooledArrayBuilder<SyntaxToken> valueTokens = [];
 
                 foreach (var literal in attributeLiteralArray)
                 {
@@ -2178,7 +2051,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                using PooledArrayBuilder<SyntaxToken> builder = [];
 
                 foreach (var literal in markupLiteralArray)
                 {
@@ -2190,7 +2063,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
             {
-                using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+                using PooledArrayBuilder<SyntaxToken> builder = [];
 
                 ISpanChunkGenerator generator = null;
                 SpanEditHandler editHandler = null;
@@ -2202,7 +2075,12 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 }
 
                 var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
-                rewritten = editHandler != null ? rewritten.WithEditHandler(editHandler) : rewritten;
+
+                if (editHandler != null)
+                {
+                    rewritten = rewritten.WithEditHandler(editHandler);
+                }
+
                 Visit(rewritten);
             }
             else
@@ -2213,28 +2091,41 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         private void Combine(HtmlContentIntermediateNode node, SyntaxNode item)
         {
-            node.Children.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = item,
-                ContentFactory = static item => ((SyntaxNode)item).GetContent(),
-                Kind = TokenKind.Html,
-                Source = BuildSourceSpanFromNode(item),
-            });
+            node.Children.Add(IntermediateNodeFactory.HtmlToken(
+                arg: item,
+                contentFactory: static item => item.GetContent(),
+                source: BuildSourceSpanFromNode(item)));
 
-            if (node.Source != null)
+            if (node.Source is SourceSpan source)
             {
-                Debug.Assert(node.Source.Value.FilePath != null);
+                Debug.Assert(source.FilePath != null);
 
                 node.Source = new SourceSpan(
-                    node.Source.Value.FilePath,
-                    node.Source.Value.AbsoluteIndex,
-                    node.Source.Value.LineIndex,
-                    node.Source.Value.CharacterIndex,
-                    node.Source.Value.Length + item.FullWidth,
-                    node.Source.Value.LineCount,
-                    node.Source.Value.EndCharacterIndex);
+                    source.FilePath,
+                    source.AbsoluteIndex,
+                    source.LineIndex,
+                    source.CharacterIndex,
+                    source.Length + item.Width,
+                    source.LineCount,
+                    source.EndCharacterIndex);
             }
         }
+    }
+
+    private ref struct DirectiveAttributeName(string original)
+    {
+        // Directive attributes should start with '@' unless the descriptors are misconfigured.
+        // In that case, we would have already logged an error.
+        public readonly ReadOnlySpan<char> Span = original.StartsWith('@') ? original.AsSpan()[1..] : original;
+
+        public string Text => field ??= (Span.Length < original.Length ? Span.ToString() : original);
+
+        private bool? _hasParameter;
+
+        public bool HasParameter => _hasParameter ??= Span.IndexOf(':') >= 0;
+
+        public string TextWithoutParameter
+            => field ??= Span.IndexOf(':') is int index && index >= 0 ? Span[..index].ToString() : Text;
     }
 
     private class ComponentImportFileKindVisitor : LoweringVisitor
@@ -2242,8 +2133,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public ComponentImportFileKindVisitor(
             DocumentIntermediateNode document,
             IntermediateNodeBuilder builder,
-            RazorParserFeatureFlags featureFlags)
-            : base(document, builder, featureFlags)
+            RazorParserOptions options)
+            : base(document, builder, options)
         {
         }
 
@@ -2254,7 +2145,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupElement(MarkupElementSyntax node)
         {
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(BuildSourceSpanFromNode(node)));
 
             base.VisitMarkupElement(node);
@@ -2262,7 +2153,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupCommentBlock(MarkupCommentBlockSyntax node)
         {
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(BuildSourceSpanFromNode(node)));
 
             base.VisitMarkupCommentBlock(node);
@@ -2270,7 +2161,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupTagHelperElement(MarkupTagHelperElementSyntax node)
         {
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(BuildSourceSpanFromNode(node)));
 
             base.VisitMarkupTagHelperElement(node);
@@ -2278,7 +2169,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitCSharpExplicitExpression(CSharpExplicitExpressionSyntax node)
         {
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(BuildSourceSpanFromNode(node)));
 
             base.VisitCSharpExplicitExpression(node);
@@ -2325,7 +2216,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 }
             }
 
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(expressionNode.Source));
 
             base.VisitCSharpImplicitExpression(node);
@@ -2339,18 +2230,15 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            _builder.Add(new LazyIntermediateToken()
-            {
-                FactoryArgument = node,
-                ContentFactory = static node => ((CSharpExpressionLiteralSyntax)node).GetContent(),
-                Kind = TokenKind.CSharp,
-                Source = BuildSourceSpanFromNode(node),
-            });
+            _builder.Add(IntermediateNodeFactory.CSharpToken(
+                arg: node,
+                contentFactory: static node => node.GetContent(),
+                source: BuildSourceSpanFromNode(node)));
         }
 
         public override void VisitCSharpStatement(CSharpStatementSyntax node)
         {
-            _document.Diagnostics.Add(
+            _document.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_UnsupportedComponentImportContent(BuildSourceSpanFromNode(node)));
 
             base.VisitCSharpStatement(node);
@@ -2359,8 +2247,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
     private class ImportsVisitor : LoweringVisitor
     {
-        public ImportsVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, RazorParserFeatureFlags featureFlags)
-            : base(document, new ImportBuilder(builder), featureFlags)
+        public ImportsVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, RazorParserOptions options)
+            : base(document, new ImportBuilder(builder), options)
         {
         }
 
@@ -2377,7 +2265,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             public override void Add(IntermediateNode node)
             {
-                node.Annotations[CommonAnnotations.Imported] = CommonAnnotations.Imported;
+                node.IsImported = true;
                 _innerBuilder.Add(node);
             }
 
@@ -2385,7 +2273,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             public override void Insert(int index, IntermediateNode node)
             {
-                node.Annotations[CommonAnnotations.Imported] = CommonAnnotations.Imported;
+                node.IsImported = true;
                 _innerBuilder.Insert(index, node);
             }
 
@@ -2393,7 +2281,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             public override void Push(IntermediateNode node)
             {
-                node.Annotations[CommonAnnotations.Imported] = CommonAnnotations.Imported;
+                node.IsImported = true;
                 _innerBuilder.Push(node);
             }
         }

@@ -868,7 +868,7 @@ class GTEST_API_ ExpectationBase {
   Clause last_clause_;
   mutable bool action_count_checked_;  // Under mutex_.
   mutable Mutex mutex_;                // Protects action_count_checked_.
-};                                     // class ExpectationBase
+};  // class ExpectationBase
 
 template <typename F>
 class TypedExpectation;
@@ -1530,7 +1530,7 @@ class FunctionMocker<R(Args...)> final : public UntypedFunctionMockerBase {
     UntypedOnCallSpecs specs_to_delete;
     untyped_on_call_specs_.swap(specs_to_delete);
 
-    g_gmock_mutex.Unlock();
+    g_gmock_mutex.unlock();
     for (UntypedOnCallSpecs::const_iterator it = specs_to_delete.begin();
          it != specs_to_delete.end(); ++it) {
       delete static_cast<const OnCallSpec<F>*>(*it);
@@ -1538,7 +1538,7 @@ class FunctionMocker<R(Args...)> final : public UntypedFunctionMockerBase {
 
     // Lock the mutex again, since the caller expects it to be locked when we
     // return.
-    g_gmock_mutex.Lock();
+    g_gmock_mutex.lock();
   }
 
   // Returns the result of invoking this mock function with the given
@@ -1838,9 +1838,8 @@ R FunctionMocker<R(Args...)>::InvokeWith(ArgumentTuple&& args)
     // Doing so slows down compilation dramatically because the *constructor* of
     // std::function<T> is re-instantiated with different template
     // parameters each time.
-    const UninterestingCallCleanupHandler report_uninteresting_call = {
-        reaction, ss
-    };
+    const UninterestingCallCleanupHandler report_uninteresting_call = {reaction,
+                                                                       ss};
 
     return PerformActionAndPrintResult(nullptr, std::move(args), ss.str(), ss);
   }
@@ -1890,8 +1889,7 @@ R FunctionMocker<R(Args...)>::InvokeWith(ArgumentTuple&& args)
   // std::function<T> is re-instantiated with different template
   // parameters each time.
   const FailureCleanupHandler handle_failures = {
-      ss, why, loc, untyped_expectation, found, is_excessive
-  };
+      ss, why, loc, untyped_expectation, found, is_excessive};
 
   return PerformActionAndPrintResult(untyped_action, std::move(args), ss.str(),
                                      ss);

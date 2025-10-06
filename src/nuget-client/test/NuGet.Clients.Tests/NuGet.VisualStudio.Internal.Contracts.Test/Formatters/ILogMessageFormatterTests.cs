@@ -22,7 +22,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             TestUtility.AssertEqual(expectedResult, actualResult!);
         }
 
-        public static TheoryData ILogMessages => new TheoryData<ILogMessage>
+        public static TheoryData<ILogMessage> ILogMessages => new()
             {
                 { new LogMessage(LogLevel.Error, Message, NuGetLogCode.NU3000) },
                 {

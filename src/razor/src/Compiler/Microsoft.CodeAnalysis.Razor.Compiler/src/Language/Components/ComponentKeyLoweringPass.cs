@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
+using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentKeyLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentKeyLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run after component lowering pass
     public override int Order => 50;
@@ -28,50 +27,48 @@ internal class ComponentKeyLoweringPass : ComponentIntermediateNodePassBase, IRa
         }
 
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
-        {
-            var reference = references[i];
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
 
-            if (node.TagHelper.IsKeyTagHelper())
+        foreach (var reference in references)
+        {
+            if (reference.Node.TagHelper.Kind == TagHelperKind.Key)
             {
-                reference.Replace(RewriteUsage(reference.Parent, node));
+                RewriteUsage(reference);
             }
         }
     }
 
-    private IntermediateNode RewriteUsage(IntermediateNode parent, TagHelperDirectiveAttributeIntermediateNode node)
+    private static void RewriteUsage(IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode> reference)
     {
+        var (node, _) = reference;
+
         // If we can't get a nonempty attribute value, do nothing because there will
         // already be a diagnostic for empty values
         var keyValueToken = DetermineKeyValueToken(node);
-        if (keyValueToken == null)
+        if (keyValueToken is null)
         {
-            return node;
+            return;
         }
 
-        return new SetKeyIntermediateNode(keyValueToken);
+        var newNode = new SetKeyIntermediateNode(keyValueToken);
+        reference.Replace(newNode);
     }
 
-    private IntermediateToken DetermineKeyValueToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
+    private static IntermediateToken? DetermineKeyValueToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
     {
-        IntermediateToken foundToken = null;
-
-        if (attributeNode.Children.Count == 1)
+        var foundToken = attributeNode.Children switch
         {
-            if (attributeNode.Children[0] is IntermediateToken token)
-            {
-                foundToken = token;
-            }
-            else if (attributeNode.Children[0] is CSharpExpressionIntermediateNode csharpNode)
-            {
-                if (csharpNode.Children.Count == 1)
-                {
-                    foundToken = csharpNode.Children[0] as IntermediateToken;
-                }
-            }
+            [IntermediateToken token] => token,
+            [CSharpExpressionIntermediateNode { Children: [IntermediateToken token] }] => token,
+            _ => null,
+        };
+
+        if (foundToken is null)
+        {
+            return null;
         }
 
-        return !string.IsNullOrWhiteSpace(foundToken?.Content) ? foundToken : null;
+        return !foundToken.Content.IsNullOrWhiteSpace()
+            ? foundToken
+            : null;
     }
 }

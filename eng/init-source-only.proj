@@ -1,0 +1,198 @@
+<Project>
+
+  <!-- This project must not use any prebuilts -->
+
+  <PropertyGroup>
+    <SkipArcadeSdkImport>true</SkipArcadeSdkImport>
+    <!-- Fake, to satisfy the SDK. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
+  </PropertyGroup>
+
+  <Target Name="Build"
+          DependsOnTargets="
+      ValidateSourceOnlySigning;
+      UnpackTarballs;
+      BuildMSBuildSdkResolver;
+      ExtractToolsetPackages" />
+
+  <!-- Unpacks the Private.SourceBuilt.Artifacts archive -->
+  <Target Name="UnpackSourceBuiltArtifactsArchive"
+          Condition="'$(CustomPreviouslySourceBuiltPackagesPath)' == ''"
+          Inputs="$(ExternalTarballsDir)"
+          Outputs="$(PreviouslySourceBuiltPackagesPath)">
+    <MakeDir Directories="$(PreviouslySourceBuiltPackagesPath)" />
+    <Exec Command="tar -xzf $(ExternalTarballsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)"
+          WorkingDirectory="$(PreviouslySourceBuiltPackagesPath)" />
+  </Target>
+
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
+
+  <Target Name="ValidateSourceOnlySigning">
+    <Error Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true' and '$(DotNetSourceOnlyPublishArtifacts)' != 'true'" 
+           Text="Source-only signing requires publishing artifacts through Arcade. Please set 'DotNetSourceOnlyPublishArtifacts' to 'true', or disable signing by setting 'DotNetSourceOnlyPostBuildSign' to 'false'." />
+  </Target>
+
+  <Target Name="ValidateSharedComponents">
+    <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '$(SharedComponentsPrereqsArchiveFile)' != '')"
+           Text="Shared components cannot be provided as input to a build which produces shared components." />
+
+    <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(SharedComponentsPrereqsArchiveFile)' == ''"
+           Text="Shared components must be provided as input to a build which does not produce shared components." />
+  </Target>
+
+  <Target Name="CopyCustomSharedComponentAssets"
+          Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
+    
+    <!-- Copy assets from custom shared components artifacts path to artifacts directory -->
+    <ItemGroup>
+      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SharedComponentsAssets)"
+          DestinationFolder="$(ArtifactsDir)/assets/%(RecursiveDir)"
+          UseSymbolicLinksIfPossible="true"
+          Condition="'@(SharedComponentsAssets)' != ''" />
+  
+  </Target>  
+
+  <Target Name="UnpackSharedComponentsPrereqsArchive"
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(DotNetSourceOnlyTestOnly)' != 'true'"
+          Inputs="$(SharedComponentsPrereqsArchiveFile)"
+          Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
+
+    <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
+
+    <!-- Extract everything except the assets directory to the shared components packages path -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
+          WorkingDirectory="$(SharedComponentsArtifactsPath)" />
+
+    <!-- Extract only the assets directory directly to the artifacts directory -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets"
+          WorkingDirectory="$(ArtifactsDir)" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+
+    <ItemGroup>
+      <_SourceBuiltSymbolsAllTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <!-- The extraction of the assets directory from the artifacts tarball included the symbols tarball.
+         Move that to the obj directory so it doesn't get confused as the symbols output of the current repo.-->
+    <Move SourceFiles="@(_SourceBuiltSymbolsAllTarball)"
+          DestinationFolder="$(BaseIntermediateOutputPath)" />
+
+    <PropertyGroup>
+      <_SharedComponentsSymbolsDir>$(IntermediateSymbolsRootDir)shared-components</_SharedComponentsSymbolsDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_SharedComponentsSymbolsDir)" />
+
+    <!-- Extract all symbols from the symbols tarball to the intermediate symbols root directory -->
+    <Exec Command="tar -xzf $(BaseIntermediateOutputPath)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)"
+          WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
+
+    <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
+         repos, specifically SBRP, because SBRP is built in each feature band branch and so there may be differences between 
+         the packages between those branches. Each SBRP assembly would have its own PDB so these are kept separated. -->
+    <ItemGroup>
+      <_AllSymbolDirs Include="$([System.IO.Directory]::GetDirectories($(_SharedComponentsSymbolsDir)))" />
+      <_RepoSymbolsToKeep Include="@(SharedRepositoryReference);$(BootstrapArcadeRepos)" />
+      <_SymbolDirsToDelete Include="@(_AllSymbolDirs)" Exclude="@(_RepoSymbolsToKeep->'$(_SharedComponentsSymbolsDir)/%(Identity)')" />
+    </ItemGroup>
+
+    <RemoveDir Directories="@(_SymbolDirsToDelete)" Condition="'@(_SymbolDirsToDelete)' != ''" />
+    
+    <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <!--
+    Prepares the source built artifacts produced from the 1xx feature band so that they can be used in the current build.
+    There are two possible sources for these artifacts:
+    1. The directory to the extracted artifacts is specified by the user via the with-shared-components option in the build script.
+       This is what distro maintainers would typically use. This maps to the CustomSharedComponentsArtifactsPath
+       property. This source takes precedence.
+    2. The archive is contained in the prereqs/packages/archive-shared-components directory.
+       This is what the prep script does by default. This provides a seamless experience for devs working in
+       the VMR, not requiring them to pass extra parameters by default when working in a non-1xx branch.
+       This scenario maps to the SharedComponentsPrereqsArchivePath item.
+  -->
+  <Target Name="PrepareSharedComponents"
+          DependsOnTargets="ValidateSharedComponents;
+                            CopyCustomSharedComponentAssets;
+                            UnpackSharedComponentsPrereqsArchive" />
+
+  <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
+       the build to be working without prebuilts. -->
+  <Target Name="UnpackSourceBuiltPrebuiltsArchive"
+          Inputs="$(ExternalTarballsDir)"
+          Outputs="$(PrebuiltPackagesPath)">
+    <ItemGroup>
+      <SourceBuiltPrebuiltsTarballFile Include="$(ExternalTarballsDir)$(SourceBuiltPrebuiltsTarballName).*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <Exec Command="tar -xzf %(SourceBuiltPrebuiltsTarballFile.FullPath)"
+          WorkingDirectory="$(PrebuiltPackagesPath)"
+          Condition="'@(SourceBuiltPrebuiltsTarballFile)' != ''" />
+  </Target>
+
+  <Target Name="UnpackTarballs"
+          DependsOnTargets="UnpackSourceBuiltArtifactsArchive;
+                            UnpackSourceBuiltPrebuiltsArchive;
+                            PrepareSharedComponents" />
+
+  <!-- Build the custom msbuild sdk resolver. -->
+  <Target Name="BuildMSBuildSdkResolver"
+          DependsOnTargets="UnpackTarballs"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)BuildMSBuildSdkResolver.complete">
+    <MSBuild Projects="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj"
+             Targets="Restore"
+             Properties="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+
+    <MSBuild Projects="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj"
+             Targets="Build" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)BuildMSBuildSdkResolver.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <!-- Extract toolset packages into the bootstrap folder -->
+  <Target Name="ExtractToolsetPackages" DependsOnTargets="UnpackTarballs">
+    <ItemGroup>
+      <ToolsetPackage Include="Microsoft.DotNet.Arcade.Sdk" SourceFolder="$(PreviouslySourceBuiltPackagesPath)" Version="$(ARCADE_BOOTSTRAP_VERSION)" />
+      <ToolsetPackage Include="Microsoft.Build.NoTargets" SourceFolder="$(PreviouslySourceBuiltPackagesPath)" Version="$(NOTARGETS_BOOTSTRAP_VERSION)"  />
+      <ToolsetPackage Include="Microsoft.Build.Traversal" SourceFolder="$(PreviouslySourceBuiltPackagesPath)" Version="$(TRAVERSAL_BOOTSTRAP_VERSION)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ToolsetPackage Destination="$(BootstrapPackagesDir)$([System.String]::Copy('%(ToolsetPackage.Identity)').ToLowerInvariant())/%(ToolsetPackage.Version)" />
+    </ItemGroup>
+
+    <Unzip SourceFiles="%(ToolsetPackage.SourceFolder)%(ToolsetPackage.Identity).%(ToolsetPackage.Version).nupkg"
+           DestinationFolder="%(ToolsetPackage.Destination)"
+           SkipUnchangedFiles="true" />
+
+    <WriteLinesToFile File="$(ArtifactsDir)/toolset/bootstrap-sdks.txt"
+                      Lines="@(ToolsetPackage->Metadata('Destination'))"
+                      Overwrite="true" />
+  </Target>
+
+</Project>

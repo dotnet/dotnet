@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
@@ -18,20 +18,22 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     internal static readonly ImmutableArray<RazorCommitCharacter> SingleLineDirectiveCommitCharacters = RazorCommitCharacter.CreateArray([" "]);
     internal static readonly ImmutableArray<RazorCommitCharacter> BlockDirectiveCommitCharacters = RazorCommitCharacter.CreateArray([" ", "{"]);
 
-    private static readonly IEnumerable<DirectiveDescriptor> s_defaultDirectives = new[]
-    {
+    // internal for testing
+    internal static readonly ImmutableArray<DirectiveDescriptor> MvcDefaultDirectives = [
         CSharpCodeParser.AddTagHelperDirectiveDescriptor,
         CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
         CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
         CSharpCodeParser.UsingDirectiveDescriptor
-    };
+    ];
 
-    // Test accessor
-    internal static IEnumerable<DirectiveDescriptor> DefaultDirectives => s_defaultDirectives;
+    // internal for testing
+    internal static readonly ImmutableArray<DirectiveDescriptor> ComponentDefaultDirectives = [
+        CSharpCodeParser.UsingDirectiveDescriptor
+    ];
 
     // internal for testing
     // Do not forget to update both insert and display text !important
-    internal static readonly FrozenDictionary<string, (string InsertText, string DisplayText)> s_singleLineDirectiveSnippets = new Dictionary<string, (string InsertText, string DisplayText)>(StringComparer.Ordinal)
+    internal static readonly FrozenDictionary<string, (string InsertText, string DisplayText)> SingleLineDirectiveSnippets = new Dictionary<string, (string InsertText, string DisplayText)>(StringComparer.Ordinal)
     {
         ["addTagHelper"] = ("addTagHelper ${1:*}, ${2:Microsoft.AspNetCore.Mvc.TagHelpers}", "addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers"),
         ["attribute"] = ("attribute [${1:Authorize}]$0", "attribute [Authorize]"),
@@ -52,20 +54,9 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
 
     public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        using var completions = new PooledArrayBuilder<RazorCompletionItem>();
-
-        if (ShouldProvideCompletions(context))
-        {
-            var directiveCompletions = GetDirectiveCompletionItems(context.SyntaxTree);
-            completions.AddRange(directiveCompletions);
-        }
-
-        return completions.DrainToImmutable();
+        return ShouldProvideCompletions(context)
+            ? GetDirectiveCompletionItems(context.SyntaxTree)
+            : [];
     }
 
     // Internal for testing
@@ -90,14 +81,14 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             return false;
         }
 
-        if (implicitExpression.FullWidth > 2 && context.Reason != CompletionReason.Invoked)
+        if (implicitExpression.Width > 2 && context.Reason != CompletionReason.Invoked)
         {
             // We only want to provide directive completions if the implicit expression is empty "@|" or at the beginning of a word "@i|", this ensures
             // we're consistent with how C# typically provides completion items.
             return false;
         }
 
-        if (owner.ChildNodes().Any(n => !n.IsToken || !IsDirectiveCompletableToken((AspNetCore.Razor.Language.Syntax.SyntaxToken)n)))
+        if (owner.ChildNodesAndTokens().Any(static x => !x.AsToken(out var token) || !IsDirectiveCompletableToken(token)))
         {
             // Implicit expression contains invalid directive tokens
             return false;
@@ -133,51 +124,50 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     // Internal for testing
     internal static ImmutableArray<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
     {
-        var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind) ? Array.Empty<DirectiveDescriptor>() : s_defaultDirectives;
-        var directives = syntaxTree.Options.Directives.Concat(defaultDirectives);
+        var defaultDirectives = syntaxTree.Options.FileKind.IsComponent()
+            ? ComponentDefaultDirectives
+            : MvcDefaultDirectives;
 
-        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
+        ReadOnlySpan<DirectiveDescriptor> directives = [.. syntaxTree.Options.Directives, .. defaultDirectives];
+
+        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>(capacity: directives.Length + SingleLineDirectiveSnippets.Count);
 
         foreach (var directive in directives)
         {
             var completionDisplayText = directive.DisplayName ?? directive.Directive;
             var commitCharacters = GetDirectiveCommitCharacters(directive.Kind);
 
-            var completionItem = new RazorCompletionItem(
-                completionDisplayText,
-                directive.Directive,
-                RazorCompletionItemKind.Directive,
+            var completionItem = RazorCompletionItem.CreateDirective(
+                displayText: completionDisplayText,
+                insertText: directive.Directive,
                 // Make sort text one less than display text so if there are any delegated completion items
                 // with the same display text in the combined completion list, they will be sorted below
                 // our items.
                 sortText: completionDisplayText,
-                commitCharacters: commitCharacters,
+                descriptionInfo: new(directive.Description),
+                commitCharacters,
                 isSnippet: false);
-            var completionDescription = new DirectiveCompletionDescription(directive.Description);
-            completionItem.SetDirectiveCompletionDescription(completionDescription);
+
             completionItems.Add(completionItem);
 
-            if (s_singleLineDirectiveSnippets.TryGetValue(directive.Directive, out var snippetTexts))
+            if (SingleLineDirectiveSnippets.TryGetValue(directive.Directive, out var snippetTexts))
             {
-                var snippetCompletionItem = new RazorCompletionItem(
-                    $"{completionDisplayText} {SR.Directive} ...",
-                    snippetTexts.InsertText,
-                    RazorCompletionItemKind.Directive,
+                var snippetDescription = $"@{snippetTexts.DisplayText}{Environment.NewLine}{SR.DirectiveSnippetDescription}";
+
+                var snippetCompletionItem = RazorCompletionItem.CreateDirective(
+                    displayText: $"{completionDisplayText} {SR.Directive} ...",
+                    insertText: snippetTexts.InsertText,
                     // Use the same sort text here as the directive completion item so both items are grouped together
                     sortText: completionDisplayText,
-                    commitCharacters: commitCharacters,
+                    descriptionInfo: new(snippetDescription),
+                    commitCharacters,
                     isSnippet: true);
 
-                var snippetDescription = "@" + snippetTexts.DisplayText
-                                             + Environment.NewLine
-                                             + SR.DirectiveSnippetDescription;
-
-                snippetCompletionItem.SetDirectiveCompletionDescription(new(snippetDescription));
                 completionItems.Add(snippetCompletionItem);
             }
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private static ImmutableArray<RazorCommitCharacter> GetDirectiveCommitCharacters(DirectiveKind directiveKind)

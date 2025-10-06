@@ -7,14 +7,11 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.CloudTestTasks;
-#if !NET472_OR_GREATER
-using Microsoft.DotNet.Maestro.Client.Models;
-#endif
+using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-#if !NET472_OR_GREATER
     public abstract class AzureStorageAssetPublisher : IAssetPublisher
     {
         private readonly TaskLoggingHelper _log;
@@ -67,19 +64,4 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
     }
-#else
-    public abstract class AzureStorageAssetPublisher : IAssetPublisher
-    {
-        private readonly TaskLoggingHelper _log;
-
-        protected AzureStorageAssetPublisher(TaskLoggingHelper log)
-        {
-            _log = log;
-        }
-
-        public abstract BlobClient CreateBlobClient(string blobPath);
-
-        public Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null) => throw new NotImplementedException();
-    }
-#endif
 }

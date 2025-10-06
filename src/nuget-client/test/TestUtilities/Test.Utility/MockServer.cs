@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Protocol;
@@ -104,15 +105,13 @@ namespace Test.Utility
         {
             try
             {
-                _listener.Abort();
+                _listener?.Abort();
 
-                var task = _listenerTask;
+                Task task = _listenerTask;
+
                 _listenerTask = null;
 
-                if (task != null)
-                {
-                    task.Wait();
-                }
+                task?.Wait();
             }
             catch (Exception ex)
             {

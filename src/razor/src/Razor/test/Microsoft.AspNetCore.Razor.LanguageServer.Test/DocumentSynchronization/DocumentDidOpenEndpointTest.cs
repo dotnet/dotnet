@@ -1,12 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,28 +22,29 @@ public class DocumentDidOpenEndpointTest(ITestOutputHelper testOutput) : Languag
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.OpenDocument(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>()))
-            .Callback<string, SourceText, int>((path, text, version) =>
+        var projectService = new StrictMock<IRazorProjectService>();
+        projectService
+            .Setup(service => service.OpenDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Callback((string path, SourceText text, CancellationToken cancellationToken) =>
             {
                 Assert.Equal("hello", text.ToString());
                 Assert.Equal(documentPath, path);
-                Assert.Equal(1337, version);
             });
-        var endpoint = new DocumentDidOpenEndpoint(Dispatcher, projectService.Object);
+        var endpoint = new DocumentDidOpenEndpoint(projectService.Object);
         var request = new DidOpenTextDocumentParams()
         {
             TextDocument = new TextDocumentItem()
             {
                 Text = "hello",
-                Uri = new Uri(documentPath),
+                DocumentUri = new(new Uri(documentPath)),
                 Version = 1337,
             }
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
         // Act
-        await endpoint.HandleNotificationAsync(request, requestContext, default);
+        await endpoint.HandleNotificationAsync(request, requestContext, DisposalToken);
 
         // Assert
         projectService.VerifyAll();

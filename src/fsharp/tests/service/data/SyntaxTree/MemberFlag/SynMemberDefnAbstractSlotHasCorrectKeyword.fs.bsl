@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/MemberFlag/SynMemberDefnAbstractSlotHasCorrectKeyword.fs", false,
-      QualifiedNameOfFile SynMemberDefnAbstractSlotHasCorrectKeyword, [], [],
+      QualifiedNameOfFile SynMemberDefnAbstractSlotHasCorrectKeyword, [],
       [SynModuleOrNamespace
          ([SynMemberDefnAbstractSlotHasCorrectKeyword], false, AnonModule,
           [Types
@@ -20,7 +20,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (3,4--3,20),
+                            Single None, None, (3,4--3,20),
                             { LeadingKeyword = Abstract (3,4--3,12)
                               InlineKeyword = None
                               WithKeyword = None
@@ -40,7 +40,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((4,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (4,4--4,26),
+                            Single None, None, (4,4--4,26),
                             { LeadingKeyword =
                                AbstractMember ((4,4--4,12), (4,13--4,19))
                               InlineKeyword = None
@@ -58,4 +58,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--4,26))],
           PreXmlDocEmpty, [], None, (2,0--5,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

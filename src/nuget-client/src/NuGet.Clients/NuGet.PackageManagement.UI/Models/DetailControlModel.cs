@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Microsoft.ServiceHub.Framework;
+using NuGet.PackageManagement.UI.Models.Package;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
@@ -24,7 +25,7 @@ namespace NuGet.PackageManagement.UI
     /// The base class of PackageDetailControlModel and PackageSolutionDetailControlModel.
     /// When user selects an action, this triggers version list update.
     /// </summary>
-    public abstract class DetailControlModel : INotifyPropertyChanged, IDisposable
+    public abstract class DetailControlModel : TitledPageViewModelBase, IDisposable
     {
         private static readonly string StarAll = VersionRangeFormatter.Instance.Format("p", VersionRange.Parse("*"), VersionRangeFormatter.Instance);
         private static readonly string StarAllFloating = VersionRangeFormatter.Instance.Format("p", VersionRange.Parse("*-*"), VersionRangeFormatter.Instance);
@@ -70,6 +71,9 @@ namespace NuGet.PackageManagement.UI
             _options.SelectedChanged += DependencyBehavior_SelectedChanged;
 
             _versions = new ItemsChangeObservableCollection<DisplayVersion>();
+
+            Title = Resources.Label_PackageDetails;
+            IsVisible = true;
         }
 
         /// <summary>
@@ -243,7 +247,7 @@ namespace NuGet.PackageManagement.UI
             }
 
             // Get the list of available versions, ignoring null versions
-            _allPackageVersions = versions
+            _allPackageVersions = versions?
                 .Where(v => v?.Version != null)
                 .Select(GetVersion)
                 .ToList();
@@ -266,6 +270,7 @@ namespace NuGet.PackageManagement.UI
                 var detailedPackageMetadata = new DetailedPackageMetadata(
                     packageSearchMetadata,
                     packageDeprecationMetadata,
+                    searchResultPackage.KnownOwnerViewModels,
                     searchResultPackage.DownloadCount);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
@@ -384,11 +389,9 @@ namespace NuGet.PackageManagement.UI
         // Called after package install/uninstall.
         public abstract Task RefreshAsync(CancellationToken cancellationToken);
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RaisePropertyChanged(propertyName);
         }
 
         public string Id => _searchResultPackage?.Id;
@@ -456,6 +459,11 @@ namespace NuGet.PackageManagement.UI
             get => PackageVulnerabilities?.Count > 0;
         }
 
+        public bool IsPackageVulnerableOrDeprecated
+        {
+            get => IsPackageVulnerable || IsPackageDeprecated;
+        }
+
         public int PackageVulnerabilityCount
         {
             get => PackageVulnerabilities?.Count ?? 0;
@@ -467,9 +475,9 @@ namespace NuGet.PackageManagement.UI
             {
                 return Resources.Label_DeprecationReasons_Unknown;
             }
-            else if (reasons.Contains(PackageDeprecationReason.CriticalBugs, StringComparer.OrdinalIgnoreCase))
+            else if (reasons.Contains(PackageDeprecationReasonConstants.CriticalBugs, StringComparer.OrdinalIgnoreCase))
             {
-                if (reasons.Contains(PackageDeprecationReason.Legacy, StringComparer.OrdinalIgnoreCase))
+                if (reasons.Contains(PackageDeprecationReasonConstants.Legacy, StringComparer.OrdinalIgnoreCase))
                 {
                     return Resources.Label_DeprecationReasons_LegacyAndCriticalBugs;
                 }
@@ -478,7 +486,7 @@ namespace NuGet.PackageManagement.UI
                     return Resources.Label_DeprecationReasons_CriticalBugs;
                 }
             }
-            else if (reasons.Contains(PackageDeprecationReason.Legacy, StringComparer.OrdinalIgnoreCase))
+            else if (reasons.Contains(PackageDeprecationReasonConstants.Legacy, StringComparer.OrdinalIgnoreCase))
             {
                 return Resources.Label_DeprecationReasons_Legacy;
             }
@@ -486,12 +494,6 @@ namespace NuGet.PackageManagement.UI
             {
                 return Resources.Label_DeprecationReasons_Unknown;
             }
-        }
-
-        private static class PackageDeprecationReason
-        {
-            public const string CriticalBugs = nameof(CriticalBugs);
-            public const string Legacy = nameof(Legacy);
         }
 
         private DetailedPackageMetadata _packageMetadata;
@@ -526,10 +528,7 @@ namespace NuGet.PackageManagement.UI
 
                     OnPropertyChanged(nameof(PackageMetadata));
                     OnPropertyChanged(nameof(IsPackageDeprecated));
-                    OnPropertyChanged(nameof(IsPackageVulnerable));
-                    OnPropertyChanged(nameof(PackageVulnerabilityCount));
-                    OnPropertyChanged(nameof(PackageVulnerabilities));
-                    OnPropertyChanged(nameof(PackageVulnerabilityMaxSeverity));
+                    OnPropertyChanged(nameof(IsPackageVulnerableOrDeprecated));
                 }
             }
         }
@@ -649,6 +648,7 @@ namespace NuGet.PackageManagement.UI
                 PackageMetadata = new DetailedPackageMetadata(
                     packageSearchMetadata,
                     packageDeprecationMetadata,
+                    packageItemViewModel.KnownOwnerViewModels,
                     packageItemViewModel.DownloadCount);
             }
             else
@@ -668,6 +668,7 @@ namespace NuGet.PackageManagement.UI
                     var detailedPackageMetadata = new DetailedPackageMetadata(
                         searchMetadata,
                         deprecationData,
+                        knownOwnerViewModels: null,
                         searchMetadata.DownloadCount);
 
                     _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;

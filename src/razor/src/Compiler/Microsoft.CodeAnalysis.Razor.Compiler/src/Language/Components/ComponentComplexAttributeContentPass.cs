@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -25,10 +23,9 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
             return;
         }
 
-        var nodes = documentNode.FindDescendantNodes<TagHelperIntermediateNode>();
-        for (var i = 0; i < nodes.Count; i++)
+        foreach (var node in documentNode.FindDescendantNodes<TagHelperIntermediateNode>())
         {
-            ProcessAttributes(nodes[i]);
+            ProcessAttributes(node);
         }
     }
 
@@ -37,12 +34,12 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
         for (var i = node.Children.Count - 1; i >= 0; i--)
         {
             if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, propertyNode, propertyNode.AttributeName);
             }
             else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, htmlNode, htmlNode.AttributeName);
             }
@@ -93,7 +90,7 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
 
         if (issueDiagnostic)
         {
-            node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
+            node.AddDiagnostic(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
                 node,
                 attributeName));
         }

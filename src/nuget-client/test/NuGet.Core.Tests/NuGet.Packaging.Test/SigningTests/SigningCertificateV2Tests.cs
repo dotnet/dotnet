@@ -2,18 +2,20 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1;
-using Test.Utility.Signing;
 using Xunit;
-using BcAlgorithmIdentifier = Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier;
-using BcEssCertIdV2 = Org.BouncyCastle.Asn1.Ess.EssCertIDv2;
-using BcPolicyInformation = Org.BouncyCastle.Asn1.X509.PolicyInformation;
-using BcSigningCertificateV2 = Org.BouncyCastle.Asn1.Ess.SigningCertificateV2;
+using EssCertIdV2 = NuGet.Packaging.Signing.EssCertIdV2;
+using Oid = System.Security.Cryptography.Oid;
 using SigningCertificateV2 = NuGet.Packaging.Signing.SigningCertificateV2;
+using TestAlgorithmIdentifier = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.AlgorithmIdentifier;
+using TestEssCertIdV2 = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.EssCertIdV2;
+using TestPolicyInformation = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.PolicyInformation;
+using TestSigningCertificateV2 = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.SigningCertificateV2;
 
 namespace NuGet.Packaging.Test
 {
@@ -35,7 +37,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WhenCertificateNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => SigningCertificateV2.Create(certificate: null, hashAlgorithmName: HashAlgorithmName.SHA256));
 
             Assert.Equal("certificate", exception.ParamName);
@@ -47,13 +49,13 @@ namespace NuGet.Packaging.Test
         [InlineData(HashAlgorithmName.SHA512)]
         public void Create_WithValidInput_ReturnsSigningCertificateV2(HashAlgorithmName hashAlgorithmName)
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var signingCertificateV2 = SigningCertificateV2.Create(certificate, hashAlgorithmName);
+                SigningCertificateV2 signingCertificateV2 = SigningCertificateV2.Create(certificate, hashAlgorithmName);
 
                 Assert.Equal(1, signingCertificateV2.Certificates.Count);
 
-                var essCertIdV2 = signingCertificateV2.Certificates[0];
+                EssCertIdV2 essCertIdV2 = signingCertificateV2.Certificates[0];
 
                 Assert.Equal(hashAlgorithmName, CryptoHashUtility.OidToHashAlgorithmName(essCertIdV2.HashAlgorithm.Algorithm.Value));
                 Assert.Equal(SigningTestUtility.GetHash(certificate, hashAlgorithmName), essCertIdV2.CertificateHash);
@@ -77,12 +79,12 @@ namespace NuGet.Packaging.Test
         [InlineData(HashAlgorithmName.SHA512)]
         public void Read_WithValidInput_ReturnsSigningCertificateV2(HashAlgorithmName hashAlgorithmName)
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var expectedSigningCertificateV2 = SigningCertificateV2.Create(certificate, hashAlgorithmName);
-                var bytes = expectedSigningCertificateV2.Encode();
+                SigningCertificateV2 expectedSigningCertificateV2 = SigningCertificateV2.Create(certificate, hashAlgorithmName);
+                byte[] bytes = expectedSigningCertificateV2.Encode();
 
-                var actualSigningCertificateV2 = SigningCertificateV2.Read(bytes);
+                SigningCertificateV2 actualSigningCertificateV2 = SigningCertificateV2.Read(bytes);
 
                 Assert.Equal(
                     expectedSigningCertificateV2.Certificates.Count,
@@ -90,8 +92,8 @@ namespace NuGet.Packaging.Test
 
                 for (var i = 0; i < expectedSigningCertificateV2.Certificates.Count; ++i)
                 {
-                    var expectedEssCertIdV2 = expectedSigningCertificateV2.Certificates[i];
-                    var actualEssCertIdV2 = actualSigningCertificateV2.Certificates[i];
+                    EssCertIdV2 expectedEssCertIdV2 = expectedSigningCertificateV2.Certificates[i];
+                    EssCertIdV2 actualEssCertIdV2 = actualSigningCertificateV2.Certificates[i];
 
                     Assert.Equal(
                         expectedEssCertIdV2.HashAlgorithm.Algorithm.Value,
@@ -114,30 +116,33 @@ namespace NuGet.Packaging.Test
         [InlineData(HashAlgorithmName.SHA512)]
         public void Read_WithMultipleEssCertIds_ReturnsSigningCertificateV2(HashAlgorithmName hashAlgorithmName)
         {
-            var bcEssCertIdV2_1 = CreateBcEssCertIdV2(hashAlgorithmName, "1");
-            var bcEssCertIdV2_2 = CreateBcEssCertIdV2(hashAlgorithmName, "2");
-            var bcEssCertIdV2_3 = CreateBcEssCertIdV2(hashAlgorithmName, "3");
-            var bcSigningCertificateV2 = new BcSigningCertificateV2(
-                new[] { bcEssCertIdV2_1, bcEssCertIdV2_2, bcEssCertIdV2_3 });
-            var bytes = bcSigningCertificateV2.GetDerEncoded();
+            TestEssCertIdV2 testEssCertIdV2_1 = CreateEssCertIdV2(hashAlgorithmName, "1");
+            TestEssCertIdV2 testEssCertIdV2_2 = CreateEssCertIdV2(hashAlgorithmName, "2");
+            TestEssCertIdV2 testEssCertIdV2_3 = CreateEssCertIdV2(hashAlgorithmName, "3");
+            TestSigningCertificateV2 testSigningCertificateV2 = new TestSigningCertificateV2(
+                new[] { testEssCertIdV2_1, testEssCertIdV2_2, testEssCertIdV2_3 });
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var signingCertificate = SigningCertificateV2.Read(bytes);
+            testSigningCertificateV2.Encode(writer);
+            byte[] bytes = writer.Encode();
+
+            SigningCertificateV2 signingCertificate = SigningCertificateV2.Read(bytes);
 
             Assert.Equal(3, signingCertificate.Certificates.Count);
             Assert.Null(signingCertificate.Policies);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertIdV2_1.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                testEssCertIdV2_1.CertificateHash,
                 signingCertificate.Certificates[0].CertificateHash);
             Assert.Null(signingCertificate.Certificates[0].IssuerSerial);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertIdV2_2.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                testEssCertIdV2_2.CertificateHash,
                 signingCertificate.Certificates[1].CertificateHash);
             Assert.Null(signingCertificate.Certificates[1].IssuerSerial);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertIdV2_3.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                testEssCertIdV2_3.CertificateHash,
                 signingCertificate.Certificates[2].CertificateHash);
             Assert.Null(signingCertificate.Certificates[2].IssuerSerial);
         }
@@ -145,10 +150,15 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithNoEssCertIds_ReturnsSigningCertificateV2()
         {
-            var bcSigningCertificateV2 = new BcSigningCertificateV2(new BcEssCertIdV2[0]);
-            var bytes = bcSigningCertificateV2.GetDerEncoded();
+            TestSigningCertificateV2 testSigningCertificateV2 = new TestSigningCertificateV2(
+                Array.Empty<TestEssCertIdV2>());
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var signingCertificate = SigningCertificateV2.Read(bytes);
+            testSigningCertificateV2.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+
+            SigningCertificateV2 signingCertificate = SigningCertificateV2.Read(bytes);
 
             Assert.Equal(0, signingCertificate.Certificates.Count);
             Assert.Null(signingCertificate.Policies);
@@ -157,30 +167,32 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithPolicyInformation_ReturnsSigningCertificateV2()
         {
-            var bcEssCertIdV2 = CreateBcEssCertIdV2(HashAlgorithmName.SHA256, "1");
-            var bcPolicyInfo = new BcPolicyInformation(new DerObjectIdentifier(Oids.AnyPolicy));
-            var bcSigningCertificateV2 = new BcSigningCertificateV2(
-                new[] { bcEssCertIdV2 }, new[] { bcPolicyInfo });
-            var bytes = bcSigningCertificateV2.GetDerEncoded();
+            TestEssCertIdV2 testEssCertIdV2 = CreateEssCertIdV2(HashAlgorithmName.SHA256, "1");
+            TestPolicyInformation testPolicyInfo = new(new Oid(Oids.AnyPolicy));
+            TestSigningCertificateV2 testSigningCertificateV2 = new(
+                new[] { testEssCertIdV2 }, new[] { testPolicyInfo });
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var signingCertificate = SigningCertificateV2.Read(bytes);
+            testSigningCertificateV2.Encode(writer);
+            byte[] bytes = writer.Encode();
+
+            SigningCertificateV2 signingCertificate = SigningCertificateV2.Read(bytes);
 
             Assert.Equal(1, signingCertificate.Certificates.Count);
             Assert.Equal(1, signingCertificate.Policies.Count);
 
-            var policyInfo = signingCertificate.Policies[0];
+            Signing.PolicyInformation policyInfo = signingCertificate.Policies[0];
 
-            Assert.Equal(bcPolicyInfo.PolicyIdentifier.ToString(), policyInfo.PolicyIdentifier.Value);
+            Assert.Equal(testPolicyInfo.PolicyIdentifier.Value, policyInfo.PolicyIdentifier.Value);
             Assert.Null(policyInfo.PolicyQualifiers);
         }
 
-        private static BcEssCertIdV2 CreateBcEssCertIdV2(HashAlgorithmName hashAlgorithmName, string text)
+        private static TestEssCertIdV2 CreateEssCertIdV2(HashAlgorithmName hashAlgorithmName, string text)
         {
-            var hash = CryptoHashUtility.ComputeHash(hashAlgorithmName, Encoding.UTF8.GetBytes(text));
-            var bcAlgorithmIdentifier = new BcAlgorithmIdentifier(
-                new DerObjectIdentifier(hashAlgorithmName.ConvertToOidString()));
+            byte[] hash = CryptoHashUtility.ComputeHash(hashAlgorithmName, Encoding.UTF8.GetBytes(text));
+            TestAlgorithmIdentifier testAlgorithmIdentifier = new(new Oid(hashAlgorithmName.ConvertToOidString()));
 
-            return new BcEssCertIdV2(bcAlgorithmIdentifier, hash);
+            return new TestEssCertIdV2(testAlgorithmIdentifier, hash);
         }
     }
 }

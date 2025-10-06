@@ -49,7 +49,7 @@ module CompileHelpers =
             { new DiagnosticsLogger("CompileAPI") with
 
                 member _.DiagnosticSink(diag, isError) =
-                    diagnostics.Add(FSharpDiagnostic.CreateFromException(diag, isError, range0, true, flatErrors, None)) // Suggest names for errors
+                    diagnostics.Add(FSharpDiagnostic.CreateFromException(diag, isError, true, flatErrors, None)) // Suggest names for errors
 
                 member _.ErrorCount =
                     diagnostics
@@ -72,10 +72,10 @@ module CompileHelpers =
 
         try
             f exiter
-            0
+            None
         with e ->
             stopProcessingRecovery e range0
-            1
+            Some e
 
     /// Compile using the given flags.  Source files names are resolved via the FileSystem API. The output file must be given by a -o flag.
     let compileFromArgs (ctok, argv: string[], legacyReferenceResolver, tcImportsCapture, dynamicAssemblyCreator) =
@@ -100,14 +100,6 @@ module CompileHelpers =
 
         diagnostics.ToArray(), result
 
-    let setOutputStreams execute =
-        // Set the output streams, if requested
-        match execute with
-        | Some(writer, error) ->
-            Console.SetOut writer
-            Console.SetError error
-        | None -> ()
-
 [<Sealed; AutoSerializable(false)>]
 // There is typically only one instance of this type in an IDE process.
 type FSharpChecker
@@ -125,8 +117,8 @@ type FSharpChecker
         captureIdentifiersWhenParsing,
         getSource,
         useChangeNotifications,
-        useSyntaxTreeCache,
-        useTransparentCompiler
+        useTransparentCompiler,
+        ?transparentCompilerCacheSizes
     ) =
 
     let backgroundCompiler =
@@ -145,7 +137,7 @@ type FSharpChecker
                 captureIdentifiersWhenParsing,
                 getSource,
                 useChangeNotifications,
-                useSyntaxTreeCache
+                ?cacheSizes = transparentCompilerCacheSizes
             )
             :> IBackgroundCompiler
         else
@@ -162,8 +154,7 @@ type FSharpChecker
                 parallelReferenceResolution,
                 captureIdentifiersWhenParsing,
                 getSource,
-                useChangeNotifications,
-                useSyntaxTreeCache
+                useChangeNotifications
             )
             :> IBackgroundCompiler
 
@@ -209,8 +200,8 @@ type FSharpChecker
             ?parallelReferenceResolution: bool,
             ?captureIdentifiersWhenParsing: bool,
             ?documentSource: DocumentSource,
-            ?useSyntaxTreeCache: bool,
-            ?useTransparentCompiler: bool
+            ?useTransparentCompiler: bool,
+            ?transparentCompilerCacheSizes: CacheSizes
         ) =
 
         use _ = Activity.startNoTags "FSharpChecker.Create"
@@ -238,8 +229,6 @@ type FSharpChecker
             | Some(DocumentSource.Custom _) -> true
             | _ -> false
 
-        let useSyntaxTreeCache = defaultArg useSyntaxTreeCache true
-
         if keepAssemblyContents && enablePartialTypeChecking then
             invalidArg "enablePartialTypeChecking" "'keepAssemblyContents' and 'enablePartialTypeChecking' cannot be both enabled."
 
@@ -261,8 +250,8 @@ type FSharpChecker
              | Some(DocumentSource.Custom f) -> Some f
              | _ -> None),
             useChangeNotifications,
-            useSyntaxTreeCache,
-            useTransparentCompiler
+            useTransparentCompiler,
+            ?transparentCompilerCacheSizes = transparentCompilerCacheSizes
         )
 
     member _.UsesTransparentCompiler = useTransparentCompiler = Some true
@@ -325,13 +314,11 @@ type FSharpChecker
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.GetBackgroundParseResultsForFileInProject(fileName, options, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.GetBackgroundCheckResultsForFileInProject(fileName, options, ?userOpName: string) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.GetBackgroundCheckResultsForFileInProject(fileName, options, userOpName)
-        |> Async.AwaitNodeCode
 
     /// Try to get recent approximate type check results for a file.
     member _.TryGetRecentCheckResultsForFile(fileName: string, options: FSharpProjectOptions, ?sourceText, ?userOpName: string) =
@@ -398,19 +385,12 @@ type FSharpChecker
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.NotifyFileChanged(fileName, options, userOpName)
-        |> Async.AwaitNodeCode
 
     /// Typecheck a source code file, returning a handle to the results of the
     /// parse including the reconstructed types in the file.
     member _.CheckFileInProjectAllowingStaleCachedResults
-        (
-            parseResults: FSharpParseFileResults,
-            fileName: string,
-            fileVersion: int,
-            source: string,
-            options: FSharpProjectOptions,
-            ?userOpName: string
-        ) =
+        (parseResults: FSharpParseFileResults, fileName: string, fileVersion: int, source: string, options: FSharpProjectOptions, ?userOpName: string)
+        =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.CheckFileInProjectAllowingStaleCachedResults(
@@ -421,7 +401,6 @@ type FSharpChecker
             options,
             userOpName
         )
-        |> Async.AwaitNodeCode
 
     /// Typecheck a source code file, returning a handle to the results of the
     /// parse including the reconstructed types in the file.
@@ -437,54 +416,38 @@ type FSharpChecker
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.CheckFileInProject(parseResults, fileName, fileVersion, sourceText, options, userOpName)
-        |> Async.AwaitNodeCode
 
     /// Typecheck a source code file, returning a handle to the results of the
     /// parse including the reconstructed types in the file.
     member _.ParseAndCheckFileInProject
-        (
-            fileName: string,
-            fileVersion: int,
-            sourceText: ISourceText,
-            options: FSharpProjectOptions,
-            ?userOpName: string
-        ) =
+        (fileName: string, fileVersion: int, sourceText: ISourceText, options: FSharpProjectOptions, ?userOpName: string)
+        =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.ParseAndCheckFileInProject(fileName, fileVersion, sourceText, options, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.ParseAndCheckFileInProject(fileName: string, projectSnapshot: FSharpProjectSnapshot, ?userOpName: string) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.ParseAndCheckFileInProject(fileName, projectSnapshot, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.ParseAndCheckProject(options: FSharpProjectOptions, ?userOpName: string) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.ParseAndCheckProject(options, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.ParseAndCheckProject(projectSnapshot: FSharpProjectSnapshot, ?userOpName: string) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.ParseAndCheckProject(projectSnapshot, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.FindBackgroundReferencesInFile
-        (
-            fileName: string,
-            options: FSharpProjectOptions,
-            symbol: FSharpSymbol,
-            ?canInvalidateProject: bool,
-            ?fastCheck: bool,
-            ?userOpName: string
-        ) =
+        (fileName: string, options: FSharpProjectOptions, symbol: FSharpSymbol, ?canInvalidateProject: bool, ?fastCheck: bool, ?userOpName: string)
+        =
         let canInvalidateProject = defaultArg canInvalidateProject true
         let userOpName = defaultArg userOpName "Unknown"
 
-        node {
+        async {
             if fastCheck <> Some true || not captureIdentifiersWhenParsing then
                 return! backgroundCompiler.FindReferencesInFile(fileName, options, symbol, canInvalidateProject, userOpName)
             else
@@ -498,15 +461,12 @@ type FSharpChecker
                 else
                     return Seq.empty
         }
-        |> Async.AwaitNodeCode
 
     member _.FindBackgroundReferencesInFile(fileName: string, projectSnapshot: FSharpProjectSnapshot, symbol: FSharpSymbol, ?userOpName: string) =
         let userOpName = defaultArg userOpName "Unknown"
 
-        node {
-            let! parseResults =
-                backgroundCompiler.ParseFile(fileName, projectSnapshot, userOpName)
-                |> NodeCode.AwaitAsync
+        async {
+            let! parseResults = backgroundCompiler.ParseFile(fileName, projectSnapshot, userOpName)
 
             if
                 parseResults.ParseTree.Identifiers |> Set.contains symbol.DisplayNameCore
@@ -516,25 +476,23 @@ type FSharpChecker
             else
                 return Seq.empty
         }
-        |> Async.AwaitNodeCode
 
     member _.GetBackgroundSemanticClassificationForFile(fileName: string, options: FSharpProjectOptions, ?userOpName) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.GetSemanticClassificationForFile(fileName, options, userOpName)
-        |> Async.AwaitNodeCode
 
     member _.GetBackgroundSemanticClassificationForFile(fileName: string, snapshot: FSharpProjectSnapshot, ?userOpName) =
         let userOpName = defaultArg userOpName "Unknown"
 
         backgroundCompiler.GetSemanticClassificationForFile(fileName, snapshot, userOpName)
-        |> Async.AwaitNodeCode
 
     /// For a given script file, get the ProjectOptions implied by the #load closure
     member _.GetProjectOptionsFromScript
         (
             fileName,
             source,
+            ?caret,
             ?previewEnabled,
             ?loadedTimeStamp,
             ?otherFlags,
@@ -550,6 +508,7 @@ type FSharpChecker
         backgroundCompiler.GetProjectOptionsFromScript(
             fileName,
             source,
+            caret,
             previewEnabled,
             loadedTimeStamp,
             otherFlags,
@@ -566,6 +525,7 @@ type FSharpChecker
         (
             fileName,
             source,
+            ?caret,
             ?documentSource,
             ?previewEnabled,
             ?loadedTimeStamp,
@@ -583,6 +543,7 @@ type FSharpChecker
         backgroundCompiler.GetProjectSnapshotFromScript(
             fileName,
             source,
+            caret,
             documentSource,
             previewEnabled,
             loadedTimeStamp,
@@ -655,6 +616,8 @@ type FSharpChecker
 
         if isEditing then
             tcConfigB.conditionalDefines <- "EDITING" :: tcConfigB.conditionalDefines
+
+        tcConfigB.realsig <- List.contains "--realsig" argv || List.contains "--realsig+" argv
 
         // Apply command-line arguments and collect more source files if they are in the arguments
         let sourceFilesNew = ApplyCommandLineArgs(tcConfigB, sourceFiles, argv)
@@ -766,14 +729,14 @@ type CompilerEnvironment() =
     static member IsScriptFile(fileName: string) = ParseAndCheckInputs.IsScript fileName
 
     /// Whether or not this file is compilable
-    static member IsCompilable file =
+    static member IsCompilable(file: string) =
         let ext = Path.GetExtension file
 
         compilableExtensions
         |> List.exists (fun e -> 0 = String.Compare(e, ext, StringComparison.OrdinalIgnoreCase))
 
     /// Whether or not this file should be a single-file project
-    static member MustBeSingleFileProject file =
+    static member MustBeSingleFileProject(file: string) =
         let ext = Path.GetExtension file
 
         singleFileProjectExtensions

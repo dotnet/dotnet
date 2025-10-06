@@ -39,51 +39,6 @@ try {
         & $PSScriptRoot\..\common\build.ps1 -ci -prepareMachine -build:$false -restore:$false
     }
 
-    Write-Host "Checking that Versions.props and Version.Details.xml match"
-    [xml] $versionProps = Get-Content "$repoRoot/eng/Versions.props"
-    [System.Xml.XmlNamespaceManager] $nsMgr = New-Object -TypeName System.Xml.XmlNamespaceManager($versionProps.NameTable)
-    $nsMgr.AddNamespace("ns", "http://schemas.microsoft.com/developer/msbuild/2003");
-
-    [xml] $versionDetails = Get-Content "$repoRoot/eng/Version.Details.xml"
-
-    $versionVars = New-Object 'System.Collections.Generic.HashSet[string]'
-    foreach ($vars in $versionProps.SelectNodes("//ns:PropertyGroup[`@Label=`"Automated`"]/*", $nsMgr)) {
-        $versionVars.Add($vars.Name) | Out-Null
-    }
-
-    foreach ($dep in $versionDetails.SelectNodes('//Dependency')) {
-        if ($dep.Name -eq 'Microsoft.DotNet.Arcade.Sdk') {
-            # Special case - this version is in global.json, not Version.props
-            continue
-        }
-        Write-Verbose "Found $dep"
-        $varName = $dep.Name -replace '\.',''
-        $varName = $varName -replace '\-',''
-        $varName = "${varName}PackageVersion"
-        $versionVar = $versionProps.SelectSingleNode("//ns:PropertyGroup[`@Label=`"Automated`"]/ns:$varName", $nsMgr)
-        if (-not $versionVar) {
-            LogError "Missing version variable '$varName' in the 'Automated' property group in $repoRoot/eng/Versions.props"
-            continue
-        }
-
-        $versionVars.Remove($varName) | Out-Null
-
-        $expectedVersion = $dep.Version
-        $actualVersion = $versionVar.InnerText
-
-        if ($expectedVersion -ne $actualVersion) {
-            LogError `
-                "Version variable '$varName' does not match the value in Version.Details.xml. Expected '$expectedVersion', actual '$actualVersion'" `
-                -filepath "$repoRoot\eng\Versions.props"
-        }
-    }
-
-    foreach ($unexpectedVar in $versionVars) {
-        LogError `
-            "Version variable '$unexpectedVar' does not have a matching entry in Version.Details.xml. See https://github.com/dotnet/aspnetcore/blob/main/docs/ReferenceResolution.md for instructions on how to add a new dependency." `
-            -filepath "$repoRoot\eng\Versions.props"
-    }
-
     Write-Host "Checking that solutions are up to date"
 
     Get-ChildItem "$repoRoot/*.sln" -Recurse `

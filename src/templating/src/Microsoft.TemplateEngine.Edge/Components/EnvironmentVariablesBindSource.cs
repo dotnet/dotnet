@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Abstractions.Components;
@@ -17,7 +14,7 @@ namespace Microsoft.TemplateEngine.Edge
     {
         int IPrioritizedComponent.Priority => 0;
 
-        string? IBindSymbolSource.SourcePrefix => "env";
+        string IBindSymbolSource.SourcePrefix => "env";
 
         bool IBindSymbolSource.RequiresPrefixMatch => false;
 

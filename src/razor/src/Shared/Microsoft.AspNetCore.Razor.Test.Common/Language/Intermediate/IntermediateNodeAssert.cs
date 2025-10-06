@@ -64,37 +64,6 @@ public static class IntermediateNodeAssert
         }
     }
 
-    public static void AnnotationEquals(IntermediateNode node, object value)
-    {
-        AnnotationEquals(node, value, value);
-    }
-
-    public static void AnnotationEquals(IntermediateNode node, object key, object value)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.Equal(value, node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
-    public static void HasAnnotation(IntermediateNode node, object key)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.NotNull(node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
     public static void Html(string expected, IntermediateNode node)
     {
         try
@@ -103,8 +72,7 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < html.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(html.Children[i]);
-                Assert.Equal(TokenKind.Html, token.Kind);
+                var token = Assert.IsAssignableFrom<HtmlIntermediateToken>(html.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -124,8 +92,7 @@ public static class IntermediateNodeAssert
             var content = new StringBuilder();
             for (var i = 0; i < statement.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(statement.Children[i]);
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(statement.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -211,8 +178,7 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < attributeValue.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(attributeValue.Children[i]);
-                Assert.True(token.IsCSharp);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(attributeValue.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -234,8 +200,7 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < attributeValue.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(attributeValue.Children[i]);
-                Assert.True(token.IsHtml);
+                var token = Assert.IsAssignableFrom<HtmlIntermediateToken>(attributeValue.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -257,8 +222,7 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < cSharp.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(cSharp.Children[i]);
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(cSharp.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -278,8 +242,7 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < beginNode.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(beginNode.Children[i]);
-                Assert.True(token.IsCSharp);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(beginNode.Children[i]);
                 content.Append(token.Content);
             }
 
@@ -299,10 +262,10 @@ public static class IntermediateNodeAssert
             using var _ = StringBuilderPool.GetPooledObject(out var content);
             for (var i = 0; i < endNode.Children.Count; i++)
             {
-                var token = Assert.IsAssignableFrom<IntermediateToken>(endNode.Children[i]);
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(endNode.Children[i]);
                 content.Append(token.Content);
             }
+
             Assert.Equal("EndContext();", content.ToString());
         }
         catch (XunitException e)
@@ -316,7 +279,7 @@ public static class IntermediateNodeAssert
         try
         {
             var fieldNode = Assert.IsType<FieldDeclarationIntermediateNode>(node);
-            Assert.Equal(typeFullName, fieldNode.FieldType);
+            Assert.Equal(typeFullName, fieldNode.Type);
         }
         catch (XunitException e)
         {
@@ -410,7 +373,7 @@ public static class IntermediateNodeAssert
         try
         {
             Assert.Equal(name, propertyNode.AttributeName);
-            Assert.Equal(propertyName, propertyNode.BoundAttribute.GetPropertyName());
+            Assert.Equal(propertyName, propertyNode.BoundAttribute.PropertyName);
             Assert.Equal(valueStyle, propertyNode.AttributeStructure);
             Children(propertyNode, valueValidators);
         }
@@ -423,13 +386,13 @@ public static class IntermediateNodeAssert
     private class IntermediateNodeAssertException : XunitException
     {
         public IntermediateNodeAssertException(IntermediateNode node, string userMessage)
-            : base(Format(node, null, null, userMessage))
+            : base(Format(null, null, userMessage))
         {
             Node = node;
         }
 
         public IntermediateNodeAssertException(IntermediateNode node, IEnumerable<IntermediateNode> nodes, string userMessage)
-            : base(Format(node, null, nodes, userMessage))
+            : base(Format(null, nodes, userMessage))
         {
             Node = node;
             Nodes = nodes;
@@ -440,8 +403,10 @@ public static class IntermediateNodeAssert
             IEnumerable<IntermediateNode> nodes,
             string userMessage,
             Exception innerException)
-            : base(Format(node, null, nodes, userMessage), innerException)
+            : base(Format(null, nodes, userMessage), innerException)
         {
+            Node = node;
+            Nodes = nodes;
         }
 
         public IntermediateNodeAssertException(
@@ -450,15 +415,17 @@ public static class IntermediateNodeAssert
             IEnumerable<IntermediateNode> nodes,
             string userMessage,
             Exception innerException)
-            : base(Format(node, ancestors, nodes, userMessage), innerException)
+            : base(Format(ancestors, nodes, userMessage), innerException)
         {
+            Node = node;
+            Nodes = nodes;
         }
 
         public IntermediateNode Node { get; }
 
         public IEnumerable<IntermediateNode> Nodes { get; }
 
-        private static string Format(IntermediateNode node, IntermediateNode[] ancestors, IEnumerable<IntermediateNode> nodes, string userMessage)
+        private static string Format(IntermediateNode[] ancestors, IEnumerable<IntermediateNode> nodes, string userMessage)
         {
             using var _ = StringBuilderPool.GetPooledObject(out var builder);
             builder.AppendLine(userMessage);

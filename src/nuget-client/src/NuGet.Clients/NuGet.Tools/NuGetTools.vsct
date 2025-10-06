@@ -93,6 +93,15 @@
         </Strings>
       </Button>
 
+      <Button guid="guidClearNuGetLocalResourcesCmdSet" id="cmdidClearNuGetLocalResources" priority="0x0100" type="Button">
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <CommandName>cmdidClearNuGetLocalResources</CommandName>
+          <!--This button text is not visible to the user as the command is invoked from Unified Settings-->
+          <ButtonText>ClearLocals</ButtonText>
+        </Strings>
+      </Button>
+
       <Button guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" priority="0x0400" type="Button">
         <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
@@ -100,6 +109,16 @@
         <Strings>
           <CommandName>cmdidUpgradeNuGetProject</CommandName>
           <ButtonText>&amp;Migrate packages.config to PackageReference...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidUpgradeProjectJsonNuGetProject" priority="0x0420" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidUpgradeProjectJsonNuGetProject</CommandName>
+          <ButtonText>&amp;Migrate project.json to PackageReference...</ButtonText>
         </Strings>
       </Button>
 
@@ -199,6 +218,7 @@
     <VisibilityItem guid="guidDialogCmdSet" id="cmdidRestorePackages" context="UICONTEXT_SolutionExistsAndNotBuildingAndNotDebugging" />
     <VisibilityItem guid="guidDialogCmdSet" id="cmdidUpgradePackagesConfig" context="UICONTEXT_UpgradeableProjectLoaded" />
     <VisibilityItem guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" context="UICONTEXT_UpgradeableProjectLoaded" />
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidUpgradeProjectJsonNuGetProject" context="UICONTEXT_UpgradeableProjectLoaded" />
   </VisibilityConstraints>
 
   <CommandPlacements>
@@ -244,6 +264,9 @@
     <CommandPlacement guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" priority="0xF101">
       <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_REFROOT_ADD"/>
     </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidUpgradeProjectJsonNuGetProject" priority="0xF101">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_REFROOT_ADD"/>
+    </CommandPlacement>
     <CommandPlacement guid="guidDialogCmdSet" id="cmdidRestorePackages" priority="0xF101">
       <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_SOLUTION_BUILD" />
     </CommandPlacement>
@@ -277,9 +300,13 @@
       <IDSymbol name="cmdidAddPackagesForSolution" value="0x0200" />
       <IDSymbol name="cmdidRestorePackages" value="0x0300" />
       <IDSymbol name="cmdidUpgradeNuGetProject" value="0x0400" />
+      <IDSymbol name="cmdidUpgradeProjectJsonNuGetProject" value="0x0420"/>
       <IDSymbol name="cmdidUpgradePackagesConfig" value="0x0410" />
       <IDSymbol name="cmdidUpdatePackage" value="0x0500" />
       <IDSymbol name="cmdidUpdatePackages" value="0x0600" />
+    </GuidSymbol>
+    <GuidSymbol name="guidClearNuGetLocalResourcesCmdSet" value="{54A0AC88-A025-4A62-8D48-6C1848E4F545}">
+      <IDSymbol name="cmdidClearNuGetLocalResources" value="0x0100" />
     </GuidSymbol>
     <GuidSymbol name="guidVenusCmdId" value="{C7547851-4E3A-4E5B-9173-FA6E9C8BD82C}" >
       <IDSymbol name="IDG_VENUS_CTX_REFERENCE" value="27" />

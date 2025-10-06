@@ -46,7 +46,7 @@ public interface IDataCollectionTestCaseEventSender
     /// The args containing info about TestResult event.
     /// </param>
     /// <returns>
-    /// The <see cref="Collection"/>Collection of TestCase attachments.
+    /// The <see cref="Collection{T}"/>Collection of TestCase attachments.
     /// </returns>
     Collection<AttachmentSet>? SendTestCaseEnd(TestCaseEndEventArgs e);
 

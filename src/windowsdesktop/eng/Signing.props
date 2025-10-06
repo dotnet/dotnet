@@ -3,20 +3,17 @@
   <PropertyGroup>
     <UseDotNetCertificate>true</UseDotNetCertificate>
     <!-- Don't sign and publish rid agnostic nuget packages from other builds than win-x64 when not building inside the VMR. -->
-    <EnableDefaultArtifacts Condition="'$(DotNetBuildRepo)' != 'true' and
+    <EnableDefaultArtifacts Condition="'$(DotNetBuild)' != 'true' and
                                        '$(TargetArchitecture)' != 'x64' and
                                        '$(TargetArchitecture)' != ''">false</EnableDefaultArtifacts>
   </PropertyGroup>
-
-  <ItemGroup>
-    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" />
-  </ItemGroup>
 
   <!-- Include installers -->
   <ItemGroup>
     <Artifact Include="$(ArtifactsPackagesDir)**\*.zip;
                        $(ArtifactsPackagesDir)**\*.exe;
                        $(ArtifactsPackagesDir)**\*.msi"
+              Kind="Blob"
               IsShipping="$([System.String]::Copy('%(RecursiveDir)').StartsWith('Shipping'))">
       <!-- Exclude wixpack.zip files from checksum generation -->
       <ChecksumPath Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.wixpack.zip')) != 'true'">%(FullPath).sha512</ChecksumPath>
@@ -28,7 +25,7 @@
     <Artifact Include="$(ArtifactsPackagesDir)**\Microsoft.WindowsDesktop.App.Runtime.*.nupkg;
                        $(ArtifactsPackagesDir)**\VS.Redist.Common.WindowsDesktop.*.nupkg"
               IsShipping="$([System.String]::Copy('%(RecursiveDir)').StartsWith('Shipping'))"
-              PublishFlatContainer="false" />
+              Kind="Package" />
   </ItemGroup>
 
 </Project>

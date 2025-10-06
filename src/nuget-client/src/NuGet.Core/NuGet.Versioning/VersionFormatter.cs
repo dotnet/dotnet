@@ -42,14 +42,14 @@ namespace NuGet.Versioning
                 format = "N";
             }
 
-            StringBuilder builder = StringBuilderPool.Shared.Rent(256);
+            StringBuilder builder = SharedStringBuilder.Instance.Rent(256);
 
             foreach (char c in format!)
             {
                 Format(builder, c, version);
             }
 
-            return StringBuilderPool.Shared.ToStringAndReturn(builder);
+            return SharedStringBuilder.Instance.ToStringAndReturn(builder);
         }
 
         /// <summary>

@@ -8,14 +8,10 @@
     See https://github.com/dotnet/arcade/blob/238f1bbb23ba67616818d0b242c5b55a18edec55/Documentation/ArcadeSdk.md#directorybuildprops
   -->
 
-  <PropertyGroup Condition="'$(DotNetSharedFrameworkTaskDir)' == ''">
-    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net9.0/</DotNetSharedFrameworkTaskDir>
-    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)../tools/net472/</DotNetSharedFrameworkTaskDir>
-  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)BuildTask.props" />
 
   <PropertyGroup>
     <UsingMicrosoftDotNetSharedFrameworkSdk>true</UsingMicrosoftDotNetSharedFrameworkSdk>
-    <DotNetSharedFrameworkTaskFile>$(DotNetSharedFrameworkTaskDir)Microsoft.DotNet.SharedFramework.Sdk.dll</DotNetSharedFrameworkTaskFile>
   </PropertyGroup>
 
   <!-- Allow setting a property to use targets from a development dir for faster iteration. -->

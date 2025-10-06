@@ -4,15 +4,17 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("B4CE6286-2A6B-3712-A3B7-1EE1DAD467B5")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedReader
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedReader
     {
         [PreserveSig]
         int GetDocument(
@@ -79,13 +81,24 @@ namespace Microsoft.DiaSymReader
             [MarshalAs(UnmanagedType.Interface)] object metadataImporter,
             [MarshalAs(UnmanagedType.LPWStr)] string fileName,
             [MarshalAs(UnmanagedType.LPWStr)] string searchPath,
-            IStream stream);
+#if NET9_0_OR_GREATER
+            [MarshalUsing(typeof(ComStreamWrapper.Marshaller))]
+#endif
+            System.Runtime.InteropServices.ComTypes.IStream stream);
 
         [PreserveSig]
-        int UpdateSymbolStore([MarshalAs(UnmanagedType.LPWStr)] string fileName, IStream stream);
+        int UpdateSymbolStore([MarshalAs(UnmanagedType.LPWStr)] string fileName,
+#if NET9_0_OR_GREATER
+            [MarshalUsing(typeof(ComStreamWrapper.Marshaller))]
+#endif
+            System.Runtime.InteropServices.ComTypes.IStream stream);
 
         [PreserveSig]
-        int ReplaceSymbolStore([MarshalAs(UnmanagedType.LPWStr)] string fileName, IStream stream);
+        int ReplaceSymbolStore([MarshalAs(UnmanagedType.LPWStr)] string fileName,
+#if NET9_0_OR_GREATER
+            [MarshalUsing(typeof(ComStreamWrapper.Marshaller))]
+#endif
+            System.Runtime.InteropServices.ComTypes.IStream stream);
 
         [PreserveSig]
         int GetSymbolStoreFileName(

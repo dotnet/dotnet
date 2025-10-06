@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>NuGet executable wrapper for the dotnet CLI nuget functionality.</Description>
-    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
-    <RuntimeIdentifier Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">win7-x86</RuntimeIdentifier>
+    <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
     <NoWarn>$(NoWarn);CS1591;CS1701;NU5104;CA1307;CA2000</NoWarn>
     <OutputType>Exe</OutputType>
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
     <XPLATProject>true</XPLATProject>
+    <UseMSBuildLocator Condition=" '$(UseMSBuildLocator)' == '' And '$(Configuration)' == 'Debug' and '$(CI)' != 'true' ">true</UseMSBuildLocator>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,34 +16,35 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="All" />
-    <PackageReference Include="System.Diagnostics.Debug" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
-<!-- Microsoft.Build.Locator is only used when debugging, and the compiler will skip copying this dependency from Release assemblies we insert because we only refer to it conditionally with the DEBUG configuration.
-  Uncomment the following when debugging. Also uncomment the MSBuildLocator code from Program.cs -->
-  <!-- <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
-  </ItemGroup> -->
+  <!-- Microsoft.Build.Locator is needed when debugging, but should not be used in the assemblies we insert. -->
+  <Choose>
+    <When Condition=" '$(UseMSBuildLocator)' == 'true' ">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);USEMSBUILDLOCATOR</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
   <ItemGroup>
-    <Compile Remove="external\*" />
-    <Compile Update="Commands\Verbs.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Verbs.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Commands\CommandParsers.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CommandParsers.tt</DependentUpon>
-    </Compile>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,17 +55,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Commands\Verbs.tt">
-      <LastGenOutput>Verbs.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Commands\CommandParsers.tt">
-      <LastGenOutput>CommandParsers.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
+    <InternalsVisibleTo Include="Dotnet.Integration.Test" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.CommandLine.Xplat.Tests" />
+    <InternalsVisibleTo Include="NuGet.XPlat.FuncTest" />
   </ItemGroup>
 </Project>

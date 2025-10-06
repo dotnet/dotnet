@@ -1,11 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
 using Xunit;
-using BcPolicyQualifierInfo = Org.BouncyCastle.Asn1.X509.PolicyQualifierInfo;
+using PolicyQualifierInfo = NuGet.Packaging.Signing.PolicyQualifierInfo;
+using TestPolicyQualifierInfo = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.PolicyQualifierInfo;
 
 namespace NuGet.Packaging.Test
 {
@@ -21,29 +22,44 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithOnlyPolicyQualifierId_ReturnsPolicyQualifierInfo()
         {
-            var policyQualifierId = "1.2.3";
-            var bcPolicyQualifierInfo = new BcPolicyQualifierInfo(
-                new DerObjectIdentifier(policyQualifierId), DerNull.Instance);
-            var bytes = bcPolicyQualifierInfo.GetDerEncoded();
+            Oid policyQualifierId = new("1.2.3");
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var policyQualifierInfo = PolicyQualifierInfo.Read(bytes);
+            using (writer.PushSequence())
+            {
+                writer.WriteObjectIdentifier(policyQualifierId.Value!);
+            }
 
-            Assert.Equal(policyQualifierId, policyQualifierInfo.PolicyQualifierId.Value);
-            Assert.Equal(DerNull.Instance.GetDerEncoded(), policyQualifierInfo.Qualifier);
+            byte[] bytes = writer.Encode();
+
+            PolicyQualifierInfo policyQualifierInfo = PolicyQualifierInfo.Read(bytes);
+
+            Assert.Equal(policyQualifierId.Value, policyQualifierInfo.PolicyQualifierId.Value);
+            Assert.Null(policyQualifierInfo.Qualifier);
         }
 
         [Fact]
         public void Read_WithQualifier_ReturnsPolicyQualifierInfo()
         {
-            var cpsUri = new DerIA5String("http://test.test");
-            var bcPolicyQualifierInfo = new BcPolicyQualifierInfo(
-                new DerObjectIdentifier(Oids.IdQtCps), cpsUri);
-            var bytes = bcPolicyQualifierInfo.GetDerEncoded();
+            const string cpsUri = "http://test.test";
 
-            var policyQualifierInfo = PolicyQualifierInfo.Read(bytes);
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            writer.WriteCharacterString(UniversalTagNumber.IA5String, cpsUri);
+
+            byte[] qualifier = writer.Encode();
+
+            TestPolicyQualifierInfo testPolicyQualifierInfo = new(new Oid(Oids.IdQtCps), qualifier);
+
+            writer.Reset();
+            testPolicyQualifierInfo.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+
+            PolicyQualifierInfo policyQualifierInfo = PolicyQualifierInfo.Read(bytes);
 
             Assert.Equal(Oids.IdQtCps, policyQualifierInfo.PolicyQualifierId.Value);
-            Assert.Equal(cpsUri.GetDerEncoded(), policyQualifierInfo.Qualifier);
+            Assert.Equal(qualifier, policyQualifierInfo.Qualifier);
         }
     }
 }

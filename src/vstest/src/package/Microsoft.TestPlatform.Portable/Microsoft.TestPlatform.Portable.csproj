@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
+    <!--  $(NetPortableTargetFrameworks); should be added here, but it makes net8.0 duplicate and nuget restore fails.  -->
+    <TargetFrameworks>$(TestHostAllTargetFrameworks);netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building from source or inside the VMR as it relies on a VS license. -->
+    <!-- Don't produce this package when building the .NET product as it relies on a VS license. -->
     <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.Portable.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
@@ -38,18 +39,20 @@
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)'))">
     <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
     <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj" />
-    <ProjectReference Include="..\..\testhost\testhost.csproj" />
-    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
     <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
     <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+
+    <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
+    This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
+    prevents us from having to lookup the correct .NET runtime. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
@@ -58,24 +61,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true"/>
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true"/>
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true"/>
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" GeneratePathProperty="true"/>
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" GeneratePathProperty="true"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" GeneratePathProperty="true" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
     <ItemGroup>
-      <MicrosoftCodeCoverageIO Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIO>
-      <MicrosoftExtensionsDependencyModel Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*"></MicrosoftExtensionsDependencyModel>
-      <MicrosoftExtensionsFileSystemGlobbing Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbing>
-      <NewtonsoftJson Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJson>
-      <SystemCollectionsImmutable Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*"></SystemCollectionsImmutable>
-      <SystemReflectionMetadata Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*"></SystemReflectionMetadata>
-      <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDia>
+      <MicrosoftCodeCoverageIO Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*" />
+      <MicrosoftExtensionsDependencyModel Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*" />
+      <MicrosoftExtensionsFileSystemGlobbing Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*" />
+      <NewtonsoftJson Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*" />
+      <SystemCollectionsImmutable Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*" />
+      <SystemReflectionMetadata Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*" />
+      <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" />

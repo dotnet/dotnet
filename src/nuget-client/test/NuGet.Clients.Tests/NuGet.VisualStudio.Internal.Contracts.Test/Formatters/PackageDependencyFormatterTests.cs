@@ -25,7 +25,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult, actualResult);
         }
 
-        public static TheoryData PackageDependencies => new TheoryData<PackageDependency>
+        public static TheoryData<PackageDependency> PackageDependencies => new()
             {
                 { new PackageDependency(PackageId) },
                 { new PackageDependency(PackageId, VersionRange) },

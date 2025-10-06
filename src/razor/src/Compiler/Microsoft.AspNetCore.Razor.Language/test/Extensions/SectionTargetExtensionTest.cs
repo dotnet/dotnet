@@ -41,7 +41,7 @@ public class SectionTargetExtensionTest
 );
 ";
 
-        var output = context.CodeWriter.GenerateCode();
+        var output = context.CodeWriter.GetText().ToString();
         Assert.Equal(expected, output);
     }
 
@@ -75,7 +75,7 @@ public class SectionTargetExtensionTest
 );
 ";
 
-        var output = context.CodeWriter.GenerateCode();
+        var output = context.CodeWriter.GetText().ToString();
         Assert.Equal(expected, output);
     }
 }

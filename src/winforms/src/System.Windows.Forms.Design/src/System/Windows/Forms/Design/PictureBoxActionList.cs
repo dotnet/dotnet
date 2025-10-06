@@ -1,8 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel.Design;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms.Design;
 
@@ -20,28 +20,25 @@ internal class PictureBoxActionList : DesignerActionList
 
     public PictureBoxSizeMode SizeMode
     {
-        get
-        {
-            return _pictureBox.SizeMode;
-        }
-        set
-        {
-            TypeDescriptor.GetProperties(_pictureBox)["SizeMode"]!.SetValue(Component, value);
-        }
+        get => _pictureBox.SizeMode;
+        set => TypeDescriptor.GetProperties(_pictureBox)[nameof(PictureBox.SizeMode)]!.SetValue(Component, value);
     }
 
-    public void ChooseImage()
-    {
-        EditorServiceContext.EditValue(_designer, Component!, "Image");
-    }
+    public void ChooseImage() => EditorServiceContext.EditValue(_designer, Component!, nameof(PictureBox.Image));
 
-    public override DesignerActionItemCollection GetSortedActionItems()
-    {
-        DesignerActionItemCollection items =
-        [
-            new DesignerActionMethodItem(this, "ChooseImage", SR.ChooseImageDisplayName, SR.PropertiesCategoryName, SR.ChooseImageDescription, true),
-            new DesignerActionPropertyItem("SizeMode", SR.SizeModeDisplayName, SR.PropertiesCategoryName, SR.SizeModeDescription),
-        ];
-        return items;
-    }
+    public override DesignerActionItemCollection GetSortedActionItems() =>
+    [
+        new DesignerActionMethodItem(
+            this,
+            nameof(ChooseImage),
+            SR.ChooseImageDisplayName,
+            SR.PropertiesCategoryName,
+            SR.ChooseImageDescription,
+            includeAsDesignerVerb: true),
+        new DesignerActionPropertyItem(
+            nameof(SizeMode),
+            SR.SizeModeDisplayName,
+            SR.PropertiesCategoryName,
+            SR.SizeModeDescription),
+    ];
 }

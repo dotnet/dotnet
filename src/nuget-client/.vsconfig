@@ -1,25 +1,34 @@
 {
   "version": "1.0",
   "components": [
+    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
+    "Microsoft.Component.MSBuild",
+    "Microsoft.VisualStudio.Component.Roslyn.LanguageServices",
+    "Microsoft.VisualStudio.Component.SQL.CLR",
     "Microsoft.VisualStudio.Component.CoreEditor",
     "Microsoft.VisualStudio.Workload.CoreEditor",
-    "Microsoft.NetCore.Component.Runtime.3.1",
-    "Microsoft.NetCore.Component.SDK",
-    "Microsoft.VisualStudio.Component.NuGet",
-    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
-    "Microsoft.VisualStudio.Component.Roslyn.LanguageServices",
-    "Microsoft.NetCore.Component.DevelopmentTools",
+    "Microsoft.Net.Component.4.8.SDK",
     "Microsoft.Net.Component.4.7.2.TargetingPack",
     "Microsoft.Net.ComponentGroup.DevelopmentPrerequisites",
-    "Microsoft.Component.MSBuild",
     "Microsoft.VisualStudio.Component.TextTemplating",
+    "Microsoft.VisualStudio.Component.NuGet",
+    "Microsoft.Component.ClickOnce",
     "Microsoft.VisualStudio.Component.ManagedDesktop.Core",
+    "Microsoft.NetCore.Component.Runtime.8.0",
+    "Microsoft.NetCore.Component.SDK",
+    "Microsoft.VisualStudio.Component.FSharp",
+    "Microsoft.ComponentGroup.ClickOnce.Publish",
+    "Microsoft.NetCore.Component.DevelopmentTools",
     "Microsoft.VisualStudio.Component.IntelliCode",
     "Microsoft.VisualStudio.Component.ManagedDesktop.Prerequisites",
     "Microsoft.VisualStudio.Workload.ManagedDesktop",
+    "Microsoft.Net.Component.4.6.TargetingPack",
     "Microsoft.VisualStudio.Component.VSSDK",
     "Microsoft.VisualStudio.ComponentGroup.VisualStudioExtension.Prerequisites",
     "Microsoft.VisualStudio.Workload.VisualStudioExtension",
-    "Microsoft.VisualStudio.Workload.NetCoreTools"
-  ]
+    "Microsoft.NetCore.Component.Runtime.3.1",
+    "Microsoft.NetCore.Component.Runtime.5.0",
+    "Microsoft.NetCore.Component.Runtime.7.0"
+  ],
+  "extensions": []
 }

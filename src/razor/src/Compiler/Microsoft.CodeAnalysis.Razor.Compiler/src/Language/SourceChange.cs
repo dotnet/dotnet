@@ -102,7 +102,7 @@ public sealed class SourceChange : IEquatable<SourceChange>
             throw new ArgumentNullException(nameof(node));
         }
 
-        if (node.FullWidth == 0)
+        if (node.Width == 0)
         {
             return string.Empty;
         }

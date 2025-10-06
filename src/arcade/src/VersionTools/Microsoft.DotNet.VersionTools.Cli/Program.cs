@@ -3,7 +3,7 @@
 
 using System;
 using System.CommandLine;
-using Microsoft.DotNet.VersionTools.Automation;
+using Microsoft.Arcade.Common;
 
 namespace Microsoft.DotNet.VersionTools.Cli;
 
@@ -13,31 +13,31 @@ class Program
     {
         //// Global options
 
-        CliRootCommand rootCommand = new("Microsoft.DotNet.VersionTools.Cli v" + Environment.Version.ToString(2))
+        RootCommand rootCommand = new("Microsoft.DotNet.VersionTools.Cli v" + Environment.Version.ToString(2))
         {
             TreatUnmatchedTokensAsErrors = true
         };
 
         // Package command
-        CliOption<string> assetsDirectoryOption = new("--assets-path", "-d")
+        Option<string> assetsDirectoryOption = new("--assets-path", "-d")
         {
             Description = "Path to the directory where the assets are located",
             Required = true
         };
 
-        CliOption<string> searchPatternOption = new("--search-pattern", "-s")
+        Option<string> searchPatternOption = new("--search-pattern", "-s")
         {
             Description = "The search string to match against the names of subdirectories in --assets-path. See Directory.GetFiles for details.",
             DefaultValueFactory = _ => "*.nupkg"
         };
 
-        CliOption<bool> recursiveOption = new("--recursive", "-r")
+        Option<bool> recursiveOption = new("--recursive", "-r")
         {
             Description = "Search for assets recursively.",
             DefaultValueFactory = _ => true
         };
 
-        CliCommand trimAssetVersionCommand = new("trim-assets-version", "Trim versions from provided assets. Currently, only NuGet packages are supported.");
+        System.CommandLine.Command trimAssetVersionCommand = new("trim-assets-version", "Trim versions from provided assets. Currently, only NuGet packages are supported.");
         trimAssetVersionCommand.Options.Add(assetsDirectoryOption);
         trimAssetVersionCommand.Options.Add(searchPatternOption);
         trimAssetVersionCommand.Options.Add(recursiveOption);
@@ -59,6 +59,6 @@ class Program
         });
 
         rootCommand.Subcommands.Add(trimAssetVersionCommand);
-        return new CliConfiguration(rootCommand).Invoke(args);
+        return rootCommand.Parse(args).Invoke();
     }
 }

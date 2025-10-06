@@ -103,11 +103,8 @@ internal class ChangeToolStripParentVerb
                 uiService.ShowError(e.Message);
             }
 
-            if (changeParent is not null)
-            {
-                changeParent.Cancel();
-                changeParent = null;
-            }
+            changeParent?.Cancel();
+            changeParent = null;
         }
         finally
         {
@@ -117,7 +114,7 @@ internal class ChangeToolStripParentVerb
         }
     }
 
-    private static Control GetParent(ToolStripContainer container, Control c)
+    private static Control GetParent(ToolStripContainer container, ToolStrip c)
     {
         Control newParent = container.ContentPanel;
         DockStyle dock = c.Dock;

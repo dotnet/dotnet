@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Moq;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Tests.Plugins.Helpers;

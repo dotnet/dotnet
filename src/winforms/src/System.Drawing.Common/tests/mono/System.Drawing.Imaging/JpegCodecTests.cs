@@ -1,13 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-//
+
 // JpegCodec class testing unit
 //
 // Authors:
 //  Jordi Mas i Hernandez (jordi@ximian.com)
 //  Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,6 +36,8 @@ namespace MonoTests.System.Drawing.Imaging;
 
 public class JpegCodecTest
 {
+    public static bool IsWindows7OrIsArm64Process => PlatformDetection.IsWindows7 || PlatformDetection.IsArm64Process;
+
     [Fact]
     public void Bitmap8bbpIndexedGreyscaleFeatures()
     {
@@ -104,7 +106,7 @@ public class JpegCodecTest
         Assert.Equal(-9211021, bmp.GetPixel(96, 96).ToArgb());
     }
 
-    [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsNotWindows7), nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
+    [Fact(Skip = "Condition not met", SkipWhen = nameof(IsWindows7OrIsArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
     public void Bitmap8bbpIndexedGreyscaleData()
     {
         string sInFile = Helpers.GetTestBitmapPath("nature-greyscale.jpg");
@@ -192,7 +194,7 @@ public class JpegCodecTest
         /* note: under MS flags aren't constant between executions in this case (no palette) */
         // Assert.Equal(77960, bmp.Flags);
 
-        Assert.Equal(0, bmp.Palette.Entries.Length);
+        Assert.Empty(bmp.Palette.Entries);
     }
 
     [Fact]
@@ -219,7 +221,7 @@ public class JpegCodecTest
         Assert.Equal(-12944166, bmp.GetPixel(96, 96).ToArgb());
     }
 
-    [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
+    [Fact(Skip = "Condition not met", SkipType = typeof(PlatformDetection), SkipUnless = nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
     public void Bitmap24bitData()
     {
         string sInFile = Helpers.GetTestBitmapPath("almogaver24bits.bmp");
@@ -340,7 +342,7 @@ public class JpegCodecTest
         }
     }
 
-    private void Save(PixelFormat original, PixelFormat expected)
+    private static void Save(PixelFormat original, PixelFormat expected)
     {
         string sOutFile = $"linerect-{expected}.jpeg";
 

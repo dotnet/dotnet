@@ -51,7 +51,7 @@ module EntryPoint =
         |> compile
         |> shouldFail
         |> withDiagnostics [
-            (Error 433, Line 18, Col 5, Line 19, Col 19, "A function labeled with the 'EntryPointAttribute' attribute must be the last declaration in the last file in the compilation sequence.")
+            (Error 433, Line 19, Col 9, Line 19, Col 14, "A function labeled with the 'EntryPointAttribute' attribute must be the last declaration in the last file in the compilation sequence.")
         ]
 
     //	SOURCE="E_twofiles_002b.fs E_twofiles_002a.fs"  SCFLAGS="--test:ErrorRanges"		# E_twofiles_002b/a
@@ -75,7 +75,7 @@ module EntryPoint =
         |> compile
         |> shouldFail
         |> withDiagnostics [
-            (Error 842, Line 9, Col 3, Line 9, Col 13, """This attribute is not valid for use on this language element""")
+            (Warning 842, Line 9, Col 3, Line 9, Col 13, "This attribute cannot be applied to class. Valid targets are: method")
         ]
 
     //	SOURCE=E_twoattributesonsamefunction001.fs      SCFLAGS="--test:ErrorRanges"	# E_twoattributesonsamefunction001.fs

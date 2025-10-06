@@ -20,6 +20,7 @@ public interface IDesignModeClient : IDisposable
     /// Setups client based on port
     /// </summary>
     /// <param name="port">port number to connect</param>
+    /// <param name="testRequestManager">test request manager</param>
     void ConnectToClientAndProcessRequests(int port, ITestRequestManager testRequestManager);
 
     /// <summary>

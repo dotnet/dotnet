@@ -222,7 +222,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
         TestPluginCache.Instance = null;
         try
         {
-            TestPluginCacheHelper.SetupMockAdditionalPathExtensions(new[] { "c:\\e1.dll" });
+            TestPluginCacheHelper.SetupMockAdditionalPathExtensions(["c:\\e1.dll"]);
             _mockFileHelper.Setup(fh => fh.Exists(It.IsAny<string>())).Returns(true);
             _mockRequestSender.Setup(s => s.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(true);
             _mockTestHostManager.Setup(th => th.GetTestPlatformExtensions(It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>())).Returns(new[] { "he1.dll", "c:\\e1.dll" });

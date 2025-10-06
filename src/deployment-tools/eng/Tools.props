@@ -1,8 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <!-- Unset the repo tool manifest property in CI as we don't use repo tools there anyway,
-    until https://github.com/dotnet/sdk/issues/10938 is fixed. -->
-    <_RepoToolManifest Condition="'$(ContinuousIntegrationBuild)' == 'true'" />
-  </PropertyGroup>
-
-</Project>

@@ -111,11 +111,14 @@ namespace NuGetVSExtension
         {
             await _lazyInitializer.InitializeAsync(cancellationToken);
 
+            INuGetTelemetryProvider telemetryProvider = await _lazyTelemetryProvider.GetValueAsync(cancellationToken);
+
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var service = new NuGetProjectManagerService(
                 options,
                 serviceBroker,
                 authorizationServiceClient,
+                telemetryProvider,
                 _projectManagerServiceSharedState,
                 _sharedServiceState);
 #pragma warning restore CA2000 // Dispose objects before losing scope

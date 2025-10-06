@@ -32,7 +32,7 @@
   <Target Name="GetVsixVersion" Returns="$(VsixVersion)" />
 
   <!--
-    Do not import targets that build VSIXes at design time or when running in LUT.
+    Do not import targets that build VSIXes when running in LUT.
     
     It is unnecessary to build the VSIXes, but also avoids VSSDK issue
     https://dev.azure.com/devdiv/DevDiv/_workitems?id=365685&fullScreen=false&_a=edit.
@@ -40,7 +40,10 @@
     Since their name ends with OutputGroup, these targets would run during design time builds per convention. 
     If the project is not a VSIX project and sets CreateVsixContainer=false these targets should be
     a no-op. However they dont check for that and that's a bug.
+    
+    It is required to include these targets in design time builds because they provide information to Visual Studio's
+    fast up-to-date check, and otherwise can fail to build a project after making changes.
   -->
-  <Import Project="VisualStudio.VsixBuild.targets" Condition="'$(DesignTimeBuild)' != 'true' and '$(BuildingForLiveUnitTesting)' != 'true'"/>
+  <Import Project="VisualStudio.VsixBuild.targets" Condition="'$(BuildingForLiveUnitTesting)' != 'true'"/>
 
 </Project>

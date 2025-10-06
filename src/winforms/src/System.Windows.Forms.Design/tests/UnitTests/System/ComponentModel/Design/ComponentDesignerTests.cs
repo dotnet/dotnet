@@ -1,12 +1,14 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.Collections;
 using System.Configuration;
+using System.Windows.Forms.Design.Tests.Mocks;
+using System.Windows.Forms.TestUtilities;
 using Moq;
 using Moq.Protected;
-using System.Windows.Forms.TestUtilities;
-using System.Windows.Forms.Design.Tests.Mocks;
 
 namespace System.ComponentModel.Design.Tests;
 
@@ -76,7 +78,7 @@ public class ComponentDesignerTests
         using IPersistComponentSettingsComponent component = new();
         designer.Initialize(component);
         designer.PostFilterProperties(properties);
-        PropertyDescriptor result = (PropertyDescriptor)properties["SettingsKey"];
+        PropertyDescriptor result = properties["SettingsKey"];
         Assert.Same(descriptor, result);
 
         Mock<IDesignerHost> mockDesignerHost = new(MockBehavior.Strict);
@@ -88,7 +90,7 @@ public class ComponentDesignerTests
         designer.Initialize(component);
 
         designer.PostFilterProperties(properties);
-        result = (PropertyDescriptor)properties["SettingsKey"];
+        result = properties["SettingsKey"];
         Assert.NotSame(descriptor, result);
     }
 
@@ -1262,7 +1264,7 @@ public class ComponentDesignerTests
         designer.Initialize(rootComponent);
         component.StringPropertySetCount = 0;
 
-        Assert.Throws(exception.GetType(), () => designer.DoDefaultAction());
+        Assert.Throws(exception.GetType(), designer.DoDefaultAction);
         mockSite.Verify(s => s.GetService(typeof(IEventBindingService)), Times.Once());
         mockSite.Verify(s => s.GetService(typeof(ISelectionService)), Times.Once());
         mockSite.Verify(s => s.GetService(typeof(IDesignerHost)), Times.Exactly(2));
@@ -1273,7 +1275,7 @@ public class ComponentDesignerTests
         Assert.Equal(0, component.StringPropertySetCount);
 
         // Call again.
-        Assert.Throws(exception.GetType(), () => designer.DoDefaultAction());
+        Assert.Throws(exception.GetType(), designer.DoDefaultAction);
         mockSite.Verify(s => s.GetService(typeof(IEventBindingService)), Times.Exactly(2));
         mockSite.Verify(s => s.GetService(typeof(ISelectionService)), Times.Exactly(2));
         mockSite.Verify(s => s.GetService(typeof(IDesignerHost)), Times.Exactly(3));
@@ -1554,7 +1556,7 @@ public class ComponentDesignerTests
         designer.Initialize(rootComponent);
         component.StringPropertySetCount = 0;
 
-        Assert.Throws(exception.GetType(), () => designer.DoDefaultAction());
+        Assert.Throws(exception.GetType(), designer.DoDefaultAction);
         mockSite.Verify(s => s.GetService(typeof(IEventBindingService)), Times.Once());
         mockSite.Verify(s => s.GetService(typeof(ISelectionService)), Times.Once());
         mockSite.Verify(s => s.GetService(typeof(IDesignerHost)), Times.Exactly(2));
@@ -1567,7 +1569,7 @@ public class ComponentDesignerTests
         Assert.Equal(0, component.StringPropertySetCount);
 
         // Call again.
-        Assert.Throws(exception.GetType(), () => designer.DoDefaultAction());
+        Assert.Throws(exception.GetType(), designer.DoDefaultAction);
         mockSite.Verify(s => s.GetService(typeof(IEventBindingService)), Times.Exactly(2));
         mockSite.Verify(s => s.GetService(typeof(ISelectionService)), Times.Exactly(2));
         mockSite.Verify(s => s.GetService(typeof(IDesignerHost)), Times.Exactly(3));
@@ -2311,7 +2313,7 @@ public class ComponentDesignerTests
         using IPersistComponentSettingsComponent component = new();
         designer.Initialize(component);
         designer.PreFilterProperties(properties);
-        PropertyDescriptor result = (PropertyDescriptor)properties["SettingsKey"];
+        PropertyDescriptor result = properties["SettingsKey"];
         Assert.NotSame(descriptor, result);
         Assert.Equal(typeof(ComponentDesigner), result.ComponentType);
         Assert.Equal(descriptor.Name, result.Name);
@@ -2331,7 +2333,7 @@ public class ComponentDesignerTests
         using IPersistComponentSettingsComponent component = new();
         designer.Initialize(component);
         designer.PreFilterProperties(properties);
-        PropertyDescriptor result = (PropertyDescriptor)properties["SettingsKey"];
+        PropertyDescriptor result = properties["SettingsKey"];
         Assert.NotSame(descriptor, result);
         Assert.Equal(typeof(ComponentDesigner), result.ComponentType);
         Assert.Equal(descriptor.Name, result.Name);
@@ -2741,7 +2743,7 @@ public class ComponentDesignerTests
         using IPersistComponentSettingsComponent component = new();
         designer.Initialize(component);
         filter.PreFilterProperties(properties);
-        PropertyDescriptor result = (PropertyDescriptor)properties["SettingsKey"];
+        PropertyDescriptor result = properties["SettingsKey"];
         Assert.NotSame(descriptor, result);
         Assert.Equal(typeof(ComponentDesigner), result.ComponentType);
         Assert.Equal(descriptor.Name, result.Name);
@@ -2762,7 +2764,7 @@ public class ComponentDesignerTests
         using IPersistComponentSettingsComponent component = new();
         designer.Initialize(component);
         filter.PreFilterProperties(properties);
-        PropertyDescriptor result = (PropertyDescriptor)properties["SettingsKey"];
+        PropertyDescriptor result = properties["SettingsKey"];
         Assert.NotSame(descriptor, result);
         Assert.Equal(typeof(ComponentDesigner), result.ComponentType);
         Assert.Equal(descriptor.Name, result.Name);

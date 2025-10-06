@@ -9,13 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(1,49) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.Rendering
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -37,6 +37,14 @@ using Microsoft.AspNetCore.Components.Rendering
 
         __builder.OpenElement(0, "ul");
 #nullable restore
+#line (6,1)-(6,13) "x:\dir\subdir\Test\TestComponent.cshtml"
+            
+
+#line default
+#line hidden
+#nullable disable
+
+#nullable restore
 #line (6,14)-(8,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 for (var i = 0; i < 100; i++)
             {
@@ -46,10 +54,9 @@ for (var i = 0; i < 100; i++)
 #nullable disable
 
         __builder.OpenElement(1, "li");
-        __builder.AddContent(2, 
 #nullable restore
-#line (9,22)-(9,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-i
+#line (9,22)-(9,23) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(2, i
 
 #line default
 #line hidden

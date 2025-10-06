@@ -1,3 +1,11 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable CA1720 // Identifier contains type name
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0039 // Use local function
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #endif

@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
-        <target state="translated">Inserir a Tag de Fechamento Automaticamente</target>
+        <source>Auto insert closing tag</source>
+        <target state="translated">Inserir automaticamente marca de fechamento</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
@@ -58,8 +58,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
-        <target state="translated">Inserir Aspas de Atributo Automaticamente</target>
+        <source>Auto insert attribute quotes</source>
+        <target state="translated">Inserção automática de citações de atributos</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -68,8 +68,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
-        <target state="translated">Código/Funções bloqueia chave de abertura na próxima linha</target>
+        <source>Code/functions block open brace on next line</source>
+        <target state="translated">Código/funções bloqueiam a chave aberta na próxima linha</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -78,18 +78,28 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
-        <target state="translated">Plano de fundo para o código C#</target>
+        <source>Background for C# code</source>
+        <target state="translated">Plano de fundo do código C#</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
-        <target state="translated">Se for verdadeiro, clicar no espaço confirmará as sugestões dos elementos e componentes Html</target>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
+        <target state="translated">Se verdadeiro, pressionar espaço confirmará as sugestões de elementos e componentes HTML</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
-        <target state="translated">Confirmar Elementos com o Espaço</target>
+        <source>Commit elements with space</source>
+        <target state="translated">Confirmar elementos com espaço</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">Se for true, a formatação será habilitada ao colar conteúdo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Formatar ao colar</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -98,8 +108,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
-        <target state="translated">Formatar no Tipo</target>
+        <source>Format on type</source>
+        <target state="translated">Formatar no tipo</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">
@@ -113,8 +123,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDescription">
-        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
-        <target state="translated">Define o nível de registro em log a ser exibido na categoria Saída do Razor Logger da Janela de Saída.</target>
+        <source>Sets the level of logging to show in the Razor Logger Output category of the Output Window.</source>
+        <target state="translated">Define o nível de registro em log a ser exibido na categoria Saída do Agente do Razor da Janela de Saída.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDisplayName">

@@ -5,9 +5,9 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 #if NET9_0_OR_GREATER
 using System.Drawing.Imaging.Effects;
-using System.Runtime.Versioning;
 #endif
 using System.IO;
+using System.Private.Windows.Graphics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -17,7 +17,7 @@ namespace System.Drawing;
         $"System.Drawing.Design.UITypeEditor, {AssemblyRef.SystemDrawing}")]
 [Serializable]
 [TypeForwardedFrom(AssemblyRef.SystemDrawing)]
-public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
+public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>, IBitmap
 {
     private static readonly Color s_defaultTransparentColor = Color.LightGray;
 
@@ -38,8 +38,8 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         fixed (char* fn = filename)
         {
             Status status = useIcm
-                ? PInvoke.GdipCreateBitmapFromFileICM(fn, &bitmap)
-                : PInvoke.GdipCreateBitmapFromFile(fn, &bitmap);
+                ? PInvokeGdiPlus.GdipCreateBitmapFromFileICM(fn, &bitmap)
+                : PInvokeGdiPlus.GdipCreateBitmapFromFile(fn, &bitmap);
             status.ThrowIfFailed();
         }
 
@@ -59,8 +59,8 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
 
         GpBitmap* bitmap = null;
         Status status = useIcm
-            ? PInvoke.GdipCreateBitmapFromStreamICM(iStream, &bitmap)
-            : PInvoke.GdipCreateBitmapFromStream(iStream, &bitmap);
+            ? PInvokeGdiPlus.GdipCreateBitmapFromStreamICM(iStream, &bitmap)
+            : PInvokeGdiPlus.GdipCreateBitmapFromStream(iStream, &bitmap);
         status.ThrowIfFailed();
 
         ValidateImage((GpImage*)bitmap);
@@ -90,7 +90,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         ArgumentNullException.ThrowIfNull(g);
 
         GpBitmap* bitmap;
-        PInvoke.GdipCreateBitmapFromGraphics(width, height, g.NativeGraphics, &bitmap).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateBitmapFromGraphics(width, height, g.NativeGraphics, &bitmap).ThrowIfFailed();
         SetNativeImage((GpImage*)bitmap);
         GC.KeepAlive(g);
     }
@@ -98,14 +98,14 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     public Bitmap(int width, int height, int stride, PixelFormat format, IntPtr scan0)
     {
         GpBitmap* bitmap;
-        PInvoke.GdipCreateBitmapFromScan0(width, height, stride, (int)format, (byte*)scan0, &bitmap).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateBitmapFromScan0(width, height, stride, (int)format, (byte*)scan0, &bitmap).ThrowIfFailed();
         SetNativeImage((GpImage*)bitmap);
     }
 
     public Bitmap(int width, int height, PixelFormat format)
     {
         GpBitmap* bitmap;
-        PInvoke.GdipCreateBitmapFromScan0(width, height, 0, (int)format, null, &bitmap).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateBitmapFromScan0(width, height, 0, (int)format, null, &bitmap).ThrowIfFailed();
         SetNativeImage((GpImage*)bitmap);
     }
 
@@ -129,12 +129,12 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     {
     }
 
-    GpBitmap* IPointer<GpBitmap>.Pointer => (GpBitmap*)((Image)this).Pointer();
+    nint IPointer<GpBitmap>.Pointer => (nint)((Image)this).Pointer();
 
     public static Bitmap FromHicon(IntPtr hicon)
     {
         GpBitmap* bitmap;
-        PInvoke.GdipCreateBitmapFromHICON((HICON)hicon, &bitmap).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateBitmapFromHICON((HICON)hicon, &bitmap).ThrowIfFailed();
         return new Bitmap(bitmap);
     }
 
@@ -144,7 +144,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         GpBitmap* bitmap = null;
         fixed (char* bn = bitmapName)
         {
-            PInvoke.GdipCreateBitmapFromResource((HINSTANCE)hinstance, bn, &bitmap).ThrowIfFailed();
+            PInvokeGdiPlus.GdipCreateBitmapFromResource((HINSTANCE)hinstance, bn, &bitmap).ThrowIfFailed();
         }
 
         return new Bitmap(bitmap);
@@ -153,30 +153,33 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IntPtr GetHbitmap() => GetHbitmap(Color.LightGray);
 
+    HBITMAP IBitmap.GetHbitmap() => (HBITMAP)GetHbitmap();
+
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IntPtr GetHbitmap(Color background)
     {
-        HBITMAP hbitmap;
-        Status status = PInvoke.GdipCreateHBITMAPFromBitmap(
-            this.Pointer(),
-            &hbitmap,
-            (uint)ColorTranslator.ToWin32(background));
-
-        if (status == Status.InvalidParameter && (Width >= short.MaxValue || Height >= short.MaxValue))
+        try
         {
-            throw new ArgumentException(SR.GdiplusInvalidSize);
+            return this.GetHBITMAP(background);
         }
-
-        status.ThrowIfFailed();
-        GC.KeepAlive(this);
-        return hbitmap;
+        catch (ArgumentException)
+        {
+            if (Width >= short.MaxValue || Height >= short.MaxValue)
+            {
+                throw new ArgumentException(SR.GdiplusInvalidSize);
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IntPtr GetHicon()
     {
         HICON hicon;
-        PInvoke.GdipCreateHICONFromBitmap(this.Pointer(), &hicon).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreateHICONFromBitmap(this.Pointer(), &hicon).ThrowIfFailed();
         GC.KeepAlive(this);
         return hicon;
     }
@@ -190,7 +193,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
 
         GpBitmap* clone;
 
-        Status status = PInvoke.GdipCloneBitmapArea(
+        Status status = PInvokeGdiPlus.GdipCloneBitmapArea(
             rect.X, rect.Y, rect.Width, rect.Height,
             (int)format,
             this.Pointer(),
@@ -233,7 +236,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         Size size = Size;
 
         // The new bitmap must be in 32bppARGB  format, because that's the only
-        // thing that supports alpha.  (And that's what the image is initialized to -- transparent)
+        // thing that supports alpha. (And that's what the image is initialized to -- transparent)
         using Bitmap result = new(size.Width, size.Height, PixelFormat.Format32bppArgb);
         using var graphics = Graphics.FromImage(result);
 
@@ -304,7 +307,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         }
 
         uint color;
-        PInvoke.GdipBitmapGetPixel(this.Pointer(), x, y, &color).ThrowIfFailed();
+        PInvokeGdiPlus.GdipBitmapGetPixel(this.Pointer(), x, y, &color).ThrowIfFailed();
         GC.KeepAlive(this);
         return Color.FromArgb((int)color);
     }
@@ -326,13 +329,13 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
             throw new ArgumentOutOfRangeException(nameof(y), SR.ValidRangeY);
         }
 
-        PInvoke.GdipBitmapSetPixel(this.Pointer(), x, y, (uint)color.ToArgb()).ThrowIfFailed();
+        PInvokeGdiPlus.GdipBitmapSetPixel(this.Pointer(), x, y, (uint)color.ToArgb()).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
     public void SetResolution(float xDpi, float yDpi)
     {
-        PInvoke.GdipBitmapSetResolution(this.Pointer(), xDpi, yDpi).ThrowIfFailed();
+        PInvokeGdiPlus.GdipBitmapSetResolution(this.Pointer(), xDpi, yDpi).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -344,7 +347,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
         }
 
         GpBitmap* clone;
-        Status status = PInvoke.GdipCloneBitmapAreaI(
+        Status status = PInvokeGdiPlus.GdipCloneBitmapAreaI(
             rect.X, rect.Y, rect.Width, rect.Height,
             (int)format,
             this.Pointer(),
@@ -368,7 +371,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     public void ApplyEffect(Effect effect, Rectangle area = default)
     {
         RECT rect = area;
-        PInvoke.GdipBitmapApplyEffect(
+        PInvokeGdiPlus.GdipBitmapApplyEffect(
             this.Pointer(),
             effect.Pointer(),
             area.IsEmpty ? null : &rect,
@@ -396,7 +399,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     ///  </para>
     ///  <para>
     ///   This must be <see cref="DitherType.Solid"/> or <see cref="DitherType.ErrorDiffusion"/> if the <paramref name="paletteType"/>
-    ///   is <see cref="PaletteType.Custom"/> or <see cref="PaletteType.FixedBW"/>.
+    ///   is <see cref="PaletteType.Custom"/> or <see cref="PaletteType.FixedBlackAndWhite"/>.
     ///  </para>
     /// </param>
     /// <param name="paletteType">
@@ -440,7 +443,6 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     ///   is complete.
     ///  </para>
     /// </remarks>
-    [RequiresPreviewFeatures]
     public void ConvertFormat(
         PixelFormat format,
         DitherType ditherType,
@@ -450,7 +452,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     {
         if (palette is null)
         {
-            PInvoke.GdipBitmapConvertFormat(
+            PInvokeGdiPlus.GdipBitmapConvertFormat(
                 this.Pointer(),
                 (int)format,
                 (GdiPlus.DitherType)ditherType,
@@ -463,7 +465,7 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
             using var buffer = palette.ConvertToBuffer();
             fixed (void* b = buffer)
             {
-                PInvoke.GdipBitmapConvertFormat(
+                PInvokeGdiPlus.GdipBitmapConvertFormat(
                     this.Pointer(),
                     (int)format,
                     (GdiPlus.DitherType)ditherType,
@@ -485,7 +487,6 @@ public sealed unsafe class Bitmap : Image, IPointer<GpBitmap>
     ///   The new pixel format. <see cref="PixelFormat.Format16bppGrayScale"/> is not supported.
     ///  </para>
     /// </param>
-    [RequiresPreviewFeatures]
     public void ConvertFormat(PixelFormat format)
     {
         PixelFormat currentFormat = PixelFormat;

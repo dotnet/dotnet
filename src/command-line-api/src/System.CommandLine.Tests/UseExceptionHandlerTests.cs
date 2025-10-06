@@ -1,9 +1,10 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-using System.Threading.Tasks;
 using FluentAssertions;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace System.CommandLine.Tests
@@ -13,15 +14,10 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task UseExceptionHandler_catches_command_handler_exceptions_and_sets_result_code_to_1()
         {
-            var command = new CliCommand("the-command");
+            var command = new Command("the-command");
             command.SetAction((_, __) => Task.FromException<int>(new Exception("oops!")));
 
-            CliConfiguration config = new(command)
-            {
-                Error = new StringWriter(),
-            };
-
-            var resultCode = await config.InvokeAsync("the-command");
+            var resultCode = await command.Parse("the-command").InvokeAsync(new() { Error = new StringWriter() },CancellationToken.None);
 
             resultCode.Should().Be(1);
         }
@@ -29,35 +25,28 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task UseExceptionHandler_catches_command_handler_exceptions_and_writes_details_to_standard_error()
         {
-            var command = new CliCommand("the-command");
+            var command = new Command("the-command");
             command.SetAction((_, __) => Task.FromException<int>(new Exception("oops!")));
 
-            CliConfiguration config = new(command)
-            {
-                Error = new StringWriter(),
-            };
+            var error = new StringWriter();
 
-            await config.InvokeAsync("the-command");
+            await command.Parse("the-command").InvokeAsync(new() { Error = error }, CancellationToken.None);
 
-            config.Error.ToString().Should().Contain("System.Exception: oops!");
+            error.ToString().Should().Contain("System.Exception: oops!");
         }
 
         [Fact]
         public async Task When_thrown_exception_is_from_cancelation_no_output_is_generated()
         {
-            CliCommand command = new("the-command");
+            Command command = new("the-command");
             command.SetAction((_, __) => throw new OperationCanceledException());
 
-            CliConfiguration config = new(command)
-            {
-                Output = new StringWriter(),
-                Error = new StringWriter()
-            };
+            var output = new StringWriter();
+            var error = new StringWriter();
 
-            int resultCode = await config
-                                   .InvokeAsync("the-command");
+            int resultCode = await command.Parse("the-command").InvokeAsync(new() { Output = output, Error = error }, CancellationToken.None);
 
-            config.Output.ToString().Should().BeEmpty();
+            output.ToString().Should().BeEmpty();
             resultCode.Should().NotBe(0);
         }
 
@@ -67,27 +56,29 @@ namespace System.CommandLine.Tests
         public async Task Exception_output_can_be_customized(bool async)
         {
             Exception expectedException = new ("oops!");
-            CliCommand command = new("the-command");
+            Command command = new("the-command");
             command.SetAction((_, __) => throw expectedException);
 
-            CliConfiguration config = new(command)
+            InvocationConfiguration config = new()
             {
                 Error = new StringWriter(),
                 EnableDefaultExceptionHandler = false
             };
 
-            ParseResult parseResult = command.Parse("the-command", config);
+            ParseResult parseResult = command.Parse("the-command");
 
             int resultCode = 0;
 
             try
             {
-                resultCode = async ? await parseResult.InvokeAsync() : parseResult.Invoke();
+                resultCode = async 
+                                 ? await parseResult.InvokeAsync(config) 
+                                 : parseResult.Invoke(config);
             }
             catch (Exception ex)
             {
                 ex.Should().Be(expectedException);
-                parseResult.Configuration.Error.Write("Well that's awkward.");
+                parseResult.InvocationConfiguration.Error.Write("Well that's awkward.");
                 resultCode = 22;
             }
 

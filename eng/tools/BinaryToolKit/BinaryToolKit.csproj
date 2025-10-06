@@ -3,9 +3,8 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <CustomPackageVersionsProps></CustomPackageVersionsProps>
-    <OutputType>Exe</OutputType>
+    <CustomPackageVersionsProps Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)/PackageVersions.props</CustomPackageVersionsProps>
+    <RestoreSources Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)</RestoreSources>
   </PropertyGroup>
 
   <Target Name="CheckCustomPackageVersionsProps">
@@ -17,10 +16,9 @@
   <Import Project="$(CustomPackageVersionsProps)" Condition="'$(CustomPackageVersionsProps)' != ''" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
-    <PackageReference Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="compile" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
 </Project>

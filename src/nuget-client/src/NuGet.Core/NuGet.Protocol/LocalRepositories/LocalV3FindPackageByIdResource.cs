@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -280,8 +279,6 @@ namespace NuGet.Protocol
                 FindPackageByIdDependencyInfo dependencyInfo = null;
                 if (DoesVersionExist(id, version))
                 {
-                    var identity = new PackageIdentity(id, version);
-
                     dependencyInfo = ProcessNuspecReader(
                         id,
                         version,

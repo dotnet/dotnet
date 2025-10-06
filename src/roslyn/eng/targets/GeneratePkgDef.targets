@@ -86,8 +86,17 @@
       </_FileContentEntries>
 
       <PkgDefFileContent Include="@(_FileContentEntries->'%(FullFilePath)')" />
+
+      <!-- Ensure we add these to the fast-up-to-date-check collections -->
+      <UpToDateCheckInput Include="@(PkgDefFileContent)" Set="PkgdefFiles" />
+      <UpToDateCheckOutput Include="$(_GeneratePkgDefOutputFile)" Set="PkgdefFiles" />
     </ItemGroup>
   </Target>
+
+  <PropertyGroup>
+    <CollectUpToDateCheckInputDesignTimeDependsOn>$(CollectUpToDateCheckInputDesignTimeDependsOn);_SetGeneratePkgDefInputsOutputs</CollectUpToDateCheckInputDesignTimeDependsOn>
+    <CollectUpToDateCheckOutputDesignTimeDependsOn>$(CollectUpToDateCheckOutputDesignTimeDependsOn);_SetGeneratePkgDefInputsOutputs</CollectUpToDateCheckOutputDesignTimeDependsOn>
+  </PropertyGroup>
 
   <!--
     Initializes metadata of PkgDefBrokeredService items.
@@ -96,6 +105,7 @@
           BeforeTargets="GeneratePkgDef">
     <ItemGroup>
       <PkgDefBrokeredService Update="@(PkgDefBrokeredService)">
+        <_Version Condition="'%(PkgDefBrokeredService.Version)' != ''">\%(PkgDefBrokeredService.Version)</_Version>
         <_Audience>dword:00000003</_Audience> <!-- default: Local -->
         <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'Process'">dword:00000001</_Audience>
         <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'RemoteExclusiveClient'">dword:00000100</_Audience>
@@ -231,7 +241,7 @@
       <_PkgDefEntry Include="@(PkgDefBrokeredService)" Condition="'%(PkgDefBrokeredService.ProfferingPackageId)' == ''">
         <!-- 11AD60FC-6D87-4674-8F88-9ABE79176CBE is id of the HubClient package which proffers ServiceHub services -->
         <RawValue>
-          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)]
+          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)%(PkgDefBrokeredService._Version)]
 @="11AD60FC-6D87-4674-8F88-9ABE79176CBE"
 "IsServiceHub"=dword:00000001
 "ServiceLocation"=%(PkgDefBrokeredService._ServiceLocation)
@@ -242,7 +252,7 @@
 
       <_PkgDefEntry Include="@(PkgDefBrokeredService)" Condition="'%(PkgDefBrokeredService.ProfferingPackageId)' != ''">
         <RawValue>
-          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)]
+          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)%(PkgDefBrokeredService._Version)]
 @="%(PkgDefBrokeredService.ProfferingPackageId)"
 "audience"=%(PkgDefBrokeredService._Audience)
 ]]>
@@ -292,12 +302,10 @@
     <Error Text="GeneratePkgDefFile is true but the project did not produce any entries (PkgDef* items) to be written to pkgdef file"
            Condition="'@(_PkgDefLines)' == ''"/>
 
-    <!-- Write final pkgdef content. If the CTO file was changed, touch the pkgdef file to cause a re-merge (see VSSDK targets). -->
     <WriteLinesToFile File="$(_GeneratePkgDefOutputFile)"
                       Lines="@(_PkgDefLines)"
                       Overwrite="true"
-                      Encoding="UTF-8"
-                      WriteOnlyWhenDifferent="!$([MSBuild]::ValueOrDefault('$(CTOFileHasChanged)', 'false'))" />
+                      Encoding="UTF-8" />
     <ItemGroup>
       <FileWrites Include="$(_GeneratePkgDefOutputFile)" />
     </ItemGroup>

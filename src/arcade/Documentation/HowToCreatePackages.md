@@ -22,7 +22,7 @@ One of the goals of Arcade is to be a vehicle to provide code sharing. One of th
 
   `namespace Microsoft.DotNet.ProjectOne.Model`
 
-- Include the package on the `Arcade.sln` file. This way it will be compiled automatically when the solution is built.
+- Include the package on the `Arcade.slnx` file. This way it will be compiled automatically when the solution is built.
 
 - Make sure that library dependencies of the new package use the Arcade defined version of the library. The versions are defined in the [`..\eng\Versions.props`](../eng/Versions.props) file. For instance, if the project has a dependence on Newtonsoft.Json you must add it as follows:
 

@@ -31,10 +31,7 @@ namespace System.Formats.Asn1
         /// </exception>
         public void WriteObjectIdentifier(string oidValue, Asn1Tag? tag = null)
         {
-            if (oidValue is null)
-            {
-                throw new ArgumentNullException(nameof(oidValue));
-            }
+            ArgumentNullException.ThrowIfNull(oidValue);
 
             WriteObjectIdentifier(oidValue.AsSpan(), tag);
         }
@@ -59,7 +56,7 @@ namespace System.Formats.Asn1
         {
             CheckUniversalTag(tag, UniversalTagNumber.ObjectIdentifier);
 
-#if NETCOREAPP
+#if NET
             ReadOnlySpan<byte> wellKnownContents = WellKnownOids.GetContents(oidValue);
 
             if (!wellKnownContents.IsEmpty)

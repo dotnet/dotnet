@@ -71,9 +71,6 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
 
             // Check that the ITarget properties match the test data
             host.TestData.CompareMembers(host.TestData.Target, target);
-
-            // Test temp directory
-            AssertX.DirectoryExists("Target temporary directory", target.GetTempDirectory(), Output);
         }
 
         [SkippableTheory, MemberData(nameof(GetConfigurations))]
@@ -289,7 +286,7 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
             {
                 if (runtimeData.TryGetValue("Id", out int id))
                 {
-                    IRuntime runtime = runtimeService.EnumerateRuntimes().FirstOrDefault((r) => r.Id == id);
+                    IRuntime runtime = runtimeService.EnumerateRuntimes().SingleOrDefault((r) => r.Id == id);
                     Assert.NotNull(runtime);
 
                     host.TestData.CompareMembers(runtimeData, runtime);

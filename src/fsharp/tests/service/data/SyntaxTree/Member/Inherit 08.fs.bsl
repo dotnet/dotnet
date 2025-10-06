@@ -1,6 +1,6 @@
 ImplFile
   (ParsedImplFileInput
-     ("/root/Member/Inherit 08.fs", false, QualifiedNameOfFile Module, [], [],
+     ("/root/Member/Inherit 08.fs", false, QualifiedNameOfFile Module, [],
       [SynModuleOrNamespace
          ([Module], false, NamedModule,
           [Types
@@ -12,8 +12,8 @@ ImplFile
                   ObjectModel
                     (Unspecified,
                      [Inherit
-                        (LongIdent (SynLongIdent ([], [], [])), None,
-                         (4,4--4,11));
+                        (None, None, (4,4--4,11),
+                         { InheritKeyword = (4,4--4,11) });
                       Member
                         (SynBinding
                            (None, Normal, false, false, [],
@@ -44,6 +44,7 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--6,21), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
 
 (4,12)-(4,14) parse error Unexpected keyword 'as' in type definition

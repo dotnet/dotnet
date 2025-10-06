@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -41,7 +39,7 @@ internal class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRaz
             return;
         }
 
-        var razorLanguageVersion = codeDocument.GetParserOptions().Version;
+        var razorLanguageVersion = codeDocument.ParserOptions.LanguageVersion;
         var useLegacyBehavior = razorLanguageVersion < RazorLanguageVersion.Version_5_0;
         if (useLegacyBehavior)
         {
@@ -83,7 +81,7 @@ internal class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRaz
 
         foreach (var preserveWhitespaceDirective in documentNode.FindDirectiveReferences(ComponentPreserveWhitespaceDirective.Directive))
         {
-            var token = ((DirectiveIntermediateNode)preserveWhitespaceDirective.Node).Tokens.FirstOrDefault();
+            var token = preserveWhitespaceDirective.Node.Tokens.FirstOrDefault();
             var shouldPreserveWhitespaceContent = token?.Content;
             if (shouldPreserveWhitespaceContent != null)
             {

@@ -43,7 +43,7 @@ internal class Converter
     /// <param name="testId"></param>
     /// <param name="executionId"></param>
     /// <param name="parentExecutionId"></param>
-    /// <param name="name"></param>
+    /// <param name="testName"></param>
     /// <param name="testType"></param>
     /// <param name="rockSteadyTestCase"></param>
     /// <returns>Trx test element</returns>
@@ -278,10 +278,10 @@ internal class Converter
         if (customProperty != null)
         {
             var cateogryValues = (string[]?)testCase.GetPropertyValue(customProperty);
-            return cateogryValues != null ? cateogryValues.ToList() : Enumerable.Empty<string>().ToList();
+            return cateogryValues != null ? cateogryValues.ToList() : [];
         }
 
-        return Enumerable.Empty<string>().ToList();
+        return [];
     }
 
     /// <summary>

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace NuGet
         private readonly ConcurrentDictionary<TKey, object> _perTaskLock;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultCache{TKey, TValue}" /> class with the specified key comparer.
+        /// Initializes a new instance of the <see cref="TaskResultCache{TKey, TValue}" /> class with the specified key comparer.
         /// </summary>
         /// <param name="comparer">An <see cref="IEqualityComparer{T}" /> to use when comparing keys.</param>
         public TaskResultCache(IEqualityComparer<TKey> comparer)
@@ -39,13 +40,28 @@ namespace NuGet
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultCache{TKey, TValue}" /> class.
+        /// Initializes a new instance of the <see cref="TaskResultCache{TKey, TValue}" /> class with the specified initial capacity.
+        /// </summary>
+        /// <param name="capacity">The default capacity for the cache.</param>
+        public TaskResultCache(int capacity)
+        {
+            _cache = new(concurrencyLevel: Environment.ProcessorCount, capacity);
+            _perTaskLock = new(concurrencyLevel: Environment.ProcessorCount, capacity);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaskResultCache{TKey, TValue}" /> class.
         /// </summary>
         public TaskResultCache()
         {
             _cache = new();
             _perTaskLock = new();
         }
+
+        /// <summary>
+        /// Gets a collection containing the keys in the cache.
+        /// </summary>
+        public ICollection<TKey> Keys => _cache.Keys;
 
         /// <summary>
         /// Gets the cached async operation associated with the specified key, or runs the operation asynchronously and returns <see cref="Task{TValue}" /> that the caller can await.
@@ -78,7 +94,13 @@ namespace NuGet
 
             // Get a lock object for this one single key which allows other asynchronous tasks to be added and retrieved at the same time
             // rather than locking the entire cache.
-            object lockObject = _perTaskLock.GetOrAdd(key, static () => new object());
+            // NOTE: Be very careful about which overload of GetOrAdd is called. There was previously a very subtle bug with this call:
+            //
+            // GetOrAdd(key, static () => new object());
+            //
+            // Which calls the `GetOrAdd(TKey key, TValue value)` overload rather than the `GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)`
+            // overload. The consequence is that the same static delegate is cached and locked on rather than having one lock object per key.
+            object lockObject = _perTaskLock.GetOrAdd(key, static (TKey _) => new object());
 
             lock (lockObject)
             {
@@ -94,6 +116,28 @@ namespace NuGet
                         TaskContinuationOptions.RunContinuationsAsynchronously,
                         TaskScheduler.Default);
             }
+        }
+
+        /// <summary>
+        /// Gets the async operation associated with the specified key if one exists, otherwise throws a <see cref="KeyNotFoundException" />.
+        /// </summary>
+        /// <param name="key">The key for the async operation to get the value of.</param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException">The specified key does not exist in the cache.</exception>
+        public Task<TValue> GetValueAsync(TKey key)
+        {
+            if (TryGetValue(key, out Task<TValue>? value))
+            {
+                return value;
+            }
+
+            throw new KeyNotFoundException();
+        }
+
+        /// <inheritdoc cref="Dictionary{TKey, TValue}.TryGetValue(TKey, out TValue)" />
+        public bool TryGetValue(TKey key, [NotNullWhen(true)] out Task<TValue>? value)
+        {
+            return _cache.TryGetValue(key, out value);
         }
     }
 }

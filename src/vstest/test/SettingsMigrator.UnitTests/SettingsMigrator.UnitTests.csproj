@@ -4,16 +4,18 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <IsTestProject Condition=" '$(OS)' != 'Windows_NT' ">false</IsTestProject>
+    <OutputType Condition=" '$(OS)' == 'Windows_NT' ">Exe</OutputType>
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- TODO: Do we need this for net6.0 as well? -->
+    <!-- TODO: Do we need this for net8.0 as well? -->
     <TargetFrameworks>net48</TargetFrameworks>
     <AssemblyName>SettingsMigrator.UnitTests</AssemblyName>
   </PropertyGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\SettingsMigrator\SettingsMigrator.csproj" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" Condition=" '$(OS)' != 'Windows_NT' " />
   </ItemGroup>
   
   <ItemGroup>

@@ -1,20 +1,18 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
@@ -31,10 +29,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
     private readonly HostProject _hostProject2 = new(ProjectFilePath2, IntermediateOutputPath2, RazorConfiguration.Default, ProjectName2);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState1 = ProjectWorkspaceState.Create(
-        [TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()]);
+        [TagHelperDescriptorBuilder.CreateTagHelper("test1", "TestAssembly1").Build()]);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState2 = ProjectWorkspaceState.Create(
-        [TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build()]);
+        [TagHelperDescriptorBuilder.CreateTagHelper("test2", "TestAssembly2").Build()]);
 
     [UIFact]
     public async Task CalculateUpdatedStateAsync_ReturnsStateForAllProjects()
@@ -44,25 +42,29 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
 
-            updater.ProjectAdded(_hostProject2);
-            updater.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
+            updater.AddProject(_hostProject2);
+            updater.UpdateProjectWorkspaceState(_hostProject2.Key, _projectWorkspaceState2);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
         var state = await JoinableTaskFactory.RunAsync(() => proxy.CalculateUpdatedStateAsync(projectManager.GetProjects()));
 
         // Assert
-        var project1TagHelpers = await projectManager.GetLoadedProject(_hostProject1.Key).GetTagHelpersAsync(DisposalToken);
-        var project2TagHelpers = await projectManager.GetLoadedProject(_hostProject2.Key).GetTagHelpersAsync(DisposalToken);
+        var project1TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject1.Key)
+            .GetTagHelpersAsync(DisposalToken);
+
+        var project2TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject2.Key)
+            .GetTagHelpersAsync(DisposalToken);
 
         Assert.Collection(
             state.ProjectHandles,
@@ -78,14 +80,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         var proxyAccessor = proxy.GetTestAccessor();
@@ -104,13 +105,7 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = updater.GetLoadedProject(_hostProject1.Key);
-            updater.ProjectConfigurationChanged(new(
-                project.FilePath,
-                project.IntermediateOutputPath,
-                FallbackRazorConfiguration.MVC_1_0,
-                project.RootNamespace,
-                project.DisplayName));
+            updater.UpdateProjectConfiguration(_hostProject1 with { Configuration = FallbackRazorConfiguration.MVC_1_0 });
         });
 
         await proxyAccessor.ProcessingChangedEventTestTask.AssumeNotNull().JoinAsync();
@@ -127,14 +122,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         var proxyAccessor = proxy.GetTestAccessor();
@@ -146,13 +140,7 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = updater.GetLoadedProject(_hostProject1.Key);
-            updater.ProjectConfigurationChanged(new(
-                project.FilePath,
-                project.IntermediateOutputPath,
-                FallbackRazorConfiguration.MVC_1_0,
-                project.RootNamespace,
-                project.DisplayName));
+            updater.UpdateProjectConfiguration(_hostProject1 with { Configuration = FallbackRazorConfiguration.MVC_1_0 });
         });
 
         // Assert
@@ -167,14 +155,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -200,25 +187,29 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
 
-            updater.ProjectAdded(_hostProject2);
-            updater.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
+            updater.AddProject(_hostProject2);
+            updater.UpdateProjectWorkspaceState(_hostProject2.Key, _projectWorkspaceState2);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
         var state = await JoinableTaskFactory.RunAsync(() => proxy.GetProjectManagerStateAsync(DisposalToken));
 
         // Assert
-        var project1TagHelpers = await projectManager.GetLoadedProject(_hostProject1.Key).GetTagHelpersAsync(DisposalToken);
-        var project2TagHelpers = await projectManager.GetLoadedProject(_hostProject2.Key).GetTagHelpersAsync(DisposalToken);
+        var project1TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject1.Key)
+            .GetTagHelpersAsync(DisposalToken);
+
+        var project2TagHelpers = await projectManager
+            .GetRequiredProject(_hostProject2.Key)
+            .GetTagHelpersAsync(DisposalToken);
 
         Assert.Collection(
             state.ProjectHandles,
@@ -234,14 +225,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(_hostProject1);
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.AddProject(_hostProject1);
+            updater.UpdateProjectWorkspaceState(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act

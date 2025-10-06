@@ -4,9 +4,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Packaging;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using System.Collections.Generic;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -19,23 +19,22 @@ namespace Microsoft.DotNet.SignTool
         {
         }
 
-        public override void RemovePublicSign(string assemblyPath)
+        public override void RemoveStrongNameSign(string assemblyPath)
         {
         }
 
-        public override bool VerifySignedPEFile(Stream stream)
+        public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files) => true;
+
+        public override SigningStatus VerifySignedPEFile(Stream stream)
         {
             var buffer = new byte[_stamp.Length];
             return stream.TryReadAll(buffer, 0, buffer.Length) == buffer.Length && 
-                   ByteSequenceComparer.Equals(buffer, _stamp);
+                   ByteSequenceComparer.Equals(buffer, _stamp) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        public override bool VerifyStrongNameSign(string fileFullPath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifyStrongNameSign(string fileFullPath) => SigningStatus.Signed;
 
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath)
             => buildEngine.BuildProjectFile(projectFilePath, null, null, null);
 
         internal static void SignFile(string path)
@@ -57,19 +56,16 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        public override bool VerifySignedPowerShellFile(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedDeb(TaskLoggingHelper log, string filePath) => SigningStatus.Signed;
 
-        public override bool VerifySignedNugetFileMarker(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedRpm(TaskLoggingHelper log, string filePath) => SigningStatus.Signed;
 
-        public override bool VerifySignedVSIXFileMarker(string filePath)
-        {
-            return true;
-        }
+        public override SigningStatus VerifySignedPowerShellFile(string filePath) => SigningStatus.Signed;
+
+        public override SigningStatus VerifySignedNuGet(string filePath) => SigningStatus.Signed;
+
+        public override SigningStatus VerifySignedVSIX(string filePath) => SigningStatus.Signed;
+
+        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath) => SigningStatus.Signed;
     }
 }

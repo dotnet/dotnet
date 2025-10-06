@@ -1,26 +1,55 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.AspNetCore.Razor.LanguageServer;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal static class Extensions
 {
-    public static TestDocumentSnapshot CreateAndAddDocument(this ProjectSnapshotManager.Updater updater, ProjectSnapshot projectSnapshot, string filePath)
+    public static ProjectInfo ToProjectInfo(this HostProject hostProject)
     {
-        var documentSnapshot = TestDocumentSnapshot.Create(projectSnapshot, filePath);
-        updater.DocumentAdded(projectSnapshot.Key, documentSnapshot.HostDocument, new DocumentSnapshotTextLoader(documentSnapshot));
+        var assemblyPath = Path.Combine(
+            Path.GetDirectoryName(hostProject.FilePath).AssumeNotNull(),
+            "obj",
+            Path.ChangeExtension(Path.GetFileName(hostProject.FilePath), ".dll"));
 
-        return documentSnapshot;
+        var projectId = ProjectId.CreateNewId(debugName: hostProject.DisplayName);
+
+        return ProjectInfo
+            .Create(
+                projectId,
+                VersionStamp.Create(),
+                name: hostProject.DisplayName,
+                assemblyName: hostProject.DisplayName,
+                language: LanguageNames.CSharp,
+                filePath: hostProject.FilePath)
+            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(assemblyPath));
     }
 
-    public static TestProjectSnapshot CreateAndAddProject(this ProjectSnapshotManager.Updater updater, string filePath)
+    public static DocumentInfo CreateDocumentInfo(this ProjectInfo projectInfo, string fileName)
     {
-        var projectSnapshot = TestProjectSnapshot.Create(filePath);
-        updater.ProjectAdded(projectSnapshot.HostProject);
+        var filePath = Path.Combine(
+            Path.GetDirectoryName(projectInfo.FilePath).AssumeNotNull(),
+            fileName);
 
-        return projectSnapshot;
+        return DocumentInfo.Create(
+            DocumentId.CreateNewId(projectInfo.Id, debugName: fileName),
+            Path.GetFileNameWithoutExtension(fileName),
+            filePath: filePath);
+    }
+
+    public static ProjectInfo WithProjectReferences(this ProjectInfo projectInfo, params IEnumerable<ProjectId> projectIds)
+    {
+        return projectInfo.WithProjectReferences(
+            projectIds.Select(id =>
+                id != projectInfo.Id
+                    ? new ProjectReference(id)
+                    : throw new InvalidOperationException("Can't add reference from project to itself.")));
     }
 }

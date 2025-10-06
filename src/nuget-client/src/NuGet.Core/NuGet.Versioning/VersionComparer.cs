@@ -12,6 +12,11 @@ namespace NuGet.Versioning
     /// </summary>
     public sealed class VersionComparer : IVersionComparer
     {
+        /// <summary>
+        /// Gets an IVersionComparer based on the specified VersionComparison mode.
+        /// </summary>
+        /// <param name="versionComparison">The version comparison mode to use.</param>
+        /// <returns>An IVersionComparer instance.</returns>
         public static IVersionComparer Get(VersionComparison versionComparison)
         {
             return versionComparison switch

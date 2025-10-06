@@ -24,6 +24,11 @@
       </bal:Condition>
     <?endif?>
 
+    <!-- Search references for upgrade policy keys -->
+    <util:RegistrySearchRef Id="RemovePreviousVersionRegistryKeySearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeyExistsSearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeySearch"/>
+
     <!--
       List of bundles that this bundle is an upgrade for. Used to support upgrade from bundles
       that were produced before UpdateCode was standardized per major-minor channel.
@@ -34,15 +39,25 @@
       <?endforeach?>
     <?endif?>
 
-    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.Foundation">
-      <bal:WixStandardBootstrapperApplication
-        LicenseFile="$(var.DotNetDummyEulaFile)"
-        SuppressDowngradeFailure="yes"
-        ShowFilesInUse="yes"
-        ShowVersion="yes" />
+    <?if $(var.BootstrapperApplicationFlavor) = "Foundation" ?>
+      <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.Foundation">
+        <bal:WixStandardBootstrapperApplication
+          LicenseFile="$(var.DotNetDummyEulaFile)"
+          SuppressDowngradeFailure="yes"
+          ShowFilesInUse="yes"
+          ShowVersion="yes" />
 
-      <PayloadGroupRef Id="DotnetCoreBAPayloads" />
-    </BootstrapperApplicationRef>
+        <PayloadGroupRef Id="DotnetCoreBAPayloads" />
+      </BootstrapperApplicationRef>
+    <?elseif $(var.BootstrapperApplicationFlavor) = "HyperlinkLicense" ?>
+      <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+        <bal:WixStandardBootstrapperApplication LicenseUrl="https://go.microsoft.com/fwlink/?LinkId=329770"
+                                                LogoFile="$(var.DotNetLogoBmpFile)"
+                                                SuppressDowngradeFailure="yes"
+                                                SuppressOptionsUI="yes" />
+        <PayloadGroupRef Id="DotnetCoreBAPayloads"/>
+      </BootstrapperApplicationRef>
+    <?endif?>
 
     <swid:Tag Regid="microsoft.com" InstallPath="[$(var.Program_Files)]dotnet" />
 
@@ -50,6 +65,10 @@
     <Variable Name="BUNDLEMONIKER" Type="string" Value="$(var.ProductMoniker) ($(var.TargetArchitectureDescription))" bal:Overridable="no" />
     <Variable Name="PRODUCT_NAME" Type="string" Value="$(var.ProductName)" bal:Overridable="no" />
     <Variable Name="LINK_PREREQ_PAGE" Type="string" Value="https://go.microsoft.com/fwlink/?linkid=846817" bal:Overridable="no" />
+
+    <?ifdef WixThemeFile ?>
+    <?include $(var.WixThemeFile) ?>
+    <?endif?>
 
     <Chain DisableSystemRestore="yes" ParallelCache="yes">
       <?foreach chainedFile in $(var.ChainedDotNetPackageFiles)?>
@@ -70,7 +89,9 @@
         <Payload Id="thm-$(var.LCID)" Compressed="yes" Name="$(var.LCID)\thm.wxl" SourceFile="$(var.BundleThmDir)\theme\$(var.LCID)\bundle.wxl" />
       <?endforeach?>
 
-      <Payload Name='eula.rtf' Compressed='yes' SourceFile='!(wix.WixStdbaLicenseRtf)' />
+      <?if $(var.BootstrapperApplicationFlavor) = "Foundation" ?>
+        <Payload Name='eula.rtf' Compressed='yes' SourceFile='!(wix.WixStdbaLicenseRtf)' />
+      <?endif?>
     </PayloadGroup>
 
     <CustomTable Id='WixStdbaInformation'>

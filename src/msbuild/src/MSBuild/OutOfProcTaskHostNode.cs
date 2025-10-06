@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -124,7 +123,7 @@ namespace Microsoft.Build.CommandLine
         /// <summary>
         /// Object used to synchronize access to taskCompletePacket
         /// </summary>
-        private Object _taskCompleteLock = new Object();
+        private LockType _taskCompleteLock = new();
 
         /// <summary>
         /// The event which is set when a task is cancelled
@@ -159,6 +158,11 @@ namespace Microsoft.Build.CommandLine
         /// importance) so that the user is aware.
         /// </summary>
         private bool _updateEnvironmentAndLog;
+
+        /// <summary>
+        /// setting this to true means we're running a long-lived sidecar node.
+        /// </summary>
+        private bool _nodeReuse;
 
 #if !CLR2COMPATIBILITY
         /// <summary>
@@ -555,7 +559,7 @@ namespace Microsoft.Build.CommandLine
 
         public EngineServices EngineServices { get; }
 
-#endregion
+        #endregion
 
 #endif
 
@@ -590,6 +594,16 @@ namespace Microsoft.Build.CommandLine
         public void DeserializeAndRoutePacket(int nodeId, NodePacketType packetType, ITranslator translator)
         {
             _packetFactory.DeserializeAndRoutePacket(nodeId, packetType, translator);
+        }
+
+        /// <summary>
+        /// Takes a serializer and deserializes the packet.
+        /// </summary>
+        /// <param name="packetType">The packet type.</param>
+        /// <param name="translator">The translator containing the data from which the packet should be reconstructed.</param>
+        public INodePacket DeserializePacket(NodePacketType packetType, ITranslator translator)
+        {
+            return _packetFactory.DeserializePacket(packetType, translator);
         }
 
         /// <summary>
@@ -630,7 +644,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         /// <param name="shutdownException">The exception which caused shutdown, if any.</param>
         /// <returns>The reason for shutting down.</returns>
-        public NodeEngineShutdownReason Run(out Exception shutdownException)
+        public NodeEngineShutdownReason Run(out Exception shutdownException, bool nodeReuse = false)
         {
 #if !CLR2COMPATIBILITY
             _registeredTaskObjectCache = new RegisteredTaskObjectCacheBase();
@@ -640,11 +654,12 @@ namespace Microsoft.Build.CommandLine
             // Snapshot the current environment
             _savedEnvironment = CommunicationsUtilities.GetEnvironmentVariables();
 
-            _nodeEndpoint = new NodeEndpointOutOfProcTaskHost();
+            _nodeReuse = nodeReuse;
+            _nodeEndpoint = new NodeEndpointOutOfProcTaskHost(nodeReuse);
             _nodeEndpoint.OnLinkStatusChanged += new LinkStatusChangedDelegate(OnLinkStatusChanged);
             _nodeEndpoint.Listen(this);
 
-            WaitHandle[] waitHandles = new WaitHandle[] { _shutdownEvent, _packetReceivedEvent, _taskCompleteEvent, _taskCancelledEvent };
+            WaitHandle[] waitHandles = [_shutdownEvent, _packetReceivedEvent, _taskCompleteEvent, _taskCancelledEvent];
 
             while (true)
             {
@@ -797,8 +812,16 @@ namespace Microsoft.Build.CommandLine
         {
             ErrorUtilities.VerifyThrow(!_isTaskExecuting, "We should never have a task in the process of executing when we receive NodeBuildComplete.");
 
-            // TaskHostNodes lock assemblies with custom tasks produced by build scripts if NodeReuse is on. This causes failures if the user builds twice.
-            _shutdownReason = buildComplete.PrepareForReuse && Traits.Instance.EscapeHatches.ReuseTaskHostNodes ? NodeEngineShutdownReason.BuildCompleteReuse : NodeEngineShutdownReason.BuildComplete;
+            // Sidecar TaskHost will persist after the build is done.
+            if (_nodeReuse)
+            {
+                _shutdownReason = NodeEngineShutdownReason.BuildCompleteReuse;
+            }
+            else 
+            {
+                // TaskHostNodes lock assemblies with custom tasks produced by build scripts if NodeReuse is on. This causes failures if the user builds twice.
+                _shutdownReason = buildComplete.PrepareForReuse && Traits.Instance.EscapeHatches.ReuseTaskHostNodes ? NodeEngineShutdownReason.BuildCompleteReuse : NodeEngineShutdownReason.BuildComplete;
+            }
             _shutdownEvent.Set();
         }
 
@@ -811,8 +834,9 @@ namespace Microsoft.Build.CommandLine
             _taskRunnerThread?.Join();
 
             using StreamWriter debugWriter = _debugCommunications
-                ? File.CreateText(string.Format(CultureInfo.CurrentCulture, Path.Combine(FileUtilities.TempFileDirectory, @"MSBuild_NodeShutdown_{0}.txt"), Process.GetCurrentProcess().Id))
-                : null;
+                    ? File.CreateText(string.Format(CultureInfo.CurrentCulture, Path.Combine(FileUtilities.TempFileDirectory, @"MSBuild_NodeShutdown_{0}.txt"), EnvironmentUtilities.CurrentProcessId))
+                    : null;
+
             debugWriter?.WriteLine("Node shutting down with reason {0}.", _shutdownReason);
 
 #if !CLR2COMPATIBILITY

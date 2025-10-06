@@ -1,29 +1,29 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using Diagnostic = Microsoft.CodeAnalysis.Diagnostic;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-[UseExportProvider]
 public class RazorToolingIntegrationTestBase : ToolingTestBase
 {
     internal const string ArbitraryWindowsPath = "x:\\dir\\subdir\\Test";
@@ -37,24 +37,10 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     static RazorToolingIntegrationTestBase()
     {
-        var referenceAssemblyRoots = new[]
-        {
-            typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-            typeof(Enumerable).Assembly, // Other .NET fundamental types
-            typeof(System.Linq.Expressions.Expression).Assembly,
-            typeof(ComponentBase).Assembly,
-        };
-
-        var referenceAssemblies = referenceAssemblyRoots
-            .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-            .Distinct()
-            .Select(Assembly.Load)
-            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-            .ToList();
         DefaultBaseCompilation = CSharpCompilation.Create(
             "TestAssembly",
             Array.Empty<SyntaxTree>(),
-            referenceAssemblies,
+            ReferenceUtil.AspNetLatestAll,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
@@ -65,13 +51,13 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     {
         AdditionalSyntaxTrees = new List<SyntaxTree>();
         AdditionalRazorItems = new List<RazorProjectItem>();
-        ImportItems = new List<RazorProjectItem>();
+        ImportItems = ImmutableArray.CreateBuilder<RazorProjectItem>();
 
         BaseCompilation = DefaultBaseCompilation;
         Configuration = RazorConfiguration.Default;
         FileSystem = new VirtualRazorProjectFileSystem();
         PathSeparator = Path.DirectorySeparatorChar.ToString();
-        WorkingDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
+        WorkingDirectory = PlatformInformation.IsWindows ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
 
         DefaultRootNamespace = "Test"; // Matches the default working directory
         DefaultFileName = "TestComponent.cshtml";
@@ -79,7 +65,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     internal List<RazorProjectItem> AdditionalRazorItems { get; }
 
-    internal List<RazorProjectItem> ImportItems { get; }
+    internal ImmutableArray<RazorProjectItem>.Builder ImportItems { get; }
 
     internal List<SyntaxTree> AdditionalSyntaxTrees { get; }
 
@@ -91,15 +77,13 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     internal virtual string DefaultFileName { get; }
 
-    internal virtual bool DesignTime { get; }
-
     internal virtual bool DeclarationOnly { get; }
 
     /// <summary>
     /// Gets a hardcoded document kind to be added to each code document that's created. This can
     /// be used to generate components.
     /// </summary>
-    internal virtual string FileKind { get; }
+    internal virtual RazorFileKind? FileKind { get; }
 
     internal virtual VirtualRazorProjectFileSystem FileSystem { get; }
 
@@ -124,17 +108,18 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         {
             b.SetRootNamespace(DefaultRootNamespace);
 
-            // Turn off checksums, we're testing code generation.
-            b.Features.Add(new SuppressChecksum());
-
-            b.Features.Add(new TestImportProjectFeature(ImportItems));
-
-            if (LineEnding != null)
+            b.ConfigureCodeGenerationOptions(builder =>
             {
-                b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
-            }
+                // Turn off checksums, we're testing code generation.
+                builder.SuppressChecksum = true;
 
-            b.Features.Add(new DefaultTypeNameFeature());
+                if (LineEnding != null)
+                {
+                    builder.NewLine = LineEnding;
+                }
+            });
+
+            b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
 
             b.Features.Add(new CompilationTagHelperFeature());
             b.Features.Add(new DefaultMetadataReferenceFeature()
@@ -144,11 +129,17 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
 
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions;
+            });
+
             CompilerFeatures.Register(b);
         });
     }
 
-    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, string fileKind = null)
+    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, RazorFileKind? fileKind = null)
     {
         var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
 
@@ -175,18 +166,13 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         };
     }
 
-    protected CompileToCSharpResult CompileToCSharp(string cshtmlContent, bool throwOnFailure=true)
+    protected CompileToCSharpResult CompileToCSharp(string cshtmlContent, bool throwOnFailure = true)
     {
         return CompileToCSharp(DefaultFileName, cshtmlContent, throwOnFailure);
     }
 
-    protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, string fileKind = null)
+    protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, RazorFileKind? fileKind = null)
     {
-        if (DeclarationOnly && DesignTime)
-        {
-            throw new InvalidOperationException($"{nameof(DeclarationOnly)} cannot be used with {nameof(DesignTime)}.");
-        }
-
         if (DeclarationOnly && UseTwoPhaseCompilation)
         {
             throw new InvalidOperationException($"{nameof(DeclarationOnly)} cannot be used with {nameof(UseTwoPhaseCompilation)}.");
@@ -203,9 +189,9 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             {
                 // Result of generating declarations
                 codeDocument = projectEngine.ProcessDeclarationOnly(item);
-                Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
+                Assert.Empty(codeDocument.GetRequiredCSharpDocument().Diagnostics);
 
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetRequiredCSharpDocument().Text, path: item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
 
@@ -216,8 +202,8 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                Diagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
             };
 
             // Result of doing 'temp' compilation
@@ -231,23 +217,23 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             foreach (var item in AdditionalRazorItems)
             {
                 // Result of generating definition
-                codeDocument = DesignTime ? projectEngine.ProcessDesignTime(item) : projectEngine.Process(item);
-                Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
+                codeDocument = projectEngine.Process(item);
+                Assert.Empty(codeDocument.GetRequiredCSharpDocument().Diagnostics);
 
                 // Replace the 'declaration' syntax tree
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetRequiredCSharpDocument().Text, path: item.FilePath);
                 AdditionalSyntaxTrees.RemoveAll(st => st.FilePath == item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
 
             // Result of real code generation for the document under test
-            codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+            codeDocument = projectEngine.Process(projectItem);
             return new CompileToCSharpResult
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                Diagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
             };
         }
         else
@@ -260,13 +246,13 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
             var codeDocument = DeclarationOnly
                 ? projectEngine.ProcessDeclarationOnly(projectItem)
-                : DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+                : projectEngine.Process(projectItem);
             return new CompileToCSharpResult
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                Diagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
             };
         }
     }
@@ -294,7 +280,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
         var diagnostics = compilation
             .GetDiagnostics()
-            .Where(d => d.Severity != DiagnosticSeverity.Hidden);
+            .Where(d => d.Severity != CodeAnalysis.DiagnosticSeverity.Hidden);
 
         if (diagnostics.Any() && throwOnFailure)
         {
@@ -322,35 +308,14 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         }
     }
 
-    protected IComponent CompileToComponent(string cshtmlSource)
+    protected static CSharpSyntaxTree Parse(SourceText text, string path = null)
     {
-        var assemblyResult = CompileToAssembly(DefaultFileName, cshtmlSource);
-
-        var componentFullTypeName = $"{DefaultRootNamespace}.{Path.GetFileNameWithoutExtension(DefaultFileName)}";
-        return CompileToComponent(assemblyResult, componentFullTypeName);
-    }
-
-    protected static IComponent CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
-    {
-        return CompileToComponent(CompileToAssembly(cSharpResult), fullTypeName);
-    }
-
-    protected static IComponent CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
-    {
-        var componentType = assemblyResult.Assembly.GetType(fullTypeName);
-        if (componentType is null)
-        {
-            throw new XunitException(
-                $"Failed to find component type '{fullTypeName}'. Found types:" + Environment.NewLine +
-                string.Join(Environment.NewLine, assemblyResult.Assembly.ExportedTypes.Select(t => t.FullName)));
-        }
-
-        return (IComponent)Activator.CreateInstance(componentType);
+        return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
     }
 
     protected static CSharpSyntaxTree Parse(string text, string path = null)
     {
-        return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
+        return Parse(SourceText.From(text, Encoding.UTF8), path);
     }
 
     protected static string FullTypeName<T>() => typeof(T).FullName.Replace('+', '.');
@@ -358,7 +323,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     protected static void AssertSourceEquals(string expected, CompileToCSharpResult generated)
     {
         // Normalize the paths inside the expected result to match the OS paths
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
             var windowsPath = Path.Combine(ArbitraryWindowsPath, generated.CodeDocument.Source.RelativePath).Replace('/', '\\');
             expected = expected.Replace(windowsPath, generated.CodeDocument.Source.FilePath);
@@ -388,6 +353,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     private class CompilationFailedException : XunitException
     {
         public CompilationFailedException(Compilation compilation)
+            : base("Compilation failed")
         {
             Compilation = compilation;
         }
@@ -428,52 +394,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
                 return builder.ToString();
             }
-        }
-    }
-
-    private class SuppressChecksum : IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public RazorEngine Engine { get; set; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    private class ForceLineEndingPhase : RazorEnginePhaseBase
-    {
-        public ForceLineEndingPhase(string lineEnding)
-        {
-            LineEnding = lineEnding;
-        }
-
-        public string LineEnding { get; }
-
-        protected override void ExecuteCore(RazorCodeDocument codeDocument)
-        {
-            var field = typeof(CodeRenderingContext).GetField("NewLineString", BindingFlags.Static | BindingFlags.NonPublic);
-            var key = field.GetValue(null);
-            codeDocument.Items[key] = LineEnding;
-        }
-    }
-
-    private class TestImportProjectFeature : IImportProjectFeature
-    {
-        private readonly List<RazorProjectItem> _imports;
-
-        public TestImportProjectFeature(List<RazorProjectItem> imports)
-        {
-            _imports = imports;
-        }
-
-        public RazorProjectEngine ProjectEngine { get; set; }
-
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
-        {
-            return _imports;
         }
     }
 }

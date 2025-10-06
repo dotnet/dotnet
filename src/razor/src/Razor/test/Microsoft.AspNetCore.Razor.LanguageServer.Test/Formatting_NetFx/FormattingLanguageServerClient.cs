@@ -1,34 +1,26 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Test.Common.Mef;
-using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Utilities;
-using Microsoft.WebTools.Languages.Shared.ContentTypes;
-using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory) : IClientConnection
+internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormattingService, ILoggerFactory loggerFactory) : IClientConnection
 {
+    private readonly HtmlFormattingService _htmlFormattingService = htmlFormattingService;
     private readonly Dictionary<string, RazorCodeDocument> _documents = [];
-    private readonly IRazorLoggerFactory _loggerFactory = loggerFactory;
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
     public InitializeResult ServerSettings
         => throw new NotImplementedException();
@@ -39,114 +31,35 @@ internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory)
         _documents.Add("/" + path, codeDocument);
     }
 
-    private Task<RazorDocumentFormattingResponse> FormatAsync(DocumentOnTypeFormattingParams @params)
+    private async Task<RazorDocumentFormattingResponse> FormatAsync(DocumentOnTypeFormattingParams @params)
     {
-        var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
-        var generatedHtmlSource = SourceText.From(generatedHtml, Encoding.UTF8);
-        var absoluteIndex = @params.Position.GetRequiredAbsoluteIndex(generatedHtmlSource, logger: null);
+        var generatedHtml = GetGeneratedHtml(@params.TextDocument.DocumentUri.GetRequiredParsedUri());
 
-        var request = $$"""
-            {
-                "Options":
-                {
-                    "UseSpaces": {{(@params.Options.InsertSpaces ? "true" : "false")}},
-                    "TabSize": {{@params.Options.TabSize}},
-                    "IndentSize": {{@params.Options.TabSize}}
-                },
-                "Uri": "{{@params.TextDocument.Uri}}",
-                "GeneratedChanges": [],
-                "OperationType": "FormatOnType",
-                "SpanToFormat":
-                {
-                    "Start": {{absoluteIndex}},
-                    "End": {{absoluteIndex}}
-                }
-            }
-            """;
+        var edits = await _htmlFormattingService.GetOnTypeFormattingEditsAsync(_loggerFactory, @params.TextDocument.DocumentUri.GetRequiredParsedUri(), generatedHtml, @params.Position, @params.Options.InsertSpaces, @params.Options.TabSize);
 
-        return CallWebToolsApplyFormattedEditsHandlerAsync(request, @params.TextDocument.Uri, generatedHtml);
+        return new()
+        {
+            Edits = edits
+        };
     }
 
-    private Task<RazorDocumentFormattingResponse> FormatAsync(DocumentFormattingParams @params)
+    private async Task<RazorDocumentFormattingResponse> FormatAsync(DocumentFormattingParams @params)
     {
-        var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
+        var generatedHtml = GetGeneratedHtml(@params.TextDocument.DocumentUri.GetRequiredParsedUri());
 
-        var request = $$"""
-            {
-                "Options":
-                {
-                    "UseSpaces": {{(@params.Options.InsertSpaces ? "true" : "false")}},
-                    "TabSize": {{@params.Options.TabSize}},
-                    "IndentSize": {{@params.Options.TabSize}}
-                },
-                "Uri": "{{@params.TextDocument.Uri}}",
-                "GeneratedChanges": [],
-            }
-            """;
+        var edits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(_loggerFactory, @params.TextDocument.DocumentUri.GetRequiredParsedUri(), generatedHtml, @params.Options.InsertSpaces, @params.Options.TabSize);
 
-        return CallWebToolsApplyFormattedEditsHandlerAsync(request, @params.TextDocument.Uri, generatedHtml);
+        return new()
+        {
+            Edits = edits
+        };
     }
 
     private string GetGeneratedHtml(Uri uri)
     {
         var codeDocument = _documents[uri.GetAbsoluteOrUNCPath()];
-        var generatedHtml = codeDocument.GetHtmlDocument().GeneratedCode;
+        var generatedHtml = codeDocument.GetHtmlDocument().Text.ToString();
         return generatedHtml.Replace("\r", "").Replace("\n", "\r\n");
-    }
-
-    private async Task<RazorDocumentFormattingResponse> CallWebToolsApplyFormattedEditsHandlerAsync(string serializedValue, Uri documentUri, string generatedHtml)
-    {
-        var exportProvider = TestComposition.Editor.ExportProviderFactory.CreateExportProvider();
-        var contentTypeService = exportProvider.GetExportedValue<IContentTypeRegistryService>();
-
-        if (!contentTypeService.ContentTypes.Any(t => t.TypeName == HtmlContentTypeDefinition.HtmlContentType))
-        {
-            contentTypeService.AddContentType(HtmlContentTypeDefinition.HtmlContentType, new[] { StandardContentTypeNames.Text });
-        }
-
-        var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
-        var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
-        var logger = new ClaspLoggingBridge(_loggerFactory);
-        var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
-
-        // Make sure the buffer manager knows about the source document
-        var textSnapshot = bufferManager.CreateBuffer(
-            documentUri: documentUri,
-            contentTypeName: HtmlContentTypeDefinition.HtmlContentType,
-            initialContent: generatedHtml,
-            snapshotVersionFromLSP: 0);
-
-        var requestContext = WebTools.RequestContext.New(textSnapshot);
-
-        var request = WebTools.ApplyFormatEditsParam.DeserializeFrom(serializedValue);
-        var response = await applyFormatEditsHandler.HandleRequestAsync(request, requestContext, CancellationToken.None);
-
-        var sourceText = SourceText.From(generatedHtml);
-
-        using var edits = new PooledArrayBuilder<TextEdit>();
-
-        foreach (var textChange in response.TextChanges)
-        {
-            var startLinePosition = sourceText.Lines.GetLinePosition(textChange.Position);
-            var endLinePosition = sourceText.Lines.GetLinePosition(textChange.Position + textChange.Length);
-
-            var edit = new TextEdit()
-            {
-                Range = new()
-                {
-                    Start = new(startLinePosition.Line, startLinePosition.Character),
-                    End = new(endLinePosition.Line, endLinePosition.Character)
-                },
-                NewText = textChange.NewText
-            };
-
-            edits.Add(edit);
-        }
-
-        return new()
-        {
-            Edits = edits.ToArray()
-        };
     }
 
     public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
@@ -174,16 +87,6 @@ internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory)
                 ? typedResponse
                 : throw new InvalidOperationException();
         }
-    }
-
-    public object GetService(Type serviceType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryGetRequest(long id, out string method, out TaskCompletionSource<JToken> pendingTask)
-    {
-        throw new NotImplementedException();
     }
 
     public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)

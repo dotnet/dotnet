@@ -3,7 +3,8 @@
 
 #nullable disable
 
-using System;
+using Microsoft.AspNetCore.Razor.Language.Components;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -40,13 +41,26 @@ public class CSharpBlockTest() : ParserTestBase(layer: TestProject.Layer.Compile
     }
 
     [Fact]
+    public void LocalFunctionsWithRazor_MissingSemicolon()
+    {
+        ParseDocumentTest(
+@"@{
+    void Foo()
+    {
+        var time = DateTime.Now
+        <strong>Hello the time is @time</strong>
+    }
+}");
+    }
+
+    [Fact]
     public void LocalFunctionsWithRazor()
     {
         ParseDocumentTest(
 @"@{
-    void Foo() 
+    void Foo()
     {
-        var time = DateTime.Now
+        var time = DateTime.Now;
         <strong>Hello the time is @time</strong>
     }
 }");
@@ -740,6 +754,181 @@ catch(bar) { baz(); }");
     public void WithUnexpectedTransitionsInAttributeValue_Throws()
     {
         ParseDocumentTest("@{<span foo='@ @' />}");
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_01()
+    {
+        ParseDocumentTest("""
+            @{
+                var @string = "blah";
+            }
+
+            @(@string)
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_02()
+    {
+        ParseDocumentTest("""
+            @{
+                @string.Format("1{0}", DateTime.Now)
+                var x = 1;
+                var y = @x;
+                @string.Format("2{0}", DateTime.Now)
+            }
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_03()
+    {
+        ParseDocumentTest("""
+            @{
+                var @@class = 1;
+                var y = @@class;
+            }
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_04()
+    {
+        ParseDocumentTest("""
+            @{
+                var @string = "string test";
+                @string = "new string";
+            }
+
+            @(@string)
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_05()
+    {
+        ParseDocumentTest("""
+            @{
+                var @string = "string test";
+                @@string = "new string";
+            }
+
+            @(@string)
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_06()
+    {
+        ParseDocumentTest("""
+            @{
+                var @string = "string test";
+                {
+                    @string = "test";
+                }
+                @string = "new string";
+            }
+
+            @(@string)
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_07()
+    {
+        ParseDocumentTest("""
+            @{
+                var @string = "string test";
+                {
+                    @@string = "test";
+                }
+                @@string = "new string";
+            }
+
+            @(@string)
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_08()
+    {
+        ParseDocumentTest("""
+            @code {
+                [Parameter]
+                public Func<int, int> ChildContent { get; set; } = (context) => 1 < @context;
+            }
+            """, directives: [ComponentCodeDirective.Directive]);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_09()
+    {
+        ParseDocumentTest("""
+            @{
+                var x = "hello";
+                @x x = "world"; @x
+            }
+            """);
+    }
+
+    [Fact]
+    public void EscapedIdentifiers_10()
+    {
+        ParseDocumentTest("""
+            @{
+                @@string.Format("1{0}", DateTime.Now)
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_11()
+    {
+        ParseDocumentTest("""
+             @{ var validationMessage = @Html.ValidationMessage(Model.Binding, "", new { @@class = "invalid-feedback" }, "div"); }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_12()
+    {
+        ParseDocumentTest("""
+            @{
+                @@
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_13()
+    {
+        ParseDocumentTest("""
+             @{ var validationMessage = new { @@
+            """);
+    }
+
+    [Fact]
+    public void Usings()
+    {
+        ParseDocumentTest("""
+            {
+            @using global::System
+            @using global::System.Collections.Generic
+            @using global::System.Linq
+            @using global::System.Threading.Tasks
+            @using global::Microsoft.AspNetCore.Components
+            }
+            """);
+    }
+
+    [Fact]
+    public void CommentOnSameLineAsHtml()
+    {
+        ParseDocumentTest("""
+            @{
+                @* comment *@<div></div>
+            }
+            """);
     }
 
     private void RunRazorCommentBetweenClausesTest(string preComment, string postComment, AcceptedCharactersInternal acceptedCharacters = AcceptedCharactersInternal.Any)

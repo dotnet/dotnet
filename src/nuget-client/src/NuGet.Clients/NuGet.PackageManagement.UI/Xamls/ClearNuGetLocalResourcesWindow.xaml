@@ -1,0 +1,92 @@
+<vsui:DialogWindow
+  x:Class="NuGet.PackageManagement.UI.ClearNuGetLocalResourcesWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+  xmlns:imagingTheme="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:vs="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+  xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+  mc:Ignorable="d"
+  Background="{DynamicResource {x:Static vs:VsBrushes.WindowKey}}"
+  Foreground="{DynamicResource {x:Static vs:VsBrushes.WindowTextKey}}"
+  WindowStartupLocation="CenterScreen"
+  ShowInTaskbar="False"
+  IsCloseButtonEnabled="{Binding IsCommandComplete}"
+  ContentRendered="DialogWindow_ContentRendered"
+  WindowStyle="SingleBorderWindow"
+  Title="{x:Static nuget:Resources.VSOptions_Text_ClearLocalResourcesTitle}"
+  Height="200" Width="600"
+  ResizeMode="NoResize">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  <Grid Margin="12,12,12,12" Focusable="False">
+    <Grid.RowDefinitions>
+      <!-- Top caption -->
+      <RowDefinition Height="Auto" />
+
+      <!-- Content -->
+      <RowDefinition Height="*" />
+
+      <!-- Progress Bar -->
+      <RowDefinition Height="Auto" />
+
+      <!-- Buttons -->
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- Top caption -->
+    <TextBlock Grid.Row="0" Margin="0" Text="{x:Static nuget:Resources.ShowMessage_LocalsCommandWorking}" Visibility="{Binding IsCommandComplete, Converter={StaticResource NegatedBooleanToVisibilityConverter}}"/>
+
+    <!-- Content -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <TextBlock TextWrapping="Wrap" Text="{Binding CommandCompleteText}" Visibility="{Binding IsCommandComplete, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    </ScrollViewer>
+
+    <!-- Progress Bar -->
+    <Grid Grid.Row="2" Margin="0,9,0,0">
+      <ProgressBar Height="20" AutomationProperties.Name="{x:Static nuget:Resources.ShowMessage_LocalsCommandWorking}" IsIndeterminate="{Binding IsCommandComplete, Converter={StaticResource InverseBooleanConverter}}" Value="100" />
+      <!--
+        Special TextBlock to report loading status to assistive technologies (narrator).
+        Changes to the Text property will trigger a narrator event.
+      -->
+      <vsui:LiveTextBlock
+        Visibility="Collapsed"
+        IsFrequencyLimited="True"
+        Focusable="False"
+        AutomationProperties.IsOffscreenBehavior="Offscreen">
+        <vsui:LiveTextBlock.Resources>
+          <Style TargetType="vsui:LiveTextBlock">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsCommandComplete}" Value="False">
+                <Setter Property="Text" Value="{x:Static nuget:Resources.ShowMessage_LocalsCommandWorking}"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding IsCommandComplete}" Value="True">
+                <Setter Property="Text" Value="{Binding CommandCompleteText}"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </vsui:LiveTextBlock.Resources>
+      </vsui:LiveTextBlock>
+    </Grid>
+
+    <!-- Buttons -->
+    <StackPanel Grid.Row="3" Margin="0,18,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button x:Name ="CloseButton"
+              Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"
+              IsDefault="True"
+              Content="{x:Static nuget:Resources.VSOptions_Button_Close}"
+              Click="CloseButton_Click"
+              Visibility="{Binding IsCommandComplete, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    </StackPanel>
+
+  </Grid>
+</vsui:DialogWindow>

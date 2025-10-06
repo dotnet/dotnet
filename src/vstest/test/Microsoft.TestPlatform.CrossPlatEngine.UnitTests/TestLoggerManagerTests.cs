@@ -36,7 +36,7 @@ public class TestLoggerManagerTests
     public void Initialize()
     {
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(TestLoggerManagerTests).Assembly.Location },
+            [typeof(TestLoggerManagerTests).Assembly.Location],
             () => { });
     }
 
@@ -409,7 +409,7 @@ public class TestLoggerManagerTests
         s_counter = 0;
         WaitHandle.Reset();
 
-        List<TestCase> testCases = new() { new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName") };
+        List<TestCase> testCases = [new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")];
         DiscoveredTestsEventArgs discoveredTestsEventArgs = new(testCases);
 
         // setup TestLogger
@@ -430,7 +430,7 @@ public class TestLoggerManagerTests
         s_counter = 0;
         WaitHandle.Reset();
 
-        List<TestCase> testCases = new() { new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName") };
+        List<TestCase> testCases = [new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")];
         DiscoveredTestsEventArgs discoveredTestsEventArgs = new(testCases);
 
         // setup TestLogger

@@ -8,4 +8,6 @@ latestmajor
 5.0
 6.0
 7.0
-8.0 (Default)
+8.0
+9.0
+10.0 (Default)

@@ -1,17 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentImportProjectFeature : IImportProjectFeature
+internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
 {
     // Using explicit newlines here to avoid fooling our baseline tests
     private const string DefaultUsingImportContent =
@@ -22,63 +17,27 @@ internal class ComponentImportProjectFeature : IImportProjectFeature
         "@using global::System.Threading.Tasks\r\n" +
         "@using global::" + ComponentsApi.RenderFragment.Namespace + "\r\n"; // Microsoft.AspNetCore.Components
 
-    public RazorProjectEngine ProjectEngine { get; set; }
+    private static readonly DefaultImportProjectItem s_defaultImport = new($"Default component imports ({ComponentHelpers.ImportsFileName})", DefaultUsingImportContent);
 
-    public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
+    public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
     {
-        if (projectItem == null)
-        {
-            throw new ArgumentNullException(nameof(projectItem));
-        }
+        ArgHelper.ThrowIfNull(projectItem);
 
         // Don't add Component imports for a non-component.
-        if (!FileKinds.IsComponent(projectItem.FileKind))
+        if (!projectItem.FileKind.IsComponent())
         {
-            return Array.Empty<RazorProjectItem>();
+            return;
         }
 
-        var imports = new List<RazorProjectItem>()
-            {
-                 new VirtualProjectItem(DefaultUsingImportContent),
-            };
+        imports.Add(s_defaultImport);
 
         // We add hierarchical imports second so any default directive imports can be overridden.
         imports.AddRange(GetHierarchicalImports(ProjectEngine.FileSystem, projectItem));
-
-        return imports;
     }
 
-    // Temporary API until we fully convert to RazorProjectEngine
-    public IEnumerable<RazorProjectItem> GetHierarchicalImports(RazorProject project, RazorProjectItem projectItem)
+    private static ImmutableArray<RazorProjectItem> GetHierarchicalImports(RazorProjectFileSystem fileSystem, RazorProjectItem projectItem)
     {
         // We want items in descending order. FindHierarchicalItems returns items in ascending order.
-        return project.FindHierarchicalItems(projectItem.FilePath, ComponentMetadata.ImportsFileName).Reverse();
-    }
-
-    private class VirtualProjectItem : RazorProjectItem
-    {
-        private readonly byte[] _bytes;
-
-        public VirtualProjectItem(string content)
-        {
-            var preamble = Encoding.UTF8.GetPreamble();
-            var contentBytes = Encoding.UTF8.GetBytes(content);
-
-            _bytes = new byte[preamble.Length + contentBytes.Length];
-            preamble.CopyTo(_bytes, 0);
-            contentBytes.CopyTo(_bytes, preamble.Length);
-        }
-
-        public override string BasePath => null;
-
-        public override string FilePath => null;
-
-        public override string PhysicalPath => null;
-
-        public override bool Exists => true;
-
-        public override string FileKind => FileKinds.ComponentImport;
-
-        public override Stream Read() => new MemoryStream(_bytes);
+        return fileSystem.FindHierarchicalItems(projectItem.FilePath, ComponentHelpers.ImportsFileName);
     }
 }

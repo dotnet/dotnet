@@ -35,7 +35,7 @@ public class TestRequestSenderTests
     private readonly Mock<IDataSerializer> _mockDataSerializer;
     private readonly Mock<ICommunicationChannel> _mockChannel;
 
-    private readonly List<string> _pathToAdditionalExtensions = new() { "Hello", "World" };
+    private readonly List<string> _pathToAdditionalExtensions = ["Hello", "World"];
     private readonly Mock<ITestDiscoveryEventsHandler2> _mockDiscoveryEventsHandler;
     private readonly Mock<IInternalTestRunEventsHandler> _mockExecutionEventsHandler;
     private readonly TestRunCriteriaWithSources _testRunCriteriaWithSources;

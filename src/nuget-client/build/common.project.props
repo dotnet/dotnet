@@ -6,28 +6,32 @@
     <IsXPlat Condition=" $(MSBuildProjectFullPath.StartsWith('/')) == 'true' OR $(MSBuildProjectFullPath.StartsWith('\')) == 'true' ">true</IsXPlat>
   </PropertyGroup>
 
-  <!-- Common -->
+  <!-- Target Frameworks -->
   <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <NETFXTargetFrameworkVersion>v4.7.2</NETFXTargetFrameworkVersion>
     <NETFXTargetFramework>net472</NETFXTargetFramework>
-    <NETCoreTargetFramework>netcoreapp3.1</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net9.0</NETCoreTargetFramework>
-    <NETCoreTestTargetFrameworks>net8.0</NETCoreTestTargetFrameworks>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <TargetFrameworksExe>$(NETFXTargetFramework);$(NETCoreTargetFramework)</TargetFrameworksExe>
-    <TargetFrameworksExe Condition="'$(IsXPlat)' == 'true'">$(NETCoreTargetFramework)</TargetFrameworksExe>
-    <TargetFrameworksExeForSigning>$(TargetFrameworksExe);netcoreapp5.0</TargetFrameworksExeForSigning>
-    <TargetFrameworksExeForSigning Condition=" '$(IsXPlat)' == 'true' ">$(NETCoreTargetFramework);netcoreapp5.0</TargetFrameworksExeForSigning>
-    <TargetFrameworksExeForSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(TargetFrameworksExe)</TargetFrameworksExeForSigning>
-    <MinimalTargetFrameworksExeSigning>$(NETFXTargetFramework);net7.0</MinimalTargetFrameworksExeSigning>
-    <MinimalTargetFrameworksExeSigning Condition=" '$(IsXPlat)' == 'true' ">net7.0</MinimalTargetFrameworksExeSigning>
-    <MinimalTargetFrameworksExeSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework)</MinimalTargetFrameworksExeSigning>
-    <TargetFrameworksLibrary>$(NETFXTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>
-    <TargetFrameworksLibrary Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>
-    <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary);netcoreapp5.0</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForCrossVerificationTests>$(NETFXTargetFramework);$(NETCoreTestTargetFrameworks)</TargetFrameworksLibraryForCrossVerificationTests>
+    <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
+    <LatestNETCoreTargetFramework>net9.0</LatestNETCoreTargetFramework>
+    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</LatestNETCoreTargetFramework>
+
+    <!-- Target frameworks for class libraries-->
+    <TargetFrameworksLibrary>$(NETCoreTargetFramework)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(LatestNETCoreTargetFramework)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
+
+    <!-- Target framework for runnable apps -->
+    <TargetFrameworksExe>$(LatestNETCoreTargetFramework)</TargetFrameworksExe>
+    <TargetFrameworksExe Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
+
+    <!-- Target frameworks for unit tests -->
+    <TargetFrameworksUnitTest>$(LatestNETCoreTargetFramework)</TargetFrameworksUnitTest>
+    <TargetFrameworksUnitTest Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
+  </PropertyGroup>
+
+  <!-- Common -->
+  <PropertyGroup>
     <RepositoryRootDirectory>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\</RepositoryRootDirectory>
     <BuildCommonDirectory>$(RepositoryRootDirectory)build\</BuildCommonDirectory>
     <SolutionFile>$(RepositoryRootDirectory)$(RepositoryName).sln</SolutionFile>
@@ -41,20 +45,23 @@
     <EnlistmentRootSrc>$(RepositoryRootDirectory)src</EnlistmentRootSrc>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(RepositoryRootDirectory)</SolutionDir>
     <ArtifactRoot>$(ArtifactsDirectory)</ArtifactRoot>
-    <NuGetBuildLocalizationRepository>$(RepositoryRootDirectory)submodules\NuGet.Build.Localization\</NuGetBuildLocalizationRepository>
+    <ArtifactTempDirectory>$(ArtifactsDirectory)temp</ArtifactTempDirectory>
     <LocalizationRootDirectory>$(NuGetBuildLocalizationRepository)localize</LocalizationRootDirectory>
     <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
     <!-- additional warnings new in .NET 6 that we need to disable when building with source-build -->
-    <NoWarn Condition="'$(DotNetBuildFromSource)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
+    <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 
   <!-- Defaults -->
   <PropertyGroup>
     <TreatWarningsAsErrors Condition=" '$(TreatWarningsAsErrors)' == '' ">true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     <!-- Treat all warnings as errors, except on official builds since we don't want new warnings to break servicing branches -->
-    <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors>
+    <!-- MSBuild currently has a bug: https://github.com/dotnet/msbuild/issues/10801 -->
+    <!-- <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors> -->
   </PropertyGroup>
 
   <!-- Default project configuration -->
@@ -83,7 +90,7 @@
     <!-- Same as SDK default, but without CandidateAssemblyFiles in front, which would search in Content items -->
     <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
     <LangVersion>12</LangVersion>
-    <LangVersion Condition="'$(DotNetBuildFromSource)' == 'true'">latest</LangVersion>
+    <LangVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 
   <!-- NuGet's dev branch always targets the next upcoming version of .NET, so we always use the preview SDK -->
@@ -109,12 +116,20 @@
   <PropertyGroup>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <VsixOutputDirName>VS15</VsixOutputDirName>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(BuildCommonDirectory)NuGet.ruleset</CodeAnalysisRuleSet>
-    <EnforceCodeStyleInBuild Condition=" '$(EnforceCodeStyleInBuild)' != '' " >true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnableNETAnalyzers Condition="'$(DotNetBuildSourceOnly)' == 'true'">false</EnableNETAnalyzers>
+    <AnalysisLevel>8.0-None</AnalysisLevel>
+    <EnforceCodeStyleInBuild Condition="'$(EnforceCodeStyleInBuild)' == ''">true</EnforceCodeStyleInBuild>
+    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
     <VsixPublishDestination>$(ArtifactRoot)$(VsixOutputDirName)\</VsixPublishDestination>
+  </PropertyGroup>
+
+  <!-- Write out .XML files for projects all projects, required to enforce IDE0005 on build. -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <!-- Set the output location for all non-test projects -->
@@ -128,46 +143,7 @@
     <AppxPackageDir>$(OutputPath)</AppxPackageDir>
   </PropertyGroup>
 
-  <!-- Generate AssemblyFileVersion and AssemblyVersion attributes. -->
-  <PropertyGroup Condition=" '$(IsNetCoreProject)' != 'true' ">
-    <!-- Turn on dynamic assembly attribute generation -->
-    <AssemblyAttributesPath>$(IntermediateOutputPath)AssemblyInfo.g.cs</AssemblyAttributesPath>
-    <GenerateAdditionalSources>true</GenerateAdditionalSources>
-  </PropertyGroup>
-
-  <!-- Assembly attributes for non net core projects-->
-  <ItemGroup Condition=" '$(SkipAssemblyAttributes)' != 'true' AND '$(IsNetCoreProject)' != 'true' ">
-    <!--
-      AssemblyVersion and AssemblyFileVersion attributes are generated automatically for every build.
-      NuGet package version is derived from AssemblyFileVersion.
-    -->
-    <AssemblyAttributes Include="AssemblyVersion">
-      <_Parameter1>$(SemanticVersion).$(PreReleaseVersion)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyFileVersion">
-      <_Parameter1>$(SemanticVersion).$(PreReleaseVersion)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyInformationalVersion">
-      <_Parameter1 Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</_Parameter1>
-      <_Parameter1 Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyCompany">
-      <_Parameter1>Microsoft Corporation</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyProduct">
-      <_Parameter1>NuGet</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyCopyright">
-      <_Parameter1>&#169; Microsoft Corporation. All rights reserved.</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="System.Resources.NeutralResourcesLanguage">
-      <_Parameter1>en-US</_Parameter1>
-    </AssemblyAttributes>
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(IsNetCoreProject)' == 'true' ">
-    <!-- Assembly attributes for net core projects -->
-    <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+  <PropertyGroup>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</InformationalVersion>
@@ -184,7 +160,6 @@
   <!-- Add symbols to the dll for test dlls -->
   <PropertyGroup Condition=" '$(TestProject)' == 'true' ">
     <DebugType>full</DebugType>
-    <CodeAnalysisRuleSet>$(BuildCommonDirectory)NuGet.Tests.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <!-- The project that builds the VSIX -->
@@ -242,8 +217,16 @@
     <ProductProjects Include="$(RepositoryRootDirectory)src\*\*\*.csproj" />
   </ItemGroup>
 
+  <!-- All projects that build assemblies that are inserted into the .NET SDK -->
+  <ItemGroup>
+    <CoreProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\*\*.csproj"
+                  Exclude="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj;
+                           $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Localization\NuGet.Localization.csproj;
+                           $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">
-   <ApexProjects Include="$(RepositoryRootDirectory)test\NuGet.Tests.Apex\*\*.csproj" />
+    <ApexProjects Include="$(RepositoryRootDirectory)test\NuGet.Tests.Apex\*\*.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">

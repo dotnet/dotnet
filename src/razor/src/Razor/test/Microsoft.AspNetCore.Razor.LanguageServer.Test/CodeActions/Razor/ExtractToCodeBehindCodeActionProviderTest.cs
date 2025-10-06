@@ -1,22 +1,25 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -37,22 +40,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, fileKind: RazorFileKind.Legacy);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -68,21 +69,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -98,21 +98,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -128,21 +127,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -163,21 +161,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Theory]
@@ -204,25 +201,23 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, supportsFileCreation: true);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, supportsFileCreation: true);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data!).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));
@@ -248,25 +243,23 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, supportsFileCreation: true);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, supportsFileCreation: true);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data!).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));
@@ -286,21 +279,20 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, supportsFileCreation: false);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, supportsFileCreation: false);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -322,25 +314,23 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data!).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));
@@ -360,52 +350,75 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = null!
         };
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, relativePath: null);
+        var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, relativePath: null);
 
         var provider = new ExtractToCodeBehindCodeActionProvider(LoggerFactory);
 
         // Act
-        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, DisposalToken);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, SourceLocation location, string filePath, string text, bool supportsFileCreation = true)
-        => CreateRazorCodeActionContext(request, location, filePath, text, relativePath: filePath, supportsFileCreation: supportsFileCreation);
+    private static RazorCodeActionContext CreateRazorCodeActionContext(
+        VSCodeActionParams request,
+        int absoluteIndex,
+        string filePath,
+        string text,
+        RazorFileKind? fileKind = null,
+        bool supportsFileCreation = true)
+        => CreateRazorCodeActionContext(
+            request, absoluteIndex, filePath, text, relativePath: filePath, fileKind, supportsFileCreation: supportsFileCreation);
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, SourceLocation location, string filePath, string text, string? relativePath, bool supportsFileCreation = true)
+    private static RazorCodeActionContext CreateRazorCodeActionContext(
+        VSCodeActionParams request,
+        int absoluteIndex,
+        string filePath,
+        string text,
+        string? relativePath,
+        RazorFileKind? fileKind = null,
+        bool supportsFileCreation = true)
     {
-        var sourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(filePath, relativePath));
-        var options = RazorParserOptions.Create(o =>
-        {
-            o.Directives.Add(ComponentCodeDirective.Directive);
-            o.Directives.Add(FunctionsDirective.Directive);
-        });
-        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, options);
+        var source = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(filePath, relativePath));
 
-        var codeDocument = TestRazorCodeDocument.Create(sourceDocument, imports: default);
-        codeDocument.SetFileKind(FileKinds.Component);
-        codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(o =>
-        {
-            o.RootNamespace = "ExtractToCodeBehindTest";
-        }));
+        var fileKindValue = fileKind ?? RazorFileKind.Component;
+
+        var codeDocument = RazorCodeDocument.Create(
+            source,
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, fileKindValue, builder =>
+            {
+                builder.Directives = [ComponentCodeDirective.Directive, FunctionsDirective.Directive];
+            }),
+            codeGenerationOptions: RazorCodeGenerationOptions.Default.WithRootNamespace("ExtractToCodeBehindTest"));
+
+        var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
+
         codeDocument.SetSyntaxTree(syntaxTree);
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
-            document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
-            document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()), MockBehavior.Strict);
+        var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
+        documentSnapshotMock
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument);
+        documentSnapshotMock
+            .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument.Source.Text);
 
-        var sourceText = SourceText.From(text);
-
-        var context = new RazorCodeActionContext(request, documentSnapshot, codeDocument, location, sourceText, supportsFileCreation, supportsCodeActionResolve: true);
-
-        return context;
+        return new RazorCodeActionContext(
+            request,
+            documentSnapshotMock.Object,
+            codeDocument,
+            DelegatedDocumentUri: null,
+            StartAbsoluteIndex: absoluteIndex,
+            EndAbsoluteIndex: absoluteIndex,
+            RazorLanguageKind.Razor,
+            codeDocument.Source.Text,
+            supportsFileCreation,
+            SupportsCodeActionResolve: true);
     }
 }

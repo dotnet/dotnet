@@ -1,7 +1,7 @@
 SigFile
   (ParsedSigFileInput
      ("/root/SynType/SynTypeTupleDoesIncludeLeadingParameterName.fsi",
-      QualifiedNameOfFile SynTypeTupleDoesIncludeLeadingParameterName, [], [],
+      QualifiedNameOfFile SynTypeTupleDoesIncludeLeadingParameterName, [],
       [SynModuleOrNamespaceSig
          ([SynTypeTupleDoesIncludeLeadingParameterName], false, AnonModule,
           [Types
@@ -38,7 +38,7 @@ SigFile
                                  SynArgInfo ([], false, Some p2)]],
                                SynArgInfo ([], false, None)), false, false,
                             PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (3,4--3,34),
+                            Single None, None, (3,4--3,34),
                             { LeadingKeyword = Member (3,4--3,10)
                               InlineKeyword = None
                               WithKeyword = None
@@ -55,4 +55,5 @@ SigFile
                                  WithKeyword = None })], (2,0--3,34))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

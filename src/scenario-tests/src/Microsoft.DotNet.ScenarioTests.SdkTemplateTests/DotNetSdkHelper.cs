@@ -13,18 +13,22 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
 internal class DotNetSdkHelper
 {
-    public string DotNetRoot { get; set; }
-    public string? SdkVersion { get; set; }
-    public string DotNetExecutablePath { get =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(DotNetRoot, "dotnet.exe") : Path.Combine(DotNetRoot, "dotnet"); }
+    private readonly string? _binlogDir;
+    private readonly ITestOutputHelper _outputHelper;
 
-    private ITestOutputHelper OutputHelper { get; }
+    public string DotNetRoot { get; }
 
-    public DotNetSdkHelper(ITestOutputHelper outputHelper, string dotnetRoot, string? sdkVersion)
+    public string? SdkVersion { get; }
+
+    public string DotNetExecutablePath  =>
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(DotNetRoot, "dotnet.exe") : Path.Combine(DotNetRoot, "dotnet");
+
+    public DotNetSdkHelper(ITestOutputHelper outputHelper, string dotnetRoot, string? sdkVersion, string? binlogDir)
     {
-        OutputHelper = outputHelper;
+        _outputHelper = outputHelper;
         DotNetRoot = dotnetRoot;
         SdkVersion = sdkVersion;
+        _binlogDir = binlogDir;
     }
 
     private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
@@ -42,7 +46,7 @@ internal class DotNetSdkHelper
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetExecutablePath,
             args,
-            OutputHelper,
+            _outputHelper,
             configure: (process) => configureProcess(process, workingDirectory),
             millisecondTimeout: millisecondTimeout);
 
@@ -61,9 +65,9 @@ internal class DotNetSdkHelper
         process.StartInfo.WorkingDirectory = workingDirectory;
 
         // The `dotnet test` execution context sets a number of dotnet related ENVs that cause issues when executing
-        // dotnet commands.  Clear these to avoid side effects.
-
-        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key.StartsWith("DOTNET_")).ToList())
+        // dotnet commands. Same for MSBuild which adds env vars when invoking the runner via the Exec task.
+        // Clear these to avoid side effects.
+        foreach (string key in process.StartInfo.Environment.Keys.Where(key => key.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || key.StartsWith("MSBUILD", StringComparison.OrdinalIgnoreCase)).ToArray())
         {
             process.StartInfo.Environment.Remove(key);
         }
@@ -71,6 +75,12 @@ internal class DotNetSdkHelper
         process.StartInfo.EnvironmentVariables["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRoot;
+        process.StartInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "Major";
+        // Don't use the repo infrastructure
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildProps"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryBuildTargets"] = "false";
+        process.StartInfo.EnvironmentVariables["ImportDirectoryPackagesProps"] = "false";
+
         if (!string.IsNullOrEmpty(nugetPackagesDirectory))
         {
             process.StartInfo.EnvironmentVariables["NUGET_PACKAGES"] = nugetPackagesDirectory;
@@ -105,22 +115,23 @@ internal class DotNetSdkHelper
         return projectDirectory;
     }
 
-    public void ExecutePublish(string projectDirectory, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false, string[]? frameworks = null)
+    public void ExecutePublish(string projectDirectory, string? rid = null, bool? selfContained = null, bool trimmed = false, bool readyToRun = false, bool? aot = false, string[]? frameworks = null)
     {
         string options = string.Empty;
         string binlogDifferentiator = string.Empty;
+
+        if (!string.IsNullOrEmpty(rid))
+        {
+            options += $" -r {rid}";
+            binlogDifferentiator += $"-{rid}";
+        }
         
         if (selfContained.HasValue)
         {
-            options += $"--self-contained {selfContained.Value.ToString().ToLowerInvariant()}";
+            options += $" --self-contained {selfContained.Value.ToString().ToLowerInvariant()}";
             if (selfContained.Value)
             {
                 binlogDifferentiator += "self-contained";
-                if (!string.IsNullOrEmpty(rid))
-                {
-                    options += $" -r {rid}";
-                    binlogDifferentiator += $"-{rid}";
-                }
                 if (trimmed)
                 {
                     options += " /p:PublishTrimmed=true";
@@ -131,6 +142,15 @@ internal class DotNetSdkHelper
                     options += " /p:PublishReadyToRun=true";
                     binlogDifferentiator += "-R2R";
                 }
+            }
+        }
+
+        if (aot.HasValue)
+        {
+            options += $" /p:PublishAot={aot.Value.ToString().ToLowerInvariant()}";
+            if (aot.Value)
+            {
+                binlogDifferentiator += "-aot";
             }
         }
 
@@ -177,7 +197,7 @@ internal class DotNetSdkHelper
             projectDirectory,
             additionalProcessConfigCallback: processConfigCallback,
             expectedExitCode: exitCode,
-            millisecondTimeout: 30000);
+            millisecondTimeout: 60000);
 
         void processConfigCallback(Process process)
         {
@@ -185,7 +205,7 @@ internal class DotNetSdkHelper
             {
                 if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
                 {
-                    process.Kill();
+                    process.Kill(true);
                     process.WaitForExit();
                 }
             });
@@ -244,15 +264,19 @@ internal class DotNetSdkHelper
     public void ExecuteTest(string projectDirectory) =>
         ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory);
 
-    private static string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
+    private string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
     {
+        string binlogDir = _binlogDir is null ?
+            projectDirectory :
+            Path.Combine(_binlogDir, Path.GetFileName(projectDirectory)!);
+
         string fileName = $"{command}";
         if (!string.IsNullOrEmpty(differentiator))
         {
             fileName += $"-{differentiator}";
         }
 
-        return $"/bl:{Path.Combine(projectDirectory, $"{fileName}.binlog")}";
+        return $"/bl:{Path.Combine(binlogDir, $"{fileName}.binlog")}";
     }
 
     public void ExecuteAddClassReference(string projectDirectory)
@@ -260,6 +284,68 @@ internal class DotNetSdkHelper
         //Very hacky fix to grab class library path assuming Console referencing Classlib
         string classDirectory = projectDirectory.Replace("Console", "ClassLib");
         ExecuteCmd($"add reference {classDirectory}", projectDirectory);
+    }
+
+    public void ExecuteWorkloadInstall(string projectDirectory, string workloadIds)
+    {
+        ExecuteCmd($"workload install {workloadIds} --skip-manifest-update", projectDirectory);
+    }
+
+    public string ExecuteWorkloadList(string projectDirectory, string workloadIds, bool shouldBeInstalled, 
+        string originalSource = "", bool firstRun = false)
+    {
+        ExecuteCmd($"workload list", projectDirectory, additionalProcessConfigCallback: processConfigCallback);
+
+        void processConfigCallback(Process process)
+        {
+            string output = "";
+            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            {
+                if (e.Data is null)
+                {
+                    return;
+                }
+
+                output += e.Data;
+                if (!output.Contains("find additional workloads to install."))
+                {
+                    return;
+                }
+
+                if (output.Contains(workloadIds))
+                {
+                    if (!shouldBeInstalled)
+                    {
+                        if (firstRun)
+                        {
+                            originalSource = output;
+                        }
+                        else if(output != originalSource)
+                        {
+                            _outputHelper.WriteLine("output is " + output);
+                            _outputHelper.WriteLine("originalSource is " + originalSource);
+                            throw new Exception($"{workloadIds} shouldn't be installed but was found.");
+                        }
+                    }
+                    _outputHelper.WriteLine($"{workloadIds} is installed");
+                }
+                else
+                {
+                    if (shouldBeInstalled)
+                    {
+                        throw new Exception($"{workloadIds} should be installed but wasn't found.");
+                    }
+                    _outputHelper.WriteLine($"{workloadIds} is not installed");
+                }
+            });
+        }
+
+        return originalSource;
+    }
+
+    public void ExecuteWorkloadUninstall(string projectDirectory, string workloadIds)
+    {
+        ExecuteCmd($"workload uninstall {workloadIds}", projectDirectory);
     }
 
     public void ExecuteAddMultiTFM(string projectName, string projectDirectory, DotNetLanguage language, string[] frameworks)
@@ -308,8 +394,8 @@ internal class DotNetSdkHelper
             }
             catch (XPathException e)
             {
-                Console.WriteLine("Unable to find node");
-                Console.WriteLine(e.Message);
+                _outputHelper.WriteLine("Unable to find node");
+                _outputHelper.WriteLine(e.Message);
                 throw;
             }
         }
@@ -328,7 +414,7 @@ internal class DotNetSdkHelper
         {
             string targetPath = Path.Combine(projectDirectory, file.Name);
             file.CopyTo(targetPath);
-            Console.WriteLine($"Copying {file.Name} to {targetPath}");
+            _outputHelper.WriteLine($"Copying {file.Name} to {targetPath}");
         }
         if (recursive)
         {

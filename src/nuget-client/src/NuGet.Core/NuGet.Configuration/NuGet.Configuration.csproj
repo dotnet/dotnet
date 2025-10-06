@@ -2,19 +2,13 @@
   <PropertyGroup>
     <Description>NuGet's configuration settings implementation.</Description>
     <NoWarn>$(NoWarn);CS1591;RS0041</NoWarn>
-    <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(DotNetBuildFromSource)' != 'true'">$(TargetFrameworks)</TargetFrameworks>
-    <TargetFramework />
+    <TargetFrameworks Condition="'$(IsVsixBuild)' != 'true'">$(TargetFrameworksLibrary)</TargetFrameworks>
+    <TargetFramework Condition="'$(IsVsixBuild)' == 'true'">$(NETFXTargetFramework)</TargetFramework>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
     <XPLATProject>true</XPLATProject>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">
-    <TargetFrameworks />
-    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,8 +21,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetStandardVersion)' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net9.0' ">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' " />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +33,32 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\EqualityUtility.cs" />
+    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.Commands.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.Commands.Test" />
+    <InternalsVisibleTo Include="NuGet.Configuration.Test" />
+    <InternalsVisibleTo Include="NuGet.Credentials.Test" />
+    <InternalsVisibleTo Include="NuGet.DependencyResolver.Core.Tests" />
+    <InternalsVisibleTo Include="NuGet.SolutionRestoreManager.Test" />
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Implementation.Test" />
+    <InternalsVisibleTo Include="Test.Utility" />
   </ItemGroup>
 </Project>

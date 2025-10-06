@@ -1,0 +1,1423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Resources.resx">
+    <body>
+      <trans-unit id="Accessibility_ColumnNotSortedHelpText">
+        <source>Not sorted, press space to sort ascending</source>
+        <target state="translated">Neseřazeno, pro vzestupné řazení stiskněte mezerník.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedAscendingHelpText">
+        <source>Sorted ascending, press space to sort descending</source>
+        <target state="translated">Seřazeno vzestupně, pro sestupné řazení stiskněte mezerník.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedDescendingHelpText">
+        <source>Sorted descending, press space to sort ascending</source>
+        <target state="translated">Seřazeno sestupně, pro vzestupné řazení stiskněte mezerník.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDeprecation">
+        <source>Package deprecation</source>
+        <target state="translated">Vyřazení balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDetailsUrlIcon">
+        <source>Package details URL icon</source>
+        <target state="translated">Ikona adresy URL s podrobnostmi o balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIcon">
+        <source>Package icon</source>
+        <target state="translated">Ikona balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIdentity">
+        <source>{0} version {1}</source>
+        <target state="translated">{0} verze {1}</target>
+        <note>{1} = Package ID, {2} = Package version</note>
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageManager">
+        <source>Package manager</source>
+        <target state="translated">Správce balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageMetadata">
+        <source>Package metadata</source>
+        <target state="translated">Metadata balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageVulnerabilities">
+        <source>Package vulnerabilities</source>
+        <target state="translated">Ohrožení zabezpečení balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_Packages">
+        <source>Packages</source>
+        <target state="translated">Balíčky</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesDetails">
+        <source>Package details</source>
+        <target state="translated">Podrobnosti balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesList">
+        <source>Packages list</source>
+        <target state="translated">Seznam balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PrefixReserved">
+        <source>Prefix reserved</source>
+        <target state="translated">Předpona je vyhrazená.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteAllToTopLevel">
+        <source>Promote all to top level dependencies</source>
+        <target state="translated">Povýšit všechny na závislosti nejvyšší úrovně</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteToTopLevel">
+        <source>Promote to a top level dependency</source>
+        <target state="translated">Povýšit na závislost nejvyšší úrovně</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbHelp">
+        <source>Use arrow keys to change the size of the sections</source>
+        <target state="translated">Pomocí šipkových kláves můžete změnit velikost oddílů.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbName">
+        <source>splitter for Packages list</source>
+        <target state="translated">rozdělovač pro seznamy balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_VulnerabilitiesDescriptionName">
+        <source>Package vulnerability description</source>
+        <target state="translated">Popis ohrožení zabezpečení balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Action_Consolidate">
+        <source>Consolidate</source>
+        <target state="translated">Konsolidovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">Vše</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">Argument nemůže být null ani prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForPRMigrator">
+        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
+        <target state="translated">Zvažte migraci formátu správy balíčků NuGet tohoto projektu z packages.config na PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForRestoreMessage">
+        <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
+        <target state="translated">V tomhle řešení chybí některé balíčky NuGet. Kliknutím je obnovíte z online zdrojů balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForUpdateMessage">
+        <source>A new version of NuGet Package Manager is available.</source>
+        <target state="translated">Je dostupná nová verze správce NuGet Package Manager.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AutoReferenced">
+        <source>Implicitly referenced by an SDK. To update the package, update the SDK to which it belongs.</source>
+        <target state="translated">Implicitně odkazováno ze sady SDK. Pokud chcete balíček aktualizovat, aktualizujte sadu SDK, do které patří.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Billion">
+        <source>{0:G3}B</source>
+        <target state="translated">{0:G3}B</target>
+        <note>American billions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="Button_Apply">
+        <source>_Apply</source>
+        <target state="translated">_Aplikovat</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Cancel">
+        <source>_Cancel</source>
+        <target state="translated">_Zrušit</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Copy">
+        <source>Co_py</source>
+        <target state="translated">Ko_pírovat</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Dismiss">
+        <source>Dismiss</source>
+        <target state="translated">Zavřít</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_IAccept">
+        <source>I _Accept</source>
+        <target state="translated">Př_ijmout</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_IDecline">
+        <source>I _Decline</source>
+        <target state="translated">O_dmítnout</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Install">
+        <source>Install</source>
+        <target state="translated">Nainstalovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_No">
+        <source>_No</source>
+        <target state="translated">_Ne</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_NoToAll">
+        <source>No to A_ll</source>
+        <target state="translated">N_e pro všechny</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_OK">
+        <source>_OK</source>
+        <target state="translated">_OK</target>
+        <note>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Preview">
+        <source>Preview</source>
+        <target state="translated">Náhled</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_RestartSearch">
+        <source>Restart search</source>
+        <target state="translated">Restartovat hledání</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowErrors">
+        <source>Show errors in output</source>
+        <target state="translated">Zobrazit chyby ve výstupu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowMoreResults">
+        <source>Show {0} more results</source>
+        <target state="translated">Zobrazit další výsledky ({0})</target>
+        <note>The string format has a single parameter "{0}", which is an integer number of how many more results will be displayed to the user when they click a button.</note>
+      </trans-unit>
+      <trans-unit id="Button_Uninstall">
+        <source>Uninstall</source>
+        <target state="translated">Odinstalovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Update">
+        <source>Update</source>
+        <target state="translated">Aktualizovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Yes">
+        <source>_Yes</source>
+        <target state="translated">_Ano</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_YesToAll">
+        <source>Yes to _All</source>
+        <target state="translated">Ano pro _všechny</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_DefaultPackageFormat">
+        <source>Allow format selection on first package install</source>
+        <target state="translated">Při první instalaci balíčku povolit výběr formátu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects">
+        <source>Select All Projects</source>
+        <target state="translated">Vybrat všechny projekty</target>
+        <note>Name for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects_HelpText">
+        <source>Select this checkbox to install the NuGet Package to all projects in the solution</source>
+        <target state="translated">Toto políčko zaškrtněte, pokud chcete balíček NuGet nainstalovat do všech projektů v tomto řešení.</target>
+        <note>Help text for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectProject_HelpText">
+        <source>Select this checkbox to install the NuGet Package to the project '{0}'</source>
+        <target state="translated">Toto políčko zaškrtněte, pokud chcete balíček NuGet nainstalovat do projektu {0}.</target>
+        <note>Help text for the checkbox to install a NuGet package to a specific project.</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_Selected">
+        <source>Selected</source>
+        <target state="translated">Vybráno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ForceRemove">
+        <source>Force uninstall, even if there are dependencies on it</source>
+        <target state="translated">Vynutit odinstalaci, i když na ní závisí další položka</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_IncludePrerelease">
+        <source>Include prerelease</source>
+        <target state="translated">Zahrnout předběžnou verzi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ProjectSelection">
+        <source>{0} project(s)</source>
+        <target state="translated">{0} projekty</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_RemoveDependencies">
+        <source>Remove dependencies</source>
+        <target state="translated">Odebrat závislosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_SelectAllPackages">
+        <source>Select all packages</source>
+        <target state="translated">Vybrat všechny balíčky</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ShowPreviewWindow">
+        <source>Show preview window</source>
+        <target state="translated">Zobrazit okno náhledu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_Show_Vulnerable_Only">
+        <source>Show only vulnerable</source>
+        <target state="translated">Zobrazit jen zranitelné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_InstalledVersion">
+        <source>Installed</source>
+        <target state="translated">Nainstalováno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_PackageLevel">
+        <source>Package Level</source>
+        <target state="translated">Úroveň balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Project">
+        <source>Project</source>
+        <target state="translated">Projekt</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Requested">
+        <source>Version</source>
+        <target state="translated">Verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Selected">
+        <source>Selected</source>
+        <target state="translated">Vybráno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CopyMenuCommandLabel">
+        <source>_Copy</source>
+        <target state="translated">_Kopírovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Highest">
+        <source>Highest</source>
+        <target state="translated">Nejvyšší</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestMinor">
+        <source>Highest Minor</source>
+        <target state="translated">Nejvyšší podverze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestPatch">
+        <source>Highest Patch</source>
+        <target state="translated">Nejvyšší oprava</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_IgnoreDependencies">
+        <source>Ignore Dependencies</source>
+        <target state="translated">Ignorovat závislosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Lowest">
+        <source>Lowest</source>
+        <target state="translated">Nejnižší</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_LinkTooltip">
+        <source>Select to view the alternative package.</source>
+        <target state="translated">Tuto možnost vyberte, pokud chcete zobrazit alternativní balíček.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_MoreInfo">
+        <source>More info</source>
+        <target state="translated">Další informace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessage">
+        <source>This package version is deprecated.</source>
+        <target state="translated">Tato verze balíčku je zastaralá.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessageAlternative">
+        <source>This package version is deprecated. Use {0} instead.</source>
+        <target state="translated">Tato verze balíčku je zastaralá. Místo ní použijte {0}.</target>
+        <note>{0} is a NuGet package id (string)</note>
+      </trans-unit>
+      <trans-unit id="Description_LearnMore">
+        <source>Learn more</source>
+        <target state="translated">Další informace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DialogTitle_HttpSource">
+        <source>HTTP Source</source>
+        <target state="translated">Zdroj HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotShowThisAgain">
+        <source>_Don't show this again</source>
+        <target state="translated">_Příště už nezobrazovat</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
+        <target state="translated">NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MetadataNotFound">
+        <source>Unable to find metadata of {0}</source>
+        <target state="translated">Nepovedlo se najít metadata {0}</target>
+        <note>{0} is the package ID</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectNotInCache">
+        <source>Project {0} does not exist in the project system cache.</source>
+        <target state="translated">Projekt {0} neexistuje v systémové mezipaměti projektů.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
+        <source>The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of the configured sources.</source>
+        <target state="translated">Balíček {0} je k dispozici ve složce Globální balíčky, ale zdroj {1}, ze které pochází, není jedním z nakonfigurovaných zdrojů.</target>
+        <note>{0} is the package ID. {1} is the URI of the package source found in the Global packages folder.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLoadReadme">
+        <source>An error occurred while trying to load the README.</source>
+        <target state="translated">Při pokusu o načtení souboru README došlo k chybě.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_IgnoreAll">
+        <source>Ignore All</source>
+        <target state="translated">Ignorovat vše</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_OverwriteAll">
+        <source>Overwrite All</source>
+        <target state="translated">Přepsat vše</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_Prompt">
+        <source>Prompt</source>
+        <target state="translated">Zobrazit výzvu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_InstallOptions">
+        <source>Install and Update Options</source>
+        <target state="translated">Možnosti instalace a aktualizace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_UninstallOptions">
+        <source>Uninstall Options</source>
+        <target state="translated">Možnosti odinstalace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_AdvisoryUrl">
+        <source>Advisory URL</source>
+        <target state="translated">Adresa URL doporučení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_License">
+        <source>License</source>
+        <target state="translated">Licence</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Owner">
+        <source>Owner</source>
+        <target state="translated">Vlastník</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_PackageSourceMappingSettings">
+        <source>Configure</source>
+        <target state="translated">Konfigurovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ProjectUrl">
+        <source>Project URL</source>
+        <target state="translated">Adresa URL projektu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Readme">
+        <source>Readme</source>
+        <target state="translated">Soubor Readme</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ReportAbuse">
+        <source>Report Abuse</source>
+        <target state="translated">Ohlásit nevhodné chování:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoreUpgrade">
+        <source>Ignore for now</source>
+        <target state="translated">Prozatím ignorovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImageCaption_HelpIcon">
+        <source>Help icon</source>
+        <target state="translated">Ikona nápovědy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Action">
+        <source>Action:</source>
+        <target state="translated">Akce:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Authors">
+        <source>Author(s): </source>
+        <target state="translated">Autoři: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Browse">
+        <source>Browse</source>
+        <target state="translated">Procházet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_CreatingSourceMappings">
+        <source>Creating source mappings to '{0}':</source>
+        <target state="translated">Vytváření mapování zdroje na „{0}“:</target>
+        <note>{0} - The Name of a user-configured NuGet Package Source</note>
+      </trans-unit>
+      <trans-unit id="Label_DatePublished">
+        <source>Date published:</source>
+        <target state="translated">Datum publikování:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Dependencies">
+        <source>Dependencies</source>
+        <target state="translated">Závislosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DependencyBehavior">
+        <source>Dependency behavior:</source>
+        <target state="translated">Chování závislostí:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Deprecated">
+        <source>Deprecated</source>
+        <target state="translated">Zastaralé</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationAlternatePackage">
+        <source>Alternate package</source>
+        <target state="translated">Alternativní balíček</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons">
+        <source>Deprecation reason</source>
+        <target state="translated">Důvod vyřazení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_CriticalBugs">
+        <source>This package has been deprecated as it has critical bugs.</source>
+        <target state="translated">Tento balíček byl vyřazen, protože obsahuje kritické chyby.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Legacy">
+        <source>This package has been deprecated as it is legacy and no longer maintained.</source>
+        <target state="translated">Tento balíček byl vyřazen, protože jde o starší verzi, která se už neudržuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_LegacyAndCriticalBugs">
+        <source>This package has been deprecated as it has critical bugs and is no longer maintained.</source>
+        <target state="translated">Tento balíček byl vyřazen, protože obsahuje kritické chyby a už se neudržuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Unknown">
+        <source>The package has been deprecated.</source>
+        <target state="translated">Tento balíček byl vyřazen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Description">
+        <source>Description</source>
+        <target state="translated">Popis</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Details">
+        <source>Details</source>
+        <target state="translated">Podrobnosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Downloads">
+        <source>Downloads:</source>
+        <target state="translated">Stažení:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_FileConflictAction">
+        <source>File conflict action:</source>
+        <target state="translated">Akce při konfliktu souborů:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed">
+        <source>Installed</source>
+        <target state="translated">Nainstalováno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledColon">
+        <source>Installed:</source>
+        <target state="translated">Nainstalováno:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledPackages">
+        <source>Installing:</source>
+        <target state="translated">Instaluje se:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledVersionsCount">
+        <source>Versions: {0}</source>
+        <target state="translated">Verze: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed_DeprecatedWarning">
+        <source>You have {0} deprecated package versions installed.</source>
+        <target state="translated">Máte nainstalovaný tento počet zastaralých verzí balíčků: {0}</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableAndDeprecatedWarning">
+        <source>You have {0} vulnerable package versions and {1} deprecated package versions installed.</source>
+        <target state="translated">Máte nainstalovaný tento počet zranitelných verzí balíčků: {0} a tento počet zastaralých verzí balíčků: {1}</target>
+        <note>{0} and {1} are numbers of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning">
+        <source>You have {0} vulnerable package versions installed.</source>
+        <target state="translated">Máte nainstalovaný tento počet zranitelných verzí balíčků: {0}</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_License">
+        <source>License:</source>
+        <target state="translated">Licence:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
+        <source>These installed package versions contain vulnerabilities: {0}</source>
+        <target state="translated">Tyto nainstalované verze balíčku obsahují ohrožení zabezpečení: {0}</target>
+        <note>{0} are package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_NetworkError">
+        <source>An error occurred while fetching additional information about the package. Refresh to try again.</source>
+        <target state="translated">Při načítání dalších informací o balíčku došlo k chybě. Aktualizujte zobrazení a zkuste to znovu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_NuGetWindowCaption">
+        <source>NuGet: {0}</source>
+        <target state="translated">NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Options">
+        <source>Options</source>
+        <target state="translated">Možnosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Owners">
+        <source>Owner(s):</source>
+        <target state="translated">Vlastníci:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDeprecatedToolTip">
+        <source>This package version is deprecated.</source>
+        <target state="translated">Tato verze balíčku je zastaralá.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDetails">
+        <source>Package Details</source>
+        <target state="translated">Podrobnosti balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageManager">
+        <source>NuGet Package Manager: {0}</source>
+        <target state="translated">Správce balíčků NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackagePrerelease">
+        <source>Prerelease</source>
+        <target state="translated">Předběžná verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageSelectForInfoToolTip">
+        <source>Select to view package details for more information.</source>
+        <target state="translated">Výběrem zobrazíte podrobnosti balíčku pro další informace.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageVulnerableToolTip">
+        <source>This package version has a vulnerability with {0} severity.</source>
+        <target state="translated">Tato verze balíčku obsahuje zranitelnost se závažností {0}.</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_ProjectUrl">
+        <source>Project URL:</source>
+        <target state="translated">Adresa URL projektu:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme">
+        <source>Readme:</source>
+        <target state="translated">Soubor Readme:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme_Tab">
+        <source>README</source>
+        <target state="translated">README</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_ReportAbuse">
+        <source>Report Abuse:</source>
+        <target state="translated">Ohlásit nevhodné chování:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Repository">
+        <source>Package source:</source>
+        <target state="translated">Zdroj balíčku:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Solution">
+        <source>Solution</source>
+        <target state="translated">Řešení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionNuGetWindowCaption">
+        <source>NuGet - Solution</source>
+        <target state="translated">NuGet – řešení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionPackageManager">
+        <source>Manage Packages for Solution</source>
+        <target state="translated">Spravovat balíčky pro řešení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Tags">
+        <source>Tags:</source>
+        <target state="translated">Značky:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UninstalledPackages">
+        <source>Uninstalling:</source>
+        <target state="translated">Odinstaluje se:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UpdatedPackages">
+        <source>Updates:</source>
+        <target state="translated">Aktualizace:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Updates">
+        <source>Updates</source>
+        <target state="translated">Aktualizace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Version">
+        <source>Version:</source>
+        <target state="translated">Verze:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Vulnerabilities">
+        <source>Vulnerabilities detected ({0})</source>
+        <target state="translated">Detekovala se ohrožení zabezpečení ({0})</target>
+        <note>{0} is the number of vulnerabilities</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilitiesDescription">
+        <source>This package version has at least one vulnerability with {0} severity. It may lead to specific problems in your project. Try updating the package version.</source>
+        <target state="translated">Tato verze balíčku obsahuje minimálně jedno ohrožení zabezpečení s {0} závažností. Může to vést k určitým problémům v projektu. Zkuste aktualizovat verzi balíčku.</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilityAdvisory">
+        <source>Advisory ({0} severity):</source>
+        <target state="translated">Poradce pro zabezpečení ({0} závažnost):</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_Vulnerable">
+        <source>Vulnerable</source>
+        <target state="translated">Zranitelné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseFile_Loading">
+        <source>Loading license file...</source>
+        <target state="translated">Načítá se soubor s licencí...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseTerm_LinkName">
+        <source>{0} license</source>
+        <target state="translated">{0} – licence</target>
+        <note>{0} = license name. Examples: MIT, Apache</note>
+      </trans-unit>
+      <trans-unit id="Link_DoNotShowAgain">
+        <source>Don't show again</source>
+        <target state="translated">Příště už nezobrazovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutInstallOptions">
+        <source>Learn about Install Options</source>
+        <target state="translated">Informace o možnostech instalace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutUninstallOptions">
+        <source>Learn about Uninstall Options</source>
+        <target state="translated">Informace o možnostech odinstalace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_MigratorHelp">
+        <source>Why should I migrate?</source>
+        <target state="translated">Proč mám migrovat?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_UpgradeOption">
+        <source>Migrate Now</source>
+        <target state="translated">Migrovat hned</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_configuration">
+        <source>Common NuGet configurations; How settings are applied.</source>
+        <target state="translated">Běžné konfigurace NuGet: Způsob použití nastavení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageIdColumnHeader">
+        <source>Package Id</source>
+        <target state="translated">ID balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageNotFound">
+        <source>Migration failed as packages {0} could not be uninstalled. These packages were not found in the solution packages folder. No changes were made to the project.</source>
+        <target state="translated">Migrace se nezdařila, protože balíčky {0} nebylo možné odinstalovat. Tyto balíčky nebyly nalezeny ve složce balíčků řešení. V projektu nebyly provedeny žádné změny.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_TopLevelColumnHeader">
+        <source>Top-Level</source>
+        <target state="translated">Nejvyšší úroveň</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_VersionColumnHeader">
+        <source>Version</source>
+        <target state="translated">Verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Million">
+        <source>{0:G3}M</source>
+        <target state="translated">{0:G3}M</target>
+        <note>Millions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_PackageDependencyOf">
+        <source>(dependency of {0})</source>
+        <target state="translated">(závislost {0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Installing">
+        <source>Installing required packages</source>
+        <target state="translated">Probíhá instalace požadovaných balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Uninstalling">
+        <source>Uninstalling packages from packages.config</source>
+        <target state="translated">Probíhá odinstalace balíčků ze souboru packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_WaitMessage">
+        <source>Upgrading Project to PackageReference</source>
+        <target state="translated">Probíhá upgrade projektu na PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">Uplynulý čas: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageLevel_TopLevelPackageHeaderText">
+        <source>Top-level packages ({0})</source>
+        <target state="translated">Balíčky na nejvyšší úrovni ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageLevel_TransitivePackageHeaderText">
+        <source>Transitive packages ({0})</source>
+        <target state="translated">Přenositelné balíčky ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageRestoreErrorTryAgain">
+        <source>An error occurred while trying to restore packages:</source>
+        <target state="translated">Při pokusu o obnovení balíčků se vyskytla chyba:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreProgressMessage">
+        <source>Downloading missing packages...</source>
+        <target state="translated">Stahují se chybějící balíčky...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageVersionWithTransitiveOrigins">
+        <source>{0} by {1}</source>
+        <target state="translated">{0}, autor: {1}</target>
+        <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
+      </trans-unit>
+      <trans-unit id="Preview_PackageUpdate">
+        <source>{0} version {1} to {2} version {3}</source>
+        <target state="translated">{0} verze {1} na {2} verze {3}</target>
+        <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
+      </trans-unit>
+      <trans-unit id="Preview_UnknownProject">
+        <source>Unknown project</source>
+        <target state="translated">Neznámý projekt</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackageRef">
+        <source>PackageReference in project file</source>
+        <target state="translated">PackageReference v souboru projektu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackagesConfig">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallMultiplePackages">
+        <source>Multiple packages failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">Nepodařilo se odinstalovat víc balíčků. Pokud chcete tento proces dokončit, restartujte Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallSinglePackage">
+        <source>The package at '{0}' failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">Balíček v: {0} se nepodařilo odinstalovat. Pokud chcete tento proces dokončit, restartujte Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestartButtonLabel">
+        <source>Rest_art</source>
+        <target state="translated">Rest_artovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreButtonLabel">
+        <source>_Restore</source>
+        <target state="translated">_Obnovit</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowDetails">
+        <source>Show Details</source>
+        <target state="translated">Zobrazit podrobnosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandFailure">
+        <source>NuGet storage clear failed at {0}. 
+Error: {1}
+Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+        <target state="translated">Vymazání úložiště NuGet selhalo v {0}. 
+Chyba: {1}
+Další nápovědu najdete na adrese https://aka.ms/troubleshoot_nuget_cache.</target>
+        <note>{0} :error message;
+{1}: date and time
+</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandSuccess">
+        <source>NuGet storage cleared at {0}</source>
+        <target state="translated">Úložiště NuGet se vymazalo v {0}.</target>
+        <note>{0} for date and time string</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandWorking">
+        <source>Clearing all NuGet storage...</source>
+        <target state="translated">Mazání celého úložiště NuGet...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_Title">
+        <source>Package Manager Options</source>
+        <target state="translated">Možnosti Správce balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueName">
+        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <target state="translated">Zadaný název už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný název.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <target state="translated">Zadaný zdroj už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný zdroj.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Canceled">
+        <source>Canceled loading packages</source>
+        <target state="translated">Načítání balíčku se zrušilo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_ErrorOccurred">
+        <source>An error occurred while loading packages</source>
+        <target state="translated">Při načítání balíčků došlo k chybě.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_NoMoreItems">
+        <source>End of package list loaded</source>
+        <target state="translated">Konec načteného seznamu balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Ready">
+        <source>Package list loaded</source>
+        <target state="translated">Načtený seznam balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_By">
+        <source>by</source>
+        <target state="translated">Autor:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByAuthor">
+        <source>by {0}</source>
+        <target state="translated">Autor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByOwner">
+        <source>by {0}</source>
+        <target state="translated">Autor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Changes">
+        <source>Visual Studio is about to make changes to this solution:</source>
+        <target state="translated">Visual Studio se chystá provést změny v tomto řešení:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DirectDependencies">
+        <source>Top-level dependencies:</source>
+        <target state="translated">Závislosti nejvyšší úrovně:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Downloads">
+        <source>{0} downloads</source>
+        <target state="translated">Počet stažení: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ErrorOccurred">
+        <source>Error occurred</source>
+        <target state="translated">Došlo k chybě.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_HelpMeMigrate">
+        <source>Help me migrate to NuGet PackageReference</source>
+        <target state="translated">Pomoc při migraci na NuGet PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LegalDisclaimer">
+        <source>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages.</source>
+        <target state="translated">Každý balíček vám licencoval jeho vlastník. Aplikace NuGet nezodpovídá za balíčky jiných výrobců ani k nim neuděluje licence.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseHeaderText">
+        <source>The following package(s) require that you accept their license terms before installing.</source>
+        <target state="translated">Další balíčky vyžadují, abyste před instalací přijali jejich licenční podmínky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseText">
+        <source>By clicking "I Accept," you agree to the license terms for the package(s) listed above. If you do not agree to the license terms, click "I Decline."</source>
+        <target state="translated">Kliknutím na Přijmout souhlasíte s licenčními podmínkami pro balíčky uvedené výše. Když s licenčními podmínkami nesouhlasíte, klikněte na Odmítnout.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Loading">
+        <source>Loading...</source>
+        <target state="translated">Načítá se...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LoadingReadme">
+        <source>Loading README...</source>
+        <target state="translated">Načítá se SOUBOR README...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ManageSettings">
+        <source>You can manage these settings in </source>
+        <target state="translated">Tato nastavení můžete spravovat v </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MultipleVersionsInstalled">
+        <source>multiple versions installed</source>
+        <target state="translated">nainstalováno víc verzí</target>
+        <note>In the solution package manager, if the select package has multiple versions installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NoDependencies">
+        <source>No dependencies</source>
+        <target state="translated">Žádné závislosti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoPackagesFound">
+        <source>No packages found</source>
+        <target state="translated">Nenašly se žádné balíčky</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoReadme">
+        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="translated">Pro vybranou verzi balíčku není k dispozici žádný soubor README. Další informace najdete na [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="Text_NotAvailableInSource">
+        <source>Not available in this source</source>
+        <target state="translated">Není ve zdroji k dispozici.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NotInstalled">
+        <source>not installed</source>
+        <target state="translated">nenainstalováno</target>
+        <note>In the solution package manager, if the select package is not installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NuGetSettings">
+        <source>NuGet Settings</source>
+        <target state="translated">Nastavení NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeIssues">
+        <source>Package compatibility issues:</source>
+        <target state="translated">Problémy s kompatibilitou balíčků:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeNoIssuesFound">
+        <source>No issues were found.</source>
+        <target state="translated">Nezjistily se žádné problémy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatApply">
+        <source>The package manager format will apply to the following projects in this Solution</source>
+        <target state="translated">Formát správce balíčků bude platit pro následující projekty v tomto řešení (Solution)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTopLevel">
+        <source>Top-level</source>
+        <target state="translated">Nejvyšší úroveň</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTransitive">
+        <source>Transitive</source>
+        <target state="translated">Přechodné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsAutoCreate">
+        <source>A package source mapping will be created.</source>
+        <target state="translated">Vytvoří se mapování zdroje balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsDisabled">
+        <source>Package source mapping is off.</source>
+        <target state="translated">Mapování zdroje balíčku je vypnuté.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsFound">
+        <source>Package source mapping found.</source>
+        <target state="translated">Bylo nalezeno mapování zdroje balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsNotFound">
+        <source>Requires a package source mapping.</source>
+        <target state="translated">Vyžaduje mapování zdroje balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport">
+        <source>Projects with PackageReference are not supported in Visual Studio 2015 and earlier.</source>
+        <target state="translated">Projekty s PackageReference se nepodporují v sadě Visual Studio 2015 a starších.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport_DocumentLink">
+        <source>Learn more about package reference</source>
+        <target state="translated">Další informace o odkazech na balíčky</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources">
+        <source>Package sources:</source>
+        <target state="translated">Zdroje balíčků:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackagesFound">
+        <source>Packages found</source>
+        <target state="translated">Nalezené balíčky</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ReadmeLoaded">
+        <source>README loaded</source>
+        <target state="translated">Soubor README se načetl.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchBoxText">
+        <source>Search ({0})</source>
+        <target state="translated">Hledat ({0})</target>
+        <note>The text to be displayed in the search box</note>
+      </trans-unit>
+      <trans-unit id="Text_SearchIncomplete">
+        <source>Retrieving results from one or more sources</source>
+        <target state="translated">Načítají se výsledky z jednoho nebo víc zdrojů.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchStopped">
+        <source>Unable to retrieve results from one or more sources</source>
+        <target state="translated">Není možné načíst výsledky z jednoho nebo víc zdrojů.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Searching">
+        <source>Searching '{0}'</source>
+        <target state="translated">Hledá se {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_TransitiveDependencies">
+        <source>Transitive dependencies:</source>
+        <target state="translated">Přechodné závislosti:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UpgradeNuGetProjectDescription">
+        <source>Migrate this project from packages.config to PackageReference format.</source>
+        <target state="translated">Migruje tento projekt z formátu packages.config na PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UserCanceled">
+        <source>Operation canceled by user</source>
+        <target state="translated">Operace zrušil uživatel.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewLicense">
+        <source>View License</source>
+        <target state="translated">Zobrazit licenci</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewReadme">
+        <source>View Readme</source>
+        <target state="translated">Zobrazit soubor Readme</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Thousand">
+        <source>{0:G3}K</source>
+        <target state="translated">{0:G3}K</target>
+        <note>Thousands in short format notation</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_BlockedVersion">
+        <source>Following versions are unavailable due to additional constraints in the project or packages.config</source>
+        <target state="translated">Následující verze jsou z důvodu dalších omezení v projektu nebo v souboru packages.config nedostupné.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstallButton">
+        <source>Install {0} version {1}.</source>
+        <target state="translated">Nainstaluje {0} verze {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstalledVersion">
+        <source>Installed version: {0}</source>
+        <target state="translated">Instalovaná verze: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_LatestVersion">
+        <source>Latest version: {0}</source>
+        <target state="translated">Nejnovější verze: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageInstalled">
+        <source>Latest stable version is installed</source>
+        <target state="translated">Je nainstalovaná poslední stabilní verze.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageRecommended">
+        <source>IntelliCode package suggestion based on this project context</source>
+        <target state="translated">Návrh balíčku IntelliCode podle kontextu tohoto projektu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Refresh">
+        <source>Refresh</source>
+        <target state="translated">Aktualizovat</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Settings">
+        <source>Settings</source>
+        <target state="translated">Nastavení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependency">
+        <source>Transitively referenced version</source>
+        <target state="translated">Přechodně odkazovaná verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependencyVersion">
+        <source>Transitively referenced version: {0}</source>
+        <target state="translated">Přechodně odkazovaná verze: {0}</target>
+        <note>{0} is a version number</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitivePathHelp">
+        <source>To learn more about transitive paths, see</source>
+        <target state="translated">Další informace o přenositelných cestách najdete tady:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UninstallButton">
+        <source>Uninstall this package.</source>
+        <target state="translated">Odinstaluje tento balíček.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateAvailable">
+        <source>Update available</source>
+        <target state="translated">Je dostupná aktualizace.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateButton">
+        <source>Update {0} to version {1}.</source>
+        <target state="translated">Aktualizuje {0} na verzi {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Tooltip_PrefixReserved">
+        <source>The ID prefix of this package has been reserved for the owner of the package by the currently selected feed</source>
+        <target state="translated">Aktuálně vybraný kanál vyhradil předponu ID tohoto balíčku pro vlastníka balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Trillion">
+        <source>{0:G3}T</source>
+        <target state="translated">{0:G3}T</target>
+        <note>American trillions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="UpdateButton_VersionOverride_Tooltip">
+        <source>Dependency version defined by VersionOverride, modify project file to change package version.</source>
+        <target state="translated">Verze závislosti definovaná parametrem VersionOverride. Upravte soubor projektu tak, aby se změnila verze balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpgradeLogger_BackupPathMustBeValid">
+        <source>Must be a valid path.</source>
+        <target state="translated">Musí se jednat o platnou cestu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_InstallFailed">
+        <source>NuGet migrate failed to install packages as PackageReference. Changed files are backed up at {0}</source>
+        <target state="translated">Při migraci na NuGet se nepodařilo balíčky nainstalovat jako PackageReference. Změněné soubory jsou zálohované zde: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_RevertSteps">
+        <source>Please follow simple instructions from {0} to go back to previous state.</source>
+        <target state="translated">Pokud se chcete vrátit do předchozího stavu, postupujte podle jednoduchých pokynů v: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_UninstallFailed">
+        <source>NuGet upgrade failed to uninstall packages from packages.config so rolled back to previous state.</source>
+        <target state="translated">Upgradu NuGet se nepodařilo odinstalovat balíčky ze souboru packages.config, takže se provedl návrat do předchozího stavu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_BackupFailed">
+        <source>The project cannot be upgraded as backing up the project file and packages.config ran into an issue.</source>
+        <target state="translated">Projekt nejde upgradovat, protože při zálohování souboru projektu a souboru packages.config došlo k problému.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_PackageNotFound">
+        <source>Unable to determine compatibility of package as {0}.nupkg was not found on disk. The project cannot be migrated.</source>
+        <target state="translated">Nelze zjistit kompatibilitu balíčku, protože soubor {0}.nupkg nebyl na disku nalezen. Tento projekt nelze migrovat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Close">
+        <source>Close</source>
+        <target state="translated">Zavřít</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
+        <source>NuGet Package Manager</source>
+        <target state="translated">Správce balíčků NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
+        <source>Once started, this action cannot be cancelled.</source>
+        <target state="translated">Po spuštění se tato akce nedá zrušit.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
+        <source>Clear all local NuGet resources?</source>
+        <target state="translated">Vymazat všechny místní prostředky NuGet?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked">
+        <source>Blocked by package.config</source>
+        <target state="translated">Blokováno souborem package.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked_Generic">
+        <source>Blocked by project</source>
+        <target state="translated">Blokováno projektem</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Installed">
+        <source>Installed</source>
+        <target state="translated">Nainstalováno</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestPrerelease">
+        <source>Latest prerelease</source>
+        <target state="translated">Nejnovější předběžná verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestStable">
+        <source>Latest stable</source>
+        <target state="translated">Poslední stabilní</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Vulnerabilities_Loading">
+        <source>Loading vulnerable packages...</source>
+        <target state="translated">Načítají se ohrožené balíčky...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Critical">
+        <source>critical</source>
+        <target state="translated">kritický</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_High">
+        <source>high</source>
+        <target state="translated">vysoká</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Low">
+        <source>low</source>
+        <target state="translated">nízká</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Moderate">
+        <source>moderate</source>
+        <target state="translated">střední</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warn_Adding_HttpSource">
+        <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
+        <target state="translated">Pokoušíte se přidat nezabezpečený zdroj HTTP. Chcete pokračovat v přidávání tohoto nezabezpečeného zdroje HTTP?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HTTPSource">
+        <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">Možnost AllowInsecureConnections je povolená a umožňuje přístup http. Poznámka: Tato metoda není zabezpečená. Informace o zabezpečených možnostech najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectJson">
+        <source>These options are not applicable to projects managing their dependencies through project.json or PackageReference</source>
+        <target state="translated">Tyto možnosti neplatí pro projekty, které spravují svoje závislosti přes project.json nebo PackageReference.</target>
+        <note>To be displayed for the VS UI opened through a solution. bug #2665</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_DeprecatedFramework">
+        <source>Deprecated Framework</source>
+        <target state="translated">Zastaralá architektura</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_FileConflict">
+        <source>File Conflict</source>
+        <target state="translated">Konflikt souborů</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseAcceptance">
+        <source>License Acceptance</source>
+        <target state="translated">Souhlas s podmínkami licence</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseFileWindow">
+        <source>{0} License</source>
+        <target state="translated">{0} – licence</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_NuGetMigrator">
+        <source>Migrate NuGet format to PackageReference - {0}</source>
+        <target state="translated">Migrovat formát NuGet na PackageReference – {0}</target>
+        <note>{0} is the project name</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_PackageFormatSelector">
+        <source>Choose NuGet Package Manager Format</source>
+        <target state="translated">Zvolte formát správce balíčků NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_PreviewChanges">
+        <source>Preview Changes</source>
+        <target state="translated">Náhled změn</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

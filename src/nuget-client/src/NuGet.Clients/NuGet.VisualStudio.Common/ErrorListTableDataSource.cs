@@ -171,19 +171,28 @@ namespace NuGet.VisualStudio.Common
         /// </summary>
         public async Task BringToFrontIfSettingsPermitAsync()
         {
+            if (_entries.Count == 0)
+            {
+                return;
+            }
+
             EnsureInitialized();
 
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            IVsShell vsShell = await _asyncServiceProvider.GetServiceAsync<IVsShell, IVsShell>(throwOnFailure: false);
-            int getPropertyReturnCode = vsShell.GetProperty((int)__VSSPROPID.VSSPROPID_ShowTasklistOnBuildEnd, out object propertyShowTaskListOnBuildEnd);
             bool showErrorListOnBuildEnd = true;
 
-            if (getPropertyReturnCode == VSConstants.S_OK)
+            // Check the setting without caching since the user can change it at any time.
+            IVsShell vsShell = await _asyncServiceProvider.GetServiceAsync<IVsShell, IVsShell>(throwOnFailure: false);
+            if (vsShell is not null)
             {
-                if (bool.TryParse(propertyShowTaskListOnBuildEnd?.ToString(), out bool result))
+                int getPropertyReturnCode = vsShell.GetProperty((int)__VSSPROPID.VSSPROPID_ShowTasklistOnBuildEnd, out object propertyShowTaskListOnBuildEnd);
+                if (getPropertyReturnCode == VSConstants.S_OK)
                 {
-                    showErrorListOnBuildEnd = result;
+                    if (bool.TryParse(propertyShowTaskListOnBuildEnd?.ToString(), out bool result))
+                    {
+                        showErrorListOnBuildEnd = result;
+                    }
                 }
             }
 

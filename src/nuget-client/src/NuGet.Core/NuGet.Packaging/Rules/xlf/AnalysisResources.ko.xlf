@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">'{0}' 어셈블리는 'lib' 폴더 바로 아래에 저장됩니다. 어셈블리는 프레임워크별 폴더 안에 저장하는 것이 좋습니다. 프레임워크별 폴더로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">'{0}' 어셈블리는 'lib' 폴더 안에 없으므로 패키지를 프로젝트에 설치할 때 참조로 추가되지 않습니다. 참조해야 하는 경우 'lib' 폴더로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">- '{1}'에 하나 이상의 {0} 파일이 있지만, '{2}'은(는) 없습니다.</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">{1}에 대한 값 "{0}"은(는) 샘플 값이며 제거할 수 없습니다. 적절한 값으로 바꾸거나 제거하고 패키지를 다시 빌드하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">- 다음에 대한 라이브러리 또는 참조 어셈블리 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">- 다음에 대한 종속성 그룹 추가</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">대상 프레임워크</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">nuspec에</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">nuspec 및 lib/ref 폴더의 종속성 그룹에 선언된 일부 대상 프레임워크에 호환되는 일치 항목이 있지만, 다른 위치에서 정확하게 일치하는 항목이 없습니다. 의도한 경우가 아니면 아래 작업 목록을 참조하세요.</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">nuspec 및 lib/ref 폴더의 종속성 그룹에 선언된 일부 대상 프레임워크에 다른 위치에서 정확하게 일치하는 항목이 없습니다. 아래 작업 목록을 참조하세요.</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">파일 '{0}' 경로, 이름 또는 둘 다 너무 깁니다. 긴 파일 경로 지원 없이는 패키지가 작동하지 않을 수 있습니다. 파일 경로 또는 파일 이름을 줄이세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">'PackageIconUrl'/'iconUrl' 요소는 사용되지 않습니다. 대신 'PackageIcon'/'icon' 요소를 사용하세요. https://aka.ms/deprecateIconUrl에서 자세히 알아보세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">'lib' 아래의 '{0}' 폴더가 유효한 프레임워크 이름 또는 지원되는 문화권 식별자로 인식되지 않습니다. 유효한 프레임워크 이름 또는 문화권 식별자로 이름을 변경하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">'{0}'의 파일은 빈 디렉터리 '_._'에 대한 기호를 사용하지만 다른 파일이 포함된 디렉터리에 있습니다. 다른 파일이 포함된 디렉터리에서 이 파일을 제거하세요.</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">안정판 패키지에는 시험판 종속성이 없어야 합니다. 종속성 "{0}"의 버전 사양을 수정하거나 nuspec의 버전 필드를 업데이트하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">프레임워크 버전에서 다음 종속성 그룹에 점이 필요합니다. {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">프레임워크 버전에서 다음 패키지된 파일 폴더에 점이 필요합니다. {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">프레임워크 버전에서 다음 프레임워크 어셈블리 그룹에 점이 필요합니다. {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">프레임워크 버전에서 다음 참조 그룹에 점이 필요합니다. {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">패키지에 있는 하나 이상의 대상 프레임워크 지정자에 프레임워크 버전 번호에 필요한 점이 없습니다. .NET5.0부터 이는 필수입니다. 필요한 점을 포함하도록 이름을 바꾸세요(예: 'net50'에서 'net5.0'으로 변경).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">패키지 버전 '{0}'은(는) SemVer 2.0.0 또는 레거시 클라이언트에서 지원되지 않는 SemVer 1.0.0의 구성 요소를 사용합니다. 패키지 버전을 SemVer 1.0.0 문자열로 변경하세요. 버전에 릴리스 레이블이 포함되는 경우 문자로 시작해야 합니다. 이전 클라이언트용 패키지가 아닌 경우에는 이 메시지를 무시해도 됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">'licenseUrl' 요소는 사용 중지됩니다. 대신 'license' 요소를 사용하세요.</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">마이그레이션 후 패키지가 설치되면 어셈블리 'lib\{0}'이(가) 무시됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">마이그레이션 후 패키지가 설치되면 'content' 자산을 사용할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">마이그레이션 후 패키지가 설치되면 install.ps1 스크립트가 무시됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">마이그레이션 후 패키지가 설치되면 XDT 변환 파일 '{0}'이(가) 적용되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">'{0}' 파일은 'tools' 폴더 바로 아래에 있지 않으므로 NuGet에 의해 무시됩니다. 'tools' 폴더 바로 아래에 파일을 두세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">'{0}' 변환 파일은 'content' 폴더 안에 없으므로 이 패키지를 설치하는 동안 변환되지 않습니다. 'content' 폴더로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">{0} 패키지에 추가 정보 파일이 없습니다. https://aka.ms/nuget/authoring-best-practices/readme로 이동하여 패키지 추가 정보 파일이 중요한 이유를 알아보세요.</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">이 패키지는 lib/ 또는 ref/ 폴더를 포함하고 있지 않으므로 모든 프레임워크에서 호환되는 것으로 처리됩니다. 프레임워크별 파일은 {0}의 build/ 디렉터리에 있으므로 패키지 호환성 범위를 올바르게 좁히기 위해 다음과 같은 빈 파일을 만드는 것이 좋습니다.
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">비어 있는 폴더 자리 표시자 파일 '{0}'은(는) 비어 있지 않은 폴더에 있으므로 제거해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">nuspec에서 참조를 찾았지만 nuspec과 ref 폴더에서 일부 참조 어셈블리를 찾을 수 없습니다. 다음 참조 어셈블리를 추가합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">- nuspec의 {1} 참조 그룹에 {0} 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">- nuspec의 참조 요소에 {0} 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">- ref/{1}/ 디렉터리에 {0} 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">'{0}' 스크립트 파일은 'tools' 폴더 안에 없으므로 이 패키지를 설치하는 동안 실행되지 않습니다. 'tools' 폴더로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">라이선스 식별자 '{0}'이(가) 현재 도구 집합에서 인식되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">'{0}' 스크립트 파일은 NuGet에서 인식되지 않으므로 이 패키지를 설치하는 동안 실행되지 않습니다. install.ps1, uninstall.ps1 또는 init.ps1로 이름을 바꾸고 'tools' 바로 아래에 두세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">'{0}' 종속성의 버전을 지정하지 않았습니다. 종속성의 버전을 지정하고 패키지를 다시 빌드하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">'{0}'에 있는 파일이 프레임워크 폴더로 사용되지 않는 'WinRT'를 사용합니다. 'WinRT' 또는 'WinRT45'를 'NetCore45'로 바꾸세요.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

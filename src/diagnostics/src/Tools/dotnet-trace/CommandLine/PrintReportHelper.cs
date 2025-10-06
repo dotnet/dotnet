@@ -9,7 +9,7 @@ using Microsoft.Diagnostics.Tracing.Stacks;
 
 namespace Microsoft.Diagnostics.Tools.Trace.CommandLine
 {
-    internal static class PrintReportHelper
+    internal static partial class PrintReportHelper
     {
         private static string MakeFixedWidth(string text, int width)
         {
@@ -30,7 +30,7 @@ namespace Microsoft.Diagnostics.Tools.Trace.CommandLine
         private static string FormatFunction(string name)
         {
             string classMethod;
-            Regex nameRx = new(@"(.*\..*)(\(.*\))");
+            Regex nameRx = GetNameRegex();
             Match match = nameRx.Match(name);
             string functionList = match.Groups[1].Value;
             string arguments = match.Groups[2].Value;
@@ -96,6 +96,12 @@ namespace Microsoft.Diagnostics.Tools.Trace.CommandLine
             }
 
             int n = nodesToReport.Count;
+            if (n == 0)
+            {
+                Console.Error.WriteLine("[WARNING] No method calls found");
+                return;
+            }
+
             int maxDigit = (int)Math.Log10(n) + 1;
             string extra = new(' ', maxDigit - 1);
 
@@ -154,5 +160,8 @@ namespace Microsoft.Diagnostics.Tools.Trace.CommandLine
 
             }
         }
+
+        [GeneratedRegex(@"(.*\..*)(\(.*\))")]
+        private static partial Regex GetNameRegex();
     }
 }

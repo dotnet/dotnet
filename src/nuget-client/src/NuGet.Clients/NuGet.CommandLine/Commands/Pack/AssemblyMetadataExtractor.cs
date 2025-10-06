@@ -82,9 +82,9 @@ namespace NuGet.CommandLine
 
             if (!builder.Authors.Any())
             {
-                if (assemblyMetadata.Properties.ContainsKey("authors"))
+                if (assemblyMetadata.Properties.TryGetValue("authors", out var authors))
                 {
-                    builder.Authors.AddRange(assemblyMetadata.Properties["authors"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                    builder.Authors.AddRange(authors.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                 }
                 else if (!string.IsNullOrEmpty(assemblyMetadata.Company))
                 {
@@ -92,18 +92,18 @@ namespace NuGet.CommandLine
                 }
             }
 
-            if (assemblyMetadata.Properties.ContainsKey("owners"))
+            if (assemblyMetadata.Properties.TryGetValue("owners", out var owners))
             {
-                builder.Owners.AddRange(assemblyMetadata.Properties["owners"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                builder.Owners.AddRange(owners.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
             }
 
             builder.Properties.AddRange(assemblyMetadata.Properties);
             // Let the id be overriden by AssemblyMetadataAttribute
-            // This preserves the existing behavior if no id metadata 
+            // This preserves the existing behavior if no id metadata
             // is provided by the assembly.
-            if (builder.Properties.ContainsKey("id"))
+            if (builder.Properties.TryGetValue("id", out var id))
             {
-                builder.Id = builder.Properties["id"];
+                builder.Id = id;
             }
             else
             {
@@ -174,10 +174,10 @@ namespace NuGet.CommandLine
                 var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 // NOTE: we make this check only by attribute type fullname, and we try to duck
                 // type it, therefore enabling the same metadata extesibility behavior for other platforms
-                // that don't define the attribute already as part of the framework. 
-                // A package author could simply declare this attribute in his own project, using 
-                // the same namespace and members, and we'd pick it up automatically. This is consistent 
-                // with what MS did in the past with the System.Runtime.CompilerServices.ExtensionAttribute 
+                // that don't define the attribute already as part of the framework.
+                // A package author could simply declare this attribute in his own project, using
+                // the same namespace and members, and we'd pick it up automatically. This is consistent
+                // with what MS did in the past with the System.Runtime.CompilerServices.ExtensionAttribute
                 // which allowed Linq to be re-implemented for .NET 2.0 :).
                 var attributeName = typeof(AssemblyMetadataAttribute).FullName;
                 foreach (var attribute in attributes.Where(x =>

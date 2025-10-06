@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,14 +21,14 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false, TaskListDescriptors: []);
         var razorJsonString =
             """
 
             {
               "format": {
-                "enable": "false",
-                "codeBlockBraceOnNextLine": "true"
+                "enable": false,
+                "codeBlockBraceOnNextLine": true
               }
             }
 
@@ -37,8 +37,8 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
         var htmlJsonString = """
 
             {
-              "format": "true",
-              "autoClosingTags": "false"
+              "format": true,
+              "autoClosingTags": false
             }
 
             """;
@@ -49,7 +49,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
 
             """;
 
-        var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
+        var result = new JsonObject[] { JsonNode.Parse(razorJsonString).AsObject(), JsonNode.Parse(htmlJsonString).AsObject(), JsonNode.Parse(vsEditorJsonString).AsObject() };
         var languageServer = GetLanguageServer(result);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
 
@@ -64,7 +64,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     public async Task GetLatestOptionsAsync_EmptyResponse_ReturnsNull()
     {
         // Arrange
-        var languageServer = GetLanguageServer<JObject[]>(result: null);
+        var languageServer = GetLanguageServer<JsonObject[]>(result: null);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
 
         // Act
@@ -78,7 +78,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     public async Task GetLatestOptionsAsync_ClientRequestThrows_ReturnsNull()
     {
         // Arrange
-        var languageServer = GetLanguageServer<JObject[]>(result: null, shouldThrow: true);
+        var languageServer = GetLanguageServer<JsonObject[]>(result: null, shouldThrow: true);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
 
         // Act
@@ -93,20 +93,20 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false, TaskListDescriptors: []);
         var razorJsonString = """
             {
               "format": {
-                "enable": "false",
-                "codeBlockBraceOnNextLine": "true"
+                "enable": false,
+                "codeBlockBraceOnNextLine": true
               }
             }
 
             """;
         var htmlJsonString = """
             {
-              "format": "true",
-              "autoClosingTags": "false"
+              "format": true,
+              "autoClosingTags": false
             }
 
             """;
@@ -116,7 +116,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
             """;
 
         // Act
-        var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
+        var result = new JsonObject[] { JsonNode.Parse(razorJsonString).AsObject(), JsonNode.Parse(htmlJsonString).AsObject(), JsonNode.Parse(vsEditorJsonString).AsObject() };
         var languageServer = GetLanguageServer(result);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
         var options = configurationService.BuildOptions(result);
@@ -130,7 +130,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false);
+            FormattingFlags.Enabled, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false, TaskListDescriptors: []);
         var razorJsonString = """
             {
             }
@@ -145,19 +145,19 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
             {
                 "ClientSpaceSettings": {
                     "IndentSize": 8,
-                    "IndentWithTabs": "true"
+                    "IndentWithTabs": true
                 },
                 "AdvancedSettings": {
-                    "FormatOnType": "false",
-                    "AutoClosingTags": "false",
-                    "AutoInsertAttributeQuotes": "false",
-                    "CommitElementsWithSpace": "false"
+                    "FormatOnType": false,
+                    "AutoClosingTags": false,
+                    "AutoInsertAttributeQuotes": false,
+                    "CommitElementsWithSpace": false
                 }
             }
             """;
 
         // Act
-        var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
+        var result = new JsonObject[] { JsonNode.Parse(razorJsonString).AsObject(), JsonNode.Parse(htmlJsonString).AsObject(), JsonNode.Parse(vsEditorJsonString).AsObject() };
         var languageServer = GetLanguageServer(result);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
         var options = configurationService.BuildOptions(result);
@@ -183,7 +183,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
 ".Trim();
         var htmlJsonString = @"
 {
-  ""format"": """",
+  ""format"": """"
 }
 ".Trim();
         var vsEditorJsonString = @"
@@ -196,7 +196,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
 ".Trim();
 
         // Act
-        var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
+        var result = new JsonObject[] { JsonNode.Parse(razorJsonString).AsObject(), JsonNode.Parse(htmlJsonString).AsObject(), JsonNode.Parse(vsEditorJsonString).AsObject() };
         var languageServer = GetLanguageServer(result);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
         var options = configurationService.BuildOptions(result);
@@ -212,7 +212,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
         var expectedOptions = RazorLSPOptions.Default;
 
         // Act
-        var result = new JObject[] { null, null, null };
+        var result = new JsonObject[] { null, null, null };
         var languageServer = GetLanguageServer(result);
         var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
         var options = configurationService.BuildOptions(result);

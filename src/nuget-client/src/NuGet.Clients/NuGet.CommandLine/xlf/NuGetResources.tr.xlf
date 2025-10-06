@@ -1,0 +1,1032 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="AddCommand_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">'{0}' paketi '{1}' akışında zaten var ve geçersiz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">'{0}' paketi '{1}' akışında zaten var.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_SourceNotProvided">
+        <source>'-Source' switch is not provided. nupkg gets added to the 'Source' and is mandatory.</source>
+        <target state="translated">'-Source' anahtarı sağlanmadı. nupkg 'Source' değerine eklenir ve zorunludur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddFileToPackage">
+        <source>Add file '{0}' to package as '{1}'</source>
+        <target state="translated">'{0}' dosyasını pakete '{1}' olarak ekleyin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousCommand">
+        <source>Ambiguous command '{0}'. Possible values: {1}.</source>
+        <target state="translated">Belirsiz komut: '{0}'. Olası değerler: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousOption">
+        <source>Ambiguous option '{0}'. Possible values: {1}.</source>
+        <target state="translated">Belirsiz seçenek '{0}'. Olası değerler: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">Bağımsız değişken null veya boş olamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildingProjectTargetingFramework">
+        <source>Building project '{0}' for target framework '{1}'.</source>
+        <target state="translated">'{0}' projesi '{1}' hedef çerçevesi için derleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLine_Warning">
+        <source>WARNING: {0}</source>
+        <target state="translated">UYARI: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandKeyNotFound">
+        <source>Key '{0}' not found.</source>
+        <target state="translated">'{0}' anahtarı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessage">
+        <source>{0} (y/N) </source>
+        <target state="translated">{0} (y/N) </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessageAccept">
+        <source>y</source>
+        <target state="translated">y</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_DisplayFile">
+        <source>Please provide password for: {0}</source>
+        <target state="translated">Lütfen şunun için parolayı sağlayın: {0}</target>
+        <note>0 - file that requires password</note>
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_PromptForPassword">
+        <source>Password: </source>
+        <target state="translated">Parola: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ForbiddenCredentials">
+        <source>The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}</source>
+        <target state="translated">Uzak sunucu, önceki isteğin yasak olduğunu belirtti. Lütfen şunun için kimlik bilgilerini sağlayın: {0}</target>
+        <note>{0} will be replaced with the URL that needs credentials.</note>
+      </trans-unit>
+      <trans-unit id="Credentials_Password">
+        <source>Password: </source>
+        <target state="translated">Parola: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ProxyCredentials">
+        <source>Please provide proxy credentials:</source>
+        <target state="translated">Lütfen ara sunucu kimlik bilgilerini sağlayın:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_RequestCredentials">
+        <source>Please provide credentials for: {0}</source>
+        <target state="translated">Lütfen şunun için kimlik bilgilerini sağlayın: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_UserName">
+        <source>UserName: </source>
+        <target state="translated">UserName: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultCommandDescription">
+        <source>No description was provided for this command.</source>
+        <target state="translated">Bu komut için açıklama sağlanmadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">simge sunucusu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error">
+        <source>Error</source>
+        <target state="translated">Hata</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotExpected">
+        <source>The argument '{0}' is not expected.</source>
+        <target state="translated">Bağımsız değişken '{0}' beklenmiyor.</target>
+        <note>0 - argument name</note>
+      </trans-unit>
+      <trans-unit id="Error_AttemptingToPackSDKproject">
+        <source>The `pack` command for SDK-style projects is not supported, use `dotnet pack` or `msbuild -t:pack` to pack this project instead. You can override this behavior by setting the '{0}' environment variable to 'true'.</source>
+        <target state="translated">SDK stili projeler için `pack` komutu desteklenmiyor, bunun yerine bu projeyi paketlemek için `dotnet pack` veya `msbuild -t:pack` komutunu kullanın. '{0}' ortam değişkenini 'true' olarak ayarlayarak bu davranışı geçersiz kılabilirsiniz.</target>
+        <note>0 - environment variable name. 
+Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find the specified version of msbuild: '{0}'</source>
+        <target state="translated">Belirtilen msbuild sürümü bulunamıyor: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindNonArchitectureSpecificMsbuild">
+        <source>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</source>
+        <target state="translated">Çözümlenen MSBuild dizini, mimariye özgü bir dizin olan `{0}` dizinidir. Üst dizininde MSBuild bulunamadı (mimariye özgü değil).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetGetAllProjectFileNamesMethod">
+        <source>Cannot get the GetAllProjectFileNamesMethod from type  Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">Mono.XBuild.CommandLine.SolutionParser türünden GetAllProjectFileNamesMethod alınamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetXBuildSolutionParser">
+        <source>Cannot get type Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">Mono.XBuild.CommandLine.SolutionParser türü alınamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotKillMsBuild">
+        <source>MsBuild timeout out while trying to get project to project references, and NuGet.exe failed to kill the process.</source>
+        <target state="translated">Proje başvuruları için proje alınmaya çalışılırken MsBuild zaman aşımına uğradı ve NuGet.exe işlemi sonlandıramadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeProjectInSolution">
+        <source>Cannot load type Microsoft.Build.Construction.ProjectInSolution from Microsoft.Build.dll</source>
+        <target state="translated">Microsoft.Build.dll’den Microsoft.Build.Construction.ProjectInSolution türü yüklenemiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeSolutionParser">
+        <source>Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</source>
+        <target state="translated">Microsoft.Build.dll’den Microsoft.Build.Construction.SolutionParser türü yüklenemiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLocateSolutionFile">
+        <source>Cannot locate a solution file.</source>
+        <target state="translated">Çözüm dosyası bulunamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotPromptForInput">
+        <source>Cannot prompt for input in non-interactive mode.</source>
+        <target state="translated">Etkileşimli olmayan modda giriş istenemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateRandomFileForP2P">
+        <source>Failed to create a temporary file while trying to get project to project references.</source>
+        <target state="translated">Proje başvurularına proje alınmaya çalışılırken geçici bir dosya oluşturulamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'{0}' işlemini bir {1} 'HTTP' kaynağıyla çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. Bir HTTP kaynağı kullanmak için 'allowInsecureConnections' değerini NuGet.Config dosyanızda açıkça true olarak ayarlamalısınız. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'{0}' işlemini {1} 'HTTP' kaynağı ile çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCharactersInPathSegment">
+        <source>Invalid characters in one of the following path segments: '{0}'</source>
+        <target state="translated">Şu yol kesimlerinden birinin içinde geçersiz karakterler var: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCultureInfo">
+        <source>Invalid culture identifier in {0} environment variable. Value read is '{1}'</source>
+        <target state="translated">{0} ortam değişkeninde geçersiz kültür tanımlayıcısı. Okunan değer '{1}'</target>
+        <note>0 - Environment variable name, 1 - value set in environment variable</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidMsbuildVersion">
+        <source>Invalid MSBuild version specified: '{0}'</source>
+        <target state="translated">Geçersiz MSBuild sürümü belirtildi: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSolutionDirectory">
+        <source>Invalid solution directory: '{0}'</source>
+        <target state="translated">Geçersiz çözüm dizini: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MSBuildNotInstalled">
+        <source>MSBuild is not installed.</source>
+        <target state="translated">MSBuild yüklü değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">Kaynak parametresi belirtilmedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MsBuildTimedOut">
+        <source>MsBuild timeout out while trying to get project to project references.</source>
+        <target state="translated">Proje başvuruları için proje alınmaya çalışılırken MsBuild zaman aşımına uğradı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleSolutions">
+        <source>This folder contains more than one solution file.</source>
+        <target state="translated">Bu klasör birden fazla çözüm dosyası içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleTargetFrameworks">
+        <source>project.json cannot contain multiple Target Frameworks.</source>
+        <target state="translated">project.json birden çok Hedef Çerçeve içeremez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NuGetExeNeedsToBeUnblockedAfterDownloading">
+        <source>NuGet.exe file on path {0} needs to be unblocked after downloading.</source>
+        <target state="translated">{0} yolundaki NuGet.exe dosyasının indirmeden sonra engeli kaldırılmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagesConfigParseError">
+        <source>Error parsing packages.config file at {0}: {1}</source>
+        <target state="translated">{0} konumundaki packages.config dosyası ayrıştırılırken hata oluştu: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProcessingNuspecFile">
+        <source>Error occurred when processing file '{0}': {1}</source>
+        <target state="translated">'{0}' dosyası işlenirken hata oluştu: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJsonNotAllowed">
+        <source>Invalid input '{0}'. Provide the path of an msbuild solution file instead. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">Geçersiz giriş: '{0}'. Bunun yerine bir msbuild çözüm dosyası yolu sağlayın. XProj desteği ve tek başına project.json dosyalarına yönelik destek kaldırıldı. Eski projelerle çalışmaya devam etmek için https://nuget.org/downloads adresinden indirerek NuGet 3.5.x sürümünü kullanın</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated_And_Removed">
+        <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
+Please consider migrating '{0}' to `PackageReference` and using the pack targets.
+You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
+        <target state="translated">'project.json' paketi geçerli NuGet sürümünde devre dışı bırakıldı ve gelecekteki bir sürümde kalıcı olarak kaldırılacak.
+Lütfen '{0}' öğesini 'PackageReference'a geçirmeyi ve paket hedeflerini kullanmayı düşünün.
+Bu işlevi geçici olarak yeniden etkinleştirmek için '{1}' ortam değişkenini 'true' olarak ayarlayabilirsiniz.</target>
+        <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileDoesNotExist">
+        <source>Response file '{0}' does not exist</source>
+        <target state="translated">Yanıt dosyası '{0}' mevcut değil</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileInvalid">
+        <source>Invalid response file, '@' does not exist</source>
+        <target state="translated">Geçersiz yanıt dosyası, '@' mevcut değil</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileMaxRecursionDepth">
+        <source>No more than {0} nested response files are allowed</source>
+        <target state="translated">En fazla {0} iç içe yanıt dosyasına izin verilir</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileNullOrEmpty">
+        <source>Response file '{0}' cannot be empty</source>
+        <target state="translated">Yanıt dosyası '{0}' boş olamaz</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileTooLarge">
+        <source>Response file '{0}' cannot be larger than {1}mb</source>
+        <target state="translated">Yanıt dosyası '{0}' {1} mb’tan büyük olamaz</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SettingsIsNull">
+        <source>Property Settings is null.</source>
+        <target state="translated">Özellik Ayarları null.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SolutionFileParseError">
+        <source>Error parsing solution file at {0}: {1}</source>
+        <target state="translated">Çözüm dosyası ayrıştırılırken hata oluştu ({0}: {1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceProviderIsNull">
+        <source>Property SourceProvider is null.</source>
+        <target state="translated">SourceProvider özelliği null.</target>
+        <note>Don't localize 'SourceProvider'</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain an msbuild solution or packages.config file to restore.</source>
+        <target state="translated">Klasör '{0}' bir msbuild çözümü veya geri yüklenecek packages.config dosyası içermiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget_Because">
+        <source>Failed to find an msbuild solution, packages.config, or project.json file in the folder '{0}'.</source>
+        <target state="translated">msbuild çözümü, packages.config veya project.json dosyası '{0}' klasöründe bulunamadı.</target>
+        <note>{0} is the folder that could not be accessed. The underlying failure is available in the inner exception message.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownAction">
+        <source>The action '{0}' is not recognized.</source>
+        <target state="translated">'{0}' eylemi tanınmıyor.</target>
+        <note>0 - action</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownDependencyVersion">
+        <source>Invalid value given for 'DependencyVersion': "{0}".</source>
+        <target state="translated">'DependencyVersion' için geçersiz değer verildi: "{0}".</target>
+        <note>Please don't localize "DependencyVersion".</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSlnx">
+        <source>This version of MSBuild not support the slnx format: '{0}'. Please use a MSBuild version greater or equal to 17.13 to use this feature.</source>
+        <target state="translated">MSBuild'in bu sürümü slnx formatını desteklemiyor: '{0}'. Bu özelliği kullanmak için lütfen 17.13 veya üzeri bir MSBuild sürümü kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
+        <source>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</source>
+        <target state="translated">MSBuild'in bu sürümü Çözüm filtresini desteklemiyor: '{0}'. Bu özelliği kullanmak için lütfen 16.7 veya üzeri bir MSBuild sürümü kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsbuild">
+        <source>This version of msbuild is not supported: '{0}'</source>
+        <target state="translated">Msbuild'in bu sürümü desteklenmiyor: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UpdateSelf_Source">
+        <source>The `update -self` command only accepts one source as an argument. If the source option is not specified, the default NuGet source will be used.</source>
+        <target state="translated">'update -self' komutu, bağımsız değişken olarak yalnızca bir kaynağı kabul eder. Kaynak seçeneği belirtilmezse, varsayılan NuGet kaynağı kullanılır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">'{0}' derlenemedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtension">
+        <source>Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock).</source>
+        <target state="translated">{0} yüklenemedi. Bu uzantı internetten indirildiyse lütfen engellemesinin kaldırıldığından emin olun (sağ tıklama, özellikler, engellemeyi kaldırma).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtensionDuringMefComposition">
+        <source>Failed to load {0}{1}</source>
+        <target state="translated">{0}{1} yüklenemedi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictChoiceText">
+        <source>[Y] Yes  [A] Yes to All  [N] No  [L] No to All ?</source>
+        <target state="translated">[Y] Evet [A] Tümüne Evet [N] Hayır [L] Tümüne Hayır ?</target>
+        <note>Please do not localize the letters inside the [] brackets.</note>
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">Paket zaten '{1}' dosyasını içerdiğinden '{0}' dosyası eklenmedi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProject">
+        <source>Found 1 project with a packages.config file. ({0})</source>
+        <target state="translated">packages.config dosyası içeren 1 proje bulundu. ({0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProjects">
+        <source>Found {0} projects with a packages.config file. ({1})</source>
+        <target state="translated">packages.config dosyası içeren {0} proje bulundu. ({1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandForMoreInfo">
+        <source>For more information, visit {0}</source>
+        <target state="translated">Daha fazla bilgi için şu adresi ziyaret edin: {0}</target>
+        <note>{0} will be replaced with a url.</note>
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedContainsNoPackages">
+        <source>Feed '{0}' contains no packages.</source>
+        <target state="translated">'{0}' akışında paket yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedIsNotFound">
+        <source>Provided feed folder '{0}' is not found.</source>
+        <target state="translated">Sağlanan akış klasörü '{0}' bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandHigherVersionAlreadyExists">
+        <source>Skipping installation of package "{0}" because higher version "{1}" is already installed.</source>
+        <target state="translated">Daha yüksek "{1}" sürümü zaten yüklü olduğundan "{0}" paketini yükleme işlemi atlanıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandInvalidPackageReference">
+        <source>'{0}' contains invalid package references. </source>
+        <target state="translated">'{0}' geçersiz paket başvuruları içeriyor. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandNothingToInstall">
+        <source>All packages listed in {0} are already installed.</source>
+        <target state="translated">{0} içinde listelenen tüm paketler zaten yüklü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageAlreadyExists">
+        <source>Package "{0}" is already installed.</source>
+        <target state="translated">"{0}" paketi zaten yüklü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageReferenceInvalidVersion">
+        <source>Version string specified for package reference '{0}' is invalid.</source>
+        <target state="translated">Paket başvurusu '{0}' için belirtilen sürüm dizesi geçersiz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageRestoreConsentNotFound">
+        <source>Package restore is disabled. To enable it, open the Visual Studio Options dialog, click on Package Manager node and check '{0}'. You can also enable package restore by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">Paket geri yüklemesi devre dışı bırakıldı. Etkinleştirmek için Visual Studio Seçenekleri iletişim kutusunu açın, Paket Yöneticisi düğümüne tıklayın ve '{0}' öğesini işaretleyin. Ayrıca 'EnableNuGetPackageRestore' ortam değişkenini 'true' olarak ayarlayarak da paket geri yüklemesini etkinleştirebilirsiniz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandUnableToFindPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">'{0}' paketi bulunamadı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallPackageMessage">
+        <source>Installing package '{0}' to '{1}'.</source>
+        <target state="translated">'{0}' paketi şuraya yükleniyor: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArguments">
+        <source>{0}: invalid arguments.</source>
+        <target state="translated">{0}: geçersiz bağımsız değişkenler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAssemblyInformationalVersion">
+        <source>Invalid AssemblyInformationalVersion '{0}' on assembly '{1}'; falling back to AssemblyVersion '{2}'.</source>
+        <target state="translated">'{1}' bütünleştirilmiş kodunda geçersiz AssemblyInformationalVersion '{0}'; AssemblyVersion '{2}' öğesine geri dönüyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFile">
+        <source>No packages.config, project or solution file specified. Use the -self switch to update NuGet.exe.</source>
+        <target state="translated">packages.config, proje veya çözüm dosyası belirtilmedi. NuGet.exe’yi güncelleştirmek için -self geçişini kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOptionValueError">
+        <source>Invalid option value: '{0} {1}'</source>
+        <target state="translated">Geçersiz seçenek değeri: '{0} {1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
+        <target state="translated">Belirtilen '{0}' kaynağı geçersiz. Lütfen geçerli bir kaynak belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandNoPackages">
+        <source>No packages found.</source>
+        <target state="translated">Paket bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_LicenseUrl">
+        <source>License url: {0}</source>
+        <target state="translated">Lisans URL'si: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_ListNotSupported">
+        <source>This version of nuget.exe does not support listing packages from package source '{0}'.</source>
+        <target state="translated">nuget.exe dosyasının bu sürümü, '{0}' paket kaynağındaki paketleri listelemeyi desteklemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">NuGet galerisi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: one or more errors occured.</source>
+        <target state="translated">Yerel kaynaklar temizlenemedi: bir veya daha fazla hata oluştu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">Yerel kaynaklar temizlendi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetCache">
+        <source>Clearing NuGet cache: {0}</source>
+        <target state="translated">NuGet önbelleği temizleniyor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesCache">
+        <source>Clearing NuGet global packages cache: {0}</source>
+        <target state="translated">NuGet genel paketleri önbelleği temizleniyor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">NuGet HTTP önbelleği temizleniyor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">'{0}' silinemedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
+        <target state="translated">Sağlanan yerel kaynak adı geçersiz. Lütfen şu değerlerden birini sağlayın: http-cache, packages-cache, global-packages, hepsi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">'{0}' yerel kaynağının konumu tanımlı değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">Yerel kaynaklar kısmen temizlendi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LookingForInstalledPackages">
+        <source>Looking for installed packages in '{0}'.</source>
+        <target state="translated">'{0}' içinde yüklü paketler aranıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'.</source>
+        <target state="translated">MSBuild otomatik algılama: '{1}' kaynağından msbuild '{0}' kullanılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection_Verbose">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'. Use option -MSBuildVersion to force nuget to use a specific version of MSBuild.</source>
+        <target state="translated">MSBuild otomatik algılama: '{1}' kaynağından msbuild '{0}' sürümü kullanılıyor. Nuget'i belirli bir MSBuild sürümünü kullanmaya zorlamak için -MSBuildVersion seçeneğini kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSbuildFromPath">
+        <source>Using Msbuild from '{0}'.</source>
+        <target state="translated">'{0}' kaynağından Msbuild kullanılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOptionValueError">
+        <source>Missing option value for: '{0}'</source>
+        <target state="translated">'{0}' seçeneği için değer eksik.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsBuildDoesNotExistAtPath">
+        <source>MsBuild.exe does not exist at '{0}'.</source>
+        <target state="translated">MsBuild.exe '{0}' konumunda yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildLoadToolSetError">
+        <source>Failed to load msbuild Toolset</source>
+        <target state="translated">msbuild Araç Takımı yüklenemedi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildPathNotExist">
+        <source>MSBuildPath : {0} does not exist.</source>
+        <target state="translated">MSBuildPath : {0} mevcut değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleProjectFilesFound">
+        <source>Found multiple project files for '{0}'.</source>
+        <target state="translated">'{0}' için birden çok proje dosyası bulundu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesConfig">
+        <source>Unable to update. The project does not contain a packages.config file.</source>
+        <target state="translated">Güncelleştirilemiyor. Proje packages.config dosyası içermiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsFound">
+        <source>No projects found with packages.config.</source>
+        <target state="translated">packages.config’e sahip proje bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidNupkg">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">'{0}' geçerli bir nupkg dosyası değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_NotFound">
+        <source>Provided Nupkg file '{0}' is not found.</source>
+        <target state="translated">Sağlanan Nupkg dosyası '{0}' bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OfficialPackageSourceName">
+        <source>NuGet official package source</source>
+        <target state="translated">NuGet resmi paket kaynağı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OptionInvalidWithoutSetter">
+        <source>[option] on '{0}' is invalid without a setter.</source>
+        <target state="translated">'{0}' üzerindeki [option] ayarlayıcı olmadan geçersizdir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_VerboseDeprecated">
+        <source>Option 'Verbose' has been deprecated. Use 'Verbosity' instead.</source>
+        <target state="translated">'Verbose' seçeneği kullanım dışı bırakıldı. Bunun yerine 'Verbosity' kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputNuGetVersion">
+        <source>{0} Version: {1}</source>
+        <target state="translated">{0} Sürümü: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">'{0}' dosyası eklendi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildPackage">
+        <source>Attempting to build package from '{0}'.</source>
+        <target state="translated">'{0}' öğesinden paket derlenmeye çalışılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">'{0}' için sembol paketi derlenmeye çalışılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsChanged">
+        <source>File from dependency is changed. Adding file '{0}'.</source>
+        <target state="translated">Bağımlılıktan gelen dosya değiştirildi. '{0}' dosyası ekleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsNotChanged">
+        <source>File from dependency is not changed. File '{0}' is not added.</source>
+        <target state="translated">Bağımlılıktaki dosya değiştirilmedi. '{0}' dosyası eklenmedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandInvalidMinClientVersion">
+        <source>The value of MinClientVersion argument is not a valid version.</source>
+        <target state="translated">MinClientVersion bağımsız değişken değeri, geçerli bir sürüm değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueDescription">
+        <source>Description: {0}</source>
+        <target state="translated">Açıklama: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueSolution">
+        <source>Solution: {0}</source>
+        <target state="translated">Çözüm: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueTitle">
+        <source>Issue: {0}</source>
+        <target state="translated">Sorun: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Paket derlenemedi. '{0}' içinde bütünleştirilmiş kod dosyalarının bulunduğundan emin olun. Sembol paketlerini derleme hakkında yardım için, bkz. {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Paket derlenemedi. '{0}' içinde kaynak ve sembol dosyalarının bulunduğundan emin olun. Sembol paketlerini derleme hakkında yardım için, bkz. {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPackageIssueSummary">
+        <source>{0} issue(s) found with package '{1}'.</source>
+        <target state="translated">'{1}' paketinde {0} sorun bulundu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSpecifyInputFileError">
+        <source>Please specify a nuspec or project file to use.</source>
+        <target state="translated">Lütfen kullanılacak bir nuspec veya proje dosyası belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">'{0}' paketi başarıyla oluşturuldu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExist">
+        <source>Unable to locate '{0} {1}'. Make sure all packages exist in the packages folder before running update.</source>
+        <target state="translated">'{0} {1}' bulunamıyor. Güncelleştirmeyi çalıştırmadan önce tüm paketlerin paketler klasöründe olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreConsentCheckBoxText">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">NuGet'in eksik paketleri indirmesine &amp;izin ver</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagingFilesFromOutputPath">
+        <source>Packing files from '{0}'.</source>
+        <target state="translated">'{0}' içindeki dosyalar paketleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">'{0}' geçerli bir yol değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">'{0}', bir yerel yol veya UNC paylaşım yolu olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectJsonPack_Deprecated">
+        <source>`project.json` pack is deprecated. Please consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
+        <target state="translated">'project.json' paketi kullanım dışı. Lütfen '{0}' öğesini 'PackageReference'a geçirmeyi ve paket hedeflerini kullanmayı düşünün.</target>
+        <note>Do not localize project.json and `PackageReference` 
+0 - project path (project.json file path)</note>
+      </trans-unit>
+      <trans-unit id="ProjectRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. This project does not specify any packages for NuGet to restore.</source>
+        <target state="translated">Yapılacak bir şey yok. Bu proje NuGet'in geri yükleyeceği herhangi bir paket belirtmiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandNoSourceError">
+        <source>There is no default source, please specify a source.</source>
+        <target state="translated">Varsayılan kaynak yok, lütfen bir kaynak belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandTimeoutError">
+        <source>Pushing took too long. You can change the default timeout of 300 seconds by using the -Timeout &lt;seconds&gt; option with the push command.</source>
+        <target state="translated">Gönderme çok uzun sürdü. Gönderme komutu ile -Timeout &lt;seconds&gt; seçeneğini kullanarak 300 saniyelik varsayılan zaman aşımını değiştirebilirsiniz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourcePropertyIncorrectType">
+        <source>The property '{0}' on resource type '{1}' is not a type of ResourceManager.</source>
+        <target state="translated">'{1}' kaynak türündeki '{0}' özelliği bir ResourceManager türü değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourceTypeDoesNotHaveProperty">
+        <source>The resource type '{0}' does not have an accessible static property named '{1}'.</source>
+        <target state="translated">'{0}' kaynak türünün '{1}' adlı erişilebilir bir statik özelliği yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
+        <source>'globalPackagesFolder' setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
+        <target state="translated">'globalPackagesFolder' ayarı göreli bir yol. Tam yolu belirlemek için lütfen parametre olarak -SolutionDirectory veya çözüm dosyası belirtin. 'globalPackagesFolder' ayarını yoksaymak için -PackagesDirectory belirtin.</target>
+        <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
+        <source>Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory.</source>
+        <target state="translated">NuGet paketlerini geri yüklemek için paketler klasörü belirlenemiyor. Lütfen -PackagesDirectory veya -SolutionDirectory belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandFileNotFound">
+        <source>Input file does not exist: {0}.</source>
+        <target state="translated">Giriş dosyası bulunmuyor: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandOptionSolutionDirectoryIsInvalid">
+        <source>Option -SolutionDirectory is not valid when restoring packages for a solution.</source>
+        <target state="translated">Çözüm için paketler geri yüklenirken -SolutionDirectory seçeneği geçerli değildir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandPackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
+        <target state="translated">NuGet paketleri geri yükleniyor...
+NuGet'in derleme sırasında paketleri geri yüklemesini önlemek için Visual Studio Seçenekleri iletişim kutusunu açın, NuGet Paket Yöneticisi düğümüne tıklayın ve '{0}' öğesinin işaretini kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandProjectNotFound">
+        <source>Project file {0} cannot be found.</source>
+        <target state="translated">Proje dosyası {0} bulunamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesForSolution">
+        <source>Restoring NuGet packages for solution {0}.</source>
+        <target state="translated">Çözüm {0} için NuGet paketleri geri yükleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesFromPackagesConfigFile">
+        <source>Restoring NuGet packages listed in packages.config file.</source>
+        <target state="translated">packages.config dosyasında listelenen NuGet paketleri geri yükleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesListedInFile">
+        <source>Restoring NuGet packages listed in file {0}.</source>
+        <target state="translated">{0} dosyasında listelenen NuGet paketleri geri yükleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScanningForProjects">
+        <source>Scanning for projects...</source>
+        <target state="translated">Projeler taranıyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandApiKeySaved">
+        <source>The API Key '{0}' was saved for {1}.</source>
+        <target state="translated">API Anahtarı '{0}' {1} için kaydedildi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandDefaultApiKeysSaved">
+        <source>The API Key '{0}' was saved for {1} and {2}.</source>
+        <target state="translated">API Anahtarı '{0}' {1} ve {2} için kaydedildi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsCredentials_UsingSavedCredentials">
+        <source>Using credentials from config. UserName: {0}</source>
+        <target state="translated">Yapılandırmadaki kimlik bilgileri kullanılıyor. UserName: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. None of the projects in this solution specify any packages for NuGet to restore.</source>
+        <target state="translated">Yapılacak bir şey yok. Bu çözümdeki projelerden hiçbiri NuGet'in geri yükleyeceği herhangi bir paketi belirtmiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_NotFound">
+        <source>Source '{0}' is not found.</source>
+        <target state="translated">'{0}' kaynağı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandCreatedNuSpec">
+        <source>Created '{0}' successfully.</source>
+        <target state="translated">'{0}' başarıyla oluşturuldu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandFileExists">
+        <source>'{0}' already exists, use -Force to overwrite it.</source>
+        <target state="translated">'{0}' zaten var, üzerine yazmak için -Force kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToConvertTypeError">
+        <source>Unable to change from type '{0}' to '{1}'.</source>
+        <target state="translated">'{0}' türü '{1}' olarak değiştirilemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToExtractAssemblyMetadata">
+        <source>Unable to extract metadata from '{0}'.</source>
+        <target state="translated">'{0}' öğesinden meta veriler ayıklanamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindBuildOutput">
+        <source>Unable to find '{0}'. Make sure the project has been built.</source>
+        <target state="translated">'{0}' bulunamıyor. Projenin derlendiğinden emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPackages">
+        <source>Unable to find '{0}'. Make sure they are specified in packages.config.</source>
+        <target state="translated">'{0}' bulunamadı. packages.config’de belirtilmiş olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindProject">
+        <source>Unable to find project '{0}'.</source>
+        <target state="translated">'{0}' projesi bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindSolution">
+        <source>Unable to find solution '{0}'.</source>
+        <target state="translated">'{0}' çözümü bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocatePackagesFolder">
+        <source>Unable to locate the packages folder. Verify all the packages are restored before running 'nuget.exe update'.</source>
+        <target state="translated">Paketler klasörü bulunamıyor. 'nuget.exe update' çalıştırılmadan önce tüm paketlerin geri yüklendiğinden emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocateProjectFile">
+        <source>Unable to locate project file for '{0}'.</source>
+        <target state="translated">'{0}' için proje dosyası bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknowCommandError">
+        <source>Unknown command: '{0}'</source>
+        <target state="translated">Bilinmeyen komut: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownOptionError">
+        <source>Unknown option: '{0}'</source>
+        <target state="translated">Bilinmeyen seçenek: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFramework">
+        <source>'{0}' is not a valid target framework.</source>
+        <target state="translated">'{0}' geçerli bir hedef çerçeve değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCheckingForUpdates">
+        <source>Checking for updates from {0}.</source>
+        <target state="translated">{0} güncelleştirmeleri denetleniyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCurrentlyRunningNuGetExe">
+        <source>Currently running NuGet.exe {0}.</source>
+        <target state="translated">Şu anda NuGet.exe {0} çalıştırılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandNuGetUpToDate">
+        <source>NuGet.exe is up to date.</source>
+        <target state="translated">NuGet.exe güncel.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToFindPackage">
+        <source>Unable to find '{0}' package.</source>
+        <target state="translated">'{0}' paketi bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToLocateNuGetExe">
+        <source>Invalid NuGet.CommandLine package. Unable to locate NuGet.exe within the package.</source>
+        <target state="translated">Geçersiz NuGet.CommandLine paketi. Paket içinde NuGet.exe bulunamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdateSuccessful">
+        <source>Update successful.</source>
+        <target state="translated">Güncelleştirme başarılı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdatingNuGet">
+        <source>Updating NuGet.exe to {0}.</source>
+        <target state="translated">NuGet.exe şuna güncelleştiriliyor: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdatingProject">
+        <source>Updating '{0}'...</source>
+        <target state="translated">'{0}' güncelleştiriliyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingNuspecForMetadata">
+        <source>Using '{0}' for metadata.</source>
+        <target state="translated">Meta veriler için '{0}' kullanılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingPackagesConfigForDependencies">
+        <source>Found packages.config. Using packages listed as dependencies</source>
+        <target state="translated">packages.config bulundu. Listelenen paketler bağımlılık olarak kullanılıyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_CommandDeprecated">
+        <source>'{0} {1}' is deprecated. Use '{0} {2}' instead.</source>
+        <target state="translated">'{0} {1}' kullanım dışı. Bunun yerine '{0} {2}' kullanın.</target>
+        <note>{0} - name of the assembly running the command, e.g., NuGet
+{1} - current command marked as deprecated, e.g., list
+{2} - replacement command. For example, search</note>
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValue">
+        <source>The value "{0}" for {1} is a sample value and should be removed.</source>
+        <target state="translated">{1} için "{0}" değeri örnek bir değerdir ve kaldırılmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueSolution">
+        <source>Replace with an appropriate value or remove and it and rebuild your package.</source>
+        <target state="translated">Bunu uygun bir değerle değiştirin veya kaldırarak paketinizi yeniden derleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueTitle">
+        <source>Remove sample nuspec values.</source>
+        <target state="translated">Örnek nuspec değerlerini kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">'{0}' anahtarı Properties koleksiyonunda zaten var. Değer geçersiz kılınıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileDoesNotExist">
+        <source>'{0}' was included in the project but doesn't exist. Skipping...</source>
+        <target state="translated">'{0}' projeye eklendi ancak yok. Atlanıyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_InvalidPackageSaveMode">
+        <source>Invalid PackageSaveMode value '{0}'.</source>
+        <target state="translated">'{0}' PackageSaveMode değeri geçersiz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_DisabledPolicy">
+        <source>Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">Lütfen yerel grup ilkesinde uzun dosya yolu desteği oluşturun. Daha fazla ayrıntı için bkz: https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
+        <source>Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">Lütfen uzun dosya yollarını destekleyen .NET Framework 4.6.2 veya üzeri bir sürümü yükleyin. Daha fazla ayrıntı için bkz: https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedOS">
+        <source>Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">Uzun dosya yolu şu anda yalnızca Windows 10’da destekleniyor. Daha fazla ayrıntı için bkz: https://aka.ms/nuget-long-path.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MsbuildPath">
+        <source>MsbuildPath : {0} is using, ignore MsBuildVersion: {1}. </source>
+        <target state="translated">MsbuildPath : {0} kullanıyorsa şunu yoksay MsBuildVersion: {1}. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoPromptDeprecated">
+        <source>Option 'NoPrompt' has been deprecated. Use 'NonInteractive' instead.</source>
+        <target state="translated">'NoPrompt' seçeneği kullanım dışı bırakıldı. Bunun yerine 'NonInteractive' kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ReadingProjectsFailed">
+        <source>Error reading msbuild project information, ensure that your input solution or project file is valid. NETCore and UAP projects will be skipped, only packages.config files will be restored.</source>
+        <target state="translated">msbuild proje bilgileri okunurken hata oluştu, giriş çözüm veya proje dosyanın geçerli olduğundan emin olun. NETCore ve UAP projeleri atlanır, yalnızca packages.config dosyaları geri yüklenir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersion">
+        <source>Version "{0}" does not follow semantic versioning guidelines.</source>
+        <target state="translated">"{0}" sürümü anlamsal sürüm oluşturma yönergelerini izlemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionSolution">
+        <source>Update your nuspec file or use the AssemblyInformationalVersion assembly attribute to specify a semantic version as described at http://semver.org. </source>
+        <target state="translated">Nuspec dosyanızı güncelleştirin veya http://semver.org adresinde açıklandığı şekilde bir anlamsal sürüm belirtmek için AssemblyInformationalVersion bütünleştirilmiş kod özniteliğini kullanın. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionTitle">
+        <source>Use semantic versioning</source>
+        <target state="translated">Anlamsal sürüm oluşturmayı kullanma</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnresolvedFilePath">
+        <source>'{0}' was included in the project but the path could not be resolved. Skipping...</source>
+        <target state="translated">'{0}' projeye eklendi ancak yol çözümlenemedi. Atlanıyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersion">
+        <source>The version of dependency '{0}' is not specified.</source>
+        <target state="translated">Bağımlılık sürümü '{0}' belirtilmedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionSolution">
+        <source>Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">Bağımlılık sürümünü belirtin ve paketinizi yeniden derleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionTitle">
+        <source>Specify version of dependencies.</source>
+        <target state="translated">Bağımlılıkların sürümünü belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedField">
+        <source>{0} was not specified. Using '{1}'.</source>
+        <target state="translated">{0} belirtilmedi. '{1}' kullanılıyor.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

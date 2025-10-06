@@ -382,11 +382,13 @@ namespace NuGet.SolutionRestoreManager
                         // completion of the current job runner.
                         // The caller will be unblocked immediately upon
                         // cancellation request via provided token.
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                         return await await Task
                             .WhenAny(
                                 pendingRestore.Task,
                                 _backgroundJobRunner.GetValueAsync())
                             .WithCancellation(token);
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
                     }
                 }
                 catch (OperationCanceledException) when (token.IsCancellationRequested)

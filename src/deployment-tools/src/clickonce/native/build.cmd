@@ -15,6 +15,7 @@ set "__LinkLibraries= "
 set __PortableBuild=0
 set __IncrementalNativeBuild=0
 set __DotnetInstallDir=%~dp0..\..\..\.dotnet
+set __AppHostLibDir=""
 
 :Arg_Loop
 if [%1] == [] goto :ToolsVersion
@@ -37,6 +38,7 @@ if /i [%1] == [commit]         ( set __CommitSha=%2&&shift&&shift&goto Arg_Loop)
 
 if /i [%1] == [incremental-native-build] ( set __IncrementalNativeBuild=1&&shift&goto Arg_Loop)
 if /i [%1] == [dotnetInstallDir]     ( set __DotnetInstallDir=%~2&&shift&&shift&goto Arg_Loop)
+if /i [%1] == [appHostLibDir]     ( set __AppHostLibDir=%~2&&shift&&shift&goto Arg_Loop)
 if /i [%1] == [rootDir]        ( set __rootDir=%2&&shift&&shift&goto Arg_Loop)
 
 shift
@@ -59,10 +61,6 @@ call "%_VSCOMNTOOLS%\VsDevCmd.bat"
 :RunVCVars
 if "%VisualStudioVersion%"=="17.0" (
     goto :VS2022
-) else if "%VisualStudioVersion%"=="16.0" (
-    goto :VS2019
-) else if "%VisualStudioVersion%"=="15.0" (
-    goto :VS2017
 )
 
 :MissingVersion
@@ -77,22 +75,6 @@ set __PlatformToolset=v143
 set __VSVersion=17 2022
 :: Set the environment for the native build
 call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-goto :SetupDirs
-
-:VS2019
-:: Setup vars for VS2019
-set __PlatformToolset=v142
-set __VSVersion=16 2019
-:: Set the environment for the native build
-call "%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-goto :SetupDirs
-
-:VS2017
-:: Setup vars for VS2017
-set __PlatformToolset=v141
-set __VSVersion=15 2017
-:: Set the environment for the native build
-call "%VS150COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 
 :SetupDirs
 if [%__rootDir%] == [] (
@@ -137,9 +119,9 @@ exit /b 1
 :GenVSSolution
 :: Regenerate the VS solution
 
-echo Calling "%__nativeWindowsDir%\gen-buildsys-win.bat %~dp0 "%__VSVersion%" %__BuildArch% %__CommitSha% %__NativeVersion% %__NetCorePkgVersion% "%__DotnetInstallDir%" %__PortableBuild%"
+echo Calling "%__nativeWindowsDir%\gen-buildsys-win.bat %~dp0 "%__VSVersion%" %__BuildArch% %__CommitSha% %__NativeVersion% %__NetCorePkgVersion% "%__DotnetInstallDir%" "%__AppHostLibDir%" %__PortableBuild%"
 pushd "%__IntermediatesDir%"
-call "%__nativeWindowsDir%\gen-buildsys-win.bat" %~dp0 "%__VSVersion%" %__BuildArch% %__CommitSha% %__NativeVersion% %__NetCorePkgVersion% "%__DotnetInstallDir%" %__PortableBuild%
+call "%__nativeWindowsDir%\gen-buildsys-win.bat" %~dp0 "%__VSVersion%" %__BuildArch% %__CommitSha% %__NativeVersion% %__NetCorePkgVersion% "%__DotnetInstallDir%" "%__AppHostLibDir%" %__PortableBuild%
 popd
 
 :CheckForProj

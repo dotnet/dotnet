@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
@@ -26,11 +27,13 @@ public abstract class ParserTestBase : IParserTest
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
     private readonly bool _validateSpanEditHandlers;
+    private readonly bool _useLegacyTokenizer;
 
-    internal ParserTestBase(TestProject.Layer layer, bool validateSpanEditHandlers = false)
+    internal ParserTestBase(TestProject.Layer layer, bool validateSpanEditHandlers = false, bool useLegacyTokenizer = false)
     {
         TestProjectRoot = TestProject.GetProjectDirectory(GetType(), layer);
         _validateSpanEditHandlers = validateSpanEditHandlers;
+        _useLegacyTokenizer = useLegacyTokenizer;
     }
 
     /// <summary>
@@ -38,12 +41,6 @@ public abstract class ParserTestBase : IParserTest
     /// Use this when spans were not created in document order.
     /// </summary>
     protected bool FixupSpans { get; set; }
-
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; set; } = true;
-#else
-    protected bool GenerateBaselines { get; set; } = false;
-#endif
 
     protected string TestProjectRoot { get; }
 
@@ -86,11 +83,12 @@ public abstract class ParserTestBase : IParserTest
         var baselineTagHelperSpansFileName = Path.ChangeExtension(fileName, ".tspans.txt");
         BaselineTestCount++;
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers), _baselineEncoding);
+            Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
+            File.WriteAllText(baselineFullPath, TestSyntaxSerializer.Serialize(root, _validateSpanEditHandlers), _baselineEncoding);
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -131,7 +129,7 @@ public abstract class ParserTestBase : IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers);
+        var actualSyntaxNodes = TestSyntaxSerializer.Serialize(root, _validateSpanEditHandlers);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics
@@ -191,33 +189,44 @@ public abstract class ParserTestBase : IParserTest
         AssertSyntaxTreeNodeMatchesBaseline(syntaxTree);
     }
 
-    internal RazorSyntaxTree ParseDocument(string document, bool designTime = false, IEnumerable<DirectiveDescriptor> directives = null, RazorParserFeatureFlags featureFlags = null, string fileKind = null)
+    internal RazorSyntaxTree ParseDocument(
+        string document,
+        bool designTime = false,
+        IEnumerable<DirectiveDescriptor> directives = null,
+        RazorFileKind? fileKind = null,
+        CSharpParseOptions csharpParseOptions = null,
+        Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
-        return ParseDocument(RazorLanguageVersion.Latest, document, directives, designTime, featureFlags, fileKind);
+        return ParseDocument(RazorLanguageVersion.Latest, document, directives, designTime, fileKind, csharpParseOptions, configureParserOptions);
     }
 
-    internal virtual RazorSyntaxTree ParseDocument(RazorLanguageVersion version, string document, IEnumerable<DirectiveDescriptor> directives, bool designTime = false, RazorParserFeatureFlags featureFlags = null, string fileKind = null)
+    internal virtual RazorSyntaxTree ParseDocument(
+        RazorLanguageVersion version,
+        string document,
+        IEnumerable<DirectiveDescriptor> directives,
+        bool designTime = false,
+        RazorFileKind? fileKind = null,
+        CSharpParseOptions csharpParseOptions = null,
+        Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
-        directives = directives ?? Array.Empty<DirectiveDescriptor>();
+        directives ??= [];
 
         var source = TestRazorSourceDocument.Create(document, filePath: null, relativePath: null, normalizeNewLines: true);
+        var parseOptions = CreateParserOptions(version, fileKind, designTime, directives, csharpParseOptions, configureParserOptions);
+        var codeDocument = RazorCodeDocument.Create(source, parseOptions);
 
-        var options = CreateParserOptions(version, directives, designTime, _validateSpanEditHandlers, featureFlags, fileKind);
-        var context = new ParserContext(source, options);
-
-        var codeParser = new CSharpCodeParser(directives, context);
-        var markupParser = new HtmlMarkupParser(context);
+        using var context = new ParserContext(source, parseOptions);
+        using var codeParser = new CSharpCodeParser(directives, context);
+        using var markupParser = new HtmlMarkupParser(context);
 
         codeParser.HtmlParser = markupParser;
         markupParser.CodeParser = codeParser;
 
         var root = markupParser.ParseDocument().CreateRed();
 
-        var diagnostics = context.ErrorSink.Errors;
+        var diagnostics = context.ErrorSink.GetErrorsAndClear();
 
-        var codeDocument = RazorCodeDocument.Create(source);
-
-        var syntaxTree = RazorSyntaxTree.Create(root, source, diagnostics, options);
+        var syntaxTree = new RazorSyntaxTree(root, source, diagnostics, parseOptions);
         codeDocument.SetSyntaxTree(syntaxTree);
 
         var defaultDirectivePass = new DefaultDirectiveSyntaxTreePass();
@@ -228,54 +237,75 @@ public abstract class ParserTestBase : IParserTest
 
     internal virtual void ParseDocumentTest(string document)
     {
-        ParseDocumentTest(document, null, false);
+        ParseDocumentTest(document, directives: null, designTime: false);
     }
 
-    internal virtual void ParseDocumentTest(string document, string fileKind)
+    internal virtual void ParseDocumentTest(string document, RazorFileKind fileKind)
     {
-        ParseDocumentTest(document, null, false, fileKind);
+        ParseDocumentTest(document, directives: null, designTime: false, fileKind);
     }
 
     internal virtual void ParseDocumentTest(string document, IEnumerable<DirectiveDescriptor> directives)
     {
-        ParseDocumentTest(document, directives, false);
+        ParseDocumentTest(document, directives, designTime: false);
     }
 
     internal virtual void ParseDocumentTest(string document, bool designTime)
     {
-        ParseDocumentTest(document, null, designTime);
+        ParseDocumentTest(document, directives: null, designTime);
     }
 
-    internal virtual void ParseDocumentTest(string document, IEnumerable<DirectiveDescriptor> directives, bool designTime, string fileKind = null)
+    internal void ParseDocumentTest(string document, CSharpParseOptions options)
     {
-        ParseDocumentTest(RazorLanguageVersion.Latest, document, directives, designTime, fileKind);
+        ParseDocumentTest(document, directives: null, designTime: false, csharpParseOptions: options);
     }
 
-    internal virtual void ParseDocumentTest(RazorLanguageVersion version, string document, IEnumerable<DirectiveDescriptor> directives, bool designTime, string fileKind = null)
+    internal virtual void ParseDocumentTest(
+        string document,
+        IEnumerable<DirectiveDescriptor> directives,
+        bool designTime,
+        RazorFileKind? fileKind = null,
+        CSharpParseOptions csharpParseOptions = null)
     {
-        var result = ParseDocument(version, document, directives, designTime, fileKind: fileKind);
+        ParseDocumentTest(RazorLanguageVersion.Latest, document, directives, designTime, fileKind, csharpParseOptions);
+    }
+
+    internal virtual void ParseDocumentTest(
+        RazorLanguageVersion version,
+        string document,
+        IEnumerable<DirectiveDescriptor> directives,
+        bool designTime,
+        RazorFileKind? fileKind = null,
+        CSharpParseOptions csharpParseOptions = null)
+    {
+        var result = ParseDocument(version, document, directives, designTime, fileKind: fileKind, csharpParseOptions: csharpParseOptions);
 
         BaselineTest(result);
     }
 
-    internal static RazorParserOptions CreateParserOptions(
+    private RazorParserOptions CreateParserOptions(
         RazorLanguageVersion version,
-        IEnumerable<DirectiveDescriptor> directives,
+        RazorFileKind? fileKind,
         bool designTime,
-        bool enableSpanEditHandlers,
-        RazorParserFeatureFlags featureFlags = null,
-        string fileKind = null)
+        IEnumerable<DirectiveDescriptor> directives,
+        CSharpParseOptions csharpParseOptions,
+        Action<RazorParserOptions.Builder> configureParserOptions = null)
     {
-        fileKind ??= FileKinds.Legacy;
-        return new RazorParserOptions(
-            directives.ToArray(),
-            designTime,
-            parseLeadingDirectives: false,
-            version,
-            fileKind,
-            enableSpanEditHandlers)
+        var builder = new RazorParserOptions.Builder(version, fileKind ?? RazorFileKind.Legacy)
         {
-            FeatureFlags = featureFlags ?? RazorParserFeatureFlags.Create(version, fileKind)
+            DesignTime = designTime,
+            Directives = [.. directives],
+            EnableSpanEditHandlers = _validateSpanEditHandlers,
+            UseRoslynTokenizer = !_useLegacyTokenizer
         };
+
+        if (csharpParseOptions is not null)
+        {
+            builder.CSharpParseOptions = csharpParseOptions;
+        }
+
+        configureParserOptions?.Invoke(builder);
+
+        return builder.ToOptions();
     }
 }

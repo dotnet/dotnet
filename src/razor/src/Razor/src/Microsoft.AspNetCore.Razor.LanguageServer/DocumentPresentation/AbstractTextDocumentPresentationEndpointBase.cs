@@ -1,42 +1,37 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
-internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
-    where TParams : IPresentationParams
+internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    IFilePathService filePathService,
+    ILogger logger) : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
+        where TParams : IPresentationParams
 {
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService;
-    private readonly IClientConnection _clientConnection;
-    private readonly IFilePathService _filePathService;
-    private readonly ILogger _logger;
-
-    protected AbstractTextDocumentPresentationEndpointBase(
-        IRazorDocumentMappingService razorDocumentMappingService,
-        IClientConnection clientConnection,
-        IFilePathService filePathService,
-        ILogger logger)
-    {
-        _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly IFilePathService _filePathService = filePathService;
+    private readonly ILogger _logger = logger;
 
     public abstract string EndpointName { get; }
 
@@ -63,19 +58,14 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning("Failed to retrieve generated output for document {request.TextDocument.Uri}.", request.TextDocument.Uri);
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (request.Range.Start.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex) != true)
+        if (!sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex))
         {
             return null;
         }
 
-        var languageKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         // See if we can handle this directly in Razor. If not, we'll let things flow to the below delegated handling.
         var result = await TryGetRazorWorkspaceEditAsync(languageKind, request, cancellationToken).ConfigureAwait(false);
         if (result is not null)
@@ -83,21 +73,27 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             return result;
         }
 
-        if (languageKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
+        if (languageKind is RazorLanguageKind.CSharp)
         {
-            _logger.LogInformation("Unsupported language {languageKind}.", languageKind);
+            // Roslyn does not support Uri or Text presentation, so to prevent unnecessary LSP calls and misleading telemetry
+            // reports, we just return null here.
+            return null;
+        }
+        else if (languageKind is not RazorLanguageKind.Html)
+        {
+            _logger.LogInformation($"Unsupported language {languageKind}.");
             return null;
         }
 
         var requestParams = CreateRazorRequestParameters(request);
 
-        requestParams.HostDocumentVersion = documentContext.Version;
+        requestParams.HostDocumentVersion = documentContext.Snapshot.Version;
         requestParams.Kind = languageKind;
 
         // For CSharp we need to map the range to the generated document
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (!_razorDocumentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
+            if (!_documentMappingService.TryMapToCSharpDocumentRange(codeDocument.GetRequiredCSharpDocument(), request.Range, out var projectedRange))
             {
                 return null;
             }
@@ -113,39 +109,9 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
         // The responses we get back will be for virtual documents, so we have to map them back to the real
         // document, and in the case of C#, map the returned ranges too
-        var edit = MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument, documentContext.Version);
+        var edit = MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument);
 
         return edit;
-    }
-
-    private static bool TryGetDocumentChanges(WorkspaceEdit workspaceEdit, [NotNullWhen(true)] out TextDocumentEdit[]? documentChanges)
-    {
-        if (workspaceEdit.DocumentChanges?.Value is TextDocumentEdit[] documentEdits)
-        {
-            documentChanges = documentEdits;
-            return true;
-        }
-
-        if (workspaceEdit.DocumentChanges?.Value is SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] sumTypeArray)
-        {
-            var documentEditList = new List<TextDocumentEdit>();
-            foreach (var sumType in sumTypeArray)
-            {
-                if (sumType.Value is TextDocumentEdit textDocumentEdit)
-                {
-                    documentEditList.Add(textDocumentEdit);
-                }
-            }
-
-            if (documentEditList.Count > 0)
-            {
-                documentChanges = documentEditList.ToArray();
-                return true;
-            }
-        }
-
-        documentChanges = null;
-        return false;
     }
 
     private Dictionary<string, TextEdit[]> MapChanges(Dictionary<string, TextEdit[]> changes, bool mapRanges, RazorCodeDocument codeDocument)
@@ -163,8 +129,8 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
                 continue;
             }
 
-            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits);
-            if (remappedEdits is null || remappedEdits.Length == 0)
+            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e));
+            if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
                 continue;
@@ -177,17 +143,16 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         return remappedChanges;
     }
 
-    private TextDocumentEdit[] MapDocumentChanges(TextDocumentEdit[] documentEdits, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    private TextDocumentEdit[] MapDocumentChanges(TextDocumentEdit[] documentEdits, bool mapRanges, RazorCodeDocument codeDocument)
     {
-        var remappedDocumentEdits = new List<TextDocumentEdit>();
+        using var remappedDocumentEdits = new PooledArrayBuilder<TextDocumentEdit>(documentEdits.Length);
         foreach (var entry in documentEdits)
         {
-            var uri = entry.TextDocument.Uri;
+            var uri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
             if (!_filePathService.IsVirtualDocumentUri(uri))
             {
                 // This location doesn't point to a background razor file. No need to remap.
                 remappedDocumentEdits.Add(entry);
-
                 continue;
             }
 
@@ -204,48 +169,45 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()
                 {
-                    Uri = razorDocumentUri,
-                    Version = hostDocumentVersion
+                    DocumentUri = new(razorDocumentUri),
                 },
-                Edits = remappedEdits
+                Edits = [.. remappedEdits]
             });
         }
 
         return remappedDocumentEdits.ToArray();
     }
 
-    private TextEdit[]? MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<TextEdit> edits)
+    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> edits)
     {
+        using var mappedEdits = new PooledArrayBuilder<TextEdit>();
         if (!mapRanges)
         {
-            return edits.ToArray();
+            mappedEdits.AddRange(edits.Select(e => (TextEdit)e));
         }
-
-        var mappedEdits = new List<TextEdit>();
-        foreach (var edit in edits)
+        else
         {
-            if (!_razorDocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), edit.Range, out var newRange))
+            foreach (var edit in edits)
             {
-                return null;
-            }
+                if (!_documentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), ((TextEdit)edit).Range, out var newRange))
+                {
+                    return [];
+                }
 
-            var newEdit = new TextEdit()
-            {
-                NewText = edit.NewText,
-                Range = newRange
-            };
-            mappedEdits.Add(newEdit);
+                var newEdit = LspFactory.CreateTextEdit(newRange, ((TextEdit)edit).NewText);
+                mappedEdits.Add(newEdit);
+            }
         }
 
         return mappedEdits.ToArray();
     }
 
-    private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument)
     {
-        if (TryGetDocumentChanges(workspaceEdit, out var documentChanges))
+        if (workspaceEdit.TryGetTextDocumentEdits(out var documentEdits))
         {
             // The LSP spec says, we should prefer `DocumentChanges` property over `Changes` if available.
-            var remappedEdits = MapDocumentChanges(documentChanges, mapRanges, codeDocument, hostDocumentVersion);
+            var remappedEdits = MapDocumentChanges(documentEdits, mapRanges, codeDocument);
             return new WorkspaceEdit()
             {
                 DocumentChanges = remappedEdits

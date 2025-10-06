@@ -11,8 +11,17 @@ namespace Microsoft.SignCheck.Verification
 {
     public class Exclusions
     {
+        /// <summary>
+        /// Cache for regex exclusions.
+        /// Helps avoid recompiling the regex for the same pattern multiple times.
+        /// </summary>
+        private Dictionary<string, Regex> _regexCache = new Dictionary<string, Regex>();
         private static readonly char[] _wildCards = new char[] { '*', '?' };
         private List<Exclusion> _exclusions = new List<Exclusion>();
+
+        private const string DoNotSign = "DO-NOT-SIGN";
+        private const string General = "GENERAL";
+        private const string IgnoreStrongName = "IGNORE-STRONG-NAME";
 
         public int Count
         {
@@ -69,33 +78,29 @@ namespace Microsoft.SignCheck.Verification
             return _exclusions.Contains(exclusion);
         }
 
-        public bool IsExcluded(string path, string parent, string virtualPath, string containerPath, IEnumerable<Exclusion> exclusions)
+        private bool IsExcluded(string path, string parent, string virtualPath, string containerPath, string exclusionClassification, IEnumerable<Exclusion> exclusions)
         {
-            foreach (Exclusion e in exclusions)
+            foreach (var exclusion in exclusions)
             {
                 // 1. The file/container path matches a file part of the exclusion and the parent matches the parent part of the exclusion.
                 //    Example: bar.dll;*.zip --> Exclude any occurence of bar.dll that is in a zip file
                 //             bar.dll;foo.zip --> Exclude bar.dll only if it is contained inside foo.zip
                 //             foo.exe;; --> Exclude any occurance of foo.exe and ignore the parent
-                if (IsMatch(e.FilePatterns, Path.GetFileName(containerPath)) || IsMatch(e.FilePatterns, containerPath) || IsMatch(e.FilePatterns, path) || IsMatch(e.FilePatterns, Path.GetFileName(path)) || IsMatch(e.FilePatterns, virtualPath))
+                if (IsFileExcluded(exclusion, path, containerPath, virtualPath, exclusionClassification) &&
+                    (!exclusion.HasParentFiles || IsParentExcluded(exclusion, parent, exclusionClassification)))
                 {
-                    if ((e.ParentFiles.Length == 0) || (e.ParentFiles.All(pf => String.IsNullOrEmpty(pf))) || IsMatch(e.ParentFiles, parent))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
-                // 2. The file/container path matches the file part of the exclusion and there is no parent exclusion. 
-                //    Example: *.dll;; --> Exclude any file with a .dll extension
-                if ((IsMatch(e.FilePatterns, path) || IsMatch(e.FilePatterns, containerPath)) && (e.ParentFiles.All(pf => String.IsNullOrEmpty(pf))))
+                // 2. There is no file exclusion, but a parent exclusion matches.
+                //    Example: ;foo.zip; --> Exclude any file in foo.zip. This is similar to using *;foo.zip;
+                if (!exclusion.HasFilePatterns && IsParentExcluded(exclusion, parent, exclusionClassification))
                 {
                     return true;
                 }
             }
 
-            // 3. There is no file exclusion, but a parent exclusion matches.
-            //    Example: ;foo.zip; --> Exclude any file in foo.zip. This is similar to using *;foo.zip;
-            return exclusions.Any(e => (e.FilePatterns.All(fp => String.IsNullOrEmpty(fp)) && IsMatch(e.ParentFiles, parent)));
+            return false;
         }
 
         /// <summary>
@@ -108,7 +113,8 @@ namespace Microsoft.SignCheck.Verification
         /// <returns></returns>
         public bool IsExcluded(string path, string parent, string virtualPath, string containerPath)
         {
-            return IsExcluded(path, parent, virtualPath, containerPath, _exclusions);
+            IEnumerable<Exclusion> exclusions = _exclusions.Where(e => !e.Comment.Contains(IgnoreStrongName));
+            return IsExcluded(path, parent, virtualPath, containerPath, General, exclusions);
         }
 
         /// <summary>
@@ -119,29 +125,54 @@ namespace Microsoft.SignCheck.Verification
         public bool IsDoNotSign(string path, string parent, string virtualPath, string containerPath)
         {
             // Get all the exclusions with DO-NOT-SIGN markers and check only against those
-            IEnumerable<Exclusion> doNotSignExclusions = _exclusions.Where(e => e.Comment.Contains("DO-NOT-SIGN")).ToArray();
+            IEnumerable<Exclusion> doNotSignExclusions = _exclusions.Where(e => e.Comment.Contains(DoNotSign)).ToArray();
 
-            return (doNotSignExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, doNotSignExclusions));
+            return (doNotSignExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, DoNotSign, doNotSignExclusions));
+        }
+
+        public bool IsIgnoreStrongName(string path, string parent, string virtualPath, string containerPath)
+        {
+            // Get all the exclusions with NO-STRONG-NAME markers and check only against those
+            IEnumerable<Exclusion> noStrongNameExclusions = _exclusions.Where(e => e.Comment.Contains(IgnoreStrongName));
+
+            return (noStrongNameExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, IgnoreStrongName, noStrongNameExclusions));
         }
 
         /// <summary>
-        /// Returns true if any <see cref="Exclusion.FilePatterns"/> matches the value of <paramref name="path"/>.
+        /// Returns true if any <see cref="Exclusion.FilePatterns"/> matches the value of
+        /// <paramref name="path"/>, <paramref name="containerPath"/> or <paramref name="virtualPath"/>.
         /// </summary>
-        /// <param name="path">The value to match against any <see cref="Exclusion.FilePatterns"/>.</param>
+        /// <param name="path">The value to match against <see cref="Exclusion.FilePatterns"/>.</param>
+        /// <param name="containerPath">The value to match against <see cref="Exclusion.FilePatterns"/>.</param>
+        /// <param name="virtualPath">The value to match against <see cref="Exclusion.FilePatterns"/>.</param>
         /// <returns></returns>
-        public bool IsFileExcluded(string path)
+        public bool IsFileExcluded(Exclusion exclusion, string path, string containerPath, string virtualPath, string exclusionsClassification)
         {
-            return _exclusions.Any(e => IsMatch(e.FilePatterns, path));
+            var values = new[] { path, containerPath, virtualPath, Path.GetFileName(path), Path.GetFileName(containerPath), Path.GetFileName(virtualPath) };
+
+            if(!exclusion.TryGetIsFileExcluded(exclusionsClassification, values, out bool isExcluded))
+            {
+                isExcluded = values.Any(v => IsMatch(exclusion.FilePatterns, v));
+                exclusion.AddToFileCache(exclusionsClassification, values, isExcluded);
+            }
+
+            return isExcluded;
         }
 
         /// <summary>
         /// Returns true if any <see cref="Exclusion.ParentFiles"/> matches the value of <paramref name="parent"/>.
         /// </summary>
-        /// <param name="parent">The value to match against any <see cref="Exclusion.ParentFiles"/>.</param>
+        /// <param name="parent">The value to match against <see cref="Exclusion.ParentFiles"/>.</param>
         /// <returns></returns>
-        public bool IsParentExcluded(string parent)
+        public bool IsParentExcluded(Exclusion exclusion, string parent, string exclusionsClassification)
         {
-            return _exclusions.Any(e => IsMatch(e.ParentFiles, parent));
+            if(!exclusion.TryGetIsParentExcluded(exclusionsClassification, parent, out bool isExcluded))
+            {
+                isExcluded = IsMatch(exclusion.ParentFiles, parent);
+                exclusion.AddToParentCache(exclusionsClassification, parent, isExcluded);
+            }
+    
+            return isExcluded;
         }
 
         private bool IsMatch(string[] patterns, string value)
@@ -158,8 +189,8 @@ namespace Microsoft.SignCheck.Verification
 
             if (pattern.IndexOfAny(_wildCards) > -1)
             {
-                string regexPattern = Utils.ConvertToRegexPattern(pattern);
-                return Regex.IsMatch(value, regexPattern, RegexOptions.IgnoreCase);
+                var regex = GetRegex(pattern);
+                return regex.IsMatch(value);
             }
             else
             {
@@ -170,6 +201,16 @@ namespace Microsoft.SignCheck.Verification
         public bool Remove(Exclusion exclusion)
         {
             return false;
+        }
+
+        private Regex GetRegex(string pattern)
+        {
+            if (!_regexCache.ContainsKey(pattern))
+            {
+                string regexPattern = Utils.ConvertToRegexPattern(pattern);
+                _regexCache[pattern] = new Regex(regexPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            }
+            return _regexCache[pattern];
         }
     }
 }

@@ -4,22 +4,27 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("E502D2DD-8671-4338-8F2A-FC08229628C4")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedEncUpdate
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedEncUpdate
     {
         /// <summary>
         /// Applies EnC edit.
         /// </summary>
         [PreserveSig]
         int UpdateSymbolStore2(
-            IStream stream,
+#if NET9_0_OR_GREATER
+            [MarshalUsing(typeof(ComStreamWrapper.Marshaller))]
+#endif
+            System.Runtime.InteropServices.ComTypes.IStream stream,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]SymUnmanagedLineDelta[] lineDeltas,
             int lineDeltaCount);
 

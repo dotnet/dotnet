@@ -5,15 +5,13 @@
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class FirstDirectiveCSharpLanguageCharacteristics : CSharpLanguageCharacteristics
+internal class FirstDirectiveCSharpLanguageCharacteristics : NativeCSharpLanguageCharacteristics
 {
-    private static readonly FirstDirectiveCSharpLanguageCharacteristics _instance = new FirstDirectiveCSharpLanguageCharacteristics();
-
     private FirstDirectiveCSharpLanguageCharacteristics()
     {
     }
 
-    public static new FirstDirectiveCSharpLanguageCharacteristics Instance => _instance;
+    public static new FirstDirectiveCSharpLanguageCharacteristics Instance { get; } = new FirstDirectiveCSharpLanguageCharacteristics();
 
-    public override CSharpTokenizer CreateTokenizer(ITextDocument source) => new DirectiveCSharpTokenizer(source);
+    public override CSharpTokenizer CreateTokenizer(SeekableTextReader source) => new DirectiveCSharpTokenizer(source);
 }

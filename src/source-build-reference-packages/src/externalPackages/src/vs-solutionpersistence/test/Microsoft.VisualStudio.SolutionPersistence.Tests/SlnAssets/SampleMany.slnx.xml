@@ -1,0 +1,80 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Apps/">
+    <Project Path="ConAppA/ConAppA.csproj">
+      <BuildDependency Project="CPSConApp/CPSConApp.vbproj" />
+      <BuildDependency Project="NativeApp/NativeApp.vcxproj" />
+    </Project>
+    <Project Path="CPSConApp/CPSConApp.vbproj" />
+  </Folder>
+  <Folder Name="/Apps/Native/">
+    <Project Path="NativeApp/NativeApp.vcxproj">
+      <BuildDependency Project="ClassLibrary1/ClassLibrary1.csproj" />
+      <BuildDependency Project="CPSConApp/CPSConApp.vbproj" />
+      <BuildDependency Project="StaticLib1/StaticLib1.vcxproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libs/">
+    <Project Path="ClassLibrary1/ClassLibrary1.csproj" />
+    <Project Path="CSharpShared/CSharpShared.shproj" />
+    <Project Path="SharedCPS/SharedCPS.vcxitems" />
+  </Folder>
+  <Folder Name="/Libs/SubLIb/">
+    <Project Path="ClassLibrary2/ClassLibrary2.csproj" />
+    <Project Path="StaticLib1/StaticLib1.vcxproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="TextFile1.txt" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="../../1/" Type="Website" DisplayName="1">
+      <BuildType Project="Debug" />
+      <Properties Name="WebsiteProperties">
+        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\..\1\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_55292\&quot;" />
+        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_55292&quot;" />
+        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\..\1\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_55292\&quot;" />
+        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_55292&quot;" />
+        <Property Name="SlnRelativePath" Value="&quot;..\..\1\&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.0&quot;" />
+        <Property Name="VWDPort" Value="&quot;55292&quot;" />
+      </Properties>
+    </Project>
+    <Project Path="http://localhost:8080" Type="Website" DisplayName="WebSite1">
+      <BuildType Project="Debug" />
+      <Properties Name="WebsiteProperties">
+        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;C:\Users\svetkere\Documents\My Web Sites\WebSite1\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_8080\&quot;" />
+        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_8080&quot;" />
+        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;C:\Users\svetkere\Documents\My Web Sites\WebSite1\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_8080\&quot;" />
+        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_8080&quot;" />
+        <Property Name="SlnRelativePath" Value="&quot;C:\Users\svetkere\Documents\My Web Sites\WebSite1\&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.0&quot;" />
+        <Property Name="UseIISExpress" Value="&quot;true&quot;" />
+      </Properties>
+    </Project>
+  </Folder>
+  <Project Path="TestProjectRoot/TestProjectRoot.csproj" />
+</Solution>

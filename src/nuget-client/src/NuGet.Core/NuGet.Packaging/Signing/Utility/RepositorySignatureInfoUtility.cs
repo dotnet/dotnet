@@ -3,10 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using NuGet.Common;
 using NuGet.Packaging.Core;
-using NuGet.Shared;
 
 namespace NuGet.Packaging.Signing
 {

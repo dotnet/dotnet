@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <IsVsixProject>true</IsVsixProject>
-    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetFrameworkRunnerTargetFramework)</TargetFrameworks>
     <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
@@ -11,7 +11,7 @@
   <!-- VSIX -->
   <PropertyGroup>
     <!-- General properties -->
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <DeployExtension>false</DeployExtension>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
@@ -29,15 +29,13 @@
     <!-- Properties for items we include in VSIX -->
     <ExtensionInstallationRelativeToVS>[installDir]\Common7\IDE\Extensions\TestPlatform</ExtensionInstallationRelativeToVS>
     <TestPlatformCliBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform.CLI\$(Configuration)\$(NetFrameworkMinimum)\</TestPlatformCliBinFolder>
-    <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\net472\</TestPlatformBinFolder>
+    <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\</TestPlatformBinFolder>
     <MsDiaFolder>$(TestPlatformBinFolder)Microsoft.Internal.Dia\</MsDiaFolder>
-    <CUITFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.CUIT\</CUITFolder>
     <CodeCoverageIOFolder>$(TestPlatformBinFolder)Microsoft.CodeCoverage.IO\</CodeCoverageIOFolder>
     <VSQualityToolsFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.QualityTools\</VSQualityToolsFolder>
     <DependencyModelFolder>$(TestPlatformBinFolder)Microsoft.Extensions.DependencyModel\</DependencyModelFolder>
     <FileSystemGlobbingFolder>$(TestPlatformBinFolder)Microsoft.Extensions.FileSystemGlobbing\</FileSystemGlobbingFolder>
     <VSSDKBuildToolsFolder>$(TestPlatformBinFolder)Microsoft.VSSDK.BuildTools\</VSSDKBuildToolsFolder>
-    <QualityToolsDataCollectorsFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.QualityTools.DataCollectors\</QualityToolsDataCollectorsFolder>
     <InternalTestPlatformExtensionsFolder>$(TestPlatformBinFolder)Microsoft.Internal.TestPlatform.Extensions\</InternalTestPlatformExtensionsFolder>
   </PropertyGroup>
 
@@ -99,6 +97,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net471\win*\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net472\win*\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net48\win*\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net481\win*\testhost.net481.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.exe" />
 
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.x86.exe;$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.net4*.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
@@ -106,6 +105,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net471\win*\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net472\win*\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net48\win*\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net481\win*\testhost.net481.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.x86.exe" />
 
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.arm64.exe;$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.net4*.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
@@ -113,6 +113,7 @@
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net471\win*\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net472\win*\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
       <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net48\win*\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net481\win*\testhost.net481.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.arm64.exe" />
     </ItemGroup>
 
     <!-- Cpp Extensions -->
@@ -136,25 +137,6 @@
       <VsixSourceItem Include="$(MsDiaFolder)x86\*">
         <VSIXSubPath>x86</VSIXSubPath>
       </VsixSourceItem>
-    </ItemGroup>
-
-    <!-- CUIT -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.MSAA.dll">
-        <VSIXSubPath>CUITPlugins</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CUITFolder)IEPropertyConfiguration.*">
-        <VSIXSubPath>CUITPlugins</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.CrossBrowser.dll;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE*;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.Uia*;" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.Interop.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.QualityTools.*.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Interop.UIAutomationClient.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.ShDocVw.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.Diagnostics.Measurement.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITesting.dll" />
-      <VsixSourceItem Include="$(CUITFolder)UIAComWrapper.dll" />
     </ItemGroup>
 
     <!-- Code Coverage -->
@@ -205,22 +187,26 @@
     <ItemGroup>
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\VideoRecorder\*">
-        <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Media*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Web*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Tmi*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
     </ItemGroup>
 
     <!-- Microsoft.TestPlatform -->
     <ItemGroup>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Reflection.Metadata.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Collections.Immutable.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Memory.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Text.Json.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Runtime.CompilerServices.Unsafe.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Numerics.Vectors.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)System.Buffers.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
@@ -270,19 +256,9 @@
       <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hant\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
         <VSIXSubPath>Extensions\zh-Hant</VSIXSubPath>
       </VsixSourceItem>
-    </ItemGroup>
 
-    <!-- Microsoft.VisualStudio.QualityTools.DataCollectors -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Microsoft.VisualStudio.QualityTools.DataCollectionAgentObject.dll" />
-      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x64\*">
-        <VSIXSubPath>Extensions\V1\x64</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x86\*">
-        <VSIXSubPath>Extensions\V1\x86</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\*" Exclude="$(QualityToolsDataCollectorsFolder)Extensions\V1\*.pdb">
-        <VSIXSubPath>Extensions\V1</VSIXSubPath>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)DumpMiniTool*">
+        <VSIXSubPath>Extensions\dump</VSIXSubPath>
       </VsixSourceItem>
     </ItemGroup>
 
@@ -291,7 +267,7 @@
       <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
       <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
       <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
-      <VsixSourceItem Include="$(VSQualityToolsFolder)*" Exclude="$(VSQualityToolsFolder)*.pdb" />
+      <VsixSourceItem Include="$(VSQualityToolsFolder)Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     </ItemGroup>
 
     <ItemGroup>
@@ -318,7 +294,7 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj">
       <Ngen>false</Ngen>
     </ProjectReference>

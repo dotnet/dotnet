@@ -9,9 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 using System.Collections.Generic;
-#if RUNTIME_TYPE_NETCORE
 using System.Runtime.Versioning;
-#endif
 
 namespace Microsoft.Deployment.Utilities
 {
@@ -233,9 +231,7 @@ namespace Microsoft.Deployment.Utilities
         /// <param name="keyContainerName">Key container name</param>
         /// <param name="providerType">Provider type</param>
         /// <returns></returns>
-#if RUNTIME_TYPE_NETCORE
         [SupportedOSPlatform("windows")]
-#endif
         public static bool SetPrivateKeyIfNeeded(X509Certificate2 certificate, string cryptoProviderName, string keyContainerName, int providerType = -1)
         {
             if (Certificate.HasPrivateKey(certificate))

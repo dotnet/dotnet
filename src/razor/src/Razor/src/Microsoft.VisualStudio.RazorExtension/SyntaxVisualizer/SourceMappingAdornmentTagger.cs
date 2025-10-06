@@ -1,9 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.VisualStudio.Razor.Documents;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -54,7 +54,9 @@ internal sealed class SourceMappingAdornmentTagger : IntraTextAdornmentTagger<So
     protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, SourceMappingTag>> GetAdornmentData(NormalizedSnapshotSpanCollection spans)
     {
         if (spans.Count == 0)
+        {
             yield break;
+        }
 
         var snapshot = spans[0].Snapshot;
 
@@ -67,7 +69,9 @@ internal sealed class SourceMappingAdornmentTagger : IntraTextAdornmentTagger<So
             // Ignore data tags that are split by projection.
             // This is theoretically possible but unlikely in current scenarios.
             if (sourceMappingSpans.Count != 1)
+            {
                 continue;
+            }
 
             var adornmentSpan = new SnapshotSpan(sourceMappingSpans[0].Start, 0);
 

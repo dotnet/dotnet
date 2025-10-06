@@ -4,4 +4,7 @@
     <SkipShared Condition="'$(SkipShared)' == ''">true</SkipShared>
   </PropertyGroup>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <SignWithTestKey>true</SignWithTestKey>
+  </PropertyGroup>
 </Project>

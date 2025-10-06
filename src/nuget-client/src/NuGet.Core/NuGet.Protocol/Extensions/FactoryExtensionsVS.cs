@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Protocol.VisualStudio

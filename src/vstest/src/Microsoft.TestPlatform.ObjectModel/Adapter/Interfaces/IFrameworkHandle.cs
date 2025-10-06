@@ -23,7 +23,7 @@ public interface IFrameworkHandle : ITestExecutionRecorder, IMessageLogger
     /// Launch the specified process with the debugger attached.
     /// </summary>
     /// <param name="filePath">File path to the exe to launch.</param>
-    /// <param name="workingDirectory">Working directory that process should use.</param>
+    /// <param name="workingDirectory">Working directory that process should use. If null, the current directory will be used.</param>
     /// <param name="arguments">Command line arguments the process should be launched with.</param>
     /// <param name="environmentVariables">Environment variables to be set in target process</param>
     /// <returns>Process ID of the started process.</returns>

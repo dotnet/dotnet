@@ -84,14 +84,9 @@
       顯示此使用方式訊息。</target>
         <note />
       </trans-unit>
-      <trans-unit id="CopyrightCommandLineTitle">
-        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="translated">Copyright (C) Microsoft Corporation. 著作權所有，並保留一切權利。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
-        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="translated">Microsoft (R) Test Execution Command Line Tool {0} 版</target>
+        <source>VSTest version {0}</source>
+        <target state="translated">VSTest 版本 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">

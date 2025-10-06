@@ -6,29 +6,24 @@
 open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.Service.Tests.Common
 open FSharp.Compiler.Text
-open FSharp.Compiler.Tokenization
 open FSharp.Compiler.EditorServices
 open FSharp.Compiler.Symbols
 open FSharp.Test
-open NUnit.Framework
+open Xunit
 
-let testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource line colAtEndOfNames lineText names (expectedContent: string) =
+let testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource (expectedContent: string) =
+    let context = Checker.getResolveContext implSource
+
     let files =
         Map.ofArray
-            [| "A.fsi",
-               SourceText.ofString sigSource
-
-
-               "A.fs",
-               SourceText.ofString implSource |]
+            [| "A.fsi", SourceText.ofString sigSource
+               "A.fs",  SourceText.ofString context.Source |]
 
     let documentSource fileName = Map.tryFind fileName files |> async.Return
 
     let projectOptions =
-        let _, projectOptions = mkTestFileAndOptions "" Array.empty
-
-        { projectOptions with
-            SourceFiles = [| "A.fsi"; "A.fs" |] }
+        let _, projectOptions = mkTestFileAndOptions Array.empty
+        { projectOptions with SourceFiles = [| "A.fsi"; "A.fs" |] }
 
     let checker =
         FSharpChecker.Create(documentSource = DocumentSource.Custom documentSource,
@@ -41,27 +36,25 @@ let testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource line colAtEn
     match checkResult with
     | _, FSharpCheckFileAnswer.Succeeded(checkResults) ->
         // Get the tooltip for (line, colAtEndOfNames) in the implementation file
-        let (ToolTipText tooltipElements) =
-            checkResults.GetToolTip(line, colAtEndOfNames, lineText, names, FSharpTokenTag.Identifier)
-
+        let (ToolTipText tooltipElements) = checkResults.GetTooltip(context)
         match tooltipElements with
         | ToolTipElement.Group [ element ] :: _ ->
             match element.XmlDoc with
             | FSharpXmlDoc.FromXmlText xmlDoc ->
                 Assert.True xmlDoc.NonEmpty
                 Assert.True (xmlDoc.UnprocessedLines[0].Contains(expectedContent))
-            | xmlDoc -> Assert.Fail $"Expected FSharpXmlDoc.FromXmlText, got {xmlDoc}"
-        | elements -> Assert.Fail $"Expected at least one tooltip group element, got {elements}"
-    | _ -> Assert.Fail "Expected checking to succeed."
+            | xmlDoc -> failwith $"Expected FSharpXmlDoc.FromXmlText, got {xmlDoc}"
+        | elements -> failwith $"Expected at least one tooltip group element, got {elements}"
+    | _ -> failwith "Expected checking to succeed."
 
-    
-[<Test>]
+
+[<Fact>]
 let ``Display XML doc of signature file for let if implementation doesn't have one`` () =
     let sigSource =
         """
 module Foo
 
-/// Great XML doc comment
+/// Comment
 val bar: a: int -> b: int -> int
 """
 
@@ -69,20 +62,19 @@ val bar: a: int -> b: int -> int
                    """
 module Foo
 
-// No XML doc here because the signature file has one right?
-let bar a b = a - b
+let bar{caret} a b = a - b
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 4 4 "let bar a b = a - b" [ "bar" ] "Great XML doc comment"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
     
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for partial AP if implementation doesn't have one`` () =
     let sigSource =
         """
 module Foo
 
-/// Some Sig Doc on IsThree
+/// Comment
 val (|IsThree|_|): x: int -> int option
 """
 
@@ -90,20 +82,19 @@ val (|IsThree|_|): x: int -> int option
         """
 module Foo
 
-// No XML doc here because the signature file has one right?
-let (|IsThree|_|) x = if x = 3 then Some x else None
+let (|IsThr{caret}ee|_|) x = if x = 3 then Some x else None
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 4 4 "let (|IsThree|_|) x = if x = 3 then Some x else None" [ "IsThree" ] "Some Sig Doc on IsThree"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
     
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for DU if implementation doesn't have one`` () =
     let sigSource =
         """
 module Foo
 
-/// Some sig comment on the disc union type
+/// Comment
 type Bar =
     | Case1 of int * string
     | Case2 of string
@@ -113,16 +104,15 @@ type Bar =
         """
 module Foo
 
-// No XML doc here because the signature file has one right?
-type Bar =
+type Bar{caret} =
     | Case1 of int * string
     | Case2 of string
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 4 7 "type Bar =" [ "Bar" ] "Some sig comment on the disc union type"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for DU case if implementation doesn't have one`` () =
     let sigSource =
         """
@@ -130,7 +120,7 @@ module Foo
 
 type Bar =
     | BarCase1 of int * string
-    /// Some sig comment on the disc union case
+    /// CommentSig
     | BarCase2 of string
 """
 
@@ -140,20 +130,20 @@ module Foo
 
 type Bar =
     | BarCase1 of int * string
-    // No XML doc here because the signature file has one right?
-    | BarCase2 of string
+    // CommentImpl
+    | BarCase2{caret} of string
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 7 14 "    | BarCase2 of string" [ "BarCase2" ] "Some sig comment on the disc union case"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "CommentSig"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for record type if implementation doesn't have one`` () =
     let sigSource =
         """
 module Foo
 
-/// Some sig comment on record type
+/// Comment
 type Bar = {
     SomeField: int
 }
@@ -163,22 +153,22 @@ type Bar = {
         """
 module Foo
 
-type Bar = {
+type B{caret}ar = {
     SomeField: int
 }
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 3 9 "type Bar = {" [ "Bar" ] "Some sig comment on record type"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for record field if implementation doesn't have one`` () =
     let sigSource =
         """
 module Foo
 
 type Bar = {
-    /// Some sig comment on record field
+    /// Comment
     SomeField: int
 }
 """
@@ -188,14 +178,14 @@ type Bar = {
 module Foo
 
 type Bar = {
-    SomeField: int
+    SomeFiel{caret}d: int
 }
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 5 13 "    SomeField: int" [ "SomeField" ] "Some sig comment on record field"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for class type if implementation doesn't have one`` () =
     let sigSource =
         """
@@ -211,14 +201,14 @@ type Bar =
         """
 module Foo
 
-type Bar() =
+type B{caret}ar() =
     member val Foo = "bla" with get, set
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 3 9 "type Bar() =" [ "Bar" ] "Some sig comment on class type"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Some sig comment on class type"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for class member if implementation doesn't have one`` () =
     let sigSource =
         """
@@ -226,9 +216,9 @@ module Foo
 
 type Bar =
     new: unit -> Bar
-    /// Some sig comment on auto property
+    /// Comment1
     member Foo: string
-    /// Some sig comment on class member
+    /// Comment2
     member Func: int -> int -> int
 """
 
@@ -238,17 +228,17 @@ module Foo
 
 type Bar() =
     member val Foo = "bla" with get, set
-    member _.Func x y = x * y
+    member _.Func{caret} x y = x * y
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 6 30 "    member _.Func x y = x * y" [ "_"; "Func" ] "Some sig comment on class member"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment2"
 
 
-[<Test>]
+[<Fact>]
 let ``Display XML doc of signature file for module if implementation doesn't have one`` () =
     let sigSource =
         """
-/// Some sig comment on module
+/// Comment
 module Foo
 
 val a: int
@@ -256,24 +246,22 @@ val a: int
                
     let implSource =
         """
-module Foo
+module Fo{caret}o
 
 let a = 23
 """
 
-    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource 2 10 "module Foo" [ "Foo" ] "Some sig comment on module"
+    testXmlDocFallbackToSigFileWhileInImplFile sigSource implSource "Comment"
 
 
-let testToolTipSquashing source line colAtEndOfNames lineText names tokenTag =
-    let files =
-        Map.ofArray
-            [| "A.fs",
-               SourceText.ofString source |]
+let testToolTipSquashing source =
+    let context = Checker.getResolveContext source
+    let files = Map.ofArray [| "A.fs", SourceText.ofString context.Source |]
     
     let documentSource fileName = Map.tryFind fileName files |> async.Return
 
     let projectOptions =
-        let _, projectOptions = mkTestFileAndOptions "" Array.empty
+        let _, projectOptions = mkTestFileAndOptions Array.empty
 
         { projectOptions with
             SourceFiles = [| "A.fs" |] }
@@ -288,13 +276,10 @@ let testToolTipSquashing source line colAtEndOfNames lineText names tokenTag =
         
     match checkResult with
     | _, FSharpCheckFileAnswer.Succeeded(checkResults) ->
-
         // Get the tooltip for `bar`
-        let (ToolTipText tooltipElements) =
-            checkResults.GetToolTip(line, colAtEndOfNames, lineText, names, tokenTag)
+        let (ToolTipText tooltipElements) = checkResults.GetTooltip(context)
+        let (ToolTipText tooltipElementsSquashed) = checkResults.GetTooltip(context, 10)
 
-        let (ToolTipText tooltipElementsSquashed) =
-            checkResults.GetToolTip(line, colAtEndOfNames, lineText, names, tokenTag, 10)
         match tooltipElements, tooltipElementsSquashed with
         | groups, groupsSquashed ->
             let breaks =
@@ -318,101 +303,268 @@ let testToolTipSquashing source line colAtEndOfNames lineText names tokenTag =
                 |> Array.concat
                 |> Array.sumBy (fun t -> if t.Tag = TextTag.LineBreak then 1 else 0)
                     
-            Assert.Less(breaks, squashedBreaks)
-    | _ -> Assert.Fail "Expected checking to succeed."
+            Assert.True(breaks < squashedBreaks)
+    | _ -> failwith "Expected checking to succeed."
 
 
-[<Test>]
+[<Fact>]
 let ``Squashed tooltip of long function signature should have newlines added`` () =
-    let source =
-        """
+    testToolTipSquashing """
 module Foo
 
-let bar (fileName: string) (fileVersion: int) (sourceText: string)  (options: int) (userOpName: string) = 0
+let bar{caret} (fileName: string) (fileVersion: int) (sourceText: string)  (options: int) (userOpName: string) = 0
 """
 
-    testToolTipSquashing source 3 6 "let bar (fileName: string) (fileVersion: int) (sourceText: string)  (options: int) (userOpName: string) = 0;" [ "bar" ] FSharpTokenTag.Identifier
 
-
-[<Test>]
+[<Fact>]
 let ``Squashed tooltip of record with long field signature should have newlines added`` () =
-    let source =
-        """
+    testToolTipSquashing """
 module Foo
 
-type Foo =
+type Fo{caret}o =
     { Field1: string
       Field2: (string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string) }
 """
 
-    testToolTipSquashing source 3 7 "type Foo =" [ "Foo" ] FSharpTokenTag.Identifier
 
-
-[<Test>]
+[<Fact>]
 let ``Squashed tooltip of DU with long case signature should have newlines added`` () =
-    let source =
-        """
+    testToolTipSquashing """
 module Foo
 
-type SomeDiscUnion =
+type SomeDis{caret}cUnion =
     | Case1 of string
     | Case2 of (string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string * string)
 """
 
-    testToolTipSquashing source 3 7 "type SomeDiscUnion =" [ "SomeDiscUnion" ] FSharpTokenTag.Identifier
 
-
-[<Test>]
+[<Fact>]
 let ``Squashed tooltip of constructor with long signature should have newlines added`` () =
-    let source =
-        """
+    testToolTipSquashing """
 module Foo
 
-type SomeClass(a1: int, a2: int, a3: int, a4: int, a5: int, a6: int, a7: int, a8: int, a9: int, a10: int, a11: int, a12: int, a13: int, a14: int, a15: int, a16: int, a17: int, a18: int, a19: int, a20: int) =
+type Some{caret}Class(a1: int, a2: int, a3: int, a4: int, a5: int, a6: int, a7: int, a8: int, a9: int, a10: int, a11: int, a12: int, a13: int, a14: int, a15: int, a16: int, a17: int, a18: int, a19: int, a20: int) =
     member _.A = a1
 """
 
-    testToolTipSquashing source 3 7 "type SomeClass(a1: int, a2: int, a3: int, a4: int, a5: int, a6: int, a7: int, a8: int, a9: int, a10: int, a11: int, a12: int, a13: int, a14: int, a15: int, a16: int, a17: int, a18: int, a19: int, a20: int) =" [ "SomeClass" ] FSharpTokenTag.Identifier
 
-
-[<Test>]
+[<Fact>]
 let ``Squashed tooltip of property with long signature should have newlines added`` () =
-    let source =
-        """
+    testToolTipSquashing """
 module Foo
 
 type SomeClass() =
     member _.Abc: (int * int * int * int * int * int * int * int * int * int * int * int * int * int * int * int * int * int * int * int) = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 
 let c = SomeClass()
-c.Abc
+c.Ab{caret}c
 """
 
-    testToolTipSquashing source 7 5 "c.Abc" [ "c"; "Abc" ] FSharpTokenTag.Identifier
 
-[<Test>]
+let getCheckResults source options =
+    let fileName, options =
+        mkTestFileAndOptions
+            options
+    let _, checkResults = parseAndCheckFile fileName source options
+    checkResults
+
+
+let taggedTextsToString (t: TaggedText array) =
+    t
+    |> Array.map (fun taggedText -> taggedText.Text)
+    |> String.concat ""
+
+let assertAndExtractTooltip (ToolTipText(items)) =
+    Assert.Equal(1,items.Length)
+    match items[0] with
+    | ToolTipElement.Group [ singleElement ] ->
+        let toolTipText =
+            singleElement.MainDescription
+            |> taggedTextsToString
+        toolTipText, singleElement.XmlDoc, singleElement.Remarks |> Option.map taggedTextsToString
+    | _ -> failwith $"Expected group, got {items[0]}"
+    
+let assertAndGetSingleToolTipText items =
+    let text,_xml,_remarks = assertAndExtractTooltip items
+    text
+
+let normalize (s: string) = s.Replace("\r\n", "\n").Replace("\n\n", "\n")
+
+[<Fact>]
 let ``Auto property should display a single tool tip`` () =
-    let source = """
+    Checker.getTooltip """
 namespace Foo
 
 /// Some comment on class
 type Bar() =
     /// Some comment on class member
-    member val Foo = "bla" with get, set
+    member val Fo{caret}o = "bla" with get, set
 """
-    let fileName, options =
-        mkTestFileAndOptions
-            source
-            Array.empty
-    let _, checkResults = parseAndCheckFile fileName source options
-    let (ToolTipText(items)) = checkResults.GetToolTip(7, 18, "    member val Foo = \"bla\" with get, set", [ "Foo" ], FSharpTokenTag.Identifier)
-    Assert.True (items.Length = 1)
-    match items.[0] with
-    | ToolTipElement.Group [ { MainDescription = description } ] ->
-        let toolTipText =
-            description
-            |> Array.map (fun taggedText -> taggedText.Text)
-            |> String.concat ""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo "property Bar.Foo: string with get, set"
 
-        Assert.AreEqual("property Bar.Foo: string with get, set", toolTipText)
-    | _ -> Assert.Fail $"Expected group, got {items.[0]}"
+[<Theory>]
+[<InlineData("(string | null) list", "val x: (string | null) list")>]
+[<InlineData("(int -> int) | null", "val x: (int -> int) | null")>]
+[<InlineData("(string | null) * int", "val x: (string | null) * int")>]
+let ``Should display correct nullable types`` declaredType tooltip =
+    Checker.getTooltip $"""
+module Foo
+
+let f (x{{caret}}: {declaredType}) = ()
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo tooltip
+
+[<FactForNETCOREAPP>]
+let ``Should display nullable Csharp code analysis annotations on method argument`` () =
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+let exists() = System.IO.Path.Exist{caret}s(null:string)
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo "System.IO.Path.Exists([<NotNullWhenAttribute (true)>] path: string | null) : bool"
+    
+[<FactForNETCOREAPP>]
+let ``Should display xml doc on a nullable BLC method`` () =
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+let exists() = System.IO.Path.Exi{caret}sts(null:string)
+"""
+    |> assertAndExtractTooltip
+    |> fun (text,xml,_remarks) ->
+            text |> Assert.shouldBeEquivalentTo "System.IO.Path.Exists([<NotNullWhenAttribute (true)>] path: string | null) : bool"
+            match xml with
+            | FSharpXmlDoc.FromXmlFile (_dll,sigPath) -> sigPath |> Assert.shouldBeEquivalentTo "M:System.IO.Path.Exists(System.String)"
+            | _ -> failwith $"Xml wrong type %A{xml}"
+
+            
+[<FactForNETCOREAPP>]
+let ``Should display xml doc on fsharp hosted nullable function`` () =
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+/// This is a xml doc above myFunc
+let myFunc(x:string|null) : string | null = x
+
+let exists() = myFu{caret}nc(null)
+"""
+    |> assertAndExtractTooltip
+    |> fun (text,xml,remarks) ->
+            match xml with
+            | FSharpXmlDoc.FromXmlText t ->
+                 t.UnprocessedLines |> Assert.shouldBeEquivalentTo [|" This is a xml doc above myFunc"|]
+            | _ -> failwith $"xml was %A{xml}"
+            text |> Assert.shouldBeEquivalentTo "val myFunc: x: (string | null) -> string | null"            
+            remarks |> Assert.shouldBeEquivalentTo (Some "Full name: Foo.myFunc")
+
+
+[<FactForNETCOREAPP>]
+let ``Should display nullable Csharp code analysis annotations on method return type`` () =
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+let getPath() = System.IO.Path.GetFile{caret}Name(null:string)
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo ("""[<return:NotNullIfNotNullAttribute ("path")>]
+System.IO.Path.GetFileName(path: string | null) : string | null""" |> normalize)
+
+[<FactForNETCOREAPP>]
+let ``Should display nullable Csharp code analysis annotations on TryParse pattern`` () =   
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+let success,version = System.Version.TryPar{caret}se(null)
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo """System.Version.TryParse([<NotNullWhenAttribute (true)>] input: string | null, [<NotNullWhenAttribute (true)>] result: byref<System.Version | null>) : bool"""
+
+[<FactForNETCOREAPP>]
+let ``Display with nullable annotations can be squashed`` () =   
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+let success,version = System.Version.Try{caret}Parse(null)
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo ("""System.Version.TryParse([<NotNullWhenAttribute (true)>] input: string | null, [<NotNullWhenAttribute (true)>] result: byref<System.Version | null>) : bool""" |> normalize)
+    
+[<FactForNETCOREAPP>]
+let ``Allows ref struct is shown on BCL interface declaration`` () =   
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+open System
+let myAction : Acti{caret}on<int> | null = null
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldStartWith ("""type Action<'T (allows ref struct)>""" |> normalize)
+    
+[<FactForNETCOREAPP>]
+let ``Allows ref struct is shown for each T on BCL interface declaration`` () =   
+    Checker.getTooltipWithOptions [|"--checknulls+";"--langversion:preview"|] """
+module Foo
+
+open System
+let myAction : Acti{caret}on<int,_,_,_> | null = null
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldStartWith ("""type Action<'T1,'T2,'T3,'T4 (allows ref struct and allows ref struct and allows ref struct and allows ref struct)>""" |> normalize)
+    
+[<FactForNETCOREAPP>]
+let ``Allows ref struct is shown on BCL method usage`` () =
+    Checker.getTooltip """
+module Foo
+
+open System
+open System.Collections.Generic
+let doIt (dict:Dictionary<'a,'b>) = dict.GetAltern{caret}ateLookup<'a,'b,ReadOnlySpan<char>>()
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldContain ("""'TAlternateKey (allows ref struct)""" |> normalize)
+    
+[<FactForNETCOREAPP>]
+let ``Allows ref struct is not shown on BCL interface usage`` () =   
+    Checker.getTooltip """
+module Foo
+
+open System
+let doIt(myAction : Action<int>) = myAc{caret}tion.Invoke(42)
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo ("""val myAction: Action<int>""" |> normalize)
+
+[<Fact>]
+let ``Super type should be formatted in the prefix style`` () =
+    Checker.getTooltip """
+namespace Foo
+
+type A{caret} =
+    inherit seq<int list>
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo "type A =\n  inherit seq<int list>"
+
+[<Fact>]
+let ``Interface impl should be formatted in the prefix style`` () =
+    Checker.getTooltip """
+namespace Foo
+
+type A{caret} =
+    interface seq<int list> with
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo "type A =\n  interface seq<int list>"
+
+[<Fact>]
+let ``Flexible generic type should be formatted in the prefix style`` () =
+    Checker.getTooltip """
+module Foo
+
+let f (x{caret}: #seq<int list>) = ()
+"""
+    |> assertAndGetSingleToolTipText
+    |> Assert.shouldBeEquivalentTo "val x: #seq<int list>"

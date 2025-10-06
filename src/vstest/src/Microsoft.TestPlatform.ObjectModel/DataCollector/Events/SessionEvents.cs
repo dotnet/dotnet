@@ -49,6 +49,7 @@ public sealed class SessionStartEventArgs : DataCollectionEventArgs
     /// <param name="context">
     /// Context information for the session
     /// </param>
+    /// <param name="properties">Properties for the session.</param>
     public SessionStartEventArgs(DataCollectionContext context, IDictionary<string, object?> properties)
         : base(context)
     {

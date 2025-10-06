@@ -17,6 +17,20 @@ namespace NuGet.Packaging
 {
     public static class PackageExtractor
     {
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageStream">A <see cref="Stream"/> for the nupkg file that is being extracted.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="ArgumentException">If packageStream is not seekable.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             Stream packageStream,
@@ -61,24 +75,17 @@ namespace NuGet.Packaging
                     var packageDirectoryInfo = Directory.CreateDirectory(installPath);
                     var packageDirectory = packageDirectoryInfo.FullName;
 
-                    try
-                    {
-                        telemetry.StartIntervalMeasure();
+                    telemetry.StartIntervalMeasure();
 
-                        await VerifyPackageSignatureAsync(
-                         source,
-                         telemetry.OperationId,
-                         packageIdentityFromNuspec,
-                         packageExtractionContext,
-                         packageReader,
-                         token);
+                    await VerifyPackageSignatureAsync(
+                        source,
+                        telemetry.OperationId,
+                        packageIdentityFromNuspec,
+                        packageExtractionContext,
+                        packageReader,
+                        token);
 
-                        telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                    }
-                    catch (SignatureException)
-                    {
-                        throw;
-                    }
+                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                     var packageFiles = await packageReader.GetPackageFilesAsync(packageSaveMode, token);
 
@@ -140,6 +147,21 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageReader">A <see cref="PackageReaderBase"/> with the package opened.</param>
+        /// <param name="packageStream">A <see cref="Stream"/> for the nupkg file that is being extracted.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="ArgumentException">If packagestream is not seekable.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             PackageReaderBase packageReader,
@@ -165,8 +187,6 @@ namespace NuGet.Packaging
             }
 
             var packageSaveMode = packageExtractionContext.PackageSaveMode;
-            var extractionId = Guid.NewGuid();
-            var nupkgStartPosition = packageStream.Position;
             var filesAdded = new List<string>();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.NuGetFolderProject);
@@ -175,24 +195,17 @@ namespace NuGet.Packaging
                 var packageIdentityFromNuspec = await packageReader.GetIdentityAsync(token);
                 packageExtractionTelemetryEvent.LogPackageIdentity(packageIdentityFromNuspec);
 
-                try
-                {
-                    telemetry.StartIntervalMeasure();
+                telemetry.StartIntervalMeasure();
 
-                    await VerifyPackageSignatureAsync(
-                         source,
-                         telemetry.OperationId,
-                         packageIdentityFromNuspec,
-                         packageExtractionContext,
-                         packageReader,
-                         token);
+                await VerifyPackageSignatureAsync(
+                    source,
+                    telemetry.OperationId,
+                    packageIdentityFromNuspec,
+                    packageExtractionContext,
+                    packageReader,
+                    token);
 
-                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                }
-                catch (SignatureException)
-                {
-                    throw;
-                }
+                telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                 var packageDirectoryInfo = Directory.CreateDirectory(packagePathResolver.GetInstallPath(packageIdentityFromNuspec));
                 var packageDirectory = packageDirectoryInfo.FullName;
@@ -241,6 +254,19 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Extracts a package, using the packages.config directory layout
+        /// </summary>
+        /// <remarks>For PackageReference directory layout, use <see cref="PackageExtractor.InstallFromSourceAsync(string, PackageIdentity, Func{Stream, Task}, VersionFolderPathResolver, PackageExtractionContext, CancellationToken, Guid)"/></remarks>
+        /// <param name="source">The source from which the package was downloaded</param>
+        /// <param name="packageReader">A <see cref="PackageReaderBase"/> with the package opened.</param>
+        /// <param name="packagePathResolver">The V2 (packages.config) <see cref="PackagePathResolver"/>.</param>
+        /// <param name="packageExtractionContext">The <see cref="PackageExtractionContext"/> with settings for how the extraction should be configured.</param>
+        /// <param name="token">A cancellation token.</param>
+        /// <param name="parentId">Telemetry parent ID.</param>
+        /// <returns>A collection of files that were extracted.</returns>
+        /// <exception cref="ArgumentNullException">If packageReader, packagePathResolver, or packageExtractionContext are null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<IEnumerable<string>> ExtractPackageAsync(
             string source,
             PackageReaderBase packageReader,
@@ -267,7 +293,6 @@ namespace NuGet.Packaging
             token.ThrowIfCancellationRequested();
 
             var packageSaveMode = packageExtractionContext.PackageSaveMode;
-            var extractionId = Guid.NewGuid();
             var filesAdded = new List<string>();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.NuGetFolderProject);
@@ -276,24 +301,17 @@ namespace NuGet.Packaging
                 var packageIdentityFromNuspec = await packageReader.GetIdentityAsync(token);
                 packageExtractionTelemetryEvent.LogPackageIdentity(packageIdentityFromNuspec);
 
-                try
-                {
-                    telemetry.StartIntervalMeasure();
+                telemetry.StartIntervalMeasure();
 
-                    await VerifyPackageSignatureAsync(
-                        source,
-                        telemetry.OperationId,
-                        packageIdentityFromNuspec,
-                        packageExtractionContext,
-                        packageReader,
-                        token);
+                await VerifyPackageSignatureAsync(
+                    source,
+                    telemetry.OperationId,
+                    packageIdentityFromNuspec,
+                    packageExtractionContext,
+                    packageReader,
+                    token);
 
-                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                }
-                catch (SignatureException)
-                {
-                    throw;
-                }
+                telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                 var packageDirectoryInfo = Directory.CreateDirectory(packagePathResolver.GetInstallPath(packageIdentityFromNuspec));
                 var packageDirectory = packageDirectoryInfo.FullName;
@@ -336,20 +354,26 @@ namespace NuGet.Packaging
         }
 
         /// <summary>
-        /// Uses a copy function to install a package to a global packages directory.
+        /// Uses a copy function to install a package to a global packages directory with the PackageReference directory layout.
         /// </summary>
+        /// <param name="source">The source where the nupkg was downloaded from.</param>
+        /// <param name="packageIdentity">The package id + version being installed.</param>
         /// <param name="copyToAsync">
         /// A function which should copy the package to the provided destination stream.
         /// </param>
+        /// <param name="versionFolderPathResolver">The path resolver for PackageReference layout.</param>
         /// <param name="packageExtractionContext">
         /// The version folder path context, which encapsulates all of the parameters to observe
         /// while installing the package.
         /// </param>
         /// <param name="token">The cancellation token.</param>
+        /// <param name="parentId">The telemetry parent ID.</param>
         /// <returns>
         /// True if the package was installed. False if the package already exists and therefore
         /// resulted in no copy operation.
         /// </returns>
+        /// <exception cref="ArgumentNullException">If copyToAsync or packageExtractionContext is null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<bool> InstallFromSourceAsync(
             string source,
             PackageIdentity packageIdentity,
@@ -370,7 +394,6 @@ namespace NuGet.Packaging
             }
 
             var logger = packageExtractionContext.Logger;
-            var extractionId = Guid.NewGuid();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.DownloadResource, packageIdentity);
             using (var telemetry = TelemetryActivity.Create(parentId, packageExtractionTelemetryEvent))
@@ -466,8 +489,6 @@ namespace NuGet.Packaging
 
                                         if ((packageSaveMode & PackageSaveMode.Files) == PackageSaveMode.Files)
                                         {
-                                            var nupkgFileName = Path.GetFileName(targetNupkg);
-                                            var nuspecFileName = Path.GetFileName(targetNuspec);
                                             var hashFileName = Path.GetFileName(hashPath);
                                             var nupkgMetadataFileName = Path.GetFileName(nupkgMetadataFilePath);
                                             var packageFiles = packageReader.GetFiles()
@@ -592,6 +613,26 @@ namespace NuGet.Packaging
             }
         }
 
+        /// <summary>
+        /// Uses a copy function to install a package to a global packages directory with the PackageReference directory layout.
+        /// </summary>
+        /// <param name="packageIdentity">The package id + version being installed.</param>
+        /// <param name="packageDownloader">
+        /// A <see cref="IPackageDownloader"/> to download the nupkg.
+        /// </param>
+        /// <param name="versionFolderPathResolver">The path resolver for PackageReference layout.</param>
+        /// <param name="packageExtractionContext">
+        /// The version folder path context, which encapsulates all of the parameters to observe
+        /// while installing the package.
+        /// </param>
+        /// <param name="token">The cancellation token.</param>
+        /// <param name="parentId">The telemetry parent ID.</param>
+        /// <returns>
+        /// True if the package was installed. False if the package already exists and therefore
+        /// resulted in no copy operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">If packageDownlaoder or packageExtractionContext is null.</exception>
+        /// <exception cref="SignatureException">If the package signature couldn't be validated. See exception message for more details.</exception>
         public static async Task<bool> InstallFromSourceAsync(
             PackageIdentity packageIdentity,
             IPackageDownloader packageDownloader,

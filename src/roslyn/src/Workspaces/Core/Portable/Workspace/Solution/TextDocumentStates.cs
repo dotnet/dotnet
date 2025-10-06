@@ -3,142 +3,156 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Serialization;
+using Microsoft.CodeAnalysis.Shared.Collections;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis;
 
+// On NetFx, frozen dictionary is very expensive when you give it a case insensitive comparer.  This is due to
+// unavoidable allocations it performs while doing its key-analysis that involve going through the non-span-aware
+// culture types.  So, on netfx, we use a plain ReadOnlyDictionary here.
+#if NET
+using FilePathToDocumentIds = FrozenDictionary<string, OneOrMany<DocumentId>>;
+#else
+using FilePathToDocumentIds = ReadOnlyDictionary<string, OneOrMany<DocumentId>>;
+#endif
+
 /// <summary>
 /// Holds on a <see cref="DocumentId"/> to <see cref="TextDocumentState"/> map and an ordering.
 /// </summary>
-internal readonly struct TextDocumentStates<TState>
+internal sealed class TextDocumentStates<TState>
     where TState : TextDocumentState
 {
+#if NET
+    private static readonly ObjectPool<Dictionary<string, OneOrMany<DocumentId>>> s_filePathPool = new(() => new(SolutionState.FilePathComparer));
+#endif
+
     public static readonly TextDocumentStates<TState> Empty =
-        new([], ImmutableSortedDictionary.Create<DocumentId, TState>(DocumentIdComparer.Instance));
+        new([],
+            ImmutableSortedDictionary.Create<DocumentId, TState>(DocumentIdComparer.Instance),
+#if NET
+            FilePathToDocumentIds.Empty);
+#else
+            new(new Dictionary<string, OneOrMany<DocumentId>>()));
+#endif
 
     private readonly ImmutableList<DocumentId> _ids;
+    private ImmutableArray<TState> _statesInCompilationOrder;
+    private FilePathToDocumentIds? _filePathToDocumentIds;
 
-    /// <summary>
-    /// The entries in the map are sorted by <see cref="DocumentId.Id"/>, which yields locally deterministic order but not the order that
-    /// matches the order in which documents were added. Therefore this ordering can't be used when creating compilations and it can't be 
-    /// used when persisting document lists that do not preserve the GUIDs.
-    /// </summary>
-    private readonly ImmutableSortedDictionary<DocumentId, TState> _map;
-
-    private TextDocumentStates(ImmutableList<DocumentId> ids, ImmutableSortedDictionary<DocumentId, TState> map)
+    private TextDocumentStates(
+        ImmutableList<DocumentId> ids,
+        ImmutableSortedDictionary<DocumentId, TState> map,
+        FilePathToDocumentIds? filePathToDocumentIds)
     {
         Debug.Assert(map.KeyComparer == DocumentIdComparer.Instance);
 
         _ids = ids;
-        _map = map;
+        States = map;
+        _filePathToDocumentIds = filePathToDocumentIds;
     }
 
     public TextDocumentStates(IEnumerable<TState> states)
-        : this(states.Select(s => s.Id).ToImmutableList(),
-               states.ToImmutableSortedDictionary(state => state.Id, state => state, DocumentIdComparer.Instance))
+        : this([.. states.Select(s => s.Id)],
+               states.ToImmutableSortedDictionary(state => state.Id, state => state, DocumentIdComparer.Instance),
+               filePathToDocumentIds: null)
     {
     }
 
     public TextDocumentStates(IEnumerable<DocumentInfo> infos, Func<DocumentInfo, TState> stateConstructor)
-        : this(infos.Select(info => info.Id).ToImmutableList(),
-               infos.ToImmutableSortedDictionary(info => info.Id, stateConstructor, DocumentIdComparer.Instance))
+        : this([.. infos.Select(info => info.Id)],
+               infos.ToImmutableSortedDictionary(info => info.Id, stateConstructor, DocumentIdComparer.Instance),
+               filePathToDocumentIds: null)
     {
     }
 
     public TextDocumentStates<TState> WithCompilationOrder(ImmutableList<DocumentId> ids)
-        => new(ids, _map);
+        => new(ids, States, _filePathToDocumentIds);
 
     public int Count
-        => _map.Count;
+        => States.Count;
 
     public bool IsEmpty
         => Count == 0;
 
     public bool Contains(DocumentId id)
-        => _map.ContainsKey(id);
+        => States.ContainsKey(id);
 
     public bool TryGetState(DocumentId documentId, [NotNullWhen(true)] out TState? state)
-        => _map.TryGetValue(documentId, out state);
+        => States.TryGetValue(documentId, out state);
 
     public TState? GetState(DocumentId documentId)
-        => _map.TryGetValue(documentId, out var state) ? state : null;
+        => States.TryGetValue(documentId, out var state) ? state : null;
 
     public TState GetRequiredState(DocumentId documentId)
-        => _map.TryGetValue(documentId, out var state) ? state : throw ExceptionUtilities.Unreachable();
+        => States.TryGetValue(documentId, out var state) ? state : throw ExceptionUtilities.Unreachable();
 
     /// <summary>
     /// <see cref="DocumentId"/>s in the order in which they were added to the project (the compilation order).
     /// </summary>
-    public readonly IReadOnlyList<DocumentId> Ids => _ids;
+    public IReadOnlyList<DocumentId> Ids => _ids;
 
     /// <summary>
     /// States ordered by <see cref="DocumentId"/>.
     /// </summary>
-    public ImmutableSortedDictionary<DocumentId, TState> States
-        => _map;
+    /// <remarks>
+    /// The entries in the map are sorted by <see cref="DocumentId.Id"/>, which yields locally deterministic order but not the order that
+    /// matches the order in which documents were added. Therefore this ordering can't be used when creating compilations and it can't be 
+    /// used when persisting document lists that do not preserve the GUIDs.
+    /// </remarks>
+    public ImmutableSortedDictionary<DocumentId, TState> States { get; }
 
     /// <summary>
     /// Get states ordered in compilation order.
     /// </summary>
-    /// <returns></returns>
-    public IEnumerable<TState> GetStatesInCompilationOrder()
+    public ImmutableArray<TState> GetStatesInCompilationOrder()
     {
-        var map = _map;
-        return Ids.Select(id => map[id]);
+        if (_statesInCompilationOrder.IsDefault)
+            _statesInCompilationOrder = Ids.SelectAsArray(static (id, map) => map[id], States);
+
+        return _statesInCompilationOrder;
     }
 
     public ImmutableArray<TValue> SelectAsArray<TValue>(Func<TState, TValue> selector)
-    {
-        // Directly use ImmutableArray.Builder as we know the final size
-        var builder = ImmutableArray.CreateBuilder<TValue>(_map.Count);
-
-        foreach (var (_, state) in _map)
-        {
-            builder.Add(selector(state));
-        }
-
-        return builder.MoveToImmutable();
-    }
+        => SelectAsArray(
+            static (state, selector) => selector(state),
+            selector);
 
     public ImmutableArray<TValue> SelectAsArray<TValue, TArg>(Func<TState, TArg, TValue> selector, TArg arg)
     {
-        // Directly use ImmutableArray.Builder as we know the final size
-        var builder = ImmutableArray.CreateBuilder<TValue>(_map.Count);
+        var result = new FixedSizeArrayBuilder<TValue>(States.Count);
+        foreach (var (_, state) in States)
+            result.Add(selector(state, arg));
 
-        foreach (var (_, state) in _map)
-        {
-            builder.Add(selector(state, arg));
-        }
-
-        return builder.MoveToImmutable();
-    }
-
-    public async ValueTask<ImmutableArray<TValue>> SelectAsArrayAsync<TValue, TArg>(Func<TState, TArg, CancellationToken, ValueTask<TValue>> selector, TArg arg, CancellationToken cancellationToken)
-    {
-        // Directly use ImmutableArray.Builder as we know the final size
-        var builder = ImmutableArray.CreateBuilder<TValue>(_map.Count);
-
-        foreach (var (_, state) in _map)
-        {
-            builder.Add(await selector(state, arg, cancellationToken).ConfigureAwait(true));
-        }
-
-        return builder.MoveToImmutable();
+        return result.MoveToImmutable();
     }
 
     public TextDocumentStates<TState> AddRange(ImmutableArray<TState> states)
-        => new(_ids.AddRange(states.Select(state => state.Id)),
-               _map.AddRange(states.Select(state => KeyValuePairUtil.Create(state.Id, state))));
+    {
+        using var pooledIds = SharedPools.Default<List<DocumentId>>().GetPooledObject();
+        var ids = pooledIds.Object;
+
+        foreach (var state in states)
+            ids.Add(state.Id);
+
+        return new(
+            _ids.AddRange(ids),
+            States.AddRange(states.Select(state => KeyValuePair.Create(state.Id, state))),
+            filePathToDocumentIds: null);
+    }
 
     public TextDocumentStates<TState> RemoveRange(ImmutableArray<DocumentId> ids)
     {
@@ -146,7 +160,7 @@ internal readonly struct TextDocumentStates<TState>
         {
             using var _ = PooledHashSet<DocumentId>.GetInstance(out var set);
 
-#if NETCOREAPP
+#if NET
             set.EnsureCapacity(ids.Length);
 #endif
 
@@ -158,22 +172,51 @@ internal readonly struct TextDocumentStates<TState>
         }
 
         IEnumerable<DocumentId> enumerableIds = ids;
-        return new(_ids.RemoveRange(enumerableIds), _map.RemoveRange(enumerableIds));
+        return new(_ids.RemoveRange(enumerableIds), States.RemoveRange(enumerableIds), filePathToDocumentIds: null);
     }
 
-    internal TextDocumentStates<TState> SetState(DocumentId id, TState state)
-        => new(_ids, _map.SetItem(id, state));
+    internal TextDocumentStates<TState> SetState(TState state)
+        => SetStates([state]);
+
+    internal TextDocumentStates<TState> SetStates(ImmutableArray<TState> states)
+    {
+        var builder = States.ToBuilder();
+        var filePathToDocumentIds = _filePathToDocumentIds;
+
+        foreach (var state in states)
+        {
+            var id = state.Id;
+            var oldState = States[id];
+
+            // If any file paths have changed, don't preseve the computed map.  We'll regenerate the new map on demand when needed.
+            if (filePathToDocumentIds != null && oldState.FilePath != state.FilePath)
+                filePathToDocumentIds = null;
+
+            builder[id] = state;
+        }
+
+        return new(_ids, builder.ToImmutable(), filePathToDocumentIds);
+    }
 
     public TextDocumentStates<TState> UpdateStates<TArg>(Func<TState, TArg, TState> transformation, TArg arg)
     {
-        var builder = _map.ToBuilder();
-
-        foreach (var (id, state) in _map)
+        var builder = States.ToBuilder();
+        var filePathsChanged = false;
+        foreach (var (id, state) in States)
         {
-            builder[id] = transformation(state, arg);
+            var newState = transformation(state, arg);
+
+            // Track if the file path changed when updating any of the state values.
+            filePathsChanged = filePathsChanged || newState.FilePath != state.FilePath;
+
+            builder[id] = newState;
         }
 
-        return new(_ids, builder.ToImmutable());
+        // If any file paths changed, don't pass along our computed map.  We'll recompute it on demand when needed.
+        var filePaths = filePathsChanged
+            ? null
+            : _filePathToDocumentIds;
+        return new(_ids, builder.ToImmutable(), filePaths);
     }
 
     /// <summary>
@@ -191,7 +234,7 @@ internal readonly struct TextDocumentStates<TState>
                 continue;
             }
 
-            var newState = _map[id];
+            var newState = States[id];
             if (newState == oldState)
             {
                 continue;
@@ -210,13 +253,13 @@ internal readonly struct TextDocumentStates<TState>
     /// Returns a <see cref="DocumentId"/>s of added documents.
     /// </summary>
     public IEnumerable<DocumentId> GetAddedStateIds(TextDocumentStates<TState> oldStates)
-        => (_ids == oldStates._ids) ? SpecializedCollections.EmptyEnumerable<DocumentId>() : Except(_ids, oldStates._map);
+        => (_ids == oldStates._ids) ? [] : Except(_ids, oldStates.States);
 
     /// <summary>
     /// Returns a <see cref="DocumentId"/>s of removed documents.
     /// </summary>
     public IEnumerable<DocumentId> GetRemovedStateIds(TextDocumentStates<TState> oldStates)
-        => (_ids == oldStates._ids) ? SpecializedCollections.EmptyEnumerable<DocumentId>() : Except(oldStates._ids, _map);
+        => (_ids == oldStates._ids) ? [] : Except(oldStates._ids, States);
 
     private static IEnumerable<DocumentId> Except(ImmutableList<DocumentId> ids, ImmutableSortedDictionary<DocumentId, TState> map)
     {
@@ -230,7 +273,7 @@ internal readonly struct TextDocumentStates<TState>
     }
 
     public bool HasAnyStateChanges(TextDocumentStates<TState> oldStates)
-        => !_map.Values.SequenceEqual(oldStates._map.Values);
+        => !States.Values.SequenceEqual(oldStates.States.Values);
 
     public override bool Equals(object? obj)
         => obj is TextDocumentStates<TState> other && Equals(other);
@@ -239,7 +282,7 @@ internal readonly struct TextDocumentStates<TState>
         => throw new NotSupportedException();
 
     public bool Equals(TextDocumentStates<TState> other)
-        => _map == other._map && _ids == other.Ids;
+        => States == other.States && _ids == other.Ids;
 
     private sealed class DocumentIdComparer : IComparer<DocumentId?>
     {
@@ -264,10 +307,73 @@ internal readonly struct TextDocumentStates<TState>
         }
     }
 
-    public async ValueTask<ChecksumsAndIds<DocumentId>> GetChecksumsAndIdsAsync(CancellationToken cancellationToken)
+    public async ValueTask<DocumentChecksumsAndIds> GetDocumentChecksumsAndIdsAsync(CancellationToken cancellationToken)
     {
-        var documentChecksumTasks = SelectAsArray(static (state, token) => state.GetChecksumAsync(token), cancellationToken);
-        var documentChecksums = new ChecksumCollection(await documentChecksumTasks.WhenAll().ConfigureAwait(false));
-        return new(documentChecksums, SelectAsArray(static s => s.Id));
+        var attributeChecksums = new FixedSizeArrayBuilder<Checksum>(States.Count);
+        var textChecksums = new FixedSizeArrayBuilder<Checksum>(States.Count);
+        var documentIds = new FixedSizeArrayBuilder<DocumentId>(States.Count);
+
+        foreach (var (documentId, state) in States)
+        {
+            var stateChecksums = await state.GetStateChecksumsAsync(cancellationToken).ConfigureAwait(false);
+            attributeChecksums.Add(stateChecksums.Info);
+            textChecksums.Add(stateChecksums.Text);
+            documentIds.Add(documentId);
+        }
+
+        return new(
+            new ChecksumCollection(attributeChecksums.MoveToImmutable()),
+            new ChecksumCollection(textChecksums.MoveToImmutable()),
+            documentIds.MoveToImmutable());
+    }
+
+    public void AddDocumentIdsWithFilePath(ref TemporaryArray<DocumentId> temporaryArray, string filePath)
+    {
+        // Lazily initialize the file path map if not computed.
+        _filePathToDocumentIds ??= ComputeFilePathToDocumentIds();
+
+        if (_filePathToDocumentIds.TryGetValue(filePath, out var oneOrMany))
+        {
+            foreach (var value in oneOrMany)
+                temporaryArray.Add(value);
+        }
+    }
+
+    public DocumentId? GetFirstDocumentIdWithFilePath(string filePath)
+    {
+        // Lazily initialize the file path map if not computed.
+        _filePathToDocumentIds ??= ComputeFilePathToDocumentIds();
+
+        // Safe to call .First here as the values in the _filePathToDocumentIds dictionary will never empty.
+        return _filePathToDocumentIds.TryGetValue(filePath, out var oneOrMany)
+            ? oneOrMany.First()
+            : null;
+    }
+
+    private FilePathToDocumentIds ComputeFilePathToDocumentIds()
+    {
+#if NET
+        using var pooledDictionary = s_filePathPool.GetPooledObject();
+        var result = pooledDictionary.Object;
+#else
+        var result = new Dictionary<string, OneOrMany<DocumentId>>(SolutionState.FilePathComparer);
+#endif
+
+        foreach (var (documentId, state) in States)
+        {
+            var filePath = state.FilePath;
+            if (filePath is null)
+                continue;
+
+            result[filePath] = result.TryGetValue(filePath, out var existingValue)
+                ? existingValue.Add(documentId)
+                : OneOrMany.Create(documentId);
+        }
+
+#if NET
+        return result.ToFrozenDictionary(SolutionState.FilePathComparer);
+#else
+        return new(result);
+#endif
     }
 }

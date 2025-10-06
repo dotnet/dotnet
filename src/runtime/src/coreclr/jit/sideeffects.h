@@ -13,7 +13,8 @@
 //
 class LclVarSet final
 {
-    union {
+    union
+    {
         hashBv*  m_bitVector;
         unsigned m_lclNum;
     };
@@ -181,6 +182,13 @@ public:
     bool InterferesWith(const SideEffectSet& other, bool strict) const;
     bool InterferesWith(Compiler* compiler, GenTree* node, bool strict) const;
     void Clear();
+
+    bool IsLirInvariantInRange(Compiler* comp, GenTree* node, GenTree* endExclusive);
+
+    bool IsLirInvariantInRange(Compiler* comp, GenTree* node, GenTree* endExclusive, GenTree* ignoreNode);
+
+    bool IsLirRangeInvariantInRange(
+        Compiler* comp, GenTree* rangeStart, GenTree* rangeEnd, GenTree* endExclusive, GenTree* ignoreNode);
 
     bool WritesLocal(unsigned lclNum) const
     {

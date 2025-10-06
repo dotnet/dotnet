@@ -6,17 +6,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
+using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
 using Xunit;
-using Roslyn.Test.Utilities;
-using Microsoft.CodeAnalysis.PooledObjects;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities
 {
@@ -514,39 +515,8 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             // write out the actual results as method calls (copy/paste this to update baseline)
             assertText.AppendLine("Actual:");
-            var e = actual.GetEnumerator();
-            for (i = 0; e.MoveNext(); i++)
-            {
-                Diagnostic d = e.Current;
-                string message = d.ToString();
-                if (Regex.Match(message, @"{\d+}").Success)
-                {
-                    Assert.True(false, "Diagnostic messages should never contain unsubstituted placeholders.\n    " + message);
-                }
-
-                if (i > 0)
-                {
-                    assertText.AppendLine(",");
-                }
-
-                if (includeDiagnosticMessagesAsComments)
-                {
-                    Indent(assertText, indentDepth);
-                    assertText.Append("// ");
-                    assertText.AppendLine(d.ToString());
-                    var l = d.Location;
-                    if (l.IsInSource)
-                    {
-                        Indent(assertText, indentDepth);
-                        assertText.Append("// ");
-                        assertText.AppendLine(l.SourceTree.GetText().Lines.GetLineFromPosition(l.SourceSpan.Start).ToString());
-                    }
-                }
-
-                var description = new DiagnosticDescription(d, errorCodeOnly: false, includeDefaultSeverity, includeEffectiveSeverity);
-                assertText.Append(GetDiagnosticDescription(description, indentDepth));
-            }
-            if (i > 0)
+            bool isNonEmpty = GetPrettyDiagnostics(assertText, actual, includeDiagnosticMessagesAsComments, indentDepth, includeDefaultSeverity, includeEffectiveSeverity);
+            if (isNonEmpty)
             {
                 assertText.AppendLine();
             }
@@ -560,7 +530,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             }
 
             var unmatchedActualText = ArrayBuilder<string>.GetInstance();
-            e = unmatchedActual.GetEnumerator();
+            IEnumerator<Diagnostic> e = unmatchedActual.GetEnumerator();
             for (i = 0; e.MoveNext(); i++)
             {
                 Diagnostic d = e.Current;
@@ -576,6 +546,45 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             expectedText.Free();
 
             return assertText.ToString();
+        }
+
+        internal static bool GetPrettyDiagnostics(StringBuilder assertText, IEnumerable<Diagnostic> diagnostics, bool includeDiagnosticMessagesAsComments, int indentDepth, bool includeDefaultSeverity, bool includeEffectiveSeverity)
+        {
+            IEnumerator<Diagnostic> e = diagnostics.GetEnumerator();
+            int i = 0;
+            for (i = 0; e.MoveNext(); i++)
+            {
+                Diagnostic d = e.Current;
+                string message = d.ToString(CultureInfo.InvariantCulture);
+                if (Regex.Match(message, @"{\d+}").Success)
+                {
+                    Assert.True(false, "Diagnostic messages should never contain unsubstituted placeholders.\n    " + message);
+                }
+
+                if (i > 0)
+                {
+                    assertText.AppendLine(",");
+                }
+
+                if (includeDiagnosticMessagesAsComments)
+                {
+                    Indent(assertText, indentDepth);
+                    assertText.Append("// ");
+                    assertText.AppendLine(message);
+                    var l = d.Location;
+                    if (l.IsInSource)
+                    {
+                        Indent(assertText, indentDepth);
+                        assertText.Append("// ");
+                        assertText.AppendLine(l.SourceTree.GetText().Lines.GetLineFromPosition(l.SourceSpan.Start).ToString());
+                    }
+                }
+
+                var description = new DiagnosticDescription(d, errorCodeOnly: false, includeDefaultSeverity, includeEffectiveSeverity);
+                assertText.Append(GetDiagnosticDescription(description, indentDepth));
+            }
+
+            return i > 0;
         }
 
         private static IEnumerable<Diagnostic> Sort(IEnumerable<Diagnostic> diagnostics)

@@ -1,12 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
@@ -16,110 +14,103 @@ namespace Microsoft.AspNetCore.Razor.Language;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
 {
-    [Flags]
-    private enum TagHelperFlags
-    {
-        CaseSensitive = 1 << 0,
-        IsComponent = 1 << 1,
-        IsComponentFullyQualifiedNameMatch = 1 << 2,
-        IsChildContent = 1 << 3
-    }
-
     private readonly TagHelperFlags _flags;
-    private readonly DocumentationObject _documentationObject;
 
     private ImmutableArray<BoundAttributeDescriptor> _editorRequiredAttributes;
 
-    public string Kind { get; }
+    public TagHelperFlags Flags => _flags;
+    public TagHelperKind Kind { get; }
+    public RuntimeKind RuntimeKind { get; }
+
     public string Name { get; }
     public string AssemblyName { get; }
 
-    public string? Documentation => _documentationObject.GetText();
-    internal DocumentationObject DocumentationObject => _documentationObject;
+    public string TypeName => TypeNameObject.FullName.AssumeNotNull();
+    public string? TypeNamespace => TypeNameObject.Namespace;
+    public string? TypeNameIdentifier => TypeNameObject.Name;
+
+    public string? Documentation => DocumentationObject.GetText();
+
+    internal TypeNameObject TypeNameObject { get; }
+    internal DocumentationObject DocumentationObject { get; }
 
     public string DisplayName { get; }
     public string? TagOutputHint { get; }
 
-    public bool CaseSensitive => (_flags & TagHelperFlags.CaseSensitive) != 0;
+    public bool CaseSensitive => _flags.IsFlagSet(TagHelperFlags.CaseSensitive);
 
     public ImmutableArray<AllowedChildTagDescriptor> AllowedChildTags { get; }
     public ImmutableArray<BoundAttributeDescriptor> BoundAttributes { get; }
     public ImmutableArray<TagMatchingRuleDescriptor> TagMatchingRules { get; }
 
-    public MetadataCollection Metadata { get; }
-
-    internal bool IsComponentTagHelper => (_flags & TagHelperFlags.IsComponent) != 0;
+    public MetadataObject Metadata { get; }
 
     /// <summary>
     /// Gets whether the component matches a tag with a fully qualified name.
     /// </summary>
-    internal bool IsComponentFullyQualifiedNameMatch => (_flags & TagHelperFlags.IsComponentFullyQualifiedNameMatch) != 0;
-    internal bool IsChildContentTagHelper => (_flags & TagHelperFlags.IsChildContent) != 0;
-    internal bool IsComponentOrChildContentTagHelper => IsComponentTagHelper || IsChildContentTagHelper;
+    internal bool IsFullyQualifiedNameMatch => _flags.IsFlagSet(TagHelperFlags.IsFullyQualifiedNameMatch);
+
+    public bool ClassifyAttributesOnly => _flags.IsFlagSet(TagHelperFlags.ClassifyAttributesOnly);
 
     internal TagHelperDescriptor(
-        string kind,
+        TagHelperFlags flags,
+        TagHelperKind kind,
+        RuntimeKind runtimeKind,
         string name,
         string assemblyName,
         string displayName,
+        TypeNameObject typeNameObject,
         DocumentationObject documentationObject,
         string? tagOutputHint,
-        bool caseSensitive,
         ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules,
         ImmutableArray<BoundAttributeDescriptor> attributeDescriptors,
         ImmutableArray<AllowedChildTagDescriptor> allowedChildTags,
-        MetadataCollection metadata,
+        MetadataObject metadata,
         ImmutableArray<RazorDiagnostic> diagnostics)
         : base(diagnostics)
     {
+        _flags = flags;
+        RuntimeKind = runtimeKind;
         Kind = kind;
         Name = name;
         AssemblyName = assemblyName;
         DisplayName = displayName;
-        _documentationObject = documentationObject;
+        TypeNameObject = typeNameObject;
+        DocumentationObject = documentationObject;
         TagOutputHint = tagOutputHint;
         TagMatchingRules = tagMatchingRules.NullToEmpty();
         BoundAttributes = attributeDescriptors.NullToEmpty();
         AllowedChildTags = allowedChildTags.NullToEmpty();
-        Metadata = metadata ?? MetadataCollection.Empty;
+        Metadata = metadata;
 
-        TagHelperFlags flags = 0;
-
-        if (caseSensitive)
+        foreach (var tagMatchingRule in TagMatchingRules)
         {
-            flags |= TagHelperFlags.CaseSensitive;
+            tagMatchingRule.SetParent(this);
         }
 
-        if (kind == ComponentMetadata.Component.TagHelperKind &&
-            !Metadata.ContainsKey(ComponentMetadata.SpecialKindKey))
+        foreach (var boundAttribute in BoundAttributes)
         {
-            flags |= TagHelperFlags.IsComponent;
+            boundAttribute.SetParent(this);
         }
 
-        if (Metadata.Contains(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch))
+        foreach (var allowedChildTag in AllowedChildTags)
         {
-            flags |= TagHelperFlags.IsComponentFullyQualifiedNameMatch;
+            allowedChildTag.SetParent(this);
         }
-
-        if (Metadata.Contains(ComponentMetadata.SpecialKindKey, ComponentMetadata.ChildContent.TagHelperKind))
-        {
-            flags |= TagHelperFlags.IsChildContent;
-        }
-
-        _flags = flags;
     }
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Kind);
+        builder.AppendData((byte)Flags);
+        builder.AppendData((byte)Kind);
+        builder.AppendData((byte)RuntimeKind);
         builder.AppendData(Name);
         builder.AppendData(AssemblyName);
         builder.AppendData(DisplayName);
         builder.AppendData(TagOutputHint);
 
+        TypeNameObject.AppendToChecksum(in builder);
         DocumentationObject.AppendToChecksum(in builder);
-
-        builder.AppendData(CaseSensitive);
 
         foreach (var descriptor in AllowedChildTags)
         {
@@ -136,7 +127,7 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
             builder.AppendData(descriptor.Checksum);
         }
 
-        builder.AppendData(Metadata.Checksum);
+        Metadata.AppendToChecksum(in builder);
     }
 
     internal ImmutableArray<BoundAttributeDescriptor> EditorRequiredAttributes
@@ -167,41 +158,41 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
                     }
                 }
 
-                return results.DrainToImmutable();
+                return results.ToImmutableAndClear();
             }
         }
     }
 
     public IEnumerable<RazorDiagnostic> GetAllDiagnostics()
     {
+        using var diagnostics = new PooledArrayBuilder<RazorDiagnostic>();
+
+        AppendAllDiagnostics(ref diagnostics.AsRef());
+
+        foreach (var diagnostic in diagnostics)
+        {
+            yield return diagnostic;
+        }
+    }
+
+    internal void AppendAllDiagnostics(ref PooledArrayBuilder<RazorDiagnostic> diagnostics)
+    {
         foreach (var allowedChildTag in AllowedChildTags)
         {
-            foreach (var diagnostic in allowedChildTag.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(allowedChildTag.Diagnostics);
         }
 
         foreach (var boundAttribute in BoundAttributes)
         {
-            foreach (var diagnostic in boundAttribute.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(boundAttribute.Diagnostics);
         }
 
         foreach (var tagMatchingRule in TagMatchingRules)
         {
-            foreach (var diagnostic in tagMatchingRule.Diagnostics)
-            {
-                yield return diagnostic;
-            }
+            diagnostics.AddRange(tagMatchingRule.Diagnostics);
         }
 
-        foreach (var diagnostic in Diagnostics)
-        {
-            yield return diagnostic;
-        }
+        diagnostics.AddRange(Diagnostics);
     }
 
     public override string ToString()
@@ -217,8 +208,8 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
     internal TagHelperDescriptor WithName(string name)
     {
         return new(
-            Kind, name, AssemblyName, DisplayName,
-            DocumentationObject, TagOutputHint, CaseSensitive,
+            Flags, Kind, RuntimeKind, name, AssemblyName, DisplayName,
+            TypeNameObject, DocumentationObject, TagOutputHint,
             TagMatchingRules, BoundAttributes, AllowedChildTags,
             Metadata, Diagnostics);
     }

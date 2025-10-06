@@ -3,10 +3,9 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
@@ -15,41 +14,35 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
     {
         private ImmutableArray<ITagHelperDescriptorProvider> _providers;
 
-        public void CollectDescriptors(ISymbol? targetSymbol, List<TagHelperDescriptor> results)
+        public void CollectDescriptors(
+            IAssemblySymbol? targetAssembly,
+            List<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            if (_providers.IsDefault)
+            if (_providers.IsDefaultOrEmpty)
             {
                 return;
             }
 
-            var context = TagHelperDescriptorProviderContext.Create(results);
-            context.SetCompilation(compilation);
-
-            if (targetSymbol is not null)
-            {
-                context.Items.SetTargetSymbol(targetSymbol);
-            }
+            var context = new TagHelperDescriptorProviderContext(compilation, targetAssembly, results);
 
             foreach (var provider in _providers)
             {
-                provider.Execute(context);
+                provider.Execute(context, cancellationToken);
             }
         }
 
-        IReadOnlyList<TagHelperDescriptor> ITagHelperFeature.GetDescriptors()
+        IReadOnlyList<TagHelperDescriptor> ITagHelperFeature.GetDescriptors(CancellationToken cancellationToken)
         {
             var results = new List<TagHelperDescriptor>();
-            CollectDescriptors(targetSymbol: null, results);
+            CollectDescriptors(targetAssembly: null, results, cancellationToken);
 
             return results;
         }
 
         protected override void OnInitialized()
         {
-            _providers = Engine.Features
-                .OfType<ITagHelperDescriptorProvider>()
-                .OrderBy(f => f.Order)
-                .ToImmutableArray();
+            _providers = Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static x => x.Order);
         }
     }
 }

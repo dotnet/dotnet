@@ -69,7 +69,7 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 try
                 {
-                    var nuGetProject = await provider.TryCreateNuGetProjectAsync(
+                    var nuGetProject = provider.TryCreateNuGetProject(
                         vsProjectAdapter,
                         context,
                         forceProjectType: false);
@@ -119,7 +119,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             try
             {
-                var nuGetProject = await provider.TryCreateNuGetProjectAsync(
+                var nuGetProject = provider.TryCreateNuGetProject(
                     vsProjectAdapter,
                     optionalContext,
                     forceProjectType: true);

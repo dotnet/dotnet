@@ -1,27 +1,52 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "ActivateDotnet",
-            "type": "shell",
-            "windows": {
-                "command": "echo",
-                "args": [
-                    "Skipping activation on windows"
-                ]
-            },
-            "linux": {
-                "command": "source",
-                "args": [
-                    "activate.sh"
-                ],
-                "options": {
-                    "cwd": "${workspaceFolder}"
-                },
-                "presentation": {
-                    "reveal": "silent"
-                }
-            },
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ActivateDotnet",
+      "type": "shell",
+      "windows": {
+        "command": "echo",
+        "args": [
+          "Skipping activation on windows"
+        ]
+      },
+      "linux": {
+        "command": "source",
+        "args": [
+          "activate.sh"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}"
         },
-    ]
+        "presentation": {
+          "reveal": "silent"
+        }
+      },
+    },
+    {
+      "label": "build.sh",
+      "command": "./build.sh",
+      "type": "shell",
+      "args": [
+      ],
+      "windows": {
+        "command": "${workspaceFolder}/build.cmd",
+      },
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+        "label": "build Rasor.Slim.slnf",
+        "command": "dotnet",
+        "type": "shell",
+        "args": [
+          "build",
+          "-p:RunAnalyzersDuringBuild=false",
+          "-p:GenerateFullPaths=true",
+          "Razor.Slim.slnf"
+        ],
+        "problemMatcher": "$msCompile",
+        "group": "build"
+    }
+  ]
 }

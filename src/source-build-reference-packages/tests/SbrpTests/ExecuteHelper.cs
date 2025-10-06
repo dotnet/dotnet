@@ -18,7 +18,7 @@ internal static class ExecuteHelper
         bool logOutput = false,
         Action<Process>? configure = null,
         int millisecondTimeout = -1)
-        {
+    {
         outputHelper.WriteLine($"Executing: {fileName} {args}");
 
         Process process = new()

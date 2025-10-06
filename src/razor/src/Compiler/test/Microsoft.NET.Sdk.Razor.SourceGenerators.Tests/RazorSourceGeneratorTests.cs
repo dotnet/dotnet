@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Test.Utilities;
@@ -314,7 +315,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -398,7 +399,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -532,7 +533,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -652,7 +653,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver, expectedDiagnostics)
                         .VerifyOutputsMatch(result);
@@ -752,7 +753,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -802,10 +803,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -920,7 +920,7 @@ namespace MyApp.Pages
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -972,10 +972,9 @@ namespace MyApp.Pages
             __builder.AddMarkupContent(0, ""<h2>Counter</h2>\r\n"");
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
-            __builder.AddContent(3, 
 #nullable restore
-#line (3,21)-(3,26) ""Pages/Counter.razor""
-count
+#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+__builder.AddContent(3, count
 #line default
 #line hidden
 #nullable disable
@@ -1059,12 +1058,12 @@ namespace MyApp.Pages
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (2,2)-(3,1) ""Pages/Index.razor""
+#line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -1113,7 +1112,7 @@ namespace MyApp.Pages
             Assert.Equal("RZ10012", diagnostic.Id);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             var surveyPromptAssembly = GetSurveyPromptMetadataReference(compilation!);
             compilation = compilation!.AddReferences(surveyPromptAssembly);
@@ -1132,12 +1131,12 @@ namespace MyApp.Pages
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (2,2)-(3,1) ""Pages/Index.razor""
+#line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -1160,6 +1159,7 @@ using SurveyPromptRootNamspace;
             Assert.Equal(2, result.GeneratedSources.Length);
 
             Assert.Collection(eventListener.Events,
+                e => Assert.Equal("ComputeRazorSourceGeneratorOptions", e.EventName),
                 e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
                 e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName),
                 e => Assert.Equal("DiscoverTagHelpersFromReferencesStart", e.EventName),
@@ -1176,7 +1176,7 @@ using SurveyPromptRootNamspace;
             );
 
             // Verify caching
-            eventListener.Events.Clear();
+            eventListener.Clear();
             result = RunGenerator(compilation, ref driver);
 
             Assert.Empty(result.Diagnostics);
@@ -1202,6 +1202,38 @@ public class SurveyPrompt : ComponentBase
                 stream.Position = 0;
                 return MetadataReference.CreateFromStream(stream);
             }
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_RazorFiles_CssScopeRemoved()
+        {
+            // Compile with CssScope set.
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, _, options) = await GetDriverWithAdditionalTextAndProviderAsync(project, static options =>
+            {
+                options.AdditionalTextOptions["Pages/Index.razor"]["build_metadata.AdditionalFiles.CssScope"] = "test-css-scope";
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is enabled.
+            Assert.Contains("<h1 test-css-scope>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
+
+            // Unset CssScope.
+            options = options.Clone();
+            options.AdditionalTextOptions["Pages/Index.razor"].Options.Remove("build_metadata.AdditionalFiles.CssScope");
+            driver = driver.WithUpdatedAnalyzerConfigOptions(options);
+
+            result = RunGenerator(compilation!, ref driver);
+            result.Diagnostics.Verify();
+
+            // CSS isolation is disabled.
+            Assert.Contains("<h1>Hello world</h1>", result.GeneratedSources.Single().SourceText.ToString());
         }
 
         [Fact]
@@ -1617,7 +1649,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -1838,7 +1870,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver, expectedDiagnostics)
                        .VerifyOutputsMatch(result);
@@ -1993,7 +2025,7 @@ namespace AspNetCoreGeneratedDocument
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
 
-            eventListener.Events.Clear();
+            eventListener.Clear();
 
             result = RunGenerator(compilation!, ref driver)
                         .VerifyOutputsMatch(result);
@@ -2584,6 +2616,9 @@ namespace AspNetCoreGeneratedDocument
             // start with the generator suppressed (this is the default state in VS)
             driver = SetSuppressionState(true);
 
+            // Disable co-hosting, this test only applies to non-cohosting scenarios
+            RazorCohostingOptions.UseRazorCohostServer = false;
+
             // results should be empty, and no recorded steps should have run
             using var eventListener = new RazorEventListener();
             var result = RunGenerator(compilation!, ref driver).VerifyPageOutput();
@@ -2703,7 +2738,7 @@ namespace MyApp.Pages
             driver = SetSuppressionState(true);
 
             // results should be empty, and no events recorded
-            eventListener.Events.Clear();
+            eventListener.Clear();
             result = RunGenerator(compilation!, ref driver)
                 .VerifyPageOutput();
             Assert.Empty(eventListener.Events);
@@ -2823,7 +2858,7 @@ namespace MyApp.Pages
 
             // Flip suppression on, change the compilation, no changes
             driver = SetSuppressionState(true);
-            eventListener.Events.Clear();
+            eventListener.Clear();
             RunGenerator(compilation!, ref driver).VerifyPageOutput();
 
             project = project.AddDocument("viewcomponent.cs", """
@@ -2852,7 +2887,7 @@ namespace MyApp.Pages
 
             // Flip suppression on, change the parse options, no changes
             driver = SetSuppressionState(true);
-            eventListener.Events.Clear();
+            eventListener.Clear();
             project = project.WithParseOptions(((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.CSharp8));
             compilation = await project.GetCompilationAsync();
             driver = driver.WithUpdatedParseOptions(project.ParseOptions!);
@@ -3174,6 +3209,399 @@ namespace MyApp
 #pragma warning restore RS1036 // Specify analyzer banned API enforcement setting
         {
             public void Initialize(IncrementalGeneratorInitializationContext context) => action(context);
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_NothingRuns_When_AdditionalFiles_HaveSameContent()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Clear();
+
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            project = project.RemoveAdditionalDocument(project.AdditionalDocumentIds[1])
+                             .AddAdditionalDocument("Counter.razor", SourceText.From("<h1>Counter</h1>", Encoding.UTF8))
+                             .Project;
+
+            compilation = await project.GetCompilationAsync();
+
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            Assert.Empty(eventListener.Events);
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_OnlyCompilationRuns_When_MetadataReferences_SameAssembly()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Clear();
+
+            result = RunGenerator(compilation!, ref driver)
+                .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            var reference = (PortableExecutableReference) project.MetadataReferences[^1];
+
+            project = project.RemoveMetadataReference(reference)
+                             .AddMetadataReference(MetadataReference.CreateFromFile(reference.FilePath!));
+
+            compilation = await project.GetCompilationAsync();
+
+            result = RunGenerator(compilation!, ref driver)
+                .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            // reference causes the compilation to change so we re-run tag helper discovery there
+            // but we didn't re-check the actual reference itself
+            Assert.Collection(eventListener.Events,
+               e => Assert.Equal("ComputeRazorSourceGeneratorOptions", e.EventName),
+               e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
+               e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName));
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("True")]
+        [InlineData("TRUE")]
+        [InlineData("tRuE")]
+        public async Task RoslynTokenizerEnabledWithTrue(string value)
+        {
+            var parseOptions = CSharpParseOptions.Default.WithFeatures([new("use-roslyn-tokenizer", value)]);
+
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = """"
+                    <div>@("""
+                        nested "
+                        """)</div>
+                    """",
+            }, cSharpParseOptions: parseOptions);
+
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+            result.VerifyPageOutput(
+                """"
+                #pragma checksum "Pages/Index.razor" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "c6855f3cabbcb69477e3f5a61f8d77fcfed086c2"
+                // <auto-generated/>
+                #pragma warning disable 1591
+                namespace MyApp.Pages
+                {
+                    #line default
+                    using global::System;
+                    using global::System.Collections.Generic;
+                    using global::System.Linq;
+                    using global::System.Threading.Tasks;
+                    using global::Microsoft.AspNetCore.Components;
+                    #line default
+                    #line hidden
+                    #nullable restore
+                    public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
+                    #nullable disable
+                    {
+                        #pragma warning disable 1998
+                        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+                        {
+                            __builder.OpenElement(0, "div");
+                #nullable restore
+                #line (1,8)-(3,8) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
+                    nested "
+                    """
+
+                #line default
+                #line hidden
+                #nullable disable
+                            );
+                            __builder.CloseElement();
+                        }
+                        #pragma warning restore 1998
+                    }
+                }
+                #pragma warning restore 1591
+
+                """");
+        }
+
+        [Theory]
+        [InlineData("false")]
+        [InlineData("False")]
+        [InlineData("FALSE")]
+        [InlineData("FaLsE")]
+        [InlineData("")]
+        [InlineData(null)]
+        public async Task RoslynTokenizerDisabledWithFalseOrNothing(string? value)
+        {
+            var parseOptions = CSharpParseOptions.Default;
+
+            if (value != null)
+            {
+                parseOptions = parseOptions.WithFeatures([new("use-roslyn-tokenizer", value)]);
+            }
+
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = """"
+                    <div>@("""
+                        nested "
+                        """)</div>
+                    """",
+            }, cSharpParseOptions: parseOptions);
+
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver,
+                // Pages/Index.razor(3,10): error CS1525: Invalid expression term '/'
+                //     """)</div>
+                Diagnostic(ErrorCode.ERR_InvalidExprTerm, "/").WithArguments("/").WithLocation(3, 10),
+                // Pages/Index.razor(3,11): error CS0103: The name 'div' does not exist in the current context
+                //     """)</div>
+                Diagnostic(ErrorCode.ERR_NameNotInContext, "div").WithArguments("div").WithLocation(3, 11),
+                // Pages/Index.razor(3,15): error CS1525: Invalid expression term ')'
+                //     """)</div>
+                Diagnostic(ErrorCode.ERR_InvalidExprTerm, "").WithArguments(")").WithLocation(3, 15),
+                // Pages/Index.razor(3,15): error CS1002: ; expected
+                //     """)</div>
+                Diagnostic(ErrorCode.ERR_SemicolonExpected, "").WithLocation(3, 15),
+                // Pages/Index.razor(3,15): error CS1513: } expected
+                //     """)</div>
+                Diagnostic(ErrorCode.ERR_RbraceExpected, "").WithLocation(3, 15));
+
+            result.VerifyPageOutput(
+                """"
+                #pragma checksum "Pages/Index.razor" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "c6855f3cabbcb69477e3f5a61f8d77fcfed086c2"
+                // <auto-generated/>
+                #pragma warning disable 1591
+                namespace MyApp.Pages
+                {
+                    #line default
+                    using global::System;
+                    using global::System.Collections.Generic;
+                    using global::System.Linq;
+                    using global::System.Threading.Tasks;
+                    using global::Microsoft.AspNetCore.Components;
+                    #line default
+                    #line hidden
+                    #nullable restore
+                    public partial class Index : global::Microsoft.AspNetCore.Components.ComponentBase
+                    #nullable disable
+                    {
+                        #pragma warning disable 1998
+                        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+                        {
+                            __builder.OpenElement(0, "div");
+                #nullable restore
+                #line (1,8)-(3,15) 24 "Pages/Index.razor"
+                __builder.AddContent(1, """
+                    nested "
+                    """)</div>
+                #line default
+                #line hidden
+                #nullable disable
+                            );
+                            __builder.CloseElement();
+                        }
+                        #pragma warning restore 1998
+                    }
+                }
+                #pragma warning restore 1591
+
+                """");
+        }
+
+        [Fact]
+        public async Task UseRazorCohostServer_CanOverride_Suppression()
+        {
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Component.Razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            RazorCohostingOptions.UseRazorCohostServer = false;
+
+            // Start with the generator suppressed
+            var (driver, additionalTexts, optionsProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project, configureGlobalOptions: (o) =>
+            {
+                o.TestGlobalOptions["build_property.SuppressRazorSourceGenerator"] = "true";
+            });
+
+            // results are empty, and no recorded steps run
+            var result = RunGenerator(compilation!, ref driver).VerifyPageOutput();
+            Assert.DoesNotContain("DocumentsWithSuppression", (IReadOnlyDictionary<string, ImmutableArray<IncrementalGeneratorRunStep>>)result.TrackedSteps);
+            Assert.DoesNotContain("ImplementationSourceOutput", (IReadOnlyDictionary<string, ImmutableArray<IncrementalGeneratorRunStep>>)result.TrackedOutputSteps);
+
+            // now enable UseRazorCohostServer
+            RazorCohostingOptions.UseRazorCohostServer = true;
+
+            // unfortunately if we re-run we'll still be in the suppressed mode. Because nothing in the compilation has changed
+            // there is no event that the source generator can 'trigger' on to re-evaluate.
+            result = RunGenerator(compilation!, ref driver).VerifyPageOutput();
+
+            // but if we make a trivial change to the compilation, we will re-run and get results
+            compilation = compilation!.WithAssemblyName(compilation.AssemblyName);
+
+            result = RunGenerator(compilation!, ref driver).VerifyPageOutput(@"
+#pragma checksum ""Component.razor"" ""{ff1816ec-aa5e-4d10-87f7-6f4963833460}"" ""6b5db227a6aa2228c777b0771108b184b1fc5df3""
+// <auto-generated/>
+#pragma warning disable 1591
+namespace MyApp
+{
+    #line default
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.Threading.Tasks;
+    using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
+    public partial class Component : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+            __builder.AddMarkupContent(0, ""<h1>Hello world</h1>"");
+        }
+        #pragma warning restore 1998
+    }
+}
+#pragma warning restore 1591
+");
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_RerunsGenerator_When_AdditionalFileRenamed()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts, analyzerConfigOptionProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Clear();
+
+            // Verify no changes when re-running
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            // Rename Counter.razor to NewCounter.razor by removing and re-adding with same content
+            var counterText = additionalTexts.First(f => f.Path.EndsWith("Counter.razor", StringComparison.OrdinalIgnoreCase));
+            var renamedText = new TestAdditionalText("Pages/NewCounter.razor", counterText.GetText()!);
+            driver = driver.RemoveAdditionalTexts([counterText])
+                          .AddAdditionalTexts([renamedText]);
+
+            // Update the analyzer config options with the new target path
+            analyzerConfigOptionProvider.AdditionalTextOptions[renamedText.Path] = new TestAnalyzerConfigOptions
+            {
+                ["build_metadata.AdditionalFiles.TargetPath"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(renamedText.Path))
+            };
+            driver = driver.WithUpdatedAnalyzerConfigOptions(analyzerConfigOptionProvider);
+
+            result = RunGenerator(compilation!, ref driver);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            // Verify the new file was processed
+            Assert.Collection(eventListener.Events,
+                    e => e.AssertSingleItem("ParseRazorDocumentStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("GenerateDeclarationCodeStart", "/Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("GenerateDeclarationCodeStop", "/Pages/NewCounter.razor"),
+                    e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
+                    e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName),
+                    e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("RewriteTagHelpersStop", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/Index.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/Index.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/NewCounter.razor"),
+                    e => e.AssertPair("RazorCodeGenerateStart", "Pages/Index.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStop", "Pages/Index.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStart", "Pages/NewCounter.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStop", "Pages/NewCounter.razor", "Runtime"),
+                    e => e.AssertSingleItem("AddSyntaxTrees", "Pages_NewCounter_razor.g.cs")
+            );
+
+            // Verify the generated source has the correct namespace and class name
+            var newCounterSource = result.GeneratedSources.FirstOrDefault(s => s.HintName.Contains("NewCounter"));
+            Assert.Contains("namespace MyApp.Pages", newCounterSource.SourceText.ToString());
+            Assert.Contains("public partial class NewCounter", newCounterSource.SourceText.ToString());
+
+            // Do a case-only rename and make sure we update the generated class name still
+            // as component names are case sensitive even on Windows.
+            var renamedText2 = new TestAdditionalText("Pages/NewCouNter.razor", counterText.GetText()!);
+            driver = driver.RemoveAdditionalTexts([renamedText])
+                          .AddAdditionalTexts([renamedText2]);
+
+            // Update the analyzer config options with the new target path
+            analyzerConfigOptionProvider.AdditionalTextOptions[renamedText2.Path] = new TestAnalyzerConfigOptions
+            {
+                ["build_metadata.AdditionalFiles.TargetPath"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(renamedText2.Path))
+            };
+            driver = driver.WithUpdatedAnalyzerConfigOptions(analyzerConfigOptionProvider);
+
+            result = RunGenerator(compilation!, ref driver);
+
+            var newCouNterSource = result.GeneratedSources.FirstOrDefault(s => s.HintName.Contains("NewCouNter"));
+            Assert.Contains("public partial class NewCouNter", newCouNterSource.SourceText.ToString());
         }
     }
 }

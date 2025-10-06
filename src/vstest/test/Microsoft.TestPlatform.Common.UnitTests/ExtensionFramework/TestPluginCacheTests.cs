@@ -30,7 +30,7 @@ public class TestPluginCacheTests
         // Reset the singleton.
         TestPluginCache.Instance = null;
         _mockFileHelper = new Mock<IFileHelper>();
-        _testablePluginCache = new TestableTestPluginCache(new List<string> { typeof(TestPluginCacheTests).Assembly.Location });
+        _testablePluginCache = new TestableTestPluginCache([typeof(TestPluginCacheTests).Assembly.Location]);
 
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
     }

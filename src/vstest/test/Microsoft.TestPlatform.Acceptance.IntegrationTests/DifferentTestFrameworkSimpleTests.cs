@@ -163,7 +163,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 
         var arguments = PrepareArguments(
             GetAssetFullPath("NUTestProject.dll"),
-            GetTestAdapterPath(UnitTestFramework.NUnit),
+            null, // GetTestAdapterPath(UnitTestFramework.NUnit),
             string.Empty, FrameworkArgValue,
             runnerInfo.InIsolationValue, TempDirectory.Path);
         InvokeVsTest(arguments);

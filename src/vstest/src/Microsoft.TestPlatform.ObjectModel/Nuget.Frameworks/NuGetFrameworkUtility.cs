@@ -27,6 +27,7 @@ namespace NuGetClone.Frameworks
         /// <param name="framework">project target framework</param>
         /// <param name="selector">retrieves the framework from the group</param>
         /// <param name="frameworkMappings">framework mappings</param>
+        /// <param name="compatibilityProvider">compatibility provider</param>
         public static T? GetNearest<T>(IEnumerable<T> items,
             NuGetFramework framework,
             IFrameworkNameProvider frameworkMappings,
@@ -66,6 +67,8 @@ namespace NuGetClone.Frameworks
         /// </summary>
         /// <param name="items">framework specific groups or items</param>
         /// <param name="framework">project target framework</param>
+        /// <param name="frameworkMappings">framework mappings</param>
+        /// <param name="compatibilityProvider">compatibility provider</param>
         public static T? GetNearest<T>(IEnumerable<T> items,
                                         NuGetFramework framework,
                                         IFrameworkNameProvider frameworkMappings,

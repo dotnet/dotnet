@@ -1,186 +1,179 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml.Linq;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using Xunit;
 
-namespace Microsoft.DotNet.WindowsDesktop.App.Tests
+namespace Microsoft.DotNet.WindowsDesktop.App.Tests;
+
+internal class NuGetArtifactTester : IDisposable
 {
-    internal class NuGetArtifactTester : IDisposable
+    public static NuGetArtifactTester Open(
+        RepoDirectoriesProvider dirs,
+        string project,
+        string id = null)
     {
-        public static NuGetArtifactTester Open(
-            RepoDirectoriesProvider dirs,
-            string project,
-            string id = null)
+        var tester = OpenOrNull(dirs, project, id);
+        Assert.NotNull(tester);
+        return tester;
+    }
+
+    public static NuGetArtifactTester OpenOrNull(
+        RepoDirectoriesProvider dirs,
+        string project,
+        string id = null)
+    {
+        id = id ?? project;
+
+        string nupkgPath = Path.Combine(
+            dirs.BaseArtifactsFolder,
+            "packages",
+            dirs.Configuration,
+            "Shipping",
+            $"{id}.{dirs.MicrosoftNETCoreAppVersion}.nupkg");
+
+        if (!File.Exists(nupkgPath))
         {
-            var tester = OpenOrNull(dirs, project, id);
-            Assert.NotNull(tester);
-            return tester;
+            return null;
         }
 
-        public static NuGetArtifactTester OpenOrNull(
-            RepoDirectoriesProvider dirs,
-            string project,
-            string id = null)
+        return new NuGetArtifactTester(nupkgPath);
+    }
+
+    public PackageIdentity Identity { get; }
+    public NuGetVersion PackageVersion { get; }
+
+    private readonly PackageArchiveReader _reader;
+
+    public NuGetArtifactTester(string file)
+    {
+        _reader = new PackageArchiveReader(ZipFile.Open(file, ZipArchiveMode.Read));
+        Identity = _reader.NuspecReader.GetIdentity();
+        PackageVersion = _reader.NuspecReader.GetVersion();
+    }
+
+    public void Dispose()
+    {
+        _reader.Dispose();
+    }
+
+    public void IsTargetingPack()
+    {
+        IsFrameworkPack();
+
+        Assert.NotEmpty(_reader.GetFiles("ref"));
+        Assert.Empty(_reader.GetFiles("runtimes"));
+        Assert.Empty(_reader.GetFiles("lib"));
+
+        ContainsFrameworkList("FrameworkList.xml");
+    }
+
+    public void IsTargetingPackForPlatform()
+    {
+        IsFrameworkPack();
+
+        HasGoodPlatformManifest();
+    }
+
+    public void IsRuntimePack()
+    {
+        IsRuntimeSpecificPack();
+
+        HasOnlyTheseDataFiles("data/RuntimeList.xml");
+
+        ContainsFrameworkList("RuntimeList.xml");
+    }
+
+    public void HasOnlyTheseDataFiles(params string[] expectedDataFiles)
+    {
+        HashSet<string> dataFileSet = _reader.GetFiles("data").ToHashSet();
+
+        Assert.True(
+            dataFileSet.SetEquals(expectedDataFiles),
+            "Invalid set of data files: " +
+                $"expected '{string.Join(", ", expectedDataFiles)}', " +
+                $"actual '{string.Join(", ", dataFileSet)}'");
+    }
+
+    public void HasGoodPlatformManifest()
+    {
+        string platformManifestContent = ReadEntryContent(
+            _reader.GetEntry("data/PlatformManifest.txt"));
+
+        // Sanity: check if the manifest has some content.
+        Assert.Contains(".dll", platformManifestContent);
+
+        // Check that the lines contain the package ID where they're supposed to.
+        foreach (var parts in platformManifestContent
+            .Split('\r', '\n')
+            .Select(line => line.Split("|"))
+            .Where(parts => parts.Length > 1))
         {
-            id = id ?? project;
-
-            string nupkgPath = Path.Combine(
-                dirs.BaseArtifactsFolder,
-                "packages",
-                dirs.Configuration,
-                "Shipping",
-                $"{id}.${dirs.MicrosoftNETCoreAppVersion}.nupkg");
-
-            if (!File.Exists(nupkgPath))
-            {
-                return null;
-            }
-
-            return new NuGetArtifactTester(nupkgPath);
-        }
-
-        public PackageIdentity Identity { get; }
-        public NuGetVersion PackageVersion { get; }
-
-        private readonly PackageArchiveReader _reader;
-
-        public NuGetArtifactTester(string file)
-        {
-            _reader = new PackageArchiveReader(ZipFile.Open(file, ZipArchiveMode.Read));
-            Identity = _reader.NuspecReader.GetIdentity();
-            PackageVersion = _reader.NuspecReader.GetVersion();
-        }
-
-        public void Dispose()
-        {
-            _reader.Dispose();
-        }
-
-        public void IsTargetingPack()
-        {
-            IsFrameworkPack();
-
-            Assert.NotEmpty(_reader.GetFiles("ref"));
-            Assert.Empty(_reader.GetFiles("runtimes"));
-            Assert.Empty(_reader.GetFiles("lib"));
-
-            ContainsFrameworkList("FrameworkList.xml");
-        }
-
-        public void IsTargetingPackForPlatform()
-        {
-            IsFrameworkPack();
-
-            HasGoodPlatformManifest();
-        }
-
-        public void IsRuntimePack()
-        {
-            IsRuntimeSpecificPack();
-
-            HasOnlyTheseDataFiles(
-                "data/RuntimeList.xml",
-                "data/PlatformManifest.txt");
-
-            HasGoodPlatformManifest();
-
-            ContainsFrameworkList("RuntimeList.xml");
-        }
-
-        public void HasOnlyTheseDataFiles(params string[] expectedDataFiles)
-        {
-            HashSet<string> dataFileSet = _reader.GetFiles("data").ToHashSet();
-
             Assert.True(
-                dataFileSet.SetEquals(expectedDataFiles),
-                "Invalid set of data files: " +
-                    $"expected '{string.Join(", ", expectedDataFiles)}', " +
-                    $"actual '{string.Join(", ", dataFileSet)}'");
+                parts[1] == Identity.Id,
+                $"Platform manifest package id column '{parts[1]}' doesn't match " +
+                    $"actual package id '{Identity.Id}'");
         }
+    }
 
-        public void HasGoodPlatformManifest()
-        {
-            string platformManifestContent = ReadEntryContent(
-                _reader.GetEntry("data/PlatformManifest.txt"));
+    public string ReadEntryContent(string entry)
+    {
+        return ReadEntryContent(_reader.GetEntry(entry));
+    }
 
-            // Sanity: check if the manifest has some content.
-            Assert.Contains(".dll", platformManifestContent);
+    public XDocument ReadEntryXDocument(string entry)
+    {
+        return ReadEntryXDocument(_reader.GetEntry(entry));
+    }
 
-            // Check that the lines contain the package ID where they're supposed to.
-            foreach (var parts in platformManifestContent
-                .Split('\r', '\n')
-                .Select(line => line.Split("|"))
-                .Where(parts => parts.Length > 1))
-            {
-                Assert.True(
-                    parts[1] == Identity.Id,
-                    $"Platform manifest package id column '{parts[1]}' doesn't match " +
-                        $"actual package id '{Identity.Id}'");
-            }
-        }
+    private void IsFrameworkPack()
+    {
+        Assert.Empty(_reader.GetPackageDependencies());
 
-        public string ReadEntryContent(string entry)
-        {
-            return ReadEntryContent(_reader.GetEntry(entry));
-        }
+        var expectedTypes = new[] { new PackageType("DotnetPlatform", new Version(0, 0)) };
+        var types = _reader.GetPackageTypes().ToArray();
+        Assert.Equal(expectedTypes, types);
+    }
 
-        public XDocument ReadEntryXDocument(string entry)
-        {
-            return ReadEntryXDocument(_reader.GetEntry(entry));
-        }
+    private void IsRuntimeSpecificPack()
+    {
+        IsFrameworkPack();
 
-        private void IsFrameworkPack()
-        {
-            Assert.Empty(_reader.GetPackageDependencies());
+        Assert.Empty(_reader.GetFiles("ref"));
+        Assert.NotEmpty(_reader.GetFiles("runtimes"));
+        Assert.Empty(_reader.GetFiles("lib"));
+    }
 
-            var expectedTypes = new[] { new PackageType("DotnetPlatform", new Version(0, 0)) };
-            var types = _reader.GetPackageTypes().ToArray();
-            Assert.Equal(expectedTypes, types);
-        }
+    private void ContainsFrameworkList(string name)
+    {
+        XDocument frameworkList = ReadEntryXDocument(
+            _reader.GetEntry($"data/{name}"));
 
-        private void IsRuntimeSpecificPack()
-        {
-            IsFrameworkPack();
+        XElement[] frameworkListFiles = frameworkList
+            .Element("FileList")
+            .Elements("File")
+            .ToArray();
 
-            Assert.Empty(_reader.GetFiles("ref"));
-            Assert.NotEmpty(_reader.GetFiles("runtimes"));
-            Assert.Empty(_reader.GetFiles("lib"));
-        }
+        // Sanity: check if the list has some content.
+        Assert.NotEmpty(frameworkListFiles);
+    }
 
-        private void ContainsFrameworkList(string name)
-        {
-            XDocument frameworkList = ReadEntryXDocument(
-                _reader.GetEntry($"data/{name}"));
+    private static string ReadEntryContent(ZipArchiveEntry entry)
+    {
+        using var reader = new StreamReader(entry.Open());
+        return reader.ReadToEnd();
+    }
 
-            XElement[] frameworkListFiles = frameworkList
-                .Element("FileList")
-                .Elements("File")
-                .ToArray();
-
-            // Sanity: check if the list has some content.
-            Assert.NotEmpty(frameworkListFiles);
-        }
-
-        private static string ReadEntryContent(ZipArchiveEntry entry)
-        {
-            using (var reader = new StreamReader(entry.Open()))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-
-        private static XDocument ReadEntryXDocument(ZipArchiveEntry entry)
-        {
-            return XDocument.Parse(ReadEntryContent(entry));
-        }
+    private static XDocument ReadEntryXDocument(ZipArchiveEntry entry)
+    {
+        return XDocument.Parse(ReadEntryContent(entry));
     }
 }

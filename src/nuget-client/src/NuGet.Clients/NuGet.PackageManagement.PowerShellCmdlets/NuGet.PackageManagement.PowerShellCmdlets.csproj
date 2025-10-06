@@ -5,26 +5,10 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <Description>Package Manager Console PowerShell host implementation and NuGet's PowerShell cmdlets for the Visual Studio client.</Description>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <GetLocalizedFilesForVsixDependsOn>GetLocalizedPowerShellCmdletHelpFile</GetLocalizedFilesForVsixDependsOn>
-    <AdditionalSignTargetsForRealSigning>GetScriptsForSigning</AdditionalSignTargetsForRealSigning>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
     <ProjectReference Include="..\NuGet.Console\NuGet.Console.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
-    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +21,11 @@
       <DesignTime>true</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,61 +48,17 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGetConsole.Host.PowerShell.Test" />
+  </ItemGroup>
+
   <Target Name="PowerShellCmdletsAfterBuild" AfterTargets="AfterBuild">
     <ItemGroup>
       <PowerShellScripts Include="$(MSBuildProjectDirectory)\Scripts\*.ps*" Exclude="$(MSBuildProjectDirectory)\Scripts\NuGet.psd1" />
     </ItemGroup>
     <Copy SourceFiles="@(PowerShellScripts)" DestinationFolder="$(ArtifactsDirectory)Scripts" />
     <Exec Command="powershell.exe -ExecutionPolicy Bypass &quot;$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\UpdateNuGetModuleManifest.ps1&quot; -NuGetPackageManagementPowerShellCmdletsFilePath &quot;$(OutDir)NuGet.PackageManagement.PowerShellCmdlets.dll&quot; -ManifestModuleSourceFilePath &quot;$(MSBuildProjectDirectory)\Scripts\NuGet.psd1&quot; -ManifestModuleDestinationFilePath &quot;$(ArtifactsDirectory)Scripts\NuGet.psd1&quot;" />
-  </Target>
-
-  <Target Name="GetScriptsForSigning" Returns="@(ScriptsToSign)" BeforeTargets="GetBuildOutputWithSigningMetadata">
-    <ItemGroup>
-      <ScriptsToSign Include="$(ArtifactsDirectory)Scripts\*.ps*">
-        <Authenticode>Microsoft400</Authenticode>
-      </ScriptsToSign>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetPowerShellCmdletsHelpFile" Returns="@(PowerShellCmdletsHelpFiles)" BeforeTargets="GetBuildOutputWithLocMetadata">
-    <ItemGroup>
-      <_PowerShellCmdletsHelpFiles Include="$(OutputPath)Scripts\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml" />
-      <PowerShellCmdletsHelpFiles Include="@(_PowerShellCmdletsHelpFiles)">
-        <!--Required: translation file-->
-        <TranslationFile>$(LocalizationWorkDirectory)\{Lang}\15\%(_PowerShellCmdletsHelpFiles.Filename)%(_PowerShellCmdletsHelpFiles.Extension).lcl</TranslationFile>
-        <LciCommentFile>$(LocalizationWorkDirectory)\comments\15\%(_PowerShellCmdletsHelpFiles.Filename)%(_PowerShellCmdletsHelpFiles.Extension).lci</LciCommentFile>
-        <Parser>210</Parser>
-        <HasLceComments>false</HasLceComments>
-      </PowerShellCmdletsHelpFiles>
-    </ItemGroup>
-  </Target>
-
-  <!-- This is called at PackVsix time to get localized files -->
-  <Target Name="GetLocalizedPowerShellCmdletHelpFile">
-    <ItemGroup>
-      <!-- VS localized languages defined at MicroBuild.Plugins.Localization.targets, which is installed as a plugin in VSTS MicroBuild -->
-      <VSLanguage Include="CHT" Locale="zh-Hant" />
-      <VSLanguage Include="CHS" Locale="zh-Hans" />
-      <VSLanguage Include="CSY" Locale="cs" />
-      <VSLanguage Include="DEU" Locale="de" />
-      <VSLanguage Include="ESN" Locale="es" />
-      <VSLanguage Include="FRA" Locale="fr" />
-      <VSLanguage Include="ITA" Locale="it" />
-      <VSLanguage Include="JPN" Locale="ja" />
-      <VSLanguage Include="KOR" Locale="ko" />
-      <VSLanguage Include="PLK" Locale="pl" />
-      <VSLanguage Include="PTB" Locale="pt-BR" />
-      <VSLanguage Include="RUS" Locale="ru" />
-      <VSLanguage Include="TRK" Locale="tr" />
-      <_AllLocalizedXmlFiles Include="$(OutputPath)Scripts\**\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml" />
-      <_XmlLocFiles Include="@(_AllLocalizedXmlFiles)">
-        <TargetPath>Modules\NuGet\$([MSBuild]::MakeRelative($(OutputPath)Scripts, %(_AllLocalizedXmlFiles.Identity)))</TargetPath>
-      </_XmlLocFiles>
-      <_TxtLocFiles Include="$(LocalizationRootDirectory)\%(VSLanguage.Identity)\15\about_NuGet.Cmdlets.help.txt">
-        <TargetPath>Modules\NuGet\%(VSLanguage.Locale)\about_NuGet.Cmdlets.help.txt</TargetPath>
-      </_TxtLocFiles>
-      <LocalizedFilesForVsix Include="@(_XmlLocFiles);@(_TxtLocFiles)" />
-    </ItemGroup>
   </Target>
 
 </Project>

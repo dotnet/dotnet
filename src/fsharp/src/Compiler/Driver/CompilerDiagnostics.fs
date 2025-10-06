@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved. See License.txt in the project root for license information.
 
-/// Contains logic to prepare, post-process, filter and emit compiler diagnsotics
+/// Contains logic to prepare, post-process, filter and emit compiler diagnostics
 module internal FSharp.Compiler.CompilerDiagnostics
 
 open System
@@ -14,7 +14,6 @@ open Internal.Utilities.Library
 open Internal.Utilities.Text
 
 open FSharp.Compiler
-open FSharp.Compiler.AttributeChecking
 open FSharp.Compiler.CheckExpressions
 open FSharp.Compiler.CheckDeclarations
 open FSharp.Compiler.CheckIncrementalClasses
@@ -45,34 +44,24 @@ open FSharp.Compiler.TypedTreeOps
 let showAssertForUnexpectedException = ref true
 #endif
 
-/// This exception is an old-style way of reporting a diagnostic
 exception HashIncludeNotAllowedInNonScript of range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception HashReferenceNotAllowedInNonScript of range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception HashLoadedSourceHasIssues of informationals: exn list * warnings: exn list * errors: exn list * range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception HashLoadedScriptConsideredSource of range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception HashDirectiveNotAllowedInNonScript of range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception DeprecatedCommandLineOptionFull of string * range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception DeprecatedCommandLineOptionForHtmlDoc of string * range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception DeprecatedCommandLineOptionSuggestAlternative of string * string * range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception DeprecatedCommandLineOptionNoDescription of string * range
 
-/// This exception is an old-style way of reporting a diagnostic
 exception InternalCommandLineOption of string * range
 
 type Exception with
@@ -148,19 +137,19 @@ type Exception with
         | IntfImplInExtrinsicAugmentation m
         | ValueRestriction(_, _, _, _, m)
         | LetRecUnsound(_, _, m)
-        | ObsoleteError(_, m)
-        | ObsoleteWarning(_, m)
-        | Experimental(_, m)
+        | ObsoleteDiagnostic(_, _, _, _, m)
+        | Experimental(range = m)
         | PossibleUnverifiableCode m
         | UserCompilerMessage(_, _, m)
         | Deprecated(_, m)
         | LibraryUseOnly m
         | FieldsFromDifferentTypes(_, _, _, m)
         | IndeterminateType m
+        | InvalidAttributeTargetForLanguageElement(_, _, m)
         | TyconBadArgs(_, _, _, m) -> Some m
 
-        | FieldNotContained(_, _, _, _, arf, _, _) -> Some arf.Range
-        | ValueNotContained(_, _, _, aval, _, _) -> Some aval.Range
+        | FieldNotContained(_, _, _, _, _, arf, _, _) -> Some arf.Range
+        | ValueNotContained(_, _, _, _, aval, _, _) -> Some aval.Range
         | UnionCaseNotContained(_, _, _, aval, _, _) -> Some aval.Id.idRange
         | FSharpExceptionNotContained(_, _, aexnc, _, _) -> Some aexnc.Range
 
@@ -177,6 +166,10 @@ type Exception with
         | ConstraintSolverTupleDiffLengths(_, _, _, _, m, _)
         | ConstraintSolverInfiniteTypes(_, _, _, _, m, _)
         | ConstraintSolverMissingConstraint(_, _, _, m, _)
+        | ConstraintSolverNullnessWarningEquivWithTypes(_, _, _, _, _, m, _)
+        | ConstraintSolverNullnessWarningWithTypes(_, _, _, _, _, m, _)
+        | ConstraintSolverNullnessWarningWithType(_, _, _, m, _)
+        | ConstraintSolverNullnessWarning(_, m, _)
         | ConstraintSolverTypesNotInEqualityRelation(_, _, _, m, _, _)
         | ConstraintSolverError(_, m, _)
         | ConstraintSolverTypesNotInSubsumptionRelation(_, _, _, m, _)
@@ -204,9 +197,11 @@ type Exception with
         | MSBuildReferenceResolutionError(_, _, m)
         | AssemblyNotResolved(_, m)
         | HashLoadedSourceHasIssues(_, _, _, m)
-        | HashLoadedScriptConsideredSource m -> Some m
+        | HashLoadedScriptConsideredSource m
+        | NoConstructorsAvailableForType(_, _, m) -> Some m
+
         // Strip TargetInvocationException wrappers
-        | :? System.Reflection.TargetInvocationException as e -> e.InnerException.DiagnosticRange
+        | :? System.Reflection.TargetInvocationException as e when isNotNull e.InnerException -> (!!e.InnerException).DiagnosticRange
 #if !NO_TYPEPROVIDERS
         | :? TypeProviderError as e -> e.Range |> Some
 #endif
@@ -252,6 +247,8 @@ type Exception with
         | LetRecUnsound _ -> 31
         | FieldsFromDifferentTypes _ -> 32
         | TyconBadArgs _ -> 33
+        | FieldNotContained(kind = TypeMismatchSource.NullnessOnlyMismatch) -> 3261
+        | ValueNotContained(kind = TypeMismatchSource.NullnessOnlyMismatch) -> 3261
         | ValueNotContained _ -> 34
         | Deprecated _ -> 35
         | UnionCaseNotContained _ -> 36
@@ -262,7 +259,7 @@ type Exception with
         | UnresolvedOverloading _ -> 41
         | LibraryUseOnly _ -> 42
         | ErrorFromAddingConstraint _ -> 43
-        | ObsoleteWarning _ -> 44
+        | ObsoleteDiagnostic(isError = false) -> 44
         | ReservedKeyword _ -> 46
         | SelfRefObjCtor _ -> 47
         | VirtualAugmentationOnNullValuedType _ -> 48
@@ -323,7 +320,7 @@ type Exception with
         | UnresolvedConversionOperator _ -> 93
 
         // avoid 94-100 for safety
-        | ObsoleteError _ -> 101
+        | ObsoleteDiagnostic(isError = true) -> 101
 #if !NO_TYPEPROVIDERS
         | TypeProviders.ProvidedTypeResolutionNoRange _
         | TypeProviders.ProvidedTypeResolution _ -> 103
@@ -331,10 +328,11 @@ type Exception with
         | PatternMatchCompilation.EnumMatchIncomplete _ -> 104
         | Failure _ -> 192
         | DefinitionsInSigAndImplNotCompatibleAbbreviationsDiffer _ -> 318
+        | NoConstructorsAvailableForType _ -> 1133
         | ArgumentsInSigAndImplMismatch _ -> 3218
 
         // Strip TargetInvocationException wrappers
-        | :? TargetInvocationException as e -> e.InnerException.DiagnosticNumber
+        | :? TargetInvocationException as e when isNotNull e.InnerException -> (!!e.InnerException).DiagnosticNumber
         | WrappedError(e, _) -> e.DiagnosticNumber
         | DiagnosticWithText(n, _, _) -> n
         | DiagnosticWithSuggestions(n, _, _, _, _) -> n
@@ -345,6 +343,11 @@ type Exception with
 #endif
         | ErrorsFromAddingSubsumptionConstraint(_, _, _, _, _, ContextInfo.DowncastUsedInsteadOfUpcast _, _) ->
             fst (FSComp.SR.considerUpcast ("", ""))
+        | ConstraintSolverNullnessWarningEquivWithTypes _ -> 3261
+        | ConstraintSolverNullnessWarningWithTypes _ -> 3261
+        | ConstraintSolverNullnessWarningWithType _ -> 3261
+        | ConstraintSolverNullnessWarning _ -> 3261
+        | InvalidAttributeTargetForLanguageElement _ -> 842
         | _ -> 193
 
 type PhasedDiagnostic with
@@ -371,7 +374,7 @@ type PhasedDiagnostic with
         // Level 2
         | _ -> 2
 
-    member x.IsEnabled(severity, options) =
+    member private x.IsEnabled(severity, options) =
         let level = options.WarnLevel
         let specificWarnOn = options.WarnOn
         let n = x.Number
@@ -394,6 +397,7 @@ type PhasedDiagnostic with
         | 3579 -> false // alwaysUseTypedStringInterpolation - off by default
         | 3582 -> false // infoIfFunctionShadowsUnionCase - off by default
         | 3570 -> false // tcAmbiguousDiscardDotLambda - off by default
+        | 3878 -> false // tcAttributeIsNotValidForUnionCaseWithFields - off by default
         | _ ->
             match x.Exception with
             | DiagnosticEnabledWithLanguageFeature(_, _, _, enabled) -> enabled
@@ -401,47 +405,31 @@ type PhasedDiagnostic with
                 (severity = FSharpDiagnosticSeverity.Info && level > 0)
                 || (severity = FSharpDiagnosticSeverity.Warning && level >= x.WarningLevel)
 
-    /// Indicates if a diagnostic should be reported as an informational
-    member x.ReportAsInfo(options, severity) =
-        match severity with
-        | FSharpDiagnosticSeverity.Error -> false
-        | FSharpDiagnosticSeverity.Warning -> false
-        | FSharpDiagnosticSeverity.Info -> x.IsEnabled(severity, options) && not (List.contains x.Number options.WarnOff)
-        | FSharpDiagnosticSeverity.Hidden -> false
+    member x.AdjustSeverity(options, severity) =
+        let n = x.Number
 
-    /// Indicates if a diagnostic should be reported as a warning
-    member x.ReportAsWarning(options, severity) =
-        match severity with
-        | FSharpDiagnosticSeverity.Error -> false
+        let localWarnon () = WarnScopes.IsWarnon options n x.Range
 
-        | FSharpDiagnosticSeverity.Warning -> x.IsEnabled(severity, options) && not (List.contains x.Number options.WarnOff)
+        let localNowarn () = WarnScopes.IsNowarn options n x.Range
 
-        // Informational become warning if explicitly on and not explicitly off
-        | FSharpDiagnosticSeverity.Info ->
-            let n = x.Number
-            List.contains n options.WarnOn && not (List.contains n options.WarnOff)
-
-        | FSharpDiagnosticSeverity.Hidden -> false
-
-    /// Indicates if a diagnostic should be reported as an error
-    member x.ReportAsError(options, severity) =
+        let warnOff () =
+            List.contains n options.WarnOff && not (localWarnon ()) || localNowarn ()
 
         match severity with
-        | FSharpDiagnosticSeverity.Error -> true
-
-        // Warnings become errors in some situations
-        | FSharpDiagnosticSeverity.Warning ->
-            let n = x.Number
-
+        | FSharpDiagnosticSeverity.Error -> FSharpDiagnosticSeverity.Error
+        | FSharpDiagnosticSeverity.Warning when
             x.IsEnabled(severity, options)
+            && ((options.GlobalWarnAsError && not (warnOff ()))
+                || List.contains n options.WarnAsError && not (localNowarn ()))
             && not (List.contains n options.WarnAsWarn)
-            && ((options.GlobalWarnAsError && not (List.contains n options.WarnOff))
-                || List.contains n options.WarnAsError)
-
-        // Informational become errors if explicitly WarnAsError
-        | FSharpDiagnosticSeverity.Info -> List.contains x.Number options.WarnAsError
-
-        | FSharpDiagnosticSeverity.Hidden -> false
+            ->
+            FSharpDiagnosticSeverity.Error
+        | FSharpDiagnosticSeverity.Info when List.contains n options.WarnAsError && not (localNowarn ()) -> FSharpDiagnosticSeverity.Error
+        | FSharpDiagnosticSeverity.Warning when x.IsEnabled(severity, options) && not (warnOff ()) -> FSharpDiagnosticSeverity.Warning
+        | FSharpDiagnosticSeverity.Warning when localWarnon () -> FSharpDiagnosticSeverity.Warning
+        | FSharpDiagnosticSeverity.Info when List.contains n options.WarnOn && not (warnOff ()) -> FSharpDiagnosticSeverity.Warning
+        | FSharpDiagnosticSeverity.Info when x.IsEnabled(severity, options) && not (warnOff ()) -> FSharpDiagnosticSeverity.Info
+        | _ -> FSharpDiagnosticSeverity.Hidden
 
 [<AutoOpen>]
 module OldStyleMessages =
@@ -452,6 +440,10 @@ module OldStyleMessages =
     let ConstraintSolverTupleDiffLengthsE () = Message("ConstraintSolverTupleDiffLengths", "%d%d")
     let ConstraintSolverInfiniteTypesE () = Message("ConstraintSolverInfiniteTypes", "%s%s")
     let ConstraintSolverMissingConstraintE () = Message("ConstraintSolverMissingConstraint", "%s")
+    let ConstraintSolverNullnessWarningEquivWithTypesE () = Message("ConstraintSolverNullnessWarningEquivWithTypes", "%s")
+    let ConstraintSolverNullnessWarningWithTypesE () = Message("ConstraintSolverNullnessWarningWithTypes", "%s%s")
+    let ConstraintSolverNullnessWarningWithTypeE () = Message("ConstraintSolverNullnessWarningWithType", "%s")
+    let ConstraintSolverNullnessWarningE () = Message("ConstraintSolverNullnessWarning", "%s")
     let ConstraintSolverTypesNotInEqualityRelation1E () = Message("ConstraintSolverTypesNotInEqualityRelation1", "%s%s")
     let ConstraintSolverTypesNotInEqualityRelation2E () = Message("ConstraintSolverTypesNotInEqualityRelation2", "%s%s")
     let ConstraintSolverTypesNotInSubsumptionRelationE () = Message("ConstraintSolverTypesNotInSubsumptionRelation", "%s%s%s")
@@ -577,7 +569,9 @@ module OldStyleMessages =
     let ValNotLocalE () = Message("ValNotLocal", "")
     let Obsolete1E () = Message("Obsolete1", "")
     let Obsolete2E () = Message("Obsolete2", "%s")
-    let ExperimentalE () = Message("Experimental", "%s")
+    let Experimental1E () = Message("Experimental1", "")
+    let Experimental2E () = Message("Experimental2", "%s")
+    let Experimental3E () = Message("Experimental3", "")
     let PossibleUnverifiableCodeE () = Message("PossibleUnverifiableCode", "")
     let DeprecatedE () = Message("Deprecated", "%s")
     let LibraryUseOnlyE () = Message("LibraryUseOnly", "")
@@ -612,14 +606,20 @@ module OldStyleMessages =
     let DefinitionsInSigAndImplNotCompatibleAbbreviationsDifferE () =
         Message("DefinitionsInSigAndImplNotCompatibleAbbreviationsDiffer", "%s%s%s%s")
 
+    let InvalidAttributeTargetForLanguageElement1E () = Message("InvalidAttributeTargetForLanguageElement1", "%s%s")
+    let InvalidAttributeTargetForLanguageElement2E () = Message("InvalidAttributeTargetForLanguageElement2", "")
+
+    let NoConstructorsAvailableForTypeE () = Message("NoConstructorsAvailableForType", "%s")
+
 #if DEBUG
 let mutable showParserStackOnParseError = false
 #endif
 
+[<return: Struct>]
 let (|InvalidArgument|_|) (exn: exn) =
     match exn with
-    | :? ArgumentException as e -> Some e.Message
-    | _ -> None
+    | :? ArgumentException as e -> ValueSome e.Message
+    | _ -> ValueNone
 
 let OutputNameSuggestions (os: StringBuilder) suggestNames suggestionsF idText =
     if suggestNames then
@@ -677,30 +677,71 @@ type Exception with
             if m.StartLine <> m2.StartLine then
                 os.AppendString(SeeAlsoE().Format(stringOfRange m))
 
-        | ConstraintSolverMissingConstraint(denv, tpr, tpc, m, m2) ->
-            os.AppendString(
-                ConstraintSolverMissingConstraintE()
-                    .Format(NicePrint.stringOfTyparConstraint denv (tpr, tpc))
-            )
+        | ConstraintSolverNullnessWarningEquivWithTypes(denv, ty1, ty2, _nullness1, _nullness2, m, m2) ->
+
+            // Turn on nullness annotations for messages about nullness
+            let denv =
+                { denv with
+                    showNullnessAnnotations = Some true
+                }
+
+            let t1, _t2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+
+            os.Append(ConstraintSolverNullnessWarningEquivWithTypesE().Format t1) |> ignore
 
             if m.StartLine <> m2.StartLine then
-                os.AppendString(SeeAlsoE().Format(stringOfRange m))
+                os.Append(SeeAlsoE().Format(stringOfRange m)) |> ignore
 
-        | ConstraintSolverTypesNotInEqualityRelation(denv, (TType_measure _ as ty1), (TType_measure _ as ty2), m, m2, _) ->
-            // REVIEW: consider if we need to show _cxs (the type parameter constraints)
-            let ty1, ty2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+        | ConstraintSolverNullnessWarningWithTypes(denv, ty1, ty2, _nullness1, _nullness2, m, m2) ->
 
-            os.AppendString(ConstraintSolverTypesNotInEqualityRelation1E().Format ty1 ty2)
+            // Turn on nullness annotations for messages about nullness
+            let denv =
+                { denv with
+                    showNullnessAnnotations = Some true
+                }
+
+            let t1, t2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+
+            os.Append(ConstraintSolverNullnessWarningWithTypesE().Format t1 t2) |> ignore
+
+            if m.StartLine <> m2.StartLine then
+                os.Append(SeeAlsoE().Format(stringOfRange m)) |> ignore
+
+        | ConstraintSolverNullnessWarningWithType(denv, ty, _, m, m2) ->
+
+            // Turn on nullness annotations for messages about nullness
+            let denv =
+                { denv with
+                    showNullnessAnnotations = Some true
+                }
+
+            let t = NicePrint.minimalStringOfType denv ty
+            os.Append(ConstraintSolverNullnessWarningWithTypeE().Format(t)) |> ignore
+
+            if m.StartLine <> m2.StartLine then
+                os.Append(SeeAlsoE().Format(stringOfRange m)) |> ignore
+
+        | ConstraintSolverNullnessWarning(msg, m, m2) ->
+            os.Append(ConstraintSolverNullnessWarningE().Format(msg)) |> ignore
+
+            if m.StartLine <> m2.StartLine then
+                os.AppendString(SeeAlsoE().Format(stringOfRange m2))
+
+        | ConstraintSolverMissingConstraint(denv, tpr, tpc, m, m2) ->
+            os.AppendString(ConstraintSolverMissingConstraintE().Format(NicePrint.stringOfTyparConstraint denv (tpr, tpc)))
 
             if m.StartLine <> m2.StartLine then
                 os.AppendString(SeeAlsoE().Format(stringOfRange m))
 
         | ConstraintSolverTypesNotInEqualityRelation(denv, ty1, ty2, m, m2, contextInfo) ->
             // REVIEW: consider if we need to show _cxs (the type parameter constraints)
-            let ty1, ty2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+            let ty1str, ty2str, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
 
-            OutputTypesNotInEqualityRelationContextInfo contextInfo ty1 ty2 m os (fun _ ->
-                os.AppendString(ConstraintSolverTypesNotInEqualityRelation2E().Format ty1 ty2))
+            match ty1, ty2 with
+            | TType_measure _, TType_measure _ -> os.AppendString(ConstraintSolverTypesNotInEqualityRelation1E().Format ty1str ty2str)
+            | _ ->
+                OutputTypesNotInEqualityRelationContextInfo contextInfo ty1str ty2str m os (fun _ ->
+                    os.AppendString(ConstraintSolverTypesNotInEqualityRelation2E().Format ty1str ty2str))
 
             if m.StartLine <> m2.StartLine then
                 os.AppendString(SeeAlsoE().Format(stringOfRange m))
@@ -745,7 +786,7 @@ type Exception with
 
         | ErrorFromAddingTypeEquation(error = ConstraintSolverError _ as e) -> e.Output(os, suggestNames)
 
-        | ErrorFromAddingTypeEquation(_g, denv, ty1, ty2, ConstraintSolverTupleDiffLengths(_, contextInfo, tl1, tl2, _, _), m) ->
+        | ErrorFromAddingTypeEquation(_g, denv, ty1, ty2, ConstraintSolverTupleDiffLengths(_, contextInfo, tl1, tl2, m1, m2), m) ->
             let ty1, ty2, tpcs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
             let messageArgs = tl1.Length, ty1, tl2.Length, ty2
 
@@ -762,13 +803,33 @@ type Exception with
                     else
                         os.AppendString(FSComp.SR.listElementHasWrongTypeTuple messageArgs)
                 | _ -> os.AppendString(ErrorFromAddingTypeEquationTuplesE().Format tl1.Length ty1 tl2.Length ty2 tpcs)
+            else
+                os.AppendString(ConstraintSolverTupleDiffLengthsE().Format tl1.Length tl2.Length)
+
+                if m1.StartLine <> m2.StartLine then
+                    os.AppendString(SeeAlsoE().Format(stringOfRange m1))
 
         | ErrorFromAddingTypeEquation(g, denv, ty1, ty2, e, _) ->
-            if not (typeEquiv g ty1 ty2) then
-                let ty1, ty2, tpcs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+            let e =
+                if not (typeEquiv g ty1 ty2) then
+                    let ty1, ty2, tpcs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
 
-                if ty1 <> ty2 + tpcs then
-                    os.AppendString(ErrorFromAddingTypeEquation2E().Format ty1 ty2 tpcs)
+                    if ty1 <> ty2 + tpcs then
+                        os.AppendString(ErrorFromAddingTypeEquation2E().Format ty1 ty2 tpcs)
+
+                    e
+
+                else
+                    // Fix for https://github.com/dotnet/fsharp/issues/18905
+                    // If ty1 = ty2 after the type solving, then ty2 holds an actual type.
+                    // The order of expected and actual types in ConstraintSolverTypesNotInEqualityRelation can be arbitrary
+                    // due to type solving logic.
+                    // If ty1 = ty2 = ty2b, it means ty2b is also an actual type, and it needs to be swapped with ty1b
+                    // to be correctly used in the type mismatch error message based on ConstraintSolverTypesNotInEqualityRelation
+                    match e with
+                    | ConstraintSolverTypesNotInEqualityRelation(env, ty1b, ty2b, m, m2, contextInfo) when typeEquiv g ty2 ty2b ->
+                        ConstraintSolverTypesNotInEqualityRelation(env, ty2b, ty1b, m, m2, contextInfo)
+                    | _ -> e
 
             e.Output(os, suggestNames)
 
@@ -829,14 +890,15 @@ type Exception with
             let argsMessage, returnType, genericParametersMessage =
 
                 let retTy =
-                    knownReturnType |> Option.defaultValue (TType_var(Typar.NewUnlinked(), 0uy))
+                    knownReturnType
+                    |> Option.defaultValue (TType.TType_var(Typar.NewUnlinked(), KnownAmbivalentToNull))
 
                 let argRepr =
                     callerArgs.ArgumentNamesAndTypes
                     |> List.map (fun (name, tTy) ->
                         tTy,
                         {
-                            ArgReprInfo.Name = name |> Option.map (fun name -> Ident(name, range.Zero))
+                            ArgReprInfo.Name = name |> Option.map (fun name -> Ident(name, range0))
                             ArgReprInfo.Attribs = []
                             ArgReprInfo.OtherRange = None
                         })
@@ -1089,6 +1151,7 @@ type Exception with
                 | Parser.TOKEN_COLON_EQUALS -> SR.GetString("Parser.TOKEN.COLON.EQUALS")
                 | Parser.TOKEN_LARROW -> SR.GetString("Parser.TOKEN.LARROW")
                 | Parser.TOKEN_EQUALS -> SR.GetString("Parser.TOKEN.EQUALS")
+                | Parser.TOKEN_GREATER_BAR_RBRACE -> SR.GetString("Parser.TOKEN.GREATER.BAR.RBRACE")
                 | Parser.TOKEN_GREATER_BAR_RBRACK -> SR.GetString("Parser.TOKEN.GREATER.BAR.RBRACK")
                 | Parser.TOKEN_MINUS -> SR.GetString("Parser.TOKEN.MINUS")
                 | Parser.TOKEN_ADJACENT_PREFIX_OP -> SR.GetString("Parser.TOKEN.ADJACENT.PREFIX.OP")
@@ -1115,6 +1178,7 @@ type Exception with
                 | Parser.TOKEN_GREATER_RBRACK -> SR.GetString("Parser.TOKEN.GREATER.RBRACK")
                 | Parser.TOKEN_RQUOTE_DOT
                 | Parser.TOKEN_RQUOTE -> SR.GetString("Parser.TOKEN.RQUOTE")
+                | Parser.TOKEN_RQUOTE_BAR_RBRACE -> SR.GetString("Parser.TOKEN.RQUOTE.BAR.RBRACE")
                 | Parser.TOKEN_RBRACK -> SR.GetString("Parser.TOKEN.RBRACK")
                 | Parser.TOKEN_RBRACE
                 | Parser.TOKEN_RBRACE_COMING_SOON
@@ -1236,9 +1300,9 @@ type Exception with
                 | Parser.TOKEN_INTERP_STRING_BEGIN_PART -> SR.GetString("Parser.TOKEN.INTERP.STRING.BEGIN.PART")
                 | Parser.TOKEN_INTERP_STRING_PART -> SR.GetString("Parser.TOKEN.INTERP.STRING.PART")
                 | Parser.TOKEN_INTERP_STRING_END -> SR.GetString("Parser.TOKEN.INTERP.STRING.END")
+                | Parser.TOKEN_BAR_JUST_BEFORE_NULL -> SR.GetString("Parser.TOKEN.BAR_JUST_BEFORE_NULL")
                 | unknown ->
-                    Debug.Assert(false, "unknown token tag")
-                    let result = sprintf "%+A" unknown
+                    let result = sprintf "unknown token tag %+A" unknown
                     Debug.Assert(false, result)
                     result
 
@@ -1476,10 +1540,7 @@ type Exception with
                 foundInContext |> ignore // suppress unused variable warning in RELEASE
 #endif
                 let fix (s: string) =
-                    s
-                        .Replace(SR.GetString("FixKeyword"), "")
-                        .Replace(SR.GetString("FixSymbol"), "")
-                        .Replace(SR.GetString("FixReplace"), "")
+                    s.Replace(SR.GetString("FixKeyword"), "").Replace(SR.GetString("FixSymbol"), "").Replace(SR.GetString("FixReplace"), "")
 
                 let tokenNames =
                     ctxt.ShiftTokens
@@ -1570,7 +1631,7 @@ type Exception with
 
         | UnionPatternsBindDifferentNames _ -> os.AppendString(UnionPatternsBindDifferentNamesE().Format)
 
-        | ValueNotContained(denv, infoReader, mref, implVal, sigVal, f) ->
+        | ValueNotContained(_, denv, infoReader, mref, implVal, sigVal, f) ->
             let text1, text2 =
                 NicePrint.minimalStringsOfTwoValues denv infoReader (mkLocalValRef implVal) (mkLocalValRef sigVal)
 
@@ -1594,7 +1655,7 @@ type Exception with
                 )
             )
 
-        | FieldNotContained(denv, infoReader, enclosingTycon, _, v1, v2, f) ->
+        | FieldNotContained(_, denv, infoReader, enclosingTycon, _, v1, v2, f) ->
             let enclosingTcref = mkLocalEntityRef enclosingTycon
 
             os.AppendString(
@@ -1743,15 +1804,21 @@ type Exception with
 
         | ValNotLocal _ -> os.AppendString(ValNotLocalE().Format)
 
-        | ObsoleteError(s, _)
-
-        | ObsoleteWarning(s, _) ->
+        | ObsoleteDiagnostic(message = message) ->
             os.AppendString(Obsolete1E().Format)
 
-            if s <> "" then
-                os.AppendString(Obsolete2E().Format s)
+            match message with
+            | Some message when message <> "" -> os.AppendString(Obsolete2E().Format message)
+            | _ -> ()
 
-        | Experimental(s, _) -> os.AppendString(ExperimentalE().Format s)
+        | Experimental(message = message) ->
+            os.AppendString(Experimental1E().Format)
+
+            match message with
+            | Some message when message <> "" -> os.AppendString(Experimental2E().Format message)
+            | _ -> ()
+
+            os.AppendString(Experimental3E().Format)
 
         | PossibleUnverifiableCode _ -> os.AppendString(PossibleUnverifiableCodeE().Format)
 
@@ -1874,8 +1941,19 @@ type Exception with
                     s2
             )
 
+        | InvalidAttributeTargetForLanguageElement(elementTargets, allowedTargets, _m) ->
+            if Array.isEmpty elementTargets then
+                os.AppendString(InvalidAttributeTargetForLanguageElement2E().Format)
+            else
+                let elementTargets = String.concat ", " elementTargets
+                let allowedTargets = allowedTargets |> String.concat ", "
+                os.AppendString(InvalidAttributeTargetForLanguageElement1E().Format elementTargets allowedTargets)
+
+        | NoConstructorsAvailableForType(t, denv, _) ->
+            os.AppendString(NoConstructorsAvailableForTypeE().Format(NicePrint.minimalStringOfType denv t))
+
         // Strip TargetInvocationException wrappers
-        | :? TargetInvocationException as exn -> exn.InnerException.Output(os, suggestNames)
+        | :? TargetInvocationException as e when isNotNull e.InnerException -> (!!e.InnerException).Output(os, suggestNames)
 
         | :? FileNotFoundException as exn -> Printf.bprintf os "%s" exn.Message
 
@@ -1974,6 +2052,8 @@ type FormattedDiagnosticDetailedInfo =
         Location: FormattedDiagnosticLocation option
         Canonical: FormattedDiagnosticCanonicalInformation
         Message: string
+        Context: string option
+        DiagnosticStyle: DiagnosticStyle
     }
 
 [<RequireQualifiedAccess>]
@@ -1981,7 +2061,7 @@ type FormattedDiagnostic =
     | Short of FSharpDiagnosticSeverity * string
     | Long of FSharpDiagnosticSeverity * FormattedDiagnosticDetailedInfo
 
-let FormatDiagnosticLocation (tcConfig: TcConfig) m : FormattedDiagnosticLocation =
+let FormatDiagnosticLocation (tcConfig: TcConfig) (m: Range) : FormattedDiagnosticLocation =
     if equals m rangeStartup || equals m rangeCmdArgs then
         {
             Range = m
@@ -1990,6 +2070,7 @@ let FormatDiagnosticLocation (tcConfig: TcConfig) m : FormattedDiagnosticLocatio
             File = ""
         }
     else
+        let m = m.ApplyLineDirectives()
         let file = m.FileName
 
         let file =
@@ -2044,6 +2125,10 @@ let FormatDiagnosticLocation (tcConfig: TcConfig) m : FormattedDiagnosticLocatio
                     sprintf "%s(%d,%d,%d,%d): " file m.StartLine m.StartColumn m.EndLine m.EndColumn, m, file
                 else
                     "", m, file
+            | DiagnosticStyle.Rich ->
+                let file = file.Replace('/', Path.DirectorySeparatorChar)
+                let m = withStart (mkPos m.StartLine (m.StartColumn + 1)) m
+                (sprintf "\n  --> %s (%d,%d)" file m.StartLine m.StartColumn), m, file
 
         {
             Range = m
@@ -2084,8 +2169,12 @@ let CollectFormattedDiagnostics (tcConfig: TcConfig, severity: FSharpDiagnosticS
             let text =
                 match tcConfig.diagnosticStyle with
                 // Show the subcategory for --vserrors so that we can fish it out in Visual Studio and use it to determine error stickiness.
+                | DiagnosticStyle.Emacs
+                | DiagnosticStyle.Gcc
+                | DiagnosticStyle.Default
+                | DiagnosticStyle.Test -> sprintf "%s FS%04d: " message errorNumber
                 | DiagnosticStyle.VisualStudio -> sprintf "%s %s FS%04d: " subcategory message errorNumber
-                | _ -> sprintf "%s FS%04d: " message errorNumber
+                | DiagnosticStyle.Rich -> sprintf "%s FS%04d: " message errorNumber
 
             let canonical: FormattedDiagnosticCanonicalInformation =
                 {
@@ -2094,13 +2183,53 @@ let CollectFormattedDiagnostics (tcConfig: TcConfig, severity: FSharpDiagnosticS
                     TextRepresentation = text
                 }
 
-            let message = diagnostic.FormatCore(tcConfig.flatErrors, suggestNames)
+            let message =
+                match tcConfig.diagnosticStyle with
+                | DiagnosticStyle.Emacs
+                | DiagnosticStyle.Gcc
+                | DiagnosticStyle.Default
+                | DiagnosticStyle.Test
+                | DiagnosticStyle.Rich
+                | DiagnosticStyle.VisualStudio -> diagnostic.FormatCore(tcConfig.flatErrors, suggestNames)
+
+            let context =
+                match tcConfig.diagnosticStyle with
+                | DiagnosticStyle.Emacs
+                | DiagnosticStyle.Gcc
+                | DiagnosticStyle.Default
+                | DiagnosticStyle.Test
+                | DiagnosticStyle.VisualStudio -> None
+                | DiagnosticStyle.Rich ->
+                    match diagnostic.Range with
+                    | Some m ->
+                        let m = m.ApplyLineDirectives()
+
+                        let content =
+                            m.FileName
+                            |> FileSystem.GetFullFilePathInDirectoryShim tcConfig.implicitIncludeDir
+                            |> System.IO.File.ReadAllLines
+
+                        if m.StartLine = m.EndLine then
+                            $"\n  {m.StartLine} | {content[m.StartLine - 1]}\n"
+                            + $"""{String.make (m.StartColumn + 6) ' '}{String.make (m.EndColumn - m.StartColumn) '^'}"""
+                            |> Some
+                        else
+                            content
+                            |> fun lines -> Array.sub lines (m.StartLine - 1) (m.EndLine - m.StartLine - 1)
+                            |> Array.fold
+                                (fun (context, lineNumber) line -> (context + $"\n{lineNumber} | {line}", lineNumber + 1))
+                                ("", (m.StartLine))
+                            |> fst
+                            |> Some
+                    | None -> None
 
             let entry: FormattedDiagnosticDetailedInfo =
                 {
                     Location = where
+                    Context = context
                     Canonical = canonical
                     Message = message
+                    DiagnosticStyle = tcConfig.diagnosticStyle
                 }
 
             errors.Add(FormattedDiagnostic.Long(severity, entry))
@@ -2128,17 +2257,39 @@ type PhasedDiagnostic with
             match e with
             | FormattedDiagnostic.Short(_, txt) -> buf.AppendString txt
             | FormattedDiagnostic.Long(_, details) ->
-                match details.Location with
-                | Some l when not l.IsEmpty -> buf.AppendString l.TextRepresentation
-                | _ -> ()
+                match details.DiagnosticStyle with
+                | DiagnosticStyle.Emacs
+                | DiagnosticStyle.Gcc
+                | DiagnosticStyle.Test
+                | DiagnosticStyle.VisualStudio
+                | DiagnosticStyle.Default ->
+                    match details.Location with
+                    | Some l when not l.IsEmpty ->
+                        buf.AppendString l.TextRepresentation
 
-                buf.AppendString details.Canonical.TextRepresentation
-                buf.AppendString details.Message
+                        if details.Context.IsSome then
+                            buf.AppendString details.Context.Value
+                    | _ -> ()
+
+                    buf.AppendString details.Canonical.TextRepresentation
+                    buf.AppendString details.Message
+                | DiagnosticStyle.Rich ->
+                    buf.AppendString details.Canonical.TextRepresentation
+                    buf.AppendString details.Message
+
+                    match details.Location with
+                    | Some l when not l.IsEmpty ->
+                        buf.AppendString l.TextRepresentation
+
+                        if details.Context.IsSome then
+                            buf.AppendString details.Context.Value
+                    | _ -> ()
 
     member diagnostic.OutputContext(buf, prefix, fileLineFunction) =
         match diagnostic.Range with
         | None -> ()
         | Some m ->
+            let m = m.ApplyLineDirectives()
             let fileName = m.FileName
             let lineA = m.StartLine
             let lineB = m.EndLine
@@ -2156,49 +2307,25 @@ type PhasedDiagnostic with
             diagnostic.OutputContext(buf, prefix, fileLineFunction)
             diagnostic.Output(buf, tcConfig, severity))
 
-//----------------------------------------------------------------------------
-// Scoped #nowarn pragmas
+/// Build an DiagnosticsLogger that delegates to another DiagnosticsLogger but filters warnings
+type DiagnosticsLoggerFilteringByScopedNowarn(diagnosticOptions: FSharpDiagnosticOptions, diagnosticsLogger: DiagnosticsLogger) =
+    inherit DiagnosticsLogger("DiagnosticsLoggerFilteringByScopedNowarn")
 
-/// Build an DiagnosticsLogger that delegates to another DiagnosticsLogger but filters warnings turned off by the given pragma declarations
-//
-// NOTE: we allow a flag to turn of strict file checking. This is because file names sometimes don't match due to use of
-// #line directives, e.g. for pars.fs/pars.fsy. In this case we just test by line number - in most cases this is sufficient
-// because we install a filtering error handler on a file-by-file basis for parsing and type-checking.
-// However this is indicative of a more systematic problem where source-line
-// sensitive operations (lexfilter and warning filtering) do not always
-// interact well with #line directives.
-type DiagnosticsLoggerFilteringByScopedPragmas
-    (checkFile, scopedPragmas, diagnosticOptions: FSharpDiagnosticOptions, diagnosticsLogger: DiagnosticsLogger) =
-    inherit DiagnosticsLogger("DiagnosticsLoggerFilteringByScopedPragmas")
+    let mutable realErrorPresent = false
 
     override _.DiagnosticSink(diagnostic: PhasedDiagnostic, severity) =
+
         if severity = FSharpDiagnosticSeverity.Error then
+            realErrorPresent <- true
             diagnosticsLogger.DiagnosticSink(diagnostic, severity)
         else
-            let report =
-                let warningNum = diagnostic.Number
-
-                match diagnostic.Range with
-                | Some m ->
-                    scopedPragmas
-                    |> List.exists (fun pragma ->
-                        let (ScopedPragma.WarningOff(pragmaRange, warningNumFromPragma)) = pragma
-
-                        warningNum = warningNumFromPragma
-                        && (not checkFile || m.FileIndex = pragmaRange.FileIndex)
-                        && posGeq m.Start pragmaRange.Start)
-                    |> not
-                | None -> true
-
-            if report then
-                if diagnostic.ReportAsError(diagnosticOptions, severity) then
-                    diagnosticsLogger.DiagnosticSink(diagnostic, FSharpDiagnosticSeverity.Error)
-                elif diagnostic.ReportAsWarning(diagnosticOptions, severity) then
-                    diagnosticsLogger.DiagnosticSink(diagnostic, FSharpDiagnosticSeverity.Warning)
-                elif diagnostic.ReportAsInfo(diagnosticOptions, severity) then
-                    diagnosticsLogger.DiagnosticSink(diagnostic, severity)
+            match diagnostic.AdjustSeverity(diagnosticOptions, severity) with
+            | FSharpDiagnosticSeverity.Hidden -> ()
+            | s -> diagnosticsLogger.DiagnosticSink(diagnostic, s)
 
     override _.ErrorCount = diagnosticsLogger.ErrorCount
 
-let GetDiagnosticsLoggerFilteringByScopedPragmas (checkFile, scopedPragmas, diagnosticOptions, diagnosticsLogger) =
-    DiagnosticsLoggerFilteringByScopedPragmas(checkFile, scopedPragmas, diagnosticOptions, diagnosticsLogger) :> DiagnosticsLogger
+    override _.CheckForRealErrorsIgnoringWarnings = realErrorPresent
+
+let GetDiagnosticsLoggerFilteringByScopedNowarn (diagnosticOptions, diagnosticsLogger) =
+    DiagnosticsLoggerFilteringByScopedNowarn(diagnosticOptions, diagnosticsLogger) :> DiagnosticsLogger

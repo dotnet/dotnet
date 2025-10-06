@@ -1,39 +1,41 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-internal class DelegatedCompletionItemResolver : CompletionItemResolver
+internal class DelegatedCompletionItemResolver(
+    IDocumentContextFactory documentContextFactory,
+    IRazorFormattingService formattingService,
+    IDocumentMappingService documentMappingService,
+    RazorLSPOptionsMonitor optionsMonitor,
+    IClientConnection clientConnection,
+    ILoggerFactory loggerFactory) : CompletionItemResolver
 {
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly IRazorFormattingService _formattingService;
-    private readonly IClientConnection _clientConnection;
-
-    public DelegatedCompletionItemResolver(
-        IDocumentContextFactory documentContextFactory,
-        IRazorFormattingService formattingService,
-        IClientConnection clientConnection)
-    {
-        _documentContextFactory = documentContextFactory;
-        _formattingService = formattingService;
-        _clientConnection = clientConnection;
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly IRazorFormattingService _formattingService = formattingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DelegatedCompletionItemResolver>();
 
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem item,
         VSInternalCompletionList containingCompletionList,
-        object? originalRequestContext,
-        VSInternalClientCapabilities? clientCapabilities,
+        ICompletionResolveContext originalRequestContext,
+        VSInternalClientCapabilities clientCapabilities,
+        IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
     {
         if (originalRequestContext is not DelegatedCompletionResolutionContext resolutionContext)
@@ -42,34 +44,17 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             return null;
         }
 
-        var labelQuery = item.Label;
-        var associatedDelegatedCompletion = containingCompletionList.Items.FirstOrDefault(completion => string.Equals(labelQuery, completion.Label, StringComparison.Ordinal));
-        if (associatedDelegatedCompletion is null)
-        {
-            return null;
-        }
+        item.Data = DelegatedCompletionHelper.GetOriginalCompletionItemData(item, containingCompletionList, resolutionContext.OriginalCompletionListData);
 
-        // If the data was merged to combine resultId with original data, undo that merge and set the data back
-        // to what it originally was for the delegated request
-        if (CompletionListMerger.TrySplit(associatedDelegatedCompletion.Data, out var splitData) && splitData.Count == 2)
-        {
-            item.Data = splitData[1];
-        }
-        else
-        {
-            item.Data = associatedDelegatedCompletion.Data ?? resolutionContext.OriginalCompletionListData;
-        }
-
-        var delegatedParams = resolutionContext.OriginalRequestParams;
         var delegatedResolveParams = new DelegatedCompletionItemResolveParams(
-            delegatedParams.Identifier,
+            resolutionContext.Identifier,
             item,
-            delegatedParams.ProjectedKind);
-        var resolvedCompletionItem = await _clientConnection.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(Common.LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
+            resolutionContext.ProjectedKind);
+        var resolvedCompletionItem = await _clientConnection.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
 
         if (resolvedCompletionItem is not null)
         {
-            resolvedCompletionItem = await PostProcessCompletionItemAsync(resolutionContext, resolvedCompletionItem, cancellationToken).ConfigureAwait(false);
+            resolvedCompletionItem = await PostProcessCompletionItemAsync(resolutionContext, resolvedCompletionItem, clientCapabilities, cancellationToken).ConfigureAwait(false);
         }
 
         return resolvedCompletionItem;
@@ -78,72 +63,52 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
     private async Task<VSInternalCompletionItem> PostProcessCompletionItemAsync(
         DelegatedCompletionResolutionContext context,
         VSInternalCompletionItem resolvedCompletionItem,
+        VSInternalClientCapabilities clientCapabilities,
         CancellationToken cancellationToken)
     {
-        if (context.OriginalRequestParams.ProjectedKind != RazorLanguageKind.CSharp)
+        if (context.ProjectedKind != RazorLanguageKind.CSharp)
         {
             // We currently don't do any post-processing for non-C# items.
             return resolvedCompletionItem;
         }
 
-        if (!resolvedCompletionItem.VsResolveTextEditOnCommit)
+        if (clientCapabilities.SupportsVisualStudioExtensions && !resolvedCompletionItem.VsResolveTextEditOnCommit)
         {
             // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
             return resolvedCompletionItem;
         }
 
-        if (resolvedCompletionItem.TextEdit is null && resolvedCompletionItem.AdditionalTextEdits is null)
-        {
-            // Only post-processing work we have to do is formatting text edits on resolution.
-            return resolvedCompletionItem;
-        }
-
-        var identifier = context.OriginalRequestParams.Identifier.TextDocumentIdentifier;
-        var documentContext = _documentContextFactory.TryCreateForOpenDocument(identifier);
-        if (documentContext is null)
+        var identifier = context.Identifier.TextDocumentIdentifier;
+        if (!_documentContextFactory.TryCreate(identifier, out var documentContext))
         {
             return resolvedCompletionItem;
         }
 
-        var formattingOptions = await _clientConnection.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(Common.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
+        // In VS we call into the VS layer to get formatting options, as the editor decides based on a multiple sources
+        var formattingOptions = clientCapabilities.SupportsVisualStudioExtensions
+            ? await _clientConnection
+                .SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(
+                    LanguageServerConstants.RazorGetFormattingOptionsEndpointName,
+                    documentContext.GetTextDocumentIdentifierAndVersion(),
+                    cancellationToken)
+                .ConfigureAwait(false)
+            : _optionsMonitor.CurrentValue.ToFormattingOptions();
+
         if (formattingOptions is null)
         {
             return resolvedCompletionItem;
         }
 
-        if (resolvedCompletionItem.TextEdit is not null)
-        {
-            if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
-            {
-                var formattedTextEdit = await _formattingService.FormatSnippetAsync(
-                    documentContext,
-                    RazorLanguageKind.CSharp,
-                    new[] { textEdit },
-                    formattingOptions,
-                    cancellationToken).ConfigureAwait(false);
+        var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-                resolvedCompletionItem.TextEdit = formattedTextEdit.FirstOrDefault();
-            }
-            else
-            {
-                // TO-DO: Handle InsertReplaceEdit type
-                // https://github.com/dotnet/razor/issues/8829
-                Debug.Fail("Unsupported edit type.");
-            }
-        }
-
-        if (resolvedCompletionItem.AdditionalTextEdits is not null)
-        {
-            var formattedTextEdits = await _formattingService.FormatSnippetAsync(
-                documentContext,
-                RazorLanguageKind.CSharp,
-                resolvedCompletionItem.AdditionalTextEdits,
-                formattingOptions,
-                cancellationToken).ConfigureAwait(false);
-
-            resolvedCompletionItem.AdditionalTextEdits = formattedTextEdits;
-        }
-
-        return resolvedCompletionItem;
+        return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
+            resolvedCompletionItem,
+            documentContext,
+            options,
+            _formattingService,
+            _documentMappingService,
+            clientCapabilities.SupportsVisualStudioExtensions,
+            _logger,
+            cancellationToken).ConfigureAwait(false);
     }
 }

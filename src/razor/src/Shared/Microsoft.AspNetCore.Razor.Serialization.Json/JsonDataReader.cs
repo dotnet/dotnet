@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
-using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR;
+using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.Strings;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
@@ -40,7 +40,9 @@ internal partial class JsonDataReader
     {
     }
 
+    public bool IsInteger => _reader.TokenType == JsonToken.Integer;
     public bool IsObjectStart => _reader.TokenType == JsonToken.StartObject;
+    public bool IsString => _reader.TokenType == JsonToken.String;
 
     public bool IsPropertyName(string propertyName)
         => _reader.TokenType == JsonToken.PropertyName &&
@@ -135,6 +137,41 @@ internal partial class JsonDataReader
 
         value = default;
         return false;
+    }
+
+    public byte ReadByte()
+    {
+        _reader.CheckToken(JsonToken.Integer);
+
+        var result = Convert.ToByte(_reader.Value);
+        _reader.Read();
+
+        return result;
+    }
+
+    public byte ReadByteOrDefault(string propertyName, byte defaultValue = default)
+        => TryReadPropertyName(propertyName) ? ReadByte() : defaultValue;
+
+    public byte ReadByteOrZero(string propertyName)
+        => TryReadPropertyName(propertyName) ? ReadByte() : (byte)0;
+
+    public bool TryReadByte(string propertyName, out byte value)
+    {
+        if (TryReadPropertyName(propertyName))
+        {
+            value = ReadByte();
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
+    public byte ReadByte(string propertyName)
+    {
+        ReadPropertyName(propertyName);
+
+        return ReadByte();
     }
 
     public int ReadInt32()
@@ -352,6 +389,9 @@ internal partial class JsonDataReader
 
         return ReadNonNullObject(readProperties);
     }
+
+    public T ReadNonNullObjectOrDefault<T>(string propertyName, ReadProperties<T> readProperties, T defaultValue)
+        => TryReadPropertyName(propertyName) ? ReadNonNullObject(readProperties) : defaultValue;
 
     public T[]? ReadArray<T>(ReadValue<T> readElement)
     {

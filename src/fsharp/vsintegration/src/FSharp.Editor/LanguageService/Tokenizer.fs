@@ -508,12 +508,8 @@ module internal Tokenizer =
         | _ -> ClassificationTypeNames.Text
 
     let private scanSourceLine
-        (
-            sourceTokenizer: FSharpSourceTokenizer,
-            textLine: TextLine,
-            lineContents: string,
-            lexState: FSharpTokenizerLexState
-        ) : SourceLineData =
+        (sourceTokenizer: FSharpSourceTokenizer, textLine: TextLine, lineContents: string, lexState: FSharpTokenizerLexState)
+        : SourceLineData =
         let colorMap = Array.create textLine.Span.Length ClassificationTypeNames.Text
         let lineTokenizer = sourceTokenizer.CreateLineTokenizer(lineContents)
         let tokens = ResizeArray<SavedTokenInfo>()
@@ -769,11 +765,11 @@ module internal Tokenizer =
         // Each of them has MatchedLength = 3. So, we take the first GREATER and skip the other two).
         //
         // Generic type parameters: we convert QUOTE + IDENT tokens into single IDENT token, altering its LeftColumn
-        // and FullMathedLength (for "'type" which is tokenized as (QUOTE, left=2) + (IDENT, left=3, length=4)
+        // and FullMatchedLength (for "'type" which is tokenized as (QUOTE, left=2) + (IDENT, left=3, length=4)
         // we'll get (IDENT, left=2, length=5).
         //
         // Statically resolved type parameters: we convert INFIX_AT_HAT_OP + IDENT tokens into single IDENT token, altering its LeftColumn
-        // and FullMathedLength (for "^type" which is tokenized as (INFIX_AT_HAT_OP, left=2) + (IDENT, left=3, length=4)
+        // and FullMatchedLength (for "^type" which is tokenized as (INFIX_AT_HAT_OP, left=2) + (IDENT, left=3, length=4)
         // we'll get (IDENT, left=2, length=5).
         let draftTokens =
             let tokensCount = savedTokens.Length

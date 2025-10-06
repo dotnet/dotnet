@@ -15,7 +15,7 @@ namespace NuGet.Packaging.Test
                                                            "lib/net50/system.exe",
                                                            "lib/net50/system.winmd" }, null)]
         [InlineData("lib/net50/system.dll", new string[] { "lib/net50/system.dll",
-                                                           "lib/net50/system.Core.dll" }, null)]
+                                                          "lib/net50/system.Core.dll" }, null)]
         [InlineData("lib/net50/system.dll", new string[] { "lib/net50/system.dll",
                                                            "lib/net50/system.EXE",
                                                            "lib/net50/system.Core.DLL"}, null)]
@@ -33,6 +33,8 @@ namespace NuGet.Packaging.Test
         [InlineData("lib/net50/system.test.dll", new string[] { "lib/net50/system.test.dll",
                                                                 "lib/net50/system.test.PDB",
                                                                 "lib/net50/system.test.XML", }, ".PDB;.XML")]
+        [InlineData("lib/net50/system.test.dll", new string[] { "lib/net50/system.test.dll",
+                                                                "lib/net50/noextension" }, null)]
 
         public void GetRelatedFileExtensionProperty_SingleAssemblyAsset_GetNullProperty(string assembly, string[] assetsPaths, string expectedRelatedProperty)
         {

@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 using FluentAssertions;
@@ -140,7 +143,8 @@ public class CustomTestHostTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [TestCategory("Feature")]
-    [RunnerCompatibilityDataSource(AfterFeature = Features.MULTI_TFM)]
+    // "Just row" used here because mstest does not cooperate with older versions of vstest.console correctly, so we test with just the latest version available..
+    [RunnerCompatibilityDataSource(AfterFeature = Features.MULTI_TFM, JustRow = 0)]
     public void RunAllTestsWithMixedTFMsWillProvideAdditionalInformationToTheDebugger(RunnerInfo runnerInfo)
     {
         // Arrange
@@ -158,6 +162,27 @@ public class CustomTestHostTests : AcceptanceTestBase
         vstestConsoleWrapper.RunTestsWithCustomTestHost(new[] { netFrameworkDll, netDll }, runsettingsXml, runEventHandler, testHostLauncher);
 
         // Assert
+        if (runEventHandler.Errors.Any())
+        {
+            var tempPath = TempDirectory.Path;
+            var files = System.IO.Directory.GetFiles(tempPath, "*.txt").ToList();
+            if (files.Count == 0)
+            {
+                throw new InvalidOperationException($"No error files found in {tempPath}. {string.Join("\n", Directory.GetFiles(tempPath))}");
+            }
+
+            var allText = new StringBuilder();
+            foreach (var file in files)
+            {
+#pragma warning disable CA1305 // Specify IFormatProvider
+                allText.AppendLine($"Error file: {file}");
+                allText.AppendLine(File.ReadAllText(file));
+                allText.AppendLine();
+#pragma warning restore CA1305 // Specify IFormatProvider
+            }
+            throw new InvalidOperationException($"Logs: {allText}");
+        }
+
         runEventHandler.Errors.Should().BeEmpty();
         testHostLauncher.AttachDebuggerInfos.Should().HaveCount(2);
         var targetFrameworks = testHostLauncher.AttachDebuggerInfos.Select(i => i.TargetFramework).ToList();

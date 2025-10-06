@@ -1,0 +1,50 @@
+<Solution>
+    <Configurations>
+        <ProjectType>
+            <BuildType Project="*" />
+            <Platform Project="*" />
+            <Build />
+            <Deploy Project="false" />
+        </ProjectType>
+        <ProjectType Extension=".vcxitems" TypeId="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" IsBuildable="false" />
+        <ProjectType Name="C#" Extension=".csproj" TypeId="fae04ec0-301f-11d3-bf4b-00c04f79efbc">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Cloud Computing" Extension=".ccproj" TypeId="cc5fd16d-436d-48ad-a40c-5a424c6e3e79" IsBuildable="false" />
+        <ProjectType Name="Common C#" TypeId="9a19103f-16f7-4668-be54-9a1e7a4f7556">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Common F#" TypeId="6ec3ee1d-3c4e-46dd-8f32-0cc8e7565705">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Common VB" TypeId="778dae3c-4631-46ea-aa77-85c1314464d9">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Deploy" Extension=".deployproj" TypeId="151d2e53-a2c4-4d7d-83fe-d05416ebd58e" IsBuildable="false" />
+        <ProjectType Name="Docker" Extension=".dcproj" TypeId="e53339b2-1760-4266-bcc7-ca923cbcf16c" IsBuildable="false" />
+        <ProjectType Name="Exe" Extension=".exe" TypeId="911e67c6-3d85-4fce-b560-20a9c3e3ff48" IsBuildable="false" />
+        <ProjectType Name="F#" Extension=".fsproj" TypeId="f2a71f9b-5d33-465a-a702-920d77279786">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Fabric" Extension=".sfproj" TypeId="a07b5eb6-e848-4116-a8d0-a826331d98c6" IsBuildable="false" />
+        <ProjectType Name="Folder" TypeId="2150e333-8fdc-42a3-9474-1a3956d46de8" IsBuildable="false" />
+        <ProjectType Name="Installer" Extension=".vsproj" TypeId="54435603-dbb4-11d2-8724-00a0c9a8b90c" IsBuildable="false" />
+        <ProjectType Name="Javascript" Extension=".esproj" TypeId="54a90642-561a-4bb1-a94e-469adee60c69" IsBuildable="false" />
+        <ProjectType Name="Node.js" Extension=".njsproj" TypeId="9092aa53-fb77-4645-b42d-1ccca6bd08bd" IsBuildable="false" />
+        <ProjectType Name="SQL" Extension=".sqlproj" TypeId="00d1a9c2-b5f0-4af3-8072-f6c62b433612" IsBuildable="false" />
+        <ProjectType Name="Shared" Extension=".shproj" TypeId="d954291e-2a0b-460d-934e-dc6b0785db48" IsBuildable="false" />
+        <ProjectType Name="U-SQL" Extension=".usqlproj" TypeId="182e2583-ecad-465b-bb50-91101d7c24ce" IsBuildable="false" />
+        <ProjectType Name="U-SQL-DB" Extension=".usqldbproj" TypeId="0c603c2c-620a-423b-a800-4f3e2f6281f1" IsBuildable="false" />
+        <ProjectType Name="VB" Extension=".vbproj" TypeId="f184b08f-c81c-45f6-a57f-5abd9991f28f">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="VC" Extension=".vcxproj" TypeId="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942">
+            <Platform Solution="*|AnyCPU" Project="x64" />
+            <Platform Solution="*|x86" Project="Win32" />
+        </ProjectType>
+        <ProjectType Name="Website" Extension=".webproj" TypeId="e24c65dc-7377-472b-9aba-bc803b73c61a">
+            <Platform Project="AnyCPU" />
+        </ProjectType>
+        <ProjectType Name="Wix" Extension=".wixproj" TypeId="930c7802-8a8c-48f9-8165-68863bccd9dd" IsBuildable="false" />
+    </Configurations>
+</Solution>

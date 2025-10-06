@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -128,18 +130,19 @@ namespace NuGet.PackageManagement.VisualStudio
             return (new[] { packageSpec }, null);
         }
 
-        private async Task<Dictionary<string, CentralPackageVersion>> GetCentralPackageVersionsAsync()
+        private IReadOnlyDictionary<string, CentralPackageVersion> GetCentralPackageVersions()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IEnumerable<(string PackageId, string Version)> packageVersions =
-                        (await _vsProjectAdapter.GetBuildItemInformationAsync(ProjectBuildProperties.PackageVersion, ProjectBuildProperties.Version))
+                        _vsProjectAdapter.GetBuildItemInformation(ProjectItems.PackageVersion, ProjectBuildProperties.Version)
                         .Select(item => (PackageId: item.ItemId, Version: item.ItemMetadata.FirstOrDefault()));
 
             return packageVersions
                 .Select(item => ToCentralPackageVersion(item.PackageId, item.Version))
                 .Distinct(CentralPackageVersionNameComparer.Default)
-                .ToDictionary(cpv => cpv.Name);
+                .ToDictionary(cpv => cpv.Name, StringComparer.OrdinalIgnoreCase);
         }
-
 
         private CentralPackageVersion ToCentralPackageVersion(string packageId, string version)
         {
@@ -156,6 +159,70 @@ namespace NuGet.PackageManagement.VisualStudio
             return new CentralPackageVersion(packageId, VersionRange.Parse(version));
         }
 
+        private IReadOnlyDictionary<string, PrunePackageReference> GetPackagesToPrune()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string PackageId, string Version)> packageVersions =
+                        _vsProjectAdapter.GetBuildItemInformation(ProjectItems.PrunePackageReference, ProjectBuildProperties.Version)
+                        .Select(item => (PackageId: item.ItemId, Version: item.ItemMetadata.FirstOrDefault()));
+
+            return packageVersions
+                .Select(item => PrunePackageReference.Create(item.PackageId, item.Version))
+                .ToDictionary(i => i.Name, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private RestoreAuditProperties GetRestoreAuditProperties()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            string enableAudit = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAudit);
+            string auditLevel = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditLevel);
+            string auditMode = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditMode);
+            HashSet<string> suppressedAdvisories = GetSuppressedAdvisories();
+
+            return new RestoreAuditProperties()
+            {
+                EnableAudit = enableAudit,
+                AuditLevel = auditLevel,
+                AuditMode = auditMode,
+                SuppressedAdvisories = suppressedAdvisories,
+            };
+        }
+
+        private HashSet<string> GetSuppressedAdvisories()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string ItemId, string[] ItemMetadata)> buildItems = _vsProjectAdapter.GetBuildItemInformation(ProjectItems.NuGetAuditSuppress);
+            if (buildItems is null)
+            {
+                return null;
+            }
+            else if (buildItems is ICollection<(string, string[])> collection)
+            {
+                if (collection.Count == 0) return null;
+
+                var suppressedAdvisories = new HashSet<string>(collection.Count, StringComparer.OrdinalIgnoreCase);
+                foreach ((string itemId, _) in buildItems.NoAllocEnumerate())
+                {
+                    suppressedAdvisories.Add(itemId);
+                }
+
+                return suppressedAdvisories;
+            }
+            else
+            {
+                var suppressedAdvisories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach ((string itemId, _) in buildItems.NoAllocEnumerate())
+                {
+                    suppressedAdvisories.Add(itemId);
+                }
+
+                return suppressedAdvisories.Count == 0 ? null : suppressedAdvisories;
+            }
+        }
+
         #endregion
 
         #region NuGetProject
@@ -167,7 +234,7 @@ namespace NuGet.PackageManagement.VisualStudio
             BuildIntegratedInstallationContext __,
             CancellationToken token)
         {
-            var dependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+            var dependency = new LibraryDependency()
             {
                 LibraryRange = new LibraryRange(
                     name: packageId,
@@ -365,12 +432,12 @@ namespace NuGet.PackageManagement.VisualStudio
                 .ReferencesReader
                 .GetProjectReferencesAsync(NullLogger.Instance, CancellationToken.None);
 
-            var targetFramework = await _vsProjectAdapter.GetTargetFrameworkAsync();
+            var targetFramework = _vsProjectAdapter.GetTargetFramework();
 
             var packageReferences = (await ProjectServices
                 .ReferencesReader
                 .GetPackageReferencesAsync(targetFramework, CancellationToken.None))
-                .ToList();
+                .ToImmutableArray();
 
 #pragma warning disable CS0618 // Type or member is obsolete
             // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
@@ -378,30 +445,41 @@ namespace NuGet.PackageManagement.VisualStudio
                 .Select(NuGetFramework.Parse)
                 .ToList();
 
-            var assetTargetFallback = MSBuildStringUtility.Split(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.AssetTargetFallback))
+            var assetTargetFallbackList = MSBuildStringUtility.Split(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.AssetTargetFallback))
                 .Select(NuGetFramework.Parse)
                 .ToList();
 #pragma warning restore CS0618 // Type or member is obsolete
-
-            var projectTfi = new TargetFrameworkInformation
-            {
-                FrameworkName = targetFramework,
-                Dependencies = packageReferences,
-            };
 
 #pragma warning disable CS0618 // Type or member is obsolete
             // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             bool isCpvmEnabled = MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.ManagePackageVersionsCentrally));
 #pragma warning restore CS0618 // Type or member is obsolete
+
+            IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions = null;
             if (isCpvmEnabled)
             {
-                // Add the central version information and merge the information to the package reference dependencies
-                projectTfi.CentralPackageVersions.AddRange(await GetCentralPackageVersionsAsync());
-                LibraryDependency.ApplyCentralVersionInformation(projectTfi.Dependencies, projectTfi.CentralPackageVersions);
+                // Add the central versionString information and merge the information to the package reference dependencies
+                centralPackageVersions = GetCentralPackageVersions();
+                packageReferences = ApplyCentralVersionInformation(packageReferences, centralPackageVersions);
             }
 
-            // Apply fallback settings
-            AssetTargetFallbackUtility.ApplyFramework(projectTfi, packageTargetFallback, assetTargetFallback);
+            IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.RestoreEnablePackagePruning))
+                ? GetPackagesToPrune()
+                : ImmutableDictionary<string, PrunePackageReference>.Empty;
+
+            // Get fallback settings
+            (targetFramework, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(targetFramework, packageTargetFallback, assetTargetFallbackList);
+
+            var projectTfi = new TargetFrameworkInformation
+            {
+                AssetTargetFallback = assetTargetFallback,
+                CentralPackageVersions = centralPackageVersions,
+                Dependencies = packageReferences,
+                Imports = imports,
+                FrameworkName = targetFramework,
+                Warn = warn,
+                PackagesToPrune = packagesToPrune,
+            };
 
             // Build up runtime information.
 
@@ -441,17 +519,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 }
             }
 
-            string enableAudit = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAudit);
-            string auditLevel = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditLevel);
-            string auditMode = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditMode);
-            RestoreAuditProperties auditProperties = !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel)
-                ? new RestoreAuditProperties()
-                {
-                    EnableAudit = enableAudit,
-                    AuditLevel = auditLevel,
-                    AuditMode = auditMode,
-                }
-                : null;
+            RestoreAuditProperties auditProperties = GetRestoreAuditProperties();
 
             var msbuildProjectExtensionsPath = await GetMSBuildProjectExtensionsPathAsync();
 
@@ -468,6 +536,8 @@ namespace NuGet.PackageManagement.VisualStudio
             string centralPackageTransitivePinningEnabled = GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageTransitivePinningEnabled);
             // Do not add new properties here. Use BuildProperties.GetPropertyValue instead, without DTE fallback.
 #pragma warning restore CS0618 // Type or member is obsolete
+            string skdAnalysisLevelString = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.SdkAnalysisLevel);
+            string usingNetSdk = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.UsingMicrosoftNETSdk);
 
             return new PackageSpec(tfis)
             {
@@ -500,8 +570,8 @@ namespace NuGet.PackageManagement.VisualStudio
                     ConfigFilePaths = GetConfigFilePaths(settings),
                     ProjectWideWarningProperties = WarningProperties.GetWarningProperties(
                         treatWarningsAsErrors,
-                        noWarn,
                         warningsAsErrors,
+                        noWarn,
                         warningsNotAsErrors),
                     RestoreLockProperties = new RestoreLockProperties(
                         restorePackagesWithLockFile,
@@ -512,8 +582,62 @@ namespace NuGet.PackageManagement.VisualStudio
                     CentralPackageFloatingVersionsEnabled = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.CentralPackageFloatingVersionsEnabled)),
                     CentralPackageTransitivePinningEnabled = MSBuildStringUtility.IsTrue(centralPackageTransitivePinningEnabled),
                     RestoreAuditProperties = auditProperties,
+                    SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(skdAnalysisLevelString),
+                    UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingNetSdk),
+                    UseLegacyDependencyResolver = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.RestoreUseLegacyDependencyResolver)),
                 }
             };
+        }
+
+        internal static ImmutableArray<LibraryDependency> ApplyCentralVersionInformation(ImmutableArray<LibraryDependency> packageReferences, IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions)
+        {
+            if (packageReferences.IsDefault)
+            {
+                throw new ArgumentNullException(nameof(packageReferences));
+            }
+            if (centralPackageVersions == null)
+            {
+                throw new ArgumentNullException(nameof(centralPackageVersions));
+            }
+            if (centralPackageVersions.Count == 0)
+            {
+                return packageReferences;
+            }
+
+            LibraryDependency[] result = new LibraryDependency[packageReferences.Length];
+            for (int i = 0; i < packageReferences.Length; i++)
+            {
+                LibraryDependency d = packageReferences[i];
+                if (!d.AutoReferenced && d.LibraryRange.VersionRange == null)
+                {
+                    var libraryRange = d.LibraryRange;
+                    var versionCentrallyManaged = d.VersionCentrallyManaged;
+
+                    if (d.VersionOverride != null)
+                    {
+                        libraryRange = new LibraryRange(d.LibraryRange) { VersionRange = d.VersionOverride };
+                    }
+                    else
+                    {
+                        if (centralPackageVersions.TryGetValue(d.Name, out CentralPackageVersion centralPackageVersion))
+                        {
+                            libraryRange = new LibraryRange(d.LibraryRange) { VersionRange = centralPackageVersion.VersionRange };
+                        }
+
+                        versionCentrallyManaged = true;
+                    }
+
+                    d = new LibraryDependency(d)
+                    {
+                        LibraryRange = libraryRange,
+                        VersionCentrallyManaged = versionCentrallyManaged
+                    };
+                }
+
+                result[i] = d;
+            }
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(result);
         }
 
         internal static IEnumerable<RuntimeDescription> GetRuntimeIdentifiers(string unparsedRuntimeIdentifer, string unparsedRuntimeIdentifers)

@@ -1,0 +1,46 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
+  </PropertyGroup>
+  <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
+
+  <Target Name="WritePrebuiltUsageData" AfterTargets="Build">
+    <PropertyGroup>
+      <TrackPrebuiltUsageRootDir Condition="'$(TrackPrebuiltUsageRootDir)' == ''">$(RepoRoot)</TrackPrebuiltUsageRootDir>
+      <TrackPrebuiltUsagePackageCache Condition="'$(TrackPrebuiltUsagePackageCache)' == ''">$(NuGetPackageRoot)</TrackPrebuiltUsagePackageCache>
+      <TrackPrebuiltUsageReportDir Condition="'$(TrackPrebuiltUsageReportDir)' == ''">$(ArtifactsLogDir)</TrackPrebuiltUsageReportDir>
+      <TrackPrebuiltUsageReportFile Condition="'$(TrackPrebuiltUsageReportFile)' == ''">$(TrackPrebuiltUsageReportDir)prebuilt-usage.xml</TrackPrebuiltUsageReportFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AllRestoredPackageFiles Include="$(TrackPrebuiltUsagePackageCache)**/*.nupkg" />
+      <SourceBuiltPackageFiles Include="$(AdditionalSourceBuiltNupkgCacheDir)**/*.nupkg" Condition="'$(AdditionalSourceBuiltNupkgCacheDir)' != ''" />
+      <SourceBuiltPackageFiles Include="$(ReferencePackageNupkgCacheDir)**/*.nupkg" Condition="'$(ReferencePackageNupkgCacheDir)' != ''" />
+      <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltNupkgCacheDir)**/*.nupkg" Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' != ''" />
+
+      <!-- Scan entire TrackPrebuiltUsageRootDir, in case project.assets.json ends up in an unexpected place. -->
+      <ProjectDirectories Include="$(TrackPrebuiltUsageRootDir)" />
+    </ItemGroup>
+
+    <WritePackageUsageData
+      RestoredPackageFiles="@(AllRestoredPackageFiles)"
+      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFiles)"
+      SourceBuiltPackageFiles="@(SourceBuiltPackageFiles)"
+      ReferencePackageFiles="@(ReferencePackageFiles)"
+      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
+      TargetRid="$(TargetRid)"
+      ProjectDirectories="@(ProjectDirectories)"
+      RootDir="$(TrackPrebuiltUsageRootDir)"
+      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
+      DataFile="$(TrackPrebuiltUsageReportFile)"
+      ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
+
+    <WriteUsageReports
+      DataFile="$(TrackPrebuiltUsageReportFile)"
+      PoisonedReportFile="$(PoisonedReportFile)"
+      OutputDirectory="$(TrackPrebuiltUsageReportDir)" />
+  </Target>
+
+</Project>

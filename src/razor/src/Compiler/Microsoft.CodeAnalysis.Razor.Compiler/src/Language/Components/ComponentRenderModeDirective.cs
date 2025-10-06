@@ -25,7 +25,7 @@ internal sealed class ComponentRenderModeDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Component);
+        builder.AddDirective(Directive, RazorFileKind.Component);
         builder.Features.Add(new ComponentRenderModeDirectivePass());
     }
 }

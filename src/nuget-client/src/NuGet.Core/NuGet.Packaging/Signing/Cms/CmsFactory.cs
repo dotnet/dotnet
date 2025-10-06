@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Pkcs;
 
 namespace NuGet.Packaging.Signing
 {
@@ -15,19 +13,13 @@ namespace NuGet.Packaging.Signing
             {
                 throw new ArgumentNullException(nameof(cmsBytes));
             }
-#if IS_SIGNING_SUPPORTED
-            ICms cms = null;
 #if IS_DESKTOP
             NativeCms nativeCms = NativeCms.Decode(cmsBytes);
-            cms = new NativeCmsWrapper(nativeCms);
+            return new NativeCmsWrapper(nativeCms);
 #else
-            SignedCms signedCms = new SignedCms();
+            System.Security.Cryptography.Pkcs.SignedCms signedCms = new System.Security.Cryptography.Pkcs.SignedCms();
             signedCms.Decode(cmsBytes);
-            cms = new ManagedCmsWrapper(signedCms);
-#endif
-            return cms;
-#else
-            throw new NotSupportedException();
+            return new ManagedCmsWrapper(signedCms);
 #endif
         }
     }

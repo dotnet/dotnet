@@ -12,13 +12,13 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis;
 
-internal partial class SolutionCompilationState
+internal sealed partial class SolutionCompilationState
 {
-    private partial class CompilationTracker
+    private sealed partial class RegularCompilationTracker
     {
         /// <summary>
-        /// The base type of all <see cref="CompilationTracker"/> states. The state of a <see
-        /// cref="CompilationTracker" /> starts at null, and then will progress through the other states until it
+        /// The base type of all <see cref="RegularCompilationTracker"/> states. The state of a <see
+        /// cref="RegularCompilationTracker" /> starts at null, and then will progress through the other states until it
         /// finally reaches <see cref="FinalCompilationTrackerState" />.
         /// </summary>
         private abstract class CompilationTrackerState
@@ -35,8 +35,11 @@ internal partial class SolutionCompilationState
             /// whether we even have references -- it's pretty likely that running a generator might produce worse results
             /// than what we originally had.</item>
             /// </list>
+            /// This also controls if we will generate skeleton references for cross-language P2P references when
+            /// creating the compilation for a particular project.  When entirely frozen, we do not want to do this due
+            /// to the enormous cost of emitting ref assemblies for cross language cases.
             /// </summary>
-            public readonly bool IsFrozen;
+            public readonly CreationPolicy CreationPolicy;
 
             /// <summary>
             /// The best compilation that is available that source generators have not ran on. May be an
@@ -47,10 +50,10 @@ internal partial class SolutionCompilationState
             public CompilationTrackerGeneratorInfo GeneratorInfo { get; }
 
             protected CompilationTrackerState(
-                bool isFrozen,
+                CreationPolicy creationPolicy,
                 CompilationTrackerGeneratorInfo generatorInfo)
             {
-                IsFrozen = isFrozen;
+                CreationPolicy = creationPolicy;
                 GeneratorInfo = generatorInfo;
             }
         }
@@ -69,7 +72,7 @@ internal partial class SolutionCompilationState
             /// correct snapshot in that the generators have not been rerun, but may be reusable if the generators
             /// are later found to give the same output.
             /// </summary>
-            public readonly Lazy<Compilation?> LazyStaleCompilationWithGeneratedDocuments;
+            public readonly CancellableLazy<Compilation?> LazyStaleCompilationWithGeneratedDocuments;
 
             /// <summary>
             /// The list of changes that have happened since we last computed a compilation. The oldState corresponds to
@@ -80,12 +83,12 @@ internal partial class SolutionCompilationState
             public override Compilation CompilationWithoutGeneratedDocuments => LazyCompilationWithoutGeneratedDocuments.Value;
 
             public InProgressState(
-                bool isFrozen,
+                CreationPolicy creationPolicy,
                 Lazy<Compilation> compilationWithoutGeneratedDocuments,
                 CompilationTrackerGeneratorInfo generatorInfo,
-                Lazy<Compilation?> staleCompilationWithGeneratedDocuments,
+                CancellableLazy<Compilation?> staleCompilationWithGeneratedDocuments,
                 ImmutableList<TranslationAction> pendingTranslationActions)
-                : base(isFrozen, generatorInfo)
+                : base(creationPolicy, generatorInfo)
             {
                 // Note: Intermediate projects can be empty.
                 Contract.ThrowIfTrue(pendingTranslationActions is null);
@@ -105,13 +108,13 @@ internal partial class SolutionCompilationState
             }
 
             public InProgressState(
-                bool isFrozen,
+                CreationPolicy creationPolicy,
                 Compilation compilationWithoutGeneratedDocuments,
                 CompilationTrackerGeneratorInfo generatorInfo,
                 Compilation? staleCompilationWithGeneratedDocuments,
                 ImmutableList<TranslationAction> pendingTranslationActions)
                 : this(
-                      isFrozen,
+                      creationPolicy,
                       new Lazy<Compilation>(() => compilationWithoutGeneratedDocuments),
                       generatorInfo,
                       // Extracted as a method call to prevent captures.
@@ -120,8 +123,8 @@ internal partial class SolutionCompilationState
             {
             }
 
-            private static Lazy<Compilation?> CreateLazyCompilation(Compilation? staleCompilationWithGeneratedDocuments)
-                => new(() => staleCompilationWithGeneratedDocuments);
+            private static CancellableLazy<Compilation?> CreateLazyCompilation(Compilation? staleCompilationWithGeneratedDocuments)
+                => new(staleCompilationWithGeneratedDocuments);
         }
 
         /// <summary>
@@ -144,12 +147,9 @@ internal partial class SolutionCompilationState
             public readonly bool HasSuccessfullyLoaded;
 
             /// <summary>
-            /// Weak set of the assembly, module and dynamic symbols that this compilation tracker has created.
-            /// This can be used to determine which project an assembly symbol came from after the fact.  This is
-            /// needed as the compilation an assembly came from can be GC'ed and further requests to get that
-            /// compilation (or any of it's assemblies) may produce new assembly symbols.
+            /// Used to determine which project an assembly symbol came from after the fact.
             /// </summary>
-            public readonly UnrootedSymbolSet UnrootedSymbolSet;
+            private SingleInitNullable<RootedSymbolSet> _rootedSymbolSet;
 
             /// <summary>
             /// The final compilation, with all references and source generators run. This is distinct from <see
@@ -161,25 +161,33 @@ internal partial class SolutionCompilationState
             /// </summary>
             public readonly Compilation FinalCompilationWithGeneratedDocuments;
 
+            /// <summary>
+            /// Whether or not this final compilation state *just* generated documents which exactly correspond to the
+            /// state of the compilation.  False if the generated documents came from a point in the past, and are being
+            /// carried forward until the next time we run generators.
+            /// </summary>
+            public readonly bool GeneratedDocumentsUpToDate;
+
             public override Compilation CompilationWithoutGeneratedDocuments { get; }
 
             private FinalCompilationTrackerState(
-                bool isFrozen,
+                CreationPolicy creationPolicy,
+                bool generatedDocumentsUpToDate,
                 Compilation finalCompilationWithGeneratedDocuments,
                 Compilation compilationWithoutGeneratedDocuments,
                 bool hasSuccessfullyLoaded,
-                CompilationTrackerGeneratorInfo generatorInfo,
-                UnrootedSymbolSet unrootedSymbolSet)
-                : base(isFrozen, generatorInfo)
+                CompilationTrackerGeneratorInfo generatorInfo)
+                : base(creationPolicy, generatorInfo)
             {
                 Contract.ThrowIfNull(finalCompilationWithGeneratedDocuments);
+
+                this.GeneratedDocumentsUpToDate = generatedDocumentsUpToDate;
 
                 // As a policy, all partial-state projects are said to have incomplete references, since the
                 // state has no guarantees.
                 this.CompilationWithoutGeneratedDocuments = compilationWithoutGeneratedDocuments;
-                HasSuccessfullyLoaded = hasSuccessfullyLoaded && !isFrozen;
+                HasSuccessfullyLoaded = hasSuccessfullyLoaded;
                 FinalCompilationWithGeneratedDocuments = finalCompilationWithGeneratedDocuments;
-                UnrootedSymbolSet = unrootedSymbolSet;
 
                 if (this.GeneratorInfo.Documents.IsEmpty)
                 {
@@ -202,7 +210,8 @@ internal partial class SolutionCompilationState
             /// <param name="projectId">Not held onto</param>
             /// <param name="metadataReferenceToProjectId">Not held onto</param>
             public static FinalCompilationTrackerState Create(
-                bool isFrozen,
+                CreationPolicy creationPolicy,
+                bool generatedDocumentsUpToDate,
                 Compilation finalCompilationWithGeneratedDocuments,
                 Compilation compilationWithoutGeneratedDocuments,
                 bool hasSuccessfullyLoaded,
@@ -213,25 +222,30 @@ internal partial class SolutionCompilationState
                 // Keep track of information about symbols from this Compilation.  This will help support other APIs
                 // the solution exposes that allows the user to map back from symbols to project information.
 
-                var unrootedSymbolSet = UnrootedSymbolSet.Create(finalCompilationWithGeneratedDocuments);
                 RecordAssemblySymbols(projectId, finalCompilationWithGeneratedDocuments, metadataReferenceToProjectId);
 
                 return new FinalCompilationTrackerState(
-                    isFrozen,
+                    creationPolicy,
+                    generatedDocumentsUpToDate,
                     finalCompilationWithGeneratedDocuments,
                     compilationWithoutGeneratedDocuments,
                     hasSuccessfullyLoaded,
-                    generatorInfo,
-                    unrootedSymbolSet);
+                    generatorInfo);
             }
 
-            public FinalCompilationTrackerState WithIsFrozen()
-                => new(isFrozen: true,
-                    FinalCompilationWithGeneratedDocuments,
-                    CompilationWithoutGeneratedDocuments,
-                    HasSuccessfullyLoaded,
-                    GeneratorInfo,
-                    UnrootedSymbolSet);
+            public RootedSymbolSet RootedSymbolSet => _rootedSymbolSet.Initialize(
+                static finalCompilationWithGeneratedDocuments => RootedSymbolSet.Create(finalCompilationWithGeneratedDocuments),
+                this.FinalCompilationWithGeneratedDocuments);
+
+            public FinalCompilationTrackerState WithCreationPolicy(CreationPolicy creationPolicy)
+                => creationPolicy == this.CreationPolicy
+                    ? this
+                    : new(creationPolicy,
+                        GeneratedDocumentsUpToDate,
+                        FinalCompilationWithGeneratedDocuments,
+                        CompilationWithoutGeneratedDocuments,
+                        HasSuccessfullyLoaded,
+                        GeneratorInfo);
 
             private static void RecordAssemblySymbols(ProjectId projectId, Compilation compilation, Dictionary<MetadataReference, ProjectId>? metadataReferenceToProjectId)
             {

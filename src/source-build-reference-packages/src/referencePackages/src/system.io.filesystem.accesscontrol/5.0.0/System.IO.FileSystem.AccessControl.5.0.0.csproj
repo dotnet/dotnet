@@ -1,25 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>5.0.0</PackageVersion>
     <AssemblyName>System.IO.FileSystem.AccessControl</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <ProjectReference Include="../../system.buffers/4.5.1/System.Buffers.4.5.1.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.4/System.Memory.4.5.4.csproj" />
+    <ProjectReference Include="../../system.security.accesscontrol/5.0.0/System.Security.AccessControl.5.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
   </ItemGroup>
 
 </Project>

@@ -63,7 +63,7 @@ internal class DataCollectorAttachmentProcessorAppDomain : IDataCollectorAttachm
             false,
             BindingFlags.Default,
             null,
-            new[] { _pipeShutdownMessagePrefix },
+            [_pipeShutdownMessagePrefix],
             null,
             null);
 

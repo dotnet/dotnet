@@ -1,19 +1,16 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -51,9 +48,9 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
     {
         EnsureServicesInitialized();
 
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
-        _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
+        _filePath = Path.Combine(projectRoot, "Components", "Pages", "Generated.razor");
 
         WriteSampleFormattingFile(_filePath, InputType == InputType.Preformatted, Blocks);
 
@@ -61,7 +58,7 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
 
         DocumentUri = new Uri(_filePath);
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
-        DocumentText = await DocumentSnapshot.GetTextAsync();
+        DocumentText = await DocumentSnapshot.GetTextAsync(CancellationToken.None);
     }
 
     private static void WriteSampleFormattingFile(string filePath, bool preformatted, int blocks)
@@ -111,19 +108,13 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
     [Benchmark(Description = "Formatting")]
     public async Task RazorCSharpFormattingAsync()
     {
-        var options = new FormattingOptions()
-        {
-            TabSize = 4,
-            InsertSpaces = true
-        };
+        var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, projectContext: null, version: 1);
-
-        var edits = await RazorFormattingService.FormatAsync(documentContext, range: null, options, CancellationToken.None);
+        var changes = await RazorFormattingService.GetDocumentFormattingChangesAsync(documentContext, htmlEdits: [], span: null, new RazorFormattingOptions(), CancellationToken.None);
 
 #if DEBUG
         // For debugging purposes only.
-        var changedText = DocumentText.WithChanges(edits.Select(e => e.ToTextChange(DocumentText)));
+        var changedText = DocumentText.WithChanges(changes);
         _ = changedText.ToString();
 #endif
     }
@@ -133,15 +124,14 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
     {
         File.Delete(_filePath);
 
-        var innerServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
+        var server = RazorLanguageServerHost.GetTestAccessor().Server;
 
-        await innerServer.ShutdownAsync();
-        await innerServer.ExitAsync();
+        await server.ShutdownAsync();
+        await server.ExitAsync();
     }
 
     private void EnsureServicesInitialized()
     {
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        RazorFormattingService = languageServer.GetRequiredService<IRazorFormattingService>();
+        RazorFormattingService = RazorLanguageServerHost.GetRequiredService<IRazorFormattingService>();
     }
 }

@@ -143,14 +143,6 @@ let ``Using getSource and notifications instead of filesystem`` () =
 
 [<Fact>]
 let GetAllUsesOfAllSymbols() =
-    let traceProvider =
-        Sdk.CreateTracerProviderBuilder()
-                .AddSource("fsc")
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName="F#", serviceVersion = "1"))
-                .AddJaegerExporter()
-                .Build()
-
-    use _ = Activity.start "GetAllUsesOfAllSymbols" [  ]
 
     let result =
         async {
@@ -162,20 +154,17 @@ let GetAllUsesOfAllSymbols() =
             return checkProjectResults.GetAllUsesOfAllSymbols()
         } |> Async.RunSynchronously
 
-    traceProvider.ForceFlush() |> ignore
-    traceProvider.Dispose()
-
-    if result.Length <> 79 then failwith $"Expected 79 symbolUses, got {result.Length}:\n%A{result}"
+    if result.Length <> 79 then failwith $"Expected 81 symbolUses, got {result.Length}:\n%A{result}"
 
 [<Fact>]
 let ``We don't lose subsequent diagnostics when there's error in one file`` () =
     let project =
         { SyntheticProject.Create(
             { sourceFile "First" [] with
-                Source = """module AbstractBaseClass.File1 
-                
+                Source = """module AbstractBaseClass.File1
+
                 let foo x = ()
-                
+
                 a""" },
             { sourceFile "Second" [] with
                 Source = """module AbstractBaseClass.File2
@@ -189,7 +178,7 @@ let ``We don't lose subsequent diagnostics when there's error in one file`` () =
                     abstract P: int""" }) with
             AutoAddModules = false
             SkipInitialCheck = true }
-                
+
     project.Workflow {
         checkFile "First" (expectErrorCodes ["FS0039"])
         checkFile "Second" (expectErrorCodes ["FS0054"; "FS0365"])

@@ -1,17 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
     <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
     <Description>Package Management UI elements for Visual Studio, Package Manager UI, Migrator, Options dialog.</Description>
-    <AssemblyOriginatorKeyFile>$(MS_PFX_PATH)</AssemblyOriginatorKeyFile>
-    <StrongNameCert>MsSharedLib72</StrongNameCert>
+    <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
     <UseWpf>true</UseWpf>
-    <UseWinForms>true</UseWinForms>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,39 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
-    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
     <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj" />
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Markdown.Platform" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Styles" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Options\GeneralOptionControl.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GeneralOptionControl.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Options\PackageSourcesOptionsControl.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PackageSourcesOptionsControl.resx</DependentUpon>
-    </Compile>
     <Compile Update="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -63,14 +38,11 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+  </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Update="Options\GeneralOptionControl.resx">
-      <DependentUpon>GeneralOptionControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Options\PackageSourcesOptionsControl.resx">
-      <DependentUpon>PackageSourcesOptionsControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -102,10 +74,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Resources\PackageIconMonikers.imagemanifest">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -114,9 +82,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Options\ConfigurationFilesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.TestContract" />
+    <InternalsVisibleTo Include="Test.Utility" />
   </ItemGroup>
 
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" Condition=" '$(MSBuildRuntimeType)' == 'Full' " />

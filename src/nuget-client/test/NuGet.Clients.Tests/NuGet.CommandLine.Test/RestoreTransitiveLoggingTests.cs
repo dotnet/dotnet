@@ -3,14 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Test
@@ -1955,7 +1953,7 @@ namespace NuGet.CommandLine.Test
 
                 // Assert
                 r.Success.Should().BeTrue();
-                GetSubstringCount(r.AllOutput, "NU1603", ignoreCase: false).Should().Be(3);
+                GetSubstringCount(r.AllOutput, "NU1603", ignoreCase: false).Should().Be(2);
             }
         }
 
@@ -2556,8 +2554,7 @@ namespace NuGet.CommandLine.Test
                 StringComparison.Ordinal;
 
             return words
-                .Where(word => string.Equals(word, substr, comparisonType))
-                .Count();
+                .Count(word => string.Equals(word, substr, comparisonType));
         }
     }
 }

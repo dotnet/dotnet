@@ -12,7 +12,9 @@ using NuGet.Protocol.Plugins;
 
 namespace NuGet.Credentials
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public static class DefaultCredentialServiceUtility
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
         /// Sets-up the CredentialService and all of its providers.
@@ -61,7 +63,7 @@ namespace NuGet.Credentials
         {
             var providers = new List<ICredentialProvider>();
 
-            var securePluginProviders = await new SecurePluginCredentialProviderBuilder(pluginManager: PluginManager.Instance, canShowDialog: false, logger: logger).BuildAllAsync();
+            var securePluginProviders = await new SecurePluginCredentialProviderBuilder(pluginManager: PluginManager.Instance, canShowDialog: true, logger: logger).BuildAllAsync();
             providers.AddRange(securePluginProviders);
 
             if (providers.Any())

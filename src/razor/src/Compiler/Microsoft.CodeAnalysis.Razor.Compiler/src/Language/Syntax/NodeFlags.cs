@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -12,11 +10,8 @@ internal enum NodeFlags : byte
 {
     None = 0,
     ContainsDiagnostics = 1 << 0,
-    ContainsStructuredTrivia = 1 << 1,
-    ContainsDirectives = 1 << 2,
-    ContainsSkippedText = 1 << 3,
-    ContainsAnnotations = 1 << 4,
-    IsMissing = 1 << 5,
+    ContainsAnnotations = 1 << 1,
+    IsMissing = 1 << 2,
 
-    InheritMask = ContainsDiagnostics | ContainsStructuredTrivia | ContainsDirectives | ContainsSkippedText | ContainsAnnotations | IsMissing,
+    InheritMask = ContainsDiagnostics | ContainsAnnotations | IsMissing
 }

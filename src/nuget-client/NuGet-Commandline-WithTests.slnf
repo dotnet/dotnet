@@ -17,7 +17,6 @@
       "src\\NuGet.Core\\NuGet.LibraryModel\\NuGet.LibraryModel.csproj",
       "src\\NuGet.Core\\NuGet.Localization\\NuGet.Localization.csproj",
       "src\\NuGet.Core\\NuGet.PackageManagement\\NuGet.PackageManagement.csproj",
-      "src\\NuGet.Core\\NuGet.Packaging.Core\\NuGet.Packaging.Core.csproj",
       "src\\NuGet.Core\\NuGet.Packaging\\NuGet.Packaging.csproj",
       "src\\NuGet.Core\\NuGet.ProjectModel\\NuGet.ProjectModel.csproj",
       "src\\NuGet.Core\\NuGet.Protocol\\NuGet.Protocol.csproj",
@@ -50,6 +49,7 @@
       "test\\NuGet.Core.Tests\\NuGet.Resolver.Test\\NuGet.Resolver.Test.csproj",
       "test\\NuGet.Core.Tests\\NuGet.Shared.Tests\\NuGet.Shared.Tests.csproj",
       "test\\NuGet.Core.Tests\\NuGet.Versioning.Test\\NuGet.Versioning.Test.csproj",
+      "test\\TestUtilities\\Microsoft.Internal.NuGet.Testing.SignedPackages\\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj",
       "test\\TestUtilities\\Test.Utility\\Test.Utility.csproj"
     ]
   }

@@ -14,7 +14,6 @@ public class ThreadApartmentStateNotSupportedException : Exception
     /// Initializes a new instance of the <see cref="ThreadApartmentStateNotSupportedException"/> class.
     /// Initializes with the message.
     /// </summary>
-    /// <param name="message">Message for the exception.</param>
     public ThreadApartmentStateNotSupportedException()
     {
     }

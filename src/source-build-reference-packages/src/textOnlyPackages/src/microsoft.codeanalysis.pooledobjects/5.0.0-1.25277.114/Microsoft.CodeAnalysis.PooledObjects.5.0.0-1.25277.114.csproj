@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>5.0.0-1.25277.114</PackageVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.PooledObjects</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../../../referencePackages/src/system.collections.immutable/9.0.0/System.Collections.Immutable.9.0.0.csproj" />
+    <ProjectReference Include="../../../../referencePackages/src/system.buffers/4.5.1/System.Buffers.4.5.1.csproj" />
+    <ProjectReference Include="../../../../referencePackages/src/system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+    <ProjectReference Include="../../../../referencePackages/src/system.numerics.vectors/4.5.0/System.Numerics.Vectors.4.5.0.csproj" />
+    <ProjectReference Include="../../../../referencePackages/src/system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

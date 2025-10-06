@@ -1,23 +1,21 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -28,9 +26,9 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     private CodeActionEndpoint? CodeActionEndpoint { get; set; }
     private IDocumentSnapshot? DocumentSnapshot { get; set; }
     private SourceText? DocumentText { get; set; }
-    private Range? RazorCodeActionRange { get; set; }
-    private Range? CSharpCodeActionRange { get; set; }
-    private Range? HtmlCodeActionRange { get; set; }
+    private LspRange? RazorCodeActionRange { get; set; }
+    private LspRange? CSharpCodeActionRange { get; set; }
+    private LspRange? HtmlCodeActionRange { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
 
     public enum FileTypes
@@ -45,21 +43,14 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     [GlobalSetup]
     public async Task SetupAsync()
     {
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-
         CodeActionEndpoint = new CodeActionEndpoint(
-            documentMappingService: languageServer.GetRequiredService<IRazorDocumentMappingService>(),
-            razorCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IRazorCodeActionProvider>>(),
-            csharpCodeActionProviders: languageServer.GetRequiredService<IEnumerable<ICSharpCodeActionProvider>>(),
-            htmlCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),
-            clientConnection: languageServer.GetRequiredService<IClientConnection>(),
-            languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>(),
-            loggerFactory: languageServer.GetRequiredService<IRazorLoggerFactory>(),
-            telemetryReporter: null);
+            codeActionsService: RazorLanguageServerHost.GetRequiredService<ICodeActionsService>(),
+            delegatedCodeActionProvider: RazorLanguageServerHost.GetRequiredService<IDelegatedCodeActionsProvider>(),
+            telemetryReporter: NoOpTelemetryReporter.Instance);
 
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
-        _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
+        _filePath = Path.Combine(projectRoot, "Components", "Pages", "Generated.razor");
 
         var content = GetFileContents(this.FileType);
 
@@ -75,30 +66,20 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         var targetPath = "/Components/Pages/Generated.razor";
 
         DocumentUri = new Uri(_filePath);
-        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
-        DocumentText = await DocumentSnapshot.GetTextAsync();
+        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath, "Root.Namespace");
+        DocumentText = await DocumentSnapshot.GetTextAsync(CancellationToken.None);
 
-        RazorCodeActionRange = ToRange(razorCodeActionIndex);
-        CSharpCodeActionRange = ToRange(csharpCodeActionIndex);
-        HtmlCodeActionRange = ToRange(htmlCodeActionIndex);
+        RazorCodeActionRange = DocumentText.GetZeroWidthRange(razorCodeActionIndex);
+        CSharpCodeActionRange = DocumentText.GetZeroWidthRange(csharpCodeActionIndex);
+        HtmlCodeActionRange = DocumentText.GetZeroWidthRange(htmlCodeActionIndex);
 
-        var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, projectContext: null, 1);
+        var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(CancellationToken.None);
-        // Need a root namespace for the Extract to Code Behind light bulb to be happy
-        codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(c => c.RootNamespace = "Root.Namespace"));
-
-        RazorRequestContext = new RazorRequestContext(documentContext, languageServer.GetLspServices(), "lsp/method", uri: null);
-
-        Range ToRange(int index)
-        {
-            DocumentText.GetLineAndOffset(index, out var line, out var offset);
-            return new Range
-            {
-                Start = new Position(line, offset),
-                End = new Position(line, offset)
-            };
-        }
+        RazorRequestContext = new RazorRequestContext(
+            documentContext,
+            RazorLanguageServerHost.GetRequiredService<LspServices>(),
+            "lsp/method",
+            uri: null);
     }
 
     private string GetFileContents(FileTypes fileType)
@@ -150,7 +131,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
             Context = new VSInternalCodeActionContext(),
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = DocumentUri!
+                DocumentUri = new(DocumentUri!)
             },
         };
 
@@ -162,9 +143,9 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     {
         File.Delete(_filePath!);
 
-        var innerServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
+        var server = RazorLanguageServerHost.GetTestAccessor().Server;
 
-        await innerServer.ShutdownAsync();
-        await innerServer.ExitAsync();
+        await server.ShutdownAsync();
+        await server.ExitAsync();
     }
 }

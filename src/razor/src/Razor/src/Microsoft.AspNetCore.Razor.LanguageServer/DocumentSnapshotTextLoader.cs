@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -9,23 +9,13 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class DocumentSnapshotTextLoader : TextLoader
+internal class DocumentSnapshotTextLoader(IDocumentSnapshot documentSnapshot) : TextLoader
 {
-    private readonly IDocumentSnapshot _documentSnapshot;
-
-    public DocumentSnapshotTextLoader(IDocumentSnapshot documentSnapshot)
-    {
-        if (documentSnapshot is null)
-        {
-            throw new ArgumentNullException(nameof(documentSnapshot));
-        }
-
-        _documentSnapshot = documentSnapshot;
-    }
+    private readonly IDocumentSnapshot _documentSnapshot = documentSnapshot;
 
     public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
     {
-        var sourceText = await _documentSnapshot.GetTextAsync().ConfigureAwait(false);
+        var sourceText = await _documentSnapshot.GetTextAsync(cancellationToken).ConfigureAwait(false);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
 
         return textAndVersion;

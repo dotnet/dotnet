@@ -57,7 +57,7 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
             DebugVSTestConsole = DebugVSTestConsole,
             DebugStopAtEntrypoint = DebugStopAtEntrypoint,
         };
-        dataRows.Add(new object[] { runnerInfo });
+        dataRows.Add([runnerInfo]);
     }
 
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
@@ -68,21 +68,21 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
         {
             var runnerFramework = IntegrationTestBase.DesktopRunnerFramework;
 
-            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core31TargetFramework);
+            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core80TargetFramework);
         }
 
         if (_useCoreRunner)
         {
             var runnerFramework = IntegrationTestBase.CoreRunnerFramework;
 
-            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core31TargetFramework);
+            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core80TargetFramework);
         }
 
         return dataRows;
     }
 
-    public string GetDisplayName(MethodInfo methodInfo, object[] data)
+    public string GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data));
+        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? []));
     }
 }

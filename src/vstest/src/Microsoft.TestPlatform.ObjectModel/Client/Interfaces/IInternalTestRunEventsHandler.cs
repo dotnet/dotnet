@@ -39,7 +39,7 @@ public interface IInternalTestRunEventsHandler : ITestMessageEventHandler
     /// <summary>
     /// Attach debugger to an already running process.
     /// </summary>
-    /// <param name="pid">Process ID of the process to which the debugger should be attached.</param>
+    /// <param name="attachDebuggerInfo">Process ID of the process and tfm to which the debugger should be attached.</param>
     /// <returns><see langword="true"/> if the debugger was successfully attached to the requested process, <see langword="false"/> otherwise.</returns>
     bool AttachDebuggerToProcess(AttachDebuggerInfo attachDebuggerInfo);
 }

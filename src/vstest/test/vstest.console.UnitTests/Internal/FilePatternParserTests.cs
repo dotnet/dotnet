@@ -114,6 +114,61 @@ public class FilePatternParserTests
         Assert.ThrowsException<TestSourceException>(() => _filePatternParser.GetMatchingFiles(TranslatePath(@"E:\path\to\project\tests\Blame.Tests\\abc.Tests.dll")));
     }
 
+    [TestMethod]
+    // only on windows because we don't translate the path to be valid linux / mac path
+    [OSCondition(OperatingSystems.Windows)]
+    public void FilePatternParserShouldCorrectlySplitPatternAndDirectoryWithForwardSlashes()
+    {
+        var patternMatchingResult = new PatternMatchingResult(new List<FilePatternMatch>());
+        _mockMatcherHelper.Setup(x => x.Execute(It.IsAny<DirectoryInfoWrapper>())).Returns(patternMatchingResult);
+
+        // Test with forward slashes - this should work on all platforms
+        // This specifically tests the fix for issue #14993
+        _filePatternParser.GetMatchingFiles("C:/Users/someUser/Desktop/a/c/*bc.dll");
+
+        // Assert that the pattern is parsed correctly
+        _mockMatcherHelper.Verify(x => x.AddInclude("*bc.dll"));
+        // On Windows, the path may be normalized, so we verify the key components are present
+        _mockMatcherHelper.Verify(x => x.Execute(It.Is<DirectoryInfoWrapper>(y =>
+            y.FullName.Contains("someUser") && y.FullName.Contains("Desktop") &&
+            y.FullName.Contains("a") && y.FullName.EndsWith("c"))));
+    }
+
+    [TestMethod]
+    // only on windows because we don't translate the path to be valid linux / mac path
+    [OSCondition(OperatingSystems.Windows)]
+    public void FilePatternParserShouldCorrectlySplitWithArbitraryDirectoryDepthWithForwardSlashes()
+    {
+        var patternMatchingResult = new PatternMatchingResult(new List<FilePatternMatch>());
+        _mockMatcherHelper.Setup(x => x.Execute(It.IsAny<DirectoryInfoWrapper>())).Returns(patternMatchingResult);
+
+        // Test with forward slashes and recursive patterns
+        _filePatternParser.GetMatchingFiles("C:/Users/someUser/**/c/*bc.txt");
+
+        // Assert
+        _mockMatcherHelper.Verify(x => x.AddInclude("**/c/*bc.txt"));
+        _mockMatcherHelper.Verify(x => x.Execute(It.Is<DirectoryInfoWrapper>(y =>
+            y.FullName.Contains("someUser"))));
+    }
+
+    [TestMethod]
+    // only on windows because we don't translate the path to be valid linux / mac path
+    [OSCondition(OperatingSystems.Windows)]
+    public void FilePatternParserShouldHandleForwardSlashesWithoutThrowingException()
+    {
+        var patternMatchingResult = new PatternMatchingResult(new List<FilePatternMatch>());
+        _mockMatcherHelper.Setup(x => x.Execute(It.IsAny<DirectoryInfoWrapper>())).Returns(patternMatchingResult);
+
+        // This is the specific case from the original bug report that was throwing ArgumentOutOfRangeException
+        // Before the fix: System.ArgumentOutOfRangeException: length ('-1') must be a non-negative value
+        _filePatternParser.GetMatchingFiles("C:/path/to/my/tests/*_Tests.dll");
+
+        // Assert that we successfully parse without throwing and get the expected pattern
+        _mockMatcherHelper.Verify(x => x.AddInclude("*_Tests.dll"));
+        _mockMatcherHelper.Verify(x => x.Execute(It.Is<DirectoryInfoWrapper>(y =>
+            y.FullName.Contains("path") && y.FullName.Contains("tests"))));
+    }
+
     private static string TranslatePath(string path)
     {
         // RuntimeInformation has conflict when used

@@ -2,9 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -19,38 +17,27 @@ using SOS.Hosting;
 
 namespace Microsoft.Diagnostics.Tools.Dump
 {
-    public class Analyzer : IHost
+    public class Analyzer : Host
     {
-        private readonly ServiceManager _serviceManager;
         private readonly ConsoleService _consoleService;
         private readonly FileLoggingConsoleService _fileLoggingConsoleService;
         private readonly CommandService _commandService;
-        private readonly List<ITarget> _targets = new();
-        private ServiceContainer _serviceContainer;
-        private int _targetIdFactory;
 
         public Analyzer()
+            : base(HostType.DotnetDump)
         {
             DiagnosticLoggingService.Initialize();
+            DacSignatureVerificationEnabled  = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? true : false;
 
-            _serviceManager = new ServiceManager();
             _consoleService = new ConsoleService();
             _fileLoggingConsoleService = new FileLoggingConsoleService(_consoleService);
             DiagnosticLoggingService.Instance.SetConsole(_fileLoggingConsoleService, _fileLoggingConsoleService);
 
             _commandService = new CommandService();
-            _serviceManager.NotifyExtensionLoad.Register(_commandService.AddCommands);
-
-            // Add and remove targets from the host
-            OnTargetCreate.Register((target) => {
-                _targets.Add(target);
-                target.OnDestroyEvent.Register(() => {
-                    _targets.Remove(target);
-                });
-            });
+            ServiceManager.NotifyExtensionLoad.Register(_commandService.AddCommands);
         }
 
-        public Task<int> Analyze(FileInfo dump_path, string[] command)
+        public int Analyze(FileInfo dump_path, string[] command)
         {
             _fileLoggingConsoleService.WriteLine($"Loading core dump: {dump_path} ...");
 
@@ -71,63 +58,51 @@ namespace Microsoft.Diagnostics.Tools.Dump
             {
             }
 
-            // Register all the services and commands in the Microsoft.Diagnostics.DebugServices.Implementation assembly
-            _serviceManager.RegisterAssembly(typeof(Target).Assembly);
-
             // Register all the services and commands in the dotnet-dump (this) assembly
-            _serviceManager.RegisterAssembly(typeof(Analyzer).Assembly);
+            ServiceManager.RegisterAssembly(typeof(Analyzer).Assembly);
 
             // Register all the services and commands in the SOS.Hosting assembly
-            _serviceManager.RegisterAssembly(typeof(SOSHost).Assembly);
+            ServiceManager.RegisterAssembly(typeof(SOSHost).Assembly);
 
             // Register all the services and commands in the Microsoft.Diagnostics.ExtensionCommands assembly
-            _serviceManager.RegisterAssembly(typeof(ClrMDHelper).Assembly);
+            ServiceManager.RegisterAssembly(typeof(ClrMDHelper).Assembly);
 
             // Add the specially handled exit command
             _commandService.AddCommands(typeof(ExitCommand), (services) => new ExitCommand(_consoleService.Stop));
 
             // Display any extension assembly loads on console
-            _serviceManager.NotifyExtensionLoad.Register((Assembly assembly) => _fileLoggingConsoleService.WriteLine($"Loading extension {assembly.Location}"));
-            _serviceManager.NotifyExtensionLoadFailure.Register((Exception ex) => _fileLoggingConsoleService.WriteLine(ex.Message));
+            ServiceManager.NotifyExtensionLoad.Register((Assembly assembly) => _fileLoggingConsoleService.WriteLine($"Loading extension {assembly.Location}"));
+            ServiceManager.NotifyExtensionLoadFailure.Register((Exception ex) => _fileLoggingConsoleService.WriteLine(ex.Message));
 
             // Load any extra extensions
-            _serviceManager.LoadExtensions();
+            ServiceManager.LoadExtensions();
 
             // Loading extensions or adding service factories not allowed after this point.
-            _serviceManager.FinalizeServices();
+            ServiceContainer serviceContainer = CreateServiceContainer();
 
-            // Add all the global services to the global service container
-            _serviceContainer = _serviceManager.CreateServiceContainer(ServiceScope.Global, parent: null);
-            _serviceContainer.AddService<IServiceManager>(_serviceManager);
-            _serviceContainer.AddService<IHost>(this);
-            _serviceContainer.AddService<IConsoleService>(_fileLoggingConsoleService);
-            _serviceContainer.AddService<IConsoleFileLoggingService>(_fileLoggingConsoleService);
-            _serviceContainer.AddService<IDiagnosticLoggingService>(DiagnosticLoggingService.Instance);
-            _serviceContainer.AddService<ICommandService>(_commandService);
-            _serviceContainer.AddService<CommandService>(_commandService);
+            // Add all the global services to the global service container.
+            serviceContainer.AddService<IConsoleService>(_fileLoggingConsoleService);
+            serviceContainer.AddService<IConsoleFileLoggingService>(_fileLoggingConsoleService);
+            serviceContainer.AddService<IDiagnosticLoggingService>(DiagnosticLoggingService.Instance);
+            serviceContainer.AddService<ICommandService>(_commandService);
+            serviceContainer.AddService<CommandService>(_commandService);
+
+            DumpTargetFactory dumpTargetFactory = new(this);
+            serviceContainer.AddService<IDumpTargetFactory>(dumpTargetFactory);
 
             SymbolService symbolService = new(this);
-            _serviceContainer.AddService<ISymbolService>(symbolService);
+            serviceContainer.AddService<ISymbolService>(symbolService);
 
             ContextService contextService = new(this);
-            _serviceContainer.AddService<IContextService>(contextService);
+            serviceContainer.AddService<IContextService>(contextService);
 
             try
             {
-                using DataTarget dataTarget = DataTarget.LoadDump(dump_path.FullName);
-
-                OSPlatform targetPlatform = dataTarget.DataReader.TargetPlatform;
-                if (targetPlatform != OSPlatform.OSX &&
-                    (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-                     dataTarget.DataReader.EnumerateModules().Any((module) => Path.GetExtension(module.FileName) == ".dylib")))
-                {
-                    targetPlatform = OSPlatform.OSX;
-                }
-                TargetFromDataReader target = new(dataTarget.DataReader, targetPlatform, this, _targetIdFactory++, dump_path.FullName);
+                ITarget target = dumpTargetFactory.OpenDump(dump_path.FullName);
                 contextService.SetCurrentTarget(target);
 
                 // Automatically enable symbol server support, default cache and search for symbols in the dump directory
-                symbolService.AddSymbolServer(msdl: true, symweb: false, retryCount: 3);
+                symbolService.AddSymbolServer(retryCount: 3);
                 symbolService.AddCachePath(symbolService.DefaultSymbolCache);
                 symbolService.AddDirectoryPath(Path.GetDirectoryName(dump_path.FullName));
 
@@ -137,10 +112,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
                 {
                     foreach (string commandLine in command)
                     {
-                        if (!_commandService.Execute(commandLine, contextService.Services))
-                        {
-                            throw new CommandNotFoundException($"{CommandNotFoundException.NotFoundMessage} '{commandLine}'");
-                        }
+                        _commandService.Execute(commandLine, contextService.Services);
                         if (_consoleService.Shutdown)
                         {
                             break;
@@ -157,10 +129,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
 
                     _consoleService.Start((string prompt, string commandLine, CancellationToken cancellation) => {
                         _fileLoggingConsoleService.WriteLine("{0}{1}", prompt, commandLine);
-                        if (!_commandService.Execute(commandLine, contextService.Services))
-                        {
-                            throw new CommandNotFoundException($"{CommandNotFoundException.NotFoundMessage} '{commandLine}'");
-                        }
+                        _commandService.Execute(commandLine, contextService.Services);
                     });
                 }
             }
@@ -176,15 +145,11 @@ namespace Microsoft.Diagnostics.Tools.Dump
                  or NotSupportedException)
             {
                 _fileLoggingConsoleService.WriteLineError($"{ex.Message}");
-                return Task.FromResult(1);
+                return 1;
             }
             finally
             {
-                foreach (ITarget target in _targets.ToArray())
-                {
-                    target.Destroy();
-                }
-                _targets.Clear();
+                DestoryTargets();
 
                 // Persist the current command history
                 if (historyFileName != null)
@@ -206,23 +171,9 @@ namespace Microsoft.Diagnostics.Tools.Dump
                 OnShutdownEvent.Fire();
 
                 // Dispose of the global services
-                _serviceContainer.DisposeServices();
+                serviceContainer.DisposeServices();
             }
-            return Task.FromResult(0);
+            return 0;
         }
-
-        #region IHost
-
-        public IServiceEvent OnShutdownEvent { get; } = new ServiceEvent();
-
-        public IServiceEvent<ITarget> OnTargetCreate { get; } = new ServiceEvent<ITarget>();
-
-        public HostType HostType => HostType.DotnetDump;
-
-        public IServiceProvider Services => _serviceContainer;
-
-        public IEnumerable<ITarget> EnumerateTargets() => _targets.ToArray();
-
-        #endregion
     }
 }

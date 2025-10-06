@@ -13,6 +13,20 @@ namespace Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities;
 
 public static partial class ManagedNameHelper
 {
+    private readonly struct AssemblyNameCache
+    {
+        public AssemblyNameCache(Assembly? assembly, string simpleName)
+        {
+            Assembly = assembly;
+            SimpleName = simpleName;
+        }
+
+        public Assembly? Assembly { get; }
+        public string SimpleName { get; }
+    }
+
+    private static AssemblyNameCache? s_lastAssemblyNameCache;
+
     /// <summary>
     /// Gets fully qualified managed type and method name from given <see href="MethodBase" /> instance.
     /// </summary>
@@ -22,12 +36,12 @@ public static partial class ManagedNameHelper
     /// <param name="managedTypeName">
     /// When this method returns, contains the fully qualified managed type name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// When this method returns, contains the fully qualified managed method name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="method"/> is null.
@@ -40,7 +54,7 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static void GetManagedName(MethodBase method, out string managedTypeName, out string managedMethodName)
      => GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out _);
@@ -54,12 +68,12 @@ public static partial class ManagedNameHelper
     /// <param name="managedTypeName">
     /// When this method returns, contains the fully qualified managed type name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// When this method returns, contains the fully qualified managed method name of the <paramref name="method"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <param name="hierarchyValues">
     /// When this method returns, contains the default test hierarchy values of the <paramref name="method"/>.
@@ -76,12 +90,22 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static void GetManagedName(MethodBase method, out string managedTypeName, out string managedMethodName, out string?[] hierarchyValues)
     {
-        GetManagedName(method, out managedTypeName, out managedMethodName);
-        GetManagedNameAndHierarchy(method, true, out _, out _, out hierarchyValues);
+        if (!method.IsGenericMethod && ReflectionHelpers.GetReflectedType(method) is { } semanticType && !ReflectionHelpers.IsGenericType(semanticType))
+        {
+            // We are dealing with non-generic method in non-generic type.
+            // So, it doesn't matter what we pass as "useClosedTypes".
+            // Instead of calling GetManagedNameAndHierarchy that does repeated work, we call it only once.
+            GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out hierarchyValues);
+        }
+        else
+        {
+            GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out _);
+            GetManagedNameAndHierarchy(method, true, out _, out _, out hierarchyValues);
+        }
     }
 
     /// <summary>
@@ -201,7 +225,19 @@ public static partial class ManagedNameHelper
             hierarchyValues[HierarchyConstants.Levels.ClassIndex] = managedTypeName.Substring(hierarchyPos[1] + 1, hierarchyPos[2] - hierarchyPos[1] - 1);
             hierarchyValues[HierarchyConstants.Levels.NamespaceIndex] = managedTypeName.Substring(hierarchyPos[0], hierarchyPos[1] - hierarchyPos[0]);
         }
-        hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = method.DeclaringType?.Assembly?.GetName()?.Name ?? string.Empty;
+
+        var assembly = method.DeclaringType?.Assembly;
+        if (s_lastAssemblyNameCache is { } cache &&
+            cache.Assembly == assembly)
+        {
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = cache.SimpleName;
+        }
+        else
+        {
+            var assemblyName = assembly?.GetName()?.Name ?? string.Empty;
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = assemblyName;
+            s_lastAssemblyNameCache = new AssemblyNameCache(assembly, assemblyName);
+        }
     }
 
     /// <summary>
@@ -213,11 +249,11 @@ public static partial class ManagedNameHelper
     /// </param>
     /// <param name="managedTypeName">
     /// The fully qualified managed name of the type.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="managedMethodName">
     /// The fully qualified managed name of the method.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <returns>
     /// A <see cref="MethodBase" /> object that represents specified parameters, throws if null.
@@ -228,7 +264,7 @@ public static partial class ManagedNameHelper
     /// </exception>
     /// <remarks>
     /// More information about <paramref name="managedTypeName"/> and <paramref name="managedMethodName"/> can be found in
-    /// <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
+    /// <see href="https://github.com/microsoft/vstest/blob/main/docs/RFCs/0017-Managed-TestCase-Properties.md">the RFC</see>.
     /// </remarks>
     public static MethodBase GetMethod(Assembly assembly, string managedTypeName, string managedMethodName)
     {
@@ -344,7 +380,7 @@ public static partial class ManagedNameHelper
                 hierarchies[1] = hierarchies[0];
             }
 
-            AppendNestedTypeName(b, type, closedType);
+            AppendNestedTypeName(b, type);
             if (closedType)
             {
                 AppendGenericTypeParameters(b, type);
@@ -456,7 +492,7 @@ public static partial class ManagedNameHelper
         b.Append('\'');
     }
 
-    private static int AppendNestedTypeName(StringBuilder b, Type? type, bool closedType)
+    private static int AppendNestedTypeName(StringBuilder b, Type? type)
     {
         if (type is null)
         {
@@ -466,7 +502,7 @@ public static partial class ManagedNameHelper
         var outerArity = 0;
         if (type.IsNested)
         {
-            outerArity = AppendNestedTypeName(b, type.DeclaringType, closedType);
+            outerArity = AppendNestedTypeName(b, type.DeclaringType);
             b.Append('+');
         }
 
@@ -563,7 +599,8 @@ public static partial class ManagedNameHelper
         }
 
         if (c == '_'
-            || char.IsLetterOrDigit(c) // Lu, Ll, Lt, Lm, Lo, or Nl
+            // 'Digit' does not include letter numbers, which are valid identifiers as per docs https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/identifier-names'.
+            || char.IsLetterOrDigit(c) // Lu, Ll, Lt, Lm, Lo, or Nd
             )
         {
             return false;
@@ -571,7 +608,8 @@ public static partial class ManagedNameHelper
 
         var category = CharUnicodeInfo.GetUnicodeCategory(c);
         return category
-            is not UnicodeCategory.NonSpacingMark         // Mn
+            is not UnicodeCategory.LetterNumber           // Nl
+            and not UnicodeCategory.NonSpacingMark        // Mn
             and not UnicodeCategory.SpacingCombiningMark  // Mc
             and not UnicodeCategory.ConnectorPunctuation  // Pc
             and not UnicodeCategory.Format;               // Cf

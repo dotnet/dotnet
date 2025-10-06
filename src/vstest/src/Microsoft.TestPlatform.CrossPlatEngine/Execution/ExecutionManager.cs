@@ -49,6 +49,7 @@ public class ExecutionManager : IExecutionManager
     /// Initializes a new instance of the <see cref="ExecutionManager"/> class.
     /// </summary>
     /// <param name="testPlatformEventSource">Test platform event source.</param>
+    /// <param name="requestData">Request data</param>
     protected ExecutionManager(ITestPlatformEventSource testPlatformEventSource, IRequestData requestData)
     {
         _testPlatformEventSource = testPlatformEventSource;
@@ -61,6 +62,7 @@ public class ExecutionManager : IExecutionManager
     /// Initializes the execution manager.
     /// </summary>
     /// <param name="pathToAdditionalExtensions"> The path to additional extensions. </param>
+    /// <param name="testMessageEventsHandler">Handler of test messages</param>
     public void Initialize(IEnumerable<string>? pathToAdditionalExtensions, ITestMessageEventHandler? testMessageEventsHandler)
     {
         // Clear the request data metrics left over from a potential previous run.

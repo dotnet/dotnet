@@ -1,3 +1,12 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else

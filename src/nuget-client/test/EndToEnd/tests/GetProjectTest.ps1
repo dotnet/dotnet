@@ -196,13 +196,13 @@ function Test-RenamingSolutionFolderWithDeeplyNestedProjectsDoesNotAffectGetProj
     Assert-AreEqual $p2 (Get-Project -Name foo\bar\A)
     Assert-AreEqual $p1 (Get-Project -Name A)
 
-    Rename-SolutionFolder 'foo' 'bar'
+    Rename-SolutionFolder 'foo' 'bar2'
 
-    Assert-AreEqual $p2 (Get-Project -Name bar\bar\A)
+    Assert-AreEqual $p2 (Get-Project -Name bar2\bar\A)
     Assert-AreEqual $p1 (Get-Project -Name A)
 
     Remove-Project $p1.Name
-    Assert-AreEqual $p2 (Get-Project -Name bar\bar\A)
+    Assert-AreEqual $p2 (Get-Project -Name bar2\bar\A)
     Assert-AreEqual $p2 (Get-Project -Name A)
 }
 

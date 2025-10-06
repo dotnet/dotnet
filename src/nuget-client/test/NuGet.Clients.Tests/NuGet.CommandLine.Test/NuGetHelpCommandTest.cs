@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using NuGet.Test.Utility;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Xunit;
 
 namespace NuGet.CommandLine.Test
@@ -12,6 +12,7 @@ namespace NuGet.CommandLine.Test
         [InlineData("client-certs")]
         [InlineData("config")]
         [InlineData("delete")]
+        [InlineData("eula")]
         [InlineData("help")]
         [InlineData("init")]
         [InlineData("install")]

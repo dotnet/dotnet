@@ -47,8 +47,16 @@ type TailCall =
     static member YesFromVal (g: TcGlobals) (v: Val) = TailCall.Yes(TailCall.IsVoidRet g v)
 
     static member YesFromExpr (g: TcGlobals) (expr: Expr) =
+        let yesFromTType (t: TType) =
+            if isUnitTy g t then
+                TailCall.Yes TailCallReturnType.MustReturnVoid
+            else
+                TailCall.Yes TailCallReturnType.NonVoid
+
         match expr with
         | ValUseAtApp(valRef, _) -> TailCall.Yes(TailCall.IsVoidRet g valRef.Deref)
+        | Expr.Const(constType = constType) -> yesFromTType constType
+        | Expr.Match(exprType = exprType) -> yesFromTType exprType
         | _ -> TailCall.Yes TailCallReturnType.NonVoid
 
     member x.AtExprLambda =
@@ -70,6 +78,9 @@ type cenv =
 
         /// Values in module that have been marked [<TailCall>]
         mustTailCall: Zset<Val>
+
+        /// Indicates whether the current method has pinned locals that would prevent tail calls
+        hasPinnedLocals: bool
     }
 
     override x.ToString() = "<cenv>"
@@ -194,8 +205,9 @@ let CheckForNonTailRecCall (cenv: cenv) expr (tailCall: TailCall) =
                             && not (IsValRefIsDllImport cenv.g vref)
                             && not isCCall
                             && not hasByrefArg
+                            && not cenv.hasPinnedLocals
 
-                        noTailCallBlockers // blockers that will prevent the IL level from emmiting a tail instruction
+                        noTailCallBlockers // blockers that will prevent the IL level from emitting a tail instruction
                     else
                         true
 
@@ -222,6 +234,13 @@ and CheckCall cenv args ctxts (tailCall: TailCall) =
             | Expr.App _ -> Some(TailCall.YesFromExpr cenv.g e)
             | IsAppInLambdaBody t -> Some t
             | _ -> None
+        | Expr.App(args = args) ->
+            args
+            |> List.tryPick (fun a ->
+                match a with
+                | IsAppInLambdaBody t -> Some t
+                | _ -> None)
+
         | _ -> None
 
     // if we haven't already decided this is no tail call, try to detect CPS-like expressions
@@ -715,11 +734,26 @@ and CheckBinding cenv alwaysCheckNoReraise ctxt (TBind(v, bindRhs, _) as bind) :
         | Some info -> info
         | _ -> ValReprInfo.emptyValData
 
+    // Check if this binding introduces a pinned local
+    let cenv =
+        if v.IsFixed then
+            { cenv with hasPinnedLocals = true }
+        else
+            cenv
+
     CheckLambdas isTop (Some v) cenv v.ShouldInline valReprInfo tailCall alwaysCheckNoReraise bindRhs v.Range v.Type ctxt
 
 and CheckBindings cenv binds =
     for bind in binds do
-        CheckBinding cenv false PermitByRefExpr.Yes bind
+        let (TBind(v, _, _)) = bind
+        // Update the environment if this binding is fixed
+        let currentCenv =
+            if v.IsFixed then
+                { cenv with hasPinnedLocals = true }
+            else
+                cenv
+
+        CheckBinding currentCenv false PermitByRefExpr.Yes bind
 
 let CheckModuleBinding cenv (isRec: bool) (TBind _ as bind) =
 
@@ -749,7 +783,18 @@ let CheckModuleBinding cenv (isRec: bool) (TBind _ as bind) =
                 | Expr.Lambda(bodyExpr = bodyExpr) -> checkTailCall insideSubBindingOrTry bodyExpr
                 | Expr.DebugPoint(_debugPointAtLeafExpr, expr) -> checkTailCall insideSubBindingOrTry expr
                 | Expr.Let(binding = binding; bodyExpr = bodyExpr) ->
-                    checkTailCall true binding.Expr
+                    // detect continuation shapes like MakeAsync
+                    let isContinuation =
+                        match bodyExpr with
+                        | Expr.App(funcExpr = Expr.Val(valRef = valRef)) ->
+                            match valRef.GeneralizedType with
+                            | [ _ ],
+                              TType_fun(domainType = TType_fun(domainType = TType_app _; rangeType = TType_app _); rangeType = TType_app _) ->
+                                true
+                            | _ -> false
+                        | _ -> false
+
+                    checkTailCall (not isContinuation) binding.Expr
 
                     let warnForBodyExpr =
                         insideSubBindingOrTry
@@ -766,6 +811,12 @@ let CheckModuleBinding cenv (isRec: bool) (TBind _ as bind) =
                     // warn for recursive calls in TryWith/TryFinally operations
                     exprs |> Seq.iter (checkTailCall true)
                 | Expr.Op(args = exprs) -> exprs |> Seq.iter (checkTailCall insideSubBindingOrTry)
+                | Expr.Sequential(expr1 = expr1; expr2 = expr2) ->
+                    match expr1 with
+                    | Expr.Op(op = TOp.IntegerForLoop _) -> checkTailCall insideSubBindingOrTry expr1
+                    | _ -> ()
+
+                    checkTailCall insideSubBindingOrTry expr2
                 | _ -> ()
 
             checkTailCall false bodyExpr
@@ -839,6 +890,7 @@ let CheckImplFile (g: TcGlobals, amap, reportErrors, implFileContents) =
                 stackGuard = StackGuard(PostInferenceChecksStackGuardDepth, "CheckImplFile")
                 amap = amap
                 mustTailCall = Zset.empty valOrder
+                hasPinnedLocals = false
             }
 
         CheckDefnInModule cenv implFileContents

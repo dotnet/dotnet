@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -16,29 +14,27 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
     public void Execute_CreatesDescriptor()
     {
         // Arrange
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(BaseCompilation);
-
+        var context = new TagHelperDescriptorProviderContext(BaseCompilation);
         var provider = new KeyTagHelperDescriptorProvider();
 
         // Act
         provider.Execute(context);
 
         // Assert
-        var matches = context.Results.Where(result => result.IsKeyTagHelper());
+        var matches = context.Results.Where(static result => result.Kind == TagHelperKind.Key);
         var item = Assert.Single(matches);
 
         Assert.Empty(item.AllowedChildTags);
         Assert.Null(item.TagOutputHint);
         Assert.Empty(item.Diagnostics);
         Assert.False(item.HasErrors);
-        Assert.Equal(ComponentMetadata.Key.TagHelperKind, item.Kind);
-        Assert.Equal(bool.TrueString, item.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.Key.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Key, item.Kind);
+        Assert.Equal(RuntimeKind.None, item.RuntimeKind);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
-        Assert.False(item.IsComponentOrChildContentTagHelper);
+        Assert.False(item.IsComponentOrChildContentTagHelper());
         Assert.True(item.CaseSensitive);
+        Assert.True(item.ClassifyAttributesOnly);
 
         Assert.Equal(
             "Ensures that the component or element will be preserved across renders if (and only if) the supplied key value matches.",
@@ -47,7 +43,7 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Equal("Microsoft.AspNetCore.Components", item.AssemblyName);
         Assert.Equal("Key", item.Name);
         Assert.Equal("Microsoft.AspNetCore.Components.Key", item.DisplayName);
-        Assert.Equal("Microsoft.AspNetCore.Components.Key", item.GetTypeName());
+        Assert.Equal("Microsoft.AspNetCore.Components.Key", item.TypeName);
 
         // The tag matching rule for a key is just the attribute name "key"
         var rule = Assert.Single(item.TagMatchingRules);
@@ -61,14 +57,14 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Empty(requiredAttribute.Diagnostics);
         Assert.Equal("@key", requiredAttribute.DisplayName);
         Assert.Equal("@key", requiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
         Assert.Null(requiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Key.TagHelperKind, attribute.Kind);
+        Assert.Equal(TagHelperKind.Key, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -81,7 +77,7 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
             attribute.Documentation);
 
         Assert.Equal("@key", attribute.Name);
-        Assert.Equal("Key", attribute.GetPropertyName());
+        Assert.Equal("Key", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Key.Key", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);

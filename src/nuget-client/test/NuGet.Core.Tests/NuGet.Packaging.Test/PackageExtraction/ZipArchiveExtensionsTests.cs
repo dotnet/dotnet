@@ -16,7 +16,7 @@ namespace NuGet.Packaging.Test.PackageExtraction
     public class ZipArchiveExtensionsTests
     {
         // Trying to change a file timestamp when the file is open only throws on Windows
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/14479")]
         public void UpdateFileTimeFromEntry_FileBusyForShortTime_Retries()
         {
             // Arrange
@@ -63,7 +63,7 @@ namespace NuGet.Packaging.Test.PackageExtraction
                 File.Delete(tempFile);
             }
         }
-
+#if !NET8_0_OR_GREATER
         // Trying to change a file timestamp when the file is open only throws on Windows
         [PlatformFact(Platform.Windows)]
         public async Task UpdateFileTimeFromEntry_FileBusyForLongTime_Throws()
@@ -106,5 +106,6 @@ namespace NuGet.Packaging.Test.PackageExtraction
                 File.Delete(tempFile);
             }
         }
+#endif
     }
 }

@@ -8,10 +8,6 @@
   <InstallDir>$(RootBinDir)\bin\Windows_NT.$(TargetArchitecture).$(TargetConfiguration)</InstallDir>
   <LogDir>$(RootBinDir)\TestResults\$(TargetConfiguration)\dbgshim.unittests_$(Timestamp)</LogDir>
 
-  <BuildProjectFrameworkLatest Condition="StartsWith('$(RuntimeVersionLatest)', '8')">net8.0</BuildProjectFrameworkLatest>
-  <BuildProjectFrameworkLatest Condition="StartsWith('$(RuntimeVersionLatest)', '7')">net7.0</BuildProjectFrameworkLatest>
-  <BuildProjectFrameworkLatest Condition="StartsWith('$(RuntimeVersionLatest)', '6')">net6.0</BuildProjectFrameworkLatest>
-
   <TestProduct>ProjectK</TestProduct>
   <DebuggeeSourceRoot>$(RepoRootDir)\src\tests\DbgShim.UnitTests\Debuggees</DebuggeeSourceRoot>
   <DebuggeeMsbuildAuxRoot>$(RepoRootDir)\eng\AuxMsbuildFiles</DebuggeeMsbuildAuxRoot>
@@ -20,26 +16,21 @@
 
   <CliPath>$(DotNetRoot)\dotnet.exe</CliPath>
 
-  <NuGetPackageFeeds>
-      dotnet9=https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet9/nuget/v3/index.json;
-      dotnet8=https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet8/nuget/v3/index.json;
-      dotnet7=https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet7/nuget/v3/index.json;
-      dotnet6=https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet6/nuget/v3/index.json;
-      dotnet-core=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json;
-      dotnet-public=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
-  </NuGetPackageFeeds>
-
   <RunTestsWindows_x64>true</RunTestsWindows_x64>
   <RunTestsWindows_x64 Condition="'$(TargetArchitecture)' != 'x64'">false</RunTestsWindows_x64>
   
   <RunTestsWindows_x86>true</RunTestsWindows_x86>
   <RunTestsWindows_x86 Condition="'$(TargetArchitecture)' != 'x86'">false</RunTestsWindows_x86>
 
+  <TestSingleFile>true</TestSingleFile>
+  <TestSingleFile Condition="'$(PrivateBuildTesting)' == 'true'">false</TestSingleFile>
+
   <Options>
     <!-- Run OpenVirtualProcess tests on Windows -->
     <Option>
       <TestName>OpenVirtualProcess</TestName>
       <RuntimeFrameworkVersion>$(RuntimeVersionLatest)</RuntimeFrameworkVersion>
+      <BuildProjectFramework>$(TargetFrameworkLatest)</BuildProjectFramework>
 
       <!-- Run OpenVirtualProcess tests on Windows x64 -->
       <Options Condition="'$(RunTestsWindows_x64)' == 'true'">
@@ -66,46 +57,62 @@
     <Option>
       <Options>
         <!--
-            Single file
+            Single file (debuggees cli built)
          -->
-        <Option Condition="'$(SingleFileRuntimeLatestVersion)' != ''">
-          <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
-          <BuildProjectFramework>$(BuildProjectFrameworkLatest)</BuildProjectFramework>
-          <PublishSingleFile>true</PublishSingleFile>
-          <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
-          <RuntimeFrameworkVersion>$(SingleFileRuntimeLatestVersion)</RuntimeFrameworkVersion>
-        </Option>
-        <Option Condition="'$(SingleFileRuntime70Version)' != ''">
-          <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
-          <BuildProjectFramework>net7.0</BuildProjectFramework>
-          <PublishSingleFile>true</PublishSingleFile>
-          <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
-          <RuntimeFrameworkVersion>$(SingleFileRuntime70Version)</RuntimeFrameworkVersion>
-        </Option>
-        <Option Condition="'$(SingleFileRuntime60Version)' != ''">
-          <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
-          <BuildProjectFramework>net6.0</BuildProjectFramework>
-          <PublishSingleFile>true</PublishSingleFile>
-          <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
-          <RuntimeFrameworkVersion>$(SingleFileRuntime60Version)</RuntimeFrameworkVersion>
+        <Option Condition="'$(TestSingleFile)' == 'true'">
+          <Options>
+            <Option Condition="'$(RuntimeVersionLatest)' != ''">
+              <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
+              <PublishSingleFile>true</PublishSingleFile>
+              <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
+              <RuntimeFrameworkVersion>$(RuntimeVersionLatest)</RuntimeFrameworkVersion>
+              <BuildProjectFramework>$(TargetFrameworkLatest)</BuildProjectFramework>
+            </Option>
+            <Option Condition="'$(RuntimeVersionServicing1)' != ''">
+              <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
+              <PublishSingleFile>true</PublishSingleFile>
+              <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
+              <RuntimeFrameworkVersion>$(RuntimeVersionServicing1)</RuntimeFrameworkVersion>
+              <BuildProjectFramework>$(TargetFrameworkServicing1)</BuildProjectFramework>
+            </Option>
+            <Option Condition="'$(RuntimeVersionServicing2)' != ''">
+              <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
+              <PublishSingleFile>true</PublishSingleFile>
+              <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
+              <RuntimeFrameworkVersion>$(RuntimeVersionServicing2)</RuntimeFrameworkVersion>
+              <BuildProjectFramework>$(TargetFrameworkServicing2)</BuildProjectFramework>
+            </Option>
+            <Option Condition="'$(RuntimeVersionServicing3)' != ''">
+              <DebuggeeBuildRoot>$(RootBinDir)\Debuggees\SingleFile</DebuggeeBuildRoot>
+              <PublishSingleFile>true</PublishSingleFile>
+              <BuildProjectRuntime>$(TargetRid)</BuildProjectRuntime>
+              <RuntimeFrameworkVersion>$(RuntimeVersionServicing3)</RuntimeFrameworkVersion>
+              <BuildProjectFramework>$(TargetFrameworkServicing3)</BuildProjectFramework>
+            </Option>
+          </Options>
         </Option>
         <!--
-            Default
+            Default (debuggees cli built)
           -->
         <Option Condition="'$(RuntimeVersionLatest)' != ''">
           <DebuggeeBuildRoot>$(RootBinDir)\Debuggees</DebuggeeBuildRoot>
-          <BuildProjectFramework>$(BuildProjectFrameworkLatest)</BuildProjectFramework>
           <RuntimeFrameworkVersion>$(RuntimeVersionLatest)</RuntimeFrameworkVersion>
+          <BuildProjectFramework>$(TargetFrameworkLatest)</BuildProjectFramework>
         </Option>
-        <Option Condition="'$(RuntimeVersion70)' != ''">
+        <Option Condition="'$(RuntimeVersionServicing1)' != ''">
           <DebuggeeBuildRoot>$(RootBinDir)\Debuggees</DebuggeeBuildRoot>
-          <BuildProjectFramework>net7.0</BuildProjectFramework>
-          <RuntimeFrameworkVersion>$(RuntimeVersion70)</RuntimeFrameworkVersion>
+          <RuntimeFrameworkVersion>$(RuntimeVersionServicing1)</RuntimeFrameworkVersion>
+          <BuildProjectFramework>$(TargetFrameworkServicing2)</BuildProjectFramework>
         </Option>
-        <Option Condition="'$(RuntimeVersion60)' != ''">
+        <Option Condition="'$(RuntimeVersionServicing2)' != ''">
           <DebuggeeBuildRoot>$(RootBinDir)\Debuggees</DebuggeeBuildRoot>
-          <BuildProjectFramework>net6.0</BuildProjectFramework>
-          <RuntimeFrameworkVersion>$(RuntimeVersion60)</RuntimeFrameworkVersion>
+          <RuntimeFrameworkVersion>$(RuntimeVersionServicing2)</RuntimeFrameworkVersion>
+          <BuildProjectFramework>$(TargetFrameworkServicing2)</BuildProjectFramework>
+        </Option>
+        <Option Condition="'$(RuntimeVersionServicing3)' != ''">
+          <DebuggeeBuildRoot>$(RootBinDir)\Debuggees</DebuggeeBuildRoot>
+          <RuntimeFrameworkVersion>$(RuntimeVersionServicing3)</RuntimeFrameworkVersion>
+          <BuildProjectFramework>$(TargetFrameworkServicing3)</BuildProjectFramework>
         </Option>
       </Options>
     </Option>

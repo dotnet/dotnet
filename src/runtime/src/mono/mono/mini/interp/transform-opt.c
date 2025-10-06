@@ -32,7 +32,9 @@ alloc_var_offset (TransformData *td, int local, gint32 *ptos)
 int
 interp_alloc_global_var_offset (TransformData *td, int var)
 {
-	return alloc_var_offset (td, var, &td->total_locals_size);
+	int offset = alloc_var_offset (td, var, &td->total_locals_size);
+	interp_mark_ref_slots_for_var (td, var);
+	return offset;
 }
 
 static void
@@ -464,6 +466,8 @@ interp_alloc_offsets (TransformData *td)
 					add_active_call (td, &ac, td->vars [var].call);
 				} else if (!td->vars [var].global && td->vars [var].offset == -1) {
 					alloc_var_offset (td, var, &current_offset);
+					interp_mark_ref_slots_for_var (td, var);
+
 					if (current_offset > final_total_locals_size)
 						final_total_locals_size = current_offset;
 
@@ -492,6 +496,7 @@ interp_alloc_offsets (TransformData *td)
 		// These are allocated separately at the end of the stack
 		if (td->vars [i].call_args) {
 			td->vars [i].offset += td->param_area_offset;
+			interp_mark_ref_slots_for_var (td, i);
 			final_total_locals_size = MAX (td->vars [i].offset + td->vars [i].size, final_total_locals_size);
 		}
 	}
@@ -798,7 +803,10 @@ interp_compute_eh_vars (TransformData *td)
 				c->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 			InterpBasicBlock *bb = td->offset_to_bb [c->try_offset];
 			int try_end = c->try_offset + c->try_len;
-			g_assert (bb);
+			// If the bblock is detected as dead while traversing the IL code, the mapping for
+			// it is cleared. We can skip it.
+			if (!bb)
+				continue;
 			while (bb->il_offset != -1 && bb->il_offset < try_end) {
 				for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
 					if (mono_interp_op_dregs [ins->opcode])
@@ -2236,6 +2244,7 @@ interp_fold_unop (TransformData *td, InterpInst *ins)
 	td->var_values [sreg].ref_count--;
 	result.def = ins;
 	result.ref_count = td->var_values [dreg].ref_count; // preserve ref count
+	result.liveness = td->var_values [dreg].liveness;
 	td->var_values [dreg] = result;
 
 	return ins;
@@ -2473,6 +2482,7 @@ fold_ok:
 	td->var_values [sreg2].ref_count--;
 	result.def = ins;
 	result.ref_count = td->var_values [dreg].ref_count; // preserve ref count
+	result.liveness = td->var_values [dreg].liveness;
 	td->var_values [dreg] = result;
 
 	return ins;
@@ -3117,6 +3127,7 @@ retry_instruction:
 						ins->data [2] = GINT_TO_UINT16 (ldsize);
 
 						interp_clear_ins (ins->prev);
+						td->var_values [ins->dreg].def = ins;
 					}
 					if (td->verbose_level) {
 						g_print ("Replace ldloca/ldobj_vt pair :\n\t");
@@ -3197,6 +3208,7 @@ retry_instruction:
 						ins->data [2] = vtsize;
 
 						interp_clear_ins (ins->prev);
+						td->var_values [ins->dreg].def = ins;
 
 						// MINT_MOV_DST_OFF doesn't work if dreg is allocated at the same location as the
 						// field value to be stored, because its behavior is not atomic in nature. We first
@@ -3380,7 +3392,7 @@ can_propagate_var_def (TransformData *td, int var, InterpLivenessPosition cur_li
 static void
 interp_super_instructions (TransformData *td)
 {
-	interp_compute_native_offset_estimates (td);
+	interp_compute_native_offset_estimates (td, FALSE);
 
 	// Add some actual super instructions
 	for (int bb_dfs_index = 0; bb_dfs_index < td->bblocks_count_eh; bb_dfs_index++) {
@@ -3393,9 +3405,11 @@ interp_super_instructions (TransformData *td)
 		current_liveness.bb_dfs_index = bb->dfs_index;
 		current_liveness.ins_index = 0;
 		for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
-			int opcode = ins->opcode;
+			int opcode;
 			if (bb->dfs_index >= td->bblocks_count_no_eh || bb->dfs_index == -1 || (ins->flags & INTERP_INST_FLAG_LIVENESS_MARKER))
 				current_liveness.ins_index++;
+retry_ins:
+			opcode = ins->opcode;
 			if (MINT_IS_NOP (opcode))
 				continue;
 
@@ -3794,9 +3808,7 @@ interp_super_instructions (TransformData *td)
 								g_print ("superins: ");
 								interp_dump_ins (ins, td->data_items);
 							}
-							// The newly added opcode could be part of further superinstructions. Retry
-							ins = ins->prev;
-							continue;
+							goto retry_ins;
 						}
 					}
 				}

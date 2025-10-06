@@ -2,6 +2,33 @@
 
 For basics on how to set-up your repo and how to build the product, refer to the [contributing guide](../CONTRIBUTING.md).
 
+## Debugging integration tests
+
+The test projects Dotnet.Integration.Tests, MSBuild.Integration.Tests and NuGet.CommandLine.FuncTests all run NuGet in child processes.
+This means you can't normally put breakpoints in the product code, since that code won't run in the test host.
+However, there is a [Microsoft Child Process Debugging Power Tool](https://marketplace.visualstudio.com/items?itemName=vsdbgplat.MicrosoftChildProcessDebuggingPowerTool2022), which can automatically attach to child processes when debugging in Visual Studio.
+
+As the extension says:
+
+> The power tool requires a native debugger. This means if you are debugging .NET code, you must choose to enable mixed mode debugging (so managed and native)
+
+It's the same to do this for test projects, or console apps, in the project property's debug settings.
+
+![Enable native code debugging](./images/enable-mixed-mode-debugging.png)
+
+After installing the child process debugging power tool, remember to go to its settings and enable child process debugging.
+
+![Enable child process debugger in extension settings](./images/enable-child-process-debugging.png)
+
+Now, when debugging tests, any breakpoints in product code should be hit.
+If your breakpoints are not stopping the debugger, you can check if child processes are being attached by opening the debugger Processes window.
+If the debugger is successfully attaching to the child process, you will see it appear and disappear in this list.
+
+![alt text](./images/vs-debugger-processes-list.png)
+
+If you don't see the process appear, then you need to check the extension's settings and check that mixed mode (native code) debugging is enabled.
+If the child process does appear, it probably means that your breakpoints are in code that is not getting run.
+
 ## Debugging and testing NuGet.exe (NuGet.Commandline)
 
 Given that it is a .NET Framework based x86 console application, NuGet.exe is straightforward to debug.
@@ -21,6 +48,10 @@ Alternatively, if you build the the repository under a `Debug` configuration, wh
 
 Testing the NuGet Visual Studio functionality is equally as easy as testing NuGet.exe.
 The start-up project is [NuGet.VisualStudio.Client](../src/NuGet.Clients/NuGet.VisualStudio.Client/NuGet.VisualStudio.Client.csproj). Starting this project will build the VSIX, then install that VSIX onto and launch your [experimental instance](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance) of Visual Studio.
+
+> Note: NuGet's integration into Visual Studio depends on Visual Studio components. When testing this integration it is important that the version of NuGet being tested and the Visual Studio instance are compatible. The [release notes](https://learn.microsoft.com/nuget/release-notes/) contain the exact mapping, where the minor version of NuGet matches the minor version of Visual Studio, example 17.12 of Visual Studio matches 6.12 of NuGet.
+Testing NuGet 6.12 on top of 17.8 for example is not guaranteed to work.
+Only testing 6.12 on top of 17.12 is expected to consistently work.
 
 ### Testing the build of NuGet in Visual Studio
 
@@ -123,15 +154,15 @@ The easiest way to test the pack functionality with dotnet.exe is to install the
 
 If you want to test dotnet.exe explicitly, so you don't have to worry about whether you installed the correct package in the project, refer to [Patching dotnet.exe to test the NuGet functionality](#patching-dotnetexe-to-test-the-nuget-functionality).
 
-### Debugging NuGet Command Xplat Functionality (add-package/remove-package/list package)
+### Debugging NuGet's integrated `dotnet` CLI commands
 
-Functionality such as `dotnet.exe add package` or `dotnet list package`, is implemented in [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj).
-
-To debug with `MSBuildLocator`, you need to un-comment the `PackageReference` for `Microsoft.Build.Locator` in `NuGet.CommandLine.XPlat.csproj`. Additionally, un-comment the code utilizing `MSBuildLocator` in that project's `Program.cs`.
+All of the `dotnet nuget` commands, in addition to some others, such as `dotnet add package`, `dotnet list package`, and `dotnet search`, are implemented in [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj).
 
 There are 2 ways to debug this project:
 
-* Given that [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj) is an exe, you can set it as the startup project and run it as you would any other command line project in Visual Studio. Note that some commands list arguments in a different order to the dotnet cli.
+* Given that [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj) is an exe, you can set it as the startup project and run it as you would any other command line project in Visual Studio.
+   However, if that is not working, please make sure `UseMSBuildLocator` is set to true.
+   **Note**: some commands list arguments in a different order to the dotnet cli.
 
 * Patch the SDK by referring to [Patching dotnet.exe to test the NuGet functionality](#patching-dotnetexe-to-test-the-nuget-functionality).
 

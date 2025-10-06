@@ -323,16 +323,10 @@ namespace NuGet.ProjectModel.Test
             var leftSide = new LockFile
             {
                 PackageSpec = new PackageSpec()
-                {
-                    Title = "a"
-                }
             };
             var rightSide = new LockFile
             {
                 PackageSpec = new PackageSpec()
-                {
-                    Title = "a"
-                }
             };
 
             leftSide.Should().Be(rightSide);
@@ -345,14 +339,14 @@ namespace NuGet.ProjectModel.Test
             {
                 PackageSpec = new PackageSpec()
                 {
-                    Title = "a"
+                    Version = Versioning.NuGetVersion.Parse("1.0.0"),
                 }
             };
             var rightSide = new LockFile
             {
                 PackageSpec = new PackageSpec()
                 {
-                    Title = "b"
+                    Version = Versioning.NuGetVersion.Parse("2.0.0"),
                 }
             };
 

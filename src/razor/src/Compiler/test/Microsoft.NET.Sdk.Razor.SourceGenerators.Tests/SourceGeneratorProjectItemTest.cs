@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Xunit;
-using Moq;
+using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
+using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
@@ -20,7 +19,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: emptyBasePath,
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -41,7 +40,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/views",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -63,7 +62,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/views",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -84,7 +83,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -107,7 +106,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 filePath: path,
                 basePath: "/",
                 relativePhysicalPath: "/foo",
-                fileKind: FileKinds.Legacy,
+                fileKind: RazorFileKind.Legacy,
                 additionalText: new TestAdditionalText(string.Empty),
                 cssScope: null);
 
@@ -116,6 +115,35 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             // Assert
             Assert.Equal(expected, fileName);
+        }
+
+        [Fact]
+        public void ProjectItems_WithDifferentPaths_SameContent_AreNotEqual()
+        {
+            // Two additional texts with same contents, but different paths
+            var content = "<h1>Hello World</h1>";
+            var additionalText1 = new TestAdditionalText(content, Encoding.UTF8, "File1.cshtml");
+            var additionalText2 = new TestAdditionalText(content, Encoding.UTF8, "File2.cshtml");
+            
+            var projectItem1 = new SourceGeneratorProjectItem(
+                filePath: "/Views/Home/Index.cshtml",
+                basePath: "/",
+                relativePhysicalPath: "/Views/Home",
+                fileKind: RazorFileKind.Legacy,
+                additionalText: additionalText1,
+                cssScope: null);
+
+            var projectItem2 = new SourceGeneratorProjectItem(
+                filePath: "/Views/About/Index.cshtml",
+                basePath: "/",
+                relativePhysicalPath: "/Views/About",
+                fileKind: RazorFileKind.Legacy,
+                additionalText: additionalText2,
+                cssScope: null);
+
+            // Act & Assert
+            Assert.NotEqual(projectItem1, projectItem2);
+            Assert.False(projectItem1.Equals(projectItem2));
         }
     }
 }

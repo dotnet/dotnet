@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
-    [ComVisible(false)]
     [Guid("40DE4037-7C81-3E1E-B022-AE1ABFF2CA08")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface ISymUnmanagedDocument
+    [ComVisible(false)]
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedDocument
     {
         [PreserveSig]
         int GetUrl(

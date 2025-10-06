@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -12,6 +14,7 @@ namespace NuGet.SolutionRestoreManager
     /// </summary>
     [ComImport]
     [Guid("8ba829f1-0271-40a7-a098-21c518b8148b")]
+    [Obsolete]
     public interface IVsProjectProperties : IEnumerable
     {
         /// <summary>
@@ -24,6 +27,6 @@ namespace NuGet.SolutionRestoreManager
         /// </summary>
         /// <param name="index">Property name or index.</param>
         /// <returns>Property matching index.</returns>
-        IVsProjectProperty Item(object index);
+        IVsProjectProperty? Item(object index);
     }
 }

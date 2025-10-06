@@ -42,13 +42,15 @@ public class PackageTests
             "Microsoft.Build.Utilities.Core",
             "Microsoft.CodeAnalysis.PublicApiAnalyzers",
             "Nuget.Packaging",
+            "System.Text.Json",
             "Valleysoft.DockerCredsProvider",
             "Microsoft.Extensions.Logging",
             "Microsoft.Extensions.Logging.Abstractions"
         };
         IReadOnlyList<string> knownProjectReferences = new List<string>()
         {
-            "..\\..\\Cli\\Microsoft.DotNet.Cli.Utils\\Microsoft.DotNet.Cli.Utils.csproj"
+            "..\\..\\Cli\\Microsoft.DotNet.Cli.Utils\\Microsoft.DotNet.Cli.Utils.csproj",
+            "..\\..\\Microsoft.Extensions.Logging.MSBuild\\Microsoft.Extensions.Logging.MSBuild.csproj"
         };
 
         string projectFilePath = Path.Combine(TestContext.Current.TestExecutionDirectory, "Container", "ProjectFiles", "Microsoft.NET.Build.Containers.csproj");
@@ -85,6 +87,7 @@ public class PackageTests
               "containerize/Microsoft.Extensions.Logging.Abstractions.dll",
               "containerize/Microsoft.Extensions.Logging.Configuration.dll",
               "containerize/Microsoft.Extensions.Logging.Console.dll",
+              "containerize/Microsoft.Extensions.Logging.MSBuild.dll",
               "containerize/Microsoft.Extensions.Logging.dll",
               "containerize/Microsoft.Extensions.Options.ConfigurationExtensions.dll",
               "containerize/Microsoft.Extensions.Options.dll",
@@ -105,31 +108,19 @@ public class PackageTests
               "Icon.png",
               "Microsoft.NET.Build.Containers.nuspec",
               "README.md",
-              "tasks/net472/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
-              "tasks/net472/Microsoft.Extensions.DependencyInjection.dll",
-              "tasks/net472/Microsoft.Extensions.DependencyModel.dll",
-              "tasks/net472/Microsoft.Extensions.Logging.Abstractions.dll",
-              "tasks/net472/Microsoft.Extensions.Logging.dll",
-              "tasks/net472/Microsoft.Extensions.Options.dll",
-              "tasks/net472/Microsoft.Extensions.Primitives.dll",
               "tasks/net472/Microsoft.NET.Build.Containers.dll",
               "tasks/net472/Newtonsoft.Json.dll",
               "tasks/net472/NuGet.Common.dll",
               "tasks/net472/NuGet.Configuration.dll",
-              "tasks/net472/NuGet.DependencyResolver.Core.dll",
               "tasks/net472/NuGet.Frameworks.dll",
-              "tasks/net472/NuGet.LibraryModel.dll",
-              "tasks/net472/NuGet.Packaging.Core.dll",
               "tasks/net472/NuGet.Packaging.dll",
-              "tasks/net472/NuGet.ProjectModel.dll",
-              "tasks/net472/NuGet.Protocol.dll",
               "tasks/net472/NuGet.Versioning.dll",
               $"tasks/{netTFM}/Microsoft.DotNet.Cli.Utils.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.DependencyInjection.dll",
-              $"tasks/{netTFM}/Microsoft.Extensions.DependencyModel.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.Logging.Abstractions.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.Logging.dll",
+              $"tasks/{netTFM}/Microsoft.Extensions.Logging.MSBuild.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.Options.dll",
               $"tasks/{netTFM}/Microsoft.Extensions.Primitives.dll",
               $"tasks/{netTFM}/Microsoft.NET.Build.Containers.deps.json",
@@ -137,19 +128,14 @@ public class PackageTests
               $"tasks/{netTFM}/Newtonsoft.Json.dll",
               $"tasks/{netTFM}/NuGet.Common.dll",
               $"tasks/{netTFM}/NuGet.Configuration.dll",
-              $"tasks/{netTFM}/NuGet.DependencyResolver.Core.dll",
               $"tasks/{netTFM}/NuGet.Frameworks.dll",
-              $"tasks/{netTFM}/NuGet.LibraryModel.dll",
               $"tasks/{netTFM}/NuGet.Packaging.dll",
-              $"tasks/{netTFM}/NuGet.Packaging.Core.dll",
-              $"tasks/{netTFM}/NuGet.ProjectModel.dll",
-              $"tasks/{netTFM}/NuGet.Protocol.dll",
               $"tasks/{netTFM}/NuGet.Versioning.dll",
               $"tasks/{netTFM}/Valleysoft.DockerCredsProvider.dll"
         };
 
-        (string packageFilePath, string packageVersion) = ToolsetUtils.GetContainersPackagePath();
-        using ZipArchive archive = new(File.OpenRead(packageFilePath), ZipArchiveMode.Read, false);
+        (string? packageFilePath, string? packageVersion) = ToolsetUtils.GetContainersPackagePath();
+        using ZipArchive archive = new(File.OpenRead(packageFilePath ?? string.Empty), ZipArchiveMode.Read, false);
 
         IEnumerable<string> actualEntries = archive.Entries
             .Select(e => e.FullName)

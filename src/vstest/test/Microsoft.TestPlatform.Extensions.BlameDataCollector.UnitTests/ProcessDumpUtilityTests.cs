@@ -44,7 +44,7 @@ public class ProcessDumpUtilityTests
         var testResultsDirectory = "D:\\TestResults";
 
         _mockFileHelper.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>()))
-            .Returns(System.Array.Empty<string>());
+            .Returns([]);
         _mockProcessHelper.Setup(x => x.GetProcessName(processId))
             .Returns(process);
 

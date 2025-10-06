@@ -120,9 +120,9 @@ namespace Microsoft.Deployment.Utilities
             }
 
             // Append a trailing \ if necessary
-            if (fromDirectory.LastIndexOf('\\') != fromDirectory.Length - 1)
+            if (!Path.EndsInDirectorySeparator(fromDirectory))
             {
-                fromDirectory += '\\';
+                fromDirectory += Path.DirectorySeparatorChar;
             }
 
             // Add application manifest file to the ignore list

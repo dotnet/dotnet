@@ -10,10 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Packaging;
 using NuGet.Packaging.Signing;
-using NuGet.Protocol;
 using static NuGet.Commands.TrustedSignersArgs;
+using NuGet.Packaging;
+using NuGet.Protocol;
 
 namespace NuGet.Commands
 {
@@ -57,7 +57,6 @@ namespace NuGet.Commands
 
                     if (isPackagePathProvided)
                     {
-#if IS_SIGNING_SUPPORTED
                         if (isServiceIndexProvided || isFingerprintProvided || isAlgorithmProvided)
                         {
                             throw new CommandLineArgumentCombinationException(string.Format(CultureInfo.CurrentCulture, Strings.Error_CouldNotAdd, Strings.Error_InvalidCombinationOfArguments));
@@ -114,10 +113,6 @@ namespace NuGet.Commands
                         }
 
                         break;
-
-#else
-                        throw new NotSupportedException();
-#endif
                     }
 
                     if (isServiceIndexProvided)
@@ -225,26 +220,26 @@ namespace NuGet.Commands
                 var index = $" {i + 1}.".PadRight(6);
                 var defaultIndentation = string.Empty.PadRight(6);
 
-                trustedSignerBuilder.AppendLine($"{index}{string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogTitle, item.Name, item.ElementName)}");
+                trustedSignerBuilder.AppendLine(index + string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogTitle, item.Name, item.ElementName));
 
                 if (item is RepositoryItem repoItem)
                 {
-                    trustedSignerBuilder.AppendLine($"{defaultIndentation}{string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogServiceIndex, repoItem.ServiceIndex)}");
+                    trustedSignerBuilder.AppendLine(defaultIndentation + string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogServiceIndex, repoItem.ServiceIndex));
 
                     if (repoItem.Owners != null && repoItem.Owners.Any())
                     {
-                        trustedSignerBuilder.AppendLine($"{defaultIndentation}{string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogOwners, string.Join("; ", repoItem.Owners))}");
+                        trustedSignerBuilder.AppendLine(defaultIndentation + string.Format(CultureInfo.CurrentCulture, Strings.TrustedSignerLogOwners, string.Join("; ", repoItem.Owners)));
                     }
                 }
 
-                trustedSignerBuilder.AppendLine($"{defaultIndentation}{Strings.TrustedSignerLogCertificates}");
+                trustedSignerBuilder.AppendLine(defaultIndentation + Strings.TrustedSignerLogCertificates);
 
                 foreach (var cert in item.Certificates)
                 {
                     var extraIndentation = string.Empty.PadRight(2);
 
                     var summaryAllowUntrustedRoot = (cert.AllowUntrustedRoot) ? Strings.TrustedSignerLogCertificateSummaryAllowUntrustedRoot : Strings.TrustedSignerLogCertificateSummaryUnallowUntrustedRoot;
-                    trustedSignerBuilder.AppendLine($"{defaultIndentation}{extraIndentation}{string.Format(CultureInfo.CurrentCulture, summaryAllowUntrustedRoot, cert.HashAlgorithm.ToString(), cert.Fingerprint)}");
+                    trustedSignerBuilder.AppendLine(defaultIndentation + extraIndentation + string.Format(CultureInfo.CurrentCulture, summaryAllowUntrustedRoot, cert.HashAlgorithm.ToString(), cert.Fingerprint));
                 }
 
                 trustedSignersLogs.Add(new LogMessage(LogLevel.Minimal, trustedSignerBuilder.ToString()));

@@ -12,7 +12,7 @@ namespace System.ComponentModel
 {
     [Serializable]
     [TypeForwardedFrom("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-    public class BindingList<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T> :
+    public class BindingList<[DynamicallyAccessedMembers(TypeDescriptor.AllMembersAndInterfaces)] T> :
         Collection<T>, IBindingList, ICancelAddNew, IRaiseItemChangedEvents
     {
         private int addNewPos = -1; // Do not rename (binary serialization)
@@ -312,7 +312,7 @@ namespace System.ComponentModel
         {
             // Allow event handler to supply the new item for us
             // If event handler did not supply new item, create one ourselves
-            object? newItem = FireAddingNew() ?? Activator.CreateInstance(typeof(T));
+            object? newItem = FireAddingNew() ?? Activator.CreateInstance<T>();
 
             // Add item to end of list. Note: If event handler returned an item not of type T,
             // the cast below will trigger an InvalidCastException. This is by design.

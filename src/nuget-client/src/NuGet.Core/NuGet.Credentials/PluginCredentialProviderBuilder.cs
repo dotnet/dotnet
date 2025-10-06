@@ -20,6 +20,12 @@ namespace NuGet.Credentials
         private readonly IExtensionLocator _extensionLocator;
         private readonly Common.ILogger _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginCredentialProviderBuilder"/> class.
+        /// </summary>
+        /// <param name="extensionLocator">The extension locator.</param>
+        /// <param name="settings">The settings.</param>
+        /// <param name="logger">The logger.</param>
         public PluginCredentialProviderBuilder(
             IExtensionLocator extensionLocator,
             Configuration.ISettings settings,
@@ -28,6 +34,13 @@ namespace NuGet.Credentials
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginCredentialProviderBuilder"/> class.
+        /// </summary>
+        /// <param name="extensionLocator">The extension locator.</param>
+        /// <param name="settings">The settings.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="envarReader">The environment variable reader.</param>
         public PluginCredentialProviderBuilder(
             IExtensionLocator extensionLocator,
             Configuration.ISettings settings,

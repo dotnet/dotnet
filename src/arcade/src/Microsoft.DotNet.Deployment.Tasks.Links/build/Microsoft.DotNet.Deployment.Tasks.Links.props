@@ -2,8 +2,8 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net9.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
-    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)net472\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
+    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
+    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
   </PropertyGroup>
 
   <UsingTask TaskName="CreateAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" />

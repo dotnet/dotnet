@@ -958,7 +958,7 @@ type Map<[<EqualityConditionalOn>] 'Key, [<EqualityConditionalOn; ComparisonCond
         member m.Count = m.Count
 
     interface System.IComparable with
-        member m.CompareTo(obj: obj) =
+        member m.CompareTo(obj: objnull) =
             match obj with
             | :? Map<'Key, 'Value> as m2 ->
                 Seq.compareWith
@@ -1001,13 +1001,7 @@ type Map<[<EqualityConditionalOn>] 'Key, [<EqualityConditionalOn; ComparisonCond
             let txt1 = LanguagePrimitives.anyToStringShowingNull h1
             let txt2 = LanguagePrimitives.anyToStringShowingNull h2
 
-            StringBuilder()
-                .Append("map [")
-                .Append(txt1)
-                .Append("; ")
-                .Append(txt2)
-                .Append("]")
-                .ToString()
+            StringBuilder().Append("map [").Append(txt1).Append("; ").Append(txt2).Append("]").ToString()
         | [ KeyValue h1; KeyValue h2; KeyValue h3 ] ->
             let txt1 = LanguagePrimitives.anyToStringShowingNull h1
             let txt2 = LanguagePrimitives.anyToStringShowingNull h2

@@ -3,12 +3,6 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <!-- Disable TFM filtering because it filteres old netstandard TFMs.
-         Once all old netstandard TFMs are cleanup, this could be removed. -->
-    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>true</IsPackable>
@@ -17,6 +11,17 @@
       equality with real packages.
     -->
     <Serviceable />
+    <CustomizationsPrefix>Customizations</CustomizationsPrefix>
+    <CustomizationsPropsFile>$(CustomizationsPrefix).props</CustomizationsPropsFile>
+    <CustomizationsSourceFile>$(CustomizationsPrefix).cs</CustomizationsSourceFile>
+
+    <ArtifactsReferenceOnlyPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsPackagesDir)','ReferenceOnly'))</ArtifactsReferenceOnlyPackagesDir>
+    <ManualNuspecTargets>$(RepositoryEngineeringDir)ManualNuspec.targets</ManualNuspecTargets>
+
+    <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
+
+    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
 
 </Project>

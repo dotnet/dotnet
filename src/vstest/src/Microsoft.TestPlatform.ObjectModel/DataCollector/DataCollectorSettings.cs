@@ -137,7 +137,7 @@ public class DataCollectorSettings
     /// The reader.
     /// </param>
     /// <returns>
-    /// The <see cref="InProcDataCollectorSettings"/>.
+    /// The <see cref="DataCollectorSettings"/>.
     /// </returns>
     /// <exception cref="SettingsException">
     /// Settings exception

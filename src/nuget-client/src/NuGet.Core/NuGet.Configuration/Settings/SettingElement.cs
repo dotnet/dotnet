@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using NuGet.Shared;
 
 namespace NuGet.Configuration
 {

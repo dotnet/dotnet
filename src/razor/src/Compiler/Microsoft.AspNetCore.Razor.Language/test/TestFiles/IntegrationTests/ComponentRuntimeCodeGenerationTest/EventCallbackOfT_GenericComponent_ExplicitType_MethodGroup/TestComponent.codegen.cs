@@ -17,8 +17,24 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.MyComponent<MyType>>(0);
-            __builder.AddComponentParameter(1, "OnClick", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<MyType>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<MyType>(this, 
+            __builder.OpenComponent<global::Test.MyComponent<
+#nullable restore
+#line (1,17)-(1,23) "x:\dir\subdir\Test\TestComponent.cshtml"
+MyType
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent<MyType>.
+#nullable restore
+#line (1,25)-(1,32) "x:\dir\subdir\Test\TestComponent.cshtml"
+OnClick
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<MyType>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<MyType>(this, 
 #nullable restore
 #line (1,34)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
 Increment

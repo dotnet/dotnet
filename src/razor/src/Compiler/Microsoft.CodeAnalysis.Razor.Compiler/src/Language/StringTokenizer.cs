@@ -8,10 +8,10 @@ namespace Microsoft.AspNetCore.Razor.Language;
 internal readonly ref struct StringTokenizer
 {
     private readonly ReadOnlySpan<char> _value;
-    private readonly char[] _separators;
+    private readonly ReadOnlySpan<char> _separators;
     private readonly bool _hasValue;
 
-    private StringTokenizer(ReadOnlySpan<char> value, char[] separators, bool hasValue)
+    private StringTokenizer(ReadOnlySpan<char> value, ReadOnlySpan<char> separators, bool hasValue)
     {
         _value = value;
         _separators = separators;
@@ -23,7 +23,7 @@ internal readonly ref struct StringTokenizer
     /// </summary>
     /// <param name="value">The <see cref="ReadOnlySpan{T}"/> to tokenize.</param>
     /// <param name="separators">The characters to tokenize by.</param>
-    public StringTokenizer(ReadOnlySpan<char> value, char[] separators)
+    public StringTokenizer(ReadOnlySpan<char> value, ReadOnlySpan<char> separators)
         : this(value, separators, hasValue: true)
     {
     }
@@ -33,7 +33,7 @@ internal readonly ref struct StringTokenizer
     /// </summary>
     /// <param name="value">The <see cref="string"/> to tokenize.</param>
     /// <param name="separators">The characters to tokenize by.</param>
-    public StringTokenizer(string value, char[] separators)
+    public StringTokenizer(string? value, ReadOnlySpan<char> separators)
         : this(value.AsSpanOrDefault(), separators, hasValue: value is not null)
     {
     }
@@ -43,10 +43,10 @@ internal readonly ref struct StringTokenizer
     public ref struct Enumerator
     {
         private ReadOnlySpan<char> _span;
-        private readonly char[] _separators;
+        private readonly ReadOnlySpan<char> _separators;
         private bool _done;
 
-        internal Enumerator(ReadOnlySpan<char> span, char[] separators, bool done)
+        internal Enumerator(ReadOnlySpan<char> span, ReadOnlySpan<char> separators, bool done)
         {
             _span = span;
             _separators = separators;

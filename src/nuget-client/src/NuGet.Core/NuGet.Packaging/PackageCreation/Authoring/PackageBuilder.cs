@@ -426,7 +426,7 @@ namespace NuGet.Packaging
                 WriteManifest(package, DetermineMinimumSchemaVersion(Files, DependencyGroups), psmdcpPath);
 
                 // Write the files to the package
-                HashSet<string> filesWithoutExtensions = new HashSet<string>();
+                SortedSet<string> filesWithoutExtensions = new();
                 var extensions = WriteFiles(package, filesWithoutExtensions);
 
                 extensions.Add("nuspec");
@@ -492,7 +492,7 @@ namespace NuGet.Packaging
         private static string CreatorInfo()
         {
             List<string> creatorInfo = new List<string>();
-            var assembly = typeof(PackageBuilder).GetTypeInfo().Assembly;
+            var assembly = typeof(PackageBuilder).Assembly;
             creatorInfo.Add(assembly.FullName);
 #if !IS_CORECLR // CORECLR_TODO: Environment.OSVersion
             creatorInfo.Add(Environment.OSVersion.ToString());
@@ -828,7 +828,6 @@ namespace NuGet.Packaging
                 patterns.EmbedAssemblies,
                 patterns.MSBuildTransitiveFiles
             };
-            var warnPaths = new HashSet<string>();
 
             var itemsWithFrameworkMissingPlatformVersion = new HashSet<string>();
             List<ContentItemGroup> targetedItemGroups = new();
@@ -1045,9 +1044,9 @@ namespace NuGet.Packaging
             }
         }
 
-        private HashSet<string> WriteFiles(ZipArchive package, HashSet<string> filesWithoutExtensions)
+        private SortedSet<string> WriteFiles(ZipArchive package, SortedSet<string> filesWithoutExtensions)
         {
-            var extensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var extensions = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             var warningMessage = new StringBuilder();
 
             // Add files that might not come from expanding files on disk
@@ -1055,33 +1054,26 @@ namespace NuGet.Packaging
             {
                 using (Stream stream = file.GetStream())
                 {
-                    try
-                    {
-                        CreatePart(
-                            package,
-                            file.Path,
-                            stream,
-                            lastWriteTime: _deterministic ? ZipFormatMinDate : file.LastWriteTime,
-                            warningMessage);
-                        var fileExtension = Path.GetExtension(file.Path);
+                    CreatePart(
+                        package,
+                        file.Path,
+                        stream,
+                        lastWriteTime: _deterministic ? ZipFormatMinDate : file.LastWriteTime,
+                        warningMessage);
+                    var fileExtension = Path.GetExtension(file.Path);
 
-                        // We have files without extension (e.g. the executables for Nix)
-                        if (!string.IsNullOrEmpty(fileExtension))
-                        {
-                            extensions.Add(fileExtension.Substring(1));
-                        }
-                        else
-                        {
-#if NETCOREAPP
-                            filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/", StringComparison.Ordinal)}");
-#else
-                            filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/")}");
-#endif
-                        }
-                    }
-                    catch
+                    // We have files without extension (e.g. the executables for Nix)
+                    if (!string.IsNullOrEmpty(fileExtension))
                     {
-                        throw;
+                        extensions.Add(fileExtension.Substring(1));
+                    }
+                    else
+                    {
+#if NETCOREAPP
+                        filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/", StringComparison.Ordinal)}");
+#else
+                        filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/")}");
+#endif
                     }
                 }
             }
@@ -1295,7 +1287,7 @@ namespace NuGet.Packaging
             }
         }
 
-        private void WriteOpcContentTypes(ZipArchive package, HashSet<string> extensions, HashSet<string> filesWithoutExtensions)
+        private void WriteOpcContentTypes(ZipArchive package, SortedSet<string> extensions, SortedSet<string> filesWithoutExtensions)
         {
             // OPC backwards compatibility
             ZipArchiveEntry relsEntry = CreateEntry(package, "[Content_Types].xml", CompressionLevel.Optimal);
@@ -1345,9 +1337,7 @@ namespace NuGet.Packaging
             var dcText = "http://purl.org/dc/elements/1.1/";
             XNamespace dc = dcText;
             var dctermsText = "http://purl.org/dc/terms/";
-            XNamespace dcterms = dctermsText;
             var xsiText = "http://www.w3.org/2001/XMLSchema-instance";
-            XNamespace xsi = xsiText;
             XNamespace core = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties";
 
             XDocument document = new XDocument(

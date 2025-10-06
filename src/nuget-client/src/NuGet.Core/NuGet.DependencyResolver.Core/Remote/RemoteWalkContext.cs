@@ -1,8 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.LibraryModel;
@@ -79,7 +82,7 @@ namespace NuGet.DependencyResolver
                     var current = RemoteLibraryProviders[i];
                     for (int j = 0; j < sources.Count; ++j)
                     {
-                        if (StringComparer.Ordinal.Equals(sources[j], current.Source.Name))
+                        if (StringComparer.OrdinalIgnoreCase.Equals(sources[j], current.Source.Name))
                         {
                             filteredLibraryProviders.Add(current);
                             break;
@@ -89,6 +92,37 @@ namespace NuGet.DependencyResolver
                 return filteredLibraryProviders;
             }
             return RemoteLibraryProviders;
+        }
+
+        /// <summary>
+        /// Returns a list of unresolved remote matches.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="FindLibraryEntryCache" /> is internal but the dependency resolver needs to know what packages were unresolved after walking the dependency graph.
+        /// </remarks>
+        /// <returns>A <see cref="HashSet{T}" /> containing the <see cref="RemoteMatch" /> objects representing unresolved packages.</returns>
+        public async Task<HashSet<RemoteMatch>> GetUnresolvedRemoteMatchesAsync()
+        {
+            HashSet<RemoteMatch> packagesToInstall = new();
+
+            foreach (LibraryRangeCacheKey key in FindLibraryEntryCache.Keys.NoAllocEnumerate())
+            {
+                if (!FindLibraryEntryCache.TryGetValue(key, out Task<GraphItem<RemoteResolveResult>>? task))
+                {
+                    continue;
+                }
+
+                GraphItem<RemoteResolveResult> item = await task;
+
+                if (item.Key.Type == LibraryType.Unresolved || !RemoteLibraryProviders.Contains(item.Data.Match.Provider))
+                {
+                    continue;
+                }
+
+                packagesToInstall.Add(item.Data.Match);
+            }
+
+            return packagesToInstall;
         }
     }
 }

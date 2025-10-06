@@ -50,7 +50,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
 
         public async Task InitializeAsync()
         {
-            Products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false).ConfigureAwait(false);
+            Products = await ProductCollection.GetFromFileAsync(@"data/releases-index.json", false).ConfigureAwait(false);
             ProductReleases = new Dictionary<string, ReadOnlyCollection<ProductRelease>>();
 
             foreach (Product product in Products)

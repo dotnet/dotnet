@@ -1,7 +1,7 @@
 SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/NestedTypeHasStaticTypeAsLeadingKeyword.fsi",
-      QualifiedNameOfFile NestedTypeHasStaticTypeAsLeadingKeyword, [], [],
+      QualifiedNameOfFile NestedTypeHasStaticTypeAsLeadingKeyword, [],
       [SynModuleOrNamespaceSig
          ([NestedTypeHasStaticTypeAsLeadingKeyword], false, AnonModule,
           [Types
@@ -29,4 +29,7 @@ SigFile
                                     WithKeyword = None })], (2,0--6,0))],
           PreXmlDocEmpty, [], None, (2,0--6,0), { LeadingKeyword = None })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
+
+(3,11)-(3,15) parse error Nested type definitions are not allowed. Types must be defined at module or namespace level.

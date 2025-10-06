@@ -1,32 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- 
       We would need to download 32bit dotnet cli, which would add extra time to PR runs 
       Testing 64bit only on Desktop suffixiently covers our interop code paths.  
     -->
     <TestArchitectures Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">x64;x86</TestArchitectures>
-
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(MicrosoftDiaSymReaderNativeVersion)" />
+    <PackageReference Include="Microsoft.DiaSymReader.Native" GeneratePathProperty="true" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
-    <Content Include="$(NuGetPackageRoot)\Microsoft.DiaSymReader.Native\$(MicrosoftDiaSymReaderNativeVersion)\runtimes\win\native\Microsoft.DiaSymReader.Native.x86.dll">
+    <Content Include="$(PkgMicrosoft_DiaSymReader_Native)\runtimes\win\native\Microsoft.DiaSymReader.Native.x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>Microsoft.DiaSymReader.Native.x86.dll</Link>
     </Content>
-    <Content Include="$(NuGetPackageRoot)\Microsoft.DiaSymReader.Native\$(MicrosoftDiaSymReaderNativeVersion)\runtimes\win\native\Microsoft.DiaSymReader.Native.amd64.dll">
+    <Content Include="$(PkgMicrosoft_DiaSymReader_Native)\runtimes\win\native\Microsoft.DiaSymReader.Native.amd64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>Microsoft.DiaSymReader.Native.amd64.dll</Link>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DiaSymReader\Microsoft.DiaSymReader.csproj" />
     <ProjectReference Include="..\PdbTestResources\PdbTestResources.csproj" />
     <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
   </ItemGroup>
+
 </Project>

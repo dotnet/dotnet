@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Newtonsoft.Json.Linq;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Frameworks;
 using NuGet.Packaging;
-using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.CommandLine.Test
@@ -93,7 +87,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "");
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
@@ -190,7 +183,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
@@ -233,10 +225,6 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectA.Properties.Add("TargetPlatformVersion", "10.0.14393.0");
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
-
-                // Set style for A since it has no references
-                projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
-
 
                 projectB.Properties.Add("TargetPlatformIdentifier", "UAP");
                 projectB.Properties.Add("TargetPlatformVersion", "10.0.14393.0");

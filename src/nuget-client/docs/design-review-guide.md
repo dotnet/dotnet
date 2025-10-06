@@ -1,7 +1,7 @@
 # Design guide and lifecycle
 
 As an open source project, the NuGet.Client team does the large majority of its work in public GitHub repos.
-All of the product code is public. The designs are also public, and for historical reasons split between the [Home](https://github.com/NuGet/Home/blob/dev/designs/) repository and [Home wiki](https://github.com/NuGet/Home/wiki).
+All of the product code is public. The designs are also public, and for historical reasons split between the [Home](https://github.com/NuGet/Home/tree/dev/meta#nuget-proposal-process) repository and [Home wiki](https://github.com/NuGet/Home/wiki).
 
 ## Source controlled Design documentation
 
@@ -38,11 +38,10 @@ The core participation rules are as follows:
 
 ## Design rules
 
-1. Use the template detailed [here](https://github.com/NuGet/Home/tree/dev/meta).
-1. All public facing designs live in the [Home](https://github.com/NuGet/Home/blob/dev/designs/) repo.
-1. Designs that do not affect the product, guides, etc, live in the private [Client.Engineering](https://github.com/NuGet/Client.Engineering/blob/master/designs/)) repo. Sometimes early iterations of a design stay private, and the Client.Engineering repository can be used for that.
-1. Follow the usual PR lifecycle to get the design to the best state that it can be and merge when accepted. See the workflow below.
+1. Start by using the [template.md](https://github.com/NuGet/Home/blob/dev/meta/template.md).
+1. All public facing designs live in the [Home](https://github.com/NuGet/Home/tree/dev/meta#nuget-proposal-process) repo.
+1. Designs that do not affect the product, guides, etc, live in the private [Client.Engineering](https://github.com/NuGet/Client.Engineering/tree/main/designs)) repo. Sometimes early iterations of a design stay private, and the Client.Engineering repository can be used for that.
+1. Follow the usual PR lifecycle to get the design to the best state that it can be and merge when accepted.
+See the [NuGet Proposal Process](https://github.com/NuGet/Home/tree/dev/meta#nuget-proposal-process).
 
-![Design Review Workflow](resources/design-reviews-sequence.png)
-
-The above workflow was borrowed from [MS CSE playbook](https://github.com/microsoft/code-with-engineering-playbook/blob/master/design-reviews/recipes/async-design-reviews.md).
+The above workflow was borrowed from [MS CSE playbook](https://github.com/microsoft/code-with-engineering-playbook/blob/main/docs/design/design-reviews/recipes/async-design-reviews.md).

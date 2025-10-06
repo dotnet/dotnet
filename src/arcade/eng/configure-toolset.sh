@@ -7,13 +7,16 @@ function Test-FilesUseTelemetryOutput {
         'eng/common/native/init-compiler.sh'
         'eng/common/native/init-distro-rid.sh'
         'eng/common/native/init-os-and-arch.sh'
+        'eng/common/native/install-dependencies.sh'
         'eng/common/cross/tizen-build-rootfs.sh'
         'eng/common/cross/tizen-fetch.sh'
         'eng/common/cross/build-android-rootfs.sh'
         'eng/common/cross/build-rootfs.sh'
         'eng/common/darc-init.sh'
+        'eng/common/dotnet.sh'
         'eng/common/msbuild.sh'
         'eng/common/performance/performance-setup.sh'
+        'eng/common/vmr-sync.sh'
     )
 
     local file_list=`grep --files-without-match --recursive --include=*.sh "Write-PipelineTelemetryError" $scriptroot`

@@ -35,7 +35,7 @@
   -->
   <Target Name="SetLastReleasedVersionForSourceBuild"
           Condition="
-            ('$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true') and
+            '$(DotNetBuildSourceOnly)' == 'true' and
             '$(SkipSetLastReleasedVersionForSourceBuild)' != 'true'"
           BeforeTargets="GetProductVersions"
           DependsOnTargets="_GetCurrentProjectServicingConfiguration">
@@ -86,25 +86,58 @@
     <PackageId Condition="'$(OverridePackageId)' != ''">$(OverridePackageId)</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(PlatformPackageType)' == 'TargetingPack'">
-    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Ref</PackageId>
-    <PackageBrandNameSuffix>Targeting Pack</PackageBrandNameSuffix>
-    <MacOSComponentNamePackType>pack.targeting</MacOSComponentNamePackType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(PlatformPackageType)' == 'RuntimePack'">
-    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Runtime.$(RuntimeIdentifier)</PackageId>
-    <PackageBrandNameSuffix>Runtime</PackageBrandNameSuffix>
-    <MacOSComponentNamePackType>sharedframework.$(SharedFrameworkName)</MacOSComponentNamePackType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(PlatformPackageType)' == 'AppHostPack'">
-    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Host.$(RuntimeIdentifier)</PackageId>
-    <PackageBrandNameSuffix>AppHost Pack</PackageBrandNameSuffix>
-    <MacOSComponentNamePackType>pack.apphost</MacOSComponentNamePackType>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PackageId Condition="'$(OverridePackageId)' == '' and '$(PackageId)' == ''">$(SharedFrameworkName)</PackageId>
-    <MacOSComponentNamePackType Condition="'$(MacOSComponentNamePackType)' == ''">pack.$(PlatformPackageType.ToLower())</MacOSComponentNamePackType>
-  </PropertyGroup>
+  <!-- 
+    Set the NuGet package ID and set various properties to integrate with
+    Microsoft.DotNet.Build.Tasks.Installers for building installer packages.
+  -->
+  <Choose>
+    <When Condition="'$(PlatformPackageType)' == 'TargetingPack'">
+      <PropertyGroup>
+        <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Ref</PackageId>
+        <PackageBrandNameSuffix>Targeting Pack</PackageBrandNameSuffix>
+        <MacOSComponentNamePackType>pack.targeting</MacOSComponentNamePackType>
+      </PropertyGroup>
+      <ItemGroup>
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/data" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/analyzers" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/ref" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/ref/$(TargetFramework)" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(PlatformPackageType)' == 'RuntimePack'">
+      <PropertyGroup>
+        <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Runtime.$(RuntimeIdentifier)</PackageId>
+        <PackageBrandNameSuffix>Runtime</PackageBrandNameSuffix>
+        <MacOSComponentNamePackType>sharedframework.$(SharedFrameworkName)</MacOSComponentNamePackType>
+      </PropertyGroup>
+      <ItemGroup>
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/shared/$(SharedFrameworkName)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/shared/$(SharedFrameworkName)/$(Version)" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(PlatformPackageType)' == 'AppHostPack'">
+      <PropertyGroup>
+        <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Host.$(RuntimeIdentifier)</PackageId>
+        <PackageBrandNameSuffix>AppHost Pack</PackageBrandNameSuffix>
+        <MacOSComponentNamePackType>pack.apphost</MacOSComponentNamePackType>
+      </PropertyGroup>
+      <ItemGroup>
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/runtimes" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/runtimes/$(RuntimeIdentifier)" />
+        <RpmOwnedDirectory Include="$(LinuxInstallRoot)/packs/$(PackageId)/$(Version)/runtimes/$(RuntimeIdentifier)/native" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <PackageId Condition="'$(OverridePackageId)' == '' and '$(PackageId)' == ''">$(SharedFrameworkName)</PackageId>
+        <MacOSComponentNamePackType Condition="'$(MacOSComponentNamePackType)' == ''">pack.$(PlatformPackageType.ToLower())</MacOSComponentNamePackType>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
   <Import Project="$(MSBuildThisFileDirectory)sharedfx.targets" />
   

@@ -15,7 +15,7 @@
                             Keyword;[null];
                             Not;[!];
                             Whitespace;[ ];
-                            NullCoalesce;[??];
+                            CSharpOperator;[??];
                             Whitespace;[ ];
                             Keyword;[true];
                             RightBracket;[]];

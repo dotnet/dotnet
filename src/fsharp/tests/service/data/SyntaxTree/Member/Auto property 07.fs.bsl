@@ -1,6 +1,6 @@
 ImplFile
   (ParsedImplFileInput
-     ("/root/Member/Auto property 07.fs", false, QualifiedNameOfFile A, [], [],
+     ("/root/Member/Auto property 07.fs", false, QualifiedNameOfFile A, [],
       [SynModuleOrNamespace
          ([A], false, NamedModule,
           [Types
@@ -32,7 +32,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((4,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 7, (4,24--4,25)), (4,4--4,38),
+                         GetSet (None, None, None),
+                         Const (Int32 7, (4,24--4,25)), (4,4--4,38),
                          { LeadingKeyword =
                             MemberVal ((4,4--4,10), (4,11--4,14))
                            WithKeyword = Some (4,26--4,30)
@@ -51,4 +52,5 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--4,38), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

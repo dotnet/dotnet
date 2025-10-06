@@ -18,7 +18,6 @@
   <Target Name="CreateEndToEndTestPackage"
           AfterTargets="PrepareForRun">
     <PropertyGroup>
-      <ScriptsDirectory>$([MSBuild]::NormalizeDirectory($(WorkingDirectory), 'scripts'))</ScriptsDirectory>
       <EndToEndPackageFullPath>$([MSBuild]::NormalizePath($(EndToEndPackageOutputPath), 'EndToEnd.zip'))</EndToEndPackageFullPath>
     </PropertyGroup>
 
@@ -27,16 +26,16 @@
 
     <ItemGroup>
       <Artifact Remove="@(Artifact)" />
-      
+
       <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'test', 'EndToEnd'))"
                 FileMatch="*"
                 DirExclude="Packages"
                 DestinationFolder="$(WorkingDirectory)" />
-      
+
       <Artifact Include="$([MSBuild]::NormalizeDirectory($(PkgNuGet_Client_EndToEnd_TestData), 'content', 'Packages'))"
                 FileMatch="*"
                 DestinationFolder="$([MSBuild]::NormalizeDirectory($(WorkingDirectory), 'Packages'))" />
-      
+
       <Artifact Include="$([MSBuild]::NormalizeDirectory(%(APITestOutput.RootDir), %(APITestOutput.Directory)))"
                 FileMatch="API.Test.*"
                 DestinationFolder="$(WorkingDirectory)" />
@@ -44,14 +43,6 @@
       <Artifact Include="$([MSBuild]::NormalizeDirectory(%(GenerateTestPackagesOutput.RootDir), %(GenerateTestPackagesOutput.Directory)))"
                 FileMatch="*.exe;*.dll;*.pdb;*.config"
                 DestinationFolder="$(WorkingDirectory)" />
-
-      <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'scripts', 'e2etests'))"
-                FileMatch="*.ps1"
-                DestinationFolder="$(ScriptsDirectory)" />
-      
-      <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'scripts', 'utils'))"
-                FileMatch="PostGitCommitStatus.ps1"
-                DestinationFolder="$(ScriptsDirectory)" />
     </ItemGroup>
 
     <Message Text="Copying files '%(Artifact.FileMatch)' from '%(Artifact.Identity)' to '%(Artifact.DestinationFolder)'" Importance="High" />
@@ -59,12 +50,12 @@
     <Robocopy Sources="@(Artifact)"
               RetryCount="$(CopyRetryCount)"
               RetryWait="$(CopyRetryDelayMilliseconds)" />
-    
+
     <Message Text="Creating test package '$(EndToEndPackageFullPath)'" Importance="High" />
-    
+
     <ZipDirectory SourceDirectory="$(WorkingDirectory)"
                   DestinationFile="$(EndToEndPackageFullPath)"
                   Overwrite="true" />
   </Target>
-  
+
 </Project>

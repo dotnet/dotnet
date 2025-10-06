@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -9,23 +9,22 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 [LogIntegrationTest]
-public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper) : AbstractIntegrationTest
+public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : AbstractIntegrationTest
 {
-    private const string LegacyRazorEditorFeatureFlag = "Razor.LSP.LegacyEditor";
-    private const string UseLegacyASPNETCoreEditorSetting = "TextEditor.HTML.Specific.UseLegacyASPNETCoreRazorEditor";
-
-    private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
+    private readonly ITestOutputHelper _testOutput = testOutput;
     private ILogger? _testLogger;
+    private string? _projectFilePath;
 
     protected virtual bool ComponentClassificationExpected => true;
 
@@ -33,25 +32,34 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
     protected virtual string TargetFrameworkElement => $"""<TargetFramework>{TargetFramework}</TargetFramework>""";
 
+    protected virtual string ProjectZipFile => "Microsoft.VisualStudio.Razor.IntegrationTests.TestFiles.BlazorProject.zip";
+
+    private protected virtual ILogger Logger => _testLogger.AssumeNotNull();
+
+    protected string ProjectFilePath => _projectFilePath.AssumeNotNull();
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
 
-        _testLogger = await TestServices.Output.SetupIntegrationTestLoggerAsync(_testOutputHelper, ControlledHangMitigatingCancellationToken);
+        _testLogger = await TestServices.Output.SetupIntegrationTestLoggerAsync(_testOutput, ControlledHangMitigatingCancellationToken);
 
-        _testLogger.LogInformation("#### Razor integration test initialize.");
+        _testLogger.LogInformation($"#### Razor integration test initialize.");
 
         VisualStudioLogging.AddCustomLoggers();
 
-        var projectFilePath = await CreateAndOpenBlazorProjectAsync(ControlledHangMitigatingCancellationToken);
+        // Our expected test results have spaces not tabs
+        await TestServices.Shell.SetInsertSpacesAsync(ControlledHangMitigatingCancellationToken);
+
+        _projectFilePath = await CreateAndOpenBlazorProjectAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.RazorProjectSystem.WaitForProjectFileAsync(projectFilePath, ControlledHangMitigatingCancellationToken);
+        await TestServices.RazorProjectSystem.WaitForProjectFileAsync(_projectFilePath, ControlledHangMitigatingCancellationToken);
 
         var razorFilePath = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForRazorFileInProjectAsync(projectFilePath, razorFilePath, ControlledHangMitigatingCancellationToken);
+        await TestServices.RazorProjectSystem.WaitForRazorFileInProjectAsync(_projectFilePath, razorFilePath, ControlledHangMitigatingCancellationToken);
 
         // We open the Index.razor file, and wait for 3 RazorComponentElement's to be classified, as that
         // way we know the LSP server is up, running, and has processed both local and library-sourced Components
@@ -81,7 +89,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);
 
-        _testLogger.LogInformation("#### Razor integration test initialize finished.");
+        _testLogger.LogInformation($"#### Razor integration test initialize finished.");
     }
 
     private async Task<string> CreateAndOpenBlazorProjectAsync(CancellationToken cancellationToken)
@@ -92,19 +100,20 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
         var solutionPath = CreateTemporaryPath();
 
-        var resourceName = "Microsoft.VisualStudio.Razor.IntegrationTests.TestFiles.BlazorProject.zip";
-        using var zipStream = typeof(AbstractRazorEditorTest).Assembly.GetManifestResourceStream(resourceName);
+        using var zipStream = typeof(AbstractRazorEditorTest).Assembly.GetManifestResourceStream(ProjectZipFile);
         using var zip = new ZipArchive(zipStream);
         zip.ExtractToDirectory(solutionPath);
 
         var slnFile = Directory.EnumerateFiles(solutionPath, "*.sln").Single();
-        var projectFile = Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).Single();
 
-        PrepareProjectForFirstOpen(projectFile);
+        foreach (var projectFile in Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories))
+        {
+            PrepareProjectForFirstOpen(projectFile);
+        }
 
         await TestServices.SolutionExplorer.OpenSolutionAsync(slnFile, cancellationToken);
 
-        return projectFile;
+        return Directory.EnumerateFiles(solutionPath, $"{RazorProjectConstants.BlazorProjectName}.csproj", SearchOption.AllDirectories).Single();
     }
 
     protected virtual void PrepareProjectForFirstOpen(string projectFileName)
@@ -132,7 +141,10 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
     public override async Task DisposeAsync()
     {
-        _testLogger!.LogInformation("#### Razor integration test dispose.");
+        // TODO: Would be good to have this as a last ditch check, but need to improve the detection and reporting here to be more robust
+        //await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
+
+        _testLogger!.LogInformation($"#### Razor integration test dispose.");
 
         TestServices.Output.ClearIntegrationTestLogger();
 
@@ -143,24 +155,21 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
     {
         var settingsManager = (ISettingsManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsPersistenceManager));
         Assumes.Present(settingsManager);
-        var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
-        var legacyEditorFeatureFlagEnabled = featureFlags.IsFeatureEnabled(LegacyRazorEditorFeatureFlag, defaultValue: false);
-        Assert.AreEqual(false, legacyEditorFeatureFlagEnabled, "Expected Legacy Editor Feature Flag to be disabled, but it was enabled");
 
-        var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(UseLegacyASPNETCoreEditorSetting);
-        Assert.AreEqual(false, useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
+        var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(WellKnownSettingNames.UseLegacyASPNETCoreEditor);
+        Assert.False(useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
     }
 
     private async Task EnsureTextViewRolesAsync(CancellationToken cancellationToken)
     {
         var textView = await TestServices.Editor.GetActiveTextViewAsync(cancellationToken);
         var contentType = textView.TextSnapshot.ContentType;
-        Assert.AreEqual("Razor", contentType.TypeName);
+        Assert.Equal("Razor", contentType.TypeName);
     }
 
     private async Task EnsureExtensionInstalledAsync(CancellationToken cancellationToken)
     {
-        const string AssemblyName = "Microsoft.AspNetCore.Razor.LanguageServer";
+        const string AssemblyName = "Microsoft.CodeAnalysis.Razor.Workspaces";
         using var semaphore = new SemaphoreSlim(1);
         await semaphore.WaitAsync(cancellationToken);
 

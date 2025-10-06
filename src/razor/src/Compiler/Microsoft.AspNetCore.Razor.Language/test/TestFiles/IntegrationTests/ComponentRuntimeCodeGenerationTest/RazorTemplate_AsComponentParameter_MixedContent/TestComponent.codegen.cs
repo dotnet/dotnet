@@ -28,20 +28,18 @@ namespace Test
             (__builder2) => {
                 __builder2.OpenElement(0, "li");
                 __builder2.AddContent(1, "#");
-                __builder2.AddContent(2, 
 #nullable restore
-#line (1,64)-(1,77) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.Index
+#line (1,64)-(1,77) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(2, context.Index
 
 #line default
 #line hidden
 #nullable disable
                 );
                 __builder2.AddContent(3, " - ");
-                __builder2.AddContent(4, 
 #nullable restore
-#line (1,81)-(1,103) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.Item.ToLower()
+#line (1,81)-(1,103) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(4, context.Item.ToLower()
 
 #line default
 #line hidden
@@ -58,7 +56,15 @@ context.Item.ToLower()
 #nullable disable
 
             __builder.OpenComponent<global::Test.MyComponent>(5);
-            __builder.AddComponentParameter(6, "Template", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Context>)(
+            __builder.AddComponentParameter(6, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,14)-(2,22) "x:\dir\subdir\Test\TestComponent.cshtml"
+Template
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<global::Test.Context>)(
 #nullable restore
 #line (2,25)-(2,33) "x:\dir\subdir\Test\TestComponent.cshtml"
 template

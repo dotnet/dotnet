@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
@@ -12,7 +12,7 @@ internal partial class TestProjectSnapshotManager
     {
         public readonly struct Inspector(ProjectChangeEventArgs notification)
         {
-            private void CommonAssertions(ProjectChangeKind kind, ProjectKey? projectKey = null, bool? solutionIsClosing = null)
+            private void CommonAssertions(ProjectChangeKind kind, ProjectKey? projectKey = null, bool? isSolutionClosing = null)
             {
                 Assert.Equal(kind, notification.Kind);
 
@@ -21,9 +21,9 @@ internal partial class TestProjectSnapshotManager
                     Assert.Equal(k, notification.ProjectKey);
                 }
 
-                if (solutionIsClosing is bool b)
+                if (isSolutionClosing is bool b)
                 {
-                    Assert.Equal(b, notification.SolutionIsClosing);
+                    Assert.Equal(b, notification.IsSolutionClosing);
                 }
             }
 

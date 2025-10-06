@@ -53,7 +53,7 @@ type MyClassStaticMembers =
     static member          SMDefault()  = 12
     
 [<Sealed>]
-type MyClassPropertiyGetters =     
+type MyClassPropertyGetters =     
     member internal x.InstInternal = 12
     member private  x.InstPrivate  = 12
     member public   x.InstPublic   = 12
@@ -278,7 +278,7 @@ let aa =
   match failures.Value with 
   | [] -> 
       stdout.WriteLine "Test Passed"
-      System.IO.File.WriteAllText("test.ok","ok")
+      printf "TEST PASSED OK" ;
       exit 0
   | _ -> 
       stdout.WriteLine "Test Failed"

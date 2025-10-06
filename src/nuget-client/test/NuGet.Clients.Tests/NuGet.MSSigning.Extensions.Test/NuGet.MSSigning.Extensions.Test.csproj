@@ -1,23 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NETFXTargetFramework)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(IsXPlat)' == 'true' "></TargetFrameworks>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>An end-to-end test suite for NuGet.MSSigning.Extensions. Overlaps in tests with NuGet.MSSigning.Extensions.FuncTest.</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />

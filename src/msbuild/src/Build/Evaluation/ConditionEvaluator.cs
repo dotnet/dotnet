@@ -11,7 +11,6 @@ using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.FileSystem;
 using BuildEventContext = Microsoft.Build.Framework.BuildEventContext;
 using ElementLocation = Microsoft.Build.Construction.ElementLocation;
-using ILoggingService = Microsoft.Build.BackEnd.Logging.ILoggingService;
 using TaskItem = Microsoft.Build.Execution.ProjectItemInstance.TaskItem;
 
 namespace Microsoft.Build.Evaluation
@@ -140,20 +139,20 @@ namespace Microsoft.Build.Evaluation
         private struct ExpressionTreeForCurrentOptionsWithSize
         {
             // condition string -> pool of expression trees
-            private readonly ConcurrentDictionary<string, ConcurrentStack<GenericExpressionNode>> _conditionPools;
+            private readonly ConcurrentDictionary<string, Stack<GenericExpressionNode>> _conditionPools;
             private int _mOptimisticSize;
 
             public readonly int OptimisticSize => _mOptimisticSize;
 
-            public ExpressionTreeForCurrentOptionsWithSize(ConcurrentDictionary<string, ConcurrentStack<GenericExpressionNode>> conditionPools)
+            public ExpressionTreeForCurrentOptionsWithSize(ConcurrentDictionary<string, Stack<GenericExpressionNode>> conditionPools)
             {
                 _conditionPools = conditionPools;
                 _mOptimisticSize = conditionPools.Count;
             }
 
-            public ConcurrentStack<GenericExpressionNode> GetOrAdd(string condition, Func<string, ConcurrentStack<GenericExpressionNode>> addFunc)
+            public Stack<GenericExpressionNode> GetOrAdd(string condition, Func<string, Stack<GenericExpressionNode>> addFunc)
             {
-                if (!_conditionPools.TryGetValue(condition, out var stack))
+                if (!_conditionPools.TryGetValue(condition, out Stack<GenericExpressionNode>? stack))
                 {
                     // Count how many conditions there are in the cache.
                     // The condition evaluator will flush the cache when some threshold is exceeded.
@@ -166,7 +165,7 @@ namespace Microsoft.Build.Evaluation
         }
 
         // Cached expression trees for all the combinations of condition strings and parser options
-        private static volatile ConcurrentDictionary<int, ExpressionTreeForCurrentOptionsWithSize> s_cachedExpressionTrees = new ConcurrentDictionary<int, ExpressionTreeForCurrentOptionsWithSize>();
+        private static readonly ConcurrentDictionary<int, ExpressionTreeForCurrentOptionsWithSize> s_cachedExpressionTrees = new ConcurrentDictionary<int, ExpressionTreeForCurrentOptionsWithSize>();
 
         /// <summary>
         /// For debugging leaks, a way to disable caching expression trees, to reduce noise
@@ -186,11 +185,9 @@ namespace Microsoft.Build.Evaluation
             ExpanderOptions expanderOptions,
             string evaluationDirectory,
             ElementLocation elementLocation,
-            ILoggingService loggingServices,
-            BuildEventContext buildEventContext,
             IFileSystem fileSystem,
-            ProjectRootElementCacheBase? projectRootElementCache = null,
-            LoggingContext? loggingContext = null)
+            LoggingContext? loggingContext,
+            ProjectRootElementCacheBase? projectRootElementCache = null)
             where P : class, IProperty
             where I : class, IItem
         {
@@ -202,11 +199,9 @@ namespace Microsoft.Build.Evaluation
                 conditionedPropertiesTable: null /* do not collect conditioned properties */,
                 evaluationDirectory,
                 elementLocation,
-                loggingServices,
-                buildEventContext,
                 fileSystem,
-                projectRootElementCache,
-                loggingContext);
+                loggingContext,
+                projectRootElementCache);
         }
 
         /// <summary>
@@ -224,18 +219,15 @@ namespace Microsoft.Build.Evaluation
             Dictionary<string, List<string>>? conditionedPropertiesTable,
             string evaluationDirectory,
             ElementLocation elementLocation,
-            ILoggingService loggingServices,
-            BuildEventContext buildEventContext,
             IFileSystem fileSystem,
-            ProjectRootElementCacheBase? projectRootElementCache = null,
-            LoggingContext? loggingContext = null)
+            LoggingContext? loggingContext,
+            ProjectRootElementCacheBase? projectRootElementCache = null)
             where P : class, IProperty
             where I : class, IItem
         {
-            ErrorUtilities.VerifyThrowArgumentNull(condition, nameof(condition));
-            ErrorUtilities.VerifyThrowArgumentNull(expander, nameof(expander));
-            ErrorUtilities.VerifyThrowArgumentLength(evaluationDirectory, nameof(evaluationDirectory));
-            ErrorUtilities.VerifyThrowArgumentNull(buildEventContext, nameof(buildEventContext));
+            ErrorUtilities.VerifyThrowArgumentNull(condition);
+            ErrorUtilities.VerifyThrowArgumentNull(expander);
+            ErrorUtilities.VerifyThrowArgumentLength(evaluationDirectory);
 
             // An empty condition is equivalent to a "true" condition.
             if (condition.Length == 0)
@@ -244,64 +236,74 @@ namespace Microsoft.Build.Evaluation
             }
 
             // If the condition wasn't empty, there must be a location for it
-            ErrorUtilities.VerifyThrowArgumentNull(elementLocation, nameof(elementLocation));
+            ErrorUtilities.VerifyThrowArgumentNull(elementLocation);
 
             // Get the expression tree cache for the current parsing options.
             var cachedExpressionTreesForCurrentOptions = s_cachedExpressionTrees.GetOrAdd(
                 (int)options,
-                _ => new ExpressionTreeForCurrentOptionsWithSize(new ConcurrentDictionary<string, ConcurrentStack<GenericExpressionNode>>(StringComparer.Ordinal)));
+                _ => new ExpressionTreeForCurrentOptionsWithSize(new ConcurrentDictionary<string, Stack<GenericExpressionNode>>(StringComparer.Ordinal)));
 
             cachedExpressionTreesForCurrentOptions = FlushCacheIfLargerThanThreshold(options, cachedExpressionTreesForCurrentOptions);
 
             // Get the pool of expressions for this condition.
-            var expressionPool = cachedExpressionTreesForCurrentOptions.GetOrAdd(condition, _ => new ConcurrentStack<GenericExpressionNode>());
+            Stack<GenericExpressionNode> expressionPool = cachedExpressionTreesForCurrentOptions.GetOrAdd(condition, _ => new Stack<GenericExpressionNode>());
 
-            // Try and see if there's an available expression tree in the pool.
-            // If not, parse a new expression tree and add it back to the pool.
-            if (!expressionPool.TryPop(out var parsedExpression))
+            lock (expressionPool)
             {
-                var conditionParser = new Parser();
-
-                #region REMOVE_COMPAT_WARNING
-                conditionParser.LoggingServices = loggingServices;
-                conditionParser.LogBuildEventContext = buildEventContext;
-                #endregion
-
-                parsedExpression = conditionParser.Parse(condition, options, elementLocation);
-            }
-
-            bool result;
-
-            var state = new ConditionEvaluationState<P, I>(
-                condition,
-                expander,
-                expanderOptions,
-                conditionedPropertiesTable,
-                evaluationDirectory,
-                elementLocation,
-                fileSystem,
-                projectRootElementCache);
-
-            // We are evaluating this expression now and it can cache some state for the duration,
-            // so we don't want multiple threads working on the same expression
-            lock (parsedExpression)
-            {
-                try
+                // Try and see if there's an available expression tree in the pool.
+                // If not, parse a new expression tree and add it back to the pool.
+                GenericExpressionNode parsedExpression;
+                if (expressionPool.Count == 0)
                 {
-                    result = parsedExpression.Evaluate(state, loggingContext);
+                    var conditionParser = new Parser();
+
+                    #region REMOVE_COMPAT_WARNING
+                    conditionParser.LoggingServices = loggingContext?.LoggingService;
+                    conditionParser.LogBuildEventContext = loggingContext?.BuildEventContext ?? BuildEventContext.Invalid;
+                    #endregion
+
+                    parsedExpression = conditionParser.Parse(condition, options, elementLocation);
                 }
-                finally
+                else
                 {
-                    parsedExpression.ResetState();
-                    if (!s_disableExpressionCaching)
+                    parsedExpression = expressionPool.Pop();
+                }
+
+                bool result;
+
+                var state = new ConditionEvaluationState<P, I>(
+                    condition,
+                    expander,
+                    expanderOptions,
+                    conditionedPropertiesTable,
+                    evaluationDirectory,
+                    elementLocation,
+                    fileSystem,
+                    projectRootElementCache);
+
+                expander.PropertiesUseTracker.PropertyReadContext = PropertyReadContext.ConditionEvaluation;
+                // We are evaluating this expression now and it can cache some state for the duration,
+                // so we don't want multiple threads working on the same expression
+                lock (parsedExpression)
+                {
+                    try
                     {
-                        // Finished using the expression tree. Add it back to the pool so other threads can use it.
-                        expressionPool.Push(parsedExpression);
+                        result = parsedExpression.Evaluate(state);
+                    }
+                    finally
+                    {
+                        parsedExpression.ResetState();
+                        if (!s_disableExpressionCaching)
+                        {
+                            // Finished using the expression tree. Add it back to the pool so other threads can use it.
+                            expressionPool.Push(parsedExpression);
+                        }
+                        expander.PropertiesUseTracker.ResetPropertyReadContext();
                     }
                 }
-            }
 
-            return result;
+                return result;
+            }
         }
 
         private static ExpressionTreeForCurrentOptionsWithSize FlushCacheIfLargerThanThreshold(
@@ -323,14 +325,14 @@ namespace Microsoft.Build.Evaluation
                     (int)options,
                     _ =>
                         new ExpressionTreeForCurrentOptionsWithSize(
-                            new ConcurrentDictionary<string, ConcurrentStack<GenericExpressionNode>>(StringComparer.Ordinal)),
+                            new ConcurrentDictionary<string, Stack<GenericExpressionNode>>(StringComparer.Ordinal)),
                     (key, existing) =>
                     {
                         if (existing.OptimisticSize > 3000)
                         {
                             return
                                 new ExpressionTreeForCurrentOptionsWithSize(
-                                    new ConcurrentDictionary<string, ConcurrentStack<GenericExpressionNode>>(StringComparer.Ordinal));
+                                    new ConcurrentDictionary<string, Stack<GenericExpressionNode>>(StringComparer.Ordinal));
                         }
                         else
                         {
@@ -350,6 +352,8 @@ namespace Microsoft.Build.Evaluation
 
             ElementLocation ElementLocation { get; }
 
+            PropertiesUseTracker PropertiesUseTracker { get; }
+
             /// <summary>
             ///     Table of conditioned properties and their values.
             ///     Used to populate configuration lists in some project systems.
@@ -362,7 +366,7 @@ namespace Microsoft.Build.Evaluation
             ///     May return null if the expression would expand to non-empty and it broke out early.
             ///     Otherwise, returns the correctly expanded expression.
             /// </summary>
-            string ExpandIntoStringBreakEarly(string expression, LoggingContext? loggingContext = null);
+            string ExpandIntoStringBreakEarly(string expression);
 
             /// <summary>
             ///     Expands the specified expression into a list of TaskItem's.
@@ -372,7 +376,7 @@ namespace Microsoft.Build.Evaluation
             /// <summary>
             ///     Expands the specified expression into a string.
             /// </summary>
-            string ExpandIntoString(string expression, LoggingContext? loggingContext = null);
+            string ExpandIntoString(string expression);
 
             /// <summary>
             ///     PRE cache
@@ -403,6 +407,8 @@ namespace Microsoft.Build.Evaluation
 
             public ElementLocation ElementLocation { get; }
 
+            public PropertiesUseTracker PropertiesUseTracker => _expander.PropertiesUseTracker;
+
             public IFileSystem FileSystem { get; }
 
             /// <summary>
@@ -428,10 +434,10 @@ namespace Microsoft.Build.Evaluation
                 IFileSystem fileSystem,
                 ProjectRootElementCacheBase? projectRootElementCache = null)
             {
-                ErrorUtilities.VerifyThrowArgumentNull(condition, nameof(condition));
-                ErrorUtilities.VerifyThrowArgumentNull(expander, nameof(expander));
-                ErrorUtilities.VerifyThrowArgumentNull(evaluationDirectory, nameof(evaluationDirectory));
-                ErrorUtilities.VerifyThrowArgumentNull(elementLocation, nameof(elementLocation));
+                ErrorUtilities.VerifyThrowArgumentNull(condition);
+                ErrorUtilities.VerifyThrowArgumentNull(expander);
+                ErrorUtilities.VerifyThrowArgumentNull(evaluationDirectory);
+                ErrorUtilities.VerifyThrowArgumentNull(elementLocation);
 
                 Condition = condition;
                 _expander = expander;
@@ -447,13 +453,9 @@ namespace Microsoft.Build.Evaluation
             /// May return null if the expression would expand to non-empty and it broke out early.
             /// Otherwise, returns the correctly expanded expression.
             /// </summary>
-            public string ExpandIntoStringBreakEarly(string expression, LoggingContext? loggingContext = null)
+            public string ExpandIntoStringBreakEarly(string expression)
             {
-                var originalValue = _expander.WarnForUninitializedProperties;
-
-                expression = _expander.ExpandIntoStringAndUnescape(expression, _expanderOptions | ExpanderOptions.BreakOnNotEmpty, ElementLocation, loggingContext);
-
-                _expander.WarnForUninitializedProperties = originalValue;
+                expression = _expander.ExpandIntoStringAndUnescape(expression, _expanderOptions | ExpanderOptions.BreakOnNotEmpty, ElementLocation);
 
                 return expression;
             }
@@ -465,11 +467,7 @@ namespace Microsoft.Build.Evaluation
             /// <returns>A list of items.</returns>
             public IList<TaskItem> ExpandIntoTaskItems(string expression)
             {
-                var originalValue = _expander.WarnForUninitializedProperties;
-
                 var items = _expander.ExpandIntoTaskItemsLeaveEscaped(expression, _expanderOptions, ElementLocation);
-
-                _expander.WarnForUninitializedProperties = originalValue;
 
                 return items;
             }
@@ -478,15 +476,10 @@ namespace Microsoft.Build.Evaluation
             /// Expands the specified expression into a string.
             /// </summary>
             /// <param name="expression">The expression to expand.</param>
-            /// <param name="loggingContext"></param>
             /// <returns>The expanded string.</returns>
-            public string ExpandIntoString(string expression, LoggingContext? loggingContext = null)
+            public string ExpandIntoString(string expression)
             {
-                var originalValue = _expander.WarnForUninitializedProperties;
-
-                expression = _expander.ExpandIntoStringAndUnescape(expression, _expanderOptions, ElementLocation, loggingContext);
-
-                _expander.WarnForUninitializedProperties = originalValue;
+                expression = _expander.ExpandIntoStringAndUnescape(expression, _expanderOptions, ElementLocation);
 
                 return expression;
             }

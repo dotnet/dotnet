@@ -4,7 +4,6 @@
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Design;
-using System.Linq;
 using System.Threading;
 using Microsoft;
 using Microsoft.VisualStudio;
@@ -13,7 +12,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.PackageManagement;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
-using NuGet.VisualStudio.Telemetry;
 using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.SolutionRestoreManager

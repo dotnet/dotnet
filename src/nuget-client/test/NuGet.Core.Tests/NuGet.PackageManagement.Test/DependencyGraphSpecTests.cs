@@ -16,17 +16,14 @@ namespace NuGet.Test
         {
             // Arrange
             var packageSpecA = new PackageSpec();
-            packageSpecA.Title = "A";
             packageSpecA.RestoreMetadata = new ProjectRestoreMetadata() { ProjectUniqueName = "a", CentralPackageVersionsEnabled = false };
             var dgSpec = new DependencyGraphSpec();
             var packageSpecB = new PackageSpec();
-            packageSpecB.Title = "B";
             packageSpecB.RestoreMetadata = new ProjectRestoreMetadata()
             {
                 ProjectUniqueName = "BBB"
             };
             var packageSpecC = new PackageSpec();
-            packageSpecC.Title = "C";
             packageSpecC.RestoreMetadata = new ProjectRestoreMetadata()
             {
                 ProjectUniqueName = "CCC"
@@ -48,7 +45,6 @@ namespace NuGet.Test
             // Arrange
             var packageSpecA = new PackageSpec
             {
-                Title = "A",
                 RestoreMetadata = new ProjectRestoreMetadata()
                 {
                     ProjectUniqueName = "a",
@@ -57,7 +53,6 @@ namespace NuGet.Test
             };
             var packageSpecB = new PackageSpec
             {
-                Title = "B",
                 RestoreMetadata = new ProjectRestoreMetadata()
                 {
                     ProjectUniqueName = "BBB"
@@ -65,7 +60,6 @@ namespace NuGet.Test
             };
             var packageSpecC = new PackageSpec
             {
-                Title = "C",
                 RestoreMetadata = new ProjectRestoreMetadata()
                 {
                     ProjectUniqueName = "CCC"
@@ -98,7 +92,7 @@ namespace NuGet.Test
             dgSpecWithReplacedPackageA.Projects.Should().HaveCount(3);
             dgSpecWithReplacedPackageA.Restore.Should().HaveCount(1);
 
-            var packageSpecInAFromDgSpec = dgSpecWithReplacedPackageA.Projects.Single(e => e.Title.Equals("A"));
+            var packageSpecInAFromDgSpec = dgSpecWithReplacedPackageA.Projects.Single(e => e.RestoreMetadata.ProjectUniqueName.Equals("a"));
             packageSpecInAFromDgSpec.Should().Be(updatedPackageA);
             dgSpecWithReplacedPackageA.Restore.Single().Should().Be(updatedPackageA.RestoreMetadata.ProjectUniqueName);
         }

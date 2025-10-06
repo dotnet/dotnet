@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksExe)</TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>Unit tests for the utilities included using shared compilation.</Description>
   </PropertyGroup>
 
   <!-- Include shared files for netcore projects -->
   <ItemGroup>
     <Compile Include="$(SharedDirectory)\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+    <Compile Remove="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Remove="$(SharedDirectory)\RequiredModifierAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />

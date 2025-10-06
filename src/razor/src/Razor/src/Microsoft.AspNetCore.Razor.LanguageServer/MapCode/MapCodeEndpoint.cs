@@ -1,29 +1,27 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Location = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
@@ -37,12 +35,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 /// </remarks>
 [RazorLanguageServerEndpoint(VSInternalMethods.WorkspaceMapCodeName)]
 internal sealed class MapCodeEndpoint(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IDocumentContextFactory documentContextFactory,
     IClientConnection clientConnection,
     ITelemetryReporter telemetryReporter) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
@@ -70,14 +68,14 @@ internal sealed class MapCodeEndpoint(
         }
 
         var mapCodeCorrelationId = mapperParams.MapCodeCorrelationId ?? Guid.NewGuid();
-        using var ts = _telemetryReporter.TrackLspRequest(VSInternalMethods.WorkspaceMapCodeName, LanguageServerConstants.RazorLanguageServerName, mapCodeCorrelationId);
+        using var ts = _telemetryReporter.TrackLspRequest(VSInternalMethods.WorkspaceMapCodeName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.MapCodeRazorTelemetryThreshold, mapCodeCorrelationId);
 
         return await HandleMappingsAsync(mapperParams.Mappings, mapCodeCorrelationId, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<WorkspaceEdit?> HandleMappingsAsync(VSInternalMapCodeMapping[] mappings, Guid mapCodeCorrelationId, CancellationToken cancellationToken)
-    { 
-        using var _ = ArrayBuilderPool<TextDocumentEdit>.GetPooledObject(out var changes);
+    {
+        using var _ = ListPool<TextDocumentEdit>.GetPooledObject(out var changes);
         foreach (var mapping in mappings)
         {
             if (mapping.TextDocument is null || mapping.FocusLocations is null)
@@ -85,15 +83,10 @@ internal sealed class MapCodeEndpoint(
                 continue;
             }
 
-            var documentContext = _documentContextFactory.TryCreateForOpenDocument(mapping.TextDocument.Uri);
-            if (documentContext is null)
+            if (!_documentContextFactory.TryCreate(mapping.TextDocument.DocumentUri.GetRequiredParsedUri(), out var documentContext))
             {
                 continue;
             }
-
-            var tagHelperContext = await documentContext.GetTagHelperContextAsync(cancellationToken).ConfigureAwait(false);
-            var fileKind = FileKinds.GetFileKindFromFilePath(documentContext.FilePath);
-            var extension = Path.GetExtension(documentContext.FilePath);
 
             var snapshot = documentContext.Snapshot;
 
@@ -106,7 +99,7 @@ internal sealed class MapCodeEndpoint(
 
                 // We create a new Razor file based on each content in each mapping order to get the syntax tree that we'll later use to map.
                 var newSnapshot = snapshot.WithText(SourceText.From(content));
-                var codeToMap = await newSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+                var codeToMap = await newSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
                 var mappingSuccess = await TryMapCodeAsync(
                     codeToMap, mapping.FocusLocations, changes, mapCodeCorrelationId, documentContext, cancellationToken).ConfigureAwait(false);
@@ -129,20 +122,19 @@ internal sealed class MapCodeEndpoint(
 
     private async Task<bool> TryMapCodeAsync(
         RazorCodeDocument codeToMap,
-        Location[][] locations,
-        ImmutableArray<TextDocumentEdit>.Builder changes,
+        LspLocation[][] locations,
+        List<TextDocumentEdit> changes,
         Guid mapCodeCorrelationId,
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         CancellationToken cancellationToken)
     {
-        var syntaxTree = codeToMap.GetSyntaxTree();
-        if (syntaxTree is null)
+        if (!codeToMap.TryGetSyntaxTree(out var syntaxTree))
         {
             return false;
         }
 
         var nodesToMap = ExtractValidNodesToMap(syntaxTree.Root);
-        if (nodesToMap.Count == 0)
+        if (nodesToMap.Length == 0)
         {
             return false;
         }
@@ -159,15 +151,15 @@ internal sealed class MapCodeEndpoint(
     }
 
     private async Task<bool> TryMapCodeAsync(
-        Location[][] focusLocations,
-        List<SyntaxNode> nodesToMap,
+        LspLocation[][] focusLocations,
+        ImmutableArray<SyntaxNode> nodesToMap,
         Guid mapCodeCorrelationId,
-        ImmutableArray<TextDocumentEdit>.Builder changes,
-        VersionedDocumentContext documentContext,
+        List<TextDocumentEdit> changes,
+        DocumentContext documentContext,
         CancellationToken cancellationToken)
     {
         var didCalculateCSharpFocusLocations = false;
-        var csharpFocusLocations = new Location[focusLocations.Length][];
+        var csharpFocusLocations = new LspLocation[focusLocations.Length][];
 
         // We attempt to map the code using each focus location in order of priority.
         // The outer array is an ordered priority list (from highest to lowest priority),
@@ -182,7 +174,7 @@ internal sealed class MapCodeEndpoint(
                 // as the code to map. The client is currently implemented using this behavior, but if it
                 // ever changes, we'll need to update this code to account for it (i.e., take into account
                 // focus location URIs).
-                Debug.Assert(location.Uri == documentContext.Uri);
+                Debug.Assert(location.DocumentUri.GetRequiredParsedUri() == documentContext.Uri);
 
                 var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 if (syntaxTree is null)
@@ -190,7 +182,7 @@ internal sealed class MapCodeEndpoint(
                     continue;
                 }
 
-                var razorNodesToMap = new List<SyntaxNode>();
+                using var razorNodesToMap = new PooledArrayBuilder<SyntaxNode>();
                 foreach (var nodeToMap in nodesToMap)
                 {
                     // If node is C#, we send it to their language server to handle and ignore it from our end.
@@ -203,7 +195,7 @@ internal sealed class MapCodeEndpoint(
                         }
 
                         var csharpMappingSuccessful = await TrySendCSharpDelegatedMappingRequestAsync(
-                            documentContext.Identifier,
+                            documentContext.GetTextDocumentIdentifierAndVersion(),
                             csharpBody,
                             csharpFocusLocations,
                             mapCodeCorrelationId,
@@ -229,7 +221,7 @@ internal sealed class MapCodeEndpoint(
                     razorNodesToMap.Add(nodeToMap);
                 }
 
-                var sourceText = await documentContext.Snapshot.GetTextAsync().ConfigureAwait(false);
+                var sourceText = await documentContext.Snapshot.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
                 foreach (var nodeToMap in razorNodesToMap)
                 {
@@ -237,13 +229,13 @@ internal sealed class MapCodeEndpoint(
                     if (insertionSpan is not null)
                     {
                         var textSpan = new TextSpan(insertionSpan.Value, 0);
-                        var edit = new TextEdit { NewText = nodeToMap.ToFullString(), Range = textSpan.ToRange(sourceText) };
+                        var edit = LspFactory.CreateTextEdit(sourceText.GetRange(textSpan), nodeToMap.ToString());
 
                         var textDocumentEdit = new TextDocumentEdit
                         {
                             TextDocument = new OptionalVersionedTextDocumentIdentifier
                             {
-                                Uri = documentContext.Uri
+                                DocumentUri = new(documentContext.Uri)
                             },
                             Edits = [edit],
                         };
@@ -264,10 +256,10 @@ internal sealed class MapCodeEndpoint(
         return false;
     }
 
-    private static List<SyntaxNode> ExtractValidNodesToMap(SyntaxNode rootNode)
+    private static ImmutableArray<SyntaxNode> ExtractValidNodesToMap(SyntaxNode rootNode)
     {
-        var validNodesToMap = new List<SyntaxNode>();
-        var stack = new Stack<SyntaxNode>();
+        using var validNodesToMap = new PooledArrayBuilder<SyntaxNode>();
+        using var _ = StackPool<SyntaxNode>.GetPooledObject(out var stack);
         stack.Push(rootNode);
 
         while (stack.Count > 0)
@@ -287,7 +279,7 @@ internal sealed class MapCodeEndpoint(
             }
         }
 
-        return validNodesToMap;
+        return validNodesToMap.ToImmutable();
     }
 
     // These are the nodes that we currently support for mapping. We should update
@@ -305,19 +297,19 @@ internal sealed class MapCodeEndpoint(
     private async Task<bool> TrySendCSharpDelegatedMappingRequestAsync(
         TextDocumentIdentifierAndVersion textDocumentIdentifier,
         SyntaxNode nodeToMap,
-        Location[][] focusLocations,
+        LspLocation[][] focusLocations,
         Guid mapCodeCorrelationId,
-        ImmutableArray<TextDocumentEdit>.Builder changes,
+        List<TextDocumentEdit> changes,
         CancellationToken cancellationToken)
     {
         var delegatedRequest = new DelegatedMapCodeParams(
             textDocumentIdentifier,
             RazorLanguageKind.CSharp,
             mapCodeCorrelationId,
-            [nodeToMap.ToFullString()],
+            [nodeToMap.ToString()],
             FocusLocations: focusLocations);
 
-        WorkspaceEdit? edits = null;
+        WorkspaceEdit? edits;
         try
         {
             edits = await _clientConnection.SendRequestAsync<DelegatedMapCodeParams, WorkspaceEdit?>(
@@ -341,14 +333,16 @@ internal sealed class MapCodeEndpoint(
         return success;
     }
 
-    private async Task<Location[][]> GetCSharpFocusLocationsAsync(Location[][] focusLocations, CancellationToken cancellationToken)
+    private async Task<LspLocation[][]> GetCSharpFocusLocationsAsync(LspLocation[][] focusLocations, CancellationToken cancellationToken)
     {
         // If the focus locations are in a C# context, map them to the C# document.
-        var csharpFocusLocations = new Location[focusLocations.Length][];
+        var csharpFocusLocations = new LspLocation[focusLocations.Length][];
+        using var csharpLocations = new PooledArrayBuilder<LspLocation>();
         for (var i = 0; i < focusLocations.Length; i++)
         {
+            csharpLocations.Clear();
+
             var locations = focusLocations[i];
-            var csharpLocations = new List<Location>();
             foreach (var potentialLocation in locations)
             {
                 if (potentialLocation is null)
@@ -356,8 +350,7 @@ internal sealed class MapCodeEndpoint(
                     continue;
                 }
 
-                var documentContext = _documentContextFactory.TryCreateForOpenDocument(potentialLocation.Uri);
-                if (documentContext is null)
+                if (!_documentContextFactory.TryCreate(potentialLocation.DocumentUri.GetRequiredParsedUri(), out var documentContext))
                 {
                     continue;
                 }
@@ -365,15 +358,15 @@ internal sealed class MapCodeEndpoint(
                 var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
                 var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
                 var hostDocumentRange = potentialLocation.Range.ToLinePositionSpan();
-                var csharpDocument = codeDocument.GetCSharpDocument();
+                var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-                if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
+                if (_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
-                    var csharpLocation = new Location
+                    var csharpLocation = new LspLocation
                     {
                         // We convert the URI to the C# generated document URI later on in
                         // LanguageServer.Client since we're unable to retrieve it here.
-                        Uri = potentialLocation.Uri,
+                        DocumentUri = potentialLocation.DocumentUri,
                         Range = generatedDocumentRange.ToRange()
                     };
 
@@ -381,7 +374,7 @@ internal sealed class MapCodeEndpoint(
                 }
             }
 
-            csharpFocusLocations[i] = [.. csharpLocations];
+            csharpFocusLocations[i] = csharpLocations.ToArray();
         }
 
         return csharpFocusLocations;
@@ -390,17 +383,17 @@ internal sealed class MapCodeEndpoint(
     // Map C# code back to Razor file
     private async Task<bool> TryHandleDelegatedResponseAsync(
         WorkspaceEdit edits,
-        ImmutableArray<TextDocumentEdit>.Builder changes,
+        List<TextDocumentEdit> changes,
         CancellationToken cancellationToken)
     {
-        using var _ = ArrayBuilderPool<TextDocumentEdit>.GetPooledObject(out var csharpChanges);
+        using var _ = ListPool<TextDocumentEdit>.GetPooledObject(out var csharpChanges);
         if (edits.DocumentChanges is not null && edits.DocumentChanges.Value.TryGetFirst(out var documentEdits))
         {
             // We only support document edits for now. In the future once the client supports it, we should look
             // into also supporting file creation/deletion/rename.
             foreach (var edit in documentEdits)
             {
-                var success = await TryProcessEditAsync(edit.TextDocument.Uri, edit.Edits, csharpChanges, cancellationToken).ConfigureAwait(false);
+                var success = await TryProcessEditAsync(edit.TextDocument.DocumentUri.GetRequiredParsedUri(), edit.Edits, csharpChanges, cancellationToken).ConfigureAwait(false);
                 if (!success)
                 {
                     return false;
@@ -413,7 +406,7 @@ internal sealed class MapCodeEndpoint(
             foreach (var edit in edits.Changes)
             {
                 var generatedUri = new Uri(edit.Key);
-                var success = await TryProcessEditAsync(generatedUri, edit.Value, csharpChanges, cancellationToken).ConfigureAwait(false);
+                var success = await TryProcessEditAsync(generatedUri, edit.Value.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e), csharpChanges, cancellationToken).ConfigureAwait(false);
                 if (!success)
                 {
                     return false;
@@ -426,11 +419,11 @@ internal sealed class MapCodeEndpoint(
 
         async Task<bool> TryProcessEditAsync(
             Uri generatedUri,
-            TextEdit[] textEdits,
-            ImmutableArray<TextDocumentEdit>.Builder csharpChanges,
+            IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> textEdits,
+            List<TextDocumentEdit> csharpChanges,
             CancellationToken cancellationToken)
         {
-            foreach (var documentEdit in textEdits)
+            foreach (var documentEdit in textEdits.Select(e => (TextEdit)e))
             {
                 var (hostDocumentUri, hostDocumentRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(
                     generatedUri, documentEdit.Range, cancellationToken).ConfigureAwait(false);
@@ -440,15 +433,11 @@ internal sealed class MapCodeEndpoint(
                     return false;
                 }
 
-                var textEdit = new TextEdit
-                {
-                    Range = hostDocumentRange,
-                    NewText = documentEdit.NewText
-                };
+                var textEdit = LspFactory.CreateTextEdit(hostDocumentRange, documentEdit.NewText);
 
                 var textDocumentEdit = new TextDocumentEdit
                 {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = hostDocumentUri },
+                    TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(hostDocumentUri) },
                     Edits = [textEdit]
                 };
 
@@ -460,20 +449,19 @@ internal sealed class MapCodeEndpoint(
     }
 
     // Resolve edits that are at the same start location by merging them together.
-    private static void MergeEdits(ImmutableArray<TextDocumentEdit>.Builder changes)
+    private static void MergeEdits(List<TextDocumentEdit> changes)
     {
-        var groupedChanges = changes.GroupBy(c => c.TextDocument.Uri);
-        using var _ = ArrayBuilderPool<TextDocumentEdit>.GetPooledObject(out var mergedChanges);
-
+        var groupedChanges = changes.GroupBy(c => c.TextDocument.DocumentUri).ToImmutableArray();
+        changes.Clear();
         foreach (var documentChanges in groupedChanges)
         {
             var edits = documentChanges.ToList();
-            edits.Sort((x, y) => x.Edits.Single().Range.Start.CompareTo(y.Edits.Single().Range.Start));
+            edits.Sort((x, y) => ((TextEdit)x.Edits.Single()).Range.Start.CompareTo(((TextEdit)y.Edits.Single()).Range.Start));
 
             for (var i = edits.Count - 1; i < edits.Count && i > 0; i--)
             {
-                var previousEdit = edits[i - 1].Edits.Single();
-                var currentEdit = edits[i].Edits.Single();
+                var previousEdit = (TextEdit)edits[i - 1].Edits.Single();
+                var currentEdit = (TextEdit)edits[i].Edits.Single();
                 if (currentEdit.Range.Start == previousEdit.Range.Start)
                 {
                     // Append the text of the current edit to the previous edit
@@ -487,15 +475,12 @@ internal sealed class MapCodeEndpoint(
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier
                 {
-                    Uri = documentChanges.Key,
+                    DocumentUri = documentChanges.Key,
                 },
                 Edits = edits.SelectMany(e => e.Edits).ToArray()
             };
 
-            mergedChanges.Add(finalEditsForDoc);
+            changes.Add(finalEditsForDoc);
         }
-
-        changes.Clear();
-        changes.AddRange(mergedChanges);
     }
 }

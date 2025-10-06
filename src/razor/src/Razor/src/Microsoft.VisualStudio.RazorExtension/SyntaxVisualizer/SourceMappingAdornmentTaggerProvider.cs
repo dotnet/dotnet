@@ -1,10 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.VisualStudio.Razor;
+using Microsoft.VisualStudio.Razor.Documents;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -40,7 +40,9 @@ internal sealed class SourceMappingAdornmentTaggerProvider : IViewTaggerProvider
         }
 
         if (buffer != textView.TextBuffer)
+        {
             return null;
+        }
 
         return SourceMappingAdornmentTagger.GetTagger(
             (IWpfTextView)textView,

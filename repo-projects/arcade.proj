@@ -1,8 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
-  <PropertyGroup>
-    <!-- Use a prebuilt Arcade to build Arcade -->
-    <UseBootstrapArcade>true</UseBootstrapArcade>
+  <PropertyGroup Condition="'$(TargetOS)' == 'linux' and '$(TargetArchitecture)' == 'x64' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
+    <!--
+      We have a BuildPass2 leg that has no dependencies on Windows artifacts except for Arcade.
+      To make sure that job doesn't need to wait for the Windows verticals,
+      we'll build all of Arcade with Internal visibility.
+    -->
+    <EnableDefaultRidSpecificArtifacts></EnableDefaultRidSpecificArtifacts>
+    <DefaultArtifactVisibility>Internal</DefaultArtifactVisibility>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,13 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <BuiltSdkPackageOverride Include="@(ArcadeSdkOverride)" />
-    <BuiltSdkPackageOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
-    <BuiltSdkPackageOverride Include="@(ArcadeCMakeSdkOverride)" />
+    <BuiltSdkPackage Include="Microsoft.DotNet.Arcade.Sdk" />
+    <BuiltSdkPackage Include="Microsoft.DotNet.SharedFramework.Sdk" />
+    <BuiltSdkPackage Include="Microsoft.DotNet.CMake.Sdk" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ExtraPackageVersionPropsPackageInfo Include="NuGetVersion" Version="%24(NuGetPackagingVersion)" />
-  </ItemGroup>
-
 </Project>

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">参数不能为 null 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDependencyTarget">
+        <source>Invalid dependency target value '{0}'.</source>
+        <target state="translated">依赖项目标值“{0}”无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageType">
+        <source>The pack options package type must be a string or array of strings in '{0}'.</source>
+        <target state="translated">包选项的包类型必须是“{0}”中的字符串或字符串数组。</target>
+        <note>{0} is the project.json file name.</note>
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">{0} 值: `{1}` 无效。有效示例: `{2}`</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingLockFile">
+        <source>Error loading lock file '{0}' : {1}</source>
+        <target state="translated">加载锁定文件“{0}”时出现错误: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJson">
+        <source>Error reading '{0}' : {1}</source>
+        <target state="translated">读取“{0}”时出现错误: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJsonWithLocation">
+        <source>Error reading '{0}' at line {1} column {2} : {3}</source>
+        <target state="translated">读取第 {1} 行、第 {2} 列的“{0}”时出现错误: {3}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidImportFramework">
+        <source>Imports contains an invalid framework: '{0}' in '{1}'.</source>
+        <target state="translated">导入包含无效的框架:“{1}”中的“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProblemReadingCacheFile">
+        <source>Problem reading the cache file {0} : {1}</source>
+        <target state="translated">读取缓存文件 {0} 时遇到问题: {1}</target>
+        <note>{0} is the file path, {1} is the exception message</note>
+      </trans-unit>
+      <trans-unit id="MissingVersionOnDependency">
+        <source>Package dependencies must specify a version range.</source>
+        <target state="translated">包依赖项必须指定版本范围。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingVersionOnTool">
+        <source>Tools must specify a version range.</source>
+        <target state="translated">工具必须指定版本范围。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="None">
+        <source>None</source>
+        <target state="translated">无</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_CentralPackageVersionRemoved">
+        <source>Central package management file(s) doesn't contain version range for {0} package which is specified as CentralTransitive dependency in the lock file.</source>
+        <target state="translated">中央包管理文件不包含在锁定文件中被指定为 CentralTransitive 依赖项的 {0} 包的版本范围。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_IncompatibleLockFileVersion">
+        <source>Version specified in the packages.lock.json file is incompatible. Current tooling supports version {0} and previous formats.</source>
+        <target state="translated">在 packages.lock.json 文件中指定的版本不兼容。当前工具支持版本 {0} 和以前的格式。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_MismatchedTargetFrameworks">
+        <source>The project target frameworks are different than the lock file's target frameworks. Lock file target frameworks: {0}. Project target frameworks {1}.</source>
+        <target state="translated">项目目标框架与锁定文件的目标框架不同。锁定文件目标框架: {0}。项目目标框架: {1}。</target>
+        <note>0 - Semicolon delimited list of lock file target frameworks, 1 - semicolon delimited list of lock file target frameworks</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_NewTargetFramework">
+        <source>The project target framework {0} was not found in the lock file.</source>
+        <target state="translated">在锁定文件中找不到项目目标框架 {0}。</target>
+        <note>0 - project target framework</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceAdded">
+        <source>A new package reference was found {0} for the project target framework {1}.</source>
+        <target state="translated">找到项目目标框架 {1} 的新包引用 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceVersionChanged">
+        <source>The package reference {0} version has changed from {1} to {2}.</source>
+        <target state="translated">包引用 {0} 版本已从 {1} 更改为 {2}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferencesHaveChanged">
+        <source>The package references have changed for {0}. Lock file's package references: {1}, project's package references: {2}.</source>
+        <target state="translated">{0} 的包引用已更改。锁定文件的包引用: {1}，项目的包引用: {2}。</target>
+        <note>0 - tfm, 1 - lock file package references, 2 - project package references</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceAdded">
+        <source>A new project reference to {0} was found for {1} target framework.</source>
+        <target state="translated">找到 {1} 目标框架的新 {0} 项目引用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceDependenciesHasChanged">
+        <source>The project references {0} whose dependencies has changed.</source>
+        <target state="translated">依赖项已更改的项目引用 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceHasNoCompatibleTargetFramework">
+        <source>The project {0} has no compatible target framework. </source>
+        <target state="translated">项目 {0} 没有兼容的目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferencesHasChange">
+        <source>The project reference {0} has changed. Current dependencies: {1} lock file's dependencies: {2}.</source>
+        <target state="translated">项目引用 {0} 已更改。当前依赖项: {1} 锁定文件的依赖项: {2}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyChanged">
+        <source>Transitive dependency {0} moved to be centraly managed invalidated the lock file.</source>
+        <target state="translated">移动进行集中管理的可传递依赖项 {0} 已使锁定文件无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyVersionChanged">
+        <source>Mistmatch between the requestedVersion of a lock file dependency marked as CentralTransitive and the the version specified in the central package management file. Lock file version {0}, central package management version {1}.</source>
+        <target state="translated">标记为 CentralTransitive 的锁定文件依赖项与中央包管理文件中指定的版本之间的请求版本不匹配。锁定文件版本: {0}，中央包管理版本: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RestoreMetadataMissingTfms">
+        <source>Restore metadata is mising the required target frameworks list. Please file a bug with repro steps on NuGet/Home if seen.</source>
+        <target state="translated">还原元数据缺失所需的目标框架列表。如果发现 bug，请使用 NuGet/Home 上的重现步骤将 bug 归档。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RuntimeIdentifiersChanged">
+        <source>The project's runtime identifiers have changed from. Project's runtime identifiers: {0}, lock file's runtime identifiers {1}.</source>
+        <target state="translated">项目的运行时标识符已更改。项目的运行时标识符: {0}，锁定文件的运行时标识符: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_UnableToLoadPackagespec">
+        <source>Unable to load package spec for {0} project.</source>
+        <target state="translated">无法为 {0} 项目加载包规范。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,21 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
     <!-- Restore and Build actions are already passed in by the root script. -->
     <BuildActions>$(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
-    <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
-    <!--
-      dotnet/fsharp has a custom eng/build.sh script that handles its own sourcebuild arg
-      differently from the ArcadeBuildFromSource MSBuild arg. Including both args is fine, but the
-      custom sourcebuild arg is the one that's required. This avoids running bootstrapping twice.
-    -->
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)sourcebuild $(FlagParameterPrefix)tfm $(NetCurrent) /p:SourceBuildBootstrapTfm=$(NetCurrent)</BuildArgs>
+    <!-- noVisualStudio build action must be passed if building with Core MSBuild on Windows. -->
+    <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(BuildActions) $(FlagParameterPrefix)noVisualStudio</BuildActions>
+
+    <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,8 +20,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="msbuild" />
-    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

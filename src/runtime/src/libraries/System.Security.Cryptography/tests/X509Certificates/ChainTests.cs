@@ -216,7 +216,7 @@ namespace System.Security.Cryptography.X509Certificates.Tests
         /// and trusted root. It will fail to build any chain if those are not valid.
         /// </summary>
         [Fact]
-        [OuterLoop]
+        [OuterLoop("May take a long time on some platforms", ~TestPlatforms.Browser)]
         [SkipOnPlatform(TestPlatforms.Android, "Not supported on Android.")]
         public static void BuildChainExtraStoreUntrustedRoot()
         {
@@ -288,13 +288,13 @@ namespace System.Security.Cryptography.X509Certificates.Tests
 
                     // Check some known conditions.
 
-                    if (PlatformDetection.UsesAppleCrypto)
-                    {
-                        Assert.Equal(3, chain.ChainElements.Count);
-                    }
-                    else if (OperatingSystem.IsLinux())
+                    if (OperatingSystem.IsLinux() || PlatformDetection.IsApplePlatform26OrLater)
                     {
                         Assert.Equal(2, chain.ChainElements.Count);
+                    }
+                    else if (PlatformDetection.IsApplePlatform)
+                    {
+                        Assert.Equal(3, chain.ChainElements.Count);
                     }
                 }
             }
@@ -344,6 +344,8 @@ namespace System.Security.Cryptography.X509Certificates.Tests
                 chainTest.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
                 chainTest.ChainPolicy.ExtraStore.Add(issuerCert);
 
+                X509ChainStatusFlags allowedFlags = X509ChainStatusFlags.NoError;
+
                 switch (testArguments)
                 {
                     case BuildChainCustomTrustStoreTestArguments.TrustedIntermediateUntrustedRoot:
@@ -361,6 +363,9 @@ namespace System.Security.Cryptography.X509Certificates.Tests
                         chainHolder.DisposeChainElements();
                         chainTest.ChainPolicy.CustomTrustStore.Remove(rootCert);
                         chainTest.ChainPolicy.TrustMode = X509ChainTrustMode.System;
+                        chainTest.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                        chainTest.ChainPolicy.ExtraStore.Add(rootCert);
+                        allowedFlags |= X509ChainStatusFlags.UntrustedRoot;
                         break;
                     default:
                         throw new InvalidDataException();
@@ -368,7 +373,11 @@ namespace System.Security.Cryptography.X509Certificates.Tests
 
                 Assert.Equal(chainBuildsSuccessfully, chainTest.Build(endCert));
                 Assert.Equal(3, chainTest.ChainElements.Count);
-                Assert.Equal(chainFlags, chainTest.AllStatusFlags());
+
+                X509ChainStatusFlags actualFlags = chainTest.AllStatusFlags();
+                actualFlags &= ~allowedFlags;
+
+                Assert.Equal(chainFlags, actualFlags);
             }
         }
 
@@ -656,7 +665,7 @@ namespace System.Security.Cryptography.X509Certificates.Tests
         }
 
         [ConditionalFact(nameof(TrustsMicrosoftDotComRoot))]
-        [OuterLoop(/* Modifies user certificate store */)]
+        [OuterLoop("Modifies user certificate store", ~TestPlatforms.Browser)]
         [SkipOnPlatform(PlatformSupport.MobileAppleCrypto, "Root certificate store is not accessible")]
         public static void BuildChain_MicrosoftDotCom_WithRootCertInUserAndSystemRootCertStores()
         {
@@ -932,8 +941,7 @@ tHP28fj0LUop/QFojSZPsaPAW6JvoQ0t4hd6WoyX6z7FsA==
         }
 
         [Fact]
-        [SkipOnPlatform(TestPlatforms.Android, "Chain building on Android fails with an empty subject")]
-        public static void ChainWithEmptySubject()
+        public static void ChainWithEmptySubjectAndCritialSan()
         {
             using (var cert = new X509Certificate2(TestData.EmptySubjectCertificate))
             using (var issuer = new X509Certificate2(TestData.EmptySubjectIssuerCertificate))
@@ -1170,12 +1178,12 @@ yY1kePIfwE+GFWvagZ2ehANB/6LgBTT8jFhR95Tw2oE3N0I=");
                 chain.ChainPolicy.ExtraStore.Add(intermediateCert);
                 Assert.False(chain.Build(cert));
 
-                if (PlatformDetection.IsAndroid)
+                if (PlatformDetection.IsAndroid || PlatformDetection.IsApplePlatform26OrLater)
                 {
                     // Android always validates trust as part of building a path,
                     // so violations comes back as PartialChain with no elements
+                    // Apple 26 no longer block these SKIs since the roots are no longer trusted at all and are expired.
                     Assert.Equal(X509ChainStatusFlags.PartialChain, chain.AllStatusFlags());
-                    Assert.Equal(0, chain.ChainElements.Count);
                 }
                 else
                 {
@@ -1283,7 +1291,18 @@ LjCvFGJ+RiZCbxIZfUZEuJ5vAH5WOa2S0tYoEAeyfzuLMIqY9xK74nlZ/vzz1cY=");
                 // minimum be marked UntrustedRoot.
 
                 Assert.False(chain.Build(cert));
-                AssertExtensions.HasFlag(X509ChainStatusFlags.UntrustedRoot, chain.AllStatusFlags());
+
+                if (PlatformDetection.IsAndroid)
+                {
+                    // Android always validates trust as part of building a path,
+                    // so violations comes back as PartialChain with no elements
+                    Assert.Equal(X509ChainStatusFlags.PartialChain, chain.AllStatusFlags());
+                    Assert.Equal(0, chain.ChainElements.Count);
+                }
+                else
+                {
+                    AssertExtensions.HasFlag(X509ChainStatusFlags.UntrustedRoot, chain.AllStatusFlags());
+                }
             }
         }
 
@@ -1308,6 +1327,12 @@ LjCvFGJ+RiZCbxIZfUZEuJ5vAH5WOa2S0tYoEAeyfzuLMIqY9xK74nlZ/vzz1cY=");
                 {
                     Assert.False(chain.Build(cert));
                     AssertExtensions.HasFlag(X509ChainStatusFlags.PartialChain, chain.AllStatusFlags());
+                }
+                else if (PlatformDetection.IsAndroid)
+                {
+                    Assert.False(chain.Build(cert));
+                    AssertExtensions.HasFlag(X509ChainStatusFlags.PartialChain, chain.AllStatusFlags());
+                    Assert.Equal(0, chain.ChainElements.Count);
                 }
                 else if (PlatformDetection.IsOpenSslSupported)
                 {

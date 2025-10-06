@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
 using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
 using VsMSBuildNuGetProjectSystemThunk = System.Func<
@@ -29,7 +27,7 @@ namespace NuGet.PackageManagement.VisualStudio
             { VsProjectTypes.DeploymentProjectTypeGuid, (project, nuGetProjectContext) => new VsMSBuildProjectSystem(project, nuGetProjectContext) }
         };
 
-        public async static Task<VsMSBuildProjectSystem> CreateMSBuildNuGetProjectSystemAsync(IVsProjectAdapter vsProjectAdapter, INuGetProjectContext nuGetProjectContext)
+        public static VsMSBuildProjectSystem CreateMSBuildNuGetProjectSystem(IVsProjectAdapter vsProjectAdapter, INuGetProjectContext nuGetProjectContext)
         {
             if (vsProjectAdapter == null)
             {
@@ -43,7 +41,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         Strings.DTE_ProjectUnsupported, vsProjectAdapter.ProjectName));
             }
 
-            var guids = await vsProjectAdapter.GetProjectTypeGuidsAsync();
+            var guids = vsProjectAdapter.GetProjectTypeGuids();
             if (guids.Contains(VsProjectTypes.CppProjectTypeGuid)) // Got a cpp project
             {
                 return new NativeProjectSystem(vsProjectAdapter, nuGetProjectContext);

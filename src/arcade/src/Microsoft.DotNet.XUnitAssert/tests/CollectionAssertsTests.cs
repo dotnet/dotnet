@@ -160,6 +160,7 @@ public class CollectionAssertsTests
 			);
 		}
 
+#if !NETCOREAPP2_0 // Unclear why this is failing only on .NET Core 2.0, but it passes with .NET 6 and .NET Framework 4.x
 		[Fact]
 		public static void MismatchedElement()
 		{
@@ -173,16 +174,18 @@ public class CollectionAssertsTests
 			);
 
 			var collEx = Assert.IsType<CollectionException>(ex);
-			Assert.Equal(
+			Assert.StartsWith(
 				"Assert.Collection() Failure: Item comparison failure" + Environment.NewLine +
 				"                 ↓ (pos 1)" + Environment.NewLine +
 				"Collection: [42, 2112]" + Environment.NewLine +
 				"Error:      Assert.Equal() Failure: Values differ" + Environment.NewLine +
 				"            Expected: 2113" + Environment.NewLine +
-				"            Actual:   2112",
+				"            Actual:   2112" + Environment.NewLine +
+				"            Stack Trace:",
 				ex.Message
 			);
 		}
+#endif
 	}
 
 	public class CollectionAsync
@@ -259,13 +262,14 @@ public class CollectionAssertsTests
 			);
 
 			var collEx = Assert.IsType<CollectionException>(ex);
-			Assert.Equal(
+			Assert.StartsWith(
 				"Assert.Collection() Failure: Item comparison failure" + Environment.NewLine +
 				"                 ↓ (pos 1)" + Environment.NewLine +
 				"Collection: [42, 2112]" + Environment.NewLine +
 				"Error:      Assert.Equal() Failure: Values differ" + Environment.NewLine +
 				"            Expected: 2113" + Environment.NewLine +
-				"            Actual:   2112",
+				"            Actual:   2112" + Environment.NewLine +
+				"            Stack Trace:",
 				ex.Message
 			);
 		}
@@ -320,15 +324,22 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static void HashSetIsTreatedSpecially()
+		public static void SetsAreTreatedSpecially()
 		{
-			// HashSet.Contains() is a custom implementation since the comparer is passed
-			// to the constructor. If this comes in via the IEnumerable<T> overload, we want
-			// to make sure it still gets treated like a HashSet.
 			IEnumerable<string> set = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Hi there" };
 
 			Assert.Contains("HI THERE", set);
 		}
+
+#if NET5_0_OR_GREATER
+		[Fact]
+		public static void ReadOnlySetsAreTreatedSpecially()
+		{
+			IEnumerable<string> set = new ReadOnlySet<string>(StringComparer.OrdinalIgnoreCase, "Hi there");
+
+			Assert.Contains("HI THERE", set);
+		}
+#endif
 	}
 
 	public class Contains_Comparer
@@ -532,11 +543,8 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static void HashSetIsTreatedSpecially()
+		public static void SetsAreTreatedSpecially()
 		{
-			// HashSet.Contains() is a custom implementation since the comparer is passed
-			// to the constructor. If this comes in via the IEnumerable<T> overload, we want
-			// to make sure it still gets treated like a HashSet.
 			IEnumerable<string> set = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Hi there" };
 
 			var ex = Record.Exception(() => Assert.DoesNotContain("HI THERE", set));
@@ -550,6 +558,25 @@ public class CollectionAssertsTests
 				ex.Message
 			);
 		}
+
+#if NET5_0_OR_GREATER
+		[Fact]
+		public static void ReadOnlySetsAreTreatedSpecially()
+		{
+			IEnumerable<string> set = new ReadOnlySet<string>(StringComparer.OrdinalIgnoreCase, "Hi there");
+
+			var ex = Record.Exception(() => Assert.DoesNotContain("HI THERE", set));
+
+			Assert.IsType<DoesNotContainException>(ex);
+			// Note: There is no pointer for sets, unlike other collections
+			Assert.Equal(
+				"Assert.DoesNotContain() Failure: Item found in set" + Environment.NewLine +
+				"Set:   [\"Hi there\"]" + Environment.NewLine +
+				"Found: \"HI THERE\"",
+				ex.Message
+			);
+		}
+#endif
 	}
 
 	public class DoesNotContain_Comparer

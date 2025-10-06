@@ -33,12 +33,12 @@ internal static partial class LegacySyntaxNodeExtensions
             PushRightmostChildren(node);
         }
 
-        private void PushRightmostChildren(SyntaxNode node)
+        private void PushRightmostChildren(SyntaxNodeOrToken nodeOrToken)
         {
-            var current = node;
-            do
+            var current = nodeOrToken;
+            while (true)
             {
-                var children = current.ChildNodes();
+                var children = current.ChildNodesAndTokens();
                 if (children.Count == 0)
                 {
                     break;
@@ -53,14 +53,13 @@ internal static partial class LegacySyntaxNodeExtensions
 
                 current = children.Last();
             }
-            while (current is not null);
         }
 
-        private bool TryMoveNextAndGetCurrent([NotNullWhen(true)] out SyntaxNode? node)
+        private bool TryMoveNextAndGetCurrent(out SyntaxNodeOrToken nodeOrToken)
         {
             if (_stackPtr < 0)
             {
-                node = null;
+                nodeOrToken = default;
                 return false;
             }
 
@@ -68,15 +67,15 @@ internal static partial class LegacySyntaxNodeExtensions
 
             if (!enumerator.MoveNext())
             {
-                node = null;
+                nodeOrToken = default;
                 return false;
             }
 
-            node = enumerator.Current;
+            nodeOrToken = enumerator.Current;
             return true;
         }
 
-        public bool TryGetNextNode([NotNullWhen(true)] out SyntaxNode? node)
+        public bool TryGetNextNodeOrToken(out SyntaxNodeOrToken node)
         {
             while (!TryMoveNextAndGetCurrent(out node))
             {
@@ -93,7 +92,7 @@ internal static partial class LegacySyntaxNodeExtensions
             return true;
         }
 
-        public bool IsEmpty
+        public readonly bool IsEmpty
             => _stackPtr < 0;
 
         public void Dispose()

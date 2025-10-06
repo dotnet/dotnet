@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -18,6 +16,9 @@ namespace NuGet.CommandLine
     {
         [Option(typeof(NuGetCommand), "PushCommandSourceDescription", AltName = "src")]
         public string Source { get; set; }
+
+        [Option(typeof(NuGetCommand), "PushCommandAllowInsecureConnectionsDescription")]
+        public bool AllowInsecureConnections { get; set; }
 
         [Option(typeof(NuGetCommand), "CommandApiKey")]
         public string ApiKey { get; set; }
@@ -72,6 +73,7 @@ namespace NuGet.CommandLine
                     NoSymbols,
                     NoServiceEndpoint,
                     SkipDuplicate,
+                    AllowInsecureConnections,
                     Console);
             }
             catch (TaskCanceledException ex)

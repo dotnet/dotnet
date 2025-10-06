@@ -4,11 +4,11 @@
 using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
-using Test.Utility.Signing;
 using Xunit;
 
 namespace NuGet.Packaging.Test
@@ -105,7 +105,7 @@ namespace NuGet.Packaging.Test
                 {
                     SigningTestUtility.AssertOfflineRevocation(logger.LogMessages, LogLevel.Warning);
                 }
-#if NETCORE5_0
+#if NET8_0_OR_GREATER
                 else if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertOfflineRevocation(logger.LogMessages, LogLevel.Warning);
@@ -135,7 +135,7 @@ namespace NuGet.Packaging.Test
                 Assert.Equal(0, logger.Errors);
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
 
-#if !NETCORE5_0
+#if NETCOREAPP3_1
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);

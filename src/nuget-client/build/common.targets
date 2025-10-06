@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
+
+  <!-- Set AssemblyVersion in targets as it is TFM dependent. -->
+  <PropertyGroup Condition="'$(AssemblyVersion)' == '' and '$(SemanticVersion)' != ''">
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(SemanticVersion).0</AssemblyVersion>
+  </PropertyGroup>
+
   <!-- Compiler flags -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
-    <DefineConstants>$(DefineConstants);IS_DESKTOP</DefineConstants>
-    <IsDesktop>true</IsDesktop>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp')) OR $(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('net6')) OR $(TargetFramework.StartsWith('net7'))  OR $(TargetFramework.StartsWith('net8')) OR $(TargetFramework.StartsWith('net9')) ">
-    <DefineConstants>$(DefineConstants);IS_CORECLR</DefineConstants>
-    <IsCore>true</IsCore>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp5.0' ">
-    <DefineConstants>$(DefineConstants);NETCORE5_0</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup>
-    <SigningNotSupported Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp3.1'">true</SigningNotSupported>
-    <SigningNotSupported Condition=" '$(SigningNotSupported)' != 'true'">false</SigningNotSupported>
+    <DefineConstants Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">$(DefineConstants);IS_DESKTOP</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">$(DefineConstants);IS_CORECLR</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(SigningNotSupported)' != 'true' ">
-    <DefineConstants>$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
-  </PropertyGroup>
-
-  <!-- Include shared files for netcore projects -->
-  <ItemGroup Condition=" ('$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' != 'true') OR '$(IncludeNuGetSharedFiles)' == 'true'">
-    <Compile Include="$(SharedDirectory)\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
-  </ItemGroup>
 
   <!-- Include shared files for test netcore projects -->
-  <ItemGroup Condition=" '$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
+  <ItemGroup Condition="'$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
     <Compile Include="$(BuildCommonDirectory)TestShared\*.cs" />
   </ItemGroup>
 
@@ -41,22 +25,11 @@
     </ItemGroup>
   </Target>
 
-  <ImportGroup Condition=" '$(SkipSigning)' != 'true' ">
-    <Import Project="sign.targets" />
-  </ImportGroup>
+  <Import Project="sign.targets" Condition=" '$(SkipSigning)' != 'true' "/>
 
   <PropertyGroup Condition="'$(Shipping)' == 'true'">
-    <GetSigningInputsDependsOn Condition="'$(GetSigningInputsDependsOn)' == ''">GetSigningInputsDefault</GetSigningInputsDependsOn>
     <GetSymbolsToIndexDependsOn Condition="'$(GetSymbolsToIndexDependsOn)' == ''">GetSymbolsToIndexDefault</GetSymbolsToIndexDependsOn>
-    <SignTargetsForRealSigning Condition="'$(SignTargetsForRealSigning)' == ''">GetBuildOutputWithSigningMetadata</SignTargetsForRealSigning>
     <SymbolTargetsToGetPdbs Condition="'$(SymbolTargetsToGetPdbs)' == ''">GetDebugSymbolsProjectOutput</SymbolTargetsToGetPdbs>
-    <LocTargets>GetBuildOutputWithLocMetadata</LocTargets>
-  </PropertyGroup>
-
-  <!-- Write out .XML files for projects that will be packed. -->
-  <PropertyGroup Condition=" '$(PackProject)' == 'true' ">
-    <GenerateDocumentationFile Condition=" '$(GenerateDocumentationFile)' == '' ">true</GenerateDocumentationFile>
-    <DocumentationFile Condition=" '$(DocumentationFile)' == '' AND '$(GenerateDocumentationFile)' == 'true' AND '$(IsNetCoreProject)' != 'true' ">$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ImportGroup Condition=" '$(PackProject)' == 'true' AND '$(NuGetBuildTasksPackTargets)' != '' ">
@@ -68,18 +41,22 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(PackProject)' != 'true' ">
+    <NoWarn>$(NoWarn);CS0419;CS1570;CS1572;CS1573;CS1574;CS1584;CS1587;CS1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup Condition=" '$(PackProject)' == 'true' ">
     <None Include="$(MSBuildThisFileDirectory)..\icon.png" Pack="true" PackagePath="\" Visible="false" />
     <None Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
     <!-- Don't use PublicApiAnalyzer on source-build .NET -->
-  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
   </PropertyGroup>
 
   <!-- Projects we pack become public APIs that others can use -->
-  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' != 'true' and '$(PackProject)' == 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' != 'true' and '$(PackProject)' == 'true' ">
     <UsePublicApiAnalyzer Condition=" '$(UsePublicApiAnalyzer)' == '' " >true</UsePublicApiAnalyzer>
   </PropertyGroup>
 
@@ -96,7 +73,7 @@
   <ImportGroup Condition=" '$(TestProject)' == 'true' ">
     <Import Project="test.targets" />
   </ImportGroup>
-  
+
 
   <!-- Allow WPF projects to run under NETCore SDK -->
   <!-- Errors occur if the output path is not set correctly -->
@@ -135,8 +112,6 @@
     ============================================================
   -->
   <Target Name="PackProjects" Condition=" '$(PackProject)' == 'true' ">
-    <Message Text="Packing $(ProjectName)" Importance="high" />
-
     <!-- Run pack on the project -->
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
@@ -164,15 +139,15 @@
   <!--
     ============================================================
     GetSymbolsToIndex - depends on targets that gather symbols that
-    need to be indexed on the symbol server.  
+    need to be indexed on the symbol server.
     ============================================================
   -->
   <Target Name="GetSymbolsToIndex" DependsOnTargets="$(GetSymbolsToIndexDependsOn)" Returns="@(SymbolFilesToIndex)" />
-  
+
   <Target Name="GetSymbolsToIndexDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(SymbolFilesToIndex)" Condition=" '$(Shipping)' == 'true' ">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
-      Targets="$(SignTargetsForRealSigning);$(SymbolTargetsToGetPdbs)"
+      Targets="$(SymbolTargetsToGetPdbs)"
       Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
                   BuildProjectReferences=false;">
 
@@ -182,41 +157,6 @@
     </MSBuild>
   </Target>
 
-  <!--
-    ============================================================
-    GetSigningInputs - depends on targets that gather files.
-    be signed from each project.  By default it calls $(GetSigningInputsDependsOn)
-    which projects can override to change the functionality.
-    ============================================================
-  -->
-  <Target Name="GetSigningInputs" DependsOnTargets="$(GetSigningInputsDependsOn)" Returns="@(DllsToSign)" />
- 
- <!--
-    ============================================================
-    The default target to get signing inputs for a particular project
-    ============================================================
-  -->
-  <Target Name="GetSigningInputsDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToSign)" Condition=" '$(Shipping)' == 'true' ">
-    <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
-      Targets="$(SignTargetsForRealSigning);$(AdditionalSignTargetsForRealSigning)"
-      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
-                  BuildProjectReferences=false;">
-
-      <Output
-          TaskParameter="TargetOutputs"
-          ItemName="DllsToSign" />
-    </MSBuild>
-    <MsBuild
-      Projects="$(MSBuildProjectFullPath)"
-      Targets="_GetLocalizedDllsForSigning"
-      Properties="BuildProjectReferences=false;">
-      <Output
-        TaskParameter="TargetOutputs"
-        ItemName="DllsToSign"/>
-    </MsBuild>
-  </Target>
-
   <Target Name="GetXPLATProject" Returns="@(XPLATProjects)">
     <ItemGroup Condition="'$(XPLATProject)' == 'true'">
       <XPLATProjects Include="$(MSBuildProjectFullPath)">
@@ -224,62 +164,9 @@
     </ItemGroup>
   </Target>
 
-
-  <Target Name="_GetLocalizedDllsForSigning" Returns="@(LocalizedDllsToSign)">
-    <ItemGroup>
-      <LocalizedDllsToSign Include="$(OutputPath)**\$(AssemblyName).resources.dll">
-        <StrongName>$(StrongNameCert)</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </LocalizedDllsToSign>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetBuildOutputWithSigningMetadata" DependsOnTargets="BuiltProjectOutputGroup;DocumentationProjectOutputGroup" Returns="@(DllsToSignWithMetadata)">
-    <ItemGroup>
-      <DllsToSignWithMetadata Include="@(BuiltProjectOutputGroupOutput->'%(FinalOutputPath)')" Condition="'%(Extension)' == '.dll' OR '%(Extension)' == '.exe'" KeepDuplicates="false">
-        <StrongName>$(StrongNameCert)</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </DllsToSignWithMetadata>
-      <DllsToSignWithMetadata Include="@(DocumentationProjectOutputGroupOutput->'%(FinalOutputPath)')" KeepDuplicates="false">
-        <Authenticode>MicrosoftXmlSHA2</Authenticode>
-      </DllsToSignWithMetadata>
-    </ItemGroup>
-  </Target>
-
   <Target Name="GetDebugSymbolsProjectOutput" DependsOnTargets="DebugSymbolsProjectOutputGroup" Returns="@(PdbsToIndex)">
     <ItemGroup>
       <PdbsToIndex Include="@(DebugSymbolsProjectOutputGroupOutput->'%(FinalOutputPath)')"/>
-    </ItemGroup>
-  </Target>
-
-  <!--
-    ============================================================
-    GatherLocalizationInputs - gathers the list of DLLs that need to
-    be localized from each project
-    ============================================================
-  -->
-  <Target Name="GetLocalizationInputs" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToLocalize)" Condition="'$(Shipping)' == 'true'">
-    <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
-      Targets="$(LocTargets)"
-      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
-                  BuildProjectReferences=false;">
-
-      <Output
-          TaskParameter="TargetOutputs"
-          ItemName="DllsToLocalize" />
-    </MSBuild>
-  </Target>
-
-  <Target Name="GetBuildOutputWithLocMetadata" DependsOnTargets="BuiltProjectOutputGroup" Returns="@(DllsToLocalizeWithMetadata)">
-    <ItemGroup>
-      <!-- remove all net45 assemblies, otherwise loc tools have problem loading two assemblies of same name in same appdomain. net45 doesn't ship in VSIX, so doesn't need loc. -->
-      <DllsToLocalizeWithMetadata Include="@(BuiltProjectOutputGroupOutput->'%(FinalOutputPath)')"
-Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPlat' OR '%(Filename)' == 'NuGet') AND !($([System.String]::new('%(FullPath)').Contains('\net45\'))) " KeepDuplicates="false">
-        <TranslationFile>$(LocalizationWorkDirectory)\{Lang}\15\%(Filename)%(Extension).lcl</TranslationFile>    <!--Required: translation file-->
-        <LciCommentFile>$(LocalizationWorkDirectory)\comments\15\%(Filename)%(Extension).lci</LciCommentFile>
-        <HasLceComments>false</HasLceComments>
-      </DllsToLocalizeWithMetadata>
     </ItemGroup>
   </Target>
 
@@ -294,34 +181,14 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
     <ItemGroup>
       <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(NETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
       <_LocalizedDllsNetStandard Include="$(OutputPath)$(NetStandardVersion)\**\$(AssemblyName).resources.dll"/>
-      <_LocalizedDllsNetStandard10 Include="$(OutputPath)netstandard1.0\**\$(AssemblyName).resources.dll"/>
 
       <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetCoreApp)" Condition=" '@(_LocalizedDllsNetCoreApp)' != '' ">
         <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetCoreApp.RecursiveDir)%(_LocalizedDllsNetCoreApp.FileName)%(_LocalizedDllsNetCoreApp.Extension)</RelativeTargetPath>
       </_LocalizedNetCoreDllsWithRelativeTargetPath>
 
-      <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetStandard10)" Condition=" '@(_LocalizedDllsNetStandard10)' != '' ">
-        <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetStandard10.RecursiveDir)%(_LocalizedDllsNetStandard10.FileName)%(_LocalizedDllsNetStandard10.Extension)</RelativeTargetPath>
-      </_LocalizedNetCoreDllsWithRelativeTargetPath>
-
       <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetStandard)" Condition=" '@(_LocalizedDllsNetStandard)' != '' ">
         <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetStandard.RecursiveDir)%(_LocalizedDllsNetStandard.FileName)%(_LocalizedDllsNetStandard.Extension)</RelativeTargetPath>
       </_LocalizedNetCoreDllsWithRelativeTargetPath>
-    </ItemGroup>
-  </Target>
-
-  <!--
-    ============================================================
-    GetLocalizedFilesForVsix - gathers the list of localized DLLs
-    from each project
-    ============================================================
-  -->
-  <Target Name="GetLocalizedFilesForVsix" DependsOnTargets="$(GetLocalizedFilesForVsixDependsOn)" Returns="@(LocalizedFilesForVsix)" Condition=" '$(IncludeInVsix)' == 'true' ">
-    <ItemGroup>
-      <_AllResourceDlls Include="$(OutputPath)**\$(AssemblyName).resources.dll"/>
-      <LocalizedFilesForVsix Include="@(_AllResourceDlls)">
-        <TargetPath>$([MSBuild]::MakeRelative($(OutputPath), %(_AllResourceDlls.Identity)))</TargetPath>
-      </LocalizedFilesForVsix>
     </ItemGroup>
   </Target>
 
@@ -365,8 +232,8 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
 
     <ItemGroup>
       <TestAssemblyPath Include="$(AbsoluteTestAssemblyPath)">
-        <IsDesktop Condition=" '$(IsDesktop)' == 'true' ">true</IsDesktop>
-        <IsCore Condition=" '$(IsDesktop)' != 'true' ">true</IsCore>
+        <IsDesktop Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">true</IsDesktop>
+        <IsCore Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">true</IsCore>
       </TestAssemblyPath>
     </ItemGroup>
   </Target>

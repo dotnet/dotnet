@@ -163,7 +163,7 @@ steps:
   # Now that everything is set, actually perform the insertion.
   - powershell: |
       mv RoslynTools.VisualStudioInsertionTool.* RIT
-      .\RIT\tools\net46\OneOffInsertion.ps1 `
+      .\RIT\tools\net472\OneOffInsertion.ps1 `
         -autoComplete "$(Template.AutoComplete)" `
         -buildQueueName "$(Build.DefinitionName)" `
         -cherryPick "(default)" `
@@ -189,7 +189,7 @@ steps:
         -requiredValueSentinel "REQUIRED" `
         -reviewerGUID "6c25b447-1d90-4840-8fde-d8b22cb8733e" `
         -specificBuild "$(Build.BuildNumber)" `
-        -updateAssemblyVersions "false" `
+        -updateAssemblyVersions "true" `
         -updateCoreXTLibraries "false" `
         -visualStudioBranchName "$(Template.VSBranchName)" `
         -writePullRequest "prid.txt" `

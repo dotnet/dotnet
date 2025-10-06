@@ -55,7 +55,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             }
         }
 
-        public static TheoryData IInstalledAndTransitivePackages => new TheoryData<IInstalledAndTransitivePackages>
+        public static TheoryData<InstalledAndTransitivePackages> IInstalledAndTransitivePackages => new()
         {
             { new InstalledAndTransitivePackages(DirectPackages, TransitivePackages) },
             { new InstalledAndTransitivePackages(DirectPackages, Array.Empty<ITransitivePackageReferenceContextInfo>()) },

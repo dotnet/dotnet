@@ -1,62 +1,65 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
-internal class TestProjectSnapshot : ProjectSnapshot
+internal sealed class TestProjectSnapshot : IProjectSnapshot
 {
-    public static TestProjectSnapshot Create(string filePath, ProjectWorkspaceState? projectWorkspaceState = null)
-        => Create(filePath, [], projectWorkspaceState);
-
-    public static TestProjectSnapshot Create(string filePath, string[] documentFilePaths, ProjectWorkspaceState? projectWorkspaceState = null)
-        => Create(filePath, Path.Combine(Path.GetDirectoryName(filePath) ?? @"\\path", "obj"), documentFilePaths, RazorConfiguration.Default, projectWorkspaceState);
-
-    public static TestProjectSnapshot Create(
-        string filePath,
-        string intermediateOutputPath,
-        string[] documentFilePaths,
-        RazorConfiguration configuration,
-        ProjectWorkspaceState? projectWorkspaceState = null,
-        string? displayName = null)
-    {
-        var hostProject = new HostProject(filePath, intermediateOutputPath, configuration, "TestRootNamespace", displayName);
-        var state = ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject, projectWorkspaceState ?? ProjectWorkspaceState.Default);
-
-        foreach (var documentFilePath in documentFilePaths)
-        {
-            var hostDocument = new HostDocument(documentFilePath, documentFilePath);
-            state = state.WithAddedHostDocument(hostDocument, () => Task.FromResult(TextAndVersion.Create(SourceText.From(string.Empty), VersionStamp.Default)));
-        }
-
-        var testProject = new TestProjectSnapshot(state);
-
-        return testProject;
-    }
+    public ProjectSnapshot RealSnapshot { get; }
 
     private TestProjectSnapshot(ProjectState state)
-        : base(state)
     {
+        RealSnapshot = new ProjectSnapshot(state);
     }
 
-    public override VersionStamp Version => throw new NotImplementedException();
-
-    public override IDocumentSnapshot? GetDocument(string filePath)
+    public static TestProjectSnapshot Create(string filePath, ProjectWorkspaceState? projectWorkspaceState = null)
     {
-        return base.GetDocument(filePath);
+        var hostProject = TestHostProject.Create(filePath);
+        var state = ProjectState.Create(hostProject, ProjectEngineFactories.DefaultProvider);
+
+        if (projectWorkspaceState is not null)
+        {
+            state = state.WithProjectWorkspaceState(projectWorkspaceState);
+        }
+
+        return new TestProjectSnapshot(state);
     }
 
-    public override RazorProjectEngine GetProjectEngine()
+    public HostProject HostProject => RealSnapshot.HostProject;
+
+    public ProjectKey Key => RealSnapshot.Key;
+    public IEnumerable<string> DocumentFilePaths => RealSnapshot.DocumentFilePaths;
+    public string FilePath => RealSnapshot.FilePath;
+    public string IntermediateOutputPath => RealSnapshot.IntermediateOutputPath;
+    public string? RootNamespace => RealSnapshot.RootNamespace;
+    public string DisplayName => RealSnapshot.DisplayName;
+    public LanguageVersion CSharpLanguageVersion => RealSnapshot.CSharpLanguageVersion;
+
+    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+        => RealSnapshot.GetTagHelpersAsync(cancellationToken);
+
+    public bool ContainsDocument(string filePath)
+        => RealSnapshot.ContainsDocument(filePath);
+
+    public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
     {
-        return RazorProjectEngine.Create(RazorConfiguration.Default, RazorProjectFileSystem.Create("C:/"));
+        if (RealSnapshot.TryGetDocument(filePath, out var result))
+        {
+            document = result;
+            return true;
+        }
+
+        document = null;
+        return false;
     }
 }

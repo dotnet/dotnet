@@ -1,9 +1,11 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using System.Windows.Forms.Design;
-using Moq;
 using System.Windows.Forms.TestUtilities;
+using Moq;
 
 namespace System.ComponentModel.Design.Tests;
 
@@ -358,10 +360,12 @@ public class CollectionFormTests : CollectionEditor
         mockContext
             .Setup(c => c.GetService(typeof(IComponentChangeService)))
             .Returns(null);
+#pragma warning disable CA2201 // Do not raise reserved exception types
         mockContext
             .Setup(c => c.OnComponentChanging())
             .Returns(() => throw new StackOverflowException())
             .Verifiable();
+#pragma warning restore CA2201
         mockContext
             .Setup(c => c.OnComponentChanged())
             .Verifiable();
@@ -453,7 +457,7 @@ public class CollectionFormTests : CollectionEditor
     [MemberData(nameof(CanRemoveInstance_TestData))]
     public void CollectionForm_CanRemoveInstance_Invoke_ReturnsExpected(object value)
     {
-        SubCollectionEditor editor = new(null);
+        SubCollectionEditor editor = new(typeof(string));
         SubCollectionForm form = new(editor);
         Assert.True(form.CanRemoveInstance(value));
     }
@@ -473,7 +477,7 @@ public class CollectionFormTests : CollectionEditor
     {
         using Component component = new();
         TypeDescriptor.AddAttributes(component, attribute);
-        SubCollectionEditor editor = new(null);
+        SubCollectionEditor editor = new(typeof(string));
         SubCollectionForm form = new(editor);
         Assert.Equal(expected, form.CanRemoveInstance(component));
     }
@@ -481,7 +485,7 @@ public class CollectionFormTests : CollectionEditor
     [Fact]
     public void CollectionForm_CanSelectMultipleInstances_Invoke_ReturnsFalse()
     {
-        SubCollectionEditor editor = new(null);
+        SubCollectionEditor editor = new(typeof(string));
         SubCollectionForm form = new(editor);
         Assert.True(form.CanSelectMultipleInstances());
     }
@@ -695,7 +699,7 @@ public class CollectionFormTests : CollectionEditor
     [Fact]
     public void CollectionForm_CreateInstance_InvokeWithoutContext_ReturnsExpected()
     {
-        SubCollectionEditor editor = new(null);
+        SubCollectionEditor editor = new(typeof(string));
         SubCollectionForm form = new(editor);
         Assert.Equal(0, form.CreateInstance(typeof(int)));
     }
@@ -703,7 +707,7 @@ public class CollectionFormTests : CollectionEditor
     [Fact]
     public void CollectionForm_CreateInstance_NullItemType_ThrowsArgumentNullException()
     {
-        SubCollectionEditor editor = new(null);
+        SubCollectionEditor editor = new(typeof(string));
         SubCollectionForm form = new(editor);
         Assert.Throws<ArgumentNullException>("itemType", () => form.CreateInstance(null));
     }
@@ -721,7 +725,7 @@ public class CollectionFormTests : CollectionEditor
             .Setup(p => p.GetService(typeof(IWindowsFormsEditorService)))
             .Returns(mockEditorService.Object);
 
-        Exception exception = new();
+        InvalidOperationException exception = new();
         Mock<IUIService> mockService = new(MockBehavior.Strict);
         mockService
             .Setup(s => s.ShowError(exception))
@@ -789,13 +793,12 @@ public class CollectionFormTests : CollectionEditor
         Assert.Same(result, form.GetService(serviceType));
     }
 
-    [Theory]
-    [CommonMemberData(typeof(CommonTestHelperEx), nameof(CommonTestHelperEx.GetTypeWithNullTheoryData))]
-    public void CollectionForm_GetService_InvokeWithoutContext_ReturnsNull(Type serviceType)
+    [Fact]
+    public void CollectionForm_GetService_InvokeWithoutContext_ReturnsNull()
     {
-        SubCollectionEditor editor = new(serviceType);
+        SubCollectionEditor editor = new(typeof(int));
         SubCollectionForm form = new(editor);
-        Assert.Null(form.GetService(serviceType));
+        Assert.Null(form.GetService(typeof(int)));
     }
 
     [Fact]

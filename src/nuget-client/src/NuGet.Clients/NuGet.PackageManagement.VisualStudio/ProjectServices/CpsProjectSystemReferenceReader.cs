@@ -131,5 +131,11 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             throw new NotSupportedException();
         }
+
+        public async Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+        {
+            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+            return VsManagedLanguagesProjectSystemServices.GetItems(_vsProjectAdapter, itemTypeName, metadataNames);
+        }
     }
 }

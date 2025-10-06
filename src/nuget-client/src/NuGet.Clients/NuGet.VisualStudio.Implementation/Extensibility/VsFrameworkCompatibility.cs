@@ -115,7 +115,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 #pragma warning restore CS0618 // Type or member is obsolete
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
 
-            return GetNearestImpl(targetFramework, fallbackTargetFrameworks, frameworks);
+            throw new NotSupportedException();
         }
 
         private FrameworkName GetNearestImpl(FrameworkName targetFramework, IEnumerable<FrameworkName> fallbackTargetFrameworks, IEnumerable<FrameworkName> frameworks)

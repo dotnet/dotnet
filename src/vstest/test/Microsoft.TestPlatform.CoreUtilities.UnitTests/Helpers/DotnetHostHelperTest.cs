@@ -298,6 +298,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
+#pragma warning disable MSTEST0042 // duplicate data row - TODO: Look more into it
     [DataTestMethod]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/local/share/dotnet/x64", "", true, PlatformOperatingSystem.OSX)]
@@ -316,6 +317,7 @@ public sealed class DotnetHostHelperTest : IDisposable
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/share/dotnet/x64", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+#pragma warning restore MSTEST0042
     public void GetDotnetPathByArchitecture_DefaultInstallation_Unix(
         PlatformArchitecture targetArchitecture,
         PlatformArchitecture platformArchitecture,

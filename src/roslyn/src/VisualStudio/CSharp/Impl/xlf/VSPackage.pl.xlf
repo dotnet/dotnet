@@ -298,42 +298,6 @@ Wstaw spację przed operatorami binarnymi i po nich;</target>
         <target state="translated">Zmień opcje formatowania dla zawijania;pozostaw blok w pojedynczym wierszu;pozostaw instrukcje i deklaracje składowych w tym samym wierszu</target>
         <note>C# Formatting &gt; Wrapping options page keywords</note>
       </trans-unit>
-      <trans-unit id="312">
-        <source>Change completion list settings;Pre-select most recently used member; Completion Lists;
-Show completion list after a character is typed;
-Show completion list after a character is deleted;
-Automatically show completion list in argument lists (experimental);
-Highlight matching portions of completion list items;
-Show completion item filters;
-Automatically complete statement on semicolon;
-Snippets behavior;
-Never include snippets;
-Always include snippets;
-Include snippets when ?-Tab is typed after an identifier;
-Enter key behavior;
-Never add new line on enter;
-Only add new line on enter after end of fully typed word;
-Always add new line on enter;
-Show name suggestions;
-Show items from unimported namespaces (experimental);</source>
-        <target state="translated">Zmień ustawienia listy uzupełniania;Wybierz wstępnie ostatnio używaną składową; Listy uzupełniania;
-Pokaż listę uzupełniania po wpisaniu znaku;
-Pokaż listę uzupełniania po usunięciu znaku;
-Automatycznie pokazuj listę uzupełniania na liście argumentów (funkcja eksperymentalna);
-Wyróżnij pasujące fragmenty elementów listy uzupełniania;
-Pokaż filtry elementów uzupełniania;
-Zachowanie fragmentów kodu;
-Nigdy nie dołączaj fragmentów kodu;
-Zawsze dołączaj fragmenty kodu;
-Dołącz fragmenty kodu po wpisaniu znaku ? po identyfikatorze i naciśnięciu klawisza Tab;
-Zachowanie klawisza Enter;
-Nigdy nie dodawaj nowego wiersza po naciśnięciu klawisza Enter;
-Dodaj nowy wiersz po naciśnięciu klawisza Enter tylko po zakończeniu pełnego wpisanego wyrazu;
-Zawsze dodawaj nowy wiersz po naciśnięciu klawisza Enter;
-Pokaż sugestie dotyczące nazwy;
-Pokaż elementy z niezaimportowanych przestrzeni nazw (funkcja eksperymentalna);</target>
-        <note>C# IntelliSense options page keywords</note>
-      </trans-unit>
       <trans-unit id="107">
         <source>Formatting</source>
         <target state="translated">Formatowanie</target>
@@ -411,47 +375,32 @@ Pokaż elementy z niezaimportowanych przestrzeni nazw (funkcja eksperymentalna);
       </trans-unit>
       <trans-unit id="Always_add_new_line_on_enter">
         <source>Always add new line on enter</source>
-        <target state="new">Always add new line on enter</target>
+        <target state="translated">Zawsze dodawaj nowy wiersz po naciśnięciu klawisza Enter</target>
         <note />
       </trans-unit>
       <trans-unit id="Always_include_snippets">
         <source>Always include snippets</source>
-        <target state="new">Always include snippets</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="An_empty_CSharp_script_file">
-        <source>An empty C# script file.</source>
-        <target state="translated">Pusty plik skryptu C#.</target>
+        <target state="translated">Zawsze dołączaj fragmenty kodu</target>
         <note />
       </trans-unit>
       <trans-unit id="Default">
         <source>Default</source>
-        <target state="new">Default</target>
+        <target state="translated">Domyślne</target>
         <note />
       </trans-unit>
       <trans-unit id="Include_snippets_when_Tab_is_typed_after_an_identifier">
         <source>Include snippets when Tab is typed after an identifier</source>
-        <target state="new">Include snippets when Tab is typed after an identifier</target>
+        <target state="translated">Dołącz fragmenty po naciśnięciu klawisza Tab po identyfikatorze</target>
         <note />
       </trans-unit>
       <trans-unit id="Never_add_new_line_on_enter">
         <source>Never add new line on enter</source>
-        <target state="new">Never add new line on enter</target>
+        <target state="translated">Nigdy nie dodawaj nowego wiersza po naciśnięciu klawisza Enter</target>
         <note />
       </trans-unit>
       <trans-unit id="Never_include_snippets">
         <source>Never include snippets</source>
-        <target state="new">Never include snippets</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Only_add_new_line_on_enter_after_end_of_fully_typed_word">
-        <source>Only add new line on enter after end of fully typed word</source>
-        <target state="new">Only add new line on enter after end of fully typed word</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Visual_CSharp_Script">
-        <source>Visual C# Script</source>
-        <target state="translated">Skrypt Visual C# Script</target>
+        <target state="translated">Nigdy nie dołączaj fragmentów kodu</target>
         <note />
       </trans-unit>
     </body>

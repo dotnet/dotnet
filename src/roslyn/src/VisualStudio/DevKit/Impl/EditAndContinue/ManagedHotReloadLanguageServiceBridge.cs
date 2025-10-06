@@ -3,11 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.BrokeredServices;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Debugger.Contracts.HotReload;
@@ -16,22 +15,13 @@ using InternalContracts = Microsoft.CodeAnalysis.Contracts.EditAndContinue;
 
 namespace Microsoft.CodeAnalysis.EditAndContinue;
 
-[ExportBrokeredService(MonikerName, ServiceVersion, Audience = ServiceAudience.Local)]
+[ExportBrokeredService(ManagedHotReloadLanguageServiceDescriptor.MonikerName, ManagedHotReloadLanguageServiceDescriptor.ServiceVersion, Audience = ServiceAudience.Local)]
 [method: ImportingConstructor]
 [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-internal sealed partial class ManagedHotReloadLanguageServiceBridge(InternalContracts.IManagedHotReloadLanguageService service) : IManagedHotReloadLanguageService, IExportedBrokeredService
+internal sealed partial class ManagedHotReloadLanguageServiceBridge(InternalContracts.IManagedHotReloadLanguageService3 service) : IManagedHotReloadLanguageService3, IExportedBrokeredService
 {
-    private const string ServiceName = "ManagedHotReloadLanguageService";
-    private const string ServiceVersion = "0.1";
-    private const string MonikerName = BrokeredServiceDescriptors.LanguageServerComponentNamespace + "." + BrokeredServiceDescriptors.LanguageServerComponentName + "." + ServiceName;
-
-    public static readonly ServiceJsonRpcDescriptor ServiceDescriptor = BrokeredServiceDescriptors.CreateServerServiceDescriptor(ServiceName, new(ServiceVersion));
-
-    static ManagedHotReloadLanguageServiceBridge()
-        => Debug.Assert(ServiceDescriptor.Moniker.Name == MonikerName);
-
     ServiceRpcDescriptor IExportedBrokeredService.Descriptor
-        => ServiceDescriptor;
+        => ManagedHotReloadLanguageServiceDescriptor.Descriptor;
 
     public Task InitializeAsync(CancellationToken cancellationToken)
         => Task.CompletedTask;
@@ -51,11 +41,29 @@ internal sealed partial class ManagedHotReloadLanguageServiceBridge(InternalCont
     public ValueTask OnCapabilitiesChangedAsync(CancellationToken cancellationToken)
         => service.OnCapabilitiesChangedAsync(cancellationToken);
 
-    public async ValueTask<ManagedHotReloadUpdates> GetUpdatesAsync(CancellationToken cancellationToken)
-        => (await service.GetUpdatesAsync(cancellationToken).ConfigureAwait(false)).FromContract();
+    [Obsolete]
+    public ValueTask<ManagedHotReloadUpdates> GetUpdatesAsync(CancellationToken cancellationToken)
+        => throw new NotImplementedException();
+
+    [Obsolete]
+    public ValueTask<ManagedHotReloadUpdates> GetUpdatesAsync(ImmutableArray<string> runningProjects, CancellationToken cancellationToken)
+    {
+        // StreamJsonRpc may use this overload when the method is invoked with empty parameters. Call the new implementation instead.
+        if (!runningProjects.IsEmpty)
+            throw new NotImplementedException();
+
+        return GetUpdatesAsync(ImmutableArray<RunningProjectInfo>.Empty, cancellationToken);
+    }
+
+    public async ValueTask<ManagedHotReloadUpdates> GetUpdatesAsync(ImmutableArray<RunningProjectInfo> runningProjects, CancellationToken cancellationToken)
+        => (await service.GetUpdatesAsync(runningProjects.SelectAsArray(static info => info.ToContract()), cancellationToken).ConfigureAwait(false)).FromContract();
 
     public ValueTask CommitUpdatesAsync(CancellationToken cancellationToken)
         => service.CommitUpdatesAsync(cancellationToken);
+
+    [Obsolete]
+    public ValueTask UpdateBaselinesAsync(ImmutableArray<string> projectPaths, CancellationToken cancellationToken)
+        => throw new NotImplementedException();
 
     public ValueTask DiscardUpdatesAsync(CancellationToken cancellationToken)
         => service.DiscardUpdatesAsync(cancellationToken);

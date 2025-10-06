@@ -19,7 +19,7 @@ public class InjectTargetExtensionTest
     {
         // Arrange
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var target = new InjectTargetExtension();
+        var target = new InjectTargetExtension(considerNullabilityEnforcement: false);
         var node = new InjectIntermediateNode()
         {
             TypeName = "PropertyType",
@@ -35,7 +35,7 @@ public class InjectTargetExtensionTest
             public PropertyType PropertyName { get; private set; }
 
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class InjectTargetExtensionTest
     {
         // Arrange
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var target = new InjectTargetExtension();
+        var target = new InjectTargetExtension(considerNullabilityEnforcement: true);
         var node = new InjectIntermediateNode()
         {
             TypeName = "PropertyType<ModelType>",
@@ -88,6 +88,6 @@ public class InjectTargetExtensionTest
              = default!;
 
             """,
-            context.CodeWriter.GenerateCode());
+            context.CodeWriter.GetText().ToString());
     }
 }

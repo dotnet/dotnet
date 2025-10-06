@@ -12,7 +12,7 @@
                     CSharpCodeBlock - [2..65)::63
                         CSharpStatementLiteral - [2..44)::42 - [ var foo = bar; Html.ExecuteTemplate(foo, ] - Gen<Stmt>
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[foo];
                             Whitespace;[ ];

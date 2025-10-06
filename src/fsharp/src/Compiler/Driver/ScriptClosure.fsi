@@ -39,8 +39,11 @@ type LoadClosure =
         /// The resolved references along with the ranges of the #r positions in each file.
         References: (string * AssemblyResolution list) list
 
-        /// The resolved pacakge references along with the ranges of the #r positions in each file.
+        /// The resolved package references along with the ranges of the #r positions in each file.
         PackageReferences: (range * string list)[]
+
+        /// The raw package manager lines in the script
+        PackageManagerLines: Map<string, PackageManagerLine list>
 
         /// Whether we're decided to use .NET Framework analysis for this script
         UseDesktopFramework: bool
@@ -56,9 +59,6 @@ type LoadClosure =
 
         /// The original #load references, including those that didn't resolve
         OriginalLoadReferences: (range * string * string) list
-
-        /// The #nowarns
-        NoWarns: (string * range list) list
 
         /// Diagnostics seen while processing resolutions
         ResolutionDiagnostics: (PhasedDiagnostic * FSharpDiagnosticSeverity) list
@@ -80,6 +80,7 @@ type LoadClosure =
         defaultFSharpBinariesDir: string *
         fileName: string *
         sourceText: ISourceText *
+        caret: Position option *
         implicitDefines: CodeContext *
         useSimpleResolution: bool *
         useFsiAuxLib: bool *

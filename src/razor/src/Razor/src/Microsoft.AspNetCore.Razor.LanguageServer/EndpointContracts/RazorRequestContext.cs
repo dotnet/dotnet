@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -7,22 +7,12 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
-internal readonly struct RazorRequestContext(VersionedDocumentContext? documentContext, ILspServices lspServices, string method, Uri? uri)
+internal readonly struct RazorRequestContext(DocumentContext? documentContext, ILspServices lspServices, string method, Uri? uri)
 {
-    public readonly VersionedDocumentContext? DocumentContext = documentContext;
+    public readonly DocumentContext? DocumentContext = documentContext;
     public readonly ILspServices LspServices = lspServices;
     public readonly string Method = method;
     public readonly Uri? Uri = uri;
-
-    public VersionedDocumentContext GetRequiredDocumentContext()
-    {
-        if (DocumentContext is null)
-        {
-            throw new ArgumentNullException(nameof(DocumentContext), $"Could not find a document context for '{Method}' on '{Uri}'");
-        }
-
-        return DocumentContext;
-    }
 
     public T GetRequiredService<T>() where T : class
     {

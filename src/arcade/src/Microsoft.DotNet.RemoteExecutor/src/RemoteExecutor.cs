@@ -16,11 +16,6 @@ namespace Microsoft.DotNet.RemoteExecutor
     public static partial class RemoteExecutor
     {
         /// <summary>
-        /// A timeout (milliseconds) after which a wait on a remote operation should be considered a failure.
-        /// </summary>
-        public const int FailWaitTimeoutMilliseconds = 60 * 1000;
-
-        /// <summary>
         /// The exit code returned when the test process exits successfully.
         /// </summary>
         public const int SuccessExitCode = 42;
@@ -98,6 +93,18 @@ namespace Microsoft.DotNet.RemoteExecutor
 
         private static bool IsNetCore() =>
             Environment.Version.Major >= 5 || RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// A timeout (milliseconds) after which a wait on a remote operation should be considered a failure.
+        /// </summary>
+        public static int FailWaitTimeoutMilliseconds
+        {
+            get
+            {
+                int.TryParse(Environment.GetEnvironmentVariable("DOTNET_TEST_TIMEOUT_MULTIPLIER"), out int failWaitTimeoutMultiplier);
+                return 60 * 1000 * Math.Max(failWaitTimeoutMultiplier, 1);
+            }
+        }
 
         /// <summary>Returns true if the RemoteExecutor works on the current platform, otherwise false.</summary>
         public static bool IsSupported { get; } =

@@ -1,8 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using Microsoft.Extensions.Logging;
+using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor.Settings;
 
@@ -32,7 +35,56 @@ internal sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)
     public int IndentSize { get; } = IndentSize >= 0 ? IndentSize : throw new ArgumentOutOfRangeException(nameof(IndentSize));
 }
 
-internal sealed record ClientAdvancedSettings(bool FormatOnType, bool AutoClosingTags, bool AutoInsertAttributeQuotes, bool ColorBackground, bool CodeBlockBraceOnNextLine, bool CommitElementsWithSpace, SnippetSetting SnippetSetting, LogLevel LogLevel)
+internal sealed record ClientAdvancedSettings(bool FormatOnType,
+                                              bool AutoClosingTags,
+                                              bool AutoInsertAttributeQuotes,
+                                              bool ColorBackground,
+                                              bool CodeBlockBraceOnNextLine,
+                                              bool CommitElementsWithSpace,
+                                              SnippetSetting SnippetSetting,
+                                              LogLevel LogLevel,
+                                              bool FormatOnPaste,
+                                              ImmutableArray<string> TaskListDescriptors)
 {
-    public static readonly ClientAdvancedSettings Default = new(FormatOnType: true, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: true, SnippetSetting.All, LogLevel.Warning);
+    public static readonly ClientAdvancedSettings Default = new(FormatOnType: true,
+                                                                AutoClosingTags: true,
+                                                                AutoInsertAttributeQuotes: true,
+                                                                ColorBackground: false,
+                                                                CodeBlockBraceOnNextLine: false,
+                                                                CommitElementsWithSpace: true,
+                                                                SnippetSetting.All,
+                                                                LogLevel.Warning,
+                                                                FormatOnPaste: true,
+                                                                TaskListDescriptors: []);
+
+    public bool Equals(ClientAdvancedSettings? other)
+    {
+        return other is not null &&
+            FormatOnType == other.FormatOnType &&
+            AutoClosingTags == other.AutoClosingTags &&
+            AutoInsertAttributeQuotes == other.AutoInsertAttributeQuotes &&
+            ColorBackground == other.ColorBackground &&
+            CodeBlockBraceOnNextLine == other.CodeBlockBraceOnNextLine &&
+            CommitElementsWithSpace == other.CommitElementsWithSpace &&
+            SnippetSetting == other.SnippetSetting &&
+            LogLevel == other.LogLevel &&
+            FormatOnPaste == other.FormatOnPaste &&
+            TaskListDescriptors.SequenceEqual(other.TaskListDescriptors);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = HashCodeCombiner.Start();
+        hash.Add(FormatOnType);
+        hash.Add(AutoClosingTags);
+        hash.Add(AutoInsertAttributeQuotes);
+        hash.Add(ColorBackground);
+        hash.Add(CodeBlockBraceOnNextLine);
+        hash.Add(CommitElementsWithSpace);
+        hash.Add(SnippetSetting);
+        hash.Add(LogLevel);
+        hash.Add(FormatOnPaste);
+        hash.Add(TaskListDescriptors);
+        return hash;
+    }
 }

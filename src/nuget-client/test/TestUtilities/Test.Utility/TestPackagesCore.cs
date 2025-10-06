@@ -800,7 +800,7 @@ namespace NuGet.Test.Utility
 
         public static async Task<FileInfo> GetPackageWithSHA512AtRoot(string path, string packageId, string packageVersion)
         {
-            return await GeneratePackageAsync(path, packageId, packageVersion, DateTimeOffset.UtcNow.LocalDateTime,
+            return await GeneratePackageAsync(path, packageId, packageVersion, entryModifiedTime: DateTimeOffset.Now,
                 "lib/net45/A.dll",
                 "lib/net45/B.sha512",
                 $"{packageId}.${packageVersion}.nupkg.sha512",
@@ -809,7 +809,7 @@ namespace NuGet.Test.Utility
 
         public static async Task<FileInfo> GetPackageWithNupkgAtRoot(string path, string packageId, string packageVersion)
         {
-            return await GeneratePackageAsync(path, packageId, packageVersion, DateTimeOffset.UtcNow.LocalDateTime,
+            return await GeneratePackageAsync(path, packageId, packageVersion, entryModifiedTime: DateTimeOffset.Now,
                 "lib/net45/A.dll",
                 "lib/net45/B.nupkg",
                 $"{packageId}.{packageVersion}.nupkg");
@@ -824,7 +824,7 @@ namespace NuGet.Test.Utility
                 path,
                 packageId,
                 packageVersion,
-                DateTimeOffset.UtcNow.LocalDateTime,
+                entryModifiedTime: DateTimeOffset.Now,
                 "lib/net45/A.dll");
         }
 
@@ -839,7 +839,7 @@ namespace NuGet.Test.Utility
                 runtimePackageId + "." + language,
                 packageVersion,
                 language,
-                DateTimeOffset.UtcNow.LocalDateTime,
+                entryModifiedTime: DateTimeOffset.Now,
                 $"lib/net45/{language}/{runtimePackageId}.resources.dll");
         }
 
@@ -847,7 +847,7 @@ namespace NuGet.Test.Utility
             string path,
             string packageId,
             string packageVersion,
-            DateTime entryModifiedTime,
+            DateTimeOffset entryModifiedTime,
             params string[] zipEntries)
         {
             return await GeneratePackageAsync(
@@ -864,7 +864,7 @@ namespace NuGet.Test.Utility
             string packageId,
             string packageVersion,
             string language,
-            DateTime entryModifiedTime,
+            DateTimeOffset entryModifiedTime,
             params string[] zipEntries)
         {
             return await GeneratePackageAsync(
@@ -882,7 +882,7 @@ namespace NuGet.Test.Utility
             string packageId,
             string packageVersion,
             string language,
-            DateTime entryModifiedTime,
+            DateTimeOffset entryModifiedTime,
             IEnumerable<string> zipEntries,
             IEnumerable<string> zipContents,
             bool frameworkAssemblies = false,

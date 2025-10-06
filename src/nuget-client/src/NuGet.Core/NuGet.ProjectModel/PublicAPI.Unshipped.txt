@@ -1,4 +1,10 @@
 #nullable enable
-NuGet.ProjectModel.RestoreAuditProperties.TryParseAuditLevel(out NuGet.Protocol.PackageVulnerabilitySeverity result) -> bool
-NuGet.ProjectModel.RestoreAuditProperties.TryParseEnableAudit(out bool result) -> bool
-~NuGet.ProjectModel.HashObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
+NuGet.ProjectModel.LockFileLibrary.HasTools.init -> void
+NuGet.ProjectModel.LockFileLibrary.IsServiceable.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Files.init -> void
+~NuGet.ProjectModel.LockFileLibrary.MSBuildProject.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Name.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Path.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Sha512.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Type.init -> void
+~NuGet.ProjectModel.LockFileLibrary.Version.init -> void

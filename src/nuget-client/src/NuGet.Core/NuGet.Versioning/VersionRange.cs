@@ -49,7 +49,11 @@ namespace NuGet.Versioning
         /// Clones a version range and applies a new float range.
         /// </summary>
         public VersionRange(VersionRange range, FloatRange floatRange)
-            : this(range.MinVersion, range.IsMinInclusive, range.MaxVersion, range.IsMaxInclusive, floatRange)
+            : this(range == null ? throw new ArgumentNullException(nameof(range)) : range.MinVersion,
+                  range.IsMinInclusive,
+                  range.MaxVersion,
+                  range.IsMaxInclusive,
+                  floatRange)
         {
         }
 
@@ -231,7 +235,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Determines if a given version is better suited to the range than a current version.
         /// </summary>
-        public bool IsBetter(NuGetVersion? current, NuGetVersion considering)
+        public bool IsBetter(NuGetVersion? current, NuGetVersion? considering)
         {
             if (ReferenceEquals(current, considering))
             {

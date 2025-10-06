@@ -2,16 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
-
-#if IS_SIGNING_SUPPORTED
+using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
-using System.Security.Cryptography.X509Certificates;
-#endif
+using System.Text;
 
 namespace NuGet.Packaging.Signing
 {
@@ -20,11 +16,9 @@ namespace NuGet.Packaging.Signing
     /// </summary>
     public class X509SignatureProvider : ISignatureProvider
     {
-#if IS_SIGNING_SUPPORTED
         // Occurs when SignedCms.ComputeSignature cannot read the certificate private key
         // "Invalid provider type specified." (INVALID_PROVIDER_TYPE)
         private const int INVALID_PROVIDER_TYPE_HRESULT = unchecked((int)0x80090014);
-#endif
         private readonly ITimestampProvider _timestampProvider;
 
         public X509SignatureProvider(ITimestampProvider timestampProvider)
@@ -98,7 +92,6 @@ namespace NuGet.Packaging.Signing
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         private static PrimarySignature CreatePrimarySignature(SignPackageRequest request, SignatureContent signatureContent, ILogger logger)
         {
             var cmsSigner = SigningUtility.CreateCmsSigner(request, logger);
@@ -223,26 +216,6 @@ namespace NuGet.Packaging.Signing
             return _timestampProvider.TimestampSignatureAsync(primarySignature, timestampRequest, logger, token);
         }
 
-#else
-        private static PrimarySignature CreatePrimarySignature(SignPackageRequest request, SignatureContent signatureContent, ILogger logger)
-        {
-            throw new NotSupportedException();
-        }
 
-        private Task<PrimarySignature> TimestampPrimarySignatureAsync(SignPackageRequest request, ILogger logger, PrimarySignature signature, CancellationToken token)
-        {
-            throw new NotSupportedException();
-        }
-
-        private static PrimarySignature CreateRepositoryCountersignature(SignPackageRequest request, PrimarySignature signature, ILogger logger)
-        {
-            throw new NotSupportedException();
-        }
-
-        private Task<PrimarySignature> TimestampRepositoryCountersignatureAsync(SignPackageRequest request, ILogger logger, PrimarySignature signature, CancellationToken token)
-        {
-            throw new NotSupportedException();
-        }
-#endif
     }
 }

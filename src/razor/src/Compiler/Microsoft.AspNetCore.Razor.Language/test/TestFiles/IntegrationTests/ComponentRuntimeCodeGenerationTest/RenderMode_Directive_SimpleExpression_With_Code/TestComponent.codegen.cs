@@ -34,8 +34,8 @@ namespace Test
         {
             private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
 #nullable restore
-#line (1,15)-(1,68) "x:\dir\subdir\Test\TestComponent.cshtml"
-Microsoft.AspNetCore.Components.Web.RenderMode.Server
+#line (1,15)-(1,79) "x:\dir\subdir\Test\TestComponent.cshtml"
+Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden

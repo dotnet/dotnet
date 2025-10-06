@@ -18,10 +18,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         /// </summary>
         public bool GenerateMetadataSourceChecksumAttributes { get; set; } = false;
 
-        /// <summary>
-        /// Gets the CSharp language version currently used by the compilation.
-        /// </summary>
-        public LanguageVersion CSharpLanguageVersion { get; set; } = LanguageVersion.CSharp10;
+        internal CSharpParseOptions CSharpParseOptions { get; set; } = new CSharpParseOptions(LanguageVersion.CSharp10);
 
         /// <summary>
         /// Gets a flag that determines if localized component names should be supported.
@@ -32,6 +29,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         /// Gets the flag that should be set on code documents to replace unique ids for testing purposes
         /// </summary>
         internal string? TestSuppressUniqueIds { get; set; }
+
+        internal bool UseRoslynTokenizer { get; set; } = true;
 
         public override int GetHashCode() => Configuration.GetHashCode();
     }

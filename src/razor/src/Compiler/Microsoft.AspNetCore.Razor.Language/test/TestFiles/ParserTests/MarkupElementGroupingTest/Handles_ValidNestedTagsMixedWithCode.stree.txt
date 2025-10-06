@@ -45,7 +45,7 @@
                         CSharpCodeBlock - [41..55)::14
                             CSharpStatementLiteral - [41..55)::14 - [ var x = Bar; ] - Gen<Stmt>
                                 Whitespace;[ ];
-                                Identifier;[var];
+                                Keyword;[var];
                                 Whitespace;[ ];
                                 Identifier;[x];
                                 Whitespace;[ ];

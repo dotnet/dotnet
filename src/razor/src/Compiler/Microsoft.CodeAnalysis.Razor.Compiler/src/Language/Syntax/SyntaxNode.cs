@@ -4,9 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis.Text;
 
@@ -19,38 +18,15 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     public SyntaxNode Parent { get; } = parent;
     public int Position { get; } = position;
 
-    public int EndPosition => Position + FullWidth;
+    public int EndPosition => Position + Width;
 
     public SyntaxKind Kind => Green.Kind;
 
     public int Width => Green.Width;
 
-    public int FullWidth => Green.FullWidth;
+    public int SpanStart => Position;
 
-    public int SpanStart => Position + Green.GetLeadingTriviaWidth();
-
-    public TextSpan FullSpan => new(Position, Green.FullWidth);
-
-    public TextSpan Span
-    {
-        get
-        {
-            // Start with the full span.
-            var start = Position;
-            var width = Green.FullWidth;
-
-            // adjust for preceding trivia (avoid calling this twice, do not call Green.Width)
-            var precedingWidth = Green.GetLeadingTriviaWidth();
-            start += precedingWidth;
-            width -= precedingWidth;
-
-            // adjust for following trivia width
-            width -= Green.GetTrailingTriviaWidth();
-
-            Debug.Assert(width >= 0);
-            return new TextSpan(start, width);
-        }
-    }
+    public TextSpan Span => new(Position, Green.Width);
 
     internal int SlotCount => Green.SlotCount;
 
@@ -60,21 +36,9 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
     public bool IsToken => Green.IsToken;
 
-    public bool IsTrivia => Green.IsTrivia;
-
-    public bool HasLeadingTrivia => GetLeadingTrivia().Count > 0;
-
-    public bool HasTrailingTrivia => GetTrailingTrivia().Count > 0;
-
     public bool ContainsDiagnostics => Green.ContainsDiagnostics;
 
     public bool ContainsAnnotations => Green.ContainsAnnotations;
-
-    internal string SerializedValue => SyntaxSerializer.Serialize(this);
-
-    public abstract TResult Accept<TResult>(SyntaxVisitor<TResult> visitor);
-
-    public abstract void Accept(SyntaxVisitor visitor);
 
     internal abstract SyntaxNode? GetNodeSlot(int index);
 
@@ -169,10 +133,34 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
         return result;
     }
 
-    internal virtual int GetChildPosition(int index)
+    internal int GetChildIndex(int slot)
+    {
+        var index = 0;
+
+        for (var i = 0; i < slot; i++)
+        {
+            var item = Green.GetSlot(i);
+            if (item != null)
+            {
+                if (item.IsList)
+                {
+                    index += item.SlotCount;
+                }
+                else
+                {
+                    index++;
+                }
+            }
+        }
+
+        return index;
+    }
+
+    internal int GetChildPosition(int index)
     {
         var offset = 0;
         var green = Green;
+
         while (index > 0)
         {
             index--;
@@ -181,60 +169,36 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
             {
                 return prevSibling.EndPosition + offset;
             }
+
             var greenChild = green.GetSlot(index);
             if (greenChild != null)
             {
-                offset += greenChild.FullWidth;
+                offset += greenChild.Width;
             }
         }
 
         return Position + offset;
     }
 
-    public virtual SyntaxTriviaList GetLeadingTrivia()
+    internal SyntaxNodeOrToken ChildThatContainsPosition(int position)
     {
-        var firstToken = GetFirstToken();
-        return firstToken != null ? firstToken.GetLeadingTrivia() : default;
-    }
+        //PERF: it is very important to keep this method fast.
 
-    public virtual SyntaxTriviaList GetTrailingTrivia()
-    {
-        var lastToken = GetLastToken();
-        return lastToken != null ? lastToken.GetTrailingTrivia() : default;
-    }
-
-    internal SyntaxList<SyntaxToken> GetTokens()
-    {
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var tokens);
-
-        AddTokens(this, tokens);
-
-        return tokens;
-
-        static void AddTokens(SyntaxNode current, SyntaxListBuilder<SyntaxToken> tokens)
+        if (!Span.Contains(position))
         {
-            if (current.SlotCount == 0 && current is SyntaxToken token)
-            {
-                // Token
-                tokens.Add(token);
-                return;
-            }
-
-            for (var i = 0; i < current.SlotCount; i++)
-            {
-                if (current.GetNodeSlot(i) is { } child)
-                {
-                    AddTokens(child, tokens);
-                }
-            }
+            throw new ArgumentOutOfRangeException(nameof(position));
         }
+
+        var childNodeOrToken = ChildSyntaxList.ChildThatContainsPosition(this, position);
+        Debug.Assert(childNodeOrToken.Span.Contains(position), "ChildThatContainsPosition's return value does not contain the requested position.");
+        return childNodeOrToken;
     }
 
     /// <summary>
     /// Gets the first token of the tree rooted by this node. Skips zero-width tokens.
     /// </summary>
     /// <returns>The first token or <c>default(SyntaxToken)</c> if it doesn't exist.</returns>
-    public SyntaxToken? GetFirstToken(bool includeZeroWidth = false)
+    public SyntaxToken GetFirstToken(bool includeZeroWidth = false)
     {
         return SyntaxNavigator.GetFirstToken(this, includeZeroWidth);
     }
@@ -243,7 +207,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// Gets the last token of the tree rooted by this node. Skips zero-width tokens.
     /// </summary>
     /// <returns>The last token or <c>default(SyntaxToken)</c> if it doesn't exist.</returns>
-    public SyntaxToken? GetLastToken(bool includeZeroWidth = false)
+    public SyntaxToken GetLastToken(bool includeZeroWidth = false)
     {
         return SyntaxNavigator.GetLastToken(this, includeZeroWidth);
     }
@@ -251,20 +215,44 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// <summary>
     /// The list of child nodes of this node, where each element is a SyntaxNode instance.
     /// </summary>
-    public ChildSyntaxList ChildNodes()
+    public ChildSyntaxList ChildNodesAndTokens()
     {
         return new ChildSyntaxList(this);
+    }
+
+    /// <summary>
+    /// Gets a list of the child nodes in prefix document order.
+    /// </summary>
+    public IEnumerable<SyntaxNode> ChildNodes()
+    {
+        foreach (var nodeOrToken in ChildNodesAndTokens())
+        {
+            if (nodeOrToken.IsNode)
+            {
+                yield return nodeOrToken.AsNode()!;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a list of the direct child tokens of this node.
+    /// </summary>
+    public IEnumerable<SyntaxToken> ChildTokens()
+    {
+        foreach (var nodeOrToken in ChildNodesAndTokens())
+        {
+            if (nodeOrToken.IsToken)
+            {
+                yield return nodeOrToken.AsToken();
+            }
+        }
     }
 
     /// <summary>
     /// Gets a list of ancestor nodes
     /// </summary>
     public IEnumerable<SyntaxNode> Ancestors()
-    {
-        return Parent?
-            .AncestorsAndSelf() ??
-            Array.Empty<SyntaxNode>();
-    }
+        => Parent?.AncestorsAndSelf() ?? [];
 
     /// <summary>
     /// Gets a list of ancestor nodes (including this node)
@@ -300,7 +288,17 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
     public IEnumerable<SyntaxNode> DescendantNodes(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
-        return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: false);
+        return DescendantNodesImpl(Span, descendIntoChildren, includeSelf: false);
+    }
+
+    /// <summary>
+    /// Gets a list of descendant nodes in prefix document order.
+    /// </summary>
+    /// <param name="span">The span the node's full span must intersect.</param>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNode> DescendantNodes(TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesImpl(span, descendIntoChildren, includeSelf: false);
     }
 
     /// <summary>
@@ -309,26 +307,87 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
     public IEnumerable<SyntaxNode> DescendantNodesAndSelf(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
-        return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: true);
+        return DescendantNodesImpl(Span, descendIntoChildren, includeSelf: true);
     }
 
-    protected internal SyntaxNode ReplaceCore<TNode>(
+    /// <summary>
+    /// Gets a list of descendant nodes (including this node) in prefix document order.
+    /// </summary>
+    /// <param name="span">The span the node's full span must intersect.</param>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNode> DescendantNodesAndSelf(TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesImpl(span, descendIntoChildren, includeSelf: true);
+    }
+
+    /// <summary>
+    /// Gets a list of descendant nodes and tokens in prefix document order.
+    /// </summary>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokens(Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokensImpl(Span, descendIntoChildren, includeSelf: false);
+    }
+
+    //// <summary>
+    /// Gets a list of the descendant nodes and tokens in prefix document order.
+    /// </summary>
+    /// <param name="span">The span the node's full span must intersect.</param>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokens(TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokensImpl(span, descendIntoChildren, includeSelf: false);
+    }
+
+    /// <summary>
+    /// Gets a list of descendant nodes (including this node) in prefix document order.
+    /// </summary>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNodeOrToken> DescendandNodesAndTokensAndSelf(Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokensImpl(Span, descendIntoChildren, includeSelf: true);
+    }
+
+    /// <summary>
+    /// Gets a list of descendant nodes (including this node) in prefix document order.
+    /// </summary>
+    /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+    public IEnumerable<SyntaxNodeOrToken> DescendandNodesAndTokensAndSelf(TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokensImpl(span, descendIntoChildren, includeSelf: true);
+    }
+
+    /// <summary>
+    /// Gets a list of all the tokens in the span of this node.
+    /// </summary>
+    public IEnumerable<SyntaxToken> DescendantTokens(Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokens(Span, descendIntoChildren)
+            .Where(static x => x.IsToken)
+            .Select(static x => x.AsToken());
+    }
+
+    /// <summary>
+    /// Gets a list of all the tokens in the span of this node.
+    /// </summary>
+    public IEnumerable<SyntaxToken> DescendantTokens(TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
+    {
+        return DescendantNodesAndTokens(span, descendIntoChildren)
+            .Where(static x => x.IsToken)
+            .Select(static x => x.AsToken());
+    }
+
+    protected internal abstract SyntaxNode ReplaceCore<TNode>(
         IEnumerable<TNode>? nodes = null,
-        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null)
-        where TNode : SyntaxNode
-    {
-        return SyntaxReplacer.Replace(this, nodes, computeReplacementNode);
-    }
+        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null,
+        IEnumerable<SyntaxToken>? tokens = null,
+        Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken = null)
+        where TNode : SyntaxNode;
 
-    protected internal SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes)
-    {
-        return SyntaxReplacer.ReplaceNodeInList(this, originalNode, replacementNodes);
-    }
-
-    protected internal SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
-    {
-        return SyntaxReplacer.InsertNodeInList(this, nodeInList, nodesToInsert, insertBefore);
-    }
+    protected internal abstract SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes);
+    protected internal abstract SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore);
+    protected internal abstract SyntaxNode ReplaceTokenInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens);
+    protected internal abstract SyntaxNode InsertTokensInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens, bool insertBefore);
 
     public RazorDiagnostic[] GetDiagnostics()
     {
@@ -384,21 +443,23 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
             return document.EndOfFile;
         }
 
-        if (!FullSpan.Contains(position))
+        if (!Span.Contains(position))
         {
             throw new ArgumentOutOfRangeException(nameof(position));
         }
 
-        SyntaxNode curNode = this;
+        SyntaxNodeOrToken curNode = this;
 
         while (true)
         {
             Debug.Assert(curNode.Kind is < SyntaxKind.FirstAvailableTokenKind and >= 0);
-            Debug.Assert(curNode.FullSpan.Contains(position));
+            Debug.Assert(curNode.Span.Contains(position));
 
-            if (!curNode.IsToken)
+            var node = curNode.AsNode();
+
+            if (node != null)
             {
-                curNode = ChildSyntaxList.ChildThatContainsPosition(curNode, position, out _);
+                curNode = node.ChildThatContainsPosition(position);
             }
             else
             {
@@ -413,7 +474,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
                 //
                 //  Walk backwards until we find a non-whitespace token. If we find something that isn't a newline, that is the node requested.
                 //  If we find a newline, we need to walk forwards until we find the first non-whitespace or newline token. That is the node requested.
-                var foundToken = (SyntaxToken)curNode;
+                var foundToken = curNode.AsToken();
                 if (includeWhitespace || foundToken.Kind is not (SyntaxKind.Whitespace or SyntaxKind.NewLine))
                 {
                     return foundToken;
@@ -432,13 +493,13 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
                 return walkForward(originalFoundToken);
             }
 
-            bool tryWalkBackwards(SyntaxToken originalFoundToken, [NotNullWhen(true)] out SyntaxToken? foundToken)
+            bool tryWalkBackwards(SyntaxToken originalFoundToken, out SyntaxToken foundToken)
             {
                 foundToken = originalFoundToken;
                 do
                 {
                     foundToken = foundToken.GetPreviousToken(includeZeroWidth: true);
-                    if (foundToken is null or { Kind: SyntaxKind.NewLine })
+                    if (foundToken.Kind is SyntaxKind.None or SyntaxKind.NewLine)
                     {
                         return false;
                     }
@@ -461,7 +522,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
                 {
                     currentToken = currentToken.GetNextToken(includeZeroWidth: true);
 
-                    if (currentToken is null || currentToken.Span.End > this.Span.End)
+                    if (currentToken.Kind == SyntaxKind.None || currentToken.Span.End > this.Span.End)
                     {
                         // Walked all the way forward to the end of the root that was requested and did not find any non-whitespace tokens. The user requested
                         // something out of range.
@@ -477,23 +538,14 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
     public override string ToString()
     {
-        var builder = new StringBuilder();
-        builder.Append(Green.ToString());
-        builder.AppendFormat(CultureInfo.InvariantCulture, " at {0}::{1}", Position, FullWidth);
-
-        return builder.ToString();
-    }
-
-    public virtual string ToFullString()
-    {
-        return Green.ToFullString();
+        return Green.ToString();
     }
 
     protected virtual string GetDebuggerDisplay()
     {
         if (IsToken)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0};[{1}]", Kind, ToFullString());
+            return string.Format(CultureInfo.InvariantCulture, "{0};[{1}]", Kind, ToString());
         }
 
         return string.Format(CultureInfo.InvariantCulture, "{0} [{1}..{2})", Kind, Position, EndPosition);

@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetFxVS)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-    <Compile Include="..\OSSkipConditionFactAttribute.cs" LinkBase="Shared" />
   </ItemGroup>
 
   <ItemGroup>

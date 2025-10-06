@@ -2,9 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Diagnostics.DebugServices.Implementation;
 using Microsoft.Diagnostics.Runtime;
 using Microsoft.Diagnostics.Runtime.Utilities;
 using Microsoft.Diagnostics.TestHelpers;
@@ -23,6 +25,8 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
         {
         }
 
+        public override IReadOnlyList<string> ExecuteHostCommand(string commandLine) => HostServices.Instance.ExecuteHostCommand(commandLine);
+
         protected override ITarget GetTarget()
         {
             // Create/initialize dbgeng controller
@@ -32,7 +36,7 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
             return contextService.GetCurrentTarget();
         }
 
-        private static IHost Host => HostServices.Instance;
+        private static IHost Host => HostServices.Instance.Host;
 
         private string DbgEngPath => TestConfiguration.MakeCanonicalPath(Config.AllSettings["DbgEngPath"]);
 

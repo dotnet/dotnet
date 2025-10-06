@@ -18,8 +18,7 @@
             CSharpStatementLiteral - [12..28)::16 - [@@@class.Foo() }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 Transition;[@];
                 Transition;[@];
-                Transition;[@];
-                Keyword;[class];
+                Identifier;[@class];
                 Dot;[.];
                 Identifier;[Foo];
                 LeftParenthesis;[(];

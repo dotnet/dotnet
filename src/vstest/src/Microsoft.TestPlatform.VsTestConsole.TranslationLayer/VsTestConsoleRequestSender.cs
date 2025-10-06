@@ -116,8 +116,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
     /// <inheritdoc/>
     public bool WaitForRequestHandlerConnection(int clientConnectionTimeout)
     {
-        var waitSucess = _handShakeComplete.WaitOne(clientConnectionTimeout);
-        return waitSucess && _handShakeSuccessful;
+        var waitSuccess = _handShakeComplete.WaitOne(clientConnectionTimeout);
+        return waitSuccess && _handShakeSuccessful;
     }
 
     /// <inheritdoc/>
@@ -1197,7 +1197,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
             EqtTrace.Error("Aborting Test Run Operation: {0}", exception);
             eventHandler.HandleLogMessage(
                 TestMessageLevel.Error,
-                TranslationLayerResources.AbortedTestsRun);
+                TranslationLayerResources.AbortedTestsRun + " " + exception.ToString());
             var completeArgs = new TestRunCompleteEventArgs(
                 null, false, true, exception, null, null, TimeSpan.Zero);
             eventHandler.HandleTestRunComplete(completeArgs, null, null, null);
@@ -1282,7 +1282,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
             EqtTrace.Error("Aborting Test Run Operation: {0}", exception);
             eventHandler.HandleLogMessage(
                 TestMessageLevel.Error,
-                TranslationLayerResources.AbortedTestsRun);
+                TranslationLayerResources.AbortedTestsRun + " " + exception.ToString());
             var completeArgs = new TestRunCompleteEventArgs(
                 null, false, true, exception, null, null, TimeSpan.Zero);
             eventHandler.HandleTestRunComplete(completeArgs, null, null, null);
@@ -1428,9 +1428,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
         {
             var testProcessStartInfo = _dataSerializer.DeserializePayload<TestProcessStartInfo>(message);
 
-            ackPayload.HostProcessId = customHostLauncher != null
-                ? customHostLauncher.LaunchTestHost(testProcessStartInfo!)
-                : -1;
+            ackPayload.HostProcessId = customHostLauncher?.LaunchTestHost(testProcessStartInfo!) ?? -1;
         }
         catch (Exception ex)
         {

@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "MSTest-Testprojekt",
-    "description": "Ein Projekt, das MSTest-Komponententests enthält, kann in .NET unter Windows, Linux und MacOS ausgeführt werden."
-  }
-}

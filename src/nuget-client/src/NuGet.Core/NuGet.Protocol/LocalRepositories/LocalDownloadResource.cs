@@ -18,12 +18,6 @@ namespace NuGet.Protocol
         private readonly FindLocalPackagesResource _localResource;
         private readonly string _source;
 
-        [Obsolete("Use constructor with source parameter")]
-        public LocalDownloadResource(FindLocalPackagesResource localResource)
-            : this(source: null, localResource)
-        {
-        }
-
         public LocalDownloadResource(string source, FindLocalPackagesResource localResource)
         {
             if (localResource == null)

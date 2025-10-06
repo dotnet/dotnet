@@ -1,6 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.Net.Http.Headers;
+using System.Text;
 using Microsoft.Diagnostics.DebugServices;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
@@ -21,7 +24,10 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         [Option(Name = "--mi", Aliases = new string[] { "-mi" }, Help = "Use the internal symweb symbol server.")]
         public bool InternalSymbolServer { get; set; }
 
-        [Option(Name = "--disable", Aliases = new string[] { "-disable" }, Help = "Clear or disable symbol download support.")]
+        [Option(Name = "--interactive", Aliases = new string[] { "-interactive" }, Help = "Allows user interaction will be included in the authentication flow.")]
+        public bool Interactive { get; set; }
+
+        [Option(Name = "--disable", Aliases = new string[] { "-disable", "-clear" }, Help = "Clear or disable symbol download support.")]
         public bool Disable { get; set; }
 
         [Option(Name = "--reset", Aliases = new string[] { "-reset" }, Help = "Reset the HTTP symbol servers clearing any cached failures.")]
@@ -29,6 +35,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
         [Option(Name = "--cache", Aliases = new string[] { "-cache" }, Help = "Specify a symbol cache directory.")]
         public string Cache { get; set; }
+
+        [Option(Name = "--nocache", Aliases = new string[] { "-nocache" }, Help = "Do not automatically add the default cache before a server.")]
+        public bool NoCache { get; set; }
 
         [Option(Name = "--directory", Aliases = new string[] { "-directory" }, Help = "Specify a directory to search for symbols.")]
         public string Directory { get; set; }
@@ -68,11 +77,22 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
             if (MicrosoftSymbolServer || InternalSymbolServer || !string.IsNullOrEmpty(SymbolServerUrl))
             {
-                if (string.IsNullOrEmpty(Cache))
+                if (string.IsNullOrEmpty(Cache) && !NoCache)
                 {
                     Cache = SymbolService.DefaultSymbolCache;
                 }
-                SymbolService.AddSymbolServer(MicrosoftSymbolServer, InternalSymbolServer, SymbolServerUrl, AccessToken, Timeout, RetryCount);
+                if (InternalSymbolServer)
+                {
+                    SymbolService.AddSymwebSymbolServer(includeInteractiveCredentials: Interactive, Timeout, RetryCount);
+                }
+                else if (AccessToken is not null)
+                {
+                    SymbolService.AddAuthenticatedSymbolServer(AccessToken, SymbolServerUrl, Timeout, RetryCount);
+                }
+                else
+                {
+                    SymbolService.AddSymbolServer(SymbolServerUrl, Timeout, RetryCount);
+                }
             }
             if (!string.IsNullOrEmpty(Cache))
             {
@@ -103,28 +123,23 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         [HelpInvoke]
         public static string GetDetailedHelp(IHost host)
         {
-            switch (host.HostType)
+            return host.HostType switch
             {
-                case HostType.DbgEng:
-                    return s_detailedHelpTextDbgEng;
-                case HostType.Lldb:
-                    return s_detailedHelpTextLLDB;
-                case HostType.DotnetDump:
-                    return s_detailedHelpTextDotNetDump;
-            }
-            return null;
+                HostType.DbgEng => s_detailedHelpTextDbgEng,
+                HostType.Lldb => s_detailedHelpTextLLDB,
+                HostType.DotnetDump => s_detailedHelpTextDotNetDump,
+                _ => null,
+            };
         }
 
         private const string s_detailedHelpTextDbgEng =
-        @"
-This commands enables symbol server support for portable PDBs for managed assemblies and 
+@"This commands enables symbol server support for portable PDBs for managed assemblies and 
 .NET Core native modules files (like the DAC) in SOS. If the .sympath is set, the symbol 
 server supported is automatically set and this command isn't necessary.
 ";
 
         private const string s_detailedHelpTextLLDB =
-        @"
-This commands enables symbol server support in SOS. The portable PDBs for managed assemblies
+@"This commands enables symbol server support in SOS. The portable PDBs for managed assemblies
 and .NET Core native symbol and module (like the DAC) files are downloaded.
 
 To enable downloading symbols from the Microsoft symbol server:
@@ -163,8 +178,7 @@ stack frames).
 ";
 
         private const string s_detailedHelpTextDotNetDump =
-        @"
-This commands enables symbol server support in SOS. The portable PDBs for managed assemblies
+@"This commands enables symbol server support in SOS. The portable PDBs for managed assemblies
 and .NET Core native module (like the DAC) files are downloaded.
 
 To enable downloading symbols from the Microsoft symbol server:

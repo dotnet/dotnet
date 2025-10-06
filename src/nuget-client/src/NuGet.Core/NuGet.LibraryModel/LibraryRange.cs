@@ -33,12 +33,20 @@ namespace NuGet.LibraryModel
             TypeConstraint = typeConstraint;
         }
 
-        public required string Name { get; set; }
+        [SetsRequiredMembers]
+        public LibraryRange(LibraryRange other)
+        {
+            Name = other.Name;
+            VersionRange = other.VersionRange;
+            TypeConstraint = other.TypeConstraint;
+        }
+
+        public required string Name { get; init; }
 
         // Null is used for all, CLI still has code expecting this
-        public VersionRange? VersionRange { get; set; }
+        public VersionRange? VersionRange { get; init; }
 
-        public LibraryDependencyTarget TypeConstraint { get; set; } = LibraryDependencyTarget.All;
+        public LibraryDependencyTarget TypeConstraint { get; init; } = LibraryDependencyTarget.All;
 
         public override string ToString()
         {
@@ -73,42 +81,40 @@ namespace NuGet.LibraryModel
             return output;
         }
 
-        public string? ToLockFileDependencyGroupString()
+        public string ToLockFileDependencyGroupString()
         {
-            if (VersionRange is null)
-            {
-                return null;
-            }
-
             StringBuilder sb = StringBuilderPool.Shared.Rent(256);
 
             sb.Append(Name);
 
-            if (VersionRange.HasLowerBound)
+            if (VersionRange != null)
             {
-                if (VersionRange.IsMinInclusive)
+                if (VersionRange.HasLowerBound)
                 {
-                    sb.Append(" >= ");
-                }
-                else
-                {
-                    sb.Append(" > ");
+                    if (VersionRange.IsMinInclusive)
+                    {
+                        sb.Append(" >= ");
+                    }
+                    else
+                    {
+                        sb.Append(" > ");
+                    }
+
+                    if (VersionRange.IsFloating)
+                    {
+                        VersionRange.Float.ToString(sb);
+                    }
+                    else
+                    {
+                        sb.Append(VersionRange.MinVersion.ToNormalizedString());
+                    }
                 }
 
-                if (VersionRange.IsFloating)
+                if (VersionRange.HasUpperBound)
                 {
-                    VersionRange.Float.ToString(sb);
+                    sb.Append(VersionRange.IsMaxInclusive ? " <= " : " < ");
+                    sb.Append(VersionRange.MaxVersion.ToNormalizedString());
                 }
-                else
-                {
-                    sb.Append(VersionRange.MinVersion.ToNormalizedString());
-                }
-            }
-
-            if (VersionRange.HasUpperBound)
-            {
-                sb.Append(VersionRange.IsMaxInclusive ? " <= " : " < ");
-                sb.Append(VersionRange.MaxVersion.ToNormalizedString());
             }
 
             return StringBuilderPool.Shared.ToStringAndReturn(sb);

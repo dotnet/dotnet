@@ -1,12 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
@@ -35,19 +31,10 @@ namespace NuGet.Commands.Test
                     Version = "1.0.0"
                 };
 
-                var projectJson = JObject.Parse(@"{
-                                                    'dependencies': {
-                                                    },
-                                                    'frameworks': {
-                                                        'net45': { }
-                                                  }
-                                               }");
-
-                var projectB = SimpleTestProjectContext.CreateUAP(
+                var projectB = SimpleTestProjectContext.CreateLegacyPackageReference(
                     "b",
                     pathContext.SolutionRoot,
-                    NuGetFramework.Parse("net45"),
-                    projectJson);
+                    NuGetFramework.Parse("net45"));
 
                 projectA.AddPackageToAllFrameworks(packageX);
 
@@ -65,7 +52,6 @@ namespace NuGet.Commands.Test
                 Assert.True(File.Exists(Path.Combine(pathContext.SolutionRoot, "a", "a.csproj")));
                 Assert.True(File.Exists(Path.Combine(pathContext.WorkingDirectory, "NuGet.Config")));
                 Assert.True(File.Exists(Path.Combine(pathContext.SolutionRoot, "b", "b.csproj")));
-                Assert.True(File.Exists(Path.Combine(pathContext.SolutionRoot, "b", "project.json")));
             }
         }
     }

@@ -9,13 +9,17 @@ namespace Microsoft.Build.BackEnd
     {
         private bool _includeEvaluationMetaprojects;
         private bool _includeEvaluationProfiles;
-        private bool _includeEvaluationPropertiesAndItems;
+        private bool _includeEvaluationPropertiesAndItemsInProjectStartedEvent;
+        private bool _includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent;
         private bool _includeTaskInputs;
+        private bool _includeTargetOutputs;
 
         public bool IncludeEvaluationMetaprojects => _includeEvaluationMetaprojects;
         public bool IncludeEvaluationProfiles => _includeEvaluationProfiles;
-        public bool IncludeEvaluationPropertiesAndItems => _includeEvaluationPropertiesAndItems;
+        public bool IncludeEvaluationPropertiesAndItemsInProjectStartedEvent => _includeEvaluationPropertiesAndItemsInProjectStartedEvent;
+        public bool IncludeEvaluationPropertiesAndItemsInEvaluationFinishedEvent => _includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent;
         public bool IncludeTaskInputs => _includeTaskInputs;
+        public bool IncludeTargetOutputs => _includeTargetOutputs;
 
         public LoggingNodeConfiguration()
         {
@@ -24,21 +28,27 @@ namespace Microsoft.Build.BackEnd
         public LoggingNodeConfiguration(
             bool includeEvaluationMetaprojects,
             bool includeEvaluationProfiles,
-            bool includeEvaluationPropertiesAndItems,
-            bool includeTaskInputs)
+            bool includeEvaluationPropertiesAndItemsInProjectStartedEvent,
+            bool includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent,
+            bool includeTaskInputs,
+            bool includeTargetOutputs)
         {
             _includeEvaluationMetaprojects = includeEvaluationMetaprojects;
             _includeEvaluationProfiles = includeEvaluationProfiles;
-            _includeEvaluationPropertiesAndItems = includeEvaluationPropertiesAndItems;
+            _includeEvaluationPropertiesAndItemsInProjectStartedEvent = includeEvaluationPropertiesAndItemsInProjectStartedEvent;
+            _includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent = includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent;
             _includeTaskInputs = includeTaskInputs;
+            _includeTargetOutputs = includeTargetOutputs;
         }
 
         void ITranslatable.Translate(ITranslator translator)
         {
             translator.Translate(ref _includeEvaluationMetaprojects);
             translator.Translate(ref _includeEvaluationProfiles);
-            translator.Translate(ref _includeEvaluationPropertiesAndItems);
+            translator.Translate(ref _includeEvaluationPropertiesAndItemsInProjectStartedEvent);
+            translator.Translate(ref _includeEvaluationPropertiesAndItemsInEvaluationFinishedEvent);
             translator.Translate(ref _includeTaskInputs);
+            translator.Translate(ref _includeTargetOutputs);
         }
     }
 }

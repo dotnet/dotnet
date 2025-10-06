@@ -1,11 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test;
 
@@ -81,30 +80,26 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
 
     private IRazorCodeDocument GetCodeDocument(string source)
     {
-        var taghelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+        var taghelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestTagHelper")
             .BoundAttributeDescriptor(attr => attr.Name("show").TypeName("System.Boolean"))
             .BoundAttributeDescriptor(attr => attr.Name("id").TypeName("System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("taghelper"))
-            .Metadata(TypeName("TestTagHelper"))
             .Build();
 
-        var engine = CreateProjectEngine(builder => builder.Features.Add(new VisualStudioEnableTagHelpersFeature()));
+        var engine = CreateProjectEngine(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.EnableSpanEditHandlers = true;
+            });
+        });
 
         var sourceDocument = TestRazorSourceDocument.Create(source, normalizeNewLines: true);
         var importDocument = TestRazorSourceDocument.Create("@addTagHelper *, TestAssembly", filePath: "import.cshtml", relativePath: "import.cshtml");
 
-        var codeDocument = engine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: ImmutableArray.Create(importDocument), new []{ taghelper });
+        var codeDocument = engine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: ImmutableArray.Create(importDocument), new[] { taghelper });
 
         return RazorWrapperFactory.WrapCodeDocument(codeDocument);
-    }
-
-    private class VisualStudioEnableTagHelpersFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
-    {
-        public int Order => 0;
-
-        public void Configure(RazorParserOptionsBuilder options)
-        {
-            options.EnableSpanEditHandlers = true;
-        }
     }
 }

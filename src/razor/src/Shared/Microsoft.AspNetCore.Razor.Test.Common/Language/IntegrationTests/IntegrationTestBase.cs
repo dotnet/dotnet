@@ -3,19 +3,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
@@ -31,32 +34,16 @@ public abstract class IntegrationTestBase
 
     static IntegrationTestBase()
     {
-        var referenceAssemblyRoots = new[]
-        {
-            typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-        };
-
-        var referenceAssemblies = referenceAssemblyRoots
-            .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-            .Distinct()
-            .Select(Assembly.Load)
-            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-            .ToList();
         DefaultBaseCompilation = CSharpCompilation.Create(
             "TestAssembly",
             Array.Empty<SyntaxTree>(),
-            referenceAssemblies,
+            ReferenceUtil.AspNetLatestAll,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    protected IntegrationTestBase(TestProject.Layer layer, bool? generateBaselines = null, string? projectDirectoryHint = null)
+    protected IntegrationTestBase(TestProject.Layer layer, string? projectDirectoryHint = null)
     {
         TestProjectRoot = projectDirectoryHint == null ? TestProject.GetProjectDirectory(GetType(), layer) : TestProject.GetProjectDirectory(projectDirectoryHint, layer);
-
-        if (generateBaselines.HasValue)
-        {
-            GenerateBaselines = generateBaselines.Value;
-        }
     }
 
     /// <summary>
@@ -86,6 +73,12 @@ public abstract class IntegrationTestBase
 
     protected virtual bool DesignTime { get; } = false;
 
+    protected bool SkipVerifyingCSharpDiagnostics { get; set; }
+
+    protected bool NullableEnable { get; set; }
+
+    protected Dictionary<SourceLocation, string>? ExpectedMissingSourceMappings { get; set; }
+
     /// <summary>
     /// Gets the
     /// </summary>
@@ -98,15 +91,9 @@ public abstract class IntegrationTestBase
     /// </summary>
     protected virtual string LineEnding { get; } = "\r\n";
 
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; } = true;
-#else
-    protected bool GenerateBaselines { get; } = false;
-#endif
-
     protected string TestProjectRoot { get; }
 
-    public virtual string GetTestFileName(string? testName)
+    public virtual string GetTestFileName([CallerMemberName] string? testName = null)
     {
         return $"TestFiles/IntegrationTests/{this.GetType().Name}/{testName}";
     }
@@ -124,7 +111,7 @@ public abstract class IntegrationTestBase
         return syntaxTree;
     }
 
-    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml", [CallerMemberName]string testName = "")
+    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml", [CallerMemberName] string testName = "")
     {
         var projectItem = CreateProjectItemFromText(text, filePath, GetTestFileName(testName));
         FileSystem.Add(projectItem);
@@ -166,7 +153,10 @@ public abstract class IntegrationTestBase
         return projectItem;
     }
 
-    protected RazorProjectItem CreateProjectItemFromFile(string? filePath = null, string? fileKind = null, [CallerMemberName]string? testName = "")
+    protected RazorProjectItem CreateProjectItemFromFile(
+        string? filePath = null,
+        RazorFileKind? fileKind = null,
+        [CallerMemberName] string? testName = "")
     {
         var fileName = GetTestFileName(testName);
 
@@ -178,8 +168,8 @@ public abstract class IntegrationTestBase
         {
             throw new XunitException($"The resource {sourceFileName} was not found.");
         }
+
         var fileContent = testFile.ReadAllText();
-        var normalizedContent = NormalizeNewLines(fileContent);
 
         var workingDirectory = Path.GetDirectoryName(fileName);
         var fullPath = sourceFileName;
@@ -208,7 +198,7 @@ public abstract class IntegrationTestBase
         return projectItem;
     }
 
-    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null, [CallerMemberName]string testName = "")
+    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null, [CallerMemberName] string testName = "")
     {
         var projectItem = CreateProjectItemFromText(text, path, GetTestFileName(testName), cssScope);
         return CompileToCSharp(projectItem, designTime);
@@ -237,18 +227,18 @@ public abstract class IntegrationTestBase
         return CompileToAssembly(compiled, throwOnFailure: throwOnFailure);
     }
 
-    protected CompiledAssembly CompileToAssembly(CompiledCSharpCode code, bool throwOnFailure = true)
+    protected CompiledAssembly CompileToAssembly(CompiledCSharpCode code, bool throwOnFailure = true, bool ignoreRazorDiagnostics = false)
     {
-        var cSharpDocument = code.CodeDocument.GetCSharpDocument();
-        if (cSharpDocument.Diagnostics.Any())
+        var csharpDocument = code.CodeDocument.GetRequiredCSharpDocument();
+        if (!ignoreRazorDiagnostics && csharpDocument.Diagnostics.Any())
         {
-            var diagnosticsLog = string.Join(Environment.NewLine, cSharpDocument.Diagnostics.Select(d => d.ToString()).ToArray());
+            var diagnosticsLog = string.Join(Environment.NewLine, csharpDocument.Diagnostics.Select(d => d.ToString()).ToArray());
             throw new InvalidOperationException($"Aborting compilation to assembly because RazorCompiler returned nonempty diagnostics: {diagnosticsLog}");
         }
 
         var syntaxTrees = new[]
         {
-            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(cSharpDocument.GeneratedCode, CSharpParseOptions, path: code.CodeDocument.Source.FilePath ?? string.Empty),
+            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(csharpDocument.Text, CSharpParseOptions, path: code.CodeDocument.Source.FilePath ?? string.Empty),
         };
 
         var compilation = code.BaseCompilation.AddSyntaxTrees(syntaxTrees);
@@ -278,6 +268,13 @@ public abstract class IntegrationTestBase
             {
                 throw new CompilationFailedException(compilation, diagnostics);
             }
+            else if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                return new CompiledAssembly(compilation, code.CodeDocument, assembly: null)
+                {
+                    EmitDiagnostics = diagnostics.ToImmutableArray(),
+                };
+            }
 
             return new CompiledAssembly(compilation, code.CodeDocument, Assembly.Load(peStream.ToArray()));
         }
@@ -306,7 +303,11 @@ public abstract class IntegrationTestBase
     {
         return RazorProjectEngine.Create(configuration, FileSystem, b =>
         {
-            b.Phases.Insert(0, new ConfigureCodeRenderingPhase(LineEnding));
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.NewLine = LineEnding;
+                builder.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
+            });
 
             b.RegisterExtensions();
 
@@ -322,23 +323,27 @@ public abstract class IntegrationTestBase
                 });
             }
 
-            b.Features.Add(new DefaultTypeNameFeature());
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
 
-            // Decorate each import feature so we can normalize line endings.
-            foreach (var feature in b.Features.OfType<IImportProjectFeature>().ToArray())
+            b.ConfigureParserOptions(builder =>
             {
-                b.Features.Remove(feature);
-                b.Features.Add(new NormalizedDefaultImportFeature(feature, LineEnding));
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = CSharpParseOptions;
+            });
+
+            // Decorate each import feature so we can normalize line endings.
+            foreach (var importFeature in b.Features.OfType<IImportProjectFeature>().ToArray())
+            {
+                b.Features.Replace(importFeature, new NormalizedDefaultImportFeature(importFeature, LineEnding));
             }
         });
     }
 
-    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document, [CallerMemberName]string testName = "")
+    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document, [CallerMemberName] string testName = "")
     {
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".ir.txt");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, IntermediateNodeSerializer.Serialize(document), _baselineEncoding);
@@ -359,10 +364,10 @@ public abstract class IntegrationTestBase
     {
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".codegen.html");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode, _baselineEncoding);
+            File.WriteAllText(baselineFullPath, htmlDocument.Text.ToString(), _baselineEncoding);
             return;
         }
 
@@ -375,23 +380,23 @@ public abstract class IntegrationTestBase
         var baseline = htmlFile.ReadAllText();
 
         // Normalize newlines to match those in the baseline.
-        var actual = htmlDocument.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actual = htmlDocument.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baseline, actual);
     }
 
-    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument cSharpDocument, [CallerMemberName] string testName = "")
+    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument csharpDocument, [CallerMemberName] string testName = "")
     {
         var fileName = GetTestFileName(testName);
         var baselineFileName = Path.ChangeExtension(fileName, ".codegen.cs");
         var baselineDiagnosticsFileName = Path.ChangeExtension(fileName, ".diagnostics.txt");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, cSharpDocument.GeneratedCode, _baselineEncoding);
+            File.WriteAllText(baselineFullPath, csharpDocument.Text.ToString(), _baselineEncoding);
 
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
-            var lines = cSharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
+            var lines = csharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
             if (lines.Any())
             {
                 File.WriteAllLines(baselineDiagnosticsFullPath, lines, _baselineEncoding);
@@ -413,7 +418,7 @@ public abstract class IntegrationTestBase
         var baseline = codegenFile.ReadAllText();
 
         // Normalize newlines to match those in the baseline.
-        var actual = cSharpDocument.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actual = csharpDocument.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baseline, actual);
 
         var baselineDiagnostics = string.Empty;
@@ -423,7 +428,7 @@ public abstract class IntegrationTestBase
             baselineDiagnostics = diagnosticsFile.ReadAllText();
         }
 
-        var actualDiagnostics = string.Concat(cSharpDocument.Diagnostics.Select(d => NormalizeNewLines(RazorDiagnosticSerializer.Serialize(d)) + "\r\n"));
+        var actualDiagnostics = string.Concat(csharpDocument.Diagnostics.Select(d => NormalizeNewLines(RazorDiagnosticSerializer.Serialize(d)) + "\r\n"));
         Assert.Equal(baselineDiagnostics, actualDiagnostics);
     }
 
@@ -435,7 +440,7 @@ public abstract class IntegrationTestBase
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".mappings.txt");
         var serializedMappings = SourceMappingsSerializer.Serialize(csharpDocument, codeDocument.Source);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
@@ -455,7 +460,7 @@ public abstract class IntegrationTestBase
 
         Assert.Equal(baseline, actualBaseline);
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var visitor = new CodeSpanVisitor();
         visitor.Visit(syntaxTree.Root);
 
@@ -500,9 +505,7 @@ public abstract class IntegrationTestBase
             {
                 if (mapping.OriginalSpan == sourceSpan)
                 {
-                    var actualSpan = csharpDocument.GeneratedCode.Substring(
-                        mapping.GeneratedSpan.AbsoluteIndex,
-                        mapping.GeneratedSpan.Length);
+                    var actualSpan = csharpDocument.Text.ToString(mapping.GeneratedSpan.AsTextSpan());
 
                     if (!string.Equals(expectedSpan, actualSpan, StringComparison.Ordinal))
                     {
@@ -516,80 +519,56 @@ public abstract class IntegrationTestBase
                 }
             }
 
-            if (!found)
+            if (ExpectedMissingSourceMappings?.TryGetValue(SourceLocation.FromSpan(sourceSpan), out var expectedMissingSpan) == true)
+            {
+                if (found)
+                {
+                    throw new XunitException($"Remove {sourceSpan} from {nameof(ExpectedMissingSourceMappings)}.");
+                }
+                else if (expectedSpan != expectedMissingSpan)
+                {
+                    throw new XunitException($"Missing span {sourceSpan} has different content '{EscapeWhitespace(expectedSpan)}' " +
+                        $"than expected '{EscapeWhitespace(expectedMissingSpan)}'.");
+                }
+
+                ExpectedMissingSourceMappings.Remove(SourceLocation.FromSpan(sourceSpan));
+            }
+            else if (!found)
             {
                 throw new XunitException(
                     $"Could not find the span {sourceSpan} - containing '{EscapeWhitespace(expectedSpan)}' " +
                     $"in the output.");
             }
         }
-    }
 
-    protected void AssertHtmlSourceMappingsMatchBaseline(RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
-    {
-        var htmlDocument = codeDocument.GetHtmlDocument();
-        Assert.NotNull(htmlDocument);
-
-        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".html.mappings.txt");
-        var serializedMappings = SourceMappingsSerializer.Serialize(htmlDocument, codeDocument.Source);
-
-        if (GenerateBaselines)
+        if (ExpectedMissingSourceMappings?.Count > 0)
         {
-            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
-            return;
-        }
-
-        var testFile = TestFile.Create(baselineFileName, GetType().GetTypeInfo().Assembly);
-        if (!testFile.Exists())
-        {
-            throw new XunitException($"The resource {baselineFileName} was not found.");
-        }
-
-        var baseline = testFile.ReadAllText();
-
-        AssertEx.AssertEqualToleratingWhitespaceDifferences(baseline, serializedMappings);
-
-        var charBuffer = new char[codeDocument.Source.Text.Length];
-        codeDocument.Source.Text.CopyTo(0, charBuffer, 0, codeDocument.Source.Text.Length);
-        var sourceContent = new string(charBuffer);
-
-        var problems = new List<string>();
-        foreach (var mapping in htmlDocument.SourceMappings)
-        {
-            var actualSpan = htmlDocument.GeneratedCode.Substring(mapping.GeneratedSpan.AbsoluteIndex, mapping.GeneratedSpan.Length);
-            var expectedSpan = sourceContent.Substring(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
-
-            if (expectedSpan != actualSpan)
-            {
-                problems.Add(
-                    $"Found the span {mapping.OriginalSpan} in the output mappings but it contains " +
-                    $"'{EscapeWhitespace(actualSpan)}' instead of '{EscapeWhitespace(expectedSpan)}'.");
-            }
-        }
-
-        if (problems.Count > 0)
-        {
-            throw new XunitException(string.Join(Environment.NewLine, problems));
+            throw new XunitException($"Found unused {nameof(ExpectedMissingSourceMappings)} ({ExpectedMissingSourceMappings.Count}), " +
+                $"for example {ExpectedMissingSourceMappings.First()}.");
         }
     }
 
-    protected void AssertLinePragmas(RazorCodeDocument codeDocument, bool designTime)
+    protected void AssertLinePragmas(RazorCodeDocument codeDocument)
     {
         var csharpDocument = codeDocument.GetCSharpDocument();
         Assert.NotNull(csharpDocument);
         var linePragmas = csharpDocument.LinePragmas;
-        designTime = false;
-        if (designTime)
+
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var sourceContent = syntaxTree.Source.Text.ToString();
+        var classifiedSpans = syntaxTree.GetClassifiedSpans();
+        foreach (var classifiedSpan in classifiedSpans)
         {
-            var sourceMappings = csharpDocument.SourceMappings;
-            foreach (var sourceMapping in sourceMappings)
+            var content = sourceContent.Substring(classifiedSpan.Span.AbsoluteIndex, classifiedSpan.Span.Length);
+            if (!string.IsNullOrWhiteSpace(content) &&
+                classifiedSpan.BlockKind != BlockKindInternal.Directive &&
+                classifiedSpan.SpanKind == SpanKindInternal.Code)
             {
                 var foundMatchingPragma = false;
                 foreach (var linePragma in linePragmas)
                 {
-                    if (sourceMapping.OriginalSpan.LineIndex >= linePragma.StartLineIndex &&
-                        sourceMapping.OriginalSpan.LineIndex <= linePragma.EndLineIndex)
+                    if (classifiedSpan.Span.LineIndex >= linePragma.StartLineIndex &&
+                        classifiedSpan.Span.LineIndex <= linePragma.EndLineIndex)
                     {
                         // Found a match.
                         foundMatchingPragma = true;
@@ -597,36 +576,82 @@ public abstract class IntegrationTestBase
                     }
                 }
 
-                Assert.True(foundMatchingPragma, $"No line pragma found for code at line {sourceMapping.OriginalSpan.LineIndex + 1}.");
+                Assert.True(foundMatchingPragma, $"No line pragma found for code '{content}' at line {classifiedSpan.Span.LineIndex + 1}.");
             }
         }
-        else
-        {
-            var syntaxTree = codeDocument.GetSyntaxTree();
-            var sourceContent = syntaxTree.Source.Text.ToString();
-            var classifiedSpans = syntaxTree.GetClassifiedSpans();
-            foreach (var classifiedSpan in classifiedSpans)
-            {
-                var content = sourceContent.Substring(classifiedSpan.Span.AbsoluteIndex, classifiedSpan.Span.Length);
-                if (!string.IsNullOrWhiteSpace(content) &&
-                    classifiedSpan.BlockKind != BlockKindInternal.Directive &&
-                    classifiedSpan.SpanKind == SpanKindInternal.Code)
-                {
-                    var foundMatchingPragma = false;
-                    foreach (var linePragma in linePragmas)
-                    {
-                        if (classifiedSpan.Span.LineIndex >= linePragma.StartLineIndex &&
-                            classifiedSpan.Span.LineIndex <= linePragma.EndLineIndex)
-                        {
-                            // Found a match.
-                            foundMatchingPragma = true;
-                            break;
-                        }
-                    }
+    }
 
-                    Assert.True(foundMatchingPragma, $"No line pragma found for code '{content}' at line {classifiedSpan.Span.LineIndex + 1}.");
-                }
+    protected void AssertCSharpDiagnosticsMatchBaseline(RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
+    {
+        if (SkipVerifyingCSharpDiagnostics)
+        {
+            return;
+        }
+
+        var fileName = GetTestFileName(testName);
+        var baselineFileName = Path.ChangeExtension(fileName, ".cs-diagnostics.txt");
+
+        var compilation = BaseCompilation.AddSyntaxTrees(CSharpSyntaxTrees);
+
+        if (NullableEnable)
+        {
+            compilation = compilation.WithOptions(compilation.Options
+                .WithNullableContextOptions(NullableContextOptions.Enable));
+        }
+
+        var compiled = CompileToAssembly(
+            new CompiledCSharpCode(compilation, codeDocument),
+            ignoreRazorDiagnostics: true,
+            throwOnFailure: false);
+        var cSharpAllDiagnostics = !compiled.EmitDiagnostics.IsDefault
+            ? compiled.EmitDiagnostics
+            : compiled.Compilation.GetDiagnostics();
+        var cSharpDiagnostics = cSharpAllDiagnostics.Where(d => d.Severity != DiagnosticSeverity.Hidden);
+        var actualDiagnosticsText = getActualDiagnosticsText(cSharpDiagnostics);
+
+        if (GenerateBaselines.ShouldGenerate)
+        {
+            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
+            if (!string.IsNullOrWhiteSpace(actualDiagnosticsText))
+            {
+                File.WriteAllText(baselineFullPath, actualDiagnosticsText, _baselineEncoding);
             }
+            else if (File.Exists(baselineFullPath))
+            {
+                File.Delete(baselineFullPath);
+            }
+
+            return;
+        }
+
+        var baselineDiagnostics = string.Empty;
+        var diagnosticsFile = TestFile.Create(baselineFileName, GetType().GetTypeInfo().Assembly);
+        if (diagnosticsFile.Exists())
+        {
+            baselineDiagnostics = diagnosticsFile.ReadAllText();
+        }
+
+        AssertEx.EqualOrDiff(baselineDiagnostics, NormalizeNewLines(actualDiagnosticsText));
+
+        static string getActualDiagnosticsText(IEnumerable<Diagnostic> diagnostics)
+        {
+            var assertText = DiagnosticDescription.GetAssertText(
+            expected: [],
+            actual: diagnostics,
+            unmatchedExpected: [],
+            unmatchedActual: diagnostics);
+            var startAnchor = "Actual:" + Environment.NewLine;
+            var endAnchor = "Diff:" + Environment.NewLine;
+            var start = assertText.IndexOf(startAnchor, StringComparison.Ordinal) + startAnchor.Length;
+            var end = assertText.IndexOf(endAnchor, start, StringComparison.Ordinal);
+            var result = assertText[start..end];
+            return removeIndentation(result);
+        }
+
+        static string removeIndentation(string text)
+        {
+            var spaces = new string(' ', 16);
+            return text.Trim().Replace(Environment.NewLine + spaces, Environment.NewLine);
         }
     }
 
@@ -640,6 +665,7 @@ public abstract class IntegrationTestBase
             {
                 CodeSpans.Add(node);
             }
+
             return base.VisitCSharpStatementLiteral(node);
         }
 
@@ -649,6 +675,7 @@ public abstract class IntegrationTestBase
             {
                 CodeSpans.Add(node);
             }
+
             return base.VisitCSharpExpressionLiteral(node);
         }
 
@@ -695,63 +722,33 @@ public abstract class IntegrationTestBase
         return Regex.Replace(content, "(?<!\r)\n", lineEnding, RegexOptions.None, TimeSpan.FromSeconds(10));
     }
 
-    // This is to prevent you from accidentally checking in with GenerateBaselines = true
-    [Fact]
-    public void GenerateBaselinesMustBeFalse()
-    {
-        Assert.False(GenerateBaselines, "GenerateBaselines should be set back to false before you check in!");
-    }
-
-    private class ConfigureCodeRenderingPhase : RazorEnginePhaseBase
-    {
-        public ConfigureCodeRenderingPhase(string lineEnding)
-        {
-            LineEnding = lineEnding;
-        }
-
-        public string LineEnding { get; }
-
-        protected override void ExecuteCore(RazorCodeDocument codeDocument)
-        {
-            codeDocument.Items[CodeRenderingContext.SuppressUniqueIds] = "test";
-            codeDocument.Items[CodeRenderingContext.NewLineString] = LineEnding;
-        }
-    }
-
     // 'Default' imports won't have normalized line-endings, which is unfriendly for testing.
-    private class NormalizedDefaultImportFeature : RazorProjectEngineFeatureBase, IImportProjectFeature
+    private sealed class NormalizedDefaultImportFeature(IImportProjectFeature innerFeature, string lineEnding) : RazorProjectEngineFeatureBase, IImportProjectFeature
     {
-        private readonly IImportProjectFeature _inner;
-        private readonly string _lineEnding;
-
-        public NormalizedDefaultImportFeature(IImportProjectFeature inner, string lineEnding)
-        {
-            _inner = inner;
-            _lineEnding = lineEnding;
-        }
+        private readonly IImportProjectFeature _innerFeature = innerFeature;
+        private readonly string _lineEnding = lineEnding;
 
         protected override void OnInitialized()
         {
-            if (_inner != null)
-            {
-                _inner.ProjectEngine = ProjectEngine;
-            }
+            _innerFeature.Initialize(ProjectEngine);
         }
 
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
+        public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
         {
-            if (_inner == null)
+            using var innerImports = new PooledArrayBuilder<RazorProjectItem>();
+            _innerFeature.CollectImports(projectItem, ref innerImports.AsRef());
+
+            if (innerImports.Count == 0)
             {
-                return Array.Empty<RazorProjectItem>();
+                return;
             }
 
-            var normalizedImports = new List<RazorProjectItem>();
-            var imports = _inner.GetImports(projectItem);
-            foreach (var import in imports)
+            foreach (var import in innerImports)
             {
                 if (import.Exists)
                 {
-                    var text = string.Empty;
+                    string text;
+
                     using (var stream = import.Read())
                     using (var reader = new StreamReader(stream))
                     {
@@ -760,18 +757,16 @@ public abstract class IntegrationTestBase
 
                     // It's important that we normalize the newlines in the default imports. The default imports will
                     // be created with Environment.NewLine, but we need to normalize to `\r\n` so that the indices
-                    // are the same on xplat.
+                    // are the same on other platforms.
                     var normalizedText = NormalizeNewLines(text, _lineEnding);
                     var normalizedImport = new TestRazorProjectItem(import.FilePath, import.PhysicalPath, import.RelativePhysicalPath, import.BasePath)
                     {
                         Content = normalizedText
                     };
 
-                    normalizedImports.Add(normalizedImport);
+                    imports.Add(normalizedImport);
                 }
             }
-
-            return normalizedImports;
         }
     }
 }

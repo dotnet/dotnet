@@ -48,13 +48,13 @@ public class InstallationContext
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Part of the public API")]
     public string[] GetVisualStudioCommonLocations(string visualStudioDirectory)
     {
-        return new[]
-        {
+        return
+        [
             Path.Combine(visualStudioDirectory, PrivateAssembliesDirName),
             Path.Combine(visualStudioDirectory, PublicAssembliesDirName),
             Path.Combine(visualStudioDirectory, "CommonExtensions", "Microsoft", "TestWindow"),
             Path.Combine(visualStudioDirectory, "CommonExtensions", "Microsoft", "TeamFoundation", "Team Explorer"),
             visualStudioDirectory
-        };
+        ];
     }
 }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
             {
                 reference =>
                 {
-                    Assert.Equal(expected: "IncrementCount", actual: reference.Code);
+                    Assert.Equal(expected: "<button class=\"btn btn-primary\" @onclick=\"IncrementCount\">Click me</button>", actual: reference.Code);
                     Assert.Equal(expected: "Counter.razor", Path.GetFileName(reference.DocumentName));
                 },
                 reference =>
@@ -75,17 +75,17 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
             reference =>
             {
                 Assert.Equal("Index.razor", reference.DocumentName);
-                Assert.Equal("Title", reference.Code);
+                Assert.Equal("<SurveyPrompt Title=\"How is Blazor working for you?\" />", reference.Code);
+            },
+            reference =>
+            {
+                Assert.Equal("SurveyPrompt.razor", reference.DocumentName);
+                Assert.Equal("<strong>@Title</strong>", reference.Code);
             },
             reference =>
             {
                 Assert.Equal("SurveyPrompt.razor", reference.DocumentName);
                 Assert.Equal("public string? Title { get; set; }", reference.Code);
-            },
-            reference =>
-            {
-                Assert.Equal("SurveyPrompt.razor", reference.DocumentName);
-                Assert.Equal("Title", reference.Code);
             }
         );
     }

@@ -2,16 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
+using System.Numerics;
 using System.Security.Cryptography;
-using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Math;
-using Test.Utility.Signing;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Xunit;
-using BcGeneralName = Org.BouncyCastle.Asn1.X509.GeneralName;
-using BcIssuerSerial = Org.BouncyCastle.Asn1.X509.IssuerSerial;
 using IssuerSerial = NuGet.Packaging.Signing.IssuerSerial;
+using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
+using TestIssuerSerial = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.IssuerSerial;
 
 namespace NuGet.Packaging.Test
 {
@@ -33,7 +32,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WhenCertificateNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => IssuerSerial.Create(certificate: null));
 
             Assert.Equal("certificate", exception.ParamName);
@@ -42,9 +41,9 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WithCertificate_InitializesFields()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var issuerSerial = IssuerSerial.Create(certificate);
+                IssuerSerial issuerSerial = IssuerSerial.Create(certificate);
 
                 Assert.Equal(1, issuerSerial.GeneralNames.Count);
                 Assert.Equal(certificate.IssuerName.Name, issuerSerial.GeneralNames[0].DirectoryName.Name);
@@ -55,14 +54,14 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WithSmallSerialNumber_ReturnsIssuerSerial()
         {
-            using (var certificate = SigningTestUtility.GenerateCertificate("test", generator =>
+            using (X509Certificate2 certificate = SigningTestUtility.GenerateCertificate("test", generator =>
                 {
-                    var bytes = BitConverter.GetBytes(1);
+                    byte[] bytes = BitConverter.GetBytes(1);
                     Array.Reverse(bytes);
                     generator.SetSerialNumber(bytes);
                 }))
             {
-                var issuerSerial = IssuerSerial.Create(certificate);
+                IssuerSerial issuerSerial = IssuerSerial.Create(certificate);
 
                 SigningTestUtility.VerifySerialNumber(certificate, issuerSerial);
             }
@@ -71,14 +70,14 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WithLargePositiveSerialNumber_ReturnsIssuerSerial()
         {
-            using (var certificate = SigningTestUtility.GenerateCertificate("test", generator =>
+            using (X509Certificate2 certificate = SigningTestUtility.GenerateCertificate("test", generator =>
                 {
-                    var bytes = BitConverter.GetBytes(long.MaxValue);
+                    byte[] bytes = BitConverter.GetBytes(long.MaxValue);
                     Array.Reverse(bytes);
                     generator.SetSerialNumber(bytes);
                 }))
             {
-                var issuerSerial = IssuerSerial.Create(certificate);
+                IssuerSerial issuerSerial = IssuerSerial.Create(certificate);
 
                 SigningTestUtility.VerifySerialNumber(certificate, issuerSerial);
             }
@@ -94,17 +93,20 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithValidInput_ReturnsIssuerSerial()
         {
-            var directoryName = new X509Name("CN=test");
-            var generalNames = new GeneralNames(
-                new BcGeneralName(BcGeneralName.DirectoryName, directoryName));
-            var bcIssuerSerial = new BcIssuerSerial(generalNames, new DerInteger(BigInteger.One));
-            var bytes = bcIssuerSerial.GetDerEncoded();
+            X500DistinguishedName directoryName = new("CN=test");
+            TestGeneralName testGeneralName = new(directoryName: directoryName.RawData);
+            TestIssuerSerial testIssuerSerial = new(new[] { testGeneralName }, BigInteger.One);
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var issuerSerial = IssuerSerial.Read(bytes);
+            testIssuerSerial.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+
+            IssuerSerial issuerSerial = IssuerSerial.Read(bytes);
 
             Assert.Equal(1, issuerSerial.GeneralNames.Count);
-            Assert.Equal(directoryName.ToString(), issuerSerial.GeneralNames[0].DirectoryName.Name);
-            Assert.Equal(bcIssuerSerial.Serial.Value.ToByteArray(), issuerSerial.SerialNumber);
+            Assert.Equal(directoryName.Name, issuerSerial.GeneralNames[0].DirectoryName.Name);
+            Assert.Equal(testIssuerSerial.SerialNumber.ToByteArray(), issuerSerial.SerialNumber);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<Project>
 
-  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
+  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(DotNetBuildSourceOnly)' != 'true'">
     <PropertyGroup>
       <VSSetupDir>$(ArtifactsDir)VSSetup\</VSSetupDir>
       <RazorExtensionVSIXName>Microsoft.VisualStudio.RazorExtension.vsix</RazorExtensionVSIXName>
@@ -10,66 +10,32 @@
       Condition="!Exists('$(VSSetupDir)$(Configuration)\$(RazorExtensionVSIXName)')" />
   </Target>
 
-  <Target Name="_ZipLanguageServerBinaries" AfterTargets="Pack" Condition="'$(ArcadeBuildFromSource)' != 'true'">
-    <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
-    <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj"
-        Targets="_GetPackageVersionInfo"
-        SkipNonexistentProjects="false">
-      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedPackageVersionInfo" />
-    </MSBuild>
-
-    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-    <PropertyGroup>
-      <RidsPublishDir>$(ArtifactsDir)LanguageServer\$(Configuration)\</RidsPublishDir>
-      <ZipOutputDir>$(RidsPublishDir)</ZipOutputDir>
-      <_PackageVersion>@(_ResolvedPackageVersionInfo->'%(PackageVersion)')</_PackageVersion>
-      <_DotNetPath>$(DOTNET_HOST_PATH)</_DotNetPath>
-      <_DotNetPath Condition="'$(_DotNetPath)' == ''">dotnet</_DotNetPath>
-    </PropertyGroup>
-
+  <!--
+    Write a list of assembly names and versions that the insertion tool uses to update assembly versions in DevDiv.
+    We want to update these lines in VS's /src/ProductData/AssemblyVersions.tt:
+      const string RazorRuntimeAssemblyVersion = "7.0.0.0";
+      const string RazorToolingAssemblyVersion = "7.0.0.0";
+    Hence we write into VSSetup/DevDivPackages/DependentAssemblyVersions.csv:
+      RazorRuntimeAssembly,8.0.0.0
+      RazorToolingAssembly,8.0.0.0
+  -->
+  <PropertyGroup>
+    <_DependentAssemblyVersionsFile>$(VisualStudioBuildPackagesDir)DependentAssemblyVersions.csv</_DependentAssemblyVersionsFile>
+    <_RazorAssemblyVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</_RazorAssemblyVersion>
+  </PropertyGroup>
+  <Target Name="_GenerateDependentAssemblyVersions"
+          AfterTargets="GenerateVisualStudioInsertionManifests"
+          Inputs="$(_RazorAssemblyVersion)"
+          Outputs="$(_DependentAssemblyVersionsFile)"
+          Condition="'$(OS)'=='WINDOWS_NT' AND '$(DotNetBuildSourceOnly)' != 'true'">
     <ItemGroup>
-      <LanguageServiceBinaryDir Include="$([System.IO.Directory]::GetDirectories(&quot;$(RidsPublishDir)&quot;))" />
-      <LanguageServiceBinary Include="@(LanguageServiceBinaryDir)">
-        <SourceDir>%(LanguageServiceBinaryDir.Identity)</SourceDir>
-        <ZipFile>$(ZipOutputDir)RazorLanguageServer-%(LanguageServiceBinaryDir.Filename)-$(_PackageVersion).zip</ZipFile>
-      </LanguageServiceBinary>
+      <_AssemblyVersionEntry Include="RazorRuntimeAssembly" />
+      <_AssemblyVersionEntry Include="RazorToolingAssembly" />
     </ItemGroup>
-
-    <MakeDir Directories="$(ZipOutputDir)" />
-    <Delete Files="%(LanguageServiceBinary.ZipFile)" />
-
-    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-    <ZipDirectory SourceDirectory="%(LanguageServiceBinary.SourceDir)" DestinationFile="%(LanguageServiceBinary.ZipFile)" />
-  </Target>
-
-  <Target Name="_ZipDevKitTelemetryBinaries" AfterTargets="_ZipLanguageServerBinaries" Condition="'$(ArcadeBuildFromSource)' != 'true'">
-    <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
-    <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.VisualStudio.DevKit.Razor\Microsoft.VisualStudio.DevKit.Razor.csproj"
-        Targets="_GetPackageVersionInfo"
-        SkipNonexistentProjects="false">
-      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedPackageVersionInfo" />
-    </MSBuild>
-
-    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-    <PropertyGroup>
-      <RidsPublishDir>$(ArtifactsDir)DevKitTelemetry\$(Configuration)\</RidsPublishDir>
-      <ZipOutputDir>$(RidsPublishDir)</ZipOutputDir>
-      <_DotNetPath>$(DOTNET_HOST_PATH)</_DotNetPath>
-      <_DotNetPath Condition="'$(_DotNetPath)' == ''">dotnet</_DotNetPath>
-    </PropertyGroup>
-
+    <MakeDir Directories="$(VisualStudioBuildPackagesDir)"/>
+    <WriteLinesToFile Lines="@(_AssemblyVersionEntry->'%(Identity),$(_RazorAssemblyVersion)')" File="$(_DependentAssemblyVersionsFile)" Overwrite="true"/>
     <ItemGroup>
-      <DevKitTelemetryBinaryDir Include="$([System.IO.Directory]::GetDirectories(&quot;$(RidsPublishDir)&quot;))" />
-      <DevKitTelemetryBinary Include="@(DevKitTelemetryBinaryDir)">
-        <SourceDir>%(DevKitTelemetryBinaryDir.Identity)</SourceDir>
-        <ZipFile>$(ZipOutputDir)DevKitTelemetry-%(DevKitTelemetryBinaryDir.Filename)-$(_PackageVersion).zip</ZipFile>
-      </DevKitTelemetryBinary>
+      <FileWrites Include="$(_DependentAssemblyVersionsFile)"/>
     </ItemGroup>
-
-    <MakeDir Directories="$(ZipOutputDir)" />
-    <Delete Files="%(DevKitTelemetryBinary.ZipFile)" />
-
-    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-    <ZipDirectory SourceDirectory="%(DevKitTelemetryBinary.SourceDir)" DestinationFile="%(DevKitTelemetryBinary.ZipFile)" />
   </Target>
 </Project>

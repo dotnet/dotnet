@@ -176,7 +176,7 @@ namespace Microsoft.Build.Experimental
                 bool serverIsAlreadyRunning = ServerIsRunning();
                 if (KnownTelemetry.PartialBuildTelemetry != null)
                 {
-                    KnownTelemetry.PartialBuildTelemetry.InitialServerState = serverIsAlreadyRunning ? "hot" : "cold";
+                    KnownTelemetry.PartialBuildTelemetry.InitialMSBuildServerState = serverIsAlreadyRunning ? "hot" : "cold";
                 }
                 if (!serverIsAlreadyRunning)
                 {
@@ -467,13 +467,14 @@ namespace Microsoft.Build.Experimental
 
             try
             {
-                string[] msBuildServerOptions = new string[] {
+                string[] msBuildServerOptions =
+                [
                     "/nologo",
                     "/nodemode:8"
-                };
+                ];
                 NodeLauncher nodeLauncher = new NodeLauncher();
                 CommunicationsUtilities.Trace("Starting Server...");
-                Process msbuildProcess = nodeLauncher.Start(_msbuildLocation, string.Join(" ", msBuildServerOptions), nodeId: 0);
+                using Process msbuildProcess = nodeLauncher.Start(_msbuildLocation, string.Join(" ", msBuildServerOptions), nodeId: 0);
                 CommunicationsUtilities.Trace("Server started with PID: {0}", msbuildProcess?.Id);
             }
             catch (Exception ex)
@@ -520,7 +521,7 @@ namespace Microsoft.Build.Experimental
                 ? null
                 : new PartialBuildTelemetry(
                     startedAt: KnownTelemetry.PartialBuildTelemetry.StartAt.GetValueOrDefault(),
-                    initialServerState: KnownTelemetry.PartialBuildTelemetry.InitialServerState,
+                    initialServerState: KnownTelemetry.PartialBuildTelemetry.InitialMSBuildServerState,
                     serverFallbackReason: KnownTelemetry.PartialBuildTelemetry.ServerFallbackReason);
 
             return new ServerNodeBuildCommand(
@@ -618,13 +619,16 @@ namespace Microsoft.Build.Experimental
             while (tryAgain && sw.ElapsedMilliseconds < timeoutMilliseconds)
             {
                 tryAgain = false;
-                try
+
+
+                if (NodeProviderOutOfProcBase.TryConnectToPipeStream(
+                    _nodeStream, _pipeName, _handshake, Math.Max(1, timeoutMilliseconds - (int)sw.ElapsedMilliseconds), out HandshakeResult result))
                 {
-                    NodeProviderOutOfProcBase.ConnectToPipeStream(_nodeStream, _pipeName, _handshake, Math.Max(1, timeoutMilliseconds - (int)sw.ElapsedMilliseconds));
+                    return true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    if (ex is not TimeoutException && sw.ElapsedMilliseconds < timeoutMilliseconds)
+                    if (result.Status is not HandshakeStatus.Timeout && sw.ElapsedMilliseconds < timeoutMilliseconds)
                     {
                         CommunicationsUtilities.Trace("Retrying to connect to server after {0} ms", sw.ElapsedMilliseconds);
                         // This solves race condition for time in which server started but have not yet listen on pipe or
@@ -634,14 +638,14 @@ namespace Microsoft.Build.Experimental
                     }
                     else
                     {
-                        CommunicationsUtilities.Trace("Failed to connect to server: {0}", ex);
+                        CommunicationsUtilities.Trace("Failed to connect to server: {0}", result.ErrorMessage);
                         _exitResult.MSBuildClientExitType = MSBuildClientExitType.UnableToConnect;
                         return false;
                     }
                 }
             }
 
-            return true;
+            return false;
         }
 
         private void WritePacket(Stream nodeStream, INodePacket packet)

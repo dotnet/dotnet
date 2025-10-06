@@ -24,8 +24,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestCategory("Windows-Review")]
 public class BlameDataCollectorTests : AcceptanceTestBase
 {
-    public const string NETCOREANDFX = "net462;net472;netcoreapp3.1";
-    public const string NET50 = "net5.0";
+    public const string NETCOREANDFX = "net462;net472;net8.0";
+    public const string NET60 = "net8.0";
     private readonly string _procDumpPath;
 
     public BlameDataCollectorTests()
@@ -107,8 +107,10 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    // This tests .net runner and .net framework runner, together with .net framework testhost
     [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    // .NET does not support crash dump on exit
+    // [NetCoreTargetFrameworkDataSource]
     public void BlameDataCollectorShouldOutputDumpFileWhenNoCrashOccursButCollectAlwaysIsEnabled(RunnerInfo runnerInfo)
     {
 
@@ -130,9 +132,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net462;net472;netcoreapp3.1;net5.0")]
+    [NetCoreRunner("net462;net472;net8.0;net9.0")]
     // should make no difference, keeping for easy debug
-    // [NetFrameworkRunner("net462;net472;netcoreapp3.1;net5.0")]
+    // [NetFrameworkRunner("net462;net472;net8.0;net9.0")]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -152,10 +154,10 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    // net5.0 does not support dump on exit
-    [NetCoreRunner("net462;net472;netcoreapp3.1")]
+    // net8.0 does not support dump on exit
+    [NetCoreRunner("net462;net472")]
     // should make no difference, keeping for easy debug
-    // [NetFrameworkRunner("net462;net472;netcoreapp3.1")]
+    // [NetFrameworkRunner("net462;net472")]
 
     public void CrashDumpWhenThereIsNoTimeout(RunnerInfo runnerInfo)
     {
@@ -176,10 +178,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    // net5.0 does not support dump on exit
-    [NetCoreRunner("net462;net472;netcoreapp3.1")]
-    // should make no difference, keeping for easy debug
-    // [NetFrameworkRunner("net462;net472;netcoreapp3.1")]
+    // .NET tfms do not support dump on exit, but runner does
+    [NetCoreRunner("net462;net472")]
+    // [NetFrameworkRunner("net462;net472")]
 
     public void CrashDumpOnExit(RunnerInfo runnerInfo)
     {
@@ -200,9 +201,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net462;net472;netcoreapp3.1;net5.0")]
+    [NetCoreRunner("net462;net472;net8.0;net9.0")]
     // should make no difference, keeping for easy debug
-    // [NetFrameworkRunner("net462;net472;netcoreapp3.1;net5.0")]
+    // [NetFrameworkRunner("net462;net472;net8.0;net9.0")]
     public void CrashDumpOnStackOverflow(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -222,7 +223,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner(NET50)]
+    [NetCoreRunner(NET60)]
     // should make no difference, keeping for easy debug
     // [NetFrameworkRunner(NET50)]
     public void CrashDumpChildProcesses(RunnerInfo runnerInfo)
@@ -238,9 +239,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net462;net472;netcoreapp3.1;net5.0")]
+    [NetCoreRunner("net462;net472;net8.0;net9.0")]
     // should make no difference, keeping for easy debug
-    // [NetFrameworkRunner("net462;net472;netcoreapp3.1;net5.0")]
+    // [NetFrameworkRunner("net462;net472;net8.0;net9.0")]
     public void HangDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -304,7 +305,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     private void ValidateDump(int expectedDumpCount = 1)
     {
-        var attachments = StdOutWithWhiteSpace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+        var attachments = StdOutWithWhiteSpace.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries)
             .SkipWhile(l => !l.Contains("Attachments:")).Skip(1)
             .Where(l => !string.IsNullOrWhiteSpace(l))
             .ToList();

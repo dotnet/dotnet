@@ -1,13 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -47,7 +47,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return FileKinds.IsComponent(codeDocument.GetFileKind());
+        return codeDocument.FileKind.IsComponent();
     }
 
     protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
@@ -62,98 +62,88 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         ClassDeclarationIntermediateNode @class,
         MethodDeclarationIntermediateNode method)
     {
-        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var computedNamespace, out var computedNamespaceSpan) ||
-            !TryComputeClassName(codeDocument, out var computedClass))
+        if (!codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var computedNamespace, out var computedNamespaceSpan))
         {
-            // If we can't compute a nice namespace (no relative path) then just generate something
-            // mangled.
             computedNamespace = FallbackRootNamespace;
+        }
+
+        if (!TryComputeClassName(codeDocument, out var computedClass))
+        {
             var checksum = ChecksumUtilities.BytesToString(codeDocument.Source.Text.GetChecksum());
             computedClass = $"AspNetCore_{checksum}";
         }
 
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         if (char.IsLower(computedClass, 0))
         {
             // We don't allow component names to start with a lowercase character.
-            documentNode.Diagnostics.Add(
+            documentNode.AddDiagnostic(
                 ComponentDiagnosticFactory.Create_ComponentNamesCannotStartWithLowerCase(computedClass, documentNode.Source));
         }
 
         if (MangleClassNames)
         {
-            computedClass = ComponentMetadata.MangleClassName(computedClass);
+            computedClass = ComponentHelpers.MangleClassName(computedClass);
         }
 
-        @class.Annotations[CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext;
+        @class.NullableContext = true;
 
-        @namespace.Content = computedNamespace;
+        @namespace.Name = computedNamespace;
         @namespace.Source = computedNamespaceSpan;
-        @class.ClassName = computedClass;
-        @class.Modifiers.Clear();
-        @class.Modifiers.Add("public");
-        @class.Modifiers.Add("partial");
+        @class.Name = computedClass;
+        @class.Modifiers = CommonModifiers.PublicPartial;
 
-        if (FileKinds.IsComponentImport(codeDocument.GetFileKind()))
+        if (codeDocument.FileKind.IsComponentImport())
         {
             // We don't want component imports to be considered as real component.
             // But we still want to generate code for it so we can get diagnostics.
-            @class.BaseType = typeof(object).FullName;
+            @class.BaseType = new BaseTypeWithModel("object");
 
             method.ReturnType = "void";
-            method.MethodName = "Execute";
-            method.Modifiers.Clear();
-            method.Modifiers.Add("protected");
-
-            method.Parameters.Clear();
+            method.Name = "Execute";
+            method.Modifiers = CommonModifiers.Protected;
+            method.Parameters = [];
         }
         else
         {
-            @class.BaseType = "global::" + ComponentsApi.ComponentBase.FullTypeName;
+            @class.BaseType = new BaseTypeWithModel("global::" + ComponentsApi.ComponentBase.FullTypeName);
 
             // Constrained type parameters are only supported in Razor language versions v6.0
-            var razorLanguageVersion = codeDocument.GetParserOptions()?.Version ?? RazorLanguageVersion.Latest;
+            var razorLanguageVersion = codeDocument.ParserOptions.LanguageVersion;
             var directiveType = razorLanguageVersion >= RazorLanguageVersion.Version_6_0
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;
-            var typeParamReferences = documentNode.FindDirectiveReferences(directiveType);
-            for (var i = 0; i < typeParamReferences.Count; i++)
+
+            using var typeParameters = new PooledArrayBuilder<TypeParameter>();
+
+            foreach (var typeParamReference in documentNode.FindDirectiveReferences(directiveType))
             {
-                var typeParamNode = (DirectiveIntermediateNode)typeParamReferences[i].Node;
+                var typeParamNode = typeParamReference.Node;
                 if (typeParamNode.HasDiagnostics)
                 {
                     continue;
                 }
 
                 // The first token is the type parameter's name, the rest are its constraints, if any.
-                var typeParameter = typeParamNode.Tokens.First();
+                var name = typeParamNode.Tokens.First();
                 var constraints = typeParamNode.Tokens.Skip(1).FirstOrDefault();
 
-                @class.TypeParameters.Add(new TypeParameter()
-                {
-                    ParameterName = typeParameter.Content,
-                    ParameterNameSource = typeParameter.Source,
-                    Constraints = constraints?.Content,
-                    ConstraintsSource = constraints?.Source,
-                });
+                typeParameters.Add(new(name.Content, name.Source, constraints?.Content, constraints?.Source));
             }
 
-            method.ReturnType = "void";
-            method.MethodName = ComponentsApi.ComponentBase.BuildRenderTree;
-            method.Modifiers.Clear();
-            method.Modifiers.Add("protected");
-            method.Modifiers.Add("override");
+            @class.TypeParameters = typeParameters.ToImmutableAndClear();
 
-            method.Parameters.Clear();
-            method.Parameters.Add(new MethodParameter()
-            {
-                ParameterName = ComponentsApi.RenderTreeBuilder.BuilderParameter,
-                TypeName = $"global::{ComponentsApi.RenderTreeBuilder.FullTypeName}",
-            });
+            method.ReturnType = "void";
+            method.Name = ComponentsApi.ComponentBase.BuildRenderTree;
+            method.Modifiers = CommonModifiers.ProtectedOverride;
+
+            method.Parameters = [new(
+                name: ComponentsApi.RenderTreeBuilder.BuilderParameter,
+                type: $"global::{ComponentsApi.RenderTreeBuilder.FullTypeName}")];
         }
     }
 
-    private bool TryComputeClassName(RazorCodeDocument codeDocument, out string className)
+    private static bool TryComputeClassName(RazorCodeDocument codeDocument, [NotNullWhen(true)] out string? className)
     {
         className = null;
         if (codeDocument.Source.FilePath == null || codeDocument.Source.RelativePath == null)

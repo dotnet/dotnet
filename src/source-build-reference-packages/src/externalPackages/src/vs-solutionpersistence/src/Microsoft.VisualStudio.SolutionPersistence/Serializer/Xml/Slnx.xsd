@@ -1,0 +1,119 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Solution">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Configurations" type="Configurations" minOccurs="0"/>
+                <xs:element name="Project" type="Project" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="Folder" type="Folder" minOccurs="0" maxOccurs="unbounded" />
+                <xs:group ref="PropertiesGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+            <xs:attribute name="Description"/>
+            <xs:attribute name="SolutionId" />
+            <xs:attribute name="VisualStudioVersion" />
+            <xs:attribute name="MinimalVisualStudioVersion" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Configurations">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="BuildType" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Name" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name ="Platform" minOccurs="0" maxOccurs="unbounded" >
+                <xs:complexType>
+                    <xs:attribute name="Name" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ProjectType" type="ProjectType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="ProjectType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:group ref="ConfigurationRulesGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="TypeId" type="xs:string" />
+        <xs:attribute name="Name" type="xs:string" />
+        <xs:attribute name="Extension" type="xs:string" />
+        <xs:attribute name="BasedOn" type="xs:string" />
+        <xs:attribute name="IsBuildable" type="xs:string" default="True" />
+    </xs:complexType>
+
+    <xs:complexType name="Folder">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="File" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Path" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Project" type="Project" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:group ref="PropertiesGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="Name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Project">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="BuildDependency" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Project" use="required" />
+                </xs:complexType>
+            </xs:element>
+            <xs:group ref="ConfigurationRulesGroup" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:group ref="PropertiesGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="Path" type="xs:string" use="required"/>
+        <xs:attribute name="Type" type="xs:string" />
+        <xs:attribute name="DisplayName" type="xs:string" />
+    </xs:complexType>
+
+    <xs:group name="PropertiesGroup">
+        <xs:choice>
+            <xs:element name="Properties">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:attribute name="Name" type="xs:string" use="required" />
+                                <xs:attribute name="Value" type="xs:string" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="Name" use="required" />
+                    <xs:attribute name="Scope" fixed="PostLoad" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:group>
+
+    <xs:group name="ConfigurationRulesGroup">
+        <xs:choice>
+            <xs:element name="BuildType" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Solution" type="xs:string" use="optional" />
+                    <xs:attribute name="Project" type="xs:string" use="optional" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Platform" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Solution" type="xs:string" use="optional" />
+                    <xs:attribute name="Project" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Build" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Solution" type="xs:string" use="optional" />
+                    <xs:attribute name="Project" type="xs:string" use="optional" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Deploy" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Solution" type="xs:string" use="optional" />
+                    <xs:attribute name="Project" type="xs:string" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:group>
+</xs:schema>

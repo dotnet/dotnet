@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -7,7 +7,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,8 +23,8 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 3 } // <te[||]st1></test1>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -49,22 +49,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 3 } // <te[||]st1></test1>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 6 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 9 },
-                End = new Position { Line = 1, Character = 14 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -73,7 +65,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -90,22 +82,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 6 } // <test1[||]></test1>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 6) // <test1[||]></test1>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 6 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 9 },
-                End = new Position { Line = 1, Character = 14 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -114,7 +98,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -131,22 +115,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 9 } // <test1></[||]test1>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 9) // <test1></[||]test1>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 6 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 9 },
-                End = new Position { Line = 1, Character = 14 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -155,7 +131,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -172,8 +148,8 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 0, Character = 1 } // @[||]addTagHelper *
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(0, 1) // @[||]addTagHelper *
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -198,8 +174,8 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 3 } // <te[||]st1 />
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 3) // <te[||]st1 />
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -224,22 +200,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 1 } // <[||]test1><test1></test1></test1>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 1) // <[||]test1><test1></test1></test1>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 6 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 24 },
-                End = new Position { Line = 1, Character = 29 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5),
+            LspFactory.CreateSingleLineRange(line: 1, character: 24, length: 5)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -248,7 +216,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -265,22 +233,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 3 } // <bo[||]dy></body>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy></body>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 5 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 8 },
-                End = new Position { Line = 1, Character = 12 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
+            LspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -289,7 +249,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -306,22 +266,14 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 8 } // <body></[||]body>
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 8) // <body></[||]body>
         };
 
-        var expectedRanges = new Range[]
+        var expectedRanges = new[]
         {
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 1 },
-                End = new Position { Line = 1, Character = 5 }
-            },
-            new Range
-            {
-                Start = new Position { Line = 1, Character = 8 },
-                End = new Position { Line = 1, Character = 12 }
-            }
+            LspFactory.CreateSingleLineRange(line: 1, character: 1, length: 4),
+            LspFactory.CreateSingleLineRange(line: 1, character: 8, length: 4)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -330,7 +282,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -347,8 +299,8 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
-            Position = new Position { Line = 1, Character = 3 } // <bo[||]dy />
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
+            Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy />
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -363,18 +315,18 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
     public void VerifyWordPatternCorrect()
     {
         // Assert
-        Assert.True(Regex.Match("Test", LinkedEditingRangeEndpoint.WordPattern).Length == 4);
-        Assert.True(Regex.Match("!Test", LinkedEditingRangeEndpoint.WordPattern).Length == 5);
-        Assert.True(Regex.Match("!Test.Test2", LinkedEditingRangeEndpoint.WordPattern).Length == 11);
+        Assert.True(Regex.Match("Test", LinkedEditingRangeHelper.WordPattern).Length == 4);
+        Assert.True(Regex.Match("!Test", LinkedEditingRangeHelper.WordPattern).Length == 5);
+        Assert.True(Regex.Match("!Test.Test2", LinkedEditingRangeHelper.WordPattern).Length == 11);
 
-        Assert.True(Regex.Match("Te>st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te/st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te\\st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te!st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te>st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te/st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te\\st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te!st", LinkedEditingRangeHelper.WordPattern).Length != 5);
         Assert.True(Regex.Match("""
             Te
             st
             """,
-            LinkedEditingRangeEndpoint.WordPattern).Length != 4 + Environment.NewLine.Length);
+            LinkedEditingRangeHelper.WordPattern).Length != 4 + Environment.NewLine.Length);
     }
 }

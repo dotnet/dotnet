@@ -57,7 +57,7 @@ type public FSharpProjectOptions =
         // Note that this may not reduce to just the project directory, because there may be two projects in the same directory.
         ProjectFileName: string
 
-        /// This is the unique identifier for the project, it is case sensitive. If it's None, will key off of ProjectFileName in our caching.
+        /// This is the unique identifier for the project, it is case-sensitive. If it's None, will key off of ProjectFileName in our caching.
         ProjectId: string option
 
         /// The files in the project
@@ -192,7 +192,7 @@ type public FSharpSymbolUse =
 
     // For internal use only
     internal new:
-        denv: DisplayEnv * symbol: FSharpSymbol * inst: TyparInstantiation * itemOcc: ItemOccurence * range: range ->
+        denv: DisplayEnv * symbol: FSharpSymbol * inst: TyparInstantiation * itemOcc: ItemOccurrence * range: range ->
             FSharpSymbolUse
 
 /// Represents the checking context implied by the ProjectOptions
@@ -269,6 +269,9 @@ type public FSharpCheckFileResults =
     /// in the documentation for compiler service.
     member DependencyFiles: string[]
 
+    member TryGetCapturedType: range -> FSharpType option
+    member TryGetCapturedDisplayContext: range -> FSharpDisplayContext option
+
     /// <summary>Get the items for a declaration list</summary>
     ///
     /// <param name="parsedFileResults">
@@ -290,13 +293,17 @@ type public FSharpCheckFileResults =
     /// <param name="completionContextAtPos">
     ///    Completion context for a particular position computed in advance.
     /// </param>
+    /// <param name="genBodyForOverriddenMeth">
+    ///    A switch to determine whether to generate a default implementation body for overridden method when completing.
+    /// </param>
     member GetDeclarationListInfo:
         parsedFileResults: FSharpParseFileResults option *
         line: int *
         lineText: string *
         partialName: PartialLongName *
         ?getAllEntities: (unit -> AssemblySymbol list) *
-        ?completionContextAtPos: (pos * CompletionContext option) ->
+        ?completionContextAtPos: (pos * CompletionContext option) *
+        ?genBodyForOverriddenMeth: bool ->
             DeclarationListInfo
 
     /// <summary>Get the items for a declaration list in FSharpSymbol format</summary>
@@ -317,12 +324,16 @@ type public FSharpCheckFileResults =
     /// <param name="getAllEntities">
     ///    Function that returns all entities from current and referenced assemblies.
     /// </param>
+    /// <param name="genBodyForOverriddenMeth">
+    ///    A switch to determine whether to generate a default implementation body for overridden method when completing.
+    /// </param>
     member GetDeclarationListSymbols:
         parsedFileResults: FSharpParseFileResults option *
         line: int *
         lineText: string *
         partialName: PartialLongName *
-        ?getAllEntities: (unit -> AssemblySymbol list) ->
+        ?getAllEntities: (unit -> AssemblySymbol list) *
+        ?genBodyForOverriddenMeth: bool ->
             FSharpSymbolUse list list
 
     /// <summary>Compute a formatted tooltip for the given keywords</summary>
@@ -454,7 +465,7 @@ type public FSharpCheckFileResults =
         tcGlobals: TcGlobals *
         isIncompleteTypeCheckEnvironment: bool *
         builder: IncrementalBuilder option *
-        projectOptions: FSharpProjectOptions *
+        projectOptions: FSharpProjectOptions option *
         dependencyFiles: string[] *
         creationErrors: FSharpDiagnostic[] *
         parseErrors: FSharpDiagnostic[] *
@@ -554,7 +565,7 @@ type public FSharpCheckProjectResults =
             AccessorDomain *
             CheckedImplFile list option *
             string[] *
-            FSharpProjectOptions) option ->
+            FSharpProjectOptions option) option ->
             FSharpCheckProjectResults
 
 module internal ParseAndCheckFile =
@@ -585,7 +596,6 @@ module internal ParseAndCheckFile =
             reportErrors: bool *
             mainInputFileName: string *
             diagnosticsOptions: FSharpDiagnosticOptions *
-            sourceText: ISourceText *
             suggestNamesForErrors: bool *
             flatErrors: bool ->
                 DiagnosticsHandler

@@ -193,4 +193,8 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
   <data name="PropertyDoesNotHaveSingleValue" xml:space="preserve">
     <value>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</value>
   </data>
+  <data name="ItemValuesAreDifferentAcrossTargetFrameworks" xml:space="preserve">
+    <value>'{0}' items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for '{0}' items.</value>
+    <comment>{0} - MSBuild item type. For example, NuGetAuditSuppress</comment>
+  </data>
 </root>

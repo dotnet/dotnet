@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Microsoft.IdentityModel.Tokens.TokenValidationResult" Collapsed="true">
+    <Position X="7.75" Y="7" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABEAIAABEEAAEAIAAAAAAAABEQAAAEEACABAAAAkIoA=</HashCode>
+      <FileName>Validation\TokenValidationResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.IssuerValidationResult">
+    <Position X="12.5" Y="7" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Validation\IssuerValidationResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.ExceptionDetail">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAEAAEAAAAAAAAAEAABAAAAAA=</HashCode>
+      <FileName>Validation\ExceptionDetail.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MessageDetail" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.ValidationResult">
+    <Position X="8.5" Y="3.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAJAAAAAAAAAAAgAIAABAAgAAAAABEBBAAAAAAA=</HashCode>
+      <FileName>Validation\ValidationResult.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ExceptionDetail" />
+      <Property Name="CallContext" />
+      <Property Name="ValidationFailureType" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="LogDetails" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.LogDetail">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEAAA=</HashCode>
+      <FileName>Validation\LogDetail.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MessageDetail" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.ValidationFailureType" Collapsed="true">
+    <Position X="13.5" Y="5.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAIAAAQAAABAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Validation\ValidationFailureType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.MessageDetail">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAEIAAIAAAAAA=</HashCode>
+      <FileName>Validation\MessageDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.CallContext" Collapsed="true">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CallContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Logging.LoggerContext" Collapsed="true">
+    <Position X="15.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

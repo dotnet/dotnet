@@ -27,20 +27,16 @@ public sealed class DefaultTagHelperPropertyIntermediateNode : ExtensionIntermed
         BoundAttribute = propertyNode.BoundAttribute;
         IsIndexerNameMatch = propertyNode.IsIndexerNameMatch;
         Source = propertyNode.Source;
-        TagHelper = propertyNode.TagHelper;
 
         for (var i = 0; i < propertyNode.Children.Count; i++)
         {
             Children.Add(propertyNode.Children[i]);
         }
 
-        for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(propertyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(propertyNode);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public string AttributeName { get; set; }
 
@@ -54,7 +50,7 @@ public sealed class DefaultTagHelperPropertyIntermediateNode : ExtensionIntermed
 
     public string PropertyName { get; set; }
 
-    public TagHelperDescriptor TagHelper { get; set; }
+    public TagHelperDescriptor TagHelper => BoundAttribute.Parent;
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

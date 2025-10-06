@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Globalization;
 
 namespace NuGet.Versioning
 {
@@ -14,14 +15,14 @@ namespace NuGet.Versioning
         internal static ArgumentException TypeNotSupported(Type type, string paramName)
         {
             return new ArgumentException(
-                message: string.Format(Resources.TypeNotSupported, type.FullName),
+                message: string.Format(CultureInfo.CurrentCulture, Resources.TypeNotSupported, type.FullName),
                 paramName: paramName);
         }
 
         internal static ArgumentNullException CannotBeNullWhenParameterIsNull(string parameterThatIsNull, string parameterThisIsNotNull)
         {
             return new ArgumentNullException(
-                message: string.Format(Resources.CannotBeNullWhenParameterIsNotNull, parameterThatIsNull, parameterThisIsNotNull),
+                message: string.Format(CultureInfo.CurrentCulture, Resources.CannotBeNullWhenParameterIsNotNull, parameterThatIsNull, parameterThisIsNotNull),
                 paramName: parameterThatIsNull);
         }
     }

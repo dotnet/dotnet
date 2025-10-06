@@ -8,7 +8,7 @@ using System.IO;
 namespace System.CommandLine
 {
     /// <summary>
-    /// Provides extension methods for <see cref="CliArgument" />.
+    /// Provides extension methods for <see cref="Argument" />.
     /// </summary>
     public static class ArgumentValidation
     {
@@ -17,7 +17,7 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="argument">The argument to configure.</param>
         /// <returns>The configured argument.</returns>
-        public static CliArgument<FileInfo> AcceptExistingOnly(this CliArgument<FileInfo> argument)
+        public static Argument<FileInfo> AcceptExistingOnly(this Argument<FileInfo> argument)
         {
             argument.Validators.Add(FileOrDirectoryExists<FileInfo>);
             return argument;
@@ -28,7 +28,7 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="argument">The argument to configure.</param>
         /// <returns>The configured argument.</returns>
-        public static CliArgument<DirectoryInfo> AcceptExistingOnly(this CliArgument<DirectoryInfo> argument)
+        public static Argument<DirectoryInfo> AcceptExistingOnly(this Argument<DirectoryInfo> argument)
         {
             argument.Validators.Add(FileOrDirectoryExists<DirectoryInfo>);
             return argument;
@@ -39,7 +39,7 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="argument">The argument to configure.</param>
         /// <returns>The configured argument.</returns>
-        public static CliArgument<FileSystemInfo> AcceptExistingOnly(this CliArgument<FileSystemInfo> argument)
+        public static Argument<FileSystemInfo> AcceptExistingOnly(this Argument<FileSystemInfo> argument)
         {
             argument.Validators.Add(FileOrDirectoryExists<FileSystemInfo>);
             return argument;
@@ -50,7 +50,7 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="argument">The argument to configure.</param>
         /// <returns>The configured argument.</returns>
-        public static CliArgument<T> AcceptExistingOnly<T>(this CliArgument<T> argument)
+        public static Argument<T> AcceptExistingOnly<T>(this Argument<T> argument)
             where T : IEnumerable<FileSystemInfo>
         {
             if (typeof(IEnumerable<FileInfo>).IsAssignableFrom(typeof(T)))
@@ -67,6 +67,95 @@ namespace System.CommandLine
             }
 
             return argument;
+        }
+
+        /// <summary>
+        /// Configures the argument to accept only values representing legal file names.
+        /// </summary>
+        /// <remarks>A parse error will result, for example, if file path separators are found in the parsed value.</remarks>
+        public static Argument<T> AcceptLegalFileNamesOnly<T>(this Argument<T> argument)
+        {
+            argument.Validators.Add(static result =>
+            {
+                var invalidFileNameChars = Path.GetInvalidFileNameChars();
+
+                for (var i = 0; i < result.Tokens.Count; i++)
+                {
+                    var token = result.Tokens[i];
+                    var invalidCharactersIndex = token.Value.IndexOfAny(invalidFileNameChars);
+
+                    if (invalidCharactersIndex >= 0)
+                    {
+                        result.AddError(LocalizationResources.InvalidCharactersInFileName(token.Value[invalidCharactersIndex]));
+                    }
+                }
+            });
+
+            return argument;
+        }
+
+
+        /// <summary>
+        /// Configures the argument to accept only values representing legal file paths.
+        /// </summary>
+        public static Argument<T> AcceptLegalFilePathsOnly<T>(this Argument<T> argument)
+        {
+            argument.Validators.Add(static result =>
+            {
+                var invalidPathChars = Path.GetInvalidPathChars();
+
+                for (var i = 0; i < result.Tokens.Count; i++)
+                {
+                    var token = result.Tokens[i];
+
+                    // File class no longer check invalid character
+                    // https://blogs.msdn.microsoft.com/jeremykuhne/2018/03/09/custom-directory-enumeration-in-net-core-2-1/
+                    var invalidCharactersIndex = token.Value.IndexOfAny(invalidPathChars);
+
+                    if (invalidCharactersIndex >= 0)
+                    {
+                        result.AddError(LocalizationResources.InvalidCharactersInPath(token.Value[invalidCharactersIndex]));
+                    }
+                }
+            });
+
+            return argument;
+        }
+
+        /// <summary>
+        /// Configures the argument to accept only the specified values, and to suggest them as command line completions.
+        /// </summary>
+        /// <param name="argument">The argument to configure.</param>
+        /// <param name="values">The values that are allowed for the argument.</param>
+        public static Argument<T> AcceptOnlyFromAmong<T>(
+            this Argument<T> argument, 
+            params string[] values)
+        {
+            if (values is not null && values.Length > 0)
+            {
+                argument.Validators.Clear();
+                argument.Validators.Add(UnrecognizedArgumentError);
+                argument.CompletionSources.Clear();
+                argument.CompletionSources.Add(values);
+            }
+
+            return argument;
+            
+            void UnrecognizedArgumentError(ArgumentResult argumentResult)
+            {
+                for (var i = 0; i < argumentResult.Tokens.Count; i++)
+                {
+                    var token = argumentResult.Tokens[i];
+
+                    if (token.Symbol is null || token.Symbol == argument)
+                    {
+                        if (Array.IndexOf(values, token.Value) < 0)
+                        {
+                            argumentResult.AddError(LocalizationResources.UnrecognizedArgument(token.Value, values));
+                        }
+                    }
+                }
+            }
         }
 
         private static void FileOrDirectoryExists<T>(ArgumentResult result)

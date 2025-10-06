@@ -7,16 +7,19 @@ using FluentAssertions;
 using NuGet.Frameworks;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Msbuild.Integration.Test
 {
     public class GenerateRestoreGraphFileTargetTests : IClassFixture<MsbuildIntegrationTestFixture>
     {
         private MsbuildIntegrationTestFixture _msbuildFixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public GenerateRestoreGraphFileTargetTests(MsbuildIntegrationTestFixture fixture)
+        public GenerateRestoreGraphFileTargetTests(MsbuildIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _msbuildFixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformFact(Platform.Windows)]
@@ -54,8 +57,8 @@ namespace Msbuild.Integration.Test
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
                 var targetPath = projectA.ProjectPath;
-                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}");
-                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation=true {targetPath}");
+                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}", testOutputHelper: _testOutputHelper);
+                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation=true {targetPath}", testOutputHelper: _testOutputHelper);
 
                 var regularDgSpec = File.ReadAllText(standardDgSpecFile);
                 var staticGraphDgSpec = File.ReadAllText(staticGraphDgSpecFile);

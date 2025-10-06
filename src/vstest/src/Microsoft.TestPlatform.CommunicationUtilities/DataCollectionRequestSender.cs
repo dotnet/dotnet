@@ -103,7 +103,7 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
         var isDataCollectionStarted = false;
         BeforeTestRunStartResult? result = null;
 
-        EqtTrace.Verbose("DataCollectionRequestSender.SendBeforeTestRunStartAndGetResult: Send BeforeTestRunStart message with settingsXml {0} and sources {1}: ", settingsXml, sources.ToString());
+        EqtTrace.Verbose("DataCollectionRequestSender.SendBeforeTestRunStartAndGetResult: Send BeforeTestRunStart message with settingsXml {0} and sources {1}: ", settingsXml, string.Join(" ", sources));
 
         var payload = new BeforeTestRunStartPayload
         {

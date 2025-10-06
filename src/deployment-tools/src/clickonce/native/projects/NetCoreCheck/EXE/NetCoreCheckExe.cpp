@@ -10,16 +10,17 @@
 // Globals
 Logger *g_log;
 const char* g_help = "NETCoreCheck [options]\n"
-"-n, --runtimename -       Runtime name                    (Example: Microsoft.AspNetCore.App)\n"
+"-n, --runtimename -       Runtime name                    (Example: Microsoft.WindowsDesktop.App)\n"
 "-v, --runtimeversion -    Runtime version in format x.y.z (Example: 1.2.3)\n"
 "-r, --rollforwardpolicy - (Optional) Roll forward policy  (Example: LatestMajor)\n"
 "-c, --runtimeconfigfile - Path to runtime config file     (Example: c:\\Foo\\Bar.runtimeconfig.json)\n"
 "-l, --logfile -           (Optional) Path to log file\n\n"
 "If runtimeconfigfile is specified then runtimename, runtimeversion and rollforwardpolicy shouldn't be.\n\n"
 "If 0 is returned the runtime requirement is satisfied.\n\n"
+"Note that checking for ASP.NET using runtimename Microsoft.AspNetCore.App without having either the .NET runtime or the .NET Windows Desktop installed is currently not supported.\n\n"
 "Examples:\n\n"
-"NETCorecheck --runtimename Microsoft.AspNetCore.App --runtimeversion 3.1.0\n"
-"NETCorecheck -n Microsoft.WindowsDesktop.App -v 5.0.1 -r LatestMajor\n"
+"NETCorecheck --runtimename Microsoft.NETCore.App --runtimeversion 8.0.0\n"
+"NETCorecheck -n Microsoft.WindowsDesktop.App -v 7.0.1 -r LatestMajor\n"
 "NETCorecheck -c c:\\Foo\\Bar.runtimeconfig.json -l c:\\Foo\\Bar.log\n";
 
 int __cdecl wmain(int argc, WCHAR* argv[])

@@ -3,4 +3,7 @@
     <TestProject Condition="'$(TestProject)' == ''">true</TestProject>
   </PropertyGroup>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Unit</TestProjectType>
+  </PropertyGroup>
 </Project>

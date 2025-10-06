@@ -154,6 +154,7 @@ namespace NuGet.PackageManagement.UI
             IDeleteOnRestartManager deleteOnRestartManager,
             INuGetLockService lockService,
             IRestoreProgressReporter restoreProgressReporter,
+            INuGetTelemetryProvider telemetryProvider,
             CancellationToken cancellationToken)
         {
             Assumes.NotNull(serviceBroker);
@@ -198,7 +199,8 @@ namespace NuGet.PackageManagement.UI
             var actionEngine = new UIActionEngine(
                 sourceRepositoryProvider,
                 packageManager,
-                lockService);
+                lockService,
+                telemetryProvider);
 
             return new NuGetUIContext(
                 serviceBroker,

@@ -42,7 +42,9 @@ namespace NuGet.PackageManagement.VisualStudio
         public override Task<bool> ReferenceExistsAsync(string name)
         {
             // We disable assembly reference for native projects
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
             return TaskResult.True;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
         }
 
         public override Task RemoveReferenceAsync(string name)

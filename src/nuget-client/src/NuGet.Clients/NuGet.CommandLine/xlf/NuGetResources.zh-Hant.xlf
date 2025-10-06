@@ -1,0 +1,1032 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="AddCommand_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">套件 '{0}' 已存在於摘要 '{1}' 但無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">套件 '{0}' 已存在於摘要 '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommand_SourceNotProvided">
+        <source>'-Source' switch is not provided. nupkg gets added to the 'Source' and is mandatory.</source>
+        <target state="translated">未提供 '-Source' 參數。nupkg 會新增至 'Source'，且為必要項目。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddFileToPackage">
+        <source>Add file '{0}' to package as '{1}'</source>
+        <target state="translated">將檔案 '{0}' 加入封裝中成為 '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousCommand">
+        <source>Ambiguous command '{0}'. Possible values: {1}.</source>
+        <target state="translated">命令 '{0}' 不明確。可能的值: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbiguousOption">
+        <source>Ambiguous option '{0}'. Possible values: {1}.</source>
+        <target state="translated">不明確的選項 '{0}'。可能的值: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">引數不能為 Null 或空白。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildingProjectTargetingFramework">
+        <source>Building project '{0}' for target framework '{1}'.</source>
+        <target state="translated">正在為目標架構 '{1}' 建置專案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLine_Warning">
+        <source>WARNING: {0}</source>
+        <target state="translated">警告: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandKeyNotFound">
+        <source>Key '{0}' not found.</source>
+        <target state="translated">找不到金鑰 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessage">
+        <source>{0} (y/N) </source>
+        <target state="translated">{0} (y/N) </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessageAccept">
+        <source>y</source>
+        <target state="translated">y</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_DisplayFile">
+        <source>Please provide password for: {0}</source>
+        <target state="translated">請提供 {0} 的密碼</target>
+        <note>0 - file that requires password</note>
+      </trans-unit>
+      <trans-unit id="ConsolePasswordProvider_PromptForPassword">
+        <source>Password: </source>
+        <target state="translated">密碼: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ForbiddenCredentials">
+        <source>The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}</source>
+        <target state="translated">遠端伺服器指出禁止先前的要求。請提供 {0} 的認證</target>
+        <note>{0} will be replaced with the URL that needs credentials.</note>
+      </trans-unit>
+      <trans-unit id="Credentials_Password">
+        <source>Password: </source>
+        <target state="translated">密碼: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_ProxyCredentials">
+        <source>Please provide proxy credentials:</source>
+        <target state="translated">請提供 Proxy 認證:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_RequestCredentials">
+        <source>Please provide credentials for: {0}</source>
+        <target state="translated">請提供 {0} 的認證</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Credentials_UserName">
+        <source>UserName: </source>
+        <target state="translated">使用者名稱: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultCommandDescription">
+        <source>No description was provided for this command.</source>
+        <target state="translated">未提供此命令的描述。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">符號伺服器</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error">
+        <source>Error</source>
+        <target state="translated">錯誤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotExpected">
+        <source>The argument '{0}' is not expected.</source>
+        <target state="translated">引數 '{0}' 不是預期值。</target>
+        <note>0 - argument name</note>
+      </trans-unit>
+      <trans-unit id="Error_AttemptingToPackSDKproject">
+        <source>The `pack` command for SDK-style projects is not supported, use `dotnet pack` or `msbuild -t:pack` to pack this project instead. You can override this behavior by setting the '{0}' environment variable to 'true'.</source>
+        <target state="translated">不支援 SDK 樣式專案的 'pack' 命令，請改用 'dotnet pack' 或 'msbuild -t:pack' 來封裝此專案。您可以將 '{0}' 環境變數設定為 'true' 以覆寫此行為。</target>
+        <note>0 - environment variable name. 
+Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find the specified version of msbuild: '{0}'</source>
+        <target state="translated">找不到指定的 msbuild 版本: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindNonArchitectureSpecificMsbuild">
+        <source>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</source>
+        <target state="translated">解析的 MSBuild 目錄是 '{0}' ,亦即架構特定目錄。在其上層目錄中找不到 MSBuild (非架構特定)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetGetAllProjectFileNamesMethod">
+        <source>Cannot get the GetAllProjectFileNamesMethod from type  Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">無法從類型 Mono.XBuild.CommandLine.SolutionParser 取得 GetAllProjectFileNamesMethod。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotGetXBuildSolutionParser">
+        <source>Cannot get type Mono.XBuild.CommandLine.SolutionParser.</source>
+        <target state="translated">無法取得 Mono.XBuild.CommandLine.SolutionParser 類型。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotKillMsBuild">
+        <source>MsBuild timeout out while trying to get project to project references, and NuGet.exe failed to kill the process.</source>
+        <target state="translated">嘗試取得專案參考的專案時發生 MsBuild 逾時，而 NuGet.exe 無法終止處理序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeProjectInSolution">
+        <source>Cannot load type Microsoft.Build.Construction.ProjectInSolution from Microsoft.Build.dll</source>
+        <target state="translated">無法從 Microsoft.Build.dll 載入 Microsoft.Build.Construction.ProjectInSolution 類型</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLoadTypeSolutionParser">
+        <source>Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</source>
+        <target state="translated">無法從 Microsoft.Build.dll 載入 Microsoft.Build.Construction.SolutionParser 類型</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotLocateSolutionFile">
+        <source>Cannot locate a solution file.</source>
+        <target state="translated">找不到解決方案檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotPromptForInput">
+        <source>Cannot prompt for input in non-interactive mode.</source>
+        <target state="translated">無法在非互動式模式中提示輸入。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateRandomFileForP2P">
+        <source>Failed to create a temporary file while trying to get project to project references.</source>
+        <target state="translated">嘗試取得專案參考的專案時，無法建立暫存檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業: {1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業：{1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 [True]。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCharactersInPathSegment">
+        <source>Invalid characters in one of the following path segments: '{0}'</source>
+        <target state="translated">下列其中一個路徑區段中有不正確字元: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCultureInfo">
+        <source>Invalid culture identifier in {0} environment variable. Value read is '{1}'</source>
+        <target state="translated">{0} 環境變數中的文化識別碼無效。讀取的值是 '{1}'</target>
+        <note>0 - Environment variable name, 1 - value set in environment variable</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidMsbuildVersion">
+        <source>Invalid MSBuild version specified: '{0}'</source>
+        <target state="translated">指定的 MSBuild 版本無效: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSolutionDirectory">
+        <source>Invalid solution directory: '{0}'</source>
+        <target state="translated">解決方案目錄無效: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MSBuildNotInstalled">
+        <source>MSBuild is not installed.</source>
+        <target state="translated">MSBuild 未安裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">未指定來源參數。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MsBuildTimedOut">
+        <source>MsBuild timeout out while trying to get project to project references.</source>
+        <target state="translated">嘗試取得專案參考的專案時，MsBuild 逾時。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleSolutions">
+        <source>This folder contains more than one solution file.</source>
+        <target state="translated">此資料夾包含多個解決方案檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleTargetFrameworks">
+        <source>project.json cannot contain multiple Target Frameworks.</source>
+        <target state="translated">project.json 不能包含多個目標 Framework。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NuGetExeNeedsToBeUnblockedAfterDownloading">
+        <source>NuGet.exe file on path {0} needs to be unblocked after downloading.</source>
+        <target state="translated">必須在下載後解除封鎖路徑 {0} 上的 NuGet.exe 檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagesConfigParseError">
+        <source>Error parsing packages.config file at {0}: {1}</source>
+        <target state="translated">剖析位於 {0} 的 packages.config 檔案時發生錯誤: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProcessingNuspecFile">
+        <source>Error occurred when processing file '{0}': {1}</source>
+        <target state="translated">處理檔案 '{0}' 時發生錯誤: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJsonNotAllowed">
+        <source>Invalid input '{0}'. Provide the path of an msbuild solution file instead. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">輸入 '{0}' 無效。請改為提供 msbuild 解決方案檔案的路徑。XProj 與獨立 project.json 檔案的支援已經移除，若要繼續使用舊版專案，請使用 https://nuget.org/downloads 中的 NuGet 3.5.x</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated_And_Removed">
+        <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
+Please consider migrating '{0}' to `PackageReference` and using the pack targets.
+You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
+        <target state="translated">目前的 NuGet 版本已停用 'project.json' 封裝，未來版本將永久移除。
+請考慮將 '{0}' 移轉至 'PackageReference' 並使用封裝目標。
+您可以將 '{1}' 環境變數設定為 'true' 以暫時重新啟用此功能。</target>
+        <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileDoesNotExist">
+        <source>Response file '{0}' does not exist</source>
+        <target state="translated">回應檔 '{0}' 不存在</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileInvalid">
+        <source>Invalid response file, '@' does not exist</source>
+        <target state="translated">回應檔無效，'@' 不存在</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileMaxRecursionDepth">
+        <source>No more than {0} nested response files are allowed</source>
+        <target state="translated">不允許超過 {0} 個巢狀回應檔</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileNullOrEmpty">
+        <source>Response file '{0}' cannot be empty</source>
+        <target state="translated">回應檔 '{0}' 不得為空白</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ResponseFileTooLarge">
+        <source>Response file '{0}' cannot be larger than {1}mb</source>
+        <target state="translated">回應檔 '{0}' 不能大於 {1} mb</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SettingsIsNull">
+        <source>Property Settings is null.</source>
+        <target state="translated">屬性設定為 Null。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SolutionFileParseError">
+        <source>Error parsing solution file at {0}: {1}</source>
+        <target state="translated">剖析位於 {0} 的解決方案檔案時，發生錯誤: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceProviderIsNull">
+        <source>Property SourceProvider is null.</source>
+        <target state="translated">屬性 SourceProvider 為 null。</target>
+        <note>Don't localize 'SourceProvider'</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain an msbuild solution or packages.config file to restore.</source>
+        <target state="translated">資料夾 '{0}' 不包含要還原的 msbuild 解決方案或 packages.config 檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget_Because">
+        <source>Failed to find an msbuild solution, packages.config, or project.json file in the folder '{0}'.</source>
+        <target state="translated">在資料夾 '{0}' 中找不到 msbuild 解決方案、packages.config 或 project.json 檔案。</target>
+        <note>{0} is the folder that could not be accessed. The underlying failure is available in the inner exception message.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownAction">
+        <source>The action '{0}' is not recognized.</source>
+        <target state="translated">無法辨識動作「{0}」。</target>
+        <note>0 - action</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownDependencyVersion">
+        <source>Invalid value given for 'DependencyVersion': "{0}".</source>
+        <target state="translated">為 'DependencyVersion' 指定的值無效: "{0}"。</target>
+        <note>Please don't localize "DependencyVersion".</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSlnx">
+        <source>This version of MSBuild not support the slnx format: '{0}'. Please use a MSBuild version greater or equal to 17.13 to use this feature.</source>
+        <target state="translated">此版本的 MSBuild 不支援 slnx 格式：'{0}'。請使用 17.13 或更新的 MSBuild 版本來使用此功能。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
+        <source>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</source>
+        <target state="translated">此版本的 MSBuild 不支援解決方案篩選: '{0}'。請使用 16.7 或更新的 MSBuild 版本來使用此功能。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedMsbuild">
+        <source>This version of msbuild is not supported: '{0}'</source>
+        <target state="translated">不支援此版本的 msbuild: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UpdateSelf_Source">
+        <source>The `update -self` command only accepts one source as an argument. If the source option is not specified, the default NuGet source will be used.</source>
+        <target state="translated">'update -self' 命令只接受一個來源做為引數。如果未指定來源選項，則會使用預設的 NuGet 來源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">無法建置 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtension">
+        <source>Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock).</source>
+        <target state="translated">無法載入 {0}，如果此擴充功能是從網際網路下載，請確定其已解除封鎖 (按一下滑鼠右鍵、內容、解除封鎖)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadExtensionDuringMefComposition">
+        <source>Failed to load {0}{1}</source>
+        <target state="translated">無法載入 {0}{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictChoiceText">
+        <source>[Y] Yes  [A] Yes to All  [N] No  [L] No to All ?</source>
+        <target state="translated">[Y] 是  [A] 全部皆是  [N] 否  [L] 全部皆否?</target>
+        <note>Please do not localize the letters inside the [] brackets.</note>
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">因為封裝中已包含檔案 '{1}'，所以未加入檔案 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProject">
+        <source>Found 1 project with a packages.config file. ({0})</source>
+        <target state="translated">找到 1 個具有 packages.config 檔案的專案。({0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundProjects">
+        <source>Found {0} projects with a packages.config file. ({1})</source>
+        <target state="translated">找到 {0} 個具有 packages.config 檔案的專案。({1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandForMoreInfo">
+        <source>For more information, visit {0}</source>
+        <target state="translated">如需詳細資訊，請瀏覽 {0}</target>
+        <note>{0} will be replaced with a url.</note>
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedContainsNoPackages">
+        <source>Feed '{0}' contains no packages.</source>
+        <target state="translated">摘要 '{0}' 未包含封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommand_FeedIsNotFound">
+        <source>Provided feed folder '{0}' is not found.</source>
+        <target state="translated">找不到提供的摘要資料夾 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandHigherVersionAlreadyExists">
+        <source>Skipping installation of package "{0}" because higher version "{1}" is already installed.</source>
+        <target state="translated">正在跳過套件 "{0}" 的安裝，因為已安裝較高版本的 "{1}"。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandInvalidPackageReference">
+        <source>'{0}' contains invalid package references. </source>
+        <target state="translated">'{0}' 包含無效的封裝參考。 </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandNothingToInstall">
+        <source>All packages listed in {0} are already installed.</source>
+        <target state="translated">已安裝 {0} 中列出的所有套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageAlreadyExists">
+        <source>Package "{0}" is already installed.</source>
+        <target state="translated">已安裝封裝 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageReferenceInvalidVersion">
+        <source>Version string specified for package reference '{0}' is invalid.</source>
+        <target state="translated">為封裝參考 '{0}' 指定的版本字串無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPackageRestoreConsentNotFound">
+        <source>Package restore is disabled. To enable it, open the Visual Studio Options dialog, click on Package Manager node and check '{0}'. You can also enable package restore by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">封裝還原已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊、按一下 [封裝管理員] 節點並核取 '{0}'。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來啟用封裝還原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandUnableToFindPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">找不到套件 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallPackageMessage">
+        <source>Installing package '{0}' to '{1}'.</source>
+        <target state="translated">正在將封裝 '{0}' 安裝到 '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArguments">
+        <source>{0}: invalid arguments.</source>
+        <target state="translated">{0}: 無效的引數。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAssemblyInformationalVersion">
+        <source>Invalid AssemblyInformationalVersion '{0}' on assembly '{1}'; falling back to AssemblyVersion '{2}'.</source>
+        <target state="translated">組件 '{1}' 上的 AssemblyInformationalVersion '{0}' 無效; 回復為 AssemblyVersion '{2}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFile">
+        <source>No packages.config, project or solution file specified. Use the -self switch to update NuGet.exe.</source>
+        <target state="translated">未指定 packages.config、專案或解決方案檔案。請使用 -self 參數更新 NuGet.exe。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOptionValueError">
+        <source>Invalid option value: '{0} {1}'</source>
+        <target state="translated">無效的選項值: '{0} {1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
+        <target state="translated">指定的來源 '{0}' 無效。請提供有效的來源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandNoPackages">
+        <source>No packages found.</source>
+        <target state="translated">找不到任何套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_LicenseUrl">
+        <source>License url: {0}</source>
+        <target state="translated">授權 URL: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommand_ListNotSupported">
+        <source>This version of nuget.exe does not support listing packages from package source '{0}'.</source>
+        <target state="translated">此版本的 nuget.exe 不支援列出封裝來源 '{0}' 中的封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">NuGet 資源庫</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: one or more errors occured.</source>
+        <target state="translated">清除本機資源失敗: 發生一或多個錯誤。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">已清除本機資源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetCache">
+        <source>Clearing NuGet cache: {0}</source>
+        <target state="translated">正在清除 NuGet 快取: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesCache">
+        <source>Clearing NuGet global packages cache: {0}</source>
+        <target state="translated">正在清除 NuGet 全域套件快取: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">正在清除 NuGet HTTP 快取: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">無法刪除 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
+        <target state="translated">提供的本機資源名稱無效。請提供下列其中一個值: http-cache、packages-cache、global-packages、all。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">未定義本機資源 '{0}' 的位置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">已部份清除本機資源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LookingForInstalledPackages">
+        <source>Looking for installed packages in '{0}'.</source>
+        <target state="translated">正在 '{0}' 中尋找已安裝的封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'.</source>
+        <target state="translated">MSBuild 自動偵測: 正在使用來自 '{1}' 的 msbuild 版本 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildAutoDetection_Verbose">
+        <source>MSBuild auto-detection: using msbuild version '{0}' from '{1}'. Use option -MSBuildVersion to force nuget to use a specific version of MSBuild.</source>
+        <target state="translated">MSBuild 自動偵測: 使用來自 '{1}' 的 msbuild 版本 '{0}'。使用選項 -MSBuildVersion 強制 Nuget 使用特定版本的 MSBuild。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSbuildFromPath">
+        <source>Using Msbuild from '{0}'.</source>
+        <target state="translated">使用來自 '{0}' 的 Msbuild。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOptionValueError">
+        <source>Missing option value for: '{0}'</source>
+        <target state="translated">缺少 '{0}' 的選項值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsBuildDoesNotExistAtPath">
+        <source>MsBuild.exe does not exist at '{0}'.</source>
+        <target state="translated">MsBuild.exe 不存在於 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildLoadToolSetError">
+        <source>Failed to load msbuild Toolset</source>
+        <target state="translated">無法載入 msbuild 工具組</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MsbuildPathNotExist">
+        <source>MSBuildPath : {0} does not exist.</source>
+        <target state="translated">MSBuildPath : {0} 不存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleProjectFilesFound">
+        <source>Found multiple project files for '{0}'.</source>
+        <target state="translated">找到多個 '{0}' 的專案檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesConfig">
+        <source>Unable to update. The project does not contain a packages.config file.</source>
+        <target state="translated">無法更新。專案不包含 packages.config 檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsFound">
+        <source>No projects found with packages.config.</source>
+        <target state="translated">找不到具有 packages.config 的專案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidNupkg">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">'{0}' 不是有效的 nupkg 檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_NotFound">
+        <source>Provided Nupkg file '{0}' is not found.</source>
+        <target state="translated">找不到提供的 Nupkg 檔案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OfficialPackageSourceName">
+        <source>NuGet official package source</source>
+        <target state="translated">NuGet 正式封裝來源</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OptionInvalidWithoutSetter">
+        <source>[option] on '{0}' is invalid without a setter.</source>
+        <target state="translated">沒有 setter 時，'{0}' 上的 [option] 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_VerboseDeprecated">
+        <source>Option 'Verbose' has been deprecated. Use 'Verbosity' instead.</source>
+        <target state="translated">選項 'Verbose' 已過時。請改用 'Verbosity'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputNuGetVersion">
+        <source>{0} Version: {1}</source>
+        <target state="translated">{0} 版本: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">已新增檔案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildPackage">
+        <source>Attempting to build package from '{0}'.</source>
+        <target state="translated">正在嘗試從 '{0}' 建置套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">正在嘗試為 '{0}' 建置符號封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsChanged">
+        <source>File from dependency is changed. Adding file '{0}'.</source>
+        <target state="translated">來自相依性的檔案已變更。正在新增檔案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandFileFromDependencyIsNotChanged">
+        <source>File from dependency is not changed. File '{0}' is not added.</source>
+        <target state="translated">相依性中的檔案未變更。未新增檔案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandInvalidMinClientVersion">
+        <source>The value of MinClientVersion argument is not a valid version.</source>
+        <target state="translated">MinClientVersion 引數的值不是有效的版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueDescription">
+        <source>Description: {0}</source>
+        <target state="translated">描述: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueSolution">
+        <source>Solution: {0}</source>
+        <target state="translated">解決方案: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIssueTitle">
+        <source>Issue: {0}</source>
+        <target state="translated">問題: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">無法建置封裝。請確定 '{0}' 包含組件檔。建置符號封裝如需協助，請前往 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">無法建置封裝。請確定 '{0}' 包含來源檔案與組件檔。建置符號封裝如需協助，請前往 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPackageIssueSummary">
+        <source>{0} issue(s) found with package '{1}'.</source>
+        <target state="translated">在封裝 '{1}' 發生 {0} 個問題。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSpecifyInputFileError">
+        <source>Please specify a nuspec or project file to use.</source>
+        <target state="translated">請指定要使用的 nuspec 或專案檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">已成功建立封裝 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExist">
+        <source>Unable to locate '{0} {1}'. Make sure all packages exist in the packages folder before running update.</source>
+        <target state="translated">找不到 '{0} {1}'。執行更新之前，請確定所有封裝都存在封裝資料夾。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreConsentCheckBoxText">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">允許 NuGet 下載遺漏的套件(&amp;A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagingFilesFromOutputPath">
+        <source>Packing files from '{0}'.</source>
+        <target state="translated">正在壓縮 '{0}' 中的檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">'{0}' 不是有效的路徑。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">'{0}' 應為本機路徑或 UNC 共用路徑。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectJsonPack_Deprecated">
+        <source>`project.json` pack is deprecated. Please consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
+        <target state="translated">'project.json' 封裝已過時。請考慮將 '{0}' 移轉至 'PackageReference' 並使用封裝目標。</target>
+        <note>Do not localize project.json and `PackageReference` 
+0 - project path (project.json file path)</note>
+      </trans-unit>
+      <trans-unit id="ProjectRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. This project does not specify any packages for NuGet to restore.</source>
+        <target state="translated">沒有要執行的動作。此專案未指定要讓 NuGet 還原的任何封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandNoSourceError">
+        <source>There is no default source, please specify a source.</source>
+        <target state="translated">沒有預設來源，請指定來源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandTimeoutError">
+        <source>Pushing took too long. You can change the default timeout of 300 seconds by using the -Timeout &lt;seconds&gt; option with the push command.</source>
+        <target state="translated">推送作業的時間太長。使用推送命令時請指定 -Timeout &lt;seconds&gt; 選項，將預設逾時變更為 300 秒。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourcePropertyIncorrectType">
+        <source>The property '{0}' on resource type '{1}' is not a type of ResourceManager.</source>
+        <target state="translated">資源類型 '{1}' 上的屬性 '{0}' 不是 ResourceManager 類型。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResourceTypeDoesNotHaveProperty">
+        <source>The resource type '{0}' does not have an accessible static property named '{1}'.</source>
+        <target state="translated">資源類型 '{0}' 沒有名為 '{1}' 的可存取公用靜態屬性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
+        <source>'globalPackagesFolder' setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
+        <target state="translated">'globalPackagesFolder' 設定是相對路徑。若要判斷完整路徑，請指定 -SolutionDirectory 或解決方案檔案作為參數。若要忽略 'globalPackagesFolder' 設定，請指定 -PackagesDirectory。</target>
+        <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
+        <source>Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory.</source>
+        <target state="translated">無法判斷要還原 NuGet 封裝的封裝資料夾。請指定 -PackagesDirectory 或 -SolutionDirectory。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandFileNotFound">
+        <source>Input file does not exist: {0}.</source>
+        <target state="translated">輸入檔不存在: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandOptionSolutionDirectoryIsInvalid">
+        <source>Option -SolutionDirectory is not valid when restoring packages for a solution.</source>
+        <target state="translated">在還原解決方案的封裝時，選項 -SolutionDirectory 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandPackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
+        <target state="translated">正在還原 NuGet 封裝...
+為避免 NuGet 在建置期間下載封裝，請開啟 [Visual Studio 選項] 對話方塊、按一下 [NuGet 封裝管理員] 節點，然後取消核取 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandProjectNotFound">
+        <source>Project file {0} cannot be found.</source>
+        <target state="translated">找不到專案檔 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesForSolution">
+        <source>Restoring NuGet packages for solution {0}.</source>
+        <target state="translated">正在還原解決方案 {0} 的 NuGet 封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesFromPackagesConfigFile">
+        <source>Restoring NuGet packages listed in packages.config file.</source>
+        <target state="translated">正在還原列在 packages.config 檔案中的 NuGet 封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRestoringPackagesListedInFile">
+        <source>Restoring NuGet packages listed in file {0}.</source>
+        <target state="translated">正在還原檔案 {0} 中列出的 NuGet 封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScanningForProjects">
+        <source>Scanning for projects...</source>
+        <target state="translated">正在掃描專案...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandApiKeySaved">
+        <source>The API Key '{0}' was saved for {1}.</source>
+        <target state="translated">API 金鑰 '{0}' 已儲存，可供 {1} 使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandDefaultApiKeysSaved">
+        <source>The API Key '{0}' was saved for {1} and {2}.</source>
+        <target state="translated">API 金鑰 '{0}' 已儲存，可供 {1} 和 {2} 使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsCredentials_UsingSavedCredentials">
+        <source>Using credentials from config. UserName: {0}</source>
+        <target state="translated">正在使用組態中的認證。UserName: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
+        <source>Nothing to do. None of the projects in this solution specify any packages for NuGet to restore.</source>
+        <target state="translated">沒有要執行的動作。此解決方案中沒有任何專案指定要讓 NuGet 還原的任何封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_NotFound">
+        <source>Source '{0}' is not found.</source>
+        <target state="translated">找不到來源 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandCreatedNuSpec">
+        <source>Created '{0}' successfully.</source>
+        <target state="translated">已成功建立 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandFileExists">
+        <source>'{0}' already exists, use -Force to overwrite it.</source>
+        <target state="translated">'{0}' 已存在，請使用 -Force 覆寫。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToConvertTypeError">
+        <source>Unable to change from type '{0}' to '{1}'.</source>
+        <target state="translated">無法從類型 '{0}' 變更為 '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToExtractAssemblyMetadata">
+        <source>Unable to extract metadata from '{0}'.</source>
+        <target state="translated">無法擷取 '{0}' 中的中繼資料。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindBuildOutput">
+        <source>Unable to find '{0}'. Make sure the project has been built.</source>
+        <target state="translated">找不到 '{0}'。請確定已建置該專案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPackages">
+        <source>Unable to find '{0}'. Make sure they are specified in packages.config.</source>
+        <target state="translated">找不到 '{0}'。請確定已在 packages.config 中指定。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindProject">
+        <source>Unable to find project '{0}'.</source>
+        <target state="translated">找不到專案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindSolution">
+        <source>Unable to find solution '{0}'.</source>
+        <target state="translated">找不到解決方案 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocatePackagesFolder">
+        <source>Unable to locate the packages folder. Verify all the packages are restored before running 'nuget.exe update'.</source>
+        <target state="translated">找不到封裝資料夾。執行 'nuget.exe update' 之前，請先確認已還原所有封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToLocateProjectFile">
+        <source>Unable to locate project file for '{0}'.</source>
+        <target state="translated">找不到 '{0}' 的專案檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknowCommandError">
+        <source>Unknown command: '{0}'</source>
+        <target state="translated">未知的命令: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownOptionError">
+        <source>Unknown option: '{0}'</source>
+        <target state="translated">未知的選項: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFramework">
+        <source>'{0}' is not a valid target framework.</source>
+        <target state="translated">'{0}' 不是有效的目標架構。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCheckingForUpdates">
+        <source>Checking for updates from {0}.</source>
+        <target state="translated">正在檢查來自 {0} 的更新。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandCurrentlyRunningNuGetExe">
+        <source>Currently running NuGet.exe {0}.</source>
+        <target state="translated">目前正在執行 NuGet.exe {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandNuGetUpToDate">
+        <source>NuGet.exe is up to date.</source>
+        <target state="translated">NuGet.exe 為最新狀態。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToFindPackage">
+        <source>Unable to find '{0}' package.</source>
+        <target state="translated">找不到 '{0}' 封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUnableToLocateNuGetExe">
+        <source>Invalid NuGet.CommandLine package. Unable to locate NuGet.exe within the package.</source>
+        <target state="translated">NuGet.CommandLine 封裝無效。在封裝中找不到 NuGet.exe。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdateSuccessful">
+        <source>Update successful.</source>
+        <target state="translated">更新成功。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUpdatingNuGet">
+        <source>Updating NuGet.exe to {0}.</source>
+        <target state="translated">正在將 NuGet.exe 更新為 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdatingProject">
+        <source>Updating '{0}'...</source>
+        <target state="translated">正在更新 '{0}'...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingNuspecForMetadata">
+        <source>Using '{0}' for metadata.</source>
+        <target state="translated">將使用中繼資料的 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsingPackagesConfigForDependencies">
+        <source>Found packages.config. Using packages listed as dependencies</source>
+        <target state="translated">找到 packages.config。將使用列為相依項目的封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_CommandDeprecated">
+        <source>'{0} {1}' is deprecated. Use '{0} {2}' instead.</source>
+        <target state="translated">'{0} {1}' 已淘汰。請改用 '{0} {2}'。</target>
+        <note>{0} - name of the assembly running the command, e.g., NuGet
+{1} - current command marked as deprecated, e.g., list
+{2} - replacement command. For example, search</note>
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValue">
+        <source>The value "{0}" for {1} is a sample value and should be removed.</source>
+        <target state="translated">"{0}" 的值 {1} 為範例值，不得移除。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueSolution">
+        <source>Replace with an appropriate value or remove and it and rebuild your package.</source>
+        <target state="translated">用適當的值予以取代，或將其移除並重建您的封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DefaultSpecValueTitle">
+        <source>Remove sample nuspec values.</source>
+        <target state="translated">請移除範例 nuspec 值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">Properties 集合中已有 '{0}' 金鑰。正在覆寫該值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileDoesNotExist">
+        <source>'{0}' was included in the project but doesn't exist. Skipping...</source>
+        <target state="translated">先前包含在專案中的 '{0}' 目前不存在。將予略過...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_InvalidPackageSaveMode">
+        <source>Invalid PackageSaveMode value '{0}'.</source>
+        <target state="translated">PackageSaveMode 值 '{0}' 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_DisabledPolicy">
+        <source>Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">請在本機群組原則中設定長檔案路徑支援。如需詳細資料，請參閱 https://aka.ms/nuget-long-path。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
+        <source>Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">請安裝支援長檔案路徑的 .NET Framework 4.6.2 或更新版本。如需詳細資料，請參閱 https://aka.ms/nuget-long-path。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_LongPath_UnsupportedOS">
+        <source>Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
+        <target state="translated">目前僅在 Windows 10 支援長檔案路徑。如需詳細資料，請參閱 https://aka.ms/nuget-long-path。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MsbuildPath">
+        <source>MsbuildPath : {0} is using, ignore MsBuildVersion: {1}. </source>
+        <target state="translated">MsbuildPath {0} 正在使用中，略過 MsBuildVersion {1}。 </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoPromptDeprecated">
+        <source>Option 'NoPrompt' has been deprecated. Use 'NonInteractive' instead.</source>
+        <target state="translated">選項 'NoPrompt' 已過時。請改用 'NonInteractive'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ReadingProjectsFailed">
+        <source>Error reading msbuild project information, ensure that your input solution or project file is valid. NETCore and UAP projects will be skipped, only packages.config files will be restored.</source>
+        <target state="translated">讀取 msbuild 專案資訊時發生錯誤，請確定您的輸入解決方案或專案檔有效。將略過 NETCore 和 UAP 專案，只會還原 packages.config 檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersion">
+        <source>Version "{0}" does not follow semantic versioning guidelines.</source>
+        <target state="translated">版本 "{0}" 未遵循語意化版本控制系統的規則。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionSolution">
+        <source>Update your nuspec file or use the AssemblyInformationalVersion assembly attribute to specify a semantic version as described at http://semver.org. </source>
+        <target state="translated">請依照 http://semver.org 所述更新您的 nuspec 檔案，或使用 AssemblyInformationalVersion 組件屬性來指定語意化版本。 </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_SemanticVersionTitle">
+        <source>Use semantic versioning</source>
+        <target state="translated">使用語意化版本控制系統</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnresolvedFilePath">
+        <source>'{0}' was included in the project but the path could not be resolved. Skipping...</source>
+        <target state="translated">'{0}' 包含在專案中，但路徑無法解。將予略過...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersion">
+        <source>The version of dependency '{0}' is not specified.</source>
+        <target state="translated">未指定相依項目 '{0}' 的版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionSolution">
+        <source>Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">請指定相依項目的版本，然後重建您的封裝。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedDependencyVersionTitle">
+        <source>Specify version of dependencies.</source>
+        <target state="translated">指定相依項目的版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_UnspecifiedField">
+        <source>{0} was not specified. Using '{1}'.</source>
+        <target state="translated">{0} 未指定。將使用 '{1}'。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

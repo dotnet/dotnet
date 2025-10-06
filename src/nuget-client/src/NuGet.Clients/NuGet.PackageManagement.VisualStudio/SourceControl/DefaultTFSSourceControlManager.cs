@@ -26,10 +26,14 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.Present(settings);
             Assumes.Present(sourceControlBindings);
 
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
             var projectCollection = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
                 new Uri(sourceControlBindings.ServerName));
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
             var versionControl = projectCollection.GetService<VersionControlServer>();
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
             PrivateWorkspace = versionControl.TryGetWorkspace(sourceControlBindings.LocalBinding);
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
         }
 
         public override Stream CreateFile(string fullPath, INuGetProjectContext nuGetProjectContext)

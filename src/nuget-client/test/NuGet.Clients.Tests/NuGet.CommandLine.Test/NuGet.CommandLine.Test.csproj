@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <TargetFramework Condition=" '$(IsXPlat)' == 'true' "></TargetFramework>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>An end-to-end test suite for NuGet.CommandLine. Contains tests for every nuget.exe CLI command. Overlaps in tests with NuGet.CommandLine.FuncTest.</Description>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,11 +20,10 @@
                       OutputItemType="TestableCredentialProviderOutputGroup" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.TestPlatform.Portable" />
-    <PackageReference Include="System.Memory" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.TestPlatform.Portable" IncludeAssets="None" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +35,23 @@
              CopyToOutputDirectory="PreserveNewest"
              Visible="false"
              Condition="'$(PkgMicrosoft_TestPlatform_Portable)' != ''" />
+    <None Include="xunit.runner.json"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="TestResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="TestResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="AddProjectReferenceFilesToOutputDirectory" AfterTargets="ResolveProjectReferences">
@@ -55,8 +70,23 @@
     </ItemGroup>
   </Target>
   
-  <Target Name="CopyFinalNuGetExeToOutputPath">
+  <Target Name="CopyFinalNuGetExeToOutputPath"
+          AfterTargets="PrepareForRun"
+          Inputs="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
+          Outputs="$(OutputPath)NuGet\NuGet.exe"
+          Condition="'$(SkipILMergeOfNuGetExe)' != 'true'">
     <Copy SourceFiles="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
-          DestinationFolder="$(OutputPath)NuGet\" />
+          DestinationFiles="$(OutputPath)NuGet\NuGet.exe"
+          SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(CreateHardLinksForCopyLocalIfPossible)"
+          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForCopyLocalIfPossible)">
+      <Output TaskParameter="DestinationFiles"
+              ItemName="FileWritesShareable" />
+      <Output TaskParameter="CopiedFiles"
+              ItemName="ReferencesCopiedInThisBuild" />
+    </Copy>
   </Target>
 </Project>

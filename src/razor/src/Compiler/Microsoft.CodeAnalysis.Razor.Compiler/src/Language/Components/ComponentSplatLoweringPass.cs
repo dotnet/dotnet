@@ -1,15 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run after component lowering pass
     public override int Order => 50;
@@ -21,33 +17,27 @@ internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, I
             return;
         }
 
-        var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
-        var parents = new HashSet<IntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
+        foreach (var reference in documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>())
         {
-            parents.Add(references[i].Parent);
-        }
-
-        for (var i = 0; i < references.Count; i++)
-        {
-            var reference = references[i];
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
-            if (node.TagHelper.IsSplatTagHelper())
+            if (reference.Node.TagHelper.Kind == TagHelperKind.Splat)
             {
-                reference.Replace(RewriteUsage(reference.Parent, node));
+                RewriteUsage(reference);
             }
         }
     }
 
-    private IntermediateNode RewriteUsage(IntermediateNode parent, TagHelperDirectiveAttributeIntermediateNode node)
+    private static void RewriteUsage(IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode> reference)
     {
+        var (node, _) = reference;
+
         var result = new SplatIntermediateNode()
         {
             Source = node.Source,
         };
 
-        result.Children.AddRange(node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp));
-        result.Diagnostics.AddRange(node.Diagnostics);
-        return result;
+        result.Children.AddRange(node.FindDescendantNodes<CSharpIntermediateToken>());
+        result.AddDiagnosticsFromNode(node);
+
+        reference.Replace(result);
     }
 }

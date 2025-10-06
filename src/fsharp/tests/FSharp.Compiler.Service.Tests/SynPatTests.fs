@@ -1,8 +1,8 @@
-module FSharp.Compiler.Syntax.Tests.SynPat
+module FSharp.Compiler.Service.Tests.SynPatTests
 
 open FSharp.Compiler.Service.Tests.Common
 open FSharp.Compiler.Syntax
-open NUnit.Framework
+open Xunit
 
 type Parenthesization = Needed | Unneeded
 
@@ -18,10 +18,13 @@ let pats: obj array list =
         [|[Unneeded; Unneeded]; "let ((Lazy x)) = lazy 1"|]
         [|[Needed; Unneeded]; "let (()) = ()"|]
         [|[Needed; Unneeded; Unneeded]; "let ((())) = ()"|]
+        [|[Needed]; "async { let! (_ : obj) = Unchecked.defaultof<_>; return () }"|]
+        [|[Unneeded]; "async { let! (A _) = Unchecked.defaultof<_>; return () }"|]
+        [|[Needed]; "async { let! (x : int) = async { return 3 }"|]
     ]
 
 // `expected` represents whether each parenthesized pattern, from the inside outward, requires its parentheses.
-[<Theory; TestCaseSource(nameof pats)>]
+[<Theory; MemberData(nameof pats)>]
 let shouldBeParenthesizedInContext (expected: Parenthesization list) src =
     let ast = getParseResults src
 
@@ -33,4 +36,4 @@ let shouldBeParenthesizedInContext (expected: Parenthesization list) src =
                 Parenthesization.ofBool (SynPat.shouldBeParenthesizedInContext path pat) :: actual
             | _ -> actual)
 
-    CollectionAssert.AreEqual(expected, actual)
+    Assert.Equal<Parenthesization list>(expected, actual)

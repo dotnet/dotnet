@@ -1,18 +1,15 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -133,13 +130,13 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         Assert.True(spans.TryGetValue("expected", out var expectedSpans), "Expected at least one span named 'expected'.");
         Assert.True(expectedSpans.Length == 1, "Expected only one 'expected' span.");
 
-        var expectedRange = expectedSpans[0].ToRange(codeDocument.GetSourceText());
+        var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[0]);
         Assert.Equal(expectedRange, result);
     }
 
-    private async Task<Range?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
+    private async Task<LspRange?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
     {
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ValidateBreakpointRangeEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
 
@@ -147,23 +144,19 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
-            Range = breakpointSpan.ToRange(codeDocument.GetSourceText())
+            Range = codeDocument.Source.Text.GetRange(breakpointSpan)
         };
 
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument).AssumeNotNull();
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateValidateBreakpointRangeRequestContext(documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(VersionedDocumentContext documentContext)
+    private static RazorRequestContext CreateValidateBreakpointRangeRequestContext(DocumentContext documentContext)
     {
-        var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
-
-        var requestContext = CreateRazorRequestContext(documentContext, lspServices: lspServices.Object);
-
-        return requestContext;
+        return CreateRazorRequestContext(documentContext, LspServices.Empty);
     }
 }

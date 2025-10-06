@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeStyle;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.CSharp.Formatting;
 using Microsoft.CodeAnalysis.Diagnostics.Analyzers.NamingStyles;
 using Microsoft.CodeAnalysis.Options;
@@ -16,15 +17,14 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.VisualStudio.LanguageServices.Options;
 using Microsoft.VisualStudio.LanguageServices.UnitTests;
 using Microsoft.VisualStudio.Settings;
-using Roslyn.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests;
 
 [UseExportProvider]
-public class VisualStudioSettingsOptionPersisterTests
+public sealed class VisualStudioSettingsOptionPersisterTests
 {
-    private class MockSettingsSubset : ISettingsSubset
+    private sealed class MockSettingsSubset : ISettingsSubset
     {
         public event PropertyChangedAsyncEventHandler? SettingChangedAsync;
 
@@ -32,7 +32,7 @@ public class VisualStudioSettingsOptionPersisterTests
             => SettingChangedAsync?.Invoke(this, new PropertyChangedEventArgs(storageName));
     }
 
-    private class MockSettingsManager : ISettingsManager
+    private sealed class MockSettingsManager : ISettingsManager
     {
         public Func<string, Type, (GetValueResult, object?)>? GetValueImpl;
         public Action<string, object?>? SetValueImpl;
@@ -100,17 +100,6 @@ public class VisualStudioSettingsOptionPersisterTests
            optionType == typeof(ImmutableArray<string>) ? (ImmutableArray.Create("a", "b"), new[] { "a", "b" }) :
            throw ExceptionUtilities.UnexpectedValue(optionType);
 
-    private static Type GetStorageType(Type optionType)
-        => optionType.IsEnum ? typeof(int) :
-           (Nullable.GetUnderlyingType(optionType)?.IsEnum == true) ? typeof(int?) :
-           optionType == typeof(NamingStylePreferences) ? typeof(string) :
-           typeof(ICodeStyleOption2).IsAssignableFrom(optionType) ? typeof(string) :
-           optionType == typeof(ImmutableArray<string>) ? typeof(string[]) :
-           optionType == typeof(ImmutableArray<bool>) ? typeof(bool[]) :
-           optionType == typeof(ImmutableArray<int>) ? typeof(int[]) :
-           optionType == typeof(ImmutableArray<long>) ? typeof(long[]) :
-           optionType;
-
     private static bool IsDefaultImmutableArray(object array)
         => (bool)array.GetType().GetMethod("get_IsDefault").Invoke(array, [])!;
 
@@ -166,8 +155,7 @@ public class VisualStudioSettingsOptionPersisterTests
         refreshedOptions.Clear();
     }
 
-    [Theory]
-    [CombinatorialData]
+    [Theory, CombinatorialData]
     public void SettingsManagerReadOptionValue_Success(
         [CombinatorialValues(
             typeof(bool),
@@ -200,8 +188,7 @@ public class VisualStudioSettingsOptionPersisterTests
         Assert.Equal(optionValue, result.Value);
     }
 
-    [Theory]
-    [CombinatorialData]
+    [Theory, CombinatorialData]
     public void SettingsManagerReadOptionValue_Error(
         [CombinatorialValues(
             GetValueResult.Missing,
@@ -229,11 +216,10 @@ public class VisualStudioSettingsOptionPersisterTests
         Type optionType)
     {
         var (optionValue, storageValue) = GetSomeOptionValue(optionType);
-        var storageType = GetStorageType(optionType);
 
         var mockManager = new MockSettingsManager()
         {
-            GetValueImpl = (_, type) => (type == storageType ? specializedTypeResult : GetValueResult.Success, storageValue)
+            GetValueImpl = (_, type) => (specializedTypeResult, storageValue)
         };
 
         var result = VisualStudioSettingsOptionPersister.TryReadOptionValue(mockManager, "key", optionType, optionValue);

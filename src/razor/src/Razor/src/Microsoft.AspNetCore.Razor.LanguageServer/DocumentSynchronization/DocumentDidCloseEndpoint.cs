@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -8,35 +8,23 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDidCloseName)]
-internal class DocumentDidCloseEndpoint : IRazorNotificationHandler<DidCloseTextDocumentParams>, ITextDocumentIdentifierHandler<DidCloseTextDocumentParams, TextDocumentIdentifier>
+internal class DocumentDidCloseEndpoint(IRazorProjectService projectService) : IRazorNotificationHandler<DidCloseTextDocumentParams>, ITextDocumentIdentifierHandler<DidCloseTextDocumentParams, TextDocumentIdentifier>
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly IRazorProjectService _projectService;
+    private readonly IRazorProjectService _projectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
 
     public bool MutatesSolutionState => true;
-
-    public DocumentDidCloseEndpoint(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        IRazorProjectService projectService)
-    {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        _projectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
-    }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DidCloseTextDocumentParams request)
     {
         return request.TextDocument;
     }
 
-    public async Task HandleNotificationAsync(DidCloseTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public Task HandleNotificationAsync(DidCloseTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        await _projectSnapshotManagerDispatcher.RunAsync(
-            () => _projectService.CloseDocument(request.TextDocument.Uri.GetAbsoluteOrUNCPath()),
-            cancellationToken).ConfigureAwait(false);
+        return _projectService.CloseDocumentAsync(request.TextDocument.DocumentUri.GetAbsoluteOrUNCPath(), cancellationToken);
     }
 }

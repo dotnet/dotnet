@@ -535,7 +535,9 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             // Check if user unchecks the "Tools - Options - Project & Soltuions - Save new projects when created" option
+#pragma warning disable CS0618 // Type or member is obsolete
             value = GetVSSolutionProperty((int)(__VSPROPID2.VSPROPID_DeferredSaveSolution));
+#pragma warning restore CS0618 // Type or member is obsolete
             return (bool)value;
         }
 
@@ -912,13 +914,13 @@ namespace NuGet.PackageManagement.VisualStudio
             }
         }
 
-        private async Task<NuGetProject> CreateNuGetProjectAsync(IVsProjectAdapter project, INuGetProjectContext projectContext = null)
+        private Task<NuGetProject> CreateNuGetProjectAsync(IVsProjectAdapter project, INuGetProjectContext projectContext = null)
         {
             var context = new ProjectProviderContext(
                 projectContext ?? EmptyNuGetProjectContext,
                 () => PackagesFolderPathUtility.GetPackagesFolderPath(this, _settings.Value));
 
-            return await _projectSystemFactory.TryCreateNuGetProjectAsync(project, context);
+            return _projectSystemFactory.TryCreateNuGetProjectAsync(project, context);
         }
 
         internal async Task<IDictionary<string, List<IVsProjectAdapter>>> GetDependentProjectsDictionaryAsync()

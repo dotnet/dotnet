@@ -47,7 +47,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
-            __o = new global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>(
+            __o = new global::Microsoft.AspNetCore.Components.RenderFragment<global::Test.Person>(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                               template

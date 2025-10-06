@@ -140,7 +140,7 @@ public class ArtifactProcessingTests
         // arrange
         _fileHelperMock.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
         _fileHelperMock.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>()))
-            .Returns((string path, string pattern, SearchOption so) => new string[2] { "/tmp/sessionId/runsettings.xml", "/tmp/sessionId/executionComplete.json" });
+            .Returns((string path, string pattern, SearchOption so) => ["/tmp/sessionId/runsettings.xml", "/tmp/sessionId/executionComplete.json"]);
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
@@ -188,7 +188,7 @@ public class ArtifactProcessingTests
         // arrange
         _fileHelperMock.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
         _fileHelperMock.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>()))
-            .Returns((string path, string pattern, SearchOption so) => new string[1] { "/tmp/sessionId/executionComplete.json" });
+            .Returns((string path, string pattern, SearchOption so) => ["/tmp/sessionId/executionComplete.json"]);
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
@@ -231,7 +231,7 @@ public class ArtifactProcessingTests
         // arrange
         _fileHelperMock.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
         _fileHelperMock.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>()))
-            .Returns((string path, string pattern, SearchOption so) => new string[1] { "/tmp/sessionId/runsettings.xml" });
+            .Returns((string path, string pattern, SearchOption so) => ["/tmp/sessionId/runsettings.xml"]);
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
@@ -266,7 +266,7 @@ public class ArtifactProcessingTests
         // arrange
         _fileHelperMock.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
         _fileHelperMock.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>()))
-            .Returns((string path, string pattern, SearchOption so) => new string[1] { "/tmp/sessionId/executionComplete.json" });
+            .Returns((string path, string pattern, SearchOption so) => ["/tmp/sessionId/executionComplete.json"]);
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {

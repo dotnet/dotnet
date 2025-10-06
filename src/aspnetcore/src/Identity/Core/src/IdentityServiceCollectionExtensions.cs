@@ -102,6 +102,7 @@ public static class IdentityServiceCollectionExtensions
         services.TryAddScoped<ITwoFactorSecurityStampValidator, TwoFactorSecurityStampValidator<TUser>>();
         services.TryAddScoped<IUserClaimsPrincipalFactory<TUser>, UserClaimsPrincipalFactory<TUser, TRole>>();
         services.TryAddScoped<IUserConfirmation<TUser>, DefaultUserConfirmation<TUser>>();
+        services.TryAddScoped<IPasskeyHandler<TUser>, PasskeyHandler<TUser>>();
         services.TryAddScoped<UserManager<TUser>>();
         services.TryAddScoped<SignInManager<TUser>>();
         services.TryAddScoped<RoleManager<TRole>>();
@@ -171,12 +172,14 @@ public static class IdentityServiceCollectionExtensions
 
     private sealed class PostConfigureSecurityStampValidatorOptions : IPostConfigureOptions<SecurityStampValidatorOptions>
     {
-        public PostConfigureSecurityStampValidatorOptions(TimeProvider timeProvider)
+        public PostConfigureSecurityStampValidatorOptions(TimeProvider? timeProvider = null)
         {
+            // We could assign this to "timeProvider ?? TimeProvider.System", but
+            // SecurityStampValidator already has system clock fallback logic.
             TimeProvider = timeProvider;
         }
 
-        private TimeProvider TimeProvider { get; }
+        private TimeProvider? TimeProvider { get; }
 
         public void PostConfigure(string? name, SecurityStampValidatorOptions options)
         {

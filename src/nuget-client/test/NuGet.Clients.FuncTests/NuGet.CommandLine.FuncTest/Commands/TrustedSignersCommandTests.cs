@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Moq;
 using NuGet.CommandLine.Commands;
 using NuGet.CommandLine.Test;
@@ -17,6 +19,7 @@ using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
+using Xunit.Abstractions;
 using static NuGet.Commands.TrustedSignersArgs;
 
 namespace NuGet.CommandLine.FuncTest.Commands
@@ -28,13 +31,15 @@ namespace NuGet.CommandLine.FuncTest.Commands
     public class TrustedSignersCommandTests
     {
         private readonly string _nugetExePath;
+        private readonly ITestOutputHelper _testOutputHelper;
         private const string _trustedSignersHelpStringFragment = "usage: NuGet trusted-signers <List|Add|Remove|Sync> [options]";
         private const string _successfulActionTrustedSigner = "Successfully {0} the trusted {1} '{2}'.";
         private const string _successfulAddTrustedSigner = "Successfully added a trusted {0} '{1}'.";
 
-        public TrustedSignersCommandTests()
+        public TrustedSignersCommandTests(ITestOutputHelper testOutputHelper)
         {
             _nugetExePath = Util.GetNuGetExePath();
+            _testOutputHelper = testOutputHelper;
         }
 
         [Fact]
@@ -133,11 +138,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
         [InlineData("notSupportedAction")]
         public void TrustedSignersCommand_Failure_InvalidArguments_HelpMessage(string args)
         {
-            // Arrange & Act 
+            // Arrange & Act
             var result = CommandRunner.Run(
                 _nugetExePath,
                 Directory.GetCurrentDirectory(),
-                $"trusted-signers {args}");
+                $"trusted-signers {args}",
+                    testOutputHelper: _testOutputHelper);
 
             // Assert
 
@@ -175,7 +181,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add -Name signer -CertificateFingerprint abcdefg -FingerprintAlgorithm SHA256 {allowUntrustedRootArg} -Config {nugetConfigPath}");
+                    $"trusted-signers add -Name signer -CertificateFingerprint abcdefg -FingerprintAlgorithm SHA256 {allowUntrustedRootArg} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();
@@ -221,7 +228,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add -Name signer -CertificateFingerprint hijklmn -FingerprintAlgorithm SHA256 {allowUntrustedRootArg} -Config {nugetConfigPath}");
+                    $"trusted-signers add -Name signer -CertificateFingerprint hijklmn -FingerprintAlgorithm SHA256 {allowUntrustedRootArg} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();
@@ -269,7 +277,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add {signedPackagePath} -Name signer -Author {allowUntrustedRootArg} -Config {nugetConfigPath}");
+                    $"trusted-signers add {signedPackagePath} -Name signer -Author {allowUntrustedRootArg} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();
@@ -319,7 +328,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add {multiplePackagesPath} -Name signer -Author {allowUntrustedRootArg} -Config {nugetConfigPath}");
+                    $"trusted-signers add {multiplePackagesPath} -Name signer -Author {allowUntrustedRootArg} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeFalse();
@@ -368,7 +378,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add {signedPackagePath} -Name signer -Repository {allowUntrustedRootArg} {ownersArgs} -Config {nugetConfigPath}");
+                    $"trusted-signers add {signedPackagePath} -Name signer -Repository {allowUntrustedRootArg} {ownersArgs} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();
@@ -429,7 +440,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers add {signedPackagePath} -Name signer -Repository {allowUntrustedRootArg} {ownersArgs} -Config {nugetConfigPath}");
+                    $"trusted-signers add {signedPackagePath} -Name signer -Repository {allowUntrustedRootArg} {ownersArgs} -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();
@@ -473,7 +485,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var commandResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"trusted-signers remove -Name signer -Config {nugetConfigPath}");
+                    $"trusted-signers remove -Name signer -Config {nugetConfigPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 commandResult.Success.Should().BeTrue();

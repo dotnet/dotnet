@@ -49,7 +49,8 @@ internal class TestHostTraceListener : DefaultTraceListener
         var debugMethodFound = false;
         var frameCount = 0;
         MethodBase? method = null;
-        foreach (var f in stack.GetFrames())
+        var frames = stack.GetFrames();
+        foreach (var f in frames)
         {
             var m = f?.GetMethod();
             var declaringType = m?.DeclaringType;
@@ -65,7 +66,7 @@ internal class TestHostTraceListener : DefaultTraceListener
             }
         }
 
-        var stackTrace = string.Join(Environment.NewLine, stack.ToString().Split(Environment.NewLine).TakeLast(frameCount));
+        var stackTrace = new StackTrace(frames.TakeLast(frameCount)).ToString();
         var methodName = method != null ? $"{method.DeclaringType?.Name}.{method.Name}" : "<method>";
         var wholeMessage = $"Method {methodName} failed with '{message}', and was translated to {typeof(DebugAssertException).FullName} to avoid terminating the process hosting the test.";
 

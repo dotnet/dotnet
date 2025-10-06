@@ -7,11 +7,17 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 public class SdkTemplateTest
 {
     public DotNetSdkActions Commands { get; }
+
     public DotNetLanguage Language { get; }
+
     public bool NoHttps { get => TargetRid.Contains("osx"); }
+
     public string TargetRid { get; set; }
-    public string TargetArchitecture { get => TargetRid.Split('-')[1]; }
+
+    public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
+
     public string ScenarioName { get; }
+
     public DotNetSdkTemplate Template { get; }
 
     public SdkTemplateTest(string scenarioName, DotNetLanguage language, string targetRid, DotNetSdkTemplate template, DotNetSdkActions commands = DotNetSdkActions.None)
@@ -23,10 +29,10 @@ public class SdkTemplateTest
         TargetRid = targetRid;
     }
 
-    internal void Execute(DotNetSdkHelper dotNetHelper, string testRoot, string[]? frameworks = null, string? PreMadeSolution = null)
+    internal void Execute(DotNetSdkHelper dotNetHelper, string testRoot, string[]? frameworks = null, string? PreMadeSolution = null, int retryCounter = 0)
     {
         // Don't use the cli language name in the project name because it may contain '#': https://github.com/dotnet/roslyn/issues/51692
-        string projectName = $"{ScenarioName}_{Template}_{Language}";
+        string projectName = $"{ScenarioName}_{Template}_{Language}" + (retryCounter > 0 ? $"_Retry{retryCounter}" : "");
         string customNewArgs = Template.IsAspNetCore() && NoHttps ? "--no-https" : string.Empty;
         string projectDirectory = Path.Combine(testRoot, projectName);
 
@@ -68,7 +74,18 @@ public class SdkTemplateTest
         {
             if (Template.IsAspNetCore())
             {
-                dotNetHelper.ExecuteRunWeb(projectDirectory);
+                try
+                {
+                    dotNetHelper.ExecuteRunWeb(projectDirectory);
+                }
+                catch (InvalidOperationException ex)
+                when (ex.Data["IsAddressInUseException"] is true &&
+                      retryCounter < 3 && // retry up to three times if we get an AdressInUseException
+                      PreMadeSolution == null) // only do this when generating a new project since a pre-made solution won't get a new port
+                {
+                    Execute(dotNetHelper, testRoot, frameworks, PreMadeSolution, retryCounter + 1);
+                    return;
+                }
             }
             else if (Template.isUIApp())
             {
@@ -86,12 +103,15 @@ public class SdkTemplateTest
         if (Commands.HasFlag(DotNetSdkActions.PublishComplex))
         {
             dotNetHelper.ExecutePublish(projectDirectory, selfContained: false);        
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, TargetRid);
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, $"linux-{TargetArchitecture}");
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, selfContained: true);
         }
         if (Commands.HasFlag(DotNetSdkActions.PublishR2R))
         {
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, $"linux-{TargetArchitecture}", trimmed: true, readyToRun: true);
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, selfContained: true, trimmed: true, readyToRun: true);
+        }
+        if (Commands.HasFlag(DotNetSdkActions.PublishAot))
+        {
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, aot: true);
         }
         if (Commands.HasFlag(DotNetSdkActions.Test))
         {

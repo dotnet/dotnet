@@ -1,42 +1,37 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.ServiceHub.Framework;
-using Microsoft.VisualStudio.Composition;
+using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemoteTagHelperProviderService
+internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args) : RazorBrokeredServiceBase(in args), IRemoteTagHelperProviderService
 {
-    private readonly RemoteTagHelperResolver _tagHelperResolver;
-    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider;
-
-    internal RemoteTagHelperProviderService(IServiceBroker serviceBroker, ExportProvider exportProvider)
-        : base(serviceBroker)
+    internal sealed class Factory : FactoryBase<IRemoteTagHelperProviderService>
     {
-        _tagHelperResolver = exportProvider.GetExportedValue<RemoteTagHelperResolver>().AssumeNotNull();
-        _tagHelperDeltaProvider = exportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>().AssumeNotNull();
+        protected override IRemoteTagHelperProviderService CreateService(in ServiceArgs args)
+            => new RemoteTagHelperProviderService(in args);
     }
+
+    private readonly RemoteTagHelperResolver _tagHelperResolver = args.ExportProvider.GetExportedValue<RemoteTagHelperResolver>();
+    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider = args.ExportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>();
 
     public ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
         ImmutableArray<Checksum> checksums,
         CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
             solution => FetchTagHelpersCoreAsync(solution, projectHandle, checksums, cancellationToken),
             cancellationToken);
 
@@ -97,7 +92,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
                 builder.Add(tagHelper);
             }
 
-            tagHelpers = builder.DrainToImmutable();
+            tagHelpers = builder.ToImmutableAndClear();
             return true;
         }
     }
@@ -107,9 +102,8 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
         ProjectSnapshotHandle projectHandle,
         int lastResultId,
         CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
             solution => GetTagHelpersDeltaCoreAsync(solution, projectHandle, lastResultId, cancellationToken),
             cancellationToken);
 
@@ -150,7 +144,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
                 cache.TryAdd(checksum, tagHelper);
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 }

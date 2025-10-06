@@ -32,10 +32,10 @@
       <_Args Include="ComponentName=$(_ComponentName)"/>
       <_Args Include="SetupOutputPath=$(VisualStudioSetupInsertionPath)"/>
       <_Args Include="ComponentIntermediateOutputPath=$(VisualStudioSetupIntermediateOutputPath)$(_ComponentName)\"/>
-      <_Args Include="SwixBuildPath=$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.plugins.swixbuild\$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)\"/>
+      <_Args Include="SwixBuildPath=$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.plugins.swixbuild\$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)\" />
       <_Args Include="VisualStudioDropName=$(VisualStudioDropName)" />
       <_Args Include="DotNetTool=$(DotNetTool)" />
-      <_Args Include="ManifestTool=$(NuGetPackageRoot)microsoft.manifesttool.crossplatform\$(MicrosoftManifestToolCrossPlatformVersion)\Content\Microsoft.ManifestTool.dll"/>
+      <_Args Include="ManifestTool=$(NuGetPackageRoot)microsoft.manifesttool.crossplatform\$(MicrosoftManifestToolCrossPlatformVersion)\Content\Microsoft.ManifestTool.dll" />
       <_Args Include="GenerateSbom=$(GenerateSbom)" />
     </ItemGroup>
 

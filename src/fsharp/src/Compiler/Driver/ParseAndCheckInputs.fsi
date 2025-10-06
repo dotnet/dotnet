@@ -7,12 +7,12 @@ open System.IO
 open Internal.Utilities.Library
 open FSharp.Compiler.CheckBasics
 open FSharp.Compiler.CheckDeclarations
-open FSharp.Compiler.CompilerGlobalState
 open FSharp.Compiler.CompilerConfig
 open FSharp.Compiler.CompilerImports
 open FSharp.Compiler.Diagnostics
 open FSharp.Compiler.DependencyManager
 open FSharp.Compiler.DiagnosticsLogger
+open FSharp.Compiler.Features
 open FSharp.Compiler.GraphChecking
 open FSharp.Compiler.NameResolution
 open FSharp.Compiler.Syntax
@@ -47,7 +47,7 @@ type NodeToTypeCheck =
     /// This can be either an implementation or a signature file.
     | PhysicalFile of fileIndex: FileIndex
     /// An artificial node that will add the earlier processed signature information to the TcEnvFromImpls.
-    /// Dependants on this type of node will perceive that a file is known in both TcEnvFromSignatures and TcEnvFromImpls.
+    /// Dependents on this type of node will perceive that a file is known in both TcEnvFromSignatures and TcEnvFromImpls.
     /// Even though the actual implementation file was not type-checked.
     | ArtificialImplFile of signatureFileIndex: FileIndex
 
@@ -78,15 +78,12 @@ val ParseInput:
 
 /// A general routine to process hash directives
 val ProcessMetaCommandsFromInput:
-    ('T -> range * string -> 'T) * ('T -> range * string * Directive -> 'T) * ('T -> range * string -> unit) ->
+    ('T -> range * string * Directive -> 'T) * ('T -> range * string -> unit) ->
         TcConfigBuilder * ParsedInput * string * 'T ->
             'T
 
-/// Process all the #r, #I etc. in an input.  For non-scripts report warnings about ignored directives.
+/// Process all the #r, #I etc. in an input.
 val ApplyMetaCommandsFromInputToTcConfig: TcConfig * ParsedInput * string * DependencyProvider -> TcConfig
-
-/// Process the #nowarn in an input and integrate them into the TcConfig
-val ApplyNoWarnsToTcConfig: TcConfig * ParsedInput * string -> TcConfig
 
 /// Parse one input stream
 val ParseOneInputStream:
@@ -138,6 +135,9 @@ val ParseInputFiles:
     diagnosticsLogger: DiagnosticsLogger *
     retryLocked: bool ->
         (ParsedInput * string) list
+
+/// Process collected directives
+val FinishPreprocessing: Lexbuf -> FSharpDiagnosticOptions -> bool -> range list -> unit
 
 /// Get the initial type checking environment including the loading of mscorlib/System.Core, FSharp.Core
 /// applying the InternalsVisibleTo in referenced assemblies and opening 'Checked' if requested.

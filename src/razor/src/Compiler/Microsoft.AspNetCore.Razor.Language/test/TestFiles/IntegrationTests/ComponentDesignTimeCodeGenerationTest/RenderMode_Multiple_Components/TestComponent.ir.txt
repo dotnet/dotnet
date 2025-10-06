@@ -14,11 +14,11 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree
-                Component - (0:0,0 [85] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
-                    RenderMode - (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
-                HtmlContent - (85:0,85 [2] x:\dir\subdir\Test\TestComponent.cshtml)
-                    LazyIntermediateToken - (85:0,85 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
-                Component - (87:1,0 [85] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
-                    RenderMode - (115:1,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (115:1,28 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                Component - (0:0,0 [96] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    RenderMode - (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                HtmlContent - (96:0,96 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (96:0,96 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+                Component - (98:1,0 [96] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    RenderMode - (126:1,28 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (126:1,28 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer

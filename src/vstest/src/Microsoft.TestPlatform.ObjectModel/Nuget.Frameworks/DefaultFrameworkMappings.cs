@@ -11,7 +11,8 @@ namespace NuGetClone.Frameworks
     {
         private static Lazy<KeyValuePair<string, string>[]> IdentifierSynonymsLazy = new(() =>
         {
-            return new[]{
+            return
+            [
                 // .NET
                 new KeyValuePair<string, string>("NETFramework", FrameworkConstants.FrameworkIdentifiers.Net),
                 new KeyValuePair<string, string>(".NET", FrameworkConstants.FrameworkIdentifiers.Net),
@@ -31,8 +32,8 @@ namespace NuGetClone.Frameworks
                 new KeyValuePair<string, string>("XamarinPlayStationThree", FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation3),
                 new KeyValuePair<string, string>("Xamarin.PlayStationFour", FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation4),
                 new KeyValuePair<string, string>("XamarinPlayStationFour", FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation4),
-                new KeyValuePair<string, string>("XamarinPlayStationVita", FrameworkConstants.FrameworkIdentifiers.XamarinPlayStationVita),
-            };
+                new KeyValuePair<string, string>("XamarinPlayStationVita", FrameworkConstants.FrameworkIdentifiers.XamarinPlayStationVita)
+            ];
         });
 
         public IEnumerable<KeyValuePair<string, string>> IdentifierSynonyms
@@ -45,8 +46,8 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<string, string>[]> IdentifierShortNamesLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.NetCoreApp, "netcoreapp"),
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.NetStandardApp, "netstandardapp"),
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.NetStandard, "netstandard"),
@@ -79,8 +80,8 @@ namespace NuGetClone.Frameworks
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.WinRT, "winrt"), // legacy
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.UAP, "uap"),
                 new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.Tizen, "tizen"),
-                new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.NanoFramework, "netnano"),
-            };
+                new KeyValuePair<string, string>(FrameworkConstants.FrameworkIdentifiers.NanoFramework, "netnano")
+            ];
         });
 
         public IEnumerable<KeyValuePair<string, string>> IdentifierShortNames
@@ -93,14 +94,14 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<FrameworkSpecificMapping[]> ProfileShortNamesLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Net, "Client", "Client"),
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Net, "CF", "CompactFramework"),
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Net, "Full", string.Empty),
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Silverlight, "WP", "WindowsPhone"),
-                new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Silverlight, "WP71", "WindowsPhone71"),
-            };
+                new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Silverlight, "WP71", "WindowsPhone71")
+            ];
         });
 
         public IEnumerable<FrameworkSpecificMapping> ProfileShortNames
@@ -113,8 +114,8 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> EquivalentFrameworksLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 // UAP 0.0 <-> UAP 10.0
                 new KeyValuePair<NuGetFramework, NuGetFramework>(
                     new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.UAP, FrameworkConstants.EmptyVersion),
@@ -219,8 +220,8 @@ namespace NuGetClone.Frameworks
                 // dnxcore50 <-> aspnetcore50
                 new KeyValuePair<NuGetFramework, NuGetFramework>(
                     FrameworkConstants.CommonFrameworks.DnxCore50,
-                    FrameworkConstants.CommonFrameworks.AspNetCore50),
-            };
+                    FrameworkConstants.CommonFrameworks.AspNetCore50)
+            ];
         });
 
         public IEnumerable<KeyValuePair<NuGetFramework, NuGetFramework>> EquivalentFrameworks
@@ -233,14 +234,14 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<FrameworkSpecificMapping[]> EquivalentProfilesLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 // The client profile, for the purposes of NuGet, is the same as the full framework
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Net, "Client", string.Empty),
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Net, "Full", string.Empty),
                 new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.Silverlight, "WindowsPhone71", "WindowsPhone"),
-                new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.WindowsPhone, "WindowsPhone71", "WindowsPhone"),
-            };
+                new FrameworkSpecificMapping(FrameworkConstants.FrameworkIdentifiers.WindowsPhone, "WindowsPhone71", "WindowsPhone")
+            ];
         });
 
         public IEnumerable<FrameworkSpecificMapping> EquivalentProfiles
@@ -253,8 +254,8 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<string, string>[]> SubSetFrameworksLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 // .NET is a subset of DNX
                 new KeyValuePair<string, string>(
                     FrameworkConstants.FrameworkIdentifiers.Net,
@@ -269,7 +270,7 @@ namespace NuGetClone.Frameworks
                 new KeyValuePair<string, string>(
                     FrameworkConstants.FrameworkIdentifiers.NetStandard,
                     FrameworkConstants.FrameworkIdentifiers.NetStandardApp)
-            };
+            ];
         });
 
         public IEnumerable<KeyValuePair<string, string>> SubSetFrameworks
@@ -553,13 +554,13 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<string[]> NonPackageBasedFrameworkPrecedenceLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 FrameworkConstants.FrameworkIdentifiers.Net,
                 FrameworkConstants.FrameworkIdentifiers.NetCore,
                 FrameworkConstants.FrameworkIdentifiers.Windows,
                 FrameworkConstants.FrameworkIdentifiers.WindowsPhoneApp
-            };
+            ];
         });
 
         public IEnumerable<string> NonPackageBasedFrameworkPrecedence
@@ -572,13 +573,13 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<string[]> PackageBasedFrameworkPrecedenceLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 FrameworkConstants.FrameworkIdentifiers.NetCoreApp,
                 FrameworkConstants.FrameworkIdentifiers.NetStandardApp,
                 FrameworkConstants.FrameworkIdentifiers.NetStandard,
                 FrameworkConstants.FrameworkIdentifiers.NetPlatform
-            };
+            ];
         });
 
         public IEnumerable<string> PackageBasedFrameworkPrecedence
@@ -591,8 +592,8 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<string[]> EquivalentFrameworkPrecedenceLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 FrameworkConstants.FrameworkIdentifiers.Windows,
                 FrameworkConstants.FrameworkIdentifiers.NetCore,
                 FrameworkConstants.FrameworkIdentifiers.WinRT,
@@ -605,7 +606,7 @@ namespace NuGetClone.Frameworks
 
                 FrameworkConstants.FrameworkIdentifiers.Dnx,
                 FrameworkConstants.FrameworkIdentifiers.AspNet
-            };
+            ];
         });
 
         public IEnumerable<string> EquivalentFrameworkPrecedence
@@ -618,10 +619,10 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> ShortNameReplacementsLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 new KeyValuePair<NuGetFramework, NuGetFramework>(FrameworkConstants.CommonFrameworks.DotNet50, FrameworkConstants.CommonFrameworks.DotNet)
-            };
+            ];
         });
 
         public IEnumerable<KeyValuePair<NuGetFramework, NuGetFramework>> ShortNameReplacements
@@ -634,10 +635,10 @@ namespace NuGetClone.Frameworks
 
         private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> FullNameReplacementsLazy = new(() =>
         {
-            return new[]
-            {
+            return
+            [
                 new KeyValuePair<NuGetFramework, NuGetFramework>(FrameworkConstants.CommonFrameworks.DotNet, FrameworkConstants.CommonFrameworks.DotNet50)
-            };
+            ];
         });
 
         public IEnumerable<KeyValuePair<NuGetFramework, NuGetFramework>> FullNameReplacements

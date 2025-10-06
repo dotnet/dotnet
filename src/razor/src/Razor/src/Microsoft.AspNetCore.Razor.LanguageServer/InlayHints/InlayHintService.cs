@@ -1,38 +1,47 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
-internal sealed class InlayHintService(IRazorDocumentMappingService documentMappingService) : IInlayHintService
+internal sealed class InlayHintService(IDocumentMappingService documentMappingService) : IInlayHintService
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
-    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, VersionedDocumentContext documentContext, Range range, CancellationToken cancellationToken)
+    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, DocumentContext documentContext, LspRange range, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         var span = range.ToLinePositionSpan();
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // Sometimes the client sends us a request that doesn't match the file contents. Could be a bug with old requests
+        // not being cancelled, but no harm in being defensive
+        if (!codeDocument.Source.Text.TryGetAbsoluteIndex(span.Start, out var startIndex) ||
+            !codeDocument.Source.Text.TryGetAbsoluteIndex(span.End, out var endIndex))
+        {
+            return null;
+        }
 
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+        if (!_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
             !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
@@ -42,7 +51,7 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         // For now we only support C# inlay hints. Once Web Tools adds support we'll need to request from both servers and combine
         // the results, much like folding ranges.
         var delegatedRequest = new DelegatedInlayHintParams(
-            Identifier: documentContext.Identifier,
+            Identifier: documentContext.GetTextDocumentIdentifierAndVersion(),
             ProjectedRange: projectedLinePositionSpan.ToRange(),
             ProjectedKind: RazorLanguageKind.CSharp
         );
@@ -61,8 +70,8 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         using var _1 = ArrayBuilderPool<InlayHint>.GetPooledObject(out var inlayHintsBuilder);
         foreach (var hint in inlayHints)
         {
-            if (hint.Position.TryGetAbsoluteIndex(csharpSourceText, null, out var absoluteIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
+            if (csharpSourceText.TryGetAbsoluteIndex(hint.Position, out var absoluteIndex) &&
+                _documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
             {
                 // We know this C# maps to Razor, but does it map to Razor that we like?
                 var node = await documentContext.GetSyntaxNodeAsync(hostDocumentIndex, cancellationToken).ConfigureAwait(false);
@@ -73,12 +82,12 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
 
                 if (hint.TextEdits is not null)
                 {
-                    hint.TextEdits = _documentMappingService.GetHostDocumentEdits(csharpDocument, hint.TextEdits);
+                    hint.TextEdits = _documentMappingService.GetRazorDocumentEdits(csharpDocument, hint.TextEdits);
                 }
 
                 hint.Data = new RazorInlayHintWrapper
                 {
-                    TextDocument = documentContext.Identifier,
+                    TextDocument = documentContext.GetTextDocumentIdentifierAndVersion(),
                     OriginalData = hint.Data,
                     OriginalPosition = hint.Position
                 };
@@ -93,10 +102,11 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
     public async Task<InlayHint?> ResolveInlayHintAsync(IClientConnection clientConnection, InlayHint inlayHint, CancellationToken cancellationToken)
     {
         var inlayHintWrapper = inlayHint.Data as RazorInlayHintWrapper;
+
         if (inlayHintWrapper is null &&
-            inlayHint.Data is JObject dataObj)
+            inlayHint.Data is JsonElement dataElement)
         {
-            inlayHintWrapper = dataObj.ToObject<RazorInlayHintWrapper>();
+            inlayHintWrapper = dataElement.Deserialize<RazorInlayHintWrapper>();
         }
 
         if (inlayHintWrapper is null)

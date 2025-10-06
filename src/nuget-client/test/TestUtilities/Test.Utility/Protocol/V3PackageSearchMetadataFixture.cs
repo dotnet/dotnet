@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol;
@@ -74,6 +73,8 @@ namespace NuGet.Test.Utility
             public PackageIdentity Identity { get; set; }
 
             public Uri ReadmeUrl => null;
+
+            public string ReadmeFileUrl => null;
 
             public Uri LicenseUrl => null;
 

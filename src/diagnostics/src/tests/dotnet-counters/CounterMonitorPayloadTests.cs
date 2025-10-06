@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.IO;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,7 +32,7 @@ namespace DotnetCounters.UnitTests
 
         private ITestOutputHelper _outputHelper;
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(2);
-        private static readonly string SystemRuntimeName = "System.Runtime";
+        private static readonly string EventCounterSystemRuntimeName = "EventCounters\\System.Runtime";
         private static readonly string TagStart = "[";
 
         private static HashSet<CounterTypes> ExpectedCounterTypes = new() { CounterTypes.Metric, CounterTypes.Rate };
@@ -67,26 +65,26 @@ namespace DotnetCounters.UnitTests
         }
 
         [SkippableTheory, MemberData(nameof(Configurations))]
-        public async Task TestCounterMonitorSystemRuntimeMetricsJSON(TestConfiguration configuration)
+        public async Task TestCounterMonitorEventCounterSystemRuntimeMetricsJSON(TestConfiguration configuration)
         {
             CheckRuntimeOS();
 
-            List<MetricComponents> metricComponents = await GetCounterTraceJSON(configuration, new List<string> { SystemRuntimeName });
+            List<MetricComponents> metricComponents = await GetCounterTraceJSON(configuration, new List<string> { EventCounterSystemRuntimeName });
 
-            ValidateSystemRuntimeMetrics(metricComponents);
+            ValidateEventCounterSystemRuntimeMetrics(metricComponents);
         }
 
         [SkippableTheory, MemberData(nameof(Configurations))]
-        public async Task TestCounterMonitorSystemRuntimeMetricsCSV(TestConfiguration configuration)
+        public async Task TestCounterMonitorEventCounterSystemRuntimeMetricsCSV(TestConfiguration configuration)
         {
             CheckRuntimeOS();
 
-            List<MetricComponents> metricComponents = await GetCounterTraceCSV(configuration, new List<string> { SystemRuntimeName });
+            List<MetricComponents> metricComponents = await GetCounterTraceCSV(configuration, new List<string> { EventCounterSystemRuntimeName });
 
-            ValidateSystemRuntimeMetrics(metricComponents);
+            ValidateEventCounterSystemRuntimeMetrics(metricComponents);
         }
 
-        private void ValidateSystemRuntimeMetrics(List<MetricComponents> metricComponents)
+        private void ValidateEventCounterSystemRuntimeMetrics(List<MetricComponents> metricComponents)
         {
             string[] ExpectedProviders = { "System.Runtime" };
             Assert.Equal(ExpectedProviders, metricComponents.Select(c => c.ProviderName).ToHashSet());
@@ -198,7 +196,7 @@ namespace DotnetCounters.UnitTests
         {
             try
             {
-                CounterMonitor monitor = new CounterMonitor();
+                CounterMonitor monitor = new CounterMonitor(TextWriter.Null, TextWriter.Null);
 
                 using CancellationTokenSource source = new CancellationTokenSource(DefaultTimeout);
 
@@ -208,9 +206,7 @@ namespace DotnetCounters.UnitTests
                     return Task.Run(async () =>
                         await monitor.Collect(
                             ct: ct,
-                            counter_list: counterList,
-                            counters: null,
-                            console: new TestConsole(),
+                            counters: string.Join(',', counterList),
                             processId: testRunner.Pid,
                             refreshInterval: 1,
                             format: exportFormat,
@@ -220,7 +216,8 @@ namespace DotnetCounters.UnitTests
                             resumeRuntime: false,
                             maxHistograms: 10,
                             maxTimeSeries: 1000,
-                            duration: TimeSpan.FromSeconds(10)));
+                            duration: TimeSpan.FromSeconds(10),
+                            dsrouter: null));
                 }, testRunner, source.Token);
 
                 return CreateMetricComponents();
@@ -242,7 +239,15 @@ namespace DotnetCounters.UnitTests
             HashSet<string> expectedProviders = new() { Constants.TestMeterName };
             Assert.Equal(expectedProviders, metricComponents.Select(c => c.ProviderName).ToHashSet());
 
-            HashSet<string> expectedCounterNames = new() { Constants.TestHistogramName, Constants.TestCounterName };
+            HashSet<string> expectedCounterNames = new()
+            {
+                Constants.TestHistogramName,
+                Constants.TestCounterName,
+                Constants.TestUpDownCounterName,
+                Constants.TestObservableCounterName,
+                Constants.TestObservableUpDownCounterName,
+                Constants.TestObservableGaugeName
+            };
             Assert.Equal(expectedCounterNames, metricComponents.Select(c => c.CounterName).ToHashSet());
 
             Assert.Equal(ExpectedCounterTypes, metricComponents.Select(c => c.CounterType).ToHashSet());
@@ -251,7 +256,7 @@ namespace DotnetCounters.UnitTests
             string tag = Constants.TagKey + "=" + Constants.TagValue + tagSeparator + Constants.PercentileKey + "=";
             HashSet<string> expectedTags = new() { $"{tag}{Constants.Quantile50}", $"{tag}{Constants.Quantile95}", $"{tag}{Constants.Quantile99}" };
             Assert.Equal(expectedTags.AsEnumerable(), metricComponents.Where(c => c.CounterName == Constants.TestHistogramName).Select(c => c.Tags).Distinct());
-            Assert.Empty(metricComponents.Where(c => c.CounterName == Constants.TestCounterName).Where(c => c.Tags != string.Empty));
+            Assert.DoesNotContain(metricComponents.Where(c => c.CounterName == Constants.TestCounterName), c => c.Tags != string.Empty);
 
             var actualCounterValues = metricComponents.Where(c => c.CounterName == Constants.TestCounterName).Select(c => c.Value);
 
@@ -302,35 +307,6 @@ namespace DotnetCounters.UnitTests
             public double Value { get; set; }
             public string Tags { get; set; }
             public CounterTypes CounterType { get; set; }
-        }
-
-        private sealed class TestConsole : IConsole
-        {
-            private readonly TestStandardStreamWriter _outWriter;
-            private readonly TestStandardStreamWriter _errorWriter;
-
-            private sealed class TestStandardStreamWriter : IStandardStreamWriter
-            {
-                private StringWriter _writer = new();
-                public void Write(string value) => _writer.Write(value);
-                public void WriteLine(string value) => _writer.WriteLine(value);
-            }
-
-            public TestConsole()
-            {
-                _outWriter = new TestStandardStreamWriter();
-                _errorWriter = new TestStandardStreamWriter();
-            }
-
-            public IStandardStreamWriter Out => _outWriter;
-
-            public bool IsOutputRedirected => true;
-
-            public IStandardStreamWriter Error => _errorWriter;
-
-            public bool IsErrorRedirected => true;
-
-            public bool IsInputRedirected => false;
         }
     }
 }

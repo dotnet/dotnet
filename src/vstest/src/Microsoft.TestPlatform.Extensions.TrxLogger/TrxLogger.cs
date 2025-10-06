@@ -87,6 +87,7 @@ public class TrxLogger : ITestLoggerWithParameters
     /// Gets the directory under which default trx file and test results attachments should be saved.
     /// </summary>
     private string? _testResultsDirPath;
+    private bool _warnOnFileOverwrite;
 
 
     #region ITestLogger
@@ -135,6 +136,13 @@ public class TrxLogger : ITestLoggerWithParameters
 
         var isLogFilePrefixParameterExists = parameters.TryGetValue(TrxLoggerConstants.LogFilePrefixKey, out _);
         var isLogFileNameParameterExists = parameters.TryGetValue(TrxLoggerConstants.LogFileNameKey, out _);
+        _warnOnFileOverwrite = parameters.TryGetValue(TrxLoggerConstants.WarnOnFileOverwrite, out string? warnOnOverwriteString)
+            ? bool.TryParse(warnOnOverwriteString, out bool providedValue)
+                ? providedValue
+                // We found the option but could not parse the value.
+                : true
+            // We did not find the option and want to fallback to warning on write, because that was the default before.
+            : true;
 
         if (isLogFilePrefixParameterExists && isLogFileNameParameterExists)
         {
@@ -342,11 +350,11 @@ public class TrxLogger : ITestLoggerWithParameters
         helper.SaveIEnumerable(_entries.Values, rootElement, "TestEntries", ".", "TestEntry", parameters);
 
         // Save default categories
-        List<TestListCategory> categories = new()
-        {
+        List<TestListCategory> categories =
+        [
             TestListCategory.UncategorizedResults,
             TestListCategory.AllResults
-        };
+        ];
         helper.SaveList(categories, rootElement, "TestLists", ".", "TestList", parameters);
 
         // Save summary
@@ -357,7 +365,7 @@ public class TrxLogger : ITestLoggerWithParameters
 
         TestResultOutcome = ChangeTestOutcomeIfNecessary(TestResultOutcome);
 
-        List<string> errorMessages = new();
+        List<string> errorMessages = [];
         List<CollectorDataEntry> collectorEntries = _converter.ToCollectionEntries(e.AttachmentSets, LoggerTestRun, _testResultsDirPath);
         IList<string> resultFiles = _converter.ToResultFiles(e.AttachmentSets, LoggerTestRun, _testResultsDirPath, errorMessages);
 
@@ -450,9 +458,12 @@ public class TrxLogger : ITestLoggerWithParameters
 
             if (shouldOverwrite && File.Exists(filePath))
             {
-                var overwriteWarningMsg = string.Format(CultureInfo.CurrentCulture, TrxLoggerResources.TrxLoggerResultsFileOverwriteWarning, filePath);
-                ConsoleOutput.Instance.Warning(false, overwriteWarningMsg);
-                EqtTrace.Warning(overwriteWarningMsg);
+                if (_warnOnFileOverwrite)
+                {
+                    var overwriteWarningMsg = string.Format(CultureInfo.CurrentCulture, TrxLoggerResources.TrxLoggerResultsFileOverwriteWarning, filePath);
+                    ConsoleOutput.Instance.Warning(false, overwriteWarningMsg);
+                    EqtTrace.Warning(overwriteWarningMsg);
+                }
             }
             else
             {
@@ -591,7 +602,7 @@ public class TrxLogger : ITestLoggerWithParameters
     /// <param name="parentExecutionId"></param>
     /// <param name="testType"></param>
     /// <param name="parentTestElement"></param>
-    /// <param name="rockSteadyTestCase"></param>
+    /// <param name="rockSteadyTestResult"></param>
     /// <returns>Trx test element</returns>
     private ITestElement GetOrCreateTestElement(Guid executionId, Guid parentExecutionId, TestType testType, ITestElement? parentTestElement, ObjectModel.TestResult rockSteadyTestResult)
     {

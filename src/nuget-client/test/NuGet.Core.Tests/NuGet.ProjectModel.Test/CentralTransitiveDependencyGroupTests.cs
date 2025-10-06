@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -22,7 +21,7 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var nuGetFramework = nullFramework ? null : NuGetFramework.Parse("NETStandard2.0");
-            var dependencies = nullDependencies ? null : Enumerable.Empty<LibraryDependency>();
+            var dependencies = nullDependencies ? null : Array.Empty<LibraryDependency>();
 
             // Act + Assert
             Assert.Throws<ArgumentNullException>(() => new CentralTransitiveDependencyGroup(nuGetFramework, dependencies));

@@ -1,9 +1,9 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <UsingTask TaskName="GenerateSwaggerCode" AssemblyFile="$(MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly)"/>
+  <UsingTask TaskName="GenerateSwaggerCode" AssemblyFile="$(MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly)" TaskFactory="$(MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory)" />
 
-  <Target Name="GenerateCode">
+  <Target Name="GenerateSwaggerCode" DependsOnTargets="$(GenerateSwaggerCodeDependsOn)">
     <GenerateSwaggerCode
       SwaggerDocumentUri="$(SwaggerDocumentUri)"
       RootNamespace="$(RootNamespace)"
@@ -11,9 +11,18 @@
       OutputDirectory="$(SwaggerOutputDirectory)">
       <Output TaskParameter="GeneratedFiles" ItemName="SwaggerGeneratedFile"/>
     </GenerateSwaggerCode>
+
+    <!-- ExcludeFromSwaggerOutputDirectory extension point to exclude files from deletion, i.e. README.md. -->
+    <PropertyGroup>
+      <_ExcludeFromSwaggerOutputDirectory Condition="'$(ExcludeFromSwaggerOutputDirectory)' != ''">$(SwaggerOutputDirectory)$(ExcludeFromSwaggerOutputDirectory)</_ExcludeFromSwaggerOutputDirectory>
+    </PropertyGroup>
+
     <ItemGroup>
-      <_StaleSwaggerGeneratedFile Include="$(SwaggerOutputDirectory)/**/*" Exclude="@(SwaggerGeneratedFile)"/>
+      <_StaleSwaggerGeneratedFile Include="$(SwaggerOutputDirectory)/**/*"
+                                  Exclude="@(SwaggerGeneratedFile);
+                                           $(_ExcludeFromSwaggerOutputDirectory)" />
     </ItemGroup>
+
     <Delete Files="@(_StaleSwaggerGeneratedFile)" TreatErrorsAsWarnings="true"/>
   </Target>
 

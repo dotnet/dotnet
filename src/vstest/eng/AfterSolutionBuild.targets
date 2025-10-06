@@ -12,8 +12,7 @@
     This is tricky. When you run tests in part of Build, this target won't run after you've run your tests,
     if you run as separate step you have no way of saying that you will run tests later. If you'd move this into
     Directory.Build.targets you would run it for every single integration tests project. So running it after
-    pack is probably the best.
-    Don't invoke when running inside the VMR until https://github.com/dotnet/arcade/issues/14283 is resolved.
+    pack is probably the best. Don't invoke in .NET product build mode.
   -->
   <Target Name="_InstallAdditionalDotnetSdk" AfterTargets="Pack" Condition="'$(OS)' == 'Windows_NT' and '$(DotNetBuild)' != 'true'">
     <Exec Command="powershell -NoProfile -NoLogo -ExecutionPolicy Bypass $(RepositoryEngineeringDir)\install-additional-dotnet-sdks.ps1 -dotnetInstallDir $(DOTNET_INSTALL_DIR) -RepoRoot $(RepoRoot)" />

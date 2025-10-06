@@ -1,36 +1,56 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
-
-#nullable disable
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public abstract class ResponseRewriterTestBase : LanguageServerTestBase
+public abstract class ResponseRewriterTestBase(ITestOutputHelper testOutput) : CompletionTestBase(testOutput)
 {
-    private protected DelegatedCompletionResponseRewriter Rewriter { get; }
-
-    private protected ResponseRewriterTestBase(
-        DelegatedCompletionResponseRewriter rewriter,
-        ITestOutputHelper testOutput)
-        : base(testOutput)
+    private protected Task<VSInternalCompletionList?> GetRewrittenCompletionListAsync(
+        int absoluteIndex,
+        string documentContent,
+        RazorVSInternalCompletionList initialCompletionList)
     {
-        Rewriter = rewriter;
+        var razorCompletionOptions = new RazorCompletionOptions(
+            SnippetsSupported: true,
+            AutoInsertAttributeQuotes: true,
+            CommitElementsWithSpace: true,
+            UseVsCodeCompletionCommitCharacters: false);
+
+        return GetRewrittenCompletionListAsync(absoluteIndex, documentContent, initialCompletionList, razorCompletionOptions);
     }
 
-    private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(int absoluteIndex, string documentContent, VSInternalCompletionList initialCompletionList, DelegatedCompletionResponseRewriter rewriter = null)
+    private protected async Task<VSInternalCompletionList?> GetRewrittenCompletionListAsync(
+        int absoluteIndex,
+        string documentContent,
+        RazorVSInternalCompletionList initialCompletionList,
+        RazorCompletionOptions razorCompletionOptions)
     {
+        const string FilePath = "C:/path/to/file.cshtml";
+
         var completionContext = new VSInternalCompletionContext();
-        var codeDocument = CreateCodeDocument(documentContent);
-        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 0);
-        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, rewriter ?? Rewriter);
+        var codeDocument = CreateCodeDocument(documentContent, filePath: FilePath);
+        var documentContext = TestDocumentContext.Create(FilePath, codeDocument);
+
+        var clientConnection = CreateClientConnectionForCompletion(initialCompletionList);
+
+        var provider = CreateDelegatedCompletionListProvider(clientConnection);
+
         var clientCapabilities = new VSInternalClientCapabilities();
-        var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
+        var completionList = await provider.GetCompletionListAsync(
+            codeDocument,
+            absoluteIndex,
+            completionContext,
+            documentContext,
+            clientCapabilities,
+            razorCompletionOptions,
+            correlationId: Guid.Empty,
+            cancellationToken: DisposalToken);
 
         return completionList;
     }

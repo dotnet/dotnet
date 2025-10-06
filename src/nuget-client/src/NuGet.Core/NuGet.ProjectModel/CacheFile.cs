@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using NuGet.Common;
 using NuGet.Shared;
 
@@ -12,34 +13,31 @@ namespace NuGet.ProjectModel
     {
         internal const int CurrentVersion = 2;
 
-        public string DgSpecHash { get; }
-
+        [JsonPropertyName("version")]
         public int Version { get; set; }
 
+        [JsonPropertyName("dgSpecHash")]
+        public string DgSpecHash { get; }
+
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
-
-        /// <summary>
-        /// Gets or sets a list of package paths that must exist in order for the project to be considered up-to-date.
-        /// </summary>
-        public IList<string> ExpectedPackageFilePaths { get; set; }
-
-        [Obsolete("File existence checks are a function of time not the cache file content.")]
-        /// <summary>
-        /// Gets or sets a value indicating if one or more of the expected files are missing.
-        /// </summary>
-        public bool HasAnyMissingPackageFiles
-        {
-            get => throw new NotImplementedException("This API is no longer support");
-            set => throw new NotImplementedException("This API is no longer support");
-        }
 
         /// <summary>
         /// Gets or sets the full path to the project file.
         /// </summary>
+        [JsonPropertyName("projectFilePath")]
         public string ProjectFilePath { get; set; }
 
+        /// <summary>
+        /// Gets or sets a list of package paths that must exist in order for the project to be considered up-to-date.
+        /// </summary>
+        [JsonPropertyName("expectedPackageFiles")]
+        public IList<string> ExpectedPackageFilePaths { get; set; }
+
+        [JsonPropertyName("logs")]
         public IList<IAssetsLogMessage> LogMessages { get; set; }
 
+        [JsonIgnore]
         public bool IsValid { get { return Version == CurrentVersion && Success && DgSpecHash != null; } }
 
         public CacheFile(string dgSpecHash)

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Resources.resx">
+    <body>
+      <trans-unit id="Console_InitializeHostFails">
+        <source>Failed to initialize the PowerShell host. If your PowerShell execution policy setting is set to AllSigned, open the Package Manager Console to initialize the host first.</source>
+        <target state="translated">無法初始化 PowerShell 主機。若您的 PowerShell 執行原則設定設為 AllSigned，請先開啟 [套件管理員主控台] 初始化主機。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutingScript">
+        <source>Executing script file '{0}'...</source>
+        <target state="translated">正在執行指令檔 '{0}'...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputConsolePaneName">
+        <source>Package Manager</source>
+        <target state="translated">套件管理員</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleBusy">
+        <source>Package Manager Console busy at the moment...</source>
+        <target state="translated">套件管理器主控台目前忙碌中...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleCommandExecuted">
+        <source>Package Manager Console Command Executed</source>
+        <target state="translated">已執行套件管理器主控台命令</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegistryKeyShouldBeDWORD">
+        <source>Registry key '{0}' should be a DWORD.</source>
+        <target state="translated">登錄機碼 '{0}' 應為 DWORD。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowInitializing">
+        <source>Initializing PowerShell host...</source>
+        <target state="translated">正在初始化 PowerShell 主機...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowTitle">
+        <source>Package Manager Console</source>
+        <target state="translated">套件管理器主控台</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

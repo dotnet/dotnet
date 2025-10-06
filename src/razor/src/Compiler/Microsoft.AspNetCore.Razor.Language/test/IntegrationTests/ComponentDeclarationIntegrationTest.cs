@@ -3,13 +3,8 @@
 
 #nullable disable
 
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -19,13 +14,10 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 {
     public ComponentDeclarationRazorIntegrationTest()
     {
-        // Include this assembly to use types defined in tests.
-        BaseCompilation = DefaultBaseCompilation.AddReferences(MetadataReference.CreateFromFile(GetType().Assembly.Location));
+        AdditionalSyntaxTrees.Add(Parse(AdditionalCode));
     }
 
-    internal override CSharpCompilation BaseCompilation { get; }
-
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     internal override bool DeclarationOnly => true;
 
@@ -39,9 +31,8 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 }");
 
         // Assert
-        var property = component.GetType().GetProperty("Value");
-        Assert.NotNull(property);
-        Assert.Same(typeof(string), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("public System.String Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
@@ -53,9 +44,8 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 ");
 
         // Assert
-        var property = component.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance);
-        Assert.NotNull(property);
-        Assert.Same(typeof(string), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("private System.String Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
@@ -68,33 +58,34 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 ");
 
         // Assert
-        var property = component.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance);
-        Assert.NotNull(property);
-        Assert.Same(typeof(StringBuilder), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("private System.Text.StringBuilder Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
     public void DeclarationConfiguration_IncludesInherits()
     {
         // Arrange & Act
-        var component = CompileToComponent($@"
-@inherits {FullTypeName<BaseClass>()}
+        var component = CompileToComponent(@"
+@inherits TestNamespace.BaseClass
 ");
 
         // Assert
-        Assert.Same(typeof(BaseClass), component.GetType().BaseType);
+        AssertEx.Equal("Test.TestComponent", component.ToTestDisplayString());
+        AssertEx.Equal("TestNamespace.BaseClass", component.BaseType.ToTestDisplayString());
     }
 
     [Fact]
     public void DeclarationConfiguration_IncludesImplements()
     {
         // Arrange & Act
-        var component = CompileToComponent($@"
-@implements {FullTypeName<IDoCoolThings>()}
+        var component = CompileToComponent(@"
+@implements TestNamespace.IDoCoolThings
 ");
 
         // Assert
-        Assert.Contains(typeof(IDoCoolThings), component.GetType().GetInterfaces());
+        AssertEx.Equal("Test.TestComponent", component.ToTestDisplayString());
+        AssertEx.Equal("TestNamespace.IDoCoolThings", component.Interfaces.Single().ToTestDisplayString());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/blazor/issues/453")]
@@ -149,17 +140,19 @@ namespace Test
 ", generated);
 
         // Act 2
-        var assembly = CompileToAssembly(generated, throwOnFailure: false);
-
-        // Assert 2
-        var diagnostic = Assert.Single(assembly.Diagnostics);
-
-        // This error should map to line 2 of the generated file, the test
-        // says 1 because Roslyn's line/column data structures are 0-based.
-        var position = diagnostic.Location.GetMappedLineSpan();
-        Assert.EndsWith(".cshtml", position.Path);
-        Assert.Equal(1, position.StartLinePosition.Line);
+        CompileToAssembly(generated,
+            // /dir/subdir/Test/TestComponent.cshtml(2,12): error CS0246: The type or namespace name 'StringBuilder' could not be found (are you missing a using directive or an assembly reference?)
+            //     public StringBuilder Builder { get; set; }
+            Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "StringBuilder").WithArguments("StringBuilder").WithLocation(2, 12));
     }
+
+    private const string AdditionalCode =
+    """
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Rendering;
+    using System.Threading.Tasks;
+
+    namespace TestNamespace;
 
     public class BaseClass : IComponent
     {
@@ -180,4 +173,5 @@ namespace Test
     public interface IDoCoolThings
     {
     }
+    """;
 }

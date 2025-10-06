@@ -1,10 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.Extensions.Options;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -13,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 /// <see cref="ProjectEngineFactories.DefaultProvider"/> and configure every <see cref="RazorProjectEngine"/>
 /// with the current code-gen options.
 /// </summary>
-internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor) : IProjectEngineFactoryProvider
+internal sealed class LspProjectEngineFactoryProvider(RazorLSPOptionsMonitor optionsMonitor) : IProjectEngineFactoryProvider
 {
     public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
     {
@@ -22,7 +21,7 @@ internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOp
         return new Factory(factory, optionsMonitor);
     }
 
-    private class Factory(IProjectEngineFactory innerFactory, IOptionsMonitor<RazorLSPOptions> optionsMonitor) : IProjectEngineFactory
+    private class Factory(IProjectEngineFactory innerFactory, RazorLSPOptionsMonitor optionsMonitor) : IProjectEngineFactory
     {
         public string ConfigurationName => innerFactory.ConfigurationName;
 
@@ -42,22 +41,16 @@ internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOp
             void Configure(RazorProjectEngineBuilder builder)
             {
                 configure?.Invoke(builder);
-                builder.Features.Add(new CodeGenFeature(optionsMonitor));
-            }
-        }
 
-        private class CodeGenFeature(IOptionsMonitor<RazorLSPOptions> optionsMonitor) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
-        {
-            public int Order { get; set; }
+                builder.ConfigureCodeGenerationOptions(builder =>
+                {
+                    // We don't need to explicitly subscribe to options changing because this method will be run on every parse.
+                    var currentOptions = optionsMonitor.CurrentValue;
 
-            public void Configure(RazorCodeGenerationOptionsBuilder options)
-            {
-                // We don't need to explicitly subscribe to options changing because this method will be run on every parse.
-                var currentOptions = optionsMonitor.CurrentValue;
-
-                options.IndentSize = currentOptions.TabSize;
-                options.IndentWithTabs = !currentOptions.InsertSpaces;
-                options.RemapLinePragmaPathsOnWindows = true;
+                    builder.IndentSize = currentOptions.TabSize;
+                    builder.IndentWithTabs = !currentOptions.InsertSpaces;
+                    builder.RemapLinePragmaPathsOnWindows = true;
+                });
             }
         }
     }

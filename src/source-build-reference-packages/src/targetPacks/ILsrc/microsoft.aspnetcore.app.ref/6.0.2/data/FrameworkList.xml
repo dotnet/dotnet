@@ -1,4 +1,4 @@
-<FileList Name="ASP.NET Core 6.0" TargetFrameworkIdentifier=".NETCoreApp" TargetFrameworkVersion="6.0" FrameworkName="Microsoft.AspNetCore.App">
+﻿<FileList Name="ASP.NET Core 6.0" TargetFrameworkIdentifier=".NETCoreApp" TargetFrameworkVersion="6.0" FrameworkName="Microsoft.AspNetCore.App">
   <File Path="ref/net6.0/Microsoft.AspNetCore.Antiforgery.dll" Type="Managed" AssemblyName="Microsoft.AspNetCore.Antiforgery" PublicKeyToken="adb9793829ddae60" AssemblyVersion="6.0.0.0" FileVersion="6.0.222.6412" />
   <File Path="ref/net6.0/Microsoft.AspNetCore.Authentication.Abstractions.dll" Type="Managed" AssemblyName="Microsoft.AspNetCore.Authentication.Abstractions" PublicKeyToken="adb9793829ddae60" AssemblyVersion="6.0.0.0" FileVersion="6.0.222.6412" />
   <File Path="ref/net6.0/Microsoft.AspNetCore.Authentication.Cookies.dll" Type="Managed" AssemblyName="Microsoft.AspNetCore.Authentication.Cookies" PublicKeyToken="adb9793829ddae60" AssemblyVersion="6.0.0.0" FileVersion="6.0.222.6412" />

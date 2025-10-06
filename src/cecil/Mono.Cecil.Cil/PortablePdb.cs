@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
+using Mono.Collections.Generic;
 using Mono.Cecil.Metadata;
 using Mono.Cecil.PE;
 
@@ -118,6 +119,7 @@ namespace Mono.Cecil.Cil {
 		void ReadModule ()
 		{
 			module.custom_infos = debug_reader.GetCustomDebugInformation (module);
+			module.documents = debug_reader.GetDocuments ();
 		}
 
 		public MethodDebugInformation Read (MethodDefinition method)
@@ -143,6 +145,11 @@ namespace Mono.Cecil.Cil {
 		void ReadStateMachineKickOffMethod (MethodDebugInformation method_info)
 		{
 			method_info.kickoff_method = debug_reader.ReadStateMachineKickoffMethod (method_info.method);
+		}
+
+		public Collection<CustomDebugInformation> Read (ICustomDebugInformationProvider provider)
+		{
+			return debug_reader.GetCustomDebugInformation (provider);
 		}
 
 		void ReadCustomDebugInformations (MethodDebugInformation info)
@@ -221,6 +228,11 @@ namespace Mono.Cecil.Cil {
 			return reader.Read (method);
 		}
 
+		public Collection<CustomDebugInformation> Read (ICustomDebugInformationProvider provider)
+		{
+			return reader.Read (provider);
+		}
+
 		public void Dispose ()
 		{
 			reader.Dispose ();
@@ -284,6 +296,7 @@ namespace Mono.Cecil.Cil {
 				this.pdb_metadata.metadata_builder = this.module_metadata;
 
 			pdb_metadata.AddCustomDebugInformations (module);
+			pdb_metadata.AddDocuments (module);
 		}
 
 		internal PortablePdbWriter (MetadataBuilder pdb_metadata, ModuleDefinition module, ImageWriter writer, Disposable<Stream> final_stream)
@@ -317,6 +330,11 @@ namespace Mono.Cecil.Cil {
 				var buffer = new byte [8192];
 				CryptoService.CopyStreamChunk (writer.BaseStream, final_stream.value, buffer, (int)writer.BaseStream.Length);
 			}
+		}
+
+		public void Write (ICustomDebugInformationProvider provider)
+		{
+			pdb_metadata.AddCustomDebugInformations (provider);
 		}
 
 		public ImageDebugHeader GetDebugHeader ()
@@ -517,6 +535,11 @@ namespace Mono.Cecil.Cil {
 		public void Write (MethodDebugInformation info)
 		{
 			writer.Write (info);
+		}
+
+		public void Write (ICustomDebugInformationProvider provider)
+		{
+			writer.Write (provider);
 		}
 
 		public ImageDebugHeader GetDebugHeader ()

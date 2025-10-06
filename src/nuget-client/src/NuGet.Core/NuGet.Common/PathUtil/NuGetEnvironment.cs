@@ -15,8 +15,10 @@ namespace NuGet.Common
     {
         private const string DotNet = "dotnet";
         private const string DotNetExe = "dotnet.exe";
+#if IS_DESKTOP
         private const string Home = "HOME";
         private const string UserProfile = "USERPROFILE";
+#endif
 #if IS_CORECLR
         private const string DotNetHome = "DOTNET_CLI_HOME";
 #endif
@@ -29,9 +31,11 @@ namespace NuGet.Common
             get { return _nuGetTempDirectory ??= GetNuGetTempDirectory(); }
         }
 
+        internal static IEnvironmentVariableReader EnvironmentVariableReader { get; } = EnvironmentVariableWrapper.Instance;
+
         private static string GetNuGetTempDirectory()
         {
-            var nuGetScratch = Environment.GetEnvironmentVariable("NUGET_SCRATCH");
+            var nuGetScratch = EnvironmentVariableReader.GetEnvironmentVariable("NUGET_SCRATCH");
             if (string.IsNullOrEmpty(nuGetScratch))
             {
 #pragma warning disable RS0030 // Do not used banned APIs
@@ -161,10 +165,10 @@ namespace NuGet.Common
             switch (folder)
             {
                 case SpecialFolder.ProgramFilesX86:
-                    return Environment.GetEnvironmentVariable("PROGRAMFILES(X86)");
+                    return EnvironmentVariableReader.GetEnvironmentVariable("PROGRAMFILES(X86)");
 
                 case SpecialFolder.ProgramFiles:
-                    return Environment.GetEnvironmentVariable("PROGRAMFILES");
+                    return EnvironmentVariableReader.GetEnvironmentVariable("PROGRAMFILES");
 
                 case SpecialFolder.UserProfile:
                     return _getHome.Value;
@@ -172,14 +176,14 @@ namespace NuGet.Common
                 case SpecialFolder.CommonApplicationData:
                     if (RuntimeEnvironmentHelper.IsWindows)
                     {
-                        var programData = Environment.GetEnvironmentVariable("PROGRAMDATA");
+                        var programData = EnvironmentVariableReader.GetEnvironmentVariable("PROGRAMDATA");
 
                         if (!string.IsNullOrEmpty(programData))
                         {
                             return programData;
                         }
 
-                        return Environment.GetEnvironmentVariable("ALLUSERSPROFILE");
+                        return EnvironmentVariableReader.GetEnvironmentVariable("ALLUSERSPROFILE");
                     }
                     else if (RuntimeEnvironmentHelper.IsMacOSX)
                     {
@@ -187,7 +191,7 @@ namespace NuGet.Common
                     }
                     else
                     {
-                        var commonApplicationDataOverride = Environment.GetEnvironmentVariable("NUGET_COMMON_APPLICATION_DATA");
+                        var commonApplicationDataOverride = EnvironmentVariableReader.GetEnvironmentVariable("NUGET_COMMON_APPLICATION_DATA");
 
                         if (!string.IsNullOrEmpty(commonApplicationDataOverride))
                         {
@@ -200,7 +204,7 @@ namespace NuGet.Common
                 case SpecialFolder.ApplicationData:
                     if (RuntimeEnvironmentHelper.IsWindows)
                     {
-                        return Environment.GetEnvironmentVariable("APPDATA");
+                        return EnvironmentVariableReader.GetEnvironmentVariable("APPDATA");
                     }
                     else
                     {
@@ -210,11 +214,11 @@ namespace NuGet.Common
                 case SpecialFolder.LocalApplicationData:
                     if (RuntimeEnvironmentHelper.IsWindows)
                     {
-                        return Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                        return EnvironmentVariableReader.GetEnvironmentVariable("LOCALAPPDATA");
                     }
                     else
                     {
-                        var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+                        var xdgDataHome = EnvironmentVariableReader.GetEnvironmentVariable("XDG_DATA_HOME");
                         if (!string.IsNullOrEmpty(xdgDataHome))
                         {
                             return xdgDataHome;
@@ -227,12 +231,6 @@ namespace NuGet.Common
                     return null;
             }
         }
-
-        private static string GetDotNetHome()
-        {
-            return Environment.GetEnvironmentVariable(DotNetHome);
-        }
-
 #else
 
         internal static string GetFolderPath(SpecialFolder folder)
@@ -284,54 +282,33 @@ namespace NuGet.Common
         private static string GetHome()
         {
 #if IS_CORECLR
-            if (RuntimeEnvironmentHelper.IsWindows)
-            {
-                return GetValueOrThrowMissingEnvVarsDotnet(() => GetDotNetHome() ?? GetHomeWindows(), UserProfile, DotNetHome);
-            }
-            else
-            {
-                return GetValueOrThrowMissingEnvVarsDotnet(() => GetDotNetHome() ?? Environment.GetEnvironmentVariable(Home), Home, DotNetHome);
-            }
+            return EnvironmentVariableReader.GetEnvironmentVariable(DotNetHome) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 #else
             if (RuntimeEnvironmentHelper.IsWindows)
             {
                 return GetValueOrThrowMissingEnvVar(() => GetHomeWindows(), UserProfile);
+
+                static string GetHomeWindows()
+                {
+                    var userProfile = EnvironmentVariableReader.GetEnvironmentVariable(UserProfile);
+                    if (!string.IsNullOrEmpty(userProfile))
+                    {
+                        return userProfile;
+                    }
+                    else
+                    {
+                        return EnvironmentVariableReader.GetEnvironmentVariable("HOMEDRIVE") + EnvironmentVariableReader.GetEnvironmentVariable("HOMEPATH");
+                    }
+                }
             }
             else
             {
-                return GetValueOrThrowMissingEnvVar(() => Environment.GetEnvironmentVariable(Home), Home);
+                return GetValueOrThrowMissingEnvVar(() => EnvironmentVariableReader.GetEnvironmentVariable(Home), Home);
             }
 #endif
         }
 
-        private static string GetHomeWindows()
-        {
-            var userProfile = Environment.GetEnvironmentVariable(UserProfile);
-            if (!string.IsNullOrEmpty(userProfile))
-            {
-                return userProfile;
-            }
-            else
-            {
-                return Environment.GetEnvironmentVariable("HOMEDRIVE") + Environment.GetEnvironmentVariable("HOMEPATH");
-            }
-        }
-
-        /// <summary>
-        /// Throw a helpful message if the required env vars are not set.
-        /// </summary>
-        private static string GetValueOrThrowMissingEnvVarsDotnet(Func<string> getValue, string home, string dotnetHome)
-        {
-            var value = getValue();
-
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.MissingRequiredEnvVarsDotnet, home, dotnetHome));
-            }
-
-            return value;
-        }
-
+#if IS_DESKTOP
         /// <summary>
         /// Throw a helpful message if a required env var is not set.
         /// </summary>
@@ -346,15 +323,15 @@ namespace NuGet.Common
 
             return value;
         }
+#endif
 
         public static string GetDotNetLocation()
         {
-            var path = Environment.GetEnvironmentVariable("PATH");
+            var path = EnvironmentVariableReader.GetEnvironmentVariable("PATH");
             var isWindows = RuntimeEnvironmentHelper.IsWindows;
-            var splitChar = isWindows ? ';' : ':';
             var executable = isWindows ? DotNetExe : DotNet;
 
-            foreach (var dir in path.Split(splitChar))
+            foreach (var dir in path.Split(Path.PathSeparator))
             {
                 var fullPath = Path.Combine(dir, executable);
                 if (File.Exists(fullPath))

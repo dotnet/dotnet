@@ -1,0 +1,9 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Fragment>
+    <DirectoryRef Id="DOTNETHOME">
+      <Directory Id="SHARED" Name="shared" />
+    </DirectoryRef>
+  </Fragment>
+
+</Wix>

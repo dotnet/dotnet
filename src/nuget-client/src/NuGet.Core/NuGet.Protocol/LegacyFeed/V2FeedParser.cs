@@ -135,8 +135,7 @@ namespace NuGet.Protocol
                 var allPackages = await FindPackagesByIdAsync(package.Id, sourceCacheContext, log, token);
 
                 return allPackages
-                    .Where(p => p.Version == package.Version)
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => p.Version == package.Version);
             }
 
             return packages.Items.FirstOrDefault();

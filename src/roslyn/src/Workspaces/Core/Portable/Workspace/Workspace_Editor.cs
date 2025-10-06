@@ -4,16 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.ErrorReporting;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.TestHooks;
-using Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
@@ -39,7 +37,7 @@ public abstract partial class Workspace
 
     private readonly Dictionary<DocumentId, TextTracker> _textTrackers = [];
     private readonly Dictionary<DocumentId, SourceTextContainer> _documentToAssociatedBufferMap = [];
-    private readonly Dictionary<DocumentId, SourceGeneratedDocumentIdentity> _openSourceGeneratedDocumentIdentities = [];
+    private readonly Dictionary<DocumentId, (SourceGeneratedDocumentIdentity identity, DateTime generationDateTime)> _openSourceGeneratedDocumentIdentities = [];
 
     /// <summary>
     /// True if this workspace supports manually opening and closing documents.
@@ -56,7 +54,7 @@ public abstract partial class Workspace
         List<DocumentId> docIds;
         using (_stateLock.DisposableWait())
         {
-            docIds = _projectToOpenDocumentsMap.Values.SelectMany(x => x).ToList();
+            docIds = [.. _projectToOpenDocumentsMap.Values.SelectMany(x => x)];
         }
 
         foreach (var docId in docIds)
@@ -195,9 +193,7 @@ public abstract partial class Workspace
         using (_stateLock.DisposableWait())
         {
             if (_projectToOpenDocumentsMap.Count == 0)
-            {
-                return SpecializedCollections.EmptyEnumerable<DocumentId>();
-            }
+                return [];
 
             if (projectId != null)
             {
@@ -206,7 +202,7 @@ public abstract partial class Workspace
                     return documentIds;
                 }
 
-                return SpecializedCollections.EmptyEnumerable<DocumentId>();
+                return [];
             }
 
             return _projectToOpenDocumentsMap.SelectManyAsArray(kvp => kvp.Value);
@@ -287,12 +283,10 @@ public abstract partial class Workspace
         return _bufferToAssociatedDocumentsMap.Where(kvp => kvp.Value.Contains(documentId)).Select(kvp => kvp.Key).FirstOrDefault();
     }
 
-    internal bool TryGetOpenSourceGeneratedDocumentIdentity(DocumentId id, out SourceGeneratedDocumentIdentity documentIdentity)
+    internal bool TryGetOpenSourceGeneratedDocumentIdentity(DocumentId id, out (SourceGeneratedDocumentIdentity identity, DateTime generationDateTime) documentIdentity)
     {
         using (_serializationLock.DisposableWait())
-        {
             return _openSourceGeneratedDocumentIdentities.TryGetValue(id, out documentIdentity);
-        }
     }
 
     /// <summary>
@@ -361,7 +355,7 @@ public abstract partial class Workspace
     internal virtual ValueTask TryOnDocumentOpenedAsync(DocumentId documentId, SourceTextContainer textContainer, bool isCurrentContext, CancellationToken cancellationToken)
     {
         OnDocumentOpened(documentId, textContainer, isCurrentContext, requireDocumentPresentAndClosed: false);
-        return ValueTaskFactory.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     internal void OnDocumentOpened(DocumentId documentId, SourceTextContainer textContainer, bool isCurrentContext, bool requireDocumentPresentAndClosed)
@@ -372,7 +366,7 @@ public abstract partial class Workspace
             {
                 var (@this, documentId, textContainer, _, requireDocumentPresentAndClosed) = data;
 
-                var oldDocument = oldSolution.GetRequiredDocument(documentId);
+                var oldDocument = oldSolution.GetDocument(documentId);
                 if (oldDocument is null)
                 {
                     // Didn't have a document.  Throw if required.  Bail out gracefully if not.
@@ -456,15 +450,15 @@ public abstract partial class Workspace
             AddToOpenDocumentMap(documentId);
 
             _documentToAssociatedBufferMap.Add(documentId, textContainer);
-            _openSourceGeneratedDocumentIdentities.Add(documentId, document.Identity);
+            _openSourceGeneratedDocumentIdentities.Add(documentId, (document.Identity, document.GenerationDateTime));
 
             UpdateCurrentContextMapping_NoLock(textContainer, documentId, isCurrentContext: true);
 
             // Fire and forget that the workspace is changing.
             // We raise 2 events for source document opened.
-            var token = _taskQueue.Listener.BeginAsyncOperation(nameof(OnSourceGeneratedDocumentOpened));
+            var token = _asyncOperationListener.BeginAsyncOperation(nameof(OnSourceGeneratedDocumentOpened));
             _ = RaiseDocumentOpenedEventAsync(document).CompletesAsyncOperation(token);
-            token = _taskQueue.Listener.BeginAsyncOperation(TextDocumentOpenedEventName);
+            token = _asyncOperationListener.BeginAsyncOperation(nameof(WorkspaceEventType.TextDocumentOpened));
             _ = RaiseTextDocumentOpenedEventAsync(document).CompletesAsyncOperation(token);
         }
 
@@ -482,9 +476,9 @@ public abstract partial class Workspace
 
             // Fire and forget that the workspace is changing.
             // We raise 2 events for source document closed.
-            var token = _taskQueue.Listener.BeginAsyncOperation(nameof(OnSourceGeneratedDocumentClosed));
+            var token = _asyncOperationListener.BeginAsyncOperation(nameof(OnSourceGeneratedDocumentClosed));
             _ = RaiseDocumentClosedEventAsync(document).CompletesAsyncOperation(token);
-            token = _taskQueue.Listener.BeginAsyncOperation(TextDocumentClosedEventName);
+            token = _asyncOperationListener.BeginAsyncOperation(nameof(WorkspaceEventType.TextDocumentClosed));
             _ = RaiseTextDocumentClosedEventAsync(document).CompletesAsyncOperation(token);
         }
     }

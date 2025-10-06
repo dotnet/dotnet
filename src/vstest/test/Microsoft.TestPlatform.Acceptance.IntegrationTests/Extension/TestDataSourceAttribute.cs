@@ -18,7 +18,7 @@ public abstract class TestDataSourceAttribute<T1> : Attribute, ITestDataSource w
 
     public void AddData(T1 value1)
     {
-        _data.Add(new object[] { value1 });
+        _data.Add([value1]);
     }
 
     public virtual string GetDisplayName(MethodInfo methodInfo, T1 value1)
@@ -32,9 +32,9 @@ public abstract class TestDataSourceAttribute<T1> : Attribute, ITestDataSource w
         return _data;
     }
 
-    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object[] data)
+    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return GetDisplayName(methodInfo, (T1)data[0]);
+        return GetDisplayName(methodInfo, (T1)data![0]!);
     }
 }
 
@@ -49,7 +49,7 @@ public abstract class TestDataSourceAttribute<T1, T2> : Attribute, ITestDataSour
 
     public void AddData(T1 value1, T2 value2)
     {
-        _data.Add(new object[] { value1, value2 });
+        _data.Add([value1, value2]);
     }
 
     public virtual string GetDisplayName(MethodInfo methodInfo, T1 value1, T2 value2)
@@ -63,9 +63,9 @@ public abstract class TestDataSourceAttribute<T1, T2> : Attribute, ITestDataSour
         return _data;
     }
 
-    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object[] data)
+    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return GetDisplayName(methodInfo, (T1)data[0], (T2)data[1]);
+        return GetDisplayName(methodInfo, (T1)data![0]!, (T2)data![1]!);
     }
 }
 
@@ -81,7 +81,7 @@ public abstract class TestDataSourceAttribute<T1, T2, T3> : Attribute, ITestData
 
     public void AddData(T1 value1, T2 value2, T3 value3)
     {
-        _data.Add(new object[] { value1, value2, value3 });
+        _data.Add([value1, value2, value3]);
     }
 
     public virtual string GetDisplayName(MethodInfo methodInfo, T1 value1, T2 value2, T3 value3)
@@ -95,9 +95,9 @@ public abstract class TestDataSourceAttribute<T1, T2, T3> : Attribute, ITestData
         return _data;
     }
 
-    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object[] data)
+    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return GetDisplayName(methodInfo, (T1)data[0], (T2)data[1], (T3)data[2]);
+        return GetDisplayName(methodInfo, (T1)data![0]!, (T2)data![1]!, (T3)data![2]!);
     }
 }
 
@@ -108,13 +108,13 @@ public abstract class TestDataSourceAttribute<T1, T2, T3, T4> : Attribute, ITest
     where T3 : notnull
     where T4 : notnull
 {
-    private readonly List<object[]> _data = new();
+    private readonly List<object[]> _data = [];
 
     public abstract void CreateData(MethodInfo methodInfo);
 
     public void AddData(T1 value1, T2 value2, T3 value3, T4 value4)
     {
-        _data.Add(new object[] { value1, value2, value3, value4 });
+        _data.Add([value1, value2, value3, value4]);
     }
 
     public virtual string GetDisplayName(MethodInfo methodInfo, T1 value1, T2 value2, T3 value3, T4 value4)
@@ -128,8 +128,8 @@ public abstract class TestDataSourceAttribute<T1, T2, T3, T4> : Attribute, ITest
         return _data;
     }
 
-    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object[] data)
+    string ITestDataSource.GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return GetDisplayName(methodInfo, (T1)data[0], (T2)data[1], (T3)data[2], (T4)data[3]);
+        return GetDisplayName(methodInfo, (T1)data![0]!, (T2)data![1]!, (T3)data![2]!, (T4)data![3]!);
     }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
 using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Utilities;
@@ -42,7 +41,7 @@ namespace NuGet.PackageManagement.VisualStudio
             _scriptExecutor = scriptExecutor;
         }
 
-        public async Task<NuGetProject> TryCreateNuGetProjectAsync(
+        public NuGetProject TryCreateNuGetProject(
             IVsProjectAdapter vsProjectAdapter,
             ProjectProviderContext context,
             bool forceProjectType)
@@ -50,11 +49,11 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.Present(vsProjectAdapter);
             Assumes.Present(context);
 
-            var projectSystem = await MSBuildNuGetProjectSystemFactory.CreateMSBuildNuGetProjectSystemAsync(
+            var projectSystem = MSBuildNuGetProjectSystemFactory.CreateMSBuildNuGetProjectSystem(
                 vsProjectAdapter,
                 context.ProjectContext);
 
-            await projectSystem.InitializeProperties();
+            projectSystem.InitializeProperties();
 
             var projectServices = new VsMSBuildProjectSystemServices(vsProjectAdapter, projectSystem, _threadingService, _scriptExecutor);
 

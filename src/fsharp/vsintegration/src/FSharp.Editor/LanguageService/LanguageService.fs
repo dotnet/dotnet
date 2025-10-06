@@ -49,194 +49,168 @@ type internal RoamingProfileStorageLocation(keyName: string) =
 
 [<Composition.Shared>]
 [<ExportWorkspaceServiceFactory(typeof<IFSharpWorkspaceService>, ServiceLayer.Default)>]
-type internal FSharpWorkspaceServiceFactory [<Composition.ImportingConstructor>] (metadataAsSourceService: FSharpMetadataAsSourceService) =
+type internal FSharpWorkspaceServiceFactory
+    [<Composition.ImportingConstructor>]
+    (editorOptions: EditorOptions, metadataAsSourceService: FSharpMetadataAsSourceService) =
 
-    // We have a lock just in case if multi-threads try to create a new IFSharpWorkspaceService -
-    //     but we only want to have a single instance of the FSharpChecker regardless if there are multiple instances of IFSharpWorkspaceService.
-    //     In VS, we only ever have a single IFSharpWorkspaceService, but for testing we may have mutliple; we still only want a
-    //     single FSharpChecker instance shared across them.
-    static let gate = obj ()
+    let tryGetMetadataSnapshot (workspace: VisualStudioWorkspace) (path, timeStamp) =
+        try
+            let md =
+                LanguageServices.FSharpVisualStudioWorkspaceExtensions.GetMetadata(workspace, path, timeStamp)
 
-    // We only ever want to have a single FSharpChecker.
-    static let mutable checkerSingleton = None
+            let amd = (md :?> AssemblyMetadata)
+            let mmd = amd.GetModules().[0]
+            let mmr = mmd.GetMetadataReader()
+
+            // "lifetime is timed to Metadata you got from the GetMetadata(...). As long as you hold it strongly, raw
+            // memory we got from metadata reader will be alive. Once you are done, just let everything go and
+            // let finalizer handle resource rather than calling Dispose from Metadata directly. It is shared metadata.
+            // You shouldn't dispose it directly."
+
+            let objToHold = box md
+
+            // We don't expect any ilread WeakByteFile to be created when working in Visual Studio
+            // Debug.Assert((FSharp.Compiler.AbstractIL.ILBinaryReader.GetStatistics().weakByteFileCount = 0), "Expected weakByteFileCount to be zero when using F# in Visual Studio. Was there a problem reading a .NET binary?")
+
+            Some(objToHold, NativePtr.toNativeInt mmr.MetadataPointer, mmr.MetadataLength)
+        with ex ->
+            // We catch all and let the backup routines in the F# compiler find the error
+            Assert.Exception(ex)
+            None
+
+    let getSource (workspace: Workspace) filename =
+        async {
+            let! ct = Async.CancellationToken
+
+            match workspace.CurrentSolution.TryGetDocumentFromPath filename with
+            | ValueSome document ->
+                let! text = document.GetTextAsync(ct) |> Async.AwaitTask
+                return Some(text.ToFSharpSourceText())
+            | ValueNone -> return None
+        }
+
+    let enableParallelReferenceResolution =
+        editorOptions.LanguageServicePerformance.EnableParallelReferenceResolution
+
+    let enableLiveBuffers = editorOptions.Advanced.IsUseLiveBuffersEnabled
+
+    let enableInMemoryCrossProjectReferences =
+        editorOptions.LanguageServicePerformance.EnableInMemoryCrossProjectReferences
+
+    let enableFastFindReferences =
+        editorOptions.LanguageServicePerformance.EnableFastFindReferencesAndRename
+
+    let isInlineParameterNameHintsEnabled =
+        editorOptions.Advanced.IsInlineParameterNameHintsEnabled
+
+    let isInlineTypeHintsEnabled = editorOptions.Advanced.IsInlineTypeHintsEnabled
+
+    let isInlineReturnTypeHintsEnabled =
+        editorOptions.Advanced.IsInlineReturnTypeHintsEnabled
+
+    let enablePartialTypeChecking =
+        editorOptions.LanguageServicePerformance.EnablePartialTypeChecking
+
+    // Default should be false
+    let keepAllBackgroundResolutions =
+        editorOptions.LanguageServicePerformance.KeepAllBackgroundResolutions
+
+    // Default should be false
+    let keepAllBackgroundSymbolUses =
+        editorOptions.LanguageServicePerformance.KeepAllBackgroundSymbolUses
+
+    // Default should be true
+    let enableBackgroundItemKeyStoreAndSemanticClassification =
+        editorOptions.LanguageServicePerformance.EnableBackgroundItemKeyStoreAndSemanticClassification
+
+    let useTransparentCompiler = editorOptions.Advanced.UseTransparentCompiler
+
+    // Default is false here
+    let solutionCrawler = editorOptions.Advanced.SolutionBackgroundAnalysis
+
+    let create getSource tryGetMetadataSnapshot =
+
+        use _eventDuration =
+            TelemetryReporter.ReportSingleEventWithDuration(
+                TelemetryEvents.LanguageServiceStarted,
+                [|
+                    nameof enableLiveBuffers, enableLiveBuffers
+                    nameof enableParallelReferenceResolution, enableParallelReferenceResolution
+                    nameof enableInMemoryCrossProjectReferences, enableInMemoryCrossProjectReferences
+                    nameof enableFastFindReferences, enableFastFindReferences
+                    nameof isInlineParameterNameHintsEnabled, isInlineParameterNameHintsEnabled
+                    nameof isInlineTypeHintsEnabled, isInlineTypeHintsEnabled
+                    nameof isInlineReturnTypeHintsEnabled, isInlineReturnTypeHintsEnabled
+                    nameof enablePartialTypeChecking, enablePartialTypeChecking
+                    nameof keepAllBackgroundResolutions, keepAllBackgroundResolutions
+                    nameof keepAllBackgroundSymbolUses, keepAllBackgroundSymbolUses
+                    nameof enableBackgroundItemKeyStoreAndSemanticClassification, enableBackgroundItemKeyStoreAndSemanticClassification
+                    "captureIdentifiersWhenParsing", enableFastFindReferences
+                    nameof useTransparentCompiler, useTransparentCompiler
+                    nameof solutionCrawler, solutionCrawler
+                |],
+                TelemetryThrottlingStrategy.NoThrottling
+            )
+
+        let checker =
+            FSharpChecker.Create(
+                projectCacheSize = 5000, // We do not care how big the cache is. VS will actually tell FCS to clear caches, so this is fine.
+                keepAllBackgroundResolutions = keepAllBackgroundResolutions,
+                legacyReferenceResolver = LegacyMSBuildReferenceResolver.getResolver (),
+                tryGetMetadataSnapshot = tryGetMetadataSnapshot,
+                keepAllBackgroundSymbolUses = keepAllBackgroundSymbolUses,
+                enableBackgroundItemKeyStoreAndSemanticClassification = enableBackgroundItemKeyStoreAndSemanticClassification,
+                enablePartialTypeChecking = enablePartialTypeChecking,
+                parallelReferenceResolution = enableParallelReferenceResolution,
+                captureIdentifiersWhenParsing = enableFastFindReferences,
+                documentSource =
+                    (if enableLiveBuffers then
+                         (DocumentSource.Custom(fun filename ->
+                             async {
+                                 match! getSource filename with
+                                 | Some source -> return Some(source :> ISourceText)
+                                 | None -> return None
+                             }))
+                     else
+                         DocumentSource.FileSystem),
+                useTransparentCompiler = useTransparentCompiler
+            )
+
+        checker
 
     interface IWorkspaceServiceFactory with
+
         member _.CreateService(workspaceServices) =
-
             let workspace = workspaceServices.Workspace
+            let getSource = getSource workspace
 
-            let tryGetMetadataSnapshot (path, timeStamp) =
+            let tryGetMetadataSnapshot =
                 match workspace with
-                | :? VisualStudioWorkspace as workspace ->
-                    try
-                        let md =
-                            LanguageServices.FSharpVisualStudioWorkspaceExtensions.GetMetadata(workspace, path, timeStamp)
+                | :? VisualStudioWorkspace as workspace -> tryGetMetadataSnapshot workspace
+                | _ -> fun _ -> None
 
-                        let amd = (md :?> AssemblyMetadata)
-                        let mmd = amd.GetModules().[0]
-                        let mmr = mmd.GetMetadataReader()
+            let checker = create getSource tryGetMetadataSnapshot
 
-                        // "lifetime is timed to Metadata you got from the GetMetadata(...). As long as you hold it strongly, raw
-                        // memory we got from metadata reader will be alive. Once you are done, just let everything go and
-                        // let finalizer handle resource rather than calling Dispose from Metadata directly. It is shared metadata.
-                        // You shouldn't dispose it directly."
+            if enableLiveBuffers && not useTransparentCompiler then
+                workspace.WorkspaceChanged.Add(fun args ->
+                    if args.DocumentId <> null then
+                        cancellableTask {
+                            let document = args.NewSolution.GetDocument(args.DocumentId)
 
-                        let objToHold = box md
+                            let! _, _, _, options = document.GetFSharpCompilationOptionsAsync(nameof (workspace.WorkspaceChanged))
 
-                        // We don't expect any ilread WeakByteFile to be created when working in Visual Studio
-                        // Debug.Assert((FSharp.Compiler.AbstractIL.ILBinaryReader.GetStatistics().weakByteFileCount = 0), "Expected weakByteFileCount to be zero when using F# in Visual Studio. Was there a problem reading a .NET binary?")
+                            do! checker.NotifyFileChanged(document.FilePath, options)
+                        }
+                        |> CancellableTask.startAsTask CancellationToken.None
+                        |> ignore)
 
-                        Some(objToHold, NativePtr.toNativeInt mmr.MetadataPointer, mmr.MetadataLength)
-                    with ex ->
-                        // We catch all and let the backup routines in the F# compiler find the error
-                        Assert.Exception(ex)
-                        None
-                | _ -> None
-
-            let getSource filename =
-                async {
-                    let! ct = Async.CancellationToken
-
-                    match workspace.CurrentSolution.TryGetDocumentFromPath filename with
-                    | ValueSome document ->
-                        let! text = document.GetTextAsync(ct) |> Async.AwaitTask
-                        return Some(text.ToFSharpSourceText())
-                    | ValueNone -> return None
-                }
-
-            lock gate (fun () ->
-                match checkerSingleton with
-                | Some _ -> ()
-                | _ ->
-                    let checker =
-                        lazy
-                            let editorOptions = workspace.Services.GetService<EditorOptions>()
-
-                            let enableParallelReferenceResolution =
-                                editorOptions.LanguageServicePerformance.EnableParallelReferenceResolution
-
-                            let enableLiveBuffers = editorOptions.Advanced.IsUseLiveBuffersEnabled
-
-                            let useSyntaxTreeCache = editorOptions.LanguageServicePerformance.UseSyntaxTreeCache
-
-                            let enableInMemoryCrossProjectReferences =
-                                editorOptions.LanguageServicePerformance.EnableInMemoryCrossProjectReferences
-
-                            let enableFastFindReferences =
-                                editorOptions.LanguageServicePerformance.EnableFastFindReferencesAndRename
-
-                            let isInlineParameterNameHintsEnabled =
-                                editorOptions.Advanced.IsInlineParameterNameHintsEnabled
-
-                            let isInlineTypeHintsEnabled = editorOptions.Advanced.IsInlineTypeHintsEnabled
-
-                            let isInlineReturnTypeHintsEnabled =
-                                editorOptions.Advanced.IsInlineReturnTypeHintsEnabled
-
-                            let enablePartialTypeChecking =
-                                editorOptions.LanguageServicePerformance.EnablePartialTypeChecking
-
-                            // Default should be false
-                            let keepAllBackgroundResolutions =
-                                editorOptions.LanguageServicePerformance.KeepAllBackgroundResolutions
-
-                            // Default should be false
-                            let keepAllBackgroundSymbolUses =
-                                editorOptions.LanguageServicePerformance.KeepAllBackgroundSymbolUses
-
-                            // Default should be true
-                            let enableBackgroundItemKeyStoreAndSemanticClassification =
-                                editorOptions.LanguageServicePerformance.EnableBackgroundItemKeyStoreAndSemanticClassification
-
-                            let useTransparentCompiler = editorOptions.Advanced.UseTransparentCompiler
-
-                            // Default is false here
-                            let solutionCrawler = editorOptions.Advanced.SolutionBackgroundAnalysis
-
-                            use _eventDuration =
-                                TelemetryReporter.ReportSingleEventWithDuration(
-                                    TelemetryEvents.LanguageServiceStarted,
-                                    [|
-                                        nameof enableLiveBuffers, enableLiveBuffers
-                                        nameof useSyntaxTreeCache, useSyntaxTreeCache
-                                        nameof enableParallelReferenceResolution, enableParallelReferenceResolution
-                                        nameof enableInMemoryCrossProjectReferences, enableInMemoryCrossProjectReferences
-                                        nameof enableFastFindReferences, enableFastFindReferences
-                                        nameof isInlineParameterNameHintsEnabled, isInlineParameterNameHintsEnabled
-                                        nameof isInlineTypeHintsEnabled, isInlineTypeHintsEnabled
-                                        nameof isInlineReturnTypeHintsEnabled, isInlineReturnTypeHintsEnabled
-                                        nameof enablePartialTypeChecking, enablePartialTypeChecking
-                                        nameof keepAllBackgroundResolutions, keepAllBackgroundResolutions
-                                        nameof keepAllBackgroundSymbolUses, keepAllBackgroundSymbolUses
-                                        nameof enableBackgroundItemKeyStoreAndSemanticClassification,
-                                        enableBackgroundItemKeyStoreAndSemanticClassification
-                                        "captureIdentifiersWhenParsing", enableFastFindReferences
-                                        nameof useTransparentCompiler, useTransparentCompiler
-                                        nameof solutionCrawler, solutionCrawler
-                                    |],
-                                    TelemetryThrottlingStrategy.NoThrottling
-                                )
-
-                            let checker =
-                                FSharpChecker.Create(
-                                    projectCacheSize = 5000, // We do not care how big the cache is. VS will actually tell FCS to clear caches, so this is fine.
-                                    keepAllBackgroundResolutions = keepAllBackgroundResolutions,
-                                    legacyReferenceResolver = LegacyMSBuildReferenceResolver.getResolver (),
-                                    tryGetMetadataSnapshot = tryGetMetadataSnapshot,
-                                    keepAllBackgroundSymbolUses = keepAllBackgroundSymbolUses,
-                                    enableBackgroundItemKeyStoreAndSemanticClassification =
-                                        enableBackgroundItemKeyStoreAndSemanticClassification,
-                                    enablePartialTypeChecking = enablePartialTypeChecking,
-                                    parallelReferenceResolution = enableParallelReferenceResolution,
-                                    captureIdentifiersWhenParsing = enableFastFindReferences,
-                                    documentSource =
-                                        (if enableLiveBuffers then
-                                             (DocumentSource.Custom(fun filename ->
-                                                 async {
-                                                     match! getSource filename with
-                                                     | Some source -> return Some(source :> ISourceText)
-                                                     | None -> return None
-                                                 }))
-                                         else
-                                             DocumentSource.FileSystem),
-                                    useSyntaxTreeCache = useSyntaxTreeCache,
-                                    useTransparentCompiler = useTransparentCompiler
-                                )
-
-                            if enableLiveBuffers && not useTransparentCompiler then
-                                workspace.WorkspaceChanged.Add(fun args ->
-                                    if args.DocumentId <> null then
-                                        cancellableTask {
-                                            let document = args.NewSolution.GetDocument(args.DocumentId)
-
-                                            let! _, _, _, options =
-                                                document.GetFSharpCompilationOptionsAsync(nameof (workspace.WorkspaceChanged))
-
-                                            do! checker.NotifyFileChanged(document.FilePath, options)
-                                        }
-                                        |> CancellableTask.startAsTask CancellationToken.None
-                                        |> ignore)
-
-                            checker
-
-                    checkerSingleton <- Some checker)
-
-            let optionsManager =
-                lazy
-                    match checkerSingleton with
-                    | Some checker -> FSharpProjectOptionsManager(checker.Value, workspaceServices.Workspace)
-                    | _ -> failwith "Checker not set."
+            let optionsManager = FSharpProjectOptionsManager(checker, workspace)
 
             { new IFSharpWorkspaceService with
-                member _.Checker =
-                    match checkerSingleton with
-                    | Some checker -> checker.Value
-                    | _ -> failwith "Checker not set."
-
-                member _.FSharpProjectOptionsManager = optionsManager.Value
+                member _.Checker = checker
+                member _.FSharpProjectOptionsManager = optionsManager
                 member _.MetadataAsSource = metadataAsSourceService
             }
-            :> _
 
 [<Sealed>]
 type private FSharpSolutionEvents(projectManager: FSharpProjectOptionsManager, metadataAsSource: FSharpMetadataAsSourceService) =
@@ -344,76 +318,111 @@ type internal FSharpPackage() as this =
 
     let mutable solutionEventsOpt = None
 
-#if DEBUG
-    let _logger = Logging.Activity.listenToAll ()
-    // Logging.Activity.listen "IncrementalBuild"
-#endif
-
     // FSI-LINKAGE-POINT: unsited init
     do FSharp.Interactive.Hooks.fsiConsoleWindowPackageCtorUnsited (this :> Package)
 
-    override this.InitializeAsync(cancellationToken: CancellationToken, progress: IProgress<ServiceProgressData>) : Tasks.Task =
-        // `base.` methods can't be called in the `async` builder, so we have to cache it
-        let baseInitializeAsync = base.InitializeAsync(cancellationToken, progress)
+#if DEBUG
+    let flushTelemetry = DebugHelpers.FSharpServiceTelemetry.otelExport ()
 
-        foregroundCancellableTask {
-            do! baseInitializeAsync
+    override this.Dispose(disposing: bool) =
+        base.Dispose(disposing: bool)
 
-            let! commandService = this.GetServiceAsync(typeof<IMenuCommandService>)
-            let commandService = commandService :?> OleMenuCommandService
+        if disposing then
+            flushTelemetry ()
+#endif
 
-            // Switch to UI thread
-            do! this.JoinableTaskFactory.SwitchToMainThreadAsync()
+    override this.RegisterInitializeAsyncWork(packageRegistrationTasks: PackageLoadTasks) : unit =
+        base.RegisterInitializeAsyncWork(packageRegistrationTasks)
 
-            // FSI-LINKAGE-POINT: sited init
-            FSharp.Interactive.Hooks.fsiConsoleWindowPackageInitalizeSited (this :> Package) commandService
+        packageRegistrationTasks.AddTask(
+            true,
+            (fun _tasks cancellationToken ->
+                foregroundCancellableTask {
+                    let exportProvider = this.ComponentModel.DefaultExportProvider
 
-            // FSI-LINKAGE-POINT: private method GetDialogPage forces fsi options to be loaded
-            let _fsiPropertyPage =
-                this.GetDialogPage(typeof<FSharp.Interactive.FsiPropertyPage>)
+                    let theme = exportProvider.GetExport<ISetThemeColors>().Value
+                    theme.SetColors()
 
-            let workspace = this.ComponentModel.GetService<VisualStudioWorkspace>()
+                    // FSI-LINKAGE-POINT: private method GetDialogPage forces fsi options to be loaded
+                    this.GetDialogPage(typeof<FSharp.Interactive.FsiPropertyPage>) |> ignore
 
-            let _ =
-                this.ComponentModel.DefaultExportProvider.GetExport<HackCpsCommandLineChanges>()
+                    let! commandService = this.GetServiceAsync(typeof<IMenuCommandService>)
+                    let commandService = commandService :?> OleMenuCommandService
 
-            let optionsManager =
-                workspace.Services
-                    .GetService<IFSharpWorkspaceService>()
-                    .FSharpProjectOptionsManager
+                    // FSI-LINKAGE-POINT: sited init
+                    FSharp.Interactive.Hooks.fsiConsoleWindowPackageInitializeSited (this :> Package) commandService
+                }
+                |> CancellableTask.startAsTask cancellationToken)
+        )
 
-            let metadataAsSource =
-                this.ComponentModel.DefaultExportProvider
-                    .GetExport<FSharpMetadataAsSourceService>()
-                    .Value
+        packageRegistrationTasks.AddTask(
+            false,
+            (fun _tasks cancellationToken ->
+                cancellableTask {
+                    let exportProvider = this.ComponentModel.DefaultExportProvider
 
-            let! solution = this.GetServiceAsync(typeof<SVsSolution>)
-            let solution = solution :?> IVsSolution
+                    let workspace = exportProvider.GetExportedValue<VisualStudioWorkspace>()
 
-            let solutionEvents = FSharpSolutionEvents(optionsManager, metadataAsSource)
+                    let fsharpWorkspaceService =
+                        workspace.Services.GetService<IFSharpWorkspaceService>()
 
-            let! rdt = this.GetServiceAsync(typeof<SVsRunningDocumentTable>)
-            let rdt = rdt :?> IVsRunningDocumentTable
+                    let optionsManager = fsharpWorkspaceService.FSharpProjectOptionsManager
 
-            solutionEventsOpt <- Some(solutionEvents)
-            solution.AdviseSolutionEvents(solutionEvents) |> ignore
+                    let metadataAsSource = fsharpWorkspaceService.MetadataAsSource
 
-            let projectContextFactory =
-                this.ComponentModel.GetService<FSharpWorkspaceProjectContextFactory>()
+                    let! solution = this.GetServiceAsync(typeof<SVsSolution>)
+                    let solution = solution :?> IVsSolution
 
-            let miscFilesWorkspace =
-                this.ComponentModel.GetService<MiscellaneousFilesWorkspace>()
+                    let solutionEvents = FSharpSolutionEvents(optionsManager, metadataAsSource)
 
-            do
-                SingleFileWorkspaceMap(FSharpMiscellaneousFileService(workspace, miscFilesWorkspace, projectContextFactory), rdt)
-                |> ignore
+                    let! rdt = this.GetServiceAsync(typeof<SVsRunningDocumentTable>)
+                    let rdt = rdt :?> IVsRunningDocumentTable
 
-            do
-                LegacyProjectWorkspaceMap(solution, optionsManager, projectContextFactory)
-                |> ignore
+                    solutionEventsOpt <- Some(solutionEvents)
+                    solution.AdviseSolutionEvents(solutionEvents) |> ignore
 
-        }
-        |> CancellableTask.startAsTask cancellationToken
+                    let projectContextFactory =
+                        this.ComponentModel.GetService<FSharpWorkspaceProjectContextFactory>()
+
+                    let _ =
+                        this.ComponentModel.DefaultExportProvider.GetExport<HackCpsCommandLineChanges>()
+
+                    let miscFilesWorkspace =
+                        this.ComponentModel.GetService<MiscellaneousFilesWorkspace>()
+
+                    do
+                        SingleFileWorkspaceMap(FSharpMiscellaneousFileService(workspace, miscFilesWorkspace, projectContextFactory), rdt)
+                        |> ignore
+
+                    do
+                        LegacyProjectWorkspaceMap(solution, optionsManager, projectContextFactory)
+                        |> ignore
+
+                    let globalOptions = exportProvider.GetExport<FSharpGlobalOptions>().Value
+
+                    let solutionAnalysis =
+                        workspace.Services.GetService<EditorOptions>().Advanced.SolutionBackgroundAnalysis
+
+                    globalOptions.SetBackgroundAnalysisScope(openFilesOnly = not solutionAnalysis)
+
+                    globalOptions.BlockForCompletionItems <- false
+
+                }
+                |> CancellableTask.startAsTask cancellationToken)
+        )
+
+#if DEBUG
+    override _.RegisterOnAfterPackageLoadedAsyncWork(afterPackageLoadedTasks: PackageLoadTasks) =
+        afterPackageLoadedTasks.AddTask(
+            false,
+            fun _ _ ->
+                task {
+                    DebugHelpers.FSharpServiceTelemetry.periodicallyDisplayMetrics
+                    |> CancellableTask.start this.DisposalToken
+                    |> ignore
+                }
+        )
+#endif
 
     override _.RoslynLanguageName = FSharpConstants.FSharpLanguageName
     (*override this.CreateWorkspace() = this.ComponentModel.GetService<VisualStudioWorkspaceImpl>() *)
@@ -435,26 +444,6 @@ type internal FSharpPackage() as this =
 [<Guid(FSharpConstants.languageServiceGuidString)>]
 type internal FSharpLanguageService(package: FSharpPackage) =
     inherit AbstractLanguageService<FSharpPackage, FSharpLanguageService>(package)
-
-    override _.Initialize() =
-        base.Initialize()
-
-        let exportProvider = package.ComponentModel.DefaultExportProvider
-        let globalOptions = exportProvider.GetExport<FSharpGlobalOptions>().Value
-
-        let workspace = package.ComponentModel.GetService<VisualStudioWorkspace>()
-
-        let solutionAnalysis =
-            workspace.Services
-                .GetService<EditorOptions>()
-                .Advanced.SolutionBackgroundAnalysis
-
-        globalOptions.SetBackgroundAnalysisScope(openFilesOnly = not solutionAnalysis)
-
-        globalOptions.BlockForCompletionItems <- false
-
-        let theme = exportProvider.GetExport<ISetThemeColors>().Value
-        theme.SetColors()
 
     override _.ContentTypeName = FSharpConstants.FSharpContentTypeName
     override _.LanguageName = FSharpConstants.FSharpLanguageName

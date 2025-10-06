@@ -54,17 +54,14 @@ public class ParallelDataCollectionEventsHandlerTests
     public void HandleTestRunComplete_ShouldCallProcessTestRunAttachmentsAsyncWithAttachmentsAndUseResults()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input1"),
             new AttachmentSet(new Uri(Uri2), "uri2_input1"),
             new AttachmentSet(new Uri(Uri3), "uri3_input1")
-        };
+        ];
 
-        Collection<AttachmentSet> outputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input1")
-        };
+        Collection<AttachmentSet> outputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input1")];
 
         _mockTestRunAttachmentsProcessingManager.Setup(f => f.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<ICollection<InvokedDataCollector>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(outputAttachments));
 
@@ -80,12 +77,12 @@ public class ParallelDataCollectionEventsHandlerTests
     public void HandleTestRunComplete_ShouldCallProcessTestRunAttachmentsAsyncWithAttachmentsAndNotUserResults_IfManagerReturnsNull()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input1"),
             new AttachmentSet(new Uri(Uri2), "uri2_input1"),
             new AttachmentSet(new Uri(Uri3), "uri3_input1")
-        };
+        ];
 
         _mockTestRunAttachmentsProcessingManager.Setup(f => f.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<ICollection<InvokedDataCollector>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult((Collection<AttachmentSet>)null!));
 

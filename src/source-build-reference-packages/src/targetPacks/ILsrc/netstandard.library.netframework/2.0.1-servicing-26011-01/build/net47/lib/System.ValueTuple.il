@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -273,6 +273,10 @@
 }
 .assembly /*20000001*/ System.ValueTuple
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000001:0A00000C*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*0100000A*/::.ctor(int32) /* 0A00000C */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000002:0A00000D*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*0100000B*/::.ctor() /* 0A00000D */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                           63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -375,7 +379,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F65F58C7000
+// Image base: 0x00007F3716336000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -662,20 +666,22 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000002*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000002*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000002*/ System.SR/*02000003*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string ArgumentException_ValueTupleIncorrectType()
+  .property /*17000002*/ callconv(8) string
+          ArgumentException_ValueTupleIncorrectType()
   {
     .get string System.SR/*02000003*/::get_ArgumentException_ValueTupleIncorrectType() /* 06000008 */
   } // end of property SR::ArgumentException_ValueTupleIncorrectType
-  .property /*17000003*/ string ArgumentException_ValueTupleLastArgumentNotAValueTuple()
+  .property /*17000003*/ callconv(8) string
+          ArgumentException_ValueTupleLastArgumentNotAValueTuple()
   {
     .get string System.SR/*02000003*/::get_ArgumentException_ValueTupleLastArgumentNotAValueTuple() /* 06000009 */
   } // end of property SR::ArgumentException_ValueTupleLastArgumentNotAValueTuple
-  .property /*17000004*/ class [mscorlib/*23000001*/]System.Type/*01000003*/
+  .property /*17000004*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000003*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000003*/ System.SR/*02000003*/::get_ResourceType() /* 0600000A */

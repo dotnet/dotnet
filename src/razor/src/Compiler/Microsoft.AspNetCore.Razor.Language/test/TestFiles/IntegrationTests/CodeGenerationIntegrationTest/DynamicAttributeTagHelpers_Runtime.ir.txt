@@ -1,11 +1,20 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+    NamespaceDeclaration -  - AspNetCoreGeneratedDocument
+        UsingDirective - (1:0,1 [20] ) - global::System
+        UsingDirective - (24:1,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [25] ) - global::System.Linq
+        UsingDirective - (95:3,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [38] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [48] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [51] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_DynamicAttributeTagHelpers_Runtime -  - 
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_DynamicAttributeTagHelpers - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
             DefaultTagHelperRuntime - 
             FieldDeclaration -  - private - global::TestNamespace.InputTagHelper - __TestNamespace_InputTagHelper
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 HtmlContent - (33:1,0 [2] DynamicAttributeTagHelpers.cshtml)
                     LazyIntermediateToken - (33:1,0 [2] DynamicAttributeTagHelpers.cshtml) - Html - \n
                 TagHelper - (35:2,0 [40] DynamicAttributeTagHelpers.cshtml) - input - TagMode.SelfClosing
@@ -125,3 +134,8 @@
                                 LazyIntermediateToken - (565:13,53 [5] DynamicAttributeTagHelpers.cshtml) - CSharp - false
                             LazyIntermediateToken - (570:13,58 [2] DynamicAttributeTagHelpers.cshtml) - CSharp -  }
                     DefaultTagHelperExecute - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 

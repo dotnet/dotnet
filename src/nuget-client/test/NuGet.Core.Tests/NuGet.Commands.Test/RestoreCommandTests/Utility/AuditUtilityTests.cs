@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -26,6 +27,7 @@ using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test.RestoreCommandTests.Utility;
+
 public class AuditUtilityTests
 {
     private static Uri CveUrl = new Uri("https://cve.test/1");
@@ -120,7 +122,7 @@ public class AuditUtilityTests
         var result = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
         // Assert
-        vulnProvider.Mock.Verify(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()), Times.Never);
+        vulnProvider.Mock.Verify(p => p.GetVulnerabilityInformationAsync(CancellationToken.None), Times.Never);
     }
 
     [Fact]
@@ -180,6 +182,19 @@ public class AuditUtilityTests
         context.PackagesDependencyProvider.Package("pkga", "1.0.0").DependsOn("pkgb", "1.0.0");
         context.PackagesDependencyProvider.Package("pkgb", "1.0.0");
 
+        ImmutableArray<DownloadDependency> downloadDependencies = ImmutableArray.Create<DownloadDependency>
+        (
+            new DownloadDependency("pkgDownload", VersionRange.Parse("[1.0.0]")),
+            new DownloadDependency("pkga", VersionRange.Parse("[1.0.0]")),
+            new DownloadDependency("pkgDownload12", VersionRange.Parse("[1.0.0]"))
+        );
+
+        TargetFrameworkInformation targetFramework = new()
+        {
+            DownloadDependencies = downloadDependencies
+        };
+        context.TargetFrameworks.Add(targetFramework);
+
         // Act
         var auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
@@ -187,11 +202,11 @@ public class AuditUtilityTests
         context.Log.LogMessages.Count.Should().Be(2);
 
         context.Log.LogMessages.Where(m => m.Message.Contains("pkga")).Should().NotBeNullOrEmpty();
-        RestoreLogMessage message = (RestoreLogMessage)context.Log.LogMessages.Where(m => m.Message.Contains("pkga")).Single();
+        RestoreLogMessage message = (RestoreLogMessage)context.Log.LogMessages.Single(m => m.Message.Contains("pkga"));
         ValidateRestoreLogMessage(message, "pkga", expectedCode, context);
 
         context.Log.LogMessages.Where(m => m.Message.Contains("pkgb")).Should().NotBeNullOrEmpty();
-        message = (RestoreLogMessage)context.Log.LogMessages.Where(m => m.Message.Contains("pkgb")).Single();
+        message = (RestoreLogMessage)context.Log.LogMessages.Single(m => m.Message.Contains("pkgb"));
         ValidateRestoreLogMessage(message, "pkgb", expectedCode, context);
 
         auditUtility.DownloadDurationSeconds.Should().NotBeNull();
@@ -204,25 +219,33 @@ public class AuditUtilityTests
         auditUtility.TransitivePackagesWithAdvisory.Should().NotBeNull();
         auditUtility.TransitivePackagesWithAdvisory!.Should().BeEquivalentTo(new[] { "pkgb" });
 
+        auditUtility.PackageDownloadPackagesWithAdvisory.Should().NotBeNull();
+        auditUtility.PackageDownloadPackagesWithAdvisory.Should().BeEquivalentTo(new[] { "pkga" });
+
         int expectedCount = severity == PackageVulnerabilitySeverity.Low ? 1 : 0;
         auditUtility.Sev0DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev0TransitiveMatches.Should().Be(expectedCount);
+        auditUtility.Sev0PackageDownloadMatches.Should().Be(expectedCount);
 
         expectedCount = severity == PackageVulnerabilitySeverity.Moderate ? 1 : 0;
         auditUtility.Sev1DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev1TransitiveMatches.Should().Be(expectedCount);
+        auditUtility.Sev1PackageDownloadMatches.Should().Be(expectedCount);
 
         expectedCount = severity == PackageVulnerabilitySeverity.High ? 1 : 0;
         auditUtility.Sev2DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev2TransitiveMatches.Should().Be(expectedCount);
+        auditUtility.Sev2PackageDownloadMatches.Should().Be(expectedCount);
 
         expectedCount = severity == PackageVulnerabilitySeverity.Critical ? 1 : 0;
         auditUtility.Sev3DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev3TransitiveMatches.Should().Be(expectedCount);
+        auditUtility.Sev3PackageDownloadMatches.Should().Be(expectedCount);
 
         expectedCount = severity == PackageVulnerabilitySeverity.Unknown ? 1 : 0;
         auditUtility.InvalidSevDirectMatches.Should().Be(expectedCount);
         auditUtility.InvalidSevTransitiveMatches.Should().Be(expectedCount);
+        auditUtility.InvalidSevPackageDownloadMatches.Should().Be(expectedCount);
 
         static void ValidateRestoreLogMessage(RestoreLogMessage message, string packageId, NuGetLogCode expectedCode, AuditTestContext context)
         {
@@ -317,6 +340,31 @@ public class AuditUtilityTests
         auditUtility.TransitivePackagesWithAdvisory.Should().BeNullOrEmpty();
     }
 
+    [Fact]
+    public async Task Check_AuditSourceWithoutVulnerabilityData_RaisesNU1905()
+    {
+        // Arrange
+        var context = new AuditTestContext();
+
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        context.WithRestoreTarget()
+            .DependsOn("pkga", "1.0.0");
+
+        var pkgaVulnerabilities = context
+            .WithVulnerabilityProvider(isAuditSource: true, sourceName: "SourceName");
+
+        // Act
+        AuditUtility auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+
+        //Assert
+        auditUtility.DownloadDurationSeconds.Should().NotBeNull("audit utility did not check vulnerability providers");
+        context.Log.Messages.Count.Should().Be(1);
+        RestoreLogMessage logMessage = (RestoreLogMessage)context.Log.LogMessages.First();
+        logMessage.Code.Should().Be(NuGetLogCode.NU1905);
+        logMessage.Message.Should().Contain("SourceName");
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -398,6 +446,17 @@ public class AuditUtilityTests
             await createGraphTasks[1]
         };
 
+        var targetFrameworks = new List<TargetFrameworkInformation>
+        {
+            new TargetFrameworkInformation()
+            {
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net60
+            },new TargetFrameworkInformation()
+            {
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net50
+            }
+        };
+
         var log = new TestLogger();
 
         // Act
@@ -406,6 +465,7 @@ public class AuditUtilityTests
             "/path/proj.csproj",
             graphs,
             vulnerabilityProviders,
+            targetFrameworks: targetFrameworks,
             log);
         await audit.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
@@ -438,12 +498,58 @@ public class AuditUtilityTests
         }
     }
 
+    [Fact]
+    public async Task Check_ProjectWithSuppressions_SuppressesExpectedVulnerabilities()
+    {
+        // Arrange
+        var context = new AuditTestContext();
+        string cveUrl1 = "https://cve.test/suppressed/1";
+        string cveUrl2 = "https://cve.test/suppressed/2";
+
+        context.Mode = "all";
+        context.SuppressedAdvisories = new HashSet<string> { cveUrl2 }; // suppress one of the two advisories
+
+        var vulnerabilityProvider = context.WithVulnerabilityProvider();
+        var knownVulnerabilities = vulnerabilityProvider.WithPackageVulnerability("pkga");
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(new Uri(cveUrl1), PackageVulnerabilitySeverity.Moderate, UpToV2));
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(new Uri(cveUrl2), PackageVulnerabilitySeverity.Moderate, UpToV2));
+
+        context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        // Act
+        var auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+
+        // Assert
+        context.Log.LogMessages.Count.Should().Be(1);
+
+        List<RestoreLogMessage> messages = new(1);
+        messages.AddRange(context.Log.LogMessages.Cast<RestoreLogMessage>());
+
+        messages.All(m => m.LibraryId == "pkga").Should().BeTrue();
+        messages.Any(m => m.Message.Contains(cveUrl1)).Should().BeTrue(); // cveUrl1 should not be suppressed
+        messages.Any(m => m.Message.Contains(cveUrl2)).Should().BeFalse(); // cveUrl2 should be suppressed
+    }
+
     private class AuditTestContext
     {
+        public AuditTestContext()
+        {
+            TargetFrameworks = new()
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = _framework
+                }
+            };
+        }
+
         public string ProjectFullPath { get; set; } = RuntimeEnvironmentHelper.IsWindows ? @"n:\proj\proj.csproj" : "/src/proj/proj.csproj";
         public string? Enabled { get; set; }
         public string? Level { get; set; }
         public string? Mode { get; set; }
+        public HashSet<string>? SuppressedAdvisories { get; set; }
+        public List<TargetFrameworkInformation> TargetFrameworks { get; set; }
 
         public TestLogger Log { get; } = new();
 
@@ -453,6 +559,8 @@ public class AuditUtilityTests
         private LibraryRange? _walkTarget;
 
         private List<VulnerabilityProviderTestContext>? _vulnerabilityProviders;
+
+        private readonly NuGetFramework _framework = FrameworkConstants.CommonFrameworks.Net60;
 
         /// <summary>
         /// Set up the project that is being restored (not just a project reference)
@@ -472,14 +580,14 @@ public class AuditUtilityTests
             return testProject;
         }
 
-        public VulnerabilityProviderTestContext WithVulnerabilityProvider()
+        public VulnerabilityProviderTestContext WithVulnerabilityProvider(bool isAuditSource = false, string? sourceName = null)
         {
             if (_vulnerabilityProviders is null)
             {
                 _vulnerabilityProviders = new();
             }
 
-            VulnerabilityProviderTestContext provider = new();
+            VulnerabilityProviderTestContext provider = new(isAuditSource, sourceName);
             _vulnerabilityProviders.Add(provider);
             return provider;
         }
@@ -491,6 +599,7 @@ public class AuditUtilityTests
                 EnableAudit = Enabled,
                 AuditLevel = Level,
                 AuditMode = Mode,
+                SuppressedAdvisories = SuppressedAdvisories,
             };
 
             bool enabled = AuditUtility.ParseEnableValue(restoreAuditProperties, ProjectFullPath, Log);
@@ -509,7 +618,7 @@ public class AuditUtilityTests
 
             var vulnProviders = CreateVulnerabilityInformationProviders(_vulnerabilityProviders);
 
-            var audit = new AuditUtility(restoreAuditProperties, ProjectFullPath, graphs, vulnProviders, Log);
+            var audit = new AuditUtility(restoreAuditProperties, ProjectFullPath, graphs, vulnProviders, targetFrameworks: TargetFrameworks, Log);
             await audit.CheckPackageVulnerabilitiesAsync(cancellationToken);
 
             return audit;
@@ -521,12 +630,11 @@ public class AuditUtilityTests
                 walkContext.ProjectLibraryProviders.Add(ProjectDependencyProvider);
                 var walker = new RemoteDependencyWalker(walkContext);
 
-                var targetFramework = FrameworkConstants.CommonFrameworks.Net60;
-                var graph = await walker.WalkAsync(_walkTarget, targetFramework, "", RuntimeGraph.Empty, true);
+                var graph = await walker.WalkAsync(_walkTarget, _framework, "", RuntimeGraph.Empty, true);
 
                 RestoreTargetGraph[] graphs = new[]
                 {
-                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, targetFramework)
+                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework)
                 };
 
                 return graphs;
@@ -555,13 +663,20 @@ public class AuditUtilityTests
     {
         public Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>? KnownVulnerabilities { get; private set; }
         public AggregateException? Exceptions { get; private set; }
+        public bool IsAuditSource { get; private set; }
+        public string SourceName { get; private set; }
         public Mock<IVulnerabilityInformationProvider> Mock { get; }
 
-        public VulnerabilityProviderTestContext()
+        public VulnerabilityProviderTestContext(bool isAuditSource = false, string? sourceName = null)
         {
+            IsAuditSource = isAuditSource;
+            SourceName = sourceName ?? Guid.NewGuid().ToString();
+
             Mock = new Mock<IVulnerabilityInformationProvider>();
-            Mock.Setup(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(p => p.GetVulnerabilityInformationAsync(CancellationToken.None))
                 .Returns(CreateVulnerabilityInformationResult);
+            Mock.SetupGet(p => p.IsAuditSource).Returns(IsAuditSource);
+            Mock.SetupGet(p => p.SourceName).Returns(SourceName);
         }
 
         private Task<GetVulnerabilityInfoResult?> CreateVulnerabilityInformationResult()

@@ -1,12 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#if !NET6_0_OR_GREATER
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-#endif
 using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Abstractions.Mount;
 using Microsoft.TemplateEngine.Abstractions.PhysicalFileSystem;
@@ -157,7 +151,7 @@ namespace Microsoft.TemplateEngine
         /// </summary>
         internal static IReadOnlyList<string> ToStringReadOnlyList(this JObject jObject, string propertyName, IReadOnlyList<string>? defaultValue = null)
         {
-            defaultValue ??= Array.Empty<string>();
+            defaultValue ??= [];
             JToken? token = jObject.Get<JToken>(propertyName);
             if (token == null)
             {
@@ -170,16 +164,16 @@ namespace Microsoft.TemplateEngine
         {
             if (token is not JObject obj)
             {
-                return Array.Empty<JProperty>();
+                return [];
             }
 
             if (key != null)
             {
                 if (!obj.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken? element))
                 {
-                    return Array.Empty<JProperty>();
+                    return [];
                 }
-                return element is not JObject jObj ? Array.Empty<JProperty>() : jObj.Properties();
+                return element is not JObject jObj ? [] : jObj.Properties();
             }
             return obj.Properties();
         }
@@ -273,7 +267,7 @@ namespace Microsoft.TemplateEngine
 
             if (token is not JArray arr)
             {
-                return Array.Empty<string>();
+                return [];
             }
 
             List<string> values = new();
@@ -298,7 +292,7 @@ namespace Microsoft.TemplateEngine
 
             if (token is not JArray arr)
             {
-                return Array.Empty<Guid>();
+                return [];
             }
 
             List<Guid> values = new();

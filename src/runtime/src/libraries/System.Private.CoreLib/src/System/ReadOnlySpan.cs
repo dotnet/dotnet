@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -10,7 +12,7 @@ using System.Runtime.Versioning;
 using EditorBrowsableAttribute = System.ComponentModel.EditorBrowsableAttribute;
 using EditorBrowsableState = System.ComponentModel.EditorBrowsableState;
 
-#pragma warning disable 0809  //warning CS0809: Obsolete member 'Span<T>.Equals(object)' overrides non-obsolete member 'object.Equals(object)'
+#pragma warning disable 0809 // Obsolete member 'Span<T>.Equals(object)' overrides non-obsolete member 'object.Equals(object)'
 
 namespace System
 {
@@ -21,9 +23,7 @@ namespace System
     [DebuggerTypeProxy(typeof(SpanDebugView<>))]
     [DebuggerDisplay("{ToString(),raw}")]
     [NonVersionable]
-#pragma warning disable SYSLIB1056 // Specified native type is invalid
     [NativeMarshalling(typeof(ReadOnlySpanMarshaller<,>))]
-#pragma warning restore SYSLIB1056 // Specified native type is invalid
     [Intrinsic]
     public readonly ref struct ReadOnlySpan<T>
     {
@@ -55,7 +55,7 @@ namespace System
         /// at 'start' index and ending at 'end' index (exclusive).
         /// </summary>
         /// <param name="array">The target array.</param>
-        /// <param name="start">The index at which to begin the read-only span.</param>
+        /// <param name="start">The zero-based index at which to begin the read-only span.</param>
         /// <param name="length">The number of items in the read-only span.</param>
         /// <remarks>Returns default when <paramref name="array"/> is null.</remarks>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -103,11 +103,11 @@ namespace System
         public unsafe ReadOnlySpan(void* pointer, int length)
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             if (length < 0)
                 ThrowHelper.ThrowArgumentOutOfRangeException();
 
-            _reference = ref Unsafe.As<byte, T>(ref *(byte*)pointer);
+            _reference = ref *(T*)pointer;
             _length = length;
         }
 
@@ -133,7 +133,7 @@ namespace System
         /// <summary>
         /// Returns the specified element of the read-only span.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">The zero-based index.</param>
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException">
         /// Thrown when index less than 0 or index greater than or equal to Length
@@ -231,7 +231,7 @@ namespace System
         public Enumerator GetEnumerator() => new Enumerator(this);
 
         /// <summary>Enumerates the elements of a <see cref="ReadOnlySpan{T}"/>.</summary>
-        public ref struct Enumerator
+        public ref struct Enumerator : IEnumerator<T>
         {
             /// <summary>The span being enumerated.</summary>
             private readonly ReadOnlySpan<T> _span;
@@ -267,6 +267,18 @@ namespace System
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get => ref _span[_index];
             }
+
+            /// <inheritdoc />
+            T IEnumerator<T>.Current => Current;
+
+            /// <inheritdoc />
+            object IEnumerator.Current => Current!;
+
+            /// <inheritdoc />
+            void IEnumerator.Reset() => _index = -1;
+
+            /// <inheritdoc />
+            void IDisposable.Dispose() { }
         }
 
         /// <summary>
@@ -351,7 +363,7 @@ namespace System
         /// <summary>
         /// Forms a slice out of the given read-only span, beginning at 'start'.
         /// </summary>
-        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="start">The zero-based index at which to begin this slice.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the specified <paramref name="start"/> index is not in range (&lt;0 or &gt;Length).
         /// </exception>
@@ -367,7 +379,7 @@ namespace System
         /// <summary>
         /// Forms a slice out of the given read-only span, beginning at 'start', of given length
         /// </summary>
-        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="start">The zero-based index at which to begin this slice.</param>
         /// <param name="length">The desired length for the slice (exclusive).</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the specified <paramref name="start"/> or end index is not in range (&lt;0 or &gt;Length).

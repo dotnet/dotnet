@@ -2,14 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
 using Xunit;
-using BcGeneralName = Org.BouncyCastle.Asn1.X509.GeneralName;
 using GeneralName = NuGet.Packaging.Signing.GeneralName;
+using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
 
 namespace NuGet.Packaging.Test
 {
@@ -18,7 +17,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WhenDistinguishedNameNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => GeneralName.Create(distinguishedName: null));
 
             Assert.Equal("distinguishedName", exception.ParamName);
@@ -31,7 +30,7 @@ namespace NuGet.Packaging.Test
                 "CN=leaf.test,OU=Test Organizational Unit Name,O=Test Organization Name,L=Redmond,S=WA,C=US",
                 X500DistinguishedNameFlags.UseCommas);
 
-            var generalName = GeneralName.Create(distinguishedName);
+            GeneralName generalName = GeneralName.Create(distinguishedName);
 
             Assert.Same(distinguishedName, generalName.DirectoryName);
         }
@@ -46,9 +45,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithUnsupportedChoice_Throws()
         {
-            var bytes = new BcGeneralName(BcGeneralName.RegisteredID, new DerObjectIdentifier("1.2.3")).GetDerEncoded();
+            TestGeneralName testGeneralName = new(registeredId: "1.2.3");
+            byte[] bytes = Encode(testGeneralName);
 
-            var exception = Assert.Throws<SignatureException>(
+            SignatureException exception = Assert.Throws<SignatureException>(
                 () => GeneralName.Read(bytes));
 
             Assert.Equal("The ASN.1 data is unsupported.", exception.Message);
@@ -57,12 +57,23 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithDistinguishedName_ReturnsGeneralName()
         {
-            var bytes = new BcGeneralName(BcGeneralName.DirectoryName, new X509Name("CN=test")).GetDerEncoded();
+            X500DistinguishedName directoryName = new("CN=test");
+            TestGeneralName testGeneralName = new(directoryName: directoryName.RawData);
+            byte[] bytes = Encode(testGeneralName);
 
-            var generalName = GeneralName.Read(bytes);
+            GeneralName generalName = GeneralName.Read(bytes);
 
             Assert.NotNull(generalName);
-            Assert.Equal("CN=test", generalName.DirectoryName.Name);
+            Assert.Equal(directoryName.Name, generalName.DirectoryName.Name);
+        }
+
+        private static byte[] Encode(TestGeneralName testGeneralName)
+        {
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            testGeneralName.Encode(writer);
+
+            return writer.Encode();
         }
     }
 }

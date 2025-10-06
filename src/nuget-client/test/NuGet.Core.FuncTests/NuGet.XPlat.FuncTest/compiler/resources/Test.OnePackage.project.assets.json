@@ -1,0 +1,94 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0-windows7.0": {
+      "task/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/task.dll": {
+            "related": ".runtimeconfig.json"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/task.dll": {
+            "related": ".runtimeconfig.json"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "task/1.0.0": {
+      "sha512": "hBxX9fNFWZCeTdczELpjkznRUZu1sK8MFOaB/ugJBK7ezeiIyV8ys1L6oD6Cj4NTRECA2mFDg2F2Kj4N8fo8Nw==",
+      "type": "package",
+      "path": "task/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net8.0/task.dll",
+        "lib/net8.0/task.runtimeconfig.json",
+        "task.1.0.0.nupkg.sha512",
+        "task.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0-windows7.0": [
+      "task >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\globalPackages": {},
+    "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\fallback": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\solution\\ProjectA\\ProjectA.csproj",
+      "projectName": "ProjectA",
+      "projectPath": "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\solution\\ProjectA\\ProjectA.csproj",
+      "packagesPath": "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\globalPackages",
+      "outputPath": "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\solution\\ProjectA\\obj\\",
+      "projectStyle": "PackageReference",
+      "UsingMicrosoftNETSdk": false,
+      "fallbackFolders": [
+        "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\fallback"
+      ],
+      "configFilePaths": [
+        "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\NuGet.Config",
+        "N:\\nuget\\NuGet.Client\\NuGet.Config",
+        "C:\\Users\\nyenework\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "N:\\nuget\\NuGet.Client\\.test\\work\\88de2778\\c4c3bb44\\source": {}
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {}
+        }
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net8.0-windows7.0": {
+        "targetAlias": "net8.0",
+        "dependencies": {
+          "task": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          }
+        }
+      }
+    }
+  }
+}

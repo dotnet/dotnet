@@ -32,6 +32,21 @@ namespace NuGet.Commands
         public const string PropsExtension = ".props";
 
         /// <summary>
+        /// This value is written into generated Restore props files, but
+        /// if it changes across tooling that ships different NuGet versions
+        /// (like Visual Studio and the dotnet CLI) it can cause unintentional
+        /// problems with MSBuild incrementality. As a result, we set it to a new,
+        /// fixed value higher than the current NuGet version (6.14.x) and 
+        /// never change it again, so that starting in .NET 10 onwards this 
+        /// won't cause rebuilds.
+        /// 
+        /// We could remove the property entirely, but there are some uses of it
+        /// on public GitHub that aren't just from checked-in generated files, so
+        /// keeping it around but stable is the most compatible option.
+        /// </summary>
+        internal const string PermanentNuGetToolsVersionValue = "7.0.0";
+
+        /// <summary>
         /// The macros that we may use in MSBuild to replace path roots.
         /// </summary>
         public static readonly string[] MacroCandidates = new[]
@@ -94,11 +109,11 @@ namespace NuGet.Commands
             return files;
         }
 
-        private static string ReplacePathsWithMacros(string path)
+        private static string ReplacePathsWithMacros(string path, IEnvironmentVariableReader environmentVariableReader)
         {
             foreach (var macroName in MacroCandidates)
             {
-                string macroValue = Environment.GetEnvironmentVariable(macroName);
+                string macroValue = environmentVariableReader.GetEnvironmentVariable(macroName);
                 if (!string.IsNullOrEmpty(macroValue)
                     && path.StartsWith(macroValue, StringComparison.OrdinalIgnoreCase))
                 {
@@ -164,6 +179,17 @@ namespace NuGet.Commands
             string assetsFilePath,
             bool success)
         {
+            AddNuGetProperties(doc, packageFolders, repositoryRoot, projectStyle, assetsFilePath, success, EnvironmentVariableWrapper.Instance);
+        }
+        internal static void AddNuGetProperties(
+            XDocument doc,
+            IEnumerable<string> packageFolders,
+            string repositoryRoot,
+            ProjectStyle projectStyle,
+            string assetsFilePath,
+            bool success,
+            IEnvironmentVariableReader environmentVariableReader)
+        {
 
             doc.Root.AddFirst(
                 new XElement(Namespace + "PropertyGroup",
@@ -171,10 +197,10 @@ namespace NuGet.Commands
                             GenerateProperty("RestoreSuccess", success.ToString(CultureInfo.CurrentCulture)),
                             GenerateProperty("RestoreTool", "NuGet"),
                             GenerateProperty("ProjectAssetsFile", assetsFilePath),
-                            GenerateProperty("NuGetPackageRoot", ReplacePathsWithMacros(repositoryRoot)),
+                            GenerateProperty("NuGetPackageRoot", ReplacePathsWithMacros(repositoryRoot, environmentVariableReader)),
                             GenerateProperty("NuGetPackageFolders", string.Join(";", packageFolders)),
                             GenerateProperty("NuGetProjectStyle", projectStyle.ToString()),
-                            GenerateProperty("NuGetToolVersion", MinClientVersionUtility.GetNuGetClientVersion().ToFullString())),
+                            GenerateProperty("NuGetToolVersion", PermanentNuGetToolsVersionValue)),
                 new XElement(Namespace + "ItemGroup",
                             new XAttribute("Condition", $" {ExcludeAllCondition} "),
                             packageFolders.Select(e => GenerateItem("SourceRoot", PathUtility.EnsureTrailingSlash(e)))));
@@ -315,6 +341,10 @@ namespace NuGet.Commands
 
         public static string GetPathWithMacros(string absolutePath, string repositoryRoot)
         {
+            return GetPathWithMacros(absolutePath, repositoryRoot, EnvironmentVariableWrapper.Instance);
+        }
+        internal static string GetPathWithMacros(string absolutePath, string repositoryRoot, IEnvironmentVariableReader environmentVariableReader)
+        {
             var path = absolutePath;
 
             if (absolutePath.StartsWith(repositoryRoot, StringComparison.Ordinal))
@@ -323,7 +353,7 @@ namespace NuGet.Commands
             }
             else
             {
-                path = ReplacePathsWithMacros(absolutePath);
+                path = ReplacePathsWithMacros(absolutePath, environmentVariableReader);
             }
 
             return path;
@@ -376,7 +406,7 @@ namespace NuGet.Commands
         {
             string path;
 
-            if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference || project.RestoreMetadata?.ProjectStyle == ProjectStyle.DotnetToolReference)
+            if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference)
             {
                 // PackageReference style projects
                 var projFileName = Path.GetFileName(project.RestoreMetadata.ProjectPath);
@@ -824,7 +854,7 @@ namespace NuGet.Commands
 
         private static string GetMatchingFrameworkStrings(PackageSpec spec, NuGetFramework framework)
         {
-            var frameworkString = spec.TargetFrameworks.Where(e => e.FrameworkName.Equals(framework)).FirstOrDefault()?.TargetAlias;
+            var frameworkString = spec.TargetFrameworks.FirstOrDefault(e => e.FrameworkName.Equals(framework))?.TargetAlias;
 
             // If there were no matches, use the generated name
             if (string.IsNullOrEmpty(frameworkString))

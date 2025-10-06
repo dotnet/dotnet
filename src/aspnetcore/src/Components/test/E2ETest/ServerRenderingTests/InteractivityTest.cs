@@ -4,6 +4,7 @@
 using Components.TestServer.RazorComponents;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
+using Microsoft.AspNetCore.Components.E2ETests.ServerExecutionTests;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
 using TestServer;
@@ -1053,6 +1054,17 @@ public class InteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<Ra
     }
 
     [Fact]
+    public void CanPersistPrerenderedStateDeclaratively_Server()
+    {
+        Navigate($"{ServerPathBase}/persist-state?server=true&declarative=true");
+
+        Browser.Equal("restored", () => Browser.FindElement(By.Id("server")).Text);
+        Browser.Equal("42", () => Browser.FindElement(By.Id("custom-server")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-server")).Text);
+        Browser.Equal("prerender-disabled-not-restored", () => Browser.FindElement(By.Id("prerendering-disabled-server")).Text);
+    }
+
+    [Fact]
     public void CanPersistPrerenderedState_WebAssembly()
     {
         Navigate($"{ServerPathBase}/persist-state?wasm=true");
@@ -1062,12 +1074,34 @@ public class InteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<Ra
     }
 
     [Fact]
+    public void CanPersistPrerenderedStateDeclaratively_WebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-state?wasm=true&declarative=true");
+
+        Browser.Equal("restored", () => Browser.FindElement(By.Id("wasm")).Text);
+        Browser.Equal("42", () => Browser.FindElement(By.Id("custom-wasm")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-wasm")).Text);
+        Browser.Equal("prerender-disabled-not-restored", () => Browser.FindElement(By.Id("prerendering-disabled-wasm")).Text);
+    }
+
+    [Fact]
     public void CanPersistPrerenderedState_Auto_PersistsOnWebAssembly()
     {
         Navigate($"{ServerPathBase}/persist-state?auto=true");
 
         Browser.Equal("restored", () => Browser.FindElement(By.Id("auto")).Text);
         Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto")).Text);
+    }
+
+    [Fact]
+    public void CanPersistPrerenderedStateDeclaratively_Auto_PersistsOnWebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-state?auto=true&declarative=true");
+
+        Browser.Equal("restored", () => Browser.FindElement(By.Id("auto")).Text);
+        Browser.Equal("42", () => Browser.FindElement(By.Id("custom-auto")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto")).Text);
+        Browser.Equal("prerender-disabled-not-restored", () => Browser.FindElement(By.Id("prerendering-disabled-auto")).Text);
     }
 
     [Fact]
@@ -1081,6 +1115,65 @@ public class InteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<Ra
 
         Browser.Equal("restored", () => Browser.FindElement(By.Id("auto")).Text);
         Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto")).Text);
+    }
+
+    [Theory]
+    [InlineData("server", "Server state", "Auto state", "not restored")]
+    [InlineData("auto", "Server state", "Auto state", "not restored")]
+    public void CanPersistPrerenderedState_ServicesState_PersistsOnServer(string mode, string expectedServerState, string expectedAutoState, string expectedWebAssemblyState)
+    {
+        Navigate(ServerPathBase);
+        Browser.Equal("Hello", () => Browser.Exists(By.TagName("h1")).Text);
+        if (mode == "auto")
+        {
+            BlockWebAssemblyResourceLoad();
+        }
+
+        Navigate($"{ServerPathBase}/persist-services-state?mode={mode}");
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode")).Text);
+        Browser.Equal(expectedServerState, () => Browser.FindElement(By.Id("server-state")).Text);
+
+        Browser.Equal(expectedAutoState, () => Browser.FindElement(By.Id("auto-state")).Text);
+        Browser.Equal(expectedWebAssemblyState, () => Browser.FindElement(By.Id("wasm-state")).Text);
+
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-server-state")).Text);
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-auto-state")).Text);
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-wasm-state")).Text);
+    }
+
+    [Theory]
+    [InlineData("auto", "not restored", "Auto state", "WebAssembly state")]
+    [InlineData("wasm", "not restored", "Auto state", "WebAssembly state")]
+    public void CanPersistPrerenderedState_ServicesState_PersistsOnWasm(string mode, string expectedServerState, string expectedAutoState, string expectedWebAssemblyState)
+    {
+        Navigate(ServerPathBase);
+        Browser.Equal("Hello", () => Browser.Exists(By.TagName("h1")).Text);
+
+        Navigate($"{ServerPathBase}/persist-services-state?mode={mode}");
+
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode")).Text);
+        Browser.Equal(expectedServerState, () => Browser.FindElement(By.Id("server-state")).Text);
+        Browser.Equal(expectedAutoState, () => Browser.FindElement(By.Id("auto-state")).Text);
+        Browser.Equal(expectedWebAssemblyState, () => Browser.FindElement(By.Id("wasm-state")).Text);
+
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-server-state")).Text);
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-auto-state")).Text);
+        Browser.Equal("not restored", () => Browser.FindElement(By.Id("filtered-wasm-state")).Text);
+    }
+
+    [Fact]
+    public void CanPersistPrerenderedStateDeclaratively_Auto_PersistsOnServer()
+    {
+        Navigate(ServerPathBase);
+        Browser.Equal("Hello", () => Browser.Exists(By.TagName("h1")).Text);
+        BlockWebAssemblyResourceLoad();
+
+        Navigate($"{ServerPathBase}/persist-state?auto=true&declarative=true");
+
+        Browser.Equal("restored", () => Browser.FindElement(By.Id("auto")).Text);
+        Browser.Equal("42", () => Browser.FindElement(By.Id("custom-auto")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto")).Text);
+        Browser.Equal("prerender-disabled-not-restored", () => Browser.FindElement(By.Id("prerendering-disabled-auto")).Text);
     }
 
     [Fact]
@@ -1142,8 +1235,56 @@ public class InteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<Ra
     public void InteractiveServerRootComponent_CanAccessCircuitContext()
     {
         Navigate($"{ServerPathBase}/interactivity/circuit-context");
+        CircuitContextTest.TestCircuitContextCore(Browser);
+    }
 
-        Browser.Equal("True", () => Browser.FindElement(By.Id("has-circuit-context")).Text);
+    [Fact]
+    public void InteractiveServerRootComponents_CanBecomeInteractive_WithoutInterferingWithOtherCircuits()
+    {
+        // Start by setting up 2 tabs with interactive server components.
+        SetUpPageWithOneInteractiveServerComponent();
+
+        var firstWindow = Browser.CurrentWindowHandle;
+        Browser.SwitchTo().NewWindow(WindowType.Tab);
+        var secondWindow = Browser.CurrentWindowHandle;
+
+        SetUpPageWithOneInteractiveServerComponent();
+
+        // Start streaming in the second tab.
+        Browser.Click(By.Id("start-streaming-link"));
+        Browser.Equal("Streaming", () => Browser.FindElement(By.Id("status")).Text);
+
+        // Add an interactive server component while streaming.
+        // This will update the existing component, but the new component
+        // won't become interactive until streaming ends.
+        Browser.Click(By.Id(AddServerPrerenderedId));
+        Browser.Equal("False", () => Browser.FindElement(By.Id($"is-interactive-1")).Text);
+
+        // Add an interactive server component in the first tab.
+        // This component will become interactive immediately because the response
+        // that rendered the component will have completed quickly.
+        Browser.SwitchTo().Window(firstWindow);
+        Browser.Click(By.Id(AddServerPrerenderedId));
+        Browser.Equal("True", () => Browser.FindElement(By.Id($"is-interactive-1")).Text);
+
+        // Stop streaming in the second tab.
+        // This will activate the pending component for interactivity.
+        // This check verifies that a circuit can activate components from its most
+        // recent response, even if that response isn't the most recent between all
+        // circuits.
+        Browser.SwitchTo().Window(secondWindow);
+        Browser.Click(By.Id("stop-streaming-link"));
+        Browser.Equal("True", () => Browser.FindElement(By.Id($"is-interactive-1")).Text);
+
+        void SetUpPageWithOneInteractiveServerComponent()
+        {
+            Navigate($"{ServerPathBase}/streaming-interactivity");
+
+            Browser.Equal("Not streaming", () => Browser.FindElement(By.Id("status")).Text);
+
+            Browser.Click(By.Id(AddServerPrerenderedId));
+            Browser.Equal("True", () => Browser.FindElement(By.Id($"is-interactive-0")).Text);
+        }
     }
 
     private void BlockWebAssemblyResourceLoad()
@@ -1223,4 +1364,157 @@ public class InteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<Ra
     {
         ((IJavaScriptExecutor)Browser).ExecuteScript("console.clear()");
     }
+
+    [Fact]
+    public void CanPersistMultiplePrerenderedStateDeclaratively_Server()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-state-declaratively?server=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("server-1")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-server-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("server-2")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-server-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultiplePrerenderedStateDeclaratively_WebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-state-declaratively?wasm=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("wasm-1")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-wasm-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("wasm-2")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-wasm-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultiplePrerenderedStateDeclaratively_Auto_PersistsOnServer()
+    {
+        Navigate(ServerPathBase);
+        Browser.Equal("Hello", () => Browser.Exists(By.TagName("h1")).Text);
+        BlockWebAssemblyResourceLoad();
+
+        Navigate($"{ServerPathBase}/persist-multiple-state-declaratively?auto=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("auto-1")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("auto-2")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultiplePrerenderedStateDeclaratively_Auto_PersistsOnWebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-state-declaratively?auto=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("auto-1")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("auto-2")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultipleRootPrerenderedStateDeclaratively_WebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-root-component-state-declaratively?wasm=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("wasm-1")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-wasm-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("wasm-2")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-wasm-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultipleRootPrerenderedStateDeclaratively_Server()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-root-component-state-declaratively?server=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("server-1")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-server-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("server-2")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-server-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultipleRootPrerenderedStateDeclaratively_Auto_PersistsOnServer()
+    {
+        Navigate(ServerPathBase);
+        Browser.Equal("Hello", () => Browser.Exists(By.TagName("h1")).Text);
+        BlockWebAssemblyResourceLoad();
+
+        Navigate($"{ServerPathBase}/persist-multiple-root-component-state-declaratively?auto=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("auto-1")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("auto-2")).Text);
+        Browser.Equal("Server", () => Browser.FindElement(By.Id("render-mode-auto-2")).Text);
+    }
+
+    [Fact]
+    public void CanPersistMultipleRootPrerenderedStateDeclaratively_Auto_PersistsOnWebAssembly()
+    {
+        Navigate($"{ServerPathBase}/persist-multiple-root-component-state-declaratively?auto=true");
+
+        Browser.Equal("restored 1", () => Browser.FindElement(By.Id("auto-1")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto-1")).Text);
+
+        Browser.Equal("restored 2", () => Browser.FindElement(By.Id("auto-2")).Text);
+        Browser.Equal("WebAssembly", () => Browser.FindElement(By.Id("render-mode-auto-2")).Text);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void NavigatesWithInteractivityByRequestRedirection(bool controlFlowByException)
+    {
+        AppContext.SetSwitch("Microsoft.AspNetCore.Components.Endpoints.NavigationManager.DisableThrowNavigationException", isEnabled: !controlFlowByException);
+        Navigate($"{ServerPathBase}/routing/ssr-navigate-to");
+        Browser.Equal("Click submit to navigate to home", () => Browser.Exists(By.Id("test-info")).Text);
+        Browser.Click(By.Id("redirectButton"));
+        Browser.Equal("Routing test cases", () => Browser.Exists(By.Id("test-info")).Text);
+    }
+
+    [Theory]
+    // prerendering (SSR) is tested in NoInteractivityTest
+    [InlineData("ServerNonPrerendered")]
+    [InlineData("WebAssemblyNonPrerendered")]
+    public void ProgrammaticNavigationToNotExistingPathReExecutesTo404(string renderMode)
+    {
+        Navigate($"{ServerPathBase}/reexecution/redirection-not-found?renderMode={renderMode}&navigate-programmatically=true");
+        Assert404ReExecuted();
+    }
+
+    [Theory]
+    // prerendering (SSR) is tested in NoInteractivityTest
+    [InlineData("ServerNonPrerendered")]
+    [InlineData("WebAssemblyNonPrerendered")]
+    public void LinkNavigationToNotExistingPathReExecutesTo404(string renderMode)
+    {
+        Navigate($"{ServerPathBase}/reexecution/redirection-not-found?renderMode={renderMode}");
+        Browser.Click(By.Id("link-to-not-existing-page"));
+        Assert404ReExecuted();
+    }
+
+    [Theory]
+    // prerendering (SSR) is tested in NoInteractivityTest
+    [InlineData("ServerNonPrerendered")]
+    [InlineData("WebAssemblyNonPrerendered")]
+    public void BrowserNavigationToNotExistingPathReExecutesTo404(string renderMode)
+    {
+        // non-existing path has to have re-execution middleware set up
+        // so it has to have "reexecution" prefix. Otherwise middleware mapping
+        // will not be activated, see configuration in Startup
+        Navigate($"{ServerPathBase}/reexecution/not-existing-page?renderMode={renderMode}");
+        Assert404ReExecuted();
+    }
+
+    private void Assert404ReExecuted() =>
+        Browser.Equal("Welcome On Page Re-executed After Not Found Event", () => Browser.Exists(By.Id("test-info")).Text);
 }

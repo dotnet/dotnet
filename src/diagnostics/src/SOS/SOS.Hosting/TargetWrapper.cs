@@ -45,7 +45,6 @@ namespace SOS.Hosting
 
             builder.AddMethod(new GetOperatingSystemDelegate(GetOperatingSystem));
             builder.AddMethod(new HostWrapper.GetServiceDelegate(ServiceWrapper.GetService));
-            builder.AddMethod(new GetTempDirectoryDelegate(GetTempDirectory));
             builder.AddMethod(new GetRuntimeDelegate(GetRuntime));
             builder.AddMethod(new FlushDelegate(Flush));
 
@@ -84,12 +83,6 @@ namespace SOS.Hosting
             return OperatingSystem.Unknown;
         }
 
-        private string GetTempDirectory(
-            IntPtr self)
-        {
-            return _target.GetTempDirectory();
-        }
-
         private int GetRuntime(
             IntPtr self,
             IntPtr* ppRuntime)
@@ -98,18 +91,27 @@ namespace SOS.Hosting
             {
                 return HResult.E_INVALIDARG;
             }
-            IRuntime runtime = _contextService.GetCurrentRuntime();
-            if (runtime is null)
+            *ppRuntime = IntPtr.Zero;
+            try
             {
+                IRuntime runtime = _contextService.GetCurrentRuntime();
+                if (runtime is null)
+                {
+                    return HResult.E_NOINTERFACE;
+                }
+                RuntimeWrapper wrapper = runtime.Services.GetService<RuntimeWrapper>();
+                if (wrapper is null)
+                {
+                    return HResult.E_NOINTERFACE;
+                }
+                *ppRuntime = wrapper.IRuntime;
+                return HResult.S_OK;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
                 return HResult.E_NOINTERFACE;
             }
-            RuntimeWrapper wrapper = runtime.Services.GetService<RuntimeWrapper>();
-            if (wrapper is null)
-            {
-                return HResult.E_NOINTERFACE;
-            }
-            *ppRuntime = wrapper.IRuntime;
-            return HResult.S_OK;
         }
 
         private void Flush(
@@ -122,11 +124,6 @@ namespace SOS.Hosting
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
         private delegate OperatingSystem GetOperatingSystemDelegate(
-            [In] IntPtr self);
-
-        [UnmanagedFunctionPointer(CallingConvention.Winapi)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        private delegate string GetTempDirectoryDelegate(
             [In] IntPtr self);
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]

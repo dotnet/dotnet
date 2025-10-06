@@ -19,15 +19,15 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private static readonly char[] ValidAfterTypeAttributeNameCharacters = { ' ', '\t', '\r', '\n', '\f', '=' };
     private static readonly SyntaxToken[] nonAllowedHtmlCommentEnding = new[]
     {
-            SyntaxFactory.Token(SyntaxKind.Text, "-"),
-            SyntaxFactory.Token(SyntaxKind.Bang, "!"),
-            SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
-        };
+        SyntaxFactory.Token(SyntaxKind.Text, "-"),
+        SyntaxFactory.Token(SyntaxKind.Bang, "!"),
+        SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
+    };
 
     private Stack<TagTracker> _tagTracker = new Stack<TagTracker>();
 
     public HtmlMarkupParser(ParserContext context)
-        : base(context.ParseLeadingDirectives ? FirstDirectiveHtmlLanguageCharacteristics.Instance : HtmlLanguageCharacteristics.Instance, context)
+        : base(context.Options.ParseLeadingDirectives ? FirstDirectiveHtmlLanguageCharacteristics.Instance : HtmlLanguageCharacteristics.Instance, context)
     {
     }
 
@@ -448,6 +448,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 AcceptAndMoveNext();
             }
         } while (!EndOfFile && CurrentToken.Kind != SyntaxKind.NewLine);
+
+        // Code block inside single-line markup transition (`@: @{ }`)
+        // does not swallow trailing whitespace.
+        Context.NullGenerateWhitespaceAndNewLine = false;
 
         if (!EndOfFile && CurrentToken.Kind == SyntaxKind.NewLine)
         {
@@ -1071,26 +1075,63 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         }
 
-        // http://dev.w3.org/html5/spec/tokenization.html#before-attribute-name-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#before-attribute-name-state
         // Capture whitespace
         using var attributePrefixWhitespace = new PooledArrayBuilder<SyntaxToken>();
         ReadWhile(
             static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine,
             ref attributePrefixWhitespace.AsRef());
 
-        // http://dev.w3.org/html5/spec/tokenization.html#attribute-name-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#attribute-name-state
         // Read the 'name' (i.e. read until the '=' or whitespace/newline)
         using var nameTokens = new PooledArrayBuilder<SyntaxToken>();
-        if (!TryParseAttributeName(ref nameTokens.AsRef()))
+        var nameParsingResult = TryParseAttributeName(out SyntaxToken? ephemeralToken, ref nameTokens.AsRef());
+
+        switch (nameParsingResult)
         {
+            // Parse C# and return to attribute parsing afterwards.
+            case AttributeNameParsingResult.CSharp:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    PutCurrentBack();
+                    using var pooledResult = Pool.Allocate<RazorSyntaxNode>();
+                    var dynamicAttributeValueBuilder = pooledResult.Builder;
+                    OtherParserBlock(dynamicAttributeValueBuilder);
+                    var value = SyntaxFactory.MarkupMiscAttributeContent(dynamicAttributeValueBuilder.ToList());
+                    builder.Add(value);
+                    return;
+                }
+
+            // Parse razor comment and return to attribute parsing afterwards.
+            case AttributeNameParsingResult.RazorComment:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    PutCurrentBack();
+                    ParseRazorCommentWithLeadingAndTrailingWhitespace(builder);
+                    return;
+                }
+
             // Unexpected character in tag, enter recovery
-            Accept(in attributePrefixWhitespace);
-            ParseMiscAttribute(builder);
-            return;
+            case AttributeNameParsingResult.Other:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    ParseMiscAttribute(builder);
+                    return;
+                }
         }
 
+        Debug.Assert(nameParsingResult is AttributeNameParsingResult.Success);
         Accept(in attributePrefixWhitespace); // Whitespace before attribute name
         var namePrefix = OutputAsMarkupLiteral();
+
+        if (ephemeralToken is not null)
+        {
+            builder.Add(namePrefix);
+            Accept(ephemeralToken);
+            builder.Add(OutputAsMarkupEphemeralLiteral());
+            namePrefix = null;
+        }
+
         Accept(in nameTokens); // Attribute name
         var name = OutputAsMarkupLiteralRequired();
 
@@ -1109,21 +1150,52 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
     }
 
-    private bool TryParseAttributeName(ref PooledArrayBuilder<SyntaxToken> nameTokens)
+    private enum AttributeNameParsingResult
     {
+        Success,
+        Other,
+        CSharp,
+        RazorComment,
+    }
+
+    private AttributeNameParsingResult TryParseAttributeName(out SyntaxToken? ephemeralToken, ref PooledArrayBuilder<SyntaxToken> nameTokens)
+    {
+        ephemeralToken = null;
+
         //
         // We are currently here <input |name="..." />
         // If we encounter a transition (@) here, it can be parsed as CSharp or Markup depending on the feature flag.
         // For example, in Components, we want to parse it as Markup so we can support directive attributes.
         //
-        if (Context.FeatureFlags.AllowCSharpInMarkupAttributeArea &&
-            (At(SyntaxKind.Transition) || At(SyntaxKind.RazorCommentTransition)))
+        if (Context.Options.AllowCSharpInMarkupAttributeArea)
         {
-            // If we get here, there is CSharp in the attribute area. Don't try to parse the name.
-            return false;
+            if (At(SyntaxKind.Transition))
+            {
+                if (NextIs(SyntaxKind.Transition))
+                {
+                    // The attribute name is escaped (@@), skip the first @ sign.
+                    ephemeralToken = CurrentToken;
+                    NextToken();
+
+                    // And accept the second @ sign.
+                    Debug.Assert(nameTokens.Count == 0);
+                    nameTokens.Add(CurrentToken);
+                    NextToken();
+                }
+                else
+                {
+                    // There is CSharp in the attribute area. Don't try to parse the name.
+                    return AttributeNameParsingResult.CSharp;
+                }
+            }
+            else if (At(SyntaxKind.RazorCommentTransition))
+            {
+                // There is razor comment in the attribute area. Don't try to parse the name.
+                return AttributeNameParsingResult.RazorComment;
+            }
         }
 
-        if (IsValidAttributeNameToken(CurrentToken))
+        if (ephemeralToken is not null || IsValidAttributeNameToken(CurrentToken))
         {
             ReadWhile(
                 static (token, self) =>
@@ -1132,14 +1204,16 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     token.Kind != SyntaxKind.Equals &&
                     token.Kind != SyntaxKind.CloseAngle &&
                     token.Kind != SyntaxKind.OpenAngle &&
+                    (token.Kind != SyntaxKind.Transition || !self.Context.Options.AllowCSharpInMarkupAttributeArea) &&
                     (token.Kind != SyntaxKind.ForwardSlash || !self.NextIs(SyntaxKind.CloseAngle)),
                 this,
-                ref nameTokens);
+                ref nameTokens,
+                expectsEmptyBuilder: ephemeralToken is null);
 
-            return true;
+            return AttributeNameParsingResult.Success;
         }
 
-        return false;
+        return AttributeNameParsingResult.Other;
     }
 
     private MarkupAttributeBlockSyntax ParseRemainingAttribute(MarkupTextLiteralSyntax? namePrefix, MarkupTextLiteralSyntax name)
@@ -1362,7 +1436,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private bool IsUnquotedEndOfAttributeValue(SyntaxToken token)
     {
         // If unquoted, we have a larger set of terminating characters:
-        // http://dev.w3.org/html5/spec/tokenization.html#attribute-value-unquoted-state
+        // https://html.spec.whatwg.org/multipage/parsing.html#attribute-value-(unquoted)-state
         // Also we need to detect "/" and ">"
         return token.Kind == SyntaxKind.DoubleQuote ||
                token.Kind == SyntaxKind.SingleQuote ||
@@ -1519,20 +1593,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseCodeTransition(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
-        if (Context.NullGenerateWhitespaceAndNewLine)
-        {
-            // Usually this is set to true when a Code block ends and there is whitespace left after it.
-            // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
-            {
-                AcceptAndMoveNext();
-            }
-
-            builder.Add(OutputAsMarkupEphemeralLiteral());
-        }
+        NullGenerateWhitespaceAndNewLine(in builder);
 
         var lastWhitespace = AcceptWhitespaceInLines();
         if (lastWhitespace != null)
@@ -1605,20 +1666,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseRazorCommentWithLeadingAndTrailingWhitespace(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
-        if (Context.NullGenerateWhitespaceAndNewLine)
-        {
-            // Usually this is set to true when a Code block ends and there is whitespace left after it.
-            // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
-            {
-                AcceptAndMoveNext();
-            }
-
-            builder.Add(OutputAsMarkupEphemeralLiteral());
-        }
+        NullGenerateWhitespaceAndNewLine(in builder);
 
         var shouldRenderWhitespace = true;
         var lastWhitespace = AcceptWhitespaceInLines();
@@ -1667,22 +1715,35 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMisc(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
+        NullGenerateWhitespaceAndNewLine(in builder);
+        AcceptWhile(IsSpacingTokenIncludingNewLines);
+    }
+
+    private void NullGenerateWhitespaceAndNewLine(in SyntaxListBuilder<RazorSyntaxNode> builder)
+    {
         if (Context.NullGenerateWhitespaceAndNewLine)
         {
             // Usually this is set to true when a Code block ends and there is whitespace left after it.
             // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
+
+            if (TokenBuilder.Count != 0)
             {
-                AcceptAndMoveNext();
+                // There should be no unprocessed tokens, only whitespace between the code block end and here.
+                Debug.Assert(false, "Unexpected tokens after NullGenerateWhitespaceAndNewLine");
             }
+            else
+            {
+                Context.NullGenerateWhitespaceAndNewLine = false;
+                chunkGenerator = SpanChunkGenerator.Null;
+                AcceptWhile(IsSpacingToken);
+                if (At(SyntaxKind.NewLine))
+                {
+                    AcceptAndMoveNext();
+                }
 
-            builder.Add(OutputAsMarkupEphemeralLiteral());
+                builder.Add(OutputAsMarkupEphemeralLiteral());
+            }
         }
-
-        AcceptWhile(IsSpacingTokenIncludingNewLines);
     }
 
     private bool ScriptTagExpectsHtml(MarkupStartTagSyntax tagBlock)
@@ -1704,7 +1765,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
         if (typeAttribute != null)
         {
-            var contentValues = typeAttribute.Value.CreateRed().DescendantNodes().Where(n => n.IsToken).Cast<Syntax.SyntaxToken>();
+            var contentValues = typeAttribute.Value.CreateRed().DescendantTokens();
 
             var scriptType = string.Concat(contentValues.Select(t => t.Content)).Trim();
 
@@ -1722,7 +1783,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             return false;
         }
 
-        var trimmedStartContent = attributeBlock.Name.ToFullString().TrimStart();
+        var trimmedStartContent = attributeBlock.Name.ToString().TrimStart();
         if (trimmedStartContent.StartsWith("type", StringComparison.OrdinalIgnoreCase) &&
             (trimmedStartContent.Length == 4 ||
             ValidAfterTypeAttributeNameCharacters.Contains(trimmedStartContent[4])))
@@ -1916,7 +1977,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     // Internal for testing
     internal bool IsHtmlCommentAhead()
     {
-        // From HTML5 Specification, available at http://www.w3.org/TR/html52/syntax.html#comments
+        // From HTML5 Specification, available at https://html.spec.whatwg.org/multipage/syntax.html#comments
 
         // Comments must have the following format:
         // 1. The string "<!--"
@@ -2006,7 +2067,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private bool IsConditionalAttributeName(string name)
     {
-        if (Context.FeatureFlags.AllowConditionalDataDashAttributes)
+        if (Context.Options.AllowConditionalDataDashAttributes)
         {
             return true;
         }
@@ -2179,7 +2240,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             return false;
         }
 
-        // These restrictions cover most of the spec defined: http://www.w3.org/TR/html5/syntax.html#attributes-0
+        // These restrictions cover most of the spec defined: https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
         // However, it's not all of it. For instance we don't special case control characters or allow OpenAngle.
         // It also doesn't try to exclude Razor specific features such as the @ transition. This is based on the
         // expectation that the parser handles such scenarios prior to falling through to name resolution.
@@ -2189,8 +2250,6 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             tokenType != SyntaxKind.CloseAngle &&
             tokenType != SyntaxKind.OpenAngle &&
             tokenType != SyntaxKind.ForwardSlash &&
-            tokenType != SyntaxKind.DoubleQuote &&
-            tokenType != SyntaxKind.SingleQuote &&
             tokenType != SyntaxKind.Equals &&
             tokenType != SyntaxKind.Marker;
     }
@@ -2217,7 +2276,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
     }
 
-    private Syntax.GreenNode? GetLastSpan(RazorSyntaxNode node)
+    private static Syntax.GreenNode? GetLastSpan(RazorSyntaxNode node)
     {
         if (node == null)
         {
@@ -2226,18 +2285,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
         // Find the last token of this node and return its immediate non-list parent.
         var red = node.CreateRed();
-        Syntax.SyntaxNode? last = red.GetLastToken();
-        if (last == null)
+        var last = red.GetLastToken();
+        if (last.Kind == SyntaxKind.None)
         {
             return null;
         }
 
-        while (last.Green.IsToken || last.Green.IsList)
-        {
-            last = last.Parent;
-        }
-
-        return last.Green;
+        return last.Parent?.Green;
     }
 
     private static bool IsVoidElement(string? tagName)

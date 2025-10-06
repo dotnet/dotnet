@@ -243,10 +243,11 @@ namespace NuGet.Commands.Test
                 var spec = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "netstandard1.6");
                 var specs = new[] { spec };
 
-                spec.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
+                var newDependencies = spec.TargetFrameworks.Single().Dependencies.Add(new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("x", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
                 });
+                spec.TargetFrameworks[0] = new TargetFrameworkInformation(spec.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 // Create fake projects, the real data is in the specs
                 var projects = NETCoreRestoreTestUtility.CreateProjectsFromSpecs(pathContext, spec);
@@ -303,7 +304,7 @@ namespace NuGet.Commands.Test
                 Assert.True(success, "Failed: " + string.Join(Environment.NewLine, logger.Messages));
 
                 // Verify only packages
-                Assert.Empty(projects[0].AssetsFile.Libraries.Where(e => e.Type != "package"));
+                Assert.DoesNotContain(projects[0].AssetsFile.Libraries, e => e.Type != "package");
             }
         }
 

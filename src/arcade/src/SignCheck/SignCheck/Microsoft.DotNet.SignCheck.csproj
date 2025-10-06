@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(MSBuildThisFileDirectory)..\Microsoft.SignCheck\ResxWorkaround.props" />
 
   <PropertyGroup>
     <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <OutputType>Exe</OutputType>
-    <Platforms>x86</Platforms>
-    <IsTool>True</IsTool>
+    <IsTool>true</IsTool>
     <SignAssembly>false</SignAssembly>
     <IsPackable>true</IsPackable>
-    <!-- Build Tasks should not include any dependencies -->
+    <!-- <NoWarn>$(NoWarn);NU5128</NoWarn> -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <Description>Build artifact signing validation tool</Description>
     <PackageTags>Arcade Signing Validation Tool</PackageTags>
@@ -18,23 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Publish="true" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" />
-    <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" Publish="true" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\Common\Internal\AssemblyResolution.cs"
-             Link="src\AssemblyResolution.cs" />
-    <Compile Update="SignCheckResources.Designer.cs"
-             DesignTime="True"
-             AutoGen="True"
-             DependentUpon="SignCheckResources.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="SignCheckResources.resx"
-                      Generator="ResXFileCodeGenerator"
-                      LastGenOutput="SignCheckResources.Designer.cs" />
+    <ProjectReference Include="..\SignCheckTask\Microsoft.DotNet.SignCheckTask.csproj" />
   </ItemGroup>
 
   <!-- This glob must run after the build and before _GetPackageFiles to ensure all dependencies end up in the .nupkg file. -->

@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Diagnostics.DebugServices
@@ -45,5 +46,24 @@ namespace Microsoft.Diagnostics.DebugServices
         /// <param name="moduleName">module name to find</param>
         /// <returns>matching modules</returns>
         IEnumerable<IModule> GetModuleFromModuleName(string moduleName);
+
+        /// <summary>
+        /// Create a module instance
+        /// </summary>
+        /// <param name="moduleIndex">artificial index or -1 for none</param>
+        /// <param name="imageBase">module base address</param>
+        /// <param name="imageSize">module size</param>
+        /// <param name="imageName">module name</param>
+        /// <returns>IModule</returns>
+        /// <exception cref="ArgumentNullException">thrown if imageBase or imageSize is 0</exception>
+        IModule CreateModule(int moduleIndex, ulong imageBase, ulong imageSize, string imageName);
+
+        /// <summary>
+        /// Gets the entrypoint module for the target.
+        /// </summary>
+        IModule EntryPointModule
+        {
+            get;
+        }
     }
 }

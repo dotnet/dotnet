@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace NuGet.Protocol.Core.Types
 {
     public class NullSourceCacheContext : SourceCacheContext

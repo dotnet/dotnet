@@ -1,0 +1,21 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+  "name": "Source Build Reference Packages",
+  "image": "mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64",
+  "customizations": {
+      "vscode": {
+          "extensions": [
+              "ms-dotnettools.csharp"
+          ]
+      },
+      "codespaces": {
+          "openFiles": [
+              "README.md"
+          ]
+      }
+  },
+  "remoteEnv": {
+      "PATH": "${containerWorkspaceFolder}/.dotnet:${containerEnv:PATH}",
+  },
+  "onCreateCommand": ".devcontainer/init.sh"
+}

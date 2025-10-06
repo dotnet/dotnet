@@ -2,10 +2,9 @@
 <Project ToolsVersion="15.0">
   <PropertyGroup>
     <_WasCommonPropsImported>true</_WasCommonPropsImported>
-    <IsNetCoreProject>true</IsNetCoreProject>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IsNetCoreProject)' == 'true' AND '$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'">
+  <PropertyGroup Condition="'$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <!-- Load config -->

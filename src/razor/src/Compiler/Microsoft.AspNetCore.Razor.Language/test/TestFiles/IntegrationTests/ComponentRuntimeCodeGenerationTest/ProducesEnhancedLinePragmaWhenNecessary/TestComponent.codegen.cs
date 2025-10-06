@@ -18,10 +18,9 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "<h1>Single line statement</h1>\r\n\r\nTime: ");
-            __builder.AddContent(1, 
 #nullable restore
-#line (3,8)-(3,20) "x:\dir\subdir\Test\TestComponent.cshtml"
-DateTime.Now
+#line (3,8)-(3,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(1, DateTime.Now
 
 #line default
 #line hidden
@@ -29,10 +28,9 @@ DateTime.Now
             );
             __builder.AddMarkupContent(2, "\r\n\r\n");
             __builder.AddMarkupContent(3, "<h1>Multiline block statement</h1>\r\n\r\n");
-            __builder.AddContent(4, 
 #nullable restore
-#line (7,2)-(10,4) "x:\dir\subdir\Test\TestComponent.cshtml"
-JsonToHtml(@"{
+#line (7,2)-(10,4) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(4, JsonToHtml(@"{
   'key1': 'value1'
   'key2': 'value2'
 }")

@@ -1,0 +1,48 @@
+﻿ARGOMENTO
+    about_NuGet
+    
+DESCRIZIONE BREVE
+    Fornisce informazioni sui comandi di Gestione pacchetti NuGet.
+           
+DESCRIZIONE LUNGA
+    In questo argomento vengono fornite informazioni sui comandi di Gestione pacchetti NuGet. NuGet è uno strumento di gestione dei  
+    pacchetti integrato, che consente di aggiungere librerie e strumenti ai progetti .NET.
+
+                 
+    Sono inclusi i seguenti cmdlets NuGet.
+
+        Cmdlet					Descrizione
+        ------------------		----------------------------------------------
+        Get-Package				Consente di recuperare l'insieme di pacchetti installati.  Con -ListAvailable 
+                                consente di recuperare l'insieme di pacchetti disponibili dall'origine pacchetti.
+
+        Install-Package			
+Consente di installare un pacchetto e le relative dipendenze nel progetto
+        Install-Package		Consente di disinstallare un pacchetto. Se da questo pacchetto dipendono altri pacchetti, 
+                                il comando non riuscirà a meno che non venga specificata l'opzione –Force.
+
+        Update-Package			Consente di aggiornare  un pacchetto e le relative dipendenze a una nuova versione.
+
+        Add-BindingRedirect		Consente di esaminare tutti gli assembly all'interno del percorso di output di un progetto e
+                                di aggiungere reindirizzamenti delle associazioni al file di configurazione dell'applicazione 
+                                o del Web, dove necessario.
+                            
+        Get-Project				Restituisce un riferimento a DTE (Development Tools Environment) 
+                                per il progetto specificato. Se si specifica none, restituisce il 
+                                progetto predefinito selezionato nella console di Gestione pacchetti.
+
+        Open-PackagePage        Consente di avviare il browser puntando a ProjectUrl, LicenseUrl o 
+                                ReportAbuseUrl del pacchetto specificato.
+
+        Register-TabExpansion	Consente di registrare un'espansione di tabulazione per i parametri di un comando.
+
+VEDERE ANCHE
+    Documentazione online: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Install-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

@@ -35,31 +35,30 @@ type IfDirectiveExpression =
     | Ident of string
 
 [<RequireQualifiedAccess; NoEquality; NoComparison>]
+type WarnDirectiveTrivia =
+    | Nowarn of range
+    | Warnon of range
+
+[<RequireQualifiedAccess; NoEquality; NoComparison>]
 type CommentTrivia =
     | LineComment of range: range
     | BlockComment of range: range
 
-/// Represents additional information for ParsedImplFileInput
+/// Represents additional information for ParsedInput
 [<NoEquality; NoComparison>]
-type ParsedImplFileInputTrivia =
+type ParsedInputTrivia =
     {
         /// Preprocessor directives of type #if, #else or #endif
         ConditionalDirectives: ConditionalDirectiveTrivia list
+
+        /// Warn directives (#nowarn / #warnon)
+        WarnDirectives: WarnDirectiveTrivia list
 
         /// Represent code comments found in the source file
         CodeComments: CommentTrivia list
     }
 
-/// Represents additional information for ParsedSigFileInputTrivia
-[<NoEquality; NoComparison>]
-type ParsedSigFileInputTrivia =
-    {
-        /// Preprocessor directives of type #if, #else or #endif
-        ConditionalDirectives: ConditionalDirectiveTrivia list
-
-        /// Represent code comments found in the source file
-        CodeComments: CommentTrivia list
-    }
+    static member internal Empty: ParsedInputTrivia
 
 /// Represents additional information for SynExpr.TryWith
 [<NoEquality; NoComparison>]
@@ -129,21 +128,15 @@ type SynExprDotLambdaTrivia =
 [<NoEquality; NoComparison>]
 type SynExprLetOrUseTrivia =
     {
+        /// The syntax range of the `let` or `use` keyword.
+        LetOrUseKeyword: range
         /// The syntax range of the `in` keyword.
         InKeyword: range option
-    }
 
-    static member Zero: SynExprLetOrUseTrivia
-
-/// Represents additional information for SynExpr.LetOrUseBang
-[<NoEquality; NoComparison>]
-type SynExprLetOrUseBangTrivia =
-    {
-        /// The syntax range of the `=` token.
         EqualsRange: range option
     }
 
-    static member Zero: SynExprLetOrUseBangTrivia
+    static member Zero: SynExprLetOrUseTrivia
 
 /// Represents additional information for SynExpr.Match
 [<NoEquality; NoComparison>]
@@ -167,6 +160,34 @@ type SynExprMatchBangTrivia =
         WithKeyword: range
     }
 
+/// Represents additional information for SynExpr.DoBang
+[<NoEquality; NoComparison>]
+type SynExprDoBangTrivia =
+    {
+        /// The syntax range of the `do!` keyword
+        DoBangKeyword: range
+    }
+
+/// Represents additional information for SynExpr.YieldOrReturn
+[<NoEquality; NoComparison>]
+type SynExprYieldOrReturnTrivia =
+    {
+        /// The syntax range of the `yield` or `return` keyword.
+        YieldOrReturnKeyword: range
+    }
+
+    static member Zero: SynExprYieldOrReturnTrivia
+
+/// Represents additional information for SynExpr.YieldOrReturnFrom
+[<NoEquality; NoComparison>]
+type SynExprYieldOrReturnFromTrivia =
+    {
+        /// The syntax range of the `yield!` or `return!` keyword.
+        YieldOrReturnFromKeyword: range
+    }
+
+    static member Zero: SynExprYieldOrReturnFromTrivia
+
 /// Represents additional information for SynExpr.AnonRecd
 [<NoEquality; NoComparison>]
 type SynExprAnonRecdTrivia =
@@ -174,6 +195,17 @@ type SynExprAnonRecdTrivia =
         /// The syntax range of the `{|` token.
         OpeningBraceRange: range
     }
+
+/// Represents additional information for SynExpr.Sequential
+[<NoEquality; NoComparison>]
+type SynExprSequentialTrivia =
+    {
+        /// The syntax range of the `;` token.
+        /// Could also be the `then` keyword.
+        SeparatorRange: range option
+    }
+
+    static member Zero: SynExprSequentialTrivia
 
 /// Represents additional information for SynMatchClause
 [<NoEquality; NoComparison>]
@@ -318,17 +350,6 @@ type SynBindingTrivia =
     }
 
     static member Zero: SynBindingTrivia
-
-/// Represents additional information for SynExprAndBang
-[<NoEquality; NoComparison>]
-type SynExprAndBangTrivia =
-    {
-        /// The syntax range of the `=` token.
-        EqualsRange: range
-
-        /// The syntax range of the `in` keyword.
-        InKeyword: range option
-    }
 
 /// Represents additional information for SynModuleDecl.NestedModule
 [<NoEquality; NoComparison>]
@@ -480,6 +501,10 @@ type SynMemberDefnAbstractSlotTrivia =
 
     static member Zero: SynMemberDefnAbstractSlotTrivia
 
+/// Represents additional information for SynMemberDefn.Inherit
+[<NoEquality; NoComparison>]
+type SynMemberDefnInheritTrivia = { InheritKeyword: range }
+
 /// Represents additional information for SynField
 [<NoEquality; NoComparison>]
 type SynFieldTrivia =
@@ -498,6 +523,14 @@ type SynTypeOrTrivia =
     {
         /// The syntax range of the `or` keyword
         OrKeyword: range
+    }
+
+/// Represents additional information for SynType.WithNull
+[<NoEquality; NoComparison>]
+type SynTypeWithNullTrivia =
+    {
+        /// The syntax range of the `|` token
+        BarRange: range
     }
 
 /// Represents additional information for SynBindingReturnInfo
@@ -533,3 +566,14 @@ type SynTyparDeclTrivia =
 type SynMeasureConstantTrivia =
     { LessRange: range
       GreaterRange: range }
+
+/// Represents additional information for SynTypeConstraint.WhereTyparNotSupportsNull
+[<NoEquality; NoComparison>]
+type SynTypeConstraintWhereTyparNotSupportsNullTrivia =
+    {
+        /// The syntax range of `:`
+        ColonRange: range
+
+        /// The syntax range of `not`
+        NotRange: range
+    }

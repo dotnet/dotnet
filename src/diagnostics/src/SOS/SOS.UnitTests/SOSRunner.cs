@@ -378,9 +378,10 @@ public class SOSRunner : IDisposable
                         if (pipeServer != null)
                         {
                             dotnetDumpOutputHelper.WriteLine("Waiting for connection on pipe {0}", pipeName);
-                            CancellationTokenSource source = new(TimeSpan.FromMinutes(5));
+                            using CancellationTokenSource source = new(TimeSpan.FromMinutes(5));
 
                             // Wait for debuggee to connect/write to pipe or if the process exits on some other failure/abnormally
+                            // TODO: This is a resiliency issue - we'll try to collect the dump even if the debuggee fails to connect.
                             await Task.WhenAny(pipeServer.WaitForConnectionAsync(source.Token), processRunner.WaitForExit());
                         }
 
@@ -555,6 +556,11 @@ public class SOSRunner : IDisposable
 
                     // Turn on source/line numbers
                     initialCommands.Add(".lines");
+
+                    bool shouldVerifyDacSignature = !config.IsPrivateBuildTesting()
+                                                    && !config.IsNightlyBuild()
+                                                    && !"-none".Equals(config.SetHostRuntime(), StringComparison.OrdinalIgnoreCase);
+                    initialCommands.Add($"dx @Debugger.Settings.EngineInitialization.SecureLoadDotNetExtensions={(shouldVerifyDacSignature ? "true" : "false")}");
                     break;
 
                 case NativeDebugger.Lldb:
@@ -668,6 +674,10 @@ public class SOSRunner : IDisposable
                         }
                     }
                     initialCommands.Add("setsymbolserver -directory %DEBUG_ROOT%");
+                    shouldVerifyDacSignature = OS.Kind == OSKind.Windows
+                        && !config.IsPrivateBuildTesting()
+                        && !config.IsNightlyBuild();
+                    initialCommands.Add($"runtimes --DacSignatureVerification:{(shouldVerifyDacSignature ? "true" : "false")}");
                     arguments.Append(debuggerPath);
                     arguments.Append(@" analyze %DUMP_NAME%");
                     debuggerPath = config.DotNetDumpHost();
@@ -681,6 +691,11 @@ public class SOSRunner : IDisposable
                 WithEnvironmentVariable("DOTNET_ROOT", config.DotNetRoot).
                 WithLog(scriptLogger).
                 WithTimeout(TimeSpan.FromMinutes(10));
+
+            if (config.TestCDAC)
+            {
+                processRunner.WithEnvironmentVariable("DOTNET_ENABLE_CDAC", "1");
+            }
 
             // Exit codes on Windows should always be 0, but not on Linux/OSX for the faulting debuggees.
             if (OS.Kind == OSKind.Windows)
@@ -699,7 +714,7 @@ public class SOSRunner : IDisposable
 
             // Setup the extension environment variable
             string extensions = config.DotNetDiagnosticExtensions();
-            if (!string.IsNullOrEmpty(extensions)) 
+            if (!string.IsNullOrEmpty(extensions))
             {
                 processRunner.WithEnvironmentVariable("DOTNET_DIAGNOSTIC_EXTENSIONS", extensions);
             }
@@ -979,7 +994,7 @@ public class SOSRunner : IDisposable
                     if (_config.PublishSingleFile)
                     {
                         string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
-                        commands.Add($"!SetSymbolServer -ms -directory {appRootDir}");
+                        commands.Add($"!SetSymbolServer -ms -timeout 10 -directory {appRootDir}");
                     }
                     if (!string.IsNullOrEmpty(setSymbolServer))
                     {
@@ -1013,7 +1028,7 @@ public class SOSRunner : IDisposable
                     if (_config.PublishSingleFile)
                     {
                         string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
-                        commands.Add($"setsymbolserver -ms -directory {appRootDir}");
+                        commands.Add($"setsymbolserver -ms -timeout 10 -directory {appRootDir}");
                     }
                     if (!string.IsNullOrEmpty(setSymbolServer))
                     {
@@ -1426,6 +1441,10 @@ public class SOSRunner : IDisposable
             {
                 defines.Add("MAJOR_RUNTIME_VERSION_GE_8");
             }
+            if (major >= 9)
+            {
+                defines.Add("MAJOR_RUNTIME_VERSION_GE_9");
+            }
         }
         catch (SkipTestException)
         {
@@ -1454,7 +1473,7 @@ public class SOSRunner : IDisposable
         {
             defines.Add("32BIT");
         }
-        else if (_config.TargetArchitecture.Equals("x64") || _config.TargetArchitecture.Equals("arm64"))
+        else if (_config.TargetArchitecture.Equals("x64") || _config.TargetArchitecture.Equals("arm64") || _config.TargetArchitecture.Equals("loongarch64"))
         {
             defines.Add("64BIT");
         }
@@ -1580,8 +1599,12 @@ public class SOSRunner : IDisposable
 
         private void AddTask()
         {
-            _taskSource = new TaskCompletionSource<CommandResult>();
-            _taskQueue.Add(_taskSource.Task);
+            TaskCompletionSource<CommandResult> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            lock (this)
+            {
+                _taskQueue.Add(tcs.Task);
+                _taskSource = tcs;
+            }
         }
 
         public async Task<bool> WaitForCommandPrompt()
@@ -1770,4 +1793,8 @@ public static class TestConfigurationExtensions
     {
         return TestConfiguration.MakeCanonicalPath(config.GetValue("DebuggeeDumpOutputRootDir"));
     }
+
+    public static bool IsPrivateBuildTesting(this TestConfiguration config) => "true".Equals(config.GetValue("PrivateBuildTesting"), StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsNightlyBuild(this TestConfiguration config) => "nightly".Equals(config.GetValue("BuildType"), StringComparison.OrdinalIgnoreCase);
 }

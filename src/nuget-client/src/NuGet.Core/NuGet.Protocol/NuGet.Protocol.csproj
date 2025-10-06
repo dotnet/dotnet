@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
     <NoWarn>$(NoWarn);CS1591;CS1573;CS0012;RS0041</NoWarn>
     <PackageTags>nuget protocol</PackageTags>
@@ -33,6 +33,18 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\EncodingUtility.cs" />
+    <Compile Include="$(SharedDirectory)\EqualityUtility.cs" />
+    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\SimplePool.cs" />
+    <Compile Include="$(SharedDirectory)\StringBuilderPool.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResultCache.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -46,5 +58,18 @@
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.CommandLine.Xplat.Tests" />
+    <InternalsVisibleTo Include="NuGet.Credentials.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
+    <InternalsVisibleTo Include="NuGet.Protocol.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.Protocol.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.Protocol.Tests" />
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Common.Test" />
+    <InternalsVisibleTo Include="NuGet.XPlat.FuncTest" />
+    <InternalsVisibleTo Include="Test.Utility" />
   </ItemGroup>
 </Project>

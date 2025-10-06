@@ -1,12 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,15 +13,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class RazorConfigurationEndpointTest : LanguageServerTestBase
 {
-    private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
     private readonly IConfigurationSyncService _configurationService;
 
     public RazorConfigurationEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var services = new ServiceCollection().AddOptions();
-        _cache = services.BuildServiceProvider().GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>();
-
         var configServiceMock = new Mock<IConfigurationSyncService>(MockBehavior.Strict);
         configServiceMock
             .Setup(c => c.GetLatestOptionsAsync(It.IsAny<CancellationToken>()))
@@ -36,8 +30,8 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
     public async Task Handle_UpdatesOptions()
     {
         // Arrange
-        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService, _cache);
-        var endpoint = new RazorConfigurationEndpoint(optionsMonitor, LoggerFactory);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService);
+        var endpoint = new RazorConfigurationEndpoint(LspServices.Empty, optionsMonitor, LoggerFactory);
         var request = new DidChangeConfigurationParams();
         var requestContext = CreateRazorRequestContext(documentContext: null);
 

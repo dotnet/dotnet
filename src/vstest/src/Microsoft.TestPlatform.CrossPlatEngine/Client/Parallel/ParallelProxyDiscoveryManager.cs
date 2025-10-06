@@ -222,7 +222,7 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
             if (!_isParallel && testhostProviderInfo.Shared)
             {
                 // Create one big source batch that will be single workload for single testhost.
-                sourceBatches = new List<string[]> { group.Select(w => w.Work).ToArray() };
+                sourceBatches = [group.Select(w => w.Work).ToArray()];
             }
             else
             {
@@ -260,7 +260,9 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
     /// Triggers the discovery for the next data object on the concurrent discoverer
     /// Each concurrent discoverer calls this method, once its completed working on previous data
     /// </summary>
-    /// <param name="ProxyDiscoveryManager">Proxy discovery manager instance.</param>
+    /// <param name="proxyDiscoveryManager">Proxy discovery manager instance.</param>
+    /// <param name="eventHandler">Discovery events handler.</param>
+    /// <param name="discoveryCriteria">Discovery criteria a parameters.</param>
     private Task InitializeDiscoverTestsOnConcurrentManager(IProxyDiscoveryManager proxyDiscoveryManager, ITestDiscoveryEventsHandler2 eventHandler, DiscoveryCriteria discoveryCriteria)
     {
         // Kick off another discovery task for the next source
@@ -279,7 +281,11 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
     /// Triggers the discovery for the next data object on the concurrent discoverer
     /// Each concurrent discoverer calls this method, once its completed working on previous data
     /// </summary>
-    /// <param name="ProxyDiscoveryManager">Proxy discovery manager instance.</param>
+    /// <param name="proxyDiscoveryManager"></param>
+    /// <param name="eventHandler"></param>
+    /// <param name="discoveryCriteria"></param>
+    /// <param name="initialized"></param>
+    /// <param name="task"></param>
     private void DiscoverTestsOnConcurrentManager(
         IProxyDiscoveryManager proxyDiscoveryManager,
         ITestDiscoveryEventsHandler2 eventHandler,

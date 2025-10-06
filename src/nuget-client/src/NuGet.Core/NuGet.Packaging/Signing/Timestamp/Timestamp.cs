@@ -2,21 +2,17 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using NuGet.Common;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using System.Linq;
-
-#if IS_SIGNING_SUPPORTED
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Common;
 using System.Security.Cryptography.Pkcs;
-#endif
 
 namespace NuGet.Packaging.Signing
 {
     public sealed class Timestamp
     {
-#if IS_SIGNING_SUPPORTED
 
         /// <summary>
         /// Upper limit of Timestamp.
@@ -280,6 +276,5 @@ namespace NuGet.Packaging.Signing
                 return flags;
             }
         }
-#endif
     }
 }

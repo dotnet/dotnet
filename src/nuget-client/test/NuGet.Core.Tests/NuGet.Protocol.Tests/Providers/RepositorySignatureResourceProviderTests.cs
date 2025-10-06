@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -55,11 +56,35 @@ namespace NuGet.Protocol.Providers.Tests
             Assert.Null(result.Item2);
         }
 
-        [Theory]
-        [InlineData("http://unit.test/4.9.0", ResourceType490)]
-        [InlineData(@"\\localhost\unit\test\4.9.0", ResourceType490)]
-        public async Task TryCreate_WhenUrlIsInvalid_Throws(string resourceUrl, string resourceType)
+        [Fact]
+        public async Task TryCreate_WhenUrlIsHttp_Throws()
         {
+            string resourceUrl = "http://unit.test/4.9.0";
+            string resourceType = ResourceType490;
+            var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
+            var resourceProviders = new ResourceProvider[]
+            {
+                MockServiceIndexResourceV3Provider.Create(serviceEntry),
+                StaticHttpSource.CreateHttpSource(
+                    new Dictionary<string, string>()
+                    {
+                        { serviceEntry.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(resourceUrl) }
+                    }),
+                _repositorySignatureResourceProvider
+            };
+            var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
+
+            var exception = await Assert.ThrowsAsync<FatalProtocolException>(
+                () => _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None));
+
+            exception.InnerException.Message.Should().Contain(string.Format(NuGet.Protocol.Strings.Error_Insecure_HTTP, _packageSource.SourceUri, resourceUrl));
+        }
+
+        [Fact]
+        public async Task TryCreate_WhenUrlIsInvalid_Throws()
+        {
+            string resourceUrl = @"\\localhost\unit\test\4.9.0";
+            string resourceType = ResourceType490;
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
             var resourceProviders = new ResourceProvider[]
             {

@@ -26,6 +26,91 @@ namespace NuGet.Build.Tasks.Test
         }
 
         [Theory]
+        [InlineData(true, "", null)]
+        [InlineData(true, null, null)]
+        [InlineData(true, "User;Value", "User%3BValue")]
+        [InlineData(false, "", null)]
+        [InlineData(false, null, null)]
+        [InlineData(false, "UserValue", null)]
+        [InlineData(null, "", null)]
+        [InlineData(null, null, null)]
+        [InlineData(null, "User;Value", "User%3BValue")]
+        public void GetCommandLineArguments_WhenBinaryLoggerParametersSpecified_CorrectValuesReturned(bool? enabled, string parameters, string expected)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string msbuildBinPath = Path.Combine(testDirectory, "MSBuild", "Current", "Bin");
+                string projectPath = Path.Combine(testDirectory, "src", "project1", "project1.csproj");
+
+                var globalProperties = new Dictionary<string, string>();
+
+                var buildEngine = new TestBuildEngine(globalProperties);
+
+                using (var task = new RestoreTaskEx
+                {
+                    BuildEngine = buildEngine,
+                    BinaryLoggerParameters = parameters,
+                    MSBuildBinPath = msbuildBinPath,
+                    ProjectFullPath = projectPath,
+                    MSBuildStartupDirectory = testDirectory,
+                })
+                {
+                    if (enabled.HasValue)
+                    {
+                        task.EnableBinaryLogger = enabled.HasValue ? enabled.Value.ToString() : null;
+                    }
+
+                    string arguments = task.GetCommandLineArguments(globalProperties);
+
+                    arguments.Should().Be(StaticGraphRestoreTaskBase.CreateArgumentString(GetExpectedArguments(msbuildBinPath, projectPath, enabled, parameters, expected)));
+                }
+            }
+
+            static IEnumerable<string> GetExpectedArguments(string msbuildBinPath, string projectPath, bool? enabled, string parameters, string expected)
+            {
+#if IS_CORECLR
+                yield return Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll");
+#endif
+                if (enabled == false)
+                {
+                    yield return "Recursive=False;CleanupAssetsForUnsupportedProjects=True;DisableParallel=False;Force=False;ForceEvaluate=False;HideWarningsAndErrors=False;IgnoreFailedSources=False;Interactive=False;NoCache=False;NoHttpCache=False;RestorePackagesConfig=False";
+                }
+
+                if (enabled == true)
+                {
+                    if (!string.IsNullOrEmpty(parameters))
+                    {
+                        yield return $"Recursive=False;EnableBinaryLogger=True;BinaryLoggerParameters={expected};CleanupAssetsForUnsupportedProjects=True;DisableParallel=False;Force=False;ForceEvaluate=False;HideWarningsAndErrors=False;IgnoreFailedSources=False;Interactive=False;NoCache=False;NoHttpCache=False;RestorePackagesConfig=False";
+                    }
+                    else
+                    {
+                        yield return "Recursive=False;EnableBinaryLogger=True;CleanupAssetsForUnsupportedProjects=True;DisableParallel=False;Force=False;ForceEvaluate=False;HideWarningsAndErrors=False;IgnoreFailedSources=False;Interactive=False;NoCache=False;NoHttpCache=False;RestorePackagesConfig=False";
+                    }
+                }
+
+                else if (enabled == null)
+                {
+                    if (!string.IsNullOrEmpty(parameters))
+                    {
+                        yield return $"Recursive=False;EnableBinaryLogger=True;BinaryLoggerParameters={expected};CleanupAssetsForUnsupportedProjects=True;DisableParallel=False;Force=False;ForceEvaluate=False;HideWarningsAndErrors=False;IgnoreFailedSources=False;Interactive=False;NoCache=False;NoHttpCache=False;RestorePackagesConfig=False";
+                    }
+                    else
+                    {
+                        yield return "Recursive=False;CleanupAssetsForUnsupportedProjects=True;DisableParallel=False;Force=False;ForceEvaluate=False;HideWarningsAndErrors=False;IgnoreFailedSources=False;Interactive=False;NoCache=False;NoHttpCache=False;RestorePackagesConfig=False";
+                    }
+                }
+#if IS_CORECLR
+                yield return Path.Combine(msbuildBinPath, "MSBuild.dll");
+#else
+                yield return Path.Combine(msbuildBinPath, "MSBuild.exe");
+#endif
+                yield return projectPath;
+
+                yield return $"";
+            }
+        }
+
+        [Theory]
         [InlineData("something", true)]
         [InlineData("  ", false)]
         [InlineData(null, false)]

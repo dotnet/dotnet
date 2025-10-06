@@ -404,6 +404,7 @@ namespace Mono.Cecil {
 		{
 			for (int i = 0; i < types.Count; i++) {
 				var type = types [i];
+				type.custom_infos = symbol_reader.Read (type);
 
 				if (type.HasNestedTypes)
 					ReadTypesSymbols (type.NestedTypes, symbol_reader);
@@ -2508,7 +2509,7 @@ namespace Mono.Cecil {
 
 			if (module.IsWindowsMetadata ())
 				foreach (var custom_attribute in custom_attributes)
-					WindowsRuntimeProjections.Project (owner, custom_attribute);
+					WindowsRuntimeProjections.Project (owner, custom_attributes, custom_attribute);
 
 			return custom_attributes;
 		}
@@ -2831,6 +2832,13 @@ namespace Mono.Cecil {
 					token = new MetadataToken (TokenType.Document, i),
 				};
 			}
+		}
+
+		internal Collection<Document> GetDocuments ()
+		{
+			InitializeDocuments ();
+
+			return new Collection<Document> (metadata.Documents);
 		}
 
 		public Collection<SequencePoint> ReadSequencePoints (MethodDefinition method)
@@ -3158,6 +3166,17 @@ namespace Mono.Cecil {
 				metadata.CustomDebugInformations.TryGetValue (token, out infos);
 				metadata.CustomDebugInformations [token] = infos.Add (info);
 			}
+		}
+
+		public bool HasCustomDebugInformation (ICustomDebugInformationProvider provider)
+		{
+			InitializeCustomDebugInformations ();
+
+			Row<Guid, uint, uint> [] rows;
+			if (!metadata.CustomDebugInformations.TryGetValue (provider.MetadataToken, out rows))
+				return false;
+
+			return rows.Length > 0;
 		}
 
 		public Collection<CustomDebugInformation> GetCustomDebugInformation (ICustomDebugInformationProvider provider)

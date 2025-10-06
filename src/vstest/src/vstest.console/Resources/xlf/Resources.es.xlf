@@ -84,14 +84,9 @@
       Muestra este mensaje de uso.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CopyrightCommandLineTitle">
-        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="translated">Copyright (c) Microsoft Corporation. Todos los derechos reservados.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
-        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="translated">Herramienta de línea de comandos de ejecución de pruebas de Microsoft(R), versión {0}</target>
+        <source>VSTest version {0}</source>
+        <target state="translated">Versión {0} de VSTest</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">

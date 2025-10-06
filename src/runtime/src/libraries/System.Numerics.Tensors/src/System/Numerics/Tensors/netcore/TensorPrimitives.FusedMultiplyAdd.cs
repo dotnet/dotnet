@@ -10,7 +10,7 @@ namespace System.Numerics.Tensors
 {
     public static partial class TensorPrimitives
     {
-        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) * <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
+        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) + <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
         /// <param name="x">The first tensor, represented as a span.</param>
         /// <param name="y">The second tensor, represented as a span.</param>
         /// <param name="addend">The third tensor, represented as a span.</param>
@@ -35,10 +35,17 @@ namespace System.Numerics.Tensors
         /// </para>
         /// </remarks>
         public static void FusedMultiplyAdd<T>(ReadOnlySpan<T> x, ReadOnlySpan<T> y, ReadOnlySpan<T> addend, Span<T> destination)
-            where T : IFloatingPointIeee754<T> =>
-            InvokeSpanSpanSpanIntoSpan<T, FusedMultiplyAddOperator<T>>(x, y, addend, destination);
+            where T : IFloatingPointIeee754<T>
+        {
+            if (typeof(T) == typeof(Half) && TryTernaryInvokeHalfAsInt16<T, FusedMultiplyAddOperator<float>>(x, y, addend, destination))
+            {
+                return;
+            }
 
-        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) * <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
+            InvokeSpanSpanSpanIntoSpan<T, FusedMultiplyAddOperator<T>>(x, y, addend, destination);
+        }
+
+        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) + <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
         /// <param name="x">The first tensor, represented as a span.</param>
         /// <param name="y">The second tensor, represented as a span.</param>
         /// <param name="addend">The third tensor, represented as a scalar.</param>
@@ -63,10 +70,17 @@ namespace System.Numerics.Tensors
         /// </para>
         /// </remarks>
         public static void FusedMultiplyAdd<T>(ReadOnlySpan<T> x, ReadOnlySpan<T> y, T addend, Span<T> destination)
-            where T : IFloatingPointIeee754<T> =>
-            InvokeSpanSpanScalarIntoSpan<T, FusedMultiplyAddOperator<T>>(x, y, addend, destination);
+            where T : IFloatingPointIeee754<T>
+        {
+            if (typeof(T) == typeof(Half) && TryTernaryInvokeHalfAsInt16<T, FusedMultiplyAddOperator<float>>(x, y, addend, destination))
+            {
+                return;
+            }
 
-        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) * <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
+            InvokeSpanSpanScalarIntoSpan<T, FusedMultiplyAddOperator<T>>(x, y, addend, destination);
+        }
+
+        /// <summary>Computes the element-wise result of <c>(<paramref name="x" /> * <paramref name="y" />) + <paramref name="addend" /></c> for the specified tensors of numbers.</summary>
         /// <param name="x">The first tensor, represented as a span.</param>
         /// <param name="y">The second tensor, represented as a scalar.</param>
         /// <param name="addend">The third tensor, represented as a span.</param>
@@ -90,16 +104,36 @@ namespace System.Numerics.Tensors
         /// </para>
         /// </remarks>
         public static void FusedMultiplyAdd<T>(ReadOnlySpan<T> x, T y, ReadOnlySpan<T> addend, Span<T> destination)
-            where T : IFloatingPointIeee754<T> =>
+            where T : IFloatingPointIeee754<T>
+        {
+            if (typeof(T) == typeof(Half) && TryTernaryInvokeHalfAsInt16<T, FusedMultiplyAddOperator<float>>(x, y, addend, destination))
+            {
+                return;
+            }
+
             InvokeSpanScalarSpanIntoSpan<T, FusedMultiplyAddOperator<T>>(x, y, addend, destination);
+        }
 
         /// <summary>(x * y) + z</summary>
         private readonly struct FusedMultiplyAddOperator<T> : ITernaryOperator<T> where T : IFloatingPointIeee754<T>
         {
+            public static bool Vectorizable => true;
+
             public static T Invoke(T x, T y, T z) => T.FusedMultiplyAdd(x, y, z);
 
             public static Vector128<T> Invoke(Vector128<T> x, Vector128<T> y, Vector128<T> z)
             {
+#if NET9_0_OR_GREATER
+                if (typeof(T) == typeof(double))
+                {
+                    return Vector128.FusedMultiplyAdd(x.AsDouble(), y.AsDouble(), z.AsDouble()).As<double, T>();
+                }
+                else
+                {
+                    Debug.Assert(typeof(T) == typeof(float));
+                    return Vector128.FusedMultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
+                }
+#else
                 if (Fma.IsSupported)
                 {
                     if (typeof(T) == typeof(float)) return Fma.MultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
@@ -137,10 +171,22 @@ namespace System.Numerics.Tensors
                         double.FusedMultiplyAdd(xDoubles[0], yDoubles[0], zDoubles[0]),
                         double.FusedMultiplyAdd(xDoubles[1], yDoubles[1], zDoubles[1])).As<double, T>();
                 }
+#endif
             }
 
             public static Vector256<T> Invoke(Vector256<T> x, Vector256<T> y, Vector256<T> z)
             {
+#if NET9_0_OR_GREATER
+                if (typeof(T) == typeof(double))
+                {
+                    return Vector256.FusedMultiplyAdd(x.AsDouble(), y.AsDouble(), z.AsDouble()).As<double, T>();
+                }
+                else
+                {
+                    Debug.Assert(typeof(T) == typeof(float));
+                    return Vector256.FusedMultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
+                }
+#else
                 if (Fma.IsSupported)
                 {
                     if (typeof(T) == typeof(float)) return Fma.MultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
@@ -150,10 +196,22 @@ namespace System.Numerics.Tensors
                 return Vector256.Create(
                     Invoke(x.GetLower(), y.GetLower(), z.GetLower()),
                     Invoke(x.GetUpper(), y.GetUpper(), z.GetUpper()));
+#endif
             }
 
             public static Vector512<T> Invoke(Vector512<T> x, Vector512<T> y, Vector512<T> z)
             {
+#if NET9_0_OR_GREATER
+                if (typeof(T) == typeof(double))
+                {
+                    return Vector512.FusedMultiplyAdd(x.AsDouble(), y.AsDouble(), z.AsDouble()).As<double, T>();
+                }
+                else
+                {
+                    Debug.Assert(typeof(T) == typeof(float));
+                    return Vector512.FusedMultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
+                }
+#else
                 if (Avx512F.IsSupported)
                 {
                     if (typeof(T) == typeof(float)) return Avx512F.FusedMultiplyAdd(x.AsSingle(), y.AsSingle(), z.AsSingle()).As<float, T>();
@@ -163,6 +221,7 @@ namespace System.Numerics.Tensors
                 return Vector512.Create(
                     Invoke(x.GetLower(), y.GetLower(), z.GetLower()),
                     Invoke(x.GetUpper(), y.GetUpper(), z.GetUpper()));
+#endif
             }
         }
     }

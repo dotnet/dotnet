@@ -4,11 +4,12 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings "$(MSBuildThisFileDirectory)\.runsettings"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestAssets\**" />
@@ -30,25 +31,16 @@
     <ProjectReference Include="$(RepoRoot)src\vstest.console\vstest.console.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
+    <PackageReference Include="AwesomeAssertions" Version="$(AwesomeAssertionsVersion)" />
     <PackageReference Include="Microsoft.TestPlatform.TestAsset.NativeCPP" Version="2.0.0" />
     <PackageReference Include="Microsoft.TestPlatform.QTools.Assets" Version="2.0.0" />
     <PackageReference Include="Procdump" Version="0.0.1" />
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
     <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0-preview2-26406-04" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Reflection" />
-    <Reference Include="System.Text.RegularExpressions" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Performance\" />

@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
+using System.Threading.Tasks;
 using EventPipe.UnitTests.Common;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
@@ -31,8 +32,8 @@ namespace EventPipe.UnitTests.LoaderEventsValidation
             output = outputHelper;
         }
 
-        [Fact]
-        public async void AssemblyLoad_ProducesEvents()
+        [Fact(Skip="https://github.com/dotnet/diagnostics/issues/4655")]
+        public async Task AssemblyLoad_ProducesEvents()
         {
             await RemoteTestExecutorHelper.RunTestCaseAsync(() => {
                 Dictionary<string, ExpectedEventCount> _expectedEventCounts = new()
@@ -60,7 +61,7 @@ namespace EventPipe.UnitTests.LoaderEventsValidation
                             }
 
                             AssemblyLoad assemblyLoad = new();
-                            assemblyLoad.LoadFromAssemblyPath(assemblyPath + "\\Microsoft.Diagnostics.Runtime.dll");
+                            assemblyLoad.LoadFromAssemblyPath(Path.Combine(assemblyPath, "Microsoft.Diagnostics.Runtime.dll"));
                             assemblyLoad.Unload();
                         }
                         GC.Collect();

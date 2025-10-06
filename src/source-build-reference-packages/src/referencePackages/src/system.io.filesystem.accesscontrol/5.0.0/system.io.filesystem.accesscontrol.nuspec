@@ -28,15 +28,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
-      <group targetFramework=".NETStandard1.3">
-        <dependency id="System.IO.FileSystem" version="4.3.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Runtime.Extensions" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Runtime.Handles" version="4.3.0" exclude="Compile" />
-        <dependency id="System.Security.AccessControl" version="5.0.0" />
-        <dependency id="System.Security.Principal.Windows" version="5.0.0" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Buffers" version="4.5.1" exclude="Compile" />
         <dependency id="System.Memory" version="4.5.4" exclude="Compile" />

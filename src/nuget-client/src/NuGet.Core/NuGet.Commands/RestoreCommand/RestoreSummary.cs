@@ -27,6 +27,18 @@ namespace NuGet.Commands
         public int InstallCount { get; }
 
         /// <summary>
+        /// A boolean that specifies if NuGetAudit verified packages for known vulnerabilities
+        /// </summary>
+        /// <remarks>This could be false if NuGetAudit is disabled, if
+        /// <list type="bullet">
+        /// <item>NuGetAudit is disabled</item>
+        /// <item>Project is already up to date (no-op restore)</item>
+        /// <item>No sources provided a vulnerability database</item>
+        /// </list>
+        /// </remarks>
+        public bool AuditRan { get; }
+
+        /// <summary>
         /// All the warnings and errors that were produced as a result of the restore.
         /// </summary>
         public IReadOnlyList<IRestoreLogMessage> Errors { get; }
@@ -59,6 +71,7 @@ namespace NuGet.Commands
                 .AsReadOnly();
             InstallCount = result.GetAllInstalled().Count;
             Errors = errors.ToArray();
+            AuditRan = result.AuditRan;
         }
 
         public RestoreSummary(

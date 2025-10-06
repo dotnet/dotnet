@@ -22,11 +22,6 @@ internal abstract partial class SyntaxVisitor<TResult>
         return DefaultVisit(token);
     }
 
-    public virtual TResult VisitTrivia(SyntaxTrivia trivia)
-    {
-        return DefaultVisit(trivia);
-    }
-
     protected virtual TResult DefaultVisit(GreenNode node)
     {
         return default(TResult);
@@ -48,11 +43,6 @@ internal abstract partial class SyntaxVisitor
     public virtual void VisitToken(SyntaxToken token)
     {
         DefaultVisit(token);
-    }
-
-    public virtual void VisitTrivia(SyntaxTrivia trivia)
-    {
-        DefaultVisit(trivia);
     }
 
     protected virtual void DefaultVisit(GreenNode node)

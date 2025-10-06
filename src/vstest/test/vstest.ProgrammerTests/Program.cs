@@ -9,6 +9,6 @@ internal class Program
 {
     static void Main()
     {
-        Intent.Console.Program.Main(new[] { Assembly.GetExecutingAssembly().Location });
+        Intent.Console.Program.Main([Assembly.GetExecutingAssembly().Location]);
     }
 }

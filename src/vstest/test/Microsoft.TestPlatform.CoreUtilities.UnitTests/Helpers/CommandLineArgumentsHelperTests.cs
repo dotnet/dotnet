@@ -33,7 +33,7 @@ public class CommandLineArgumentsHelperTests
         Assert.AreEqual("2312", argsDictionary["--parentprocessid"]);
         Assert.AreEqual(@"C:\temp\1.dll", argsDictionary["--testsourcepath"]);
 
-        args = new List<string>() { "--port", "12312", "--parentprocessid", "2312", "testsourcepath", @"C:\temp\1.dll" };
+        args = ["--port", "12312", "--parentprocessid", "2312", "testsourcepath", @"C:\temp\1.dll"];
         argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(args.ToArray());
 
         Assert.IsTrue(argsDictionary.Count == 2);
@@ -81,7 +81,7 @@ public class CommandLineArgumentsHelperTests
         var argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(null);
         Assert.IsTrue(argsDictionary.Count == 0);
 
-        argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(System.Array.Empty<string>());
+        argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary([]);
         Assert.IsTrue(argsDictionary.Count == 0);
     }
 

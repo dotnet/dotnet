@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -14,7 +12,7 @@ public class RazorParserTest
     public void ParseMethodCallsParseDocumentOnMarkupParserAndReturnsResults()
     {
         // Arrange
-        var parser = new RazorParser(RazorParserOptions.Create(builder => builder.EnableSpanEditHandlers = true));
+        var parser = new RazorParser(RazorParserOptions.Default.WithFlags(enableSpanEditHandlers: true));
         var expected =
 @"RazorDocument - [0..12)::12 - [foo @bar baz]
     MarkupBlock - [0..12)::12
@@ -39,7 +37,7 @@ public class RazorParserTest
         var syntaxTree = parser.Parse(TestRazorSourceDocument.Create("foo @bar baz"));
 
         // Assert
-        var actual = SyntaxNodeSerializer.Serialize(syntaxTree.Root, validateSpanEditHandlers: true);
+        var actual = TestSyntaxSerializer.Serialize(syntaxTree.Root, allowSpanEditHandlers: true);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(expected, actual);
     }
 }

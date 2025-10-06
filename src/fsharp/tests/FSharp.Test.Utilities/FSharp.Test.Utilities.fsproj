@@ -8,10 +8,12 @@
     <ReferenceVsAssemblies>true</ReferenceVsAssemblies>
     <OutputType>Library</OutputType>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
-    <Optimize>false</Optimize>
-    <Tailcalls>false</Tailcalls>
-    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+    <UnitTestType>xunit</UnitTestType>
+    <IsTestProject>true</IsTestProject>
+    <OtherFlags>$(OtherFlags) --realsig-</OtherFlags>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--Extra xUnit customizations, not required for the test suite to work, but can speed up local test runs and help with debugging.-->
+    <DefineConstants>XUNIT_EXTRAS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BUILDING_USING_DOTNET)' == 'true'">
@@ -20,14 +22,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectCapability Remove="TestContainer" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="..\scripts\scriptlib.fsx">
       <Link>scriptlib.fsx</Link>
     </Compile>
     <None Include="ScriptingShims.fsx" />
+    <Compile Include="TestConsole.fs" />
     <Compile Include="TestFramework.fs" />
     <Compile Include="ILChecker.fs" />
     <Compile Include="Utilities.fs" />
@@ -36,11 +38,16 @@
     <Compile Include="Assert.fs" />
     <Compile Include="ScriptHelpers.fs" />
     <Compile Include="Compiler.fs" />
-    <Compile Include="Peverifier.fs" />
+    <Compile Include="ILVerifierModule.fs" />
     <Compile Include="DirectoryAttribute.fs" />
+    <Compile Include="FileInlineDataAttribute.fs" />
     <Compile Include="ReflectionHelper.fs" />
     <Compile Include="SurfaceArea.fs" />
+    <Compile Include="XunitHelpers.fs" />
+    <Compile Include="XunitSetup.fs" />
+    <Compile Include="Tests.fs" />
   </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="$(FSharpSourcesRoot)\Compiler\FSharp.Compiler.Service.fsproj" />
@@ -60,75 +67,49 @@
     <ProjectReference Include="$(FSharpSourcesRoot)\FSharp.Build\FSharp.Build.fsproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="$(NUnitVersion)" /> <!-- TODO: This should be removed once all NUnit frameworks are migrated to xUnit -->
-    <PackageReference Include="xunit" Version="$(XUnitVersion)" />
-    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
-  </ItemGroup>
-
   <!-- Runtime dependencies. Beware. -->
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.ILDAsm" Version="$(MicrosoftNETCoreILDAsmVersion)" />
     <PackageReference Include="Microsoft.NETCore.ILAsm" Version="$(MicrosoftNETCoreILAsmVersion)" />
   </ItemGroup>
 
-    <ItemGroup>
-
-	    <InternalsVisibleTo Include="VisualFSharp.UnitTests" />
-	    <InternalsVisibleTo Include="FSharp.Compiler.ComponentTests" />
-	    <InternalsVisibleTo Include="FSharp.Compiler.UnitTests" />
-	    <InternalsVisibleTo Include="FSharp.Compiler.Service.Tests" />
-	    <InternalsVisibleTo Include="FSharp.Tests.FSharpSuite" />
-	    <InternalsVisibleTo Include="LanguageServiceProfiling" />
-	    <InternalsVisibleTo Include="FSharp.Compiler.Benchmarks" />
-
-    </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilersVersion)" />
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" GeneratePathProperty="true" />
+    <InternalsVisibleTo Include="VisualFSharp.UnitTests" />
+    <InternalsVisibleTo Include="FSharp.Compiler.ComponentTests" />
+    <InternalsVisibleTo Include="FSharp.Compiler.Service.Tests" />
+    <InternalsVisibleTo Include="FSharp.Tests.FSharpSuite" />
+    <InternalsVisibleTo Include="LanguageServiceProfiling" />
+    <InternalsVisibleTo Include="FSharp.Compiler.Benchmarks" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != '$(FSharpNetCoreProductTargetFramework)'">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
     <PackageReference Include="System.Buffers" Version="$(SystemBuffersVersion)" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourceVersion)" />
+  </ItemGroup>
+<PropertyGroup>
+ <NoWarn>$(NoWarn);NU1510</NoWarn> <!-- NU1510: Project is explicitly referencing the runtime assembly 'System.Collections.Immutable', however, if we remove it, it tries to find it on the wrong path. Also, local NoWarn does not help - This is just me trying to enforce it -->
+</PropertyGroup>
+  <ItemGroup>
+    <!-- NU1510: Project is explicitly referencing the runtime assembly 'System.Collections.Immutable', however, if we remove it, it tries to find it on the wrong path -->
+    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" GeneratePathProperty="true" NoWarn="NU1510" />
+    <PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilersVersion)" />
     <PackageReference Include="Microsoft.DiaSymReader.PortablePdb" Version="$(MicrosoftDiaSymReaderPortablePdbVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Resources.Proprietary" Version="$(MicrosoftCodeAnalysisTestResourcesProprietaryVersion)" />
     <PackageReference Include="Microsoft.NETCore.App.Ref" Version="6.0.0" IncludeAssets="none" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.4.0" />
-	<PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\mscorlib.dll" LogicalName="net6.01.mscorlib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\System.dll" LogicalName="net6.01.System.dll">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\System.Core.dll" LogicalName="net6.01.System.Core.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\System.Console.dll" LogicalName="net6.01.System.Console.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\System.Runtime.dll" LogicalName="net6.01.System.Runtime.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\System.Dynamic.Runtime.dll" LogicalName="net6.01.System.Runtime.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMicrosoft_NETCore_App_Ref)\ref\net6.0\netstandard.dll" LogicalName="net6.01.netstandard.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\System.Collections.Immutable.dll" LogicalName="netstandard2.0.System.Collections.Immutable.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
+	<ItemGroup>
+		<EmbeddedResource Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\System.Collections.Immutable.dll" LogicalName="netstandard2.0.System.Collections.Immutable.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

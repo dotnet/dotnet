@@ -222,6 +222,65 @@ namespace NuGet.Packaging.Test
             }
         }
 
+        [Fact]
+        public void CreatePackage_IncludesAStableOrderOfContentTypesXml()
+        {
+            // Arrange
+            PackageBuilder builder = new PackageBuilder()
+            {
+                Id = "A",
+                Version = NuGetVersion.Parse("1.0"),
+                Description = "Descriptions",
+            };
+
+            builder.Authors.Add("testAuthor");
+
+            var dependencies = new List<PackageDependency>();
+            dependencies.Add(new PackageDependency("packageB", VersionRange.Parse("1.0.0"), null, new[] { "z" }));
+            dependencies.Add(new PackageDependency(
+                "packageC",
+                VersionRange.Parse("1.0.0"),
+                new[] { "a", "b", "c" },
+                new[] { "b", "c" }));
+
+            var set = new PackageDependencyGroup(NuGetFramework.AnyFramework, dependencies);
+            builder.DependencyGroups.Add(set);
+
+            var sep = Path.DirectorySeparatorChar;
+
+            builder.Files.Add(CreatePackageFile(@"content" + sep + "foo.jpg"));
+            builder.Files.Add(CreatePackageFile(@"contentFiles" + sep + "any" + sep + "any" + sep + "foo.png"));
+
+            using (var ms = new MemoryStream())
+            {
+                // Act
+                builder.Save(ms);
+
+                ms.Seek(0, SeekOrigin.Begin);
+
+                using (var archive = new ZipArchive(ms, ZipArchiveMode.Read, leaveOpen: true))
+                {
+                    var contentTypesEntry = archive.Entries
+                        .First(file => file.FullName == "[Content_Types].xml");
+
+                    using (StreamReader reader = new StreamReader(contentTypesEntry.Open()))
+                    {
+                        var contents = reader.ReadToEnd();
+                        // Assert
+                        Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<Types xmlns=""http://schemas.openxmlformats.org/package/2006/content-types"">
+  <Default Extension=""rels"" ContentType=""application/vnd.openxmlformats-package.relationships+xml"" />
+  <Default Extension=""psmdcp"" ContentType=""application/vnd.openxmlformats-package.core-properties+xml"" />
+  <Default Extension=""jpg"" ContentType=""application/octet"" />
+  <Default Extension=""nuspec"" ContentType=""application/octet"" />
+  <Default Extension=""png"" ContentType=""application/octet"" />
+</Types>", contents);
+                    }
+                }
+            }
+        }
+
+
         [Theory]
         [InlineData(".NETFramework,Version=v4.7.2", ".NETFramework4.7.2")]
         [InlineData(".NETFramework,Version=v4.7.2,Profile=foo", ".NETFramework4.7.2-foo")]
@@ -3312,29 +3371,6 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
 #pragma warning restore CS0618 // Type or member is obsolete
 
             return file.Object;
-        }
-
-        private IPackageFile CreatePackageFileOnPath(string path, DateTime lastWriteTime)
-        {
-            string directorypath = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directorypath))
-            {
-                Directory.CreateDirectory(directorypath);
-            }
-
-            File.WriteAllText(path, string.Empty);
-            File.SetLastWriteTime(path, lastWriteTime);
-
-            using (MemoryStream ms = new MemoryStream())
-            using (FileStream fileStream = File.OpenRead(path))
-            {
-                fileStream.CopyTo(ms);
-                var file = new PhysicalPackageFile(ms)
-                {
-                    TargetPath = path
-                };
-                return file;
-            }
         }
 
         private Stream GetManifestStream(Stream packageStream)

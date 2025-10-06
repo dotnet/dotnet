@@ -14,7 +14,7 @@
     <NoWarn>$(NoWarn);
     <!-- Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) test projects. -->
     MSB3270;
-    <!-- Suppress warnings about netcoreapp3.1 being used, and being out of support. -->
+    <!-- Suppress warnings about net8.0 being used, and being out of support. -->
     NETSDK1138;
     <!-- Suppress warning about nugets that we produce not being available when we did not build at least once -->
     NU1603</NoWarn>
@@ -24,7 +24,7 @@
     <!-- The TFMs to build and test against. -->
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
-    <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
+    <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 

@@ -1,35 +1,22 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorProvider
+internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public int Order { get; set; }
-
-    public RazorEngine Engine { get; set; }
-
-    public void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgHelper.ThrowIfNull(context);
 
-        var compilation = context.GetCompilation();
-        if (compilation == null)
-        {
-            return;
-        }
+        var compilation = context.Compilation;
 
         if (compilation.GetTypeByMetadataName(ComponentsApi.EventHandlerAttribute.FullTypeName) is not INamedTypeSymbol eventHandlerAttribute)
         {
@@ -37,73 +24,105 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
             return;
         }
 
-        var targetSymbol = context.Items.GetTargetSymbol();
+        var targetAssembly = context.TargetAssembly;
 
-        var collector = new Collector(compilation, targetSymbol, eventHandlerAttribute);
-        collector.Collect(context);
+        var collector = new Collector(compilation, targetAssembly, eventHandlerAttribute);
+        collector.Collect(context, cancellationToken);
     }
 
-    private class Collector(Compilation compilation, ISymbol targetSymbol, INamedTypeSymbol eventHandlerAttribute)
-        : TagHelperCollector<Collector>(compilation, targetSymbol)
+    private class Collector(
+        Compilation compilation,
+        IAssemblySymbol? targetAssembly,
+        INamedTypeSymbol eventHandlerAttribute)
+        : TagHelperCollector<Collector>(compilation, targetAssembly)
     {
         private readonly INamedTypeSymbol _eventHandlerAttribute = eventHandlerAttribute;
 
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => type.DeclaredAccessibility == Accessibility.Public &&
+               type.Name == "EventHandlers";
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new EventHandlerDataVisitor(types);
-
-            visitor.Visit(symbol);
-
-            foreach (var type in types)
+            // Not handling duplicates here for now since we're the primary ones extending this.
+            // If we see users adding to the set of event handler constructs we will want to add deduplication
+            // and potentially diagnostics.
+            foreach (var attribute in type.GetAttributes())
             {
-                // Create helper to delay computing display names for this type when we need them.
-                var displayNames = new DisplayNameHelper(type);
-
-                // Not handling duplicates here for now since we're the primary ones extending this.
-                // If we see users adding to the set of event handler constructs we will want to add deduplication
-                // and potentially diagnostics.
-                foreach (var attribute in type.GetAttributes())
+                if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _eventHandlerAttribute))
                 {
-                    if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _eventHandlerAttribute))
+                    if (!AttributeArgs.TryGet(attribute, out var args))
                     {
-                        var enablePreventDefault = false;
-                        var enableStopPropagation = false;
-                        if (attribute.ConstructorArguments.Length == 4)
-                        {
-                            enablePreventDefault = (bool)attribute.ConstructorArguments[2].Value;
-                            enableStopPropagation = (bool)attribute.ConstructorArguments[3].Value;
-                        }
-
-                        var (typeName, namespaceName) = displayNames.GetNames();
-                        var constructorArguments = attribute.ConstructorArguments;
-
-                        results.Add(CreateTagHelper(
-                            typeName,
-                            namespaceName,
-                            type.Name,
-                            (string)constructorArguments[0].Value,
-                            (INamedTypeSymbol)constructorArguments[1].Value,
-                            enablePreventDefault,
-                            enableStopPropagation));
+                        // If this occurs, the [EventHandler] was defined incorrectly, so we can't create a tag helper.
+                        continue;
                     }
+
+                    var typeName = type.GetDefaultDisplayString();
+                    var namespaceName = type.ContainingNamespace.GetFullName();
+                    results.Add(CreateTagHelper(typeName, namespaceName, type.Name, args));
                 }
             }
         }
 
-        /// <summary>
-        ///  Helper to avoid computing various type-based names until necessary.
-        /// </summary>
-        private ref struct DisplayNameHelper(INamedTypeSymbol type)
+        private readonly record struct AttributeArgs(
+            string Attribute,
+            INamedTypeSymbol EventArgsType,
+            bool EnableStopPropagation = false,
+            bool EnablePreventDefault = false)
         {
-            private readonly INamedTypeSymbol _type = type;
-            private (string Type, string Namespace)? _names;
-
-            public (string Type, string Namespace) GetNames()
+            public static bool TryGet(AttributeData attribute, out AttributeArgs args)
             {
-                _names ??= (_type.ToDisplayString(), _type.ContainingNamespace.ToDisplayString());
+                // EventHandlerAttribute has two constructors:
+                //
+                // - EventHandlerAttribute(string attributeName, Type eventArgsType);
+                // - EventHandlerAttribute(string attributeName, Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault);
 
-                return _names.GetValueOrDefault();
+                var arguments = attribute.ConstructorArguments;
+
+                return TryGetFromTwoArguments(arguments, out args) ||
+                       TryGetFromFourArguments(arguments, out args);
+
+                static bool TryGetFromTwoArguments(ImmutableArray<TypedConstant> arguments, out AttributeArgs args)
+                {
+                    // Ctor 1: EventHandlerAttribute(string attributeName, Type eventArgsType);
+
+                    if (arguments is [
+                        { Value: string attributeName },
+                        { Value: INamedTypeSymbol eventArgsType }])
+                    {
+                        args = new(attributeName, eventArgsType);
+                        return true;
+                    }
+
+                    args = default;
+                    return false;
+                }
+
+                static bool TryGetFromFourArguments(ImmutableArray<TypedConstant> arguments, out AttributeArgs args)
+                {
+                    // Ctor 2: EventHandlerAttribute(string attributeName, Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault);
+
+                    // TODO: The enablePreventDefault and enableStopPropagation arguments are incorrectly swapped!
+                    // However, they have been that way since the 4-argument constructor variant was introduced
+                    // in https://github.com/dotnet/razor/commit/7635bba6ef2d3e6798d0846ceb96da6d5908e1b0.
+                    // Fixing this is tracked be https://github.com/dotnet/razor/issues/10497
+
+                    if (arguments is [
+                        { Value: string attributeName },
+                        { Value: INamedTypeSymbol eventArgsType },
+                        { Value: bool enablePreventDefault },
+                        { Value: bool enableStopPropagation }])
+                    {
+                        args = new(attributeName, eventArgsType, enableStopPropagation, enablePreventDefault);
+                        return true;
+                    }
+
+                    args = default;
+                    return false;
+                }
             }
         }
 
@@ -111,31 +130,30 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
             string typeName,
             string typeNamespace,
             string typeNameIdentifier,
-            string attribute,
-            INamedTypeSymbol eventArgsType,
-            bool enablePreventDefault,
-            bool enableStopPropagation)
+            AttributeArgs args)
         {
+            var (attribute, eventArgsType, enableStopPropagation, enablePreventDefault) = args;
+
             var attributeName = "@" + attribute;
-            var eventArgType = eventArgsType.ToDisplayString();
-            _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.EventHandler.TagHelperKind, attribute, ComponentsApi.AssemblyName,
+            var eventArgType = eventArgsType.GetDefaultDisplayString();
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                TagHelperKind.EventHandler, attribute, ComponentsApi.AssemblyName,
                 out var builder);
+
+            builder.SetTypeName(typeName, typeNamespace, typeNameIdentifier);
+
             builder.CaseSensitive = true;
+            builder.ClassifyAttributesOnly = true;
             builder.SetDocumentation(
                 DocumentationDescriptor.From(
                     DocumentationId.EventHandlerTagHelper,
                     attributeName,
                     eventArgType));
 
-            builder.SetMetadata(
-                SpecialKind(ComponentMetadata.EventHandler.TagHelperKind),
-                new(ComponentMetadata.EventHandler.EventArgsType, eventArgType),
-                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-                RuntimeName(ComponentMetadata.EventHandler.RuntimeName),
-                TypeName(typeName),
-                TypeNamespace(typeNamespace),
-                TypeNameIdentifier(typeNameIdentifier));
+            builder.SetMetadata(new EventHandlerMetadata()
+            {
+                EventArgsType = eventArgType
+            });
 
             builder.TagMatchingRule(rule =>
             {
@@ -144,8 +162,8 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                 rule.Attribute(a =>
                 {
                     a.Name = attributeName;
-                    a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                    a.SetMetadata(Attributes.IsDirectiveAttribute);
+                    a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                    a.IsDirectiveAttribute = true;
                 });
             });
 
@@ -158,8 +176,8 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                     rule.Attribute(a =>
                     {
                         a.Name = attributeName + ":preventDefault";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        a.SetMetadata(Attributes.IsDirectiveAttribute);
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        a.IsDirectiveAttribute = true;
                     });
                 });
             }
@@ -173,8 +191,8 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                     rule.Attribute(a =>
                     {
                         a.Name = attributeName + ":stopPropagation";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        a.SetMetadata(Attributes.IsDirectiveAttribute);
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        a.IsDirectiveAttribute = true;
                     });
                 });
             }
@@ -192,25 +210,25 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                 // We want event handler directive attributes to default to C# context.
                 a.TypeName = $"Microsoft.AspNetCore.Components.EventCallback<{eventArgType}>";
 
-                a.SetMetadata(
-                    // Make this weakly typed (don't type check) - delegates have their own type-checking
-                    // logic that we don't want to interfere with.
-                    IsWeaklyTyped,
-                    IsDirectiveAttribute,
-                    PropertyName(attribute));
+                a.PropertyName = attribute;
+
+                a.IsDirectiveAttribute = true;
+
+                // Make this weakly typed (don't type check) - delegates have their own type-checking
+                // logic that we don't want to interfere with.
+                a.IsWeaklyTyped = true;
 
                 if (enablePreventDefault)
                 {
                     a.BindAttributeParameter(parameter =>
                     {
                         parameter.Name = "preventDefault";
+                        parameter.PropertyName = "PreventDefault";
                         parameter.TypeName = typeof(bool).FullName;
                         parameter.SetDocumentation(
                             DocumentationDescriptor.From(
                                 DocumentationId.EventHandlerTagHelper_PreventDefault,
                                 attributeName));
-
-                        parameter.SetMetadata(Parameters.PreventDefault);
                     });
                 }
 
@@ -219,45 +237,17 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                     a.BindAttributeParameter(parameter =>
                     {
                         parameter.Name = "stopPropagation";
+                        parameter.PropertyName = "StopPropagation";
                         parameter.TypeName = typeof(bool).FullName;
                         parameter.SetDocumentation(
                             DocumentationDescriptor.From(
                                 DocumentationId.EventHandlerTagHelper_StopPropagation,
                                 attributeName));
-
-                        parameter.SetMetadata(Parameters.StopPropagation);
                     });
                 }
             });
 
             return builder.Build();
-        }
-
-        private class EventHandlerDataVisitor(List<INamedTypeSymbol> results) : SymbolVisitor
-        {
-            private readonly List<INamedTypeSymbol> _results = results;
-
-            public override void VisitNamedType(INamedTypeSymbol symbol)
-            {
-                if (symbol.DeclaredAccessibility == Accessibility.Public &&
-                    symbol.Name == "EventHandlers")
-                {
-                    _results.Add(symbol);
-                }
-            }
-
-            public override void VisitNamespace(INamespaceSymbol symbol)
-            {
-                foreach (var member in symbol.GetMembers())
-                {
-                    Visit(member);
-                }
-            }
-
-            public override void VisitAssembly(IAssemblySymbol symbol)
-            {
-                Visit(symbol.GlobalNamespace);
-            }
         }
     }
 }

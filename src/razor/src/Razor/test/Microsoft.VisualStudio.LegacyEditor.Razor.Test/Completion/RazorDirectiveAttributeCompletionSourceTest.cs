@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -44,7 +44,6 @@ public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testO
         var descriptionFactory = StrictMock.Of<IVisualStudioDescriptionFactory>(f =>
             f.CreateClassifiedDescription(description) == expectedResult);
         var source = new RazorDirectiveAttributeCompletionSource(
-            Dispatcher,
             StrictMock.Of<IVisualStudioRazorParser>(),
             StrictMock.Of<IRazorCompletionFactsService>(),
             StrictMock.Of<ICompletionBroker>(),
@@ -234,7 +233,6 @@ public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testO
     private RazorDirectiveAttributeCompletionSource CreateCompletionSource()
     {
         var source = new RazorDirectiveAttributeCompletionSource(
-            Dispatcher,
             StrictMock.Of<IVisualStudioRazorParser>(),
             StrictMock.Of<IRazorCompletionFactsService>(),
             StrictMock.Of<ICompletionBroker>(),

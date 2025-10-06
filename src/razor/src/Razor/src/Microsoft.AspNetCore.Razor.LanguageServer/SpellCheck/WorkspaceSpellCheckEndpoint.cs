@@ -1,11 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
@@ -17,5 +17,5 @@ internal sealed class WorkspaceSpellCheckEndpoint : IRazorDocumentlessRequestHan
     // Razor files generally don't do anything at the workspace level, so continuing that tradition for spell checking
 
     public Task<VSInternalWorkspaceSpellCheckableReport[]> HandleRequestAsync(VSInternalWorkspaceSpellCheckableParams request, RazorRequestContext context, CancellationToken cancellationToken)
-        => Task.FromResult(Array.Empty<VSInternalWorkspaceSpellCheckableReport>());
+        => SpecializedTasks.EmptyArray<VSInternalWorkspaceSpellCheckableReport>();
 }

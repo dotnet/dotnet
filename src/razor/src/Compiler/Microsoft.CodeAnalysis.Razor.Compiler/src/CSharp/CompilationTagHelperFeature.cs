@@ -1,10 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -12,23 +12,23 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
 {
-    private ITagHelperDescriptorProvider[] _providers;
-    private IMetadataReferenceFeature _referenceFeature;
+    private ImmutableArray<ITagHelperDescriptorProvider> _providers;
+    private IMetadataReferenceFeature? _referenceFeature;
 
-    public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
+    public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
     {
-        var results = new List<TagHelperDescriptor>();
-
-        var context = TagHelperDescriptorProviderContext.Create(results);
-        var compilation = CSharpCompilation.Create("__TagHelpers", references: _referenceFeature.References);
-        if (IsValidCompilation(compilation))
+        var compilation = CSharpCompilation.Create("__TagHelpers", references: _referenceFeature?.References);
+        if (!IsValidCompilation(compilation))
         {
-            context.SetCompilation(compilation);
+            return [];
         }
 
-        for (var i = 0; i < _providers.Length; i++)
+        var results = new List<TagHelperDescriptor>();
+        var context = new TagHelperDescriptorProviderContext(compilation, results);
+
+        foreach (var provider in _providers)
         {
-            _providers[i].Execute(context);
+            provider.Execute(context, cancellationToken);
         }
 
         return results;
@@ -36,8 +36,8 @@ public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHe
 
     protected override void OnInitialized()
     {
-        _referenceFeature = Engine.Features.OfType<IMetadataReferenceFeature>().FirstOrDefault();
-        _providers = Engine.Features.OfType<ITagHelperDescriptorProvider>().OrderBy(f => f.Order).ToArray();
+        _referenceFeature = Engine.GetFeatures<IMetadataReferenceFeature>().FirstOrDefault();
+        _providers = Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static f => f.Order);
     }
 
     internal static bool IsValidCompilation(Compilation compilation)

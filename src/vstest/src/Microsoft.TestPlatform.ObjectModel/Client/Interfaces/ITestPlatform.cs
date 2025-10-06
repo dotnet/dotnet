@@ -38,6 +38,8 @@ public interface ITestPlatform : IDisposable
     /// <param name="requestData">Providing common services and data for discovery.</param>
     /// <param name="discoveryCriteria">Specifies the discovery parameters.</param>
     /// <param name="options">Test platform options.</param>
+    /// <param name="sourceToSourceDetailMap">Details of each dll (source).</param>
+    /// <param name="warningLogger">Logger to use for warnings.</param>
     ///
     /// <returns>A DiscoveryRequest object.</returns>
     IDiscoveryRequest CreateDiscoveryRequest(
@@ -54,6 +56,8 @@ public interface ITestPlatform : IDisposable
     /// <param name="requestData">Providing common services and data for execution.</param>
     /// <param name="testRunCriteria">Specifies the test run criteria.</param>
     /// <param name="options">Test platform options.</param>
+    /// <param name="sourceToSourceDetailMap">Details of each dll (source).</param>
+    /// <param name="warningLogger">Logger to use for warnings.</param>
     ///
     /// <returns>A RunRequest object.</returns>
     ITestRunRequest CreateTestRunRequest(
@@ -72,6 +76,8 @@ public interface ITestPlatform : IDisposable
     /// </param>
     /// <param name="criteria">Specifies the start test session criteria.</param>
     /// <param name="eventsHandler">Events handler for handling session events.</param>
+    /// <param name="sourceToSourceDetailMap">Details of each dll (source).</param>
+    /// <param name="warningLogger">Logger to use for warnings.</param>
     ///
     /// <returns>True if the operation succeeded, false otherwise.</returns>
     bool StartTestSession(

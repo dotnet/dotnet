@@ -100,9 +100,14 @@ public abstract class RazorSourceGeneratorTestsBase
 
     protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, out Compilation outputCompilation, params DiagnosticDescription[] expectedDiagnostics)
     {
+        return RunGenerator(compilation, ref driver, out outputCompilation, c => c.VerifyDiagnostics(expectedDiagnostics));
+    }
+
+    protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, out Compilation outputCompilation, Action<Compilation> verify)
+    {
         driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out outputCompilation, out _);
 
-        outputCompilation.VerifyDiagnostics(expectedDiagnostics);
+        verify(outputCompilation);
 
         var result = driver.GetRunResult();
         return result.Results.Single();
@@ -209,7 +214,7 @@ public abstract class RazorSourceGeneratorTestsBase
         }
     }
 
-    protected static async Task VerifyRazorPageMatchesBaselineAsync(Compilation compilation, string name,
+    protected static async Task<string> VerifyRazorPageMatchesBaselineAsync(Compilation compilation, string name,
         [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "", string suffix = "")
     {
         var html = await RenderRazorPageAsync(compilation, name);
@@ -220,13 +225,15 @@ public abstract class RazorSourceGeneratorTestsBase
             testPath: testPath,
             testName: testName,
             suffix: suffix);
+        return html;
     }
 
     protected static Project CreateTestProject(
         OrderedStringDictionary additionalSources,
-        OrderedStringDictionary? sources = null)
+        OrderedStringDictionary? sources = null,
+        CSharpParseOptions? cSharpParseOptions = null)
     {
-        var project = CreateBaseProject();
+        var project = CreateBaseProject(cSharpParseOptions);
 
         if (sources is not null)
         {
@@ -288,7 +295,7 @@ public abstract class RazorSourceGeneratorTestsBase
         }
     }
 
-    private static Project CreateBaseProject()
+    private static Project CreateBaseProject(CSharpParseOptions? cSharpParseOptions)
     {
         var projectId = ProjectId.CreateNewId(debugName: "TestProject");
 
@@ -308,7 +315,7 @@ public abstract class RazorSourceGeneratorTestsBase
                     new("CS8019", ReportDiagnostic.Suppress),
                 }));
 
-        project = project.WithParseOptions(((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.Preview));
+        project = project.WithParseOptions(cSharpParseOptions ?? ((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.Preview));
 
         foreach (var defaultCompileLibrary in DependencyContext.Load(typeof(RazorSourceGeneratorTests).Assembly)!.CompileLibraries)
         {
@@ -414,7 +421,7 @@ internal static class Extensions
             for (int i = 0; i < result.GeneratedSources.Length; i++)
             {
                 var text = TrimChecksum(result.GeneratedSources[i].SourceText.ToString());
-                AssertEx.AssertEqualToleratingWhitespaceDifferences(text, TrimChecksum(expectedOutput[i]));
+                AssertEx.AssertEqualToleratingWhitespaceDifferences(TrimChecksum(expectedOutput[i]), text);
             }
         }
 
@@ -466,7 +473,7 @@ internal static class Extensions
 
         // Verify actual against baseline.
         var baselineText = File.ReadAllText(baselinePath);
-        AssertEx.EqualOrDiff(baselineText, actualText);
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(baselineText, actualText);
     }
 
     [Conditional("GENERATE_BASELINES")]

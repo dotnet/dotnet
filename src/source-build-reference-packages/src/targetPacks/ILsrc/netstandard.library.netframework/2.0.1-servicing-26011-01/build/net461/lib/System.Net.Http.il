@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -397,6 +397,10 @@
 }
 .assembly /*20000001*/ System.Net.Http
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000002:0A000001*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
   .custom /*0C000003:0A000002*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000002*/::.ctor(int32) /* 0A000002 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000004:0A000003*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000003*/::.ctor() /* 0A000003 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -485,7 +489,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F3763BF1000
+// Image base: 0x00007F0DDC03D000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -2237,332 +2241,412 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000017*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000017*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000017*/ System.SR/*02000004*/::get_ResourceManager() /* 06000008 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string net_securityprotocolnotsupported()
+  .property /*17000002*/ callconv(8) string
+          net_securityprotocolnotsupported()
   {
     .get string System.SR/*02000004*/::get_net_securityprotocolnotsupported() /* 0600000F */
   } // end of property SR::net_securityprotocolnotsupported
-  .property /*17000003*/ string net_http_httpmethod_format_error()
+  .property /*17000003*/ callconv(8) string
+          net_http_httpmethod_format_error()
   {
     .get string System.SR/*02000004*/::get_net_http_httpmethod_format_error() /* 06000010 */
   } // end of property SR::net_http_httpmethod_format_error
-  .property /*17000004*/ string net_http_reasonphrase_format_error()
+  .property /*17000004*/ callconv(8) string
+          net_http_reasonphrase_format_error()
   {
     .get string System.SR/*02000004*/::get_net_http_reasonphrase_format_error() /* 06000011 */
   } // end of property SR::net_http_reasonphrase_format_error
-  .property /*17000005*/ string net_http_copyto_array_too_small()
+  .property /*17000005*/ callconv(8) string
+          net_http_copyto_array_too_small()
   {
     .get string System.SR/*02000004*/::get_net_http_copyto_array_too_small() /* 06000012 */
   } // end of property SR::net_http_copyto_array_too_small
-  .property /*17000006*/ string net_http_headers_not_found()
+  .property /*17000006*/ callconv(8) string
+          net_http_headers_not_found()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_not_found() /* 06000013 */
   } // end of property SR::net_http_headers_not_found
-  .property /*17000007*/ string net_http_headers_single_value_header()
+  .property /*17000007*/ callconv(8) string
+          net_http_headers_single_value_header()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_single_value_header() /* 06000014 */
   } // end of property SR::net_http_headers_single_value_header
-  .property /*17000008*/ string net_http_headers_invalid_header_name()
+  .property /*17000008*/ callconv(8) string
+          net_http_headers_invalid_header_name()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_header_name() /* 06000015 */
   } // end of property SR::net_http_headers_invalid_header_name
-  .property /*17000009*/ string net_http_headers_invalid_value()
+  .property /*17000009*/ callconv(8) string
+          net_http_headers_invalid_value()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_value() /* 06000016 */
   } // end of property SR::net_http_headers_invalid_value
-  .property /*1700000A*/ string net_http_headers_not_allowed_header_name()
+  .property /*1700000A*/ callconv(8) string
+          net_http_headers_not_allowed_header_name()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_not_allowed_header_name() /* 06000017 */
   } // end of property SR::net_http_headers_not_allowed_header_name
-  .property /*1700000B*/ string net_http_headers_invalid_host_header()
+  .property /*1700000B*/ callconv(8) string
+          net_http_headers_invalid_host_header()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_host_header() /* 06000018 */
   } // end of property SR::net_http_headers_invalid_host_header
-  .property /*1700000C*/ string net_http_headers_invalid_from_header()
+  .property /*1700000C*/ callconv(8) string
+          net_http_headers_invalid_from_header()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_from_header() /* 06000019 */
   } // end of property SR::net_http_headers_invalid_from_header
-  .property /*1700000D*/ string net_http_headers_invalid_etag_name()
+  .property /*1700000D*/ callconv(8) string
+          net_http_headers_invalid_etag_name()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_etag_name() /* 0600001A */
   } // end of property SR::net_http_headers_invalid_etag_name
-  .property /*1700000E*/ string net_http_headers_invalid_range()
+  .property /*1700000E*/ callconv(8) string
+          net_http_headers_invalid_range()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_invalid_range() /* 0600001B */
   } // end of property SR::net_http_headers_invalid_range
-  .property /*1700000F*/ string net_http_headers_no_newlines()
+  .property /*1700000F*/ callconv(8) string
+          net_http_headers_no_newlines()
   {
     .get string System.SR/*02000004*/::get_net_http_headers_no_newlines() /* 0600001C */
   } // end of property SR::net_http_headers_no_newlines
-  .property /*17000010*/ string net_http_content_buffersize_exceeded()
+  .property /*17000010*/ callconv(8) string
+          net_http_content_buffersize_exceeded()
   {
     .get string System.SR/*02000004*/::get_net_http_content_buffersize_exceeded() /* 0600001D */
   } // end of property SR::net_http_content_buffersize_exceeded
-  .property /*17000011*/ string net_http_content_no_task_returned()
+  .property /*17000011*/ callconv(8) string
+          net_http_content_no_task_returned()
   {
     .get string System.SR/*02000004*/::get_net_http_content_no_task_returned() /* 0600001E */
   } // end of property SR::net_http_content_no_task_returned
-  .property /*17000012*/ string net_http_content_stream_already_read()
+  .property /*17000012*/ callconv(8) string
+          net_http_content_stream_already_read()
   {
     .get string System.SR/*02000004*/::get_net_http_content_stream_already_read() /* 0600001F */
   } // end of property SR::net_http_content_stream_already_read
-  .property /*17000013*/ string net_http_content_readonly_stream()
+  .property /*17000013*/ callconv(8) string
+          net_http_content_readonly_stream()
   {
     .get string System.SR/*02000004*/::get_net_http_content_readonly_stream() /* 06000020 */
   } // end of property SR::net_http_content_readonly_stream
-  .property /*17000014*/ string net_http_content_invalid_charset()
+  .property /*17000014*/ callconv(8) string
+          net_http_content_invalid_charset()
   {
     .get string System.SR/*02000004*/::get_net_http_content_invalid_charset() /* 06000021 */
   } // end of property SR::net_http_content_invalid_charset
-  .property /*17000015*/ string net_http_content_stream_copy_error()
+  .property /*17000015*/ callconv(8) string
+          net_http_content_stream_copy_error()
   {
     .get string System.SR/*02000004*/::get_net_http_content_stream_copy_error() /* 06000022 */
   } // end of property SR::net_http_content_stream_copy_error
-  .property /*17000016*/ string net_http_argument_empty_string()
+  .property /*17000016*/ callconv(8) string
+          net_http_argument_empty_string()
   {
     .get string System.SR/*02000004*/::get_net_http_argument_empty_string() /* 06000023 */
   } // end of property SR::net_http_argument_empty_string
-  .property /*17000017*/ string net_http_client_request_already_sent()
+  .property /*17000017*/ callconv(8) string
+          net_http_client_request_already_sent()
   {
     .get string System.SR/*02000004*/::get_net_http_client_request_already_sent() /* 06000024 */
   } // end of property SR::net_http_client_request_already_sent
-  .property /*17000018*/ string net_http_operation_started()
+  .property /*17000018*/ callconv(8) string
+          net_http_operation_started()
   {
     .get string System.SR/*02000004*/::get_net_http_operation_started() /* 06000025 */
   } // end of property SR::net_http_operation_started
-  .property /*17000019*/ string net_http_client_execution_error()
+  .property /*17000019*/ callconv(8) string
+          net_http_client_execution_error()
   {
     .get string System.SR/*02000004*/::get_net_http_client_execution_error() /* 06000026 */
   } // end of property SR::net_http_client_execution_error
-  .property /*1700001A*/ string net_http_client_absolute_baseaddress_required()
+  .property /*1700001A*/ callconv(8) string
+          net_http_client_absolute_baseaddress_required()
   {
     .get string System.SR/*02000004*/::get_net_http_client_absolute_baseaddress_required() /* 06000027 */
   } // end of property SR::net_http_client_absolute_baseaddress_required
-  .property /*1700001B*/ string net_http_client_invalid_requesturi()
+  .property /*1700001B*/ callconv(8) string
+          net_http_client_invalid_requesturi()
   {
     .get string System.SR/*02000004*/::get_net_http_client_invalid_requesturi() /* 06000028 */
   } // end of property SR::net_http_client_invalid_requesturi
-  .property /*1700001C*/ string net_http_client_http_baseaddress_required()
+  .property /*1700001C*/ callconv(8) string
+          net_http_client_http_baseaddress_required()
   {
     .get string System.SR/*02000004*/::get_net_http_client_http_baseaddress_required() /* 06000029 */
   } // end of property SR::net_http_client_http_baseaddress_required
-  .property /*1700001D*/ string net_http_parser_invalid_base64_string()
+  .property /*1700001D*/ callconv(8) string
+          net_http_parser_invalid_base64_string()
   {
     .get string System.SR/*02000004*/::get_net_http_parser_invalid_base64_string() /* 0600002A */
   } // end of property SR::net_http_parser_invalid_base64_string
-  .property /*1700001E*/ string net_http_handler_noresponse()
+  .property /*1700001E*/ callconv(8) string
+          net_http_handler_noresponse()
   {
     .get string System.SR/*02000004*/::get_net_http_handler_noresponse() /* 0600002B */
   } // end of property SR::net_http_handler_noresponse
-  .property /*1700001F*/ string net_http_handler_norequest()
+  .property /*1700001F*/ callconv(8) string
+          net_http_handler_norequest()
   {
     .get string System.SR/*02000004*/::get_net_http_handler_norequest() /* 0600002C */
   } // end of property SR::net_http_handler_norequest
-  .property /*17000020*/ string net_http_message_not_success_statuscode()
+  .property /*17000020*/ callconv(8) string
+          net_http_message_not_success_statuscode()
   {
     .get string System.SR/*02000004*/::get_net_http_message_not_success_statuscode() /* 0600002D */
   } // end of property SR::net_http_message_not_success_statuscode
-  .property /*17000021*/ string net_http_content_field_too_long()
+  .property /*17000021*/ callconv(8) string
+          net_http_content_field_too_long()
   {
     .get string System.SR/*02000004*/::get_net_http_content_field_too_long() /* 0600002E */
   } // end of property SR::net_http_content_field_too_long
-  .property /*17000022*/ string net_http_log_headers_no_newlines()
+  .property /*17000022*/ callconv(8) string
+          net_http_log_headers_no_newlines()
   {
     .get string System.SR/*02000004*/::get_net_http_log_headers_no_newlines() /* 0600002F */
   } // end of property SR::net_http_log_headers_no_newlines
-  .property /*17000023*/ string net_http_log_headers_invalid_quality()
+  .property /*17000023*/ callconv(8) string
+          net_http_log_headers_invalid_quality()
   {
     .get string System.SR/*02000004*/::get_net_http_log_headers_invalid_quality() /* 06000030 */
   } // end of property SR::net_http_log_headers_invalid_quality
-  .property /*17000024*/ string net_http_log_headers_wrong_email_format()
+  .property /*17000024*/ callconv(8) string
+          net_http_log_headers_wrong_email_format()
   {
     .get string System.SR/*02000004*/::get_net_http_log_headers_wrong_email_format() /* 06000031 */
   } // end of property SR::net_http_log_headers_wrong_email_format
-  .property /*17000025*/ string net_http_handler_not_assigned()
+  .property /*17000025*/ callconv(8) string
+          net_http_handler_not_assigned()
   {
     .get string System.SR/*02000004*/::get_net_http_handler_not_assigned() /* 06000032 */
   } // end of property SR::net_http_handler_not_assigned
-  .property /*17000026*/ string net_http_invalid_enable_first()
+  .property /*17000026*/ callconv(8) string
+          net_http_invalid_enable_first()
   {
     .get string System.SR/*02000004*/::get_net_http_invalid_enable_first() /* 06000033 */
   } // end of property SR::net_http_invalid_enable_first
-  .property /*17000027*/ string net_http_content_buffersize_limit()
+  .property /*17000027*/ callconv(8) string
+          net_http_content_buffersize_limit()
   {
     .get string System.SR/*02000004*/::get_net_http_content_buffersize_limit() /* 06000034 */
   } // end of property SR::net_http_content_buffersize_limit
-  .property /*17000028*/ string net_http_value_not_supported()
+  .property /*17000028*/ callconv(8) string
+          net_http_value_not_supported()
   {
     .get string System.SR/*02000004*/::get_net_http_value_not_supported() /* 06000035 */
   } // end of property SR::net_http_value_not_supported
-  .property /*17000029*/ string net_http_io_read()
+  .property /*17000029*/ callconv(8) string
+          net_http_io_read()
   {
     .get string System.SR/*02000004*/::get_net_http_io_read() /* 06000036 */
   } // end of property SR::net_http_io_read
-  .property /*1700002A*/ string net_http_io_read_incomplete()
+  .property /*1700002A*/ callconv(8) string
+          net_http_io_read_incomplete()
   {
     .get string System.SR/*02000004*/::get_net_http_io_read_incomplete() /* 06000037 */
   } // end of property SR::net_http_io_read_incomplete
-  .property /*1700002B*/ string net_http_io_write()
+  .property /*1700002B*/ callconv(8) string
+          net_http_io_write()
   {
     .get string System.SR/*02000004*/::get_net_http_io_write() /* 06000038 */
   } // end of property SR::net_http_io_write
-  .property /*1700002C*/ string net_http_chunked_not_allowed_with_empty_content()
+  .property /*1700002C*/ callconv(8) string
+          net_http_chunked_not_allowed_with_empty_content()
   {
     .get string System.SR/*02000004*/::get_net_http_chunked_not_allowed_with_empty_content() /* 06000039 */
   } // end of property SR::net_http_chunked_not_allowed_with_empty_content
-  .property /*1700002D*/ string net_http_invalid_cookiecontainer()
+  .property /*1700002D*/ callconv(8) string
+          net_http_invalid_cookiecontainer()
   {
     .get string System.SR/*02000004*/::get_net_http_invalid_cookiecontainer() /* 0600003A */
   } // end of property SR::net_http_invalid_cookiecontainer
-  .property /*1700002E*/ string net_http_invalid_proxyusepolicy()
+  .property /*1700002E*/ callconv(8) string
+          net_http_invalid_proxyusepolicy()
   {
     .get string System.SR/*02000004*/::get_net_http_invalid_proxyusepolicy() /* 0600003B */
   } // end of property SR::net_http_invalid_proxyusepolicy
-  .property /*1700002F*/ string net_http_invalid_proxy()
+  .property /*1700002F*/ callconv(8) string
+          net_http_invalid_proxy()
   {
     .get string System.SR/*02000004*/::get_net_http_invalid_proxy() /* 0600003C */
   } // end of property SR::net_http_invalid_proxy
-  .property /*17000030*/ string net_http_handler_nocontentlength()
+  .property /*17000030*/ callconv(8) string
+          net_http_handler_nocontentlength()
   {
     .get string System.SR/*02000004*/::get_net_http_handler_nocontentlength() /* 0600003D */
   } // end of property SR::net_http_handler_nocontentlength
-  .property /*17000031*/ string net_http_value_must_be_greater_than()
+  .property /*17000031*/ callconv(8) string
+          net_http_value_must_be_greater_than()
   {
     .get string System.SR/*02000004*/::get_net_http_value_must_be_greater_than() /* 0600003E */
   } // end of property SR::net_http_value_must_be_greater_than
-  .property /*17000032*/ string MailHeaderFieldInvalidCharacter()
+  .property /*17000032*/ callconv(8) string
+          MailHeaderFieldInvalidCharacter()
   {
     .get string System.SR/*02000004*/::get_MailHeaderFieldInvalidCharacter() /* 0600003F */
   } // end of property SR::MailHeaderFieldInvalidCharacter
-  .property /*17000033*/ string MailAddressInvalidFormat()
+  .property /*17000033*/ callconv(8) string
+          MailAddressInvalidFormat()
   {
     .get string System.SR/*02000004*/::get_MailAddressInvalidFormat() /* 06000040 */
   } // end of property SR::MailAddressInvalidFormat
-  .property /*17000034*/ string MailHeaderFieldMalformedHeader()
+  .property /*17000034*/ callconv(8) string
+          MailHeaderFieldMalformedHeader()
   {
     .get string System.SR/*02000004*/::get_MailHeaderFieldMalformedHeader() /* 06000041 */
   } // end of property SR::MailHeaderFieldMalformedHeader
-  .property /*17000035*/ string InvalidHeaderName()
+  .property /*17000035*/ callconv(8) string
+          InvalidHeaderName()
   {
     .get string System.SR/*02000004*/::get_InvalidHeaderName() /* 06000042 */
   } // end of property SR::InvalidHeaderName
-  .property /*17000036*/ string net_cookie_attribute()
+  .property /*17000036*/ callconv(8) string
+          net_cookie_attribute()
   {
     .get string System.SR/*02000004*/::get_net_cookie_attribute() /* 06000043 */
   } // end of property SR::net_cookie_attribute
-  .property /*17000037*/ string net_http_unix_invalid_credential()
+  .property /*17000037*/ callconv(8) string
+          net_http_unix_invalid_credential()
   {
     .get string System.SR/*02000004*/::get_net_http_unix_invalid_credential() /* 06000044 */
   } // end of property SR::net_http_unix_invalid_credential
-  .property /*17000038*/ string net_http_unix_https_support_unavailable_libcurl()
+  .property /*17000038*/ callconv(8) string
+          net_http_unix_https_support_unavailable_libcurl()
   {
     .get string System.SR/*02000004*/::get_net_http_unix_https_support_unavailable_libcurl() /* 06000045 */
   } // end of property SR::net_http_unix_https_support_unavailable_libcurl
-  .property /*17000039*/ string ArgumentOutOfRange_FileLengthTooBig()
+  .property /*17000039*/ callconv(8) string
+          ArgumentOutOfRange_FileLengthTooBig()
   {
     .get string System.SR/*02000004*/::get_ArgumentOutOfRange_FileLengthTooBig() /* 06000046 */
   } // end of property SR::ArgumentOutOfRange_FileLengthTooBig
-  .property /*1700003A*/ string IO_FileExists_Name()
+  .property /*1700003A*/ callconv(8) string
+          IO_FileExists_Name()
   {
     .get string System.SR/*02000004*/::get_IO_FileExists_Name() /* 06000047 */
   } // end of property SR::IO_FileExists_Name
-  .property /*1700003B*/ string IO_FileNotFound()
+  .property /*1700003B*/ callconv(8) string
+          IO_FileNotFound()
   {
     .get string System.SR/*02000004*/::get_IO_FileNotFound() /* 06000048 */
   } // end of property SR::IO_FileNotFound
-  .property /*1700003C*/ string IO_FileNotFound_FileName()
+  .property /*1700003C*/ callconv(8) string
+          IO_FileNotFound_FileName()
   {
     .get string System.SR/*02000004*/::get_IO_FileNotFound_FileName() /* 06000049 */
   } // end of property SR::IO_FileNotFound_FileName
-  .property /*1700003D*/ string IO_PathNotFound_NoPathName()
+  .property /*1700003D*/ callconv(8) string
+          IO_PathNotFound_NoPathName()
   {
     .get string System.SR/*02000004*/::get_IO_PathNotFound_NoPathName() /* 0600004A */
   } // end of property SR::IO_PathNotFound_NoPathName
-  .property /*1700003E*/ string IO_PathNotFound_Path()
+  .property /*1700003E*/ callconv(8) string
+          IO_PathNotFound_Path()
   {
     .get string System.SR/*02000004*/::get_IO_PathNotFound_Path() /* 0600004B */
   } // end of property SR::IO_PathNotFound_Path
-  .property /*1700003F*/ string IO_PathTooLong()
+  .property /*1700003F*/ callconv(8) string
+          IO_PathTooLong()
   {
     .get string System.SR/*02000004*/::get_IO_PathTooLong() /* 0600004C */
   } // end of property SR::IO_PathTooLong
-  .property /*17000040*/ string IO_SharingViolation_File()
+  .property /*17000040*/ callconv(8) string
+          IO_SharingViolation_File()
   {
     .get string System.SR/*02000004*/::get_IO_SharingViolation_File() /* 0600004D */
   } // end of property SR::IO_SharingViolation_File
-  .property /*17000041*/ string IO_SharingViolation_NoFileName()
+  .property /*17000041*/ callconv(8) string
+          IO_SharingViolation_NoFileName()
   {
     .get string System.SR/*02000004*/::get_IO_SharingViolation_NoFileName() /* 0600004E */
   } // end of property SR::IO_SharingViolation_NoFileName
-  .property /*17000042*/ string UnauthorizedAccess_IODenied_NoPathName()
+  .property /*17000042*/ callconv(8) string
+          UnauthorizedAccess_IODenied_NoPathName()
   {
     .get string System.SR/*02000004*/::get_UnauthorizedAccess_IODenied_NoPathName() /* 0600004F */
   } // end of property SR::UnauthorizedAccess_IODenied_NoPathName
-  .property /*17000043*/ string UnauthorizedAccess_IODenied_Path()
+  .property /*17000043*/ callconv(8) string
+          UnauthorizedAccess_IODenied_Path()
   {
     .get string System.SR/*02000004*/::get_UnauthorizedAccess_IODenied_Path() /* 06000050 */
   } // end of property SR::UnauthorizedAccess_IODenied_Path
-  .property /*17000044*/ string net_http_content_no_concurrent_reads()
+  .property /*17000044*/ callconv(8) string
+          net_http_content_no_concurrent_reads()
   {
     .get string System.SR/*02000004*/::get_net_http_content_no_concurrent_reads() /* 06000051 */
   } // end of property SR::net_http_content_no_concurrent_reads
-  .property /*17000045*/ string net_http_username_empty_string()
+  .property /*17000045*/ callconv(8) string
+          net_http_username_empty_string()
   {
     .get string System.SR/*02000004*/::get_net_http_username_empty_string() /* 06000052 */
   } // end of property SR::net_http_username_empty_string
-  .property /*17000046*/ string net_http_no_concurrent_io_allowed()
+  .property /*17000046*/ callconv(8) string
+          net_http_no_concurrent_io_allowed()
   {
     .get string System.SR/*02000004*/::get_net_http_no_concurrent_io_allowed() /* 06000053 */
   } // end of property SR::net_http_no_concurrent_io_allowed
-  .property /*17000047*/ string net_http_unix_invalid_response()
+  .property /*17000047*/ callconv(8) string
+          net_http_unix_invalid_response()
   {
     .get string System.SR/*02000004*/::get_net_http_unix_invalid_response() /* 06000054 */
   } // end of property SR::net_http_unix_invalid_response
-  .property /*17000048*/ string net_http_unix_handler_disposed()
+  .property /*17000048*/ callconv(8) string
+          net_http_unix_handler_disposed()
   {
     .get string System.SR/*02000004*/::get_net_http_unix_handler_disposed() /* 06000055 */
   } // end of property SR::net_http_unix_handler_disposed
-  .property /*17000049*/ string net_http_buffer_insufficient_length()
+  .property /*17000049*/ callconv(8) string
+          net_http_buffer_insufficient_length()
   {
     .get string System.SR/*02000004*/::get_net_http_buffer_insufficient_length() /* 06000056 */
   } // end of property SR::net_http_buffer_insufficient_length
-  .property /*1700004A*/ string net_http_response_headers_exceeded_length()
+  .property /*1700004A*/ callconv(8) string
+          net_http_response_headers_exceeded_length()
   {
     .get string System.SR/*02000004*/::get_net_http_response_headers_exceeded_length() /* 06000057 */
   } // end of property SR::net_http_response_headers_exceeded_length
-  .property /*1700004B*/ string ArgumentOutOfRange_NeedPosNum()
+  .property /*1700004B*/ callconv(8) string
+          ArgumentOutOfRange_NeedPosNum()
   {
     .get string System.SR/*02000004*/::get_ArgumentOutOfRange_NeedPosNum() /* 06000058 */
   } // end of property SR::ArgumentOutOfRange_NeedPosNum
-  .property /*1700004C*/ string NotSupported_UnreadableStream()
+  .property /*1700004C*/ callconv(8) string
+          NotSupported_UnreadableStream()
   {
     .get string System.SR/*02000004*/::get_NotSupported_UnreadableStream() /* 06000059 */
   } // end of property SR::NotSupported_UnreadableStream
-  .property /*1700004D*/ string NotSupported_UnwritableStream()
+  .property /*1700004D*/ callconv(8) string
+          NotSupported_UnwritableStream()
   {
     .get string System.SR/*02000004*/::get_NotSupported_UnwritableStream() /* 0600005A */
   } // end of property SR::NotSupported_UnwritableStream
-  .property /*1700004E*/ string ObjectDisposed_StreamClosed()
+  .property /*1700004E*/ callconv(8) string
+          ObjectDisposed_StreamClosed()
   {
     .get string System.SR/*02000004*/::get_ObjectDisposed_StreamClosed() /* 0600005B */
   } // end of property SR::ObjectDisposed_StreamClosed
-  .property /*1700004F*/ string net_http_libcurl_callback_notsupported()
+  .property /*1700004F*/ callconv(8) string
+          net_http_libcurl_callback_notsupported()
   {
     .get string System.SR/*02000004*/::get_net_http_libcurl_callback_notsupported() /* 0600005C */
   } // end of property SR::net_http_libcurl_callback_notsupported
-  .property /*17000050*/ string net_http_libcurl_clientcerts_notsupported()
+  .property /*17000050*/ callconv(8) string
+          net_http_libcurl_clientcerts_notsupported()
   {
     .get string System.SR/*02000004*/::get_net_http_libcurl_clientcerts_notsupported() /* 0600005D */
   } // end of property SR::net_http_libcurl_clientcerts_notsupported
-  .property /*17000051*/ string net_http_libcurl_revocation_notsupported()
+  .property /*17000051*/ callconv(8) string
+          net_http_libcurl_revocation_notsupported()
   {
     .get string System.SR/*02000004*/::get_net_http_libcurl_revocation_notsupported() /* 0600005E */
   } // end of property SR::net_http_libcurl_revocation_notsupported
-  .property /*17000052*/ class [mscorlib/*23000001*/]System.Type/*0100001A*/
+  .property /*17000052*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*0100001A*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*0100001A*/ System.SR/*02000004*/::get_ResourceType() /* 0600005F */
@@ -2657,20 +2741,22 @@
       IL_000b:  /* 2A   |                  */ ret
     } // end of method TaskWrapperAsyncResult::System.IAsyncResult.get_AsyncWaitHandle
 
-    .property /*1700012A*/ instance object
+    .property /*1700012A*/ instance callconv(8) object
             System.IAsyncResult.AsyncState()
     {
       .get instance object System.Threading.Tasks.TaskToApm/*02000005*//TaskWrapperAsyncResult/*0200004C*/::System.IAsyncResult.get_AsyncState() /* 0600047F */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.AsyncState
-    .property /*1700012B*/ instance bool System.IAsyncResult.CompletedSynchronously()
+    .property /*1700012B*/ instance callconv(8) bool
+            System.IAsyncResult.CompletedSynchronously()
     {
       .get instance bool System.Threading.Tasks.TaskToApm/*02000005*//TaskWrapperAsyncResult/*0200004C*/::System.IAsyncResult.get_CompletedSynchronously() /* 06000480 */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.CompletedSynchronously
-    .property /*1700012C*/ instance bool System.IAsyncResult.IsCompleted()
+    .property /*1700012C*/ instance callconv(8) bool
+            System.IAsyncResult.IsCompleted()
     {
       .get instance bool System.Threading.Tasks.TaskToApm/*02000005*//TaskWrapperAsyncResult/*0200004C*/::System.IAsyncResult.get_IsCompleted() /* 06000481 */
     } // end of property TaskWrapperAsyncResult::System.IAsyncResult.IsCompleted
-    .property /*1700012D*/ instance class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000023*/
+    .property /*1700012D*/ instance callconv(8) class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000023*/
             System.IAsyncResult.AsyncWaitHandle()
     {
       .get instance class [mscorlib/*23000001*/]System.Threading.WaitHandle/*01000023*/ System.Threading.Tasks.TaskToApm/*02000005*//TaskWrapperAsyncResult/*0200004C*/::System.IAsyncResult.get_AsyncWaitHandle() /* 06000482 */
@@ -5729,7 +5815,8 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method NetEventSource::.cctor
 
-  .property /*17000053*/ bool IsEnabled()
+  .property /*17000053*/ callconv(8) bool
+          IsEnabled()
   {
     .get bool System.Net.NetEventSource/*02000008*/::get_IsEnabled() /* 0600008C */
   } // end of property NetEventSource::IsEnabled
@@ -6170,7 +6257,7 @@
     IL_002c:  /* 2A   |                  */ ret
   } // end of method DelegatingHandler::SetOperationStarted
 
-  .property /*17000054*/ instance class System.Net.Http.HttpMessageHandler/*02000011*/
+  .property /*17000054*/ instance callconv(8) class System.Net.Http.HttpMessageHandler/*02000011*/
           InnerHandler()
   {
     .get instance class System.Net.Http.HttpMessageHandler/*02000011*/ System.Net.Http.DelegatingHandler/*0200000C*/::get_InnerHandler() /* 0600009F */
@@ -8827,24 +8914,25 @@
     IL_0030:  /* 2A   |                  */ ret
   } // end of method HttpClient::.cctor
 
-  .property /*17000055*/ instance class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/
+  .property /*17000055*/ instance callconv(8) class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/
           DefaultRequestHeaders()
   {
     .get instance class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/ System.Net.Http.HttpClient/*0200000E*/::get_DefaultRequestHeaders() /* 060000AB */
   } // end of property HttpClient::DefaultRequestHeaders
-  .property /*17000056*/ instance class [System/*23000002*/]System.Uri/*0100002C*/
+  .property /*17000056*/ instance callconv(8) class [System/*23000002*/]System.Uri/*0100002C*/
           BaseAddress()
   {
     .get instance class [System/*23000002*/]System.Uri/*0100002C*/ System.Net.Http.HttpClient/*0200000E*/::get_BaseAddress() /* 060000AC */
     .set instance void System.Net.Http.HttpClient/*0200000E*/::set_BaseAddress(class [System/*23000002*/]System.Uri/*0100002C*/) /* 060000AD */
   } // end of property HttpClient::BaseAddress
-  .property /*17000057*/ instance valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/
+  .property /*17000057*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/
           Timeout()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/ System.Net.Http.HttpClient/*0200000E*/::get_Timeout() /* 060000AE */
     .set instance void System.Net.Http.HttpClient/*0200000E*/::set_Timeout(valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/) /* 060000AF */
   } // end of property HttpClient::Timeout
-  .property /*17000058*/ instance int64 MaxResponseContentBufferSize()
+  .property /*17000058*/ instance callconv(8) int64
+          MaxResponseContentBufferSize()
   {
     .get instance int64 System.Net.Http.HttpClient/*0200000E*/::get_MaxResponseContentBufferSize() /* 060000B0 */
     .set instance void System.Net.Http.HttpClient/*0200000E*/::set_MaxResponseContentBufferSize(int64) /* 060000B1 */
@@ -9127,7 +9215,7 @@
       IL_001e:  /* 2A   |                  */ ret
     } // end of method LimitMemoryStream::CheckSize
 
-    .property /*1700012E*/ instance int32
+    .property /*1700012E*/ instance callconv(8) int32
             MaxSize()
     {
       .get instance int32 System.Net.Http.HttpContent/*02000010*//LimitMemoryStream/*02000054*/::get_MaxSize() /* 06000491 */
@@ -11122,12 +11210,13 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method HttpContent::.cctor
 
-  .property /*17000059*/ instance class System.Net.Http.Headers.HttpContentHeaders/*0200002D*/
+  .property /*17000059*/ instance callconv(8) class System.Net.Http.Headers.HttpContentHeaders/*0200002D*/
           Headers()
   {
     .get instance class System.Net.Http.Headers.HttpContentHeaders/*0200002D*/ System.Net.Http.HttpContent/*02000010*/::get_Headers() /* 060000E4 */
   } // end of property HttpContent::Headers
-  .property /*1700005A*/ instance bool IsBuffered()
+  .property /*1700005A*/ instance callconv(8) bool
+          IsBuffered()
   {
     .get instance bool System.Net.Http.HttpContent/*02000010*/::get_IsBuffered() /* 060000E5 */
   } // end of property HttpContent::IsBuffered
@@ -11741,42 +11830,43 @@
     IL_0069:  /* 2A   |                  */ ret
   } // end of method HttpMethod::.cctor
 
-  .property /*1700005B*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*1700005B*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Get()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Get() /* 06000111 */
   } // end of property HttpMethod::Get
-  .property /*1700005C*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*1700005C*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Put()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Put() /* 06000112 */
   } // end of property HttpMethod::Put
-  .property /*1700005D*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*1700005D*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Post()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Post() /* 06000113 */
   } // end of property HttpMethod::Post
-  .property /*1700005E*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*1700005E*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Delete()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Delete() /* 06000114 */
   } // end of property HttpMethod::Delete
-  .property /*1700005F*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*1700005F*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Head()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Head() /* 06000115 */
   } // end of property HttpMethod::Head
-  .property /*17000060*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*17000060*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Options()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Options() /* 06000116 */
   } // end of property HttpMethod::Options
-  .property /*17000061*/ class System.Net.Http.HttpMethod/*02000013*/
+  .property /*17000061*/ callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Trace()
   {
     .get class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpMethod/*02000013*/::get_Trace() /* 06000117 */
   } // end of property HttpMethod::Trace
-  .property /*17000062*/ instance string Method()
+  .property /*17000062*/ instance callconv(8) string
+          Method()
   {
     .get instance string System.Net.Http.HttpMethod/*02000013*/::get_Method() /* 06000118 */
   } // end of property HttpMethod::Method
@@ -12402,36 +12492,36 @@
     IL_0019:  /* 2A   |                  */ ret
   } // end of method HttpRequestMessage::CheckDisposed
 
-  .property /*17000063*/ instance class [mscorlib/*23000001*/]System.Version/*01000037*/
+  .property /*17000063*/ instance callconv(8) class [mscorlib/*23000001*/]System.Version/*01000037*/
           Version()
   {
     .get instance class [mscorlib/*23000001*/]System.Version/*01000037*/ System.Net.Http.HttpRequestMessage/*02000016*/::get_Version() /* 06000125 */
     .set instance void System.Net.Http.HttpRequestMessage/*02000016*/::set_Version(class [mscorlib/*23000001*/]System.Version/*01000037*/) /* 06000126 */
   } // end of property HttpRequestMessage::Version
-  .property /*17000064*/ instance class System.Net.Http.HttpContent/*02000010*/
+  .property /*17000064*/ instance callconv(8) class System.Net.Http.HttpContent/*02000010*/
           Content()
   {
     .get instance class System.Net.Http.HttpContent/*02000010*/ System.Net.Http.HttpRequestMessage/*02000016*/::get_Content() /* 06000127 */
     .set instance void System.Net.Http.HttpRequestMessage/*02000016*/::set_Content(class System.Net.Http.HttpContent/*02000010*/) /* 06000128 */
   } // end of property HttpRequestMessage::Content
-  .property /*17000065*/ instance class System.Net.Http.HttpMethod/*02000013*/
+  .property /*17000065*/ instance callconv(8) class System.Net.Http.HttpMethod/*02000013*/
           Method()
   {
     .get instance class System.Net.Http.HttpMethod/*02000013*/ System.Net.Http.HttpRequestMessage/*02000016*/::get_Method() /* 06000129 */
     .set instance void System.Net.Http.HttpRequestMessage/*02000016*/::set_Method(class System.Net.Http.HttpMethod/*02000013*/) /* 0600012A */
   } // end of property HttpRequestMessage::Method
-  .property /*17000066*/ instance class [System/*23000002*/]System.Uri/*0100002C*/
+  .property /*17000066*/ instance callconv(8) class [System/*23000002*/]System.Uri/*0100002C*/
           RequestUri()
   {
     .get instance class [System/*23000002*/]System.Uri/*0100002C*/ System.Net.Http.HttpRequestMessage/*02000016*/::get_RequestUri() /* 0600012B */
     .set instance void System.Net.Http.HttpRequestMessage/*02000016*/::set_RequestUri(class [System/*23000002*/]System.Uri/*0100002C*/) /* 0600012C */
   } // end of property HttpRequestMessage::RequestUri
-  .property /*17000067*/ instance class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/
+  .property /*17000067*/ instance callconv(8) class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/
           Headers()
   {
     .get instance class System.Net.Http.Headers.HttpRequestHeaders/*02000032*/ System.Net.Http.HttpRequestMessage/*02000016*/::get_Headers() /* 0600012D */
   } // end of property HttpRequestMessage::Headers
-  .property /*17000068*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object>
+  .property /*17000068*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object>
           Properties()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object> System.Net.Http.HttpRequestMessage/*02000016*/::get_Properties() /* 0600012E */
@@ -12998,41 +13088,43 @@
     IL_0019:  /* 2A   |                  */ ret
   } // end of method HttpResponseMessage::CheckDisposed
 
-  .property /*17000069*/ instance class [mscorlib/*23000001*/]System.Version/*01000037*/
+  .property /*17000069*/ instance callconv(8) class [mscorlib/*23000001*/]System.Version/*01000037*/
           Version()
   {
     .get instance class [mscorlib/*23000001*/]System.Version/*01000037*/ System.Net.Http.HttpResponseMessage/*02000017*/::get_Version() /* 06000138 */
     .set instance void System.Net.Http.HttpResponseMessage/*02000017*/::set_Version(class [mscorlib/*23000001*/]System.Version/*01000037*/) /* 06000139 */
   } // end of property HttpResponseMessage::Version
-  .property /*1700006A*/ instance class System.Net.Http.HttpContent/*02000010*/
+  .property /*1700006A*/ instance callconv(8) class System.Net.Http.HttpContent/*02000010*/
           Content()
   {
     .get instance class System.Net.Http.HttpContent/*02000010*/ System.Net.Http.HttpResponseMessage/*02000017*/::get_Content() /* 0600013A */
     .set instance void System.Net.Http.HttpResponseMessage/*02000017*/::set_Content(class System.Net.Http.HttpContent/*02000010*/) /* 0600013B */
   } // end of property HttpResponseMessage::Content
-  .property /*1700006B*/ instance valuetype [System/*23000002*/]System.Net.HttpStatusCode/*01000054*/
+  .property /*1700006B*/ instance callconv(8) valuetype [System/*23000002*/]System.Net.HttpStatusCode/*01000054*/
           StatusCode()
   {
     .get instance valuetype [System/*23000002*/]System.Net.HttpStatusCode/*01000054*/ System.Net.Http.HttpResponseMessage/*02000017*/::get_StatusCode() /* 0600013C */
     .set instance void System.Net.Http.HttpResponseMessage/*02000017*/::set_StatusCode(valuetype [System/*23000002*/]System.Net.HttpStatusCode/*01000054*/) /* 0600013D */
   } // end of property HttpResponseMessage::StatusCode
-  .property /*1700006C*/ instance string ReasonPhrase()
+  .property /*1700006C*/ instance callconv(8) string
+          ReasonPhrase()
   {
     .get instance string System.Net.Http.HttpResponseMessage/*02000017*/::get_ReasonPhrase() /* 0600013E */
     .set instance void System.Net.Http.HttpResponseMessage/*02000017*/::set_ReasonPhrase(string) /* 0600013F */
   } // end of property HttpResponseMessage::ReasonPhrase
-  .property /*1700006D*/ instance class System.Net.Http.Headers.HttpResponseHeaders/*02000033*/
+  .property /*1700006D*/ instance callconv(8) class System.Net.Http.Headers.HttpResponseHeaders/*02000033*/
           Headers()
   {
     .get instance class System.Net.Http.Headers.HttpResponseHeaders/*02000033*/ System.Net.Http.HttpResponseMessage/*02000017*/::get_Headers() /* 06000140 */
   } // end of property HttpResponseMessage::Headers
-  .property /*1700006E*/ instance class System.Net.Http.HttpRequestMessage/*02000016*/
+  .property /*1700006E*/ instance callconv(8) class System.Net.Http.HttpRequestMessage/*02000016*/
           RequestMessage()
   {
     .get instance class System.Net.Http.HttpRequestMessage/*02000016*/ System.Net.Http.HttpResponseMessage/*02000017*/::get_RequestMessage() /* 06000141 */
     .set instance void System.Net.Http.HttpResponseMessage/*02000017*/::set_RequestMessage(class System.Net.Http.HttpRequestMessage/*02000016*/) /* 06000142 */
   } // end of property HttpResponseMessage::RequestMessage
-  .property /*1700006F*/ instance bool IsSuccessStatusCode()
+  .property /*1700006F*/ instance callconv(8) bool
+          IsSuccessStatusCode()
   {
     .get instance bool System.Net.Http.HttpResponseMessage/*02000017*/::get_IsSuccessStatusCode() /* 06000143 */
   } // end of property HttpResponseMessage::IsSuccessStatusCode
@@ -14195,12 +14287,12 @@
     IL_0017:  /* 2A   |                  */ ret
   } // end of method HttpUtilities::ContinueWithStandard
 
-  .property /*17000070*/ class [mscorlib/*23000001*/]System.Version/*01000037*/
+  .property /*17000070*/ callconv(8) class [mscorlib/*23000001*/]System.Version/*01000037*/
           DefaultRequestVersion()
   {
     .get class [mscorlib/*23000001*/]System.Version/*01000037*/ System.Net.Http.HttpUtilities/*02000019*/::get_DefaultRequestVersion() /* 0600015C */
   } // end of property HttpUtilities::DefaultRequestVersion
-  .property /*17000071*/ class [mscorlib/*23000001*/]System.Version/*01000037*/
+  .property /*17000071*/ callconv(8) class [mscorlib/*23000001*/]System.Version/*01000037*/
           DefaultResponseVersion()
   {
     .get class [mscorlib/*23000001*/]System.Version/*01000037*/ System.Net.Http.HttpUtilities/*02000019*/::get_DefaultResponseVersion() /* 0600015D */
@@ -15342,25 +15434,28 @@
       IL_0005:  /* 7A   |                  */ throw
     } // end of method ContentReadStream::WriteAsync
 
-    .property /*1700012F*/ instance bool CanRead()
+    .property /*1700012F*/ instance callconv(8) bool
+            CanRead()
     {
       .get instance bool System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::get_CanRead() /* 060004AB */
     } // end of property ContentReadStream::CanRead
-    .property /*17000130*/ instance bool CanSeek()
+    .property /*17000130*/ instance callconv(8) bool
+            CanSeek()
     {
       .get instance bool System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::get_CanSeek() /* 060004AC */
     } // end of property ContentReadStream::CanSeek
-    .property /*17000131*/ instance bool CanWrite()
+    .property /*17000131*/ instance callconv(8) bool
+            CanWrite()
     {
       .get instance bool System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::get_CanWrite() /* 060004AD */
     } // end of property ContentReadStream::CanWrite
-    .property /*17000132*/ instance int64
+    .property /*17000132*/ instance callconv(8) int64
             Position()
     {
       .get instance int64 System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::get_Position() /* 060004B3 */
       .set instance void System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::set_Position(int64) /* 060004B4 */
     } // end of property ContentReadStream::Position
-    .property /*17000133*/ instance int64
+    .property /*17000133*/ instance callconv(8) int64
             Length()
     {
       .get instance int64 System.Net.Http.MultipartContent/*0200001B*//ContentReadStream/*0200005B*/::get_Length() /* 060004B6 */
@@ -17226,11 +17321,12 @@
       IL_000a:  /* 7A   |                  */ throw
     } // end of method ReadOnlyStream::WriteAsync
 
-    .property /*17000134*/ instance bool CanWrite()
+    .property /*17000134*/ instance callconv(8) bool
+            CanWrite()
     {
       .get instance bool System.Net.Http.StreamContent/*0200001D*//ReadOnlyStream/*0200005E*/::get_CanWrite() /* 060004C0 */
     } // end of property ReadOnlyStream::CanWrite
-    .property /*17000135*/ instance int32
+    .property /*17000135*/ instance callconv(8) int32
             WriteTimeout()
     {
       .get instance int32 System.Net.Http.StreamContent/*0200001D*//ReadOnlyStream/*0200005E*/::get_WriteTimeout() /* 060004C1 */
@@ -18268,42 +18364,50 @@
     IL_000e:  /* 2A   |                  */ ret
   } // end of method DelegatingStream::CopyToAsync
 
-  .property /*17000072*/ instance class [mscorlib/*23000001*/]System.IO.Stream/*01000025*/
+  .property /*17000072*/ instance callconv(8) class [mscorlib/*23000001*/]System.IO.Stream/*01000025*/
           BaseStream()
   {
     .get instance class [mscorlib/*23000001*/]System.IO.Stream/*01000025*/ System.Net.Http.DelegatingStream/*02000020*/::get_BaseStream() /* 06000192 */
   } // end of property DelegatingStream::BaseStream
-  .property /*17000073*/ instance bool CanRead()
+  .property /*17000073*/ instance callconv(8) bool
+          CanRead()
   {
     .get instance bool System.Net.Http.DelegatingStream/*02000020*/::get_CanRead() /* 06000193 */
   } // end of property DelegatingStream::CanRead
-  .property /*17000074*/ instance bool CanSeek()
+  .property /*17000074*/ instance callconv(8) bool
+          CanSeek()
   {
     .get instance bool System.Net.Http.DelegatingStream/*02000020*/::get_CanSeek() /* 06000194 */
   } // end of property DelegatingStream::CanSeek
-  .property /*17000075*/ instance bool CanWrite()
+  .property /*17000075*/ instance callconv(8) bool
+          CanWrite()
   {
     .get instance bool System.Net.Http.DelegatingStream/*02000020*/::get_CanWrite() /* 06000195 */
   } // end of property DelegatingStream::CanWrite
-  .property /*17000076*/ instance int64 Length()
+  .property /*17000076*/ instance callconv(8) int64
+          Length()
   {
     .get instance int64 System.Net.Http.DelegatingStream/*02000020*/::get_Length() /* 06000196 */
   } // end of property DelegatingStream::Length
-  .property /*17000077*/ instance int64 Position()
+  .property /*17000077*/ instance callconv(8) int64
+          Position()
   {
     .get instance int64 System.Net.Http.DelegatingStream/*02000020*/::get_Position() /* 06000197 */
     .set instance void System.Net.Http.DelegatingStream/*02000020*/::set_Position(int64) /* 06000198 */
   } // end of property DelegatingStream::Position
-  .property /*17000078*/ instance int32 ReadTimeout()
+  .property /*17000078*/ instance callconv(8) int32
+          ReadTimeout()
   {
     .get instance int32 System.Net.Http.DelegatingStream/*02000020*/::get_ReadTimeout() /* 06000199 */
     .set instance void System.Net.Http.DelegatingStream/*02000020*/::set_ReadTimeout(int32) /* 0600019A */
   } // end of property DelegatingStream::ReadTimeout
-  .property /*17000079*/ instance bool CanTimeout()
+  .property /*17000079*/ instance callconv(8) bool
+          CanTimeout()
   {
     .get instance bool System.Net.Http.DelegatingStream/*02000020*/::get_CanTimeout() /* 0600019B */
   } // end of property DelegatingStream::CanTimeout
-  .property /*1700007A*/ instance int32 WriteTimeout()
+  .property /*1700007A*/ instance callconv(8) int32
+          WriteTimeout()
   {
     .get instance int32 System.Net.Http.DelegatingStream/*02000020*/::get_WriteTimeout() /* 0600019C */
     .set instance void System.Net.Http.DelegatingStream/*02000020*/::set_WriteTimeout(int32) /* 0600019D */
@@ -21389,127 +21493,140 @@
     IL_0026:  /* 2A   |                  */ ret
   } // end of method HttpClientHandler::.cctor
 
-  .property /*1700007B*/ instance bool AllowAutoRedirect()
+  .property /*1700007B*/ instance callconv(8) bool
+          AllowAutoRedirect()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_AllowAutoRedirect() /* 060001AF */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_AllowAutoRedirect(bool) /* 060001B0 */
   } // end of property HttpClientHandler::AllowAutoRedirect
-  .property /*1700007C*/ instance valuetype [System/*23000002*/]System.Net.DecompressionMethods/*01000062*/
+  .property /*1700007C*/ instance callconv(8) valuetype [System/*23000002*/]System.Net.DecompressionMethods/*01000062*/
           AutomaticDecompression()
   {
     .get instance valuetype [System/*23000002*/]System.Net.DecompressionMethods/*01000062*/ System.Net.Http.HttpClientHandler/*02000021*/::get_AutomaticDecompression() /* 060001B1 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_AutomaticDecompression(valuetype [System/*23000002*/]System.Net.DecompressionMethods/*01000062*/) /* 060001B2 */
   } // end of property HttpClientHandler::AutomaticDecompression
-  .property /*1700007D*/ instance bool CheckCertificateRevocationList()
+  .property /*1700007D*/ instance callconv(8) bool
+          CheckCertificateRevocationList()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_CheckCertificateRevocationList() /* 060001B3 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_CheckCertificateRevocationList(bool) /* 060001B4 */
   } // end of property HttpClientHandler::CheckCertificateRevocationList
-  .property /*1700007E*/ instance valuetype System.Net.Http.ClientCertificateOption/*0200000B*/
+  .property /*1700007E*/ instance callconv(8) valuetype System.Net.Http.ClientCertificateOption/*0200000B*/
           ClientCertificateOptions()
   {
     .get instance valuetype System.Net.Http.ClientCertificateOption/*0200000B*/ System.Net.Http.HttpClientHandler/*02000021*/::get_ClientCertificateOptions() /* 060001B5 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_ClientCertificateOptions(valuetype System.Net.Http.ClientCertificateOption/*0200000B*/) /* 060001B6 */
   } // end of property HttpClientHandler::ClientCertificateOptions
-  .property /*1700007F*/ instance class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509CertificateCollection/*0100006A*/
+  .property /*1700007F*/ instance callconv(8) class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509CertificateCollection/*0100006A*/
           ClientCertificates()
   {
     .get instance class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509CertificateCollection/*0100006A*/ System.Net.Http.HttpClientHandler/*02000021*/::get_ClientCertificates() /* 060001B7 */
   } // end of property HttpClientHandler::ClientCertificates
-  .property /*17000080*/ instance class [System/*23000002*/]System.Net.CookieContainer/*01000061*/
+  .property /*17000080*/ instance callconv(8) class [System/*23000002*/]System.Net.CookieContainer/*01000061*/
           CookieContainer()
   {
     .get instance class [System/*23000002*/]System.Net.CookieContainer/*01000061*/ System.Net.Http.HttpClientHandler/*02000021*/::get_CookieContainer() /* 060001B8 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_CookieContainer(class [System/*23000002*/]System.Net.CookieContainer/*01000061*/) /* 060001B9 */
   } // end of property HttpClientHandler::CookieContainer
-  .property /*17000081*/ instance class [System/*23000002*/]System.Net.ICredentials/*01000064*/
+  .property /*17000081*/ instance callconv(8) class [System/*23000002*/]System.Net.ICredentials/*01000064*/
           Credentials()
   {
     .get instance class [System/*23000002*/]System.Net.ICredentials/*01000064*/ System.Net.Http.HttpClientHandler/*02000021*/::get_Credentials() /* 060001BA */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_Credentials(class [System/*23000002*/]System.Net.ICredentials/*01000064*/) /* 060001BB */
   } // end of property HttpClientHandler::Credentials
-  .property /*17000082*/ instance class [System/*23000002*/]System.Net.ICredentials/*01000064*/
+  .property /*17000082*/ instance callconv(8) class [System/*23000002*/]System.Net.ICredentials/*01000064*/
           DefaultProxyCredentials()
   {
     .get instance class [System/*23000002*/]System.Net.ICredentials/*01000064*/ System.Net.Http.HttpClientHandler/*02000021*/::get_DefaultProxyCredentials() /* 060001BC */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_DefaultProxyCredentials(class [System/*23000002*/]System.Net.ICredentials/*01000064*/) /* 060001BD */
   } // end of property HttpClientHandler::DefaultProxyCredentials
-  .property /*17000083*/ instance int32 MaxAutomaticRedirections()
+  .property /*17000083*/ instance callconv(8) int32
+          MaxAutomaticRedirections()
   {
     .get instance int32 System.Net.Http.HttpClientHandler/*02000021*/::get_MaxAutomaticRedirections() /* 060001BE */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_MaxAutomaticRedirections(int32) /* 060001BF */
   } // end of property HttpClientHandler::MaxAutomaticRedirections
-  .property /*17000084*/ instance int32 MaxConnectionsPerServer()
+  .property /*17000084*/ instance callconv(8) int32
+          MaxConnectionsPerServer()
   {
     .get instance int32 System.Net.Http.HttpClientHandler/*02000021*/::get_MaxConnectionsPerServer() /* 060001C0 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_MaxConnectionsPerServer(int32) /* 060001C1 */
   } // end of property HttpClientHandler::MaxConnectionsPerServer
-  .property /*17000085*/ instance int64 MaxRequestContentBufferSize()
+  .property /*17000085*/ instance callconv(8) int64
+          MaxRequestContentBufferSize()
   {
     .get instance int64 System.Net.Http.HttpClientHandler/*02000021*/::get_MaxRequestContentBufferSize() /* 060001C2 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_MaxRequestContentBufferSize(int64) /* 060001C3 */
   } // end of property HttpClientHandler::MaxRequestContentBufferSize
-  .property /*17000086*/ instance int32 MaxResponseHeadersLength()
+  .property /*17000086*/ instance callconv(8) int32
+          MaxResponseHeadersLength()
   {
     .get instance int32 System.Net.Http.HttpClientHandler/*02000021*/::get_MaxResponseHeadersLength() /* 060001C4 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_MaxResponseHeadersLength(int32) /* 060001C5 */
   } // end of property HttpClientHandler::MaxResponseHeadersLength
-  .property /*17000087*/ instance bool PreAuthenticate()
+  .property /*17000087*/ instance callconv(8) bool
+          PreAuthenticate()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_PreAuthenticate() /* 060001C6 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_PreAuthenticate(bool) /* 060001C7 */
   } // end of property HttpClientHandler::PreAuthenticate
-  .property /*17000088*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object>
+  .property /*17000088*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object>
           Properties()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.IDictionary`2/*01000053*/<string,object> System.Net.Http.HttpClientHandler/*02000021*/::get_Properties() /* 060001C8 */
   } // end of property HttpClientHandler::Properties
-  .property /*17000089*/ instance class [System/*23000002*/]System.Net.IWebProxy/*01000063*/
+  .property /*17000089*/ instance callconv(8) class [System/*23000002*/]System.Net.IWebProxy/*01000063*/
           Proxy()
   {
     .get instance class [System/*23000002*/]System.Net.IWebProxy/*01000063*/ System.Net.Http.HttpClientHandler/*02000021*/::get_Proxy() /* 060001C9 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_Proxy(class [System/*23000002*/]System.Net.IWebProxy/*01000063*/) /* 060001CA */
   } // end of property HttpClientHandler::Proxy
-  .property /*1700008A*/ class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool>
+  .property /*1700008A*/ callconv(8) class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool>
           DangerousAcceptAnyServerCertificateValidator()
   {
     .get class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool> System.Net.Http.HttpClientHandler/*02000021*/::get_DangerousAcceptAnyServerCertificateValidator() /* 060001CB */
   } // end of property HttpClientHandler::DangerousAcceptAnyServerCertificateValidator
-  .property /*1700008B*/ instance class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool>
+  .property /*1700008B*/ instance callconv(8) class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool>
           ServerCertificateCustomValidationCallback()
   {
     .get instance class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool> System.Net.Http.HttpClientHandler/*02000021*/::get_ServerCertificateCustomValidationCallback() /* 060001CC */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_ServerCertificateCustomValidationCallback(class [mscorlib/*23000001*/]System.Func`5/*01000066*/<class System.Net.Http.HttpRequestMessage/*02000016*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Certificate2/*01000067*/,class [System/*23000002*/]System.Security.Cryptography.X509Certificates.X509Chain/*01000068*/,valuetype [System/*23000002*/]System.Net.Security.SslPolicyErrors/*01000069*/,bool>) /* 060001CD */
   } // end of property HttpClientHandler::ServerCertificateCustomValidationCallback
-  .property /*1700008C*/ instance valuetype [System/*23000002*/]System.Security.Authentication.SslProtocols/*0100006B*/
+  .property /*1700008C*/ instance callconv(8) valuetype [System/*23000002*/]System.Security.Authentication.SslProtocols/*0100006B*/
           SslProtocols()
   {
     .get instance valuetype [System/*23000002*/]System.Security.Authentication.SslProtocols/*0100006B*/ System.Net.Http.HttpClientHandler/*02000021*/::get_SslProtocols() /* 060001CE */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_SslProtocols(valuetype [System/*23000002*/]System.Security.Authentication.SslProtocols/*0100006B*/) /* 060001CF */
   } // end of property HttpClientHandler::SslProtocols
-  .property /*1700008D*/ instance bool SupportsAutomaticDecompression()
+  .property /*1700008D*/ instance callconv(8) bool
+          SupportsAutomaticDecompression()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_SupportsAutomaticDecompression() /* 060001D0 */
   } // end of property HttpClientHandler::SupportsAutomaticDecompression
-  .property /*1700008E*/ instance bool SupportsProxy()
+  .property /*1700008E*/ instance callconv(8) bool
+          SupportsProxy()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_SupportsProxy() /* 060001D1 */
   } // end of property HttpClientHandler::SupportsProxy
-  .property /*1700008F*/ instance bool SupportsRedirectConfiguration()
+  .property /*1700008F*/ instance callconv(8) bool
+          SupportsRedirectConfiguration()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_SupportsRedirectConfiguration() /* 060001D2 */
   } // end of property HttpClientHandler::SupportsRedirectConfiguration
-  .property /*17000090*/ instance bool UseCookies()
+  .property /*17000090*/ instance callconv(8) bool
+          UseCookies()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_UseCookies() /* 060001D3 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_UseCookies(bool) /* 060001D4 */
   } // end of property HttpClientHandler::UseCookies
-  .property /*17000091*/ instance bool UseDefaultCredentials()
+  .property /*17000091*/ instance callconv(8) bool
+          UseDefaultCredentials()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_UseDefaultCredentials() /* 060001D5 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_UseDefaultCredentials(bool) /* 060001D6 */
   } // end of property HttpClientHandler::UseDefaultCredentials
-  .property /*17000092*/ instance bool UseProxy()
+  .property /*17000092*/ instance callconv(8) bool
+          UseProxy()
   {
     .get instance bool System.Net.Http.HttpClientHandler/*02000021*/::get_UseProxy() /* 060001D7 */
     .set instance void System.Net.Http.HttpClientHandler/*02000021*/::set_UseProxy(bool) /* 060001D8 */
@@ -22166,11 +22283,13 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method AuthenticationHeaderValue::System.ICloneable.Clone
 
-  .property /*17000093*/ instance string Scheme()
+  .property /*17000093*/ instance callconv(8) string
+          Scheme()
   {
     .get instance string System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/::get_Scheme() /* 060001F3 */
   } // end of property AuthenticationHeaderValue::Scheme
-  .property /*17000094*/ instance string Parameter()
+  .property /*17000094*/ instance callconv(8) string
+          Parameter()
   {
     .get instance string System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/::get_Parameter() /* 060001F4 */
   } // end of property AuthenticationHeaderValue::Parameter
@@ -24723,86 +24842,95 @@
     IL_001b:  /* 2A   |                  */ ret
   } // end of method CacheControlHeaderValue::.cctor
 
-  .property /*17000095*/ instance bool NoCache()
+  .property /*17000095*/ instance callconv(8) bool
+          NoCache()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_NoCache() /* 0600020C */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_NoCache(bool) /* 0600020D */
   } // end of property CacheControlHeaderValue::NoCache
-  .property /*17000096*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
+  .property /*17000096*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
           NoCacheHeaders()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_NoCacheHeaders() /* 0600020E */
   } // end of property CacheControlHeaderValue::NoCacheHeaders
-  .property /*17000097*/ instance bool NoStore()
+  .property /*17000097*/ instance callconv(8) bool
+          NoStore()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_NoStore() /* 0600020F */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_NoStore(bool) /* 06000210 */
   } // end of property CacheControlHeaderValue::NoStore
-  .property /*17000098*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*17000098*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           MaxAge()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_MaxAge() /* 06000211 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_MaxAge(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>) /* 06000212 */
   } // end of property CacheControlHeaderValue::MaxAge
-  .property /*17000099*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*17000099*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           SharedMaxAge()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_SharedMaxAge() /* 06000213 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_SharedMaxAge(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>) /* 06000214 */
   } // end of property CacheControlHeaderValue::SharedMaxAge
-  .property /*1700009A*/ instance bool MaxStale()
+  .property /*1700009A*/ instance callconv(8) bool
+          MaxStale()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_MaxStale() /* 06000215 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_MaxStale(bool) /* 06000216 */
   } // end of property CacheControlHeaderValue::MaxStale
-  .property /*1700009B*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*1700009B*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           MaxStaleLimit()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_MaxStaleLimit() /* 06000217 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_MaxStaleLimit(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>) /* 06000218 */
   } // end of property CacheControlHeaderValue::MaxStaleLimit
-  .property /*1700009C*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*1700009C*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           MinFresh()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_MinFresh() /* 06000219 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_MinFresh(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>) /* 0600021A */
   } // end of property CacheControlHeaderValue::MinFresh
-  .property /*1700009D*/ instance bool NoTransform()
+  .property /*1700009D*/ instance callconv(8) bool
+          NoTransform()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_NoTransform() /* 0600021B */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_NoTransform(bool) /* 0600021C */
   } // end of property CacheControlHeaderValue::NoTransform
-  .property /*1700009E*/ instance bool OnlyIfCached()
+  .property /*1700009E*/ instance callconv(8) bool
+          OnlyIfCached()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_OnlyIfCached() /* 0600021D */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_OnlyIfCached(bool) /* 0600021E */
   } // end of property CacheControlHeaderValue::OnlyIfCached
-  .property /*1700009F*/ instance bool Public()
+  .property /*1700009F*/ instance callconv(8) bool
+          Public()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_Public() /* 0600021F */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_Public(bool) /* 06000220 */
   } // end of property CacheControlHeaderValue::Public
-  .property /*170000A0*/ instance bool Private()
+  .property /*170000A0*/ instance callconv(8) bool
+          Private()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_Private() /* 06000221 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_Private(bool) /* 06000222 */
   } // end of property CacheControlHeaderValue::Private
-  .property /*170000A1*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
+  .property /*170000A1*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
           PrivateHeaders()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_PrivateHeaders() /* 06000223 */
   } // end of property CacheControlHeaderValue::PrivateHeaders
-  .property /*170000A2*/ instance bool MustRevalidate()
+  .property /*170000A2*/ instance callconv(8) bool
+          MustRevalidate()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_MustRevalidate() /* 06000224 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_MustRevalidate(bool) /* 06000225 */
   } // end of property CacheControlHeaderValue::MustRevalidate
-  .property /*170000A3*/ instance bool ProxyRevalidate()
+  .property /*170000A3*/ instance callconv(8) bool
+          ProxyRevalidate()
   {
     .get instance bool System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_ProxyRevalidate() /* 06000226 */
     .set instance void System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::set_ProxyRevalidate(bool) /* 06000227 */
   } // end of property CacheControlHeaderValue::ProxyRevalidate
-  .property /*170000A4*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*170000A4*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Extensions()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/::get_Extensions() /* 06000228 */
@@ -26435,50 +26563,54 @@
     IL_00ff:  /* 2A   |                  */ ret
   } // end of method ContentDispositionHeaderValue::TryDecode5987
 
-  .property /*170000A5*/ instance string DispositionType()
+  .property /*170000A5*/ instance callconv(8) string
+          DispositionType()
   {
     .get instance string System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_DispositionType() /* 0600023B */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_DispositionType(string) /* 0600023C */
   } // end of property ContentDispositionHeaderValue::DispositionType
-  .property /*170000A6*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*170000A6*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Parameters()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_Parameters() /* 0600023D */
   } // end of property ContentDispositionHeaderValue::Parameters
-  .property /*170000A7*/ instance string Name()
+  .property /*170000A7*/ instance callconv(8) string
+          Name()
   {
     .get instance string System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_Name() /* 0600023E */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_Name(string) /* 0600023F */
   } // end of property ContentDispositionHeaderValue::Name
-  .property /*170000A8*/ instance string FileName()
+  .property /*170000A8*/ instance callconv(8) string
+          FileName()
   {
     .get instance string System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_FileName() /* 06000240 */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_FileName(string) /* 06000241 */
   } // end of property ContentDispositionHeaderValue::FileName
-  .property /*170000A9*/ instance string FileNameStar()
+  .property /*170000A9*/ instance callconv(8) string
+          FileNameStar()
   {
     .get instance string System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_FileNameStar() /* 06000242 */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_FileNameStar(string) /* 06000243 */
   } // end of property ContentDispositionHeaderValue::FileNameStar
-  .property /*170000AA*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000AA*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           CreationDate()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_CreationDate() /* 06000244 */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_CreationDate(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000245 */
   } // end of property ContentDispositionHeaderValue::CreationDate
-  .property /*170000AB*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000AB*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           ModificationDate()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_ModificationDate() /* 06000246 */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_ModificationDate(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000247 */
   } // end of property ContentDispositionHeaderValue::ModificationDate
-  .property /*170000AC*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000AC*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           ReadDate()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_ReadDate() /* 06000248 */
     .set instance void System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::set_ReadDate(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000249 */
   } // end of property ContentDispositionHeaderValue::ReadDate
-  .property /*170000AD*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*170000AD*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           Size()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/::get_Size() /* 0600024A */
@@ -27616,31 +27748,34 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method ContentRangeHeaderValue::System.ICloneable.Clone
 
-  .property /*170000AE*/ instance string Unit()
+  .property /*170000AE*/ instance callconv(8) string
+          Unit()
   {
     .get instance string System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_Unit() /* 06000263 */
     .set instance void System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::set_Unit(string) /* 06000264 */
   } // end of property ContentRangeHeaderValue::Unit
-  .property /*170000AF*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*170000AF*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           From()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_From() /* 06000265 */
   } // end of property ContentRangeHeaderValue::From
-  .property /*170000B0*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*170000B0*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           To()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_To() /* 06000266 */
   } // end of property ContentRangeHeaderValue::To
-  .property /*170000B1*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*170000B1*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           Length()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_Length() /* 06000267 */
   } // end of property ContentRangeHeaderValue::Length
-  .property /*170000B2*/ instance bool HasLength()
+  .property /*170000B2*/ instance callconv(8) bool
+          HasLength()
   {
     .get instance bool System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_HasLength() /* 06000268 */
   } // end of property ContentRangeHeaderValue::HasLength
-  .property /*170000B3*/ instance bool HasRange()
+  .property /*170000B3*/ instance callconv(8) bool
+          HasRange()
   {
     .get instance bool System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/::get_HasRange() /* 06000269 */
   } // end of property ContentRangeHeaderValue::HasRange
@@ -28210,15 +28345,17 @@
     IL_0014:  /* 2A   |                  */ ret
   } // end of method EntityTagHeaderValue::System.ICloneable.Clone
 
-  .property /*170000B4*/ instance string Tag()
+  .property /*170000B4*/ instance callconv(8) string
+          Tag()
   {
     .get instance string System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/::get_Tag() /* 0600027D */
   } // end of property EntityTagHeaderValue::Tag
-  .property /*170000B5*/ instance bool IsWeak()
+  .property /*170000B5*/ instance callconv(8) bool
+          IsWeak()
   {
     .get instance bool System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/::get_IsWeak() /* 0600027E */
   } // end of property EntityTagHeaderValue::IsWeak
-  .property /*170000B6*/ class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
+  .property /*170000B6*/ callconv(8) class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
           Any()
   {
     .get class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/ System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/::get_Any() /* 0600027F */
@@ -28833,7 +28970,7 @@
     IL_0232:  /* 2A   |                  */ ret
   } // end of method GenericHeaderParser::.cctor
 
-  .property /*170000B7*/ instance class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/
+  .property /*170000B7*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/
           Comparer()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/ System.Net.Http.Headers.GenericHeaderParser/*0200002B*/::get_Comparer() /* 0600028B */
@@ -30255,64 +30392,64 @@
     IL_0014:  /* 2A   |                  */ ret
   } // end of method HttpContentHeaders::.cctor
 
-  .property /*170000B8*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
+  .property /*170000B8*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
           Allow()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_Allow() /* 060002A7 */
   } // end of property HttpContentHeaders::Allow
-  .property /*170000B9*/ instance class System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/
+  .property /*170000B9*/ instance callconv(8) class System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/
           ContentDisposition()
   {
     .get instance class System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/ System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentDisposition() /* 060002A8 */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentDisposition(class System.Net.Http.Headers.ContentDispositionHeaderValue/*02000027*/) /* 060002A9 */
   } // end of property HttpContentHeaders::ContentDisposition
-  .property /*170000BA*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
+  .property /*170000BA*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
           ContentEncoding()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentEncoding() /* 060002AA */
   } // end of property HttpContentHeaders::ContentEncoding
-  .property /*170000BB*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
+  .property /*170000BB*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string>
           ContentLanguage()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<string> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentLanguage() /* 060002AB */
   } // end of property HttpContentHeaders::ContentLanguage
-  .property /*170000BC*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*170000BC*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           ContentLength()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentLength() /* 060002AC */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentLength(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>) /* 060002AD */
   } // end of property HttpContentHeaders::ContentLength
-  .property /*170000BD*/ instance class [System/*23000002*/]System.Uri/*0100002C*/
+  .property /*170000BD*/ instance callconv(8) class [System/*23000002*/]System.Uri/*0100002C*/
           ContentLocation()
   {
     .get instance class [System/*23000002*/]System.Uri/*0100002C*/ System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentLocation() /* 060002AE */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentLocation(class [System/*23000002*/]System.Uri/*0100002C*/) /* 060002AF */
   } // end of property HttpContentHeaders::ContentLocation
-  .property /*170000BE*/ instance uint8[]
+  .property /*170000BE*/ instance callconv(8) uint8[]
           ContentMD5()
   {
     .get instance uint8[] System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentMD5() /* 060002B0 */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentMD5(uint8[]) /* 060002B1 */
   } // end of property HttpContentHeaders::ContentMD5
-  .property /*170000BF*/ instance class System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/
+  .property /*170000BF*/ instance callconv(8) class System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/
           ContentRange()
   {
     .get instance class System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/ System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentRange() /* 060002B2 */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentRange(class System.Net.Http.Headers.ContentRangeHeaderValue/*02000028*/) /* 060002B3 */
   } // end of property HttpContentHeaders::ContentRange
-  .property /*170000C0*/ instance class System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/
+  .property /*170000C0*/ instance callconv(8) class System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/
           ContentType()
   {
     .get instance class System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/ System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_ContentType() /* 060002B4 */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_ContentType(class System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/) /* 060002B5 */
   } // end of property HttpContentHeaders::ContentType
-  .property /*170000C1*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000C1*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Expires()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_Expires() /* 060002B6 */
     .set instance void System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::set_Expires(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 060002B7 */
   } // end of property HttpContentHeaders::Expires
-  .property /*170000C2*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000C2*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           LastModified()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpContentHeaders/*0200002D*/::get_LastModified() /* 060002B8 */
@@ -30932,71 +31069,71 @@
     IL_0038:  /* 2A   |                  */ ret
   } // end of method HttpGeneralHeaders::AddSpecialsFrom
 
-  .property /*170000C3*/ instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
+  .property /*170000C3*/ instance callconv(8) class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
           CacheControl()
   {
     .get instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/ System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_CacheControl() /* 060002BF */
     .set instance void System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::set_CacheControl(class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/) /* 060002C0 */
   } // end of property HttpGeneralHeaders::CacheControl
-  .property /*170000C4*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000C4*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Connection()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Connection() /* 060002C1 */
   } // end of property HttpGeneralHeaders::Connection
-  .property /*170000C5*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*170000C5*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           ConnectionClose()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_ConnectionClose() /* 060002C2 */
     .set instance void System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::set_ConnectionClose(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 060002C3 */
   } // end of property HttpGeneralHeaders::ConnectionClose
-  .property /*170000C6*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000C6*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Date() /* 060002C4 */
     .set instance void System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::set_Date(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 060002C5 */
   } // end of property HttpGeneralHeaders::Date
-  .property /*170000C7*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*170000C7*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Pragma()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Pragma() /* 060002C6 */
   } // end of property HttpGeneralHeaders::Pragma
-  .property /*170000C8*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000C8*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Trailer()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Trailer() /* 060002C7 */
   } // end of property HttpGeneralHeaders::Trailer
-  .property /*170000C9*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
+  .property /*170000C9*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
           TransferEncoding()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_TransferEncoding() /* 060002C8 */
   } // end of property HttpGeneralHeaders::TransferEncoding
-  .property /*170000CA*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*170000CA*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           TransferEncodingChunked()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_TransferEncodingChunked() /* 060002C9 */
     .set instance void System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::set_TransferEncodingChunked(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 060002CA */
   } // end of property HttpGeneralHeaders::TransferEncodingChunked
-  .property /*170000CB*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
+  .property /*170000CB*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
           Upgrade()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Upgrade() /* 060002CB */
   } // end of property HttpGeneralHeaders::Upgrade
-  .property /*170000CC*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
+  .property /*170000CC*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
           Via()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Via() /* 060002CC */
   } // end of property HttpGeneralHeaders::Via
-  .property /*170000CD*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
+  .property /*170000CD*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
           Warning()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_Warning() /* 060002CD */
   } // end of property HttpGeneralHeaders::Warning
-  .property /*170000CE*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000CE*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           ConnectionCore()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_ConnectionCore() /* 060002CE */
   } // end of property HttpGeneralHeaders::ConnectionCore
-  .property /*170000CF*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
+  .property /*170000CF*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
           TransferEncodingCore()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/> System.Net.Http.Headers.HttpGeneralHeaders/*0200002E*/::get_TransferEncodingCore() /* 060002CF */
@@ -31152,15 +31289,17 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method HttpHeaderParser::ToString
 
-  .property /*170000D0*/ instance bool SupportsMultipleValues()
+  .property /*170000D0*/ instance callconv(8) bool
+          SupportsMultipleValues()
   {
     .get instance bool System.Net.Http.Headers.HttpHeaderParser/*0200002F*/::get_SupportsMultipleValues() /* 060002D4 */
   } // end of property HttpHeaderParser::SupportsMultipleValues
-  .property /*170000D1*/ instance string Separator()
+  .property /*170000D1*/ instance callconv(8) string
+          Separator()
   {
     .get instance string System.Net.Http.Headers.HttpHeaderParser/*0200002F*/::get_Separator() /* 060002D5 */
   } // end of property HttpHeaderParser::Separator
-  .property /*170000D2*/ instance class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/
+  .property /*170000D2*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/
           Comparer()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.IEqualityComparer/*01000078*/ System.Net.Http.Headers.HttpHeaderParser/*0200002F*/::get_Comparer() /* 060002D6 */
@@ -31345,34 +31484,36 @@
       IL_000d:  /* 2A   |                  */ ret
     } // end of method HeaderStoreItemInfo::.ctor
 
-    .property /*17000136*/ instance object
+    .property /*17000136*/ instance callconv(8) object
             RawValue()
     {
       .get instance object System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_RawValue() /* 060004E1 */
       .set instance void System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::set_RawValue(object) /* 060004E2 */
     } // end of property HeaderStoreItemInfo::RawValue
-    .property /*17000137*/ instance object
+    .property /*17000137*/ instance callconv(8) object
             InvalidValue()
     {
       .get instance object System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_InvalidValue() /* 060004E3 */
       .set instance void System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::set_InvalidValue(object) /* 060004E4 */
     } // end of property HeaderStoreItemInfo::InvalidValue
-    .property /*17000138*/ instance object
+    .property /*17000138*/ instance callconv(8) object
             ParsedValue()
     {
       .get instance object System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_ParsedValue() /* 060004E5 */
       .set instance void System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::set_ParsedValue(object) /* 060004E6 */
     } // end of property HeaderStoreItemInfo::ParsedValue
-    .property /*17000139*/ instance class System.Net.Http.Headers.HttpHeaderParser/*0200002F*/
+    .property /*17000139*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderParser/*0200002F*/
             Parser()
     {
       .get instance class System.Net.Http.Headers.HttpHeaderParser/*0200002F*/ System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_Parser() /* 060004E7 */
     } // end of property HeaderStoreItemInfo::Parser
-    .property /*1700013A*/ instance bool CanAddValue()
+    .property /*1700013A*/ instance callconv(8) bool
+            CanAddValue()
     {
       .get instance bool System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_CanAddValue() /* 060004E8 */
     } // end of property HeaderStoreItemInfo::CanAddValue
-    .property /*1700013B*/ instance bool IsEmpty()
+    .property /*1700013B*/ instance callconv(8) bool
+            IsEmpty()
     {
       .get instance bool System.Net.Http.Headers.HttpHeaders/*02000030*//HeaderStoreItemInfo/*02000068*/::get_IsEmpty() /* 060004E9 */
     } // end of property HeaderStoreItemInfo::IsEmpty
@@ -31670,12 +31811,12 @@
       IL_0006:  /* 2A   |                  */ ret
     } // end of method '<GetHeaderStrings>d__15'::System.Collections.IEnumerable.GetEnumerator
 
-    .property /*1700013C*/ instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,string>
+    .property /*1700013C*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,string>
             'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.String>>.Current'()
     {
       .get instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,string> System.Net.Http.Headers.HttpHeaders/*02000030*//'<GetHeaderStrings>d__15'/*02000069*/::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.String>>.get_Current'() /* 060004EF */
     } // end of property '<GetHeaderStrings>d__15'::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.String>>.Current'
-    .property /*1700013D*/ instance object
+    .property /*1700013D*/ instance callconv(8) object
             System.Collections.IEnumerator.Current()
     {
       .get instance object System.Net.Http.Headers.HttpHeaders/*02000030*//'<GetHeaderStrings>d__15'/*02000069*/::System.Collections.IEnumerator.get_Current() /* 060004F1 */
@@ -31970,12 +32111,12 @@
       IL_000b:  /* 2A   |                  */ ret
     } // end of method '<GetEnumeratorCore>d__21'::System.Collections.IEnumerator.get_Current
 
-    .property /*1700013E*/ instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100003C*/<string>>
+    .property /*1700013E*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100003C*/<string>>
             'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Collections.Generic.IEnumerable<System.String>>>.Current'()
     {
       .get instance valuetype [mscorlib/*23000001*/]System.Collections.Generic.KeyValuePair`2/*0100003D*/<string,class [mscorlib/*23000001*/]System.Collections.Generic.IEnumerable`1/*0100003C*/<string>> System.Net.Http.Headers.HttpHeaders/*02000030*//'<GetEnumeratorCore>d__21'/*0200006A*/::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Collections.Generic.IEnumerable<System.String>>>.get_Current'() /* 060004F8 */
     } // end of property '<GetEnumeratorCore>d__21'::'System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String,System.Collections.Generic.IEnumerable<System.String>>>.Current'
-    .property /*1700013F*/ instance object
+    .property /*1700013F*/ instance callconv(8) object
             System.Collections.IEnumerator.Current()
     {
       .get instance object System.Net.Http.Headers.HttpHeaders/*02000030*//'<GetEnumeratorCore>d__21'/*0200006A*/::System.Collections.IEnumerator.get_Current() /* 060004FA */
@@ -34965,11 +35106,12 @@
       IL_000b:  /* 2A   |                  */ ret
     } // end of method '<GetEnumerator>d__21'::System.Collections.IEnumerator.get_Current
 
-    .property /*17000140*/ instance !T 'System.Collections.Generic.IEnumerator<T>.Current'()
+    .property /*17000140*/ instance callconv(8) !T
+            'System.Collections.Generic.IEnumerator<T>.Current'()
     {
       .get instance !T System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*//'<GetEnumerator>d__21'/*0200006B*/::'System.Collections.Generic.IEnumerator<T>.get_Current'() /* 060004FF */
     } // end of property '<GetEnumerator>d__21'::'System.Collections.Generic.IEnumerator<T>.Current'
-    .property /*17000141*/ instance object
+    .property /*17000141*/ instance callconv(8) object
             System.Collections.IEnumerator.Current()
     {
       .get instance object System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*//'<GetEnumerator>d__21'/*0200006B*/::System.Collections.IEnumerator.get_Current() /* 06000501 */
@@ -35502,15 +35644,18 @@
     IL_0029:  /* 2A   |                  */ ret
   } // end of method HttpHeaderValueCollection`1::GetCount
 
-  .property /*170000D3*/ instance int32 Count()
+  .property /*170000D3*/ instance callconv(8) int32
+          Count()
   {
     .get instance int32 System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/::get_Count() /* 06000314 */
   } // end of property HttpHeaderValueCollection`1::Count
-  .property /*170000D4*/ instance bool IsReadOnly()
+  .property /*170000D4*/ instance callconv(8) bool
+          IsReadOnly()
   {
     .get instance bool System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/::get_IsReadOnly() /* 06000315 */
   } // end of property HttpHeaderValueCollection`1::IsReadOnly
-  .property /*170000D5*/ instance bool IsSpecialValueSet()
+  .property /*170000D5*/ instance callconv(8) bool
+          IsSpecialValueSet()
   {
     .get instance bool System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/::get_IsSpecialValueSet() /* 06000316 */
   } // end of property HttpHeaderValueCollection`1::IsSpecialValueSet
@@ -36688,175 +36833,177 @@
     IL_0014:  /* 2A   |                  */ ret
   } // end of method HttpRequestHeaders::.cctor
 
-  .property /*170000D6*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.MediaTypeWithQualityHeaderValue/*02000038*/>
+  .property /*170000D6*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.MediaTypeWithQualityHeaderValue/*02000038*/>
           Accept()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.MediaTypeWithQualityHeaderValue/*02000038*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Accept() /* 0600032A */
   } // end of property HttpRequestHeaders::Accept
-  .property /*170000D7*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
+  .property /*170000D7*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
           AcceptCharset()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_AcceptCharset() /* 0600032B */
   } // end of property HttpRequestHeaders::AcceptCharset
-  .property /*170000D8*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
+  .property /*170000D8*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
           AcceptEncoding()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_AcceptEncoding() /* 0600032C */
   } // end of property HttpRequestHeaders::AcceptEncoding
-  .property /*170000D9*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
+  .property /*170000D9*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/>
           AcceptLanguage()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_AcceptLanguage() /* 0600032D */
   } // end of property HttpRequestHeaders::AcceptLanguage
-  .property /*170000DA*/ instance class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/
+  .property /*170000DA*/ instance callconv(8) class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/
           Authorization()
   {
     .get instance class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Authorization() /* 0600032E */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_Authorization(class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/) /* 0600032F */
   } // end of property HttpRequestHeaders::Authorization
-  .property /*170000DB*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/>
+  .property /*170000DB*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/>
           Expect()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Expect() /* 06000330 */
   } // end of property HttpRequestHeaders::Expect
-  .property /*170000DC*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*170000DC*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           ExpectContinue()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_ExpectContinue() /* 06000331 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_ExpectContinue(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 06000332 */
   } // end of property HttpRequestHeaders::ExpectContinue
-  .property /*170000DD*/ instance string From()
+  .property /*170000DD*/ instance callconv(8) string
+          From()
   {
     .get instance string System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_From() /* 06000333 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_From(string) /* 06000334 */
   } // end of property HttpRequestHeaders::From
-  .property /*170000DE*/ instance string Host()
+  .property /*170000DE*/ instance callconv(8) string
+          Host()
   {
     .get instance string System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Host() /* 06000335 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_Host(string) /* 06000336 */
   } // end of property HttpRequestHeaders::Host
-  .property /*170000DF*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/>
+  .property /*170000DF*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/>
           IfMatch()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_IfMatch() /* 06000337 */
   } // end of property HttpRequestHeaders::IfMatch
-  .property /*170000E0*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000E0*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           IfModifiedSince()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_IfModifiedSince() /* 06000338 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_IfModifiedSince(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000339 */
   } // end of property HttpRequestHeaders::IfModifiedSince
-  .property /*170000E1*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/>
+  .property /*170000E1*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/>
           IfNoneMatch()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_IfNoneMatch() /* 0600033A */
   } // end of property HttpRequestHeaders::IfNoneMatch
-  .property /*170000E2*/ instance class System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/
+  .property /*170000E2*/ instance callconv(8) class System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/
           IfRange()
   {
     .get instance class System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_IfRange() /* 0600033B */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_IfRange(class System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/) /* 0600033C */
   } // end of property HttpRequestHeaders::IfRange
-  .property /*170000E3*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000E3*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           IfUnmodifiedSince()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_IfUnmodifiedSince() /* 0600033D */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_IfUnmodifiedSince(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 0600033E */
   } // end of property HttpRequestHeaders::IfUnmodifiedSince
-  .property /*170000E4*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int32>
+  .property /*170000E4*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int32>
           MaxForwards()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int32> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_MaxForwards() /* 0600033F */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_MaxForwards(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int32>) /* 06000340 */
   } // end of property HttpRequestHeaders::MaxForwards
-  .property /*170000E5*/ instance class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/
+  .property /*170000E5*/ instance callconv(8) class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/
           ProxyAuthorization()
   {
     .get instance class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_ProxyAuthorization() /* 06000341 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_ProxyAuthorization(class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/) /* 06000342 */
   } // end of property HttpRequestHeaders::ProxyAuthorization
-  .property /*170000E6*/ instance class System.Net.Http.Headers.RangeHeaderValue/*02000040*/
+  .property /*170000E6*/ instance callconv(8) class System.Net.Http.Headers.RangeHeaderValue/*02000040*/
           Range()
   {
     .get instance class System.Net.Http.Headers.RangeHeaderValue/*02000040*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Range() /* 06000343 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_Range(class System.Net.Http.Headers.RangeHeaderValue/*02000040*/) /* 06000344 */
   } // end of property HttpRequestHeaders::Range
-  .property /*170000E7*/ instance class [System/*23000002*/]System.Uri/*0100002C*/
+  .property /*170000E7*/ instance callconv(8) class [System/*23000002*/]System.Uri/*0100002C*/
           Referrer()
   {
     .get instance class [System/*23000002*/]System.Uri/*0100002C*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Referrer() /* 06000345 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_Referrer(class [System/*23000002*/]System.Uri/*0100002C*/) /* 06000346 */
   } // end of property HttpRequestHeaders::Referrer
-  .property /*170000E8*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingWithQualityHeaderValue/*02000047*/>
+  .property /*170000E8*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingWithQualityHeaderValue/*02000047*/>
           TE()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingWithQualityHeaderValue/*02000047*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_TE() /* 06000347 */
   } // end of property HttpRequestHeaders::TE
-  .property /*170000E9*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/>
+  .property /*170000E9*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/>
           UserAgent()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_UserAgent() /* 06000348 */
   } // end of property HttpRequestHeaders::UserAgent
-  .property /*170000EA*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/>
+  .property /*170000EA*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/>
           ExpectCore()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_ExpectCore() /* 06000349 */
   } // end of property HttpRequestHeaders::ExpectCore
-  .property /*170000EB*/ instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
+  .property /*170000EB*/ instance callconv(8) class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
           CacheControl()
   {
     .get instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/ System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_CacheControl() /* 0600034A */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_CacheControl(class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/) /* 0600034B */
   } // end of property HttpRequestHeaders::CacheControl
-  .property /*170000EC*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000EC*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Connection()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Connection() /* 0600034C */
   } // end of property HttpRequestHeaders::Connection
-  .property /*170000ED*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*170000ED*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           ConnectionClose()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_ConnectionClose() /* 0600034D */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_ConnectionClose(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 0600034E */
   } // end of property HttpRequestHeaders::ConnectionClose
-  .property /*170000EE*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*170000EE*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Date() /* 0600034F */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_Date(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000350 */
   } // end of property HttpRequestHeaders::Date
-  .property /*170000EF*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*170000EF*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Pragma()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Pragma() /* 06000351 */
   } // end of property HttpRequestHeaders::Pragma
-  .property /*170000F0*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000F0*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Trailer()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Trailer() /* 06000352 */
   } // end of property HttpRequestHeaders::Trailer
-  .property /*170000F1*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
+  .property /*170000F1*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
           TransferEncoding()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_TransferEncoding() /* 06000353 */
   } // end of property HttpRequestHeaders::TransferEncoding
-  .property /*170000F2*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*170000F2*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           TransferEncodingChunked()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_TransferEncodingChunked() /* 06000354 */
     .set instance void System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::set_TransferEncodingChunked(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 06000355 */
   } // end of property HttpRequestHeaders::TransferEncodingChunked
-  .property /*170000F3*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
+  .property /*170000F3*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
           Upgrade()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Upgrade() /* 06000356 */
   } // end of property HttpRequestHeaders::Upgrade
-  .property /*170000F4*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
+  .property /*170000F4*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
           Via()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Via() /* 06000357 */
   } // end of property HttpRequestHeaders::Via
-  .property /*170000F5*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
+  .property /*170000F5*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
           Warning()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/> System.Net.Http.Headers.HttpRequestHeaders/*02000032*/::get_Warning() /* 06000358 */
@@ -37508,110 +37655,110 @@
     IL_0014:  /* 2A   |                  */ ret
   } // end of method HttpResponseHeaders::.cctor
 
-  .property /*170000F6*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000F6*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           AcceptRanges()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_AcceptRanges() /* 0600035F */
   } // end of property HttpResponseHeaders::AcceptRanges
-  .property /*170000F7*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*170000F7*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           Age()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Age() /* 06000360 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_Age(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>) /* 06000361 */
   } // end of property HttpResponseHeaders::Age
-  .property /*170000F8*/ instance class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
+  .property /*170000F8*/ instance callconv(8) class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
           ETag()
   {
     .get instance class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/ System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_ETag() /* 06000362 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_ETag(class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/) /* 06000363 */
   } // end of property HttpResponseHeaders::ETag
-  .property /*170000F9*/ instance class [System/*23000002*/]System.Uri/*0100002C*/
+  .property /*170000F9*/ instance callconv(8) class [System/*23000002*/]System.Uri/*0100002C*/
           Location()
   {
     .get instance class [System/*23000002*/]System.Uri/*0100002C*/ System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Location() /* 06000364 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_Location(class [System/*23000002*/]System.Uri/*0100002C*/) /* 06000365 */
   } // end of property HttpResponseHeaders::Location
-  .property /*170000FA*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/>
+  .property /*170000FA*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/>
           ProxyAuthenticate()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_ProxyAuthenticate() /* 06000366 */
   } // end of property HttpResponseHeaders::ProxyAuthenticate
-  .property /*170000FB*/ instance class System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/
+  .property /*170000FB*/ instance callconv(8) class System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/
           RetryAfter()
   {
     .get instance class System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/ System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_RetryAfter() /* 06000367 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_RetryAfter(class System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/) /* 06000368 */
   } // end of property HttpResponseHeaders::RetryAfter
-  .property /*170000FC*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/>
+  .property /*170000FC*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/>
           Server()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Server() /* 06000369 */
   } // end of property HttpResponseHeaders::Server
-  .property /*170000FD*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*170000FD*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Vary()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Vary() /* 0600036A */
   } // end of property HttpResponseHeaders::Vary
-  .property /*170000FE*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/>
+  .property /*170000FE*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/>
           WwwAuthenticate()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.AuthenticationHeaderValue/*02000022*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_WwwAuthenticate() /* 0600036B */
   } // end of property HttpResponseHeaders::WwwAuthenticate
-  .property /*170000FF*/ instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
+  .property /*170000FF*/ instance callconv(8) class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/
           CacheControl()
   {
     .get instance class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/ System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_CacheControl() /* 0600036C */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_CacheControl(class System.Net.Http.Headers.CacheControlHeaderValue/*02000026*/) /* 0600036D */
   } // end of property HttpResponseHeaders::CacheControl
-  .property /*17000100*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*17000100*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Connection()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Connection() /* 0600036E */
   } // end of property HttpResponseHeaders::Connection
-  .property /*17000101*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*17000101*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           ConnectionClose()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_ConnectionClose() /* 0600036F */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_ConnectionClose(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 06000370 */
   } // end of property HttpResponseHeaders::ConnectionClose
-  .property /*17000102*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*17000102*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Date() /* 06000371 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_Date(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>) /* 06000372 */
   } // end of property HttpResponseHeaders::Date
-  .property /*17000103*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*17000103*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Pragma()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Pragma() /* 06000373 */
   } // end of property HttpResponseHeaders::Pragma
-  .property /*17000104*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
+  .property /*17000104*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string>
           Trailer()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<string> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Trailer() /* 06000374 */
   } // end of property HttpResponseHeaders::Trailer
-  .property /*17000105*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
+  .property /*17000105*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/>
           TransferEncoding()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_TransferEncoding() /* 06000375 */
   } // end of property HttpResponseHeaders::TransferEncoding
-  .property /*17000106*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
+  .property /*17000106*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>
           TransferEncodingChunked()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_TransferEncodingChunked() /* 06000376 */
     .set instance void System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::set_TransferEncodingChunked(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<bool>) /* 06000377 */
   } // end of property HttpResponseHeaders::TransferEncodingChunked
-  .property /*17000107*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
+  .property /*17000107*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/>
           Upgrade()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Upgrade() /* 06000378 */
   } // end of property HttpResponseHeaders::Upgrade
-  .property /*17000108*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
+  .property /*17000108*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/>
           Via()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.ViaHeaderValue/*02000049*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Via() /* 06000379 */
   } // end of property HttpResponseHeaders::Via
-  .property /*17000109*/ instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
+  .property /*17000109*/ instance callconv(8) class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/>
           Warning()
   {
     .get instance class System.Net.Http.Headers.HttpHeaderValueCollection`1/*02000031*/<class System.Net.Http.Headers.WarningHeaderValue/*0200004A*/> System.Net.Http.Headers.HttpResponseHeaders/*02000033*/::get_Warning() /* 0600037A */
@@ -38601,17 +38748,19 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method MediaTypeHeaderValue::System.ICloneable.Clone
 
-  .property /*1700010A*/ instance string CharSet()
+  .property /*1700010A*/ instance callconv(8) string
+          CharSet()
   {
     .get instance string System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/::get_CharSet() /* 0600038E */
     .set instance void System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/::set_CharSet(string) /* 0600038F */
   } // end of property MediaTypeHeaderValue::CharSet
-  .property /*1700010B*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*1700010B*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Parameters()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/::get_Parameters() /* 06000390 */
   } // end of property MediaTypeHeaderValue::Parameters
-  .property /*1700010C*/ instance string MediaType()
+  .property /*1700010C*/ instance callconv(8) string
+          MediaType()
   {
     .get instance string System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/::get_MediaType() /* 06000391 */
     .set instance void System.Net.Http.Headers.MediaTypeHeaderValue/*02000037*/::set_MediaType(string) /* 06000392 */
@@ -38781,7 +38930,7 @@
     IL_0022:  /* 2A   |                  */ ret
   } // end of method MediaTypeWithQualityHeaderValue::TryParse
 
-  .property /*1700010D*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
+  .property /*1700010D*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
           Quality()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64> System.Net.Http.Headers.MediaTypeWithQualityHeaderValue/*02000038*/::get_Quality() /* 0600039F */
@@ -39722,11 +39871,13 @@
     IL_0011:  /* 2A   |                  */ ret
   } // end of method NameValueHeaderValue::.cctor
 
-  .property /*1700010E*/ instance string Name()
+  .property /*1700010E*/ instance callconv(8) string
+          Name()
   {
     .get instance string System.Net.Http.Headers.NameValueHeaderValue/*02000039*/::get_Name() /* 060003A8 */
   } // end of property NameValueHeaderValue::Name
-  .property /*1700010F*/ instance string Value()
+  .property /*1700010F*/ instance callconv(8) string
+          Value()
   {
     .get instance string System.Net.Http.Headers.NameValueHeaderValue/*02000039*/::get_Value() /* 060003A9 */
     .set instance void System.Net.Http.Headers.NameValueHeaderValue/*02000039*/::set_Value(string) /* 060003AA */
@@ -40147,7 +40298,7 @@
     IL_0011:  /* 2A   |                  */ ret
   } // end of method NameValueWithParametersHeaderValue::.cctor
 
-  .property /*17000110*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*17000110*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Parameters()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.NameValueWithParametersHeaderValue/*0200003A*/::get_Parameters() /* 060003C1 */
@@ -40689,11 +40840,13 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method ProductHeaderValue::System.ICloneable.Clone
 
-  .property /*17000111*/ instance string Name()
+  .property /*17000111*/ instance callconv(8) string
+          Name()
   {
     .get instance string System.Net.Http.Headers.ProductHeaderValue/*0200003C*/::get_Name() /* 060003D6 */
   } // end of property ProductHeaderValue::Name
-  .property /*17000112*/ instance string Version()
+  .property /*17000112*/ instance callconv(8) string
+          Version()
   {
     .get instance string System.Net.Http.Headers.ProductHeaderValue/*0200003C*/::get_Version() /* 060003D7 */
   } // end of property ProductHeaderValue::Version
@@ -41245,12 +41398,13 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method ProductInfoHeaderValue::System.ICloneable.Clone
 
-  .property /*17000113*/ instance class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/
+  .property /*17000113*/ instance callconv(8) class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/
           Product()
   {
     .get instance class System.Net.Http.Headers.ProductHeaderValue/*0200003C*/ System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/::get_Product() /* 060003E6 */
   } // end of property ProductInfoHeaderValue::Product
-  .property /*17000114*/ instance string Comment()
+  .property /*17000114*/ instance callconv(8) string
+          Comment()
   {
     .get instance string System.Net.Http.Headers.ProductInfoHeaderValue/*0200003E*/::get_Comment() /* 060003E7 */
   } // end of property ProductInfoHeaderValue::Comment
@@ -41668,12 +41822,12 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method RangeConditionHeaderValue::System.ICloneable.Clone
 
-  .property /*17000115*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*17000115*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/::get_Date() /* 060003F4 */
   } // end of property RangeConditionHeaderValue::Date
-  .property /*17000116*/ instance class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
+  .property /*17000116*/ instance callconv(8) class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/
           EntityTag()
   {
     .get instance class System.Net.Http.Headers.EntityTagHeaderValue/*0200002A*/ System.Net.Http.Headers.RangeConditionHeaderValue/*0200003F*/::get_EntityTag() /* 060003F5 */
@@ -42190,12 +42344,13 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method RangeHeaderValue::System.ICloneable.Clone
 
-  .property /*17000117*/ instance string Unit()
+  .property /*17000117*/ instance callconv(8) string
+          Unit()
   {
     .get instance string System.Net.Http.Headers.RangeHeaderValue/*02000040*/::get_Unit() /* 06000402 */
     .set instance void System.Net.Http.Headers.RangeHeaderValue/*02000040*/::set_Unit(string) /* 06000403 */
   } // end of property RangeHeaderValue::Unit
-  .property /*17000118*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.RangeItemHeaderValue/*02000041*/>
+  .property /*17000118*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.RangeItemHeaderValue/*02000041*/>
           Ranges()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.RangeItemHeaderValue/*02000041*/> System.Net.Http.Headers.RangeHeaderValue/*02000040*/::get_Ranges() /* 06000404 */
@@ -42826,12 +42981,12 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method RangeItemHeaderValue::System.ICloneable.Clone
 
-  .property /*17000119*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*17000119*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           From()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.RangeItemHeaderValue/*02000041*/::get_From() /* 0600040F */
   } // end of property RangeItemHeaderValue::From
-  .property /*1700011A*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
+  .property /*1700011A*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64>
           To()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<int64> System.Net.Http.Headers.RangeItemHeaderValue/*02000041*/::get_To() /* 06000410 */
@@ -43285,12 +43440,12 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method RetryConditionHeaderValue::System.ICloneable.Clone
 
-  .property /*1700011B*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*1700011B*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/::get_Date() /* 06000419 */
   } // end of property RetryConditionHeaderValue::Date
-  .property /*1700011C*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
+  .property /*1700011C*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/>
           Delta()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.TimeSpan/*0100003F*/> System.Net.Http.Headers.RetryConditionHeaderValue/*02000042*/::get_Delta() /* 0600041A */
@@ -43866,11 +44021,12 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method StringWithQualityHeaderValue::System.ICloneable.Clone
 
-  .property /*1700011D*/ instance string Value()
+  .property /*1700011D*/ instance callconv(8) string
+          Value()
   {
     .get instance string System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/::get_Value() /* 06000426 */
   } // end of property StringWithQualityHeaderValue::Value
-  .property /*1700011E*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
+  .property /*1700011E*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
           Quality()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64> System.Net.Http.Headers.StringWithQualityHeaderValue/*02000043*/::get_Quality() /* 06000427 */
@@ -44519,11 +44675,12 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method TransferCodingHeaderValue::System.ICloneable.Clone
 
-  .property /*1700011F*/ instance string Value()
+  .property /*1700011F*/ instance callconv(8) string
+          Value()
   {
     .get instance string System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/::get_Value() /* 0600043D */
   } // end of property TransferCodingHeaderValue::Value
-  .property /*17000120*/ instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
+  .property /*17000120*/ instance callconv(8) class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/>
           Parameters()
   {
     .get instance class [mscorlib/*23000001*/]System.Collections.Generic.ICollection`1/*01000077*/<class System.Net.Http.Headers.NameValueHeaderValue/*02000039*/> System.Net.Http.Headers.TransferCodingHeaderValue/*02000046*/::get_Parameters() /* 0600043E */
@@ -44693,7 +44850,7 @@
     IL_0022:  /* 2A   |                  */ ret
   } // end of method TransferCodingWithQualityHeaderValue::TryParse
 
-  .property /*17000121*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
+  .property /*17000121*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64>
           Quality()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<float64> System.Net.Http.Headers.TransferCodingWithQualityHeaderValue/*02000047*/::get_Quality() /* 06000449 */
@@ -45710,19 +45867,23 @@
     IL_0042:  /* 2A   |                  */ ret
   } // end of method ViaHeaderValue::CheckReceivedBy
 
-  .property /*17000122*/ instance string ProtocolName()
+  .property /*17000122*/ instance callconv(8) string
+          ProtocolName()
   {
     .get instance string System.Net.Http.Headers.ViaHeaderValue/*02000049*/::get_ProtocolName() /* 06000457 */
   } // end of property ViaHeaderValue::ProtocolName
-  .property /*17000123*/ instance string ProtocolVersion()
+  .property /*17000123*/ instance callconv(8) string
+          ProtocolVersion()
   {
     .get instance string System.Net.Http.Headers.ViaHeaderValue/*02000049*/::get_ProtocolVersion() /* 06000458 */
   } // end of property ViaHeaderValue::ProtocolVersion
-  .property /*17000124*/ instance string ReceivedBy()
+  .property /*17000124*/ instance callconv(8) string
+          ReceivedBy()
   {
     .get instance string System.Net.Http.Headers.ViaHeaderValue/*02000049*/::get_ReceivedBy() /* 06000459 */
   } // end of property ViaHeaderValue::ReceivedBy
-  .property /*17000125*/ instance string Comment()
+  .property /*17000125*/ instance callconv(8) string
+          Comment()
   {
     .get instance string System.Net.Http.Headers.ViaHeaderValue/*02000049*/::get_Comment() /* 0600045A */
   } // end of property ViaHeaderValue::Comment
@@ -46600,19 +46761,22 @@
     IL_0042:  /* 2A   |                  */ ret
   } // end of method WarningHeaderValue::CheckAgent
 
-  .property /*17000126*/ instance int32 Code()
+  .property /*17000126*/ instance callconv(8) int32
+          Code()
   {
     .get instance int32 System.Net.Http.Headers.WarningHeaderValue/*0200004A*/::get_Code() /* 06000469 */
   } // end of property WarningHeaderValue::Code
-  .property /*17000127*/ instance string Agent()
+  .property /*17000127*/ instance callconv(8) string
+          Agent()
   {
     .get instance string System.Net.Http.Headers.WarningHeaderValue/*0200004A*/::get_Agent() /* 0600046A */
   } // end of property WarningHeaderValue::Agent
-  .property /*17000128*/ instance string Text()
+  .property /*17000128*/ instance callconv(8) string
+          Text()
   {
     .get instance string System.Net.Http.Headers.WarningHeaderValue/*0200004A*/::get_Text() /* 0600046B */
   } // end of property WarningHeaderValue::Text
-  .property /*17000129*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
+  .property /*17000129*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/>
           Date()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100004F*/<valuetype [mscorlib/*23000001*/]System.DateTimeOffset/*01000055*/> System.Net.Http.Headers.WarningHeaderValue/*0200004A*/::get_Date() /* 0600046C */

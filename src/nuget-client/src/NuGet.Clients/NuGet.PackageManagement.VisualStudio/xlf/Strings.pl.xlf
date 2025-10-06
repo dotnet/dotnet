@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
+    <body>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">Wszystkie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Argument nie może mieć wartości null ani być pusty</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">Wartość musi być większa lub równa {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigErrorDialogBoxTitle">
+        <source>NuGet operation failed</source>
+        <target state="translated">Operacja narzędzia NuGet nie powiodła się</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
+        <source>The default credentials credential provider failed to load.</source>
+        <target state="translated">Nie można załadować dostawcy poświadczeń domyślnych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_ImportedProvider">
+        <source>Failed to load credential provider from assembly {0}.</source>
+        <target state="translated">Nie można załadować dostawcy poświadczeń z zestawu {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_PluginCredentialProvider">
+        <source>The plugin credential providers could not be loaded.</source>
+        <target state="translated">Nie można załadować dostawców poświadczeń wtyczki.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioAccountProvider">
+        <source>The Visual Studio or VSTS account provider failed to load.</source>
+        <target state="translated">Nie można załadować dostawcy konta programu Visual Studio lub usługi VSTS.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioCredentialProvider">
+        <source>The Visual Studio credential provider failed to load.</source>
+        <target state="translated">Nie można załadować dostawcy poświadczeń programu Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DTE_ProjectUnsupported">
+        <source>The project '{0}' is unsupported</source>
+        <target state="translated">Projekt „{0}” jest nieobsługiwany</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddGacReference">
+        <source>Added reference '{0}' in the Global Assembly Cache to project '{1}'</source>
+        <target state="translated">Dodano odwołanie „{0}” do projektu „{1}” w globalnej pamięci podręcznej Global Assembly Cache</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToProject">
+        <source>Added file '{0}' to project '{1}'.</source>
+        <target state="translated">Dodano plik „{0}” do projektu „{1}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedReferenceToProject">
+        <source>Added reference '{0}' to project:'{1}'. The Reference was Resolved To Package (resolvedToPackage):'{2}', where Reference Path from DTE(dteOriginalPath):'{3}' and Reference Path from package reference(assemblyFullPath):'{4}'.</source>
+        <target state="translated">Dodano odwołanie „{0}” do projektu „{1}”. Odwołanie zostało rozpoznane jako pakiet (resolvedToPackage): „{2}”, gdzie ścieżka odwołania z elementu DTE (dteOriginalPath): „{3}” i ścieżka odwołania z odwołania pakietu (assemblyFullPath): „{4}”.</target>
+        <note>{0} is the reference name
+{1} is the project name
+{2} is boolean flag (true or false)
+{3} is the project full path
+{4} is the reference assembly full path</note>
+      </trans-unit>
+      <trans-unit id="Debug_RemoveReference">
+        <source>Removed reference '{0}' from project '{1}'</source>
+        <target state="translated">Usunięto odwołanie „{0}” z projektu „{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'</source>
+        <target state="translated">Usunięto plik „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'</source>
+        <target state="translated">Usunięto plik „{0}” z folderu „{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">Usunięto folder „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateParentFolder">
+        <source>Failed to create parent folder for file '{0}' in project {1}.</source>
+        <target state="translated">Nie można utworzyć folderu nadrzędnego dla pliku „{0}” w projekcie {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>File '{0}' does not exist on disk. </source>
+        <target state="translated">Plik „{0}” nie istnieje na dysku. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidJson">
+        <source>'{0}' is an invalid json file.</source>
+        <target state="translated">Plik „{0}” jest nieprawidłowym plikiem JSON.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleFrameworks">
+        <source>Failed to migrate project '{0}'. The project may only contain one target framework.</source>
+        <target state="translated">Nie można przeprowadzić migracji projektu „{0}”. Projekt może zawierać tylko jedną strukturę docelową.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Error_NuGetConfig_InvalidState">
+        <source>One or more NuGet.Config files contain an error.</source>
+        <target state="translated">Co najmniej jeden plik NuGet.Config zawiera błąd.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_InvalidSource">
+        <source>The source specified is invalid.</source>
+        <target state="translated">Określone źródło jest nieprawidłowe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueName">
+        <source>The name specified has already been added to the list of available package sources.</source>
+        <target state="translated">Określona nazwa została już dodana do listy dostępnych źródeł pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources.</source>
+        <target state="translated">Określone źródło zostało już dodane do listy dostępnych źródeł pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">Podczas pobierania danych o lukach w zabezpieczeniach pakietu wystąpił błąd: {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WhileLoadingConfigForBindingRedirects">
+        <source>Failed to load '{0}', while updating binding redirects. {1}</source>
+        <target state="translated">Nie można załadować elementu „{0}” podczas aktualizowania przekierowań wiązań. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_InvalidContinuationToken">
+        <source>Invalid token</source>
+        <target state="translated">Nieprawidłowy token</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddFacadeReference">
+        <source>Failed to add reference to '{0}'. The package '{1}' tried to add a framework reference to '{0}'. This reference is not required to be explicitly added by a package.</source>
+        <target state="translated">Nie można dodać odwołania do elementu „{0}”. Pakiet „{1}” próbował dodać odwołanie do platformy w elemencie „{0}”. Pakiet nie musi jawnie dodawać tego odwołania.</target>
+        <note>{0} is the framework facade reference name
+{1} is the package name</note>
+      </trans-unit>
+      <trans-unit id="FailedToAddGacReference">
+        <source>Failed to add reference. The package '{0}' tried to add a framework reference to '{1}' which was not found in the GAC. This is possibly a bug in the package. Please contact the package owners for assistance.</source>
+        <target state="translated">Nie można dodać odwołania. Pakiet „{0}” próbował dodać odwołanie do platformy w elemencie „{1}”, którego nie znaleziono w pamięci podręcznej GAC. Prawdopodobnie jest to usterka pakietu. Aby uzyskać pomoc, skontaktuj się z właścicielami pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddReference">
+        <source>Failed to add reference to '{0}'.</source>
+        <target state="translated">Nie można dodać odwołania do elementu „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToRemoveReference">
+        <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
+        <target state="translated">W wyniku wyszukiwania bez uwzględniania wielkości liter odwołania „{0}” do usunięcia zostało zwrócone więcej niż jedno dopasowanie. Nie można wykonać żądania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateBindingRedirects">
+        <source>Failed to update binding redirects for {0} : {1}</source>
+        <target state="translated">Nie można zaktualizować przekerowań wiązań dla elementu {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallingPackage">
+        <source>Installing NuGet package {0}.</source>
+        <target state="translated">Instalowanie pakietu NuGet {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildPropertyNotFound">
+        <source>The {0} MSBuild property could not be found for project '{1}'.</source>
+        <target state="translated">Nie można odnaleźć właściwości programu MSBuild {0} dla projektu „{1}”.</target>
+        <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="PathToExistingFileNotPresent">
+        <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
+        <target state="translated">Nie znaleziono na dysku ścieżki „{0}” do istniejącego pliku. Nie można dodać do projektu „{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">Operacja nie powiodła się, ponieważ nie można załadować szczegółów projektu {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectUpgradeAndRetargetErrorMessage">
+        <source>Some NuGet packages were installed using a target framework different from the current target framework and may need to be reinstalled. Visit https://docs.nuget.org/docs/workflows/reinstalling-packages for more information.  Packages affected: {0}</source>
+        <target state="translated">Niektóre pakiety NuGet zostały zainstalowane przy użyciu platformy docelowej innej niż bieżąca platforma docelowa i może być konieczne ich ponowne zainstalowanie. Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/workflows/reinstalling-packages. Pakiety, których dotyczy problem: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectWithIdNotFound">
+        <source>A project with ID '{0}' was not found.</source>
+        <target state="translated">Nie znaleziono projektu o identyfikatorze „{0}”.</target>
+        <note>{0} is the project's unique ID (ProjectGuid)</note>
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">Element „{0}” nie może mieć wartości null.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">Nie zapisano rozwiązania. Zapisz rozwiązanie zanim zaczniesz zarządzać pakietami NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink">
+        <source>migration document</source>
+        <target state="translated">dokument migracji</target>
+        <note>The text has the document hyperlink applied to it.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
+        <source>.</source>
+        <target state="translated">.</target>
+        <note>This test goes immediately after the document link.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
+        <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</source>
+        <target state="translated">Operacja NuGet nie powiodła się, ponieważ co najmniej jeden pakiet jest niezgodny z Twoim projektem. Struktura projektu „{0}” („{1}”) jest przestarzała. Aby uzyskać więcej informacji o tym, jak migrować projekty do obsługiwanej struktury, zobacz</target>
+        <note>This text goes immediately before the document link.
+{0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
+{1} is the short folder representation of the framework (e.g. "net45").</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_ProjectList">
+        <source>The following project(s) target the deprecated framework:</source>
+        <target state="translated">Docelowa struktura następujących projektów jest przestarzała:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGetCPSPackageInstallationService">
+        <source>Unable to get the project's package installation service for project '{0}'.</source>
+        <target state="translated">Nie można pobrać usługi instalacji pakietu projektu „{0}”.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="UnresolvedItemDuringProjectClosureWalk">
+        <source>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</source>
+        <target state="translated">Nie można rozwiązać wszystkich elementów przywoływanych przez element „{0}”. Zwykle można zignorować ten komunikat. Problem można rozwiązać przez pełne przywrócenie i skompilowanie rozwiązania. Jeśli nierozwiązany element to odwołanie do projektu, wynik przywracania narzędzia NuGet może być niepełny i może brakować odwołań do pakietów. Aby funkcja przywracania mogła znaleźć wszystkie projekty, upewnij się, że wszystkie projekty mają poprawne odwołania oraz że istnieją na dysku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFeedType">
+        <source>The feed type '{0}' is unsupported.</source>
+        <target state="translated">Typ kanału informacyjnego „{0}” jest nieobsługiwany.</target>
+        <note>{0} is the ItemFilter type which correlates to the selected tab</note>
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Open">
+        <source>_Open</source>
+        <target state="translated">_Otwórz</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">Katalog „{0}” nie jest pusty. Pomijanie...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
+        <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
+        <target state="translated">Nie można usunąć katalogów pakietów, które zostały oznaczone do usunięcia przy ponownym uruchomieniu programu Visual Studio: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
+        <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
+        <target state="translated">Nie można usunąć katalogu pakietu „{0}”, który został oznaczony do usunięcia przy ponownym uruchomieniu programu Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
+        <source>Failed to find match for removing reference '{0}'.</source>
+        <target state="translated">Nie można odnaleźć dopasowania w celu usunięcia odwołania „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
+        <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
+        <target state="translated">Nie można oznaczyć katalogu pakietu {0} do usunięcia przy ponownym uruchomieniu programu Visual Studio: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">Plik „{0}” już istnieje. Trwa pomijanie...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoExactMatchForReference">
+        <source>No exact match found for removing reference '{0}'. Trying No No exact match found for removing reference '{0}'. Trying case-insensitive search...-</source>
+        <target state="translated">Nie znaleziono dokładnego dopasowania w celu usunięcia odwołania „{0}”. Trwa podejmowanie próby wyszukiwania bez uwzględniania wielkości liter...</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

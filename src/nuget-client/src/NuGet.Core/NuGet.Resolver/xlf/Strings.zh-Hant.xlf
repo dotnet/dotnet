@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="CircularDependencyDetected">
+        <source>Circular dependency detected '{0}'.</source>
+        <target state="translated">偵測到循環相依性 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyConstraint">
+        <source>constraint</source>
+        <target state="translated">條件約束</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependencyIdsError">
+        <source>The package '{0}' version '{1}' declared a duplicate dependency '{2}'. This might mean the package is corrupt or the server metadata for the package is corrupt.</source>
+        <target state="translated">封裝 '{0}' 版本 '{1}' 重複宣告了相依性 '{2}'。這可能表示封裝已損毀，或封裝的伺服器中繼資料已損毀。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FatalError">
+        <source>A fatal error occured while resolving dependencies.</source>
+        <target state="translated">解析相依項時發生嚴重錯誤。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageConfig">
+        <source>One or more unresolved package dependency constraints detected in the existing packages.config file. All dependency constraints must be resolved to add or update packages. If these packages are being updated this message may be ignored, if not the following error(s) may be blocking the current package operation: {0}</source>
+        <target state="translated">在現有 packages.config 檔案中偵測到一或多個未解析的封裝相依性條件約束。必須解析所有相依性條件約束才能新增或更新封裝。若正在更新這些封裝，則可能會略過此訊息。若並非正在更新這些封裝，則下列錯誤可能會封鎖目前的封裝作業: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDependencyInfo">
+        <source>Unable to find package '{0}'. Existing packages must be restored before performing an install or update.</source>
+        <target state="translated">找不到封裝 '{0}'。必須先還原現有的封裝，才能執行安裝或更新作業。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSolution">
+        <source>Unable to resolve dependencies.</source>
+        <target state="translated">無法解析封裝相依性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigConstraint">
+        <source>'{0}' has an additional constraint {1} defined in {2}.</source>
+        <target state="translated">{2} 中為 '{0}' 多定義了條件約束 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverTotalTime">
+        <source>Resolving dependency information took {0}</source>
+        <target state="translated">解析相依性資訊花費了 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleVersion">
+        <source>Unable to find a version of '{0}' that is compatible with {1}.</source>
+        <target state="translated">找不到與 {1} 相容的 '{0}' 版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForEmptySource">
+        <source>Unable to resolve dependency '{0}'.</source>
+        <target state="translated">無法解析相依性 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForMultipleSources">
+        <source>Unable to resolve dependency '{0}'. Source(s) used: {1}.</source>
+        <target state="translated">無法解析相依性 '{0}'。已使用來源: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionIsNotCompatible">
+        <source>Unable to resolve dependencies. '{0}' is not compatible with {1}.</source>
+        <target state="translated">無法解析相依性。'{0}' 與 {1} 不相容。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,5 +1,0 @@
-[
-  Age? ninety-nine,
-  Invalid input,
-  Age? 99
-]

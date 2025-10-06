@@ -11,32 +11,37 @@ open System.Threading
 open System.Threading.Tasks
 open System.Runtime.CompilerServices
 
+open FSharp.Compiler.Caches
+
 [<Class>]
 type InterruptibleLazy<'T> private (value, valueFactory: unit -> 'T) =
     let syncObj = obj ()
-    let mutable valueFactory = valueFactory
+
+    [<VolatileField>]
+    // TODO nullness - this is boxed to obj because of an attribute targets bug fixed in main, but not yet shipped (needs shipped 8.0.400)
+    let mutable valueFactory: objnull = valueFactory
+
     let mutable value = value
 
     new(valueFactory: unit -> 'T) = InterruptibleLazy(Unchecked.defaultof<_>, valueFactory)
 
     member this.IsValueCreated =
-        match box valueFactory with
+        match valueFactory with
         | null -> true
         | _ -> false
 
     member this.Value =
-        match box valueFactory with
+        match valueFactory with
         | null -> value
         | _ ->
-
             Monitor.Enter(syncObj)
 
             try
-                match box valueFactory with
+                match valueFactory with
                 | null -> ()
                 | _ ->
 
-                    value <- valueFactory ()
+                    value <- (valueFactory |> unbox<unit -> 'T>) ()
                     valueFactory <- Unchecked.defaultof<_>
             finally
                 Monitor.Exit(syncObj)
@@ -83,30 +88,6 @@ module internal PervasiveAutoOpens =
         | [ _ ] -> true
         | _ -> false
 
-    type 'T MaybeNull when 'T: null and 'T: not struct = 'T
-
-    let inline isNotNull (x: 'T) = not (isNull x)
-
-    let inline (|NonNullQuick|) (x: 'T MaybeNull) =
-        match x with
-        | null -> raise (NullReferenceException())
-        | v -> v
-
-    let inline nonNull (x: 'T MaybeNull) =
-        match x with
-        | null -> raise (NullReferenceException())
-        | v -> v
-
-    let inline (|Null|NonNull|) (x: 'T MaybeNull) : Choice<unit, 'T> =
-        match x with
-        | null -> Null
-        | v -> NonNull v
-
-    let inline nullArgCheck paramName (x: 'T MaybeNull) =
-        match x with
-        | null -> raise (ArgumentNullException(paramName))
-        | v -> v
-
     let inline (===) x y = LanguagePrimitives.PhysicalEquality x y
 
     /// Per the docs the threshold for the Large Object Heap is 85000 bytes: https://learn.microsoft.com/dotnet/standard/garbage-collection/large-object-heap#how-an-object-ends-up-on-the-large-object-heap-and-how-gc-handles-them
@@ -124,7 +105,7 @@ module internal PervasiveAutoOpens =
         member inline x.EndsWithOrdinalIgnoreCase value =
             x.EndsWith(value, StringComparison.OrdinalIgnoreCase)
 
-        member inline x.IndexOfOrdinal value =
+        member inline x.IndexOfOrdinal(value: string) =
             x.IndexOf(value, StringComparison.Ordinal)
 
         member inline x.IndexOfOrdinal(value, startIndex) =
@@ -140,17 +121,15 @@ module internal PervasiveAutoOpens =
         | Some x -> x
 
     let reportTime =
-        let mutable tPrev: IDisposable = null
+        let mutable tPrev: IDisposable MaybeNull = null
 
         fun descr ->
             if isNotNull tPrev then
                 tPrev.Dispose()
+                tPrev <- null
 
-            tPrev <-
-                if descr <> "Finish" then
-                    FSharp.Compiler.Diagnostics.Activity.Profiling.startAndMeasureEnvironmentStats descr
-                else
-                    null
+            if descr <> "Finish" then
+                tPrev <- FSharp.Compiler.Diagnostics.Activity.Profiling.startAndMeasureEnvironmentStats descr
 
     let foldOn p f z x = f z (p x)
 
@@ -160,19 +139,24 @@ module internal PervasiveAutoOpens =
 
         static member RunImmediate(computation: Async<'T>, ?cancellationToken) =
             let cancellationToken = defaultArg cancellationToken Async.DefaultCancellationToken
+
             let ts = TaskCompletionSource<'T>()
+
             let task = ts.Task
 
             Async.StartWithContinuations(computation, (ts.SetResult), (ts.SetException), (fun _ -> ts.SetCanceled()), cancellationToken)
 
-            task.Result
+            try
+                task.Result
+            with :? AggregateException as ex when ex.InnerExceptions.Count = 1 ->
+                raise (ex.InnerExceptions[0])
 
 [<AbstractClass>]
 type DelayInitArrayMap<'T, 'TDictKey, 'TDictValue>(f: unit -> 'T[]) =
     let syncObj = obj ()
 
-    let mutable arrayStore = null
-    let mutable dictStore = null
+    let mutable arrayStore: _ array MaybeNull = null
+    let mutable dictStore: _ MaybeNull = null
 
     let mutable func = f
 
@@ -186,11 +170,11 @@ type DelayInitArrayMap<'T, 'TDictKey, 'TDictValue>(f: unit -> 'T[]) =
                 match arrayStore with
                 | NonNull value -> value
                 | _ ->
-
-                    arrayStore <- func ()
+                    let freshArray = func ()
+                    arrayStore <- freshArray
 
                     func <- Unchecked.defaultof<_>
-                    arrayStore
+                    freshArray
             finally
                 Monitor.Exit(syncObj)
 
@@ -205,9 +189,9 @@ type DelayInitArrayMap<'T, 'TDictKey, 'TDictValue>(f: unit -> 'T[]) =
                 match dictStore with
                 | NonNull value -> value
                 | _ ->
-
-                    dictStore <- this.CreateDictionary(array)
-                    dictStore
+                    let dict = this.CreateDictionary(array)
+                    dictStore <- dict
+                    dict
             finally
                 Monitor.Exit(syncObj)
 
@@ -220,15 +204,15 @@ type DelayInitArrayMap<'T, 'TDictKey, 'TDictValue>(f: unit -> 'T[]) =
 module Order =
     let orderBy (p: 'T -> 'U) =
         { new IComparer<'T> with
-            member _.Compare(x, xx) = compare (p x) (p xx)
+            member _.Compare(x, xx) = compare (p !!x) (p !!xx)
         }
 
-    let orderOn p (pxOrder: IComparer<'U>) =
+    let orderOn (p: 'T -> 'U) (pxOrder: IComparer<'U>) =
         { new IComparer<'T> with
-            member _.Compare(x, xx) = pxOrder.Compare(p x, p xx)
+            member _.Compare(x, xx) = pxOrder.Compare(p !!x, p !!xx)
         }
 
-    let toFunction (pxOrder: IComparer<'U>) x y = pxOrder.Compare(x, y)
+    let toFunction (pxOrder: IComparer<'U>) (x: 'U) (y: 'U) = pxOrder.Compare(x, y)
 
 //-------------------------------------------------------------------------
 // Library: arrays, lists, options, resizearrays
@@ -259,6 +243,7 @@ module Array =
     let order (eltOrder: IComparer<'T>) =
         { new IComparer<'T array> with
             member _.Compare(xs, ys) =
+                let xs, ys = nullArgCheck "xs" xs, nullArgCheck "ys" ys
                 let c = compare xs.Length ys.Length
 
                 if c <> 0 then
@@ -354,10 +339,7 @@ module Array =
     /// ~0.8x slower for ints
     let inline areEqual (xs: 'T[]) (ys: 'T[]) =
         match xs, ys with
-        | null, null -> true
         | [||], [||] -> true
-        | null, _
-        | _, null -> false
         | _ when xs.Length <> ys.Length -> false
         | _ ->
             let mutable break' = false
@@ -430,6 +412,9 @@ module Option =
             Some(f ())
         with _ ->
             None
+
+module internal ValueTuple =
+    let inline map1Of2 ([<InlineIfLambda>] f) struct (a1, a2) = struct (f a1, a2)
 
 module List =
 
@@ -555,6 +540,8 @@ module List =
     let order (eltOrder: IComparer<'T>) =
         { new IComparer<'T list> with
             member _.Compare(xs, ys) =
+                let xs, ys = nullArgCheck "xs" xs, nullArgCheck "ys" ys
+
                 let rec loop xs ys =
                     match xs, ys with
                     | [], [] -> 0
@@ -657,6 +644,23 @@ module List =
         | Some x -> x :: l
         | _ -> l
 
+    [<TailCall>]
+    let rec private vMapFoldWithAcc<'T, 'State, 'Result>
+        (mapping: 'State -> 'T -> struct ('Result * 'State))
+        state
+        list
+        acc
+        : struct ('Result list * 'State) =
+        match list with
+        | [] -> acc, state
+        | [ h ] -> mapping state h |> ValueTuple.map1Of2 (fun x -> x :: acc)
+        | h :: t ->
+            let struct (mappedHead, stateHead) = mapping state h
+            vMapFoldWithAcc mapping stateHead t (mappedHead :: acc)
+
+    let vMapFold<'T, 'State, 'Result> (mapping: 'State -> 'T -> struct ('Result * 'State)) state list : struct ('Result list * 'State) =
+        vMapFoldWithAcc mapping state list [] |> ValueTuple.map1Of2 List.rev
+
 module ResizeArray =
 
     /// Split a ResizeArray into an array of smaller chunks.
@@ -714,18 +718,6 @@ module Span =
 
         state
 
-module ValueOptionInternal =
-
-    let inline ofOption x =
-        match x with
-        | Some x -> ValueSome x
-        | None -> ValueNone
-
-    let inline bind ([<InlineIfLambda>] f) x =
-        match x with
-        | ValueSome x -> f x
-        | ValueNone -> ValueNone
-
 module String =
     let make (n: int) (c: char) : string = String(c, n)
 
@@ -742,7 +734,7 @@ module String =
     let uppercase (s: string) = s.ToUpperInvariant()
 
     // Scripts that distinguish between upper and lower case (bicameral) DU Discriminators and Active Pattern identifiers are required to start with an upper case character.
-    // For valid identifiers where the case of the identifier can not be determined because there is no upper and lower case we will allow DU Discriminators and upper case characters
+    // For valid identifiers where the case of the identifier cannot be determined because there is no upper and lower case we will allow DU Discriminators and upper case characters
     // to be used.  This means that developers using unicameral scripts such as hindi, are not required to prefix these identifiers with an Upper case latin character.
     //
     let isLeadingIdentifierCharacterUpperCase (s: string) =
@@ -804,13 +796,14 @@ module String =
 
     let (|StartsWith|_|) pattern value =
         if String.IsNullOrWhiteSpace value then None
-        elif value.StartsWithOrdinal pattern then Some()
+        elif (!!value).StartsWithOrdinal pattern then Some()
         else None
 
-    let (|Contains|_|) pattern value =
-        if String.IsNullOrWhiteSpace value then None
-        elif value.Contains pattern then Some()
-        else None
+    let (|Contains|_|) (pattern: string) (value: string | null) =
+        match value with
+        | null -> None
+        | value when String.IsNullOrWhiteSpace value -> None
+        | value -> if value.Contains pattern then Some() else None
 
     let getLines (str: string) =
         use reader = new StringReader(str)
@@ -819,7 +812,7 @@ module String =
             let mutable line = reader.ReadLine()
 
             while not (isNull line) do
-                yield line
+                yield (line |> Unchecked.nonNull)
                 line <- reader.ReadLine()
 
             if str.EndsWithOrdinal("\n") then
@@ -862,9 +855,7 @@ module Lazy =
 // Single threaded execution and mutual exclusion
 
 /// Represents a permission active at this point in execution
-type ExecutionToken =
-    interface
-    end
+type ExecutionToken = interface end
 
 /// Represents a token that indicates execution on the compilation thread, i.e.
 ///   - we have full access to the (partially mutable) TAST and TcImports data structures
@@ -949,7 +940,7 @@ module ResultOrException =
         | Exception _err -> f ()
 
 /// Generates unique stamps
-type UniqueStampGenerator<'T when 'T: equality>() =
+type UniqueStampGenerator<'T when 'T: equality and 'T: not null>() =
     let encodeTable = ConcurrentDictionary<'T, Lazy<int>>(HashIdentity.Structural)
     let mutable nItems = -1
 
@@ -961,10 +952,11 @@ type UniqueStampGenerator<'T when 'T: equality>() =
     member _.Table = encodeTable.Keys
 
 /// memoize tables (all entries cached, never collected)
-type MemoizationTable<'T, 'U>(compute: 'T -> 'U, keyComparer: IEqualityComparer<'T>, ?canMemoize) =
+type MemoizationTable<'T, 'U when 'T: not null>(name, compute: 'T -> 'U, keyComparer: IEqualityComparer<'T>, ?canMemoize) =
 
-    let table = new ConcurrentDictionary<'T, Lazy<'U>>(keyComparer)
-    let computeFunc = Func<_, _>(fun key -> lazy (compute key))
+    let options = CacheOptions.getDefault keyComparer |> CacheOptions.withNoEviction
+    let table = new Cache<'T, Lazy<'U>>(options, name)
+    let computeFunc key = lazy compute key
 
     member t.Apply x =
         if
@@ -977,7 +969,7 @@ type MemoizationTable<'T, 'U>(compute: 'T -> 'U, keyComparer: IEqualityComparer<
             compute x
 
 /// A thread-safe lookup table which is assigning an auto-increment stamp with each insert
-type internal StampedDictionary<'T, 'U>(keyComparer: IEqualityComparer<'T>) =
+type internal StampedDictionary<'T, 'U when 'T: not null>(keyComparer: IEqualityComparer<'T>) =
     let table = new ConcurrentDictionary<'T, Lazy<int * 'U>>(keyComparer)
     let mutable count = -1
 
@@ -1019,7 +1011,7 @@ type LazyWithContext<'T, 'Ctxt> =
 
         /// This field holds either the function to run or a LazyWithContextFailure object recording the exception raised
         /// from running the function. It is null if the thunk has been evaluated successfully.
-        mutable funcOrException: obj
+        mutable funcOrException: objnull
 
         /// A helper to ensure we rethrow the "original" exception
         findOriginalException: exn -> exn
@@ -1106,7 +1098,7 @@ module IPartialEqualityComparer =
     let On f (c: IPartialEqualityComparer<_>) =
         { new IPartialEqualityComparer<_> with
             member _.InEqualityRelation x = c.InEqualityRelation(f x)
-            member _.Equals(x, y) = c.Equals(f x, f y)
+            member _.Equals(x, y) = c.Equals(f !!x, f !!y)
             member _.GetHashCode x = c.GetHashCode(f x)
         }
 
@@ -1123,7 +1115,7 @@ module IPartialEqualityComparer =
                 member _.GetHashCode(Wrap x) = per.GetHashCode x
             }
         // Wrap a Wrap _ around all keys in case the key type is itself a type using null as a representation
-        let dict = Dictionary<WrapType<'T>, obj>(wper)
+        let dict = Dictionary<WrapType<'T>, _>(wper)
 
         seq
         |> List.filter (fun v ->
@@ -1302,6 +1294,15 @@ module MultiMap =
 
     let initBy f xs : MultiMap<_, _> =
         xs |> Seq.groupBy f |> Seq.map (fun (k, v) -> (k, List.ofSeq v)) |> Map.ofSeq
+
+    let ofList (xs: ('a * 'b) list) : MultiMap<'a, 'b> =
+        (Map.empty, xs)
+        ||> List.fold (fun m (k, v) ->
+            m
+            |> Map.change k (function
+                | None -> Some [ v ]
+                | Some vs -> Some(v :: vs)))
+        |> Map.map (fun _ values -> List.rev values)
 
 type LayeredMap<'Key, 'Value when 'Key: comparison> = Map<'Key, 'Value>
 

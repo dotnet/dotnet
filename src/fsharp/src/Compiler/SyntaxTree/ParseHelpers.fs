@@ -16,6 +16,7 @@ open FSharp.Compiler.Xml
 open Internal.Utilities.Library
 open Internal.Utilities.Text.Lexing
 open Internal.Utilities.Text.Parsing
+open FSharp.Compiler.LexerStore
 
 //------------------------------------------------------------------------
 // Parsing: Error recovery exception for fsyacc
@@ -43,7 +44,11 @@ let posOfLexPosition (p: Position) = mkPos p.Line p.Column
 
 /// Get an F# compiler range from a lexer range
 let mkSynRange (p1: Position) (p2: Position) =
-    mkFileIndexRange p1.FileIndex (posOfLexPosition p1) (posOfLexPosition p2)
+    if p1.FileIndex = p2.FileIndex then
+        mkFileIndexRange p1.FileIndex (posOfLexPosition p1) (posOfLexPosition p2)
+    else
+        // This means we had a #line directive in the middle of this syntax element.
+        mkFileIndexRange p1.FileIndex (posOfLexPosition p1) (posOfLexPosition (p1.ShiftColumnBy 1))
 
 type LexBuffer<'Char> with
 
@@ -64,88 +69,8 @@ let rhs2 (parseState: IParseState) i j =
 /// Get the range corresponding to one of the r.h.s. symbols of a grammar rule while it is being reduced
 let rhs parseState i = rhs2 parseState i i
 
-type IParseState with
-
-    /// Get the generator used for compiler-generated argument names.
-    member x.SynArgNameGenerator =
-        let key = "SynArgNameGenerator"
-        let bls = x.LexBuffer.BufferLocalStore
-
-        let gen =
-            match bls.TryGetValue key with
-            | true, gen -> gen
-            | _ ->
-                let gen = box (SynArgNameGenerator())
-                bls[key] <- gen
-                gen
-
-        gen :?> SynArgNameGenerator
-
-    /// Reset the generator used for compiler-generated argument names.
-    member x.ResetSynArgNameGenerator() = x.SynArgNameGenerator.Reset()
-
 //------------------------------------------------------------------------
-// Parsing: grabbing XmlDoc
-//------------------------------------------------------------------------
-
-/// XmlDoc F# lexer/parser state, held in the BufferLocalStore for the lexer.
-module LexbufLocalXmlDocStore =
-    // The key into the BufferLocalStore used to hold the current accumulated XmlDoc lines
-    let private xmlDocKey = "XmlDoc"
-
-    let private getCollector (lexbuf: Lexbuf) =
-        match lexbuf.BufferLocalStore.TryGetValue xmlDocKey with
-        | true, collector -> collector
-        | _ ->
-            let collector = box (XmlDocCollector())
-            lexbuf.BufferLocalStore[xmlDocKey] <- collector
-            collector
-
-        |> unbox<XmlDocCollector>
-
-    let ClearXmlDoc (lexbuf: Lexbuf) =
-        lexbuf.BufferLocalStore[xmlDocKey] <- box (XmlDocCollector())
-
-    /// Called from the lexer to save a single line of XML doc comment.
-    let SaveXmlDocLine (lexbuf: Lexbuf, lineText, range: range) =
-        let collector = getCollector lexbuf
-        collector.AddXmlDocLine(lineText, range)
-
-    let AddGrabPoint (lexbuf: Lexbuf) =
-        let collector = getCollector lexbuf
-        let startPos = lexbuf.StartPos
-        collector.AddGrabPoint(mkPos startPos.Line startPos.Column)
-
-    /// Allowed cases when there are comments after XmlDoc
-    ///
-    ///    /// X xmlDoc
-    ///    // comment
-    ///    //// comment
-    ///    (* multiline comment *)
-    ///    let x = ...        // X xmlDoc
-    ///
-    /// Remember the first position when a comment (//, (* *), ////) is encountered after the XmlDoc block
-    /// then add a grab point if a new XmlDoc block follows the comments
-    let AddGrabPointDelayed (lexbuf: Lexbuf) =
-        let collector = getCollector lexbuf
-        let startPos = lexbuf.StartPos
-        collector.AddGrabPointDelayed(mkPos startPos.Line startPos.Column)
-
-    /// Called from the parser each time we parse a construct that marks the end of an XML doc comment range,
-    /// e.g. a 'type' declaration. The markerRange is the range of the keyword that delimits the construct.
-    let GrabXmlDocBeforeMarker (lexbuf: Lexbuf, markerRange: range) =
-        match lexbuf.BufferLocalStore.TryGetValue xmlDocKey with
-        | true, collector ->
-            let collector = unbox<XmlDocCollector> (collector)
-            PreXmlDoc.CreateFromGrabPoint(collector, markerRange.Start)
-        | _ -> PreXmlDoc.Empty
-
-    let ReportInvalidXmlDocPositions (lexbuf: Lexbuf) =
-        let collector = getCollector lexbuf
-        collector.CheckInvalidXmlDocPositions()
-
-//------------------------------------------------------------------------
-// Parsing/lexing: status of #if/#endif processing in lexing, used for continutations
+// Parsing/lexing: status of #if/#endif processing in lexing, used for continuations
 // for whitespace tokens in parser specification.
 //------------------------------------------------------------------------
 
@@ -160,104 +85,11 @@ type LexerIfdefStack = LexerIfdefStackEntries
 
 /// Specifies how the 'endline' function in the lexer should continue after
 /// it reaches end of line or eof. The options are to continue with 'token' function
-/// or to continue with 'skip' function.
+/// or to continue with 'ifdefSkip' function.
+[<RequireQualifiedAccess>]
 type LexerEndlineContinuation =
     | Token
-    | Skip of int * range: range
-
-type LexerIfdefExpression =
-    | IfdefAnd of LexerIfdefExpression * LexerIfdefExpression
-    | IfdefOr of LexerIfdefExpression * LexerIfdefExpression
-    | IfdefNot of LexerIfdefExpression
-    | IfdefId of string
-
-let rec LexerIfdefEval (lookup: string -> bool) =
-    function
-    | IfdefAnd(l, r) -> (LexerIfdefEval lookup l) && (LexerIfdefEval lookup r)
-    | IfdefOr(l, r) -> (LexerIfdefEval lookup l) || (LexerIfdefEval lookup r)
-    | IfdefNot e -> not (LexerIfdefEval lookup e)
-    | IfdefId id -> lookup id
-
-/// Ifdef F# lexer/parser state, held in the BufferLocalStore for the lexer.
-/// Used to capture #if, #else and #endif as syntax trivia.
-module LexbufIfdefStore =
-    // The key into the BufferLocalStore used to hold the compiler directives
-    let private ifDefKey = "Ifdef"
-
-    let private getStore (lexbuf: Lexbuf) : ResizeArray<ConditionalDirectiveTrivia> =
-        match lexbuf.BufferLocalStore.TryGetValue ifDefKey with
-        | true, store -> store
-        | _ ->
-            let store = box (ResizeArray<ConditionalDirectiveTrivia>())
-            lexbuf.BufferLocalStore[ifDefKey] <- store
-            store
-        |> unbox<ResizeArray<ConditionalDirectiveTrivia>>
-
-    let private mkRangeWithoutLeadingWhitespace (lexed: string) (m: range) : range =
-        let startColumn = lexed.Length - lexed.TrimStart().Length
-        mkFileIndexRange m.FileIndex (mkPos m.StartLine startColumn) m.End
-
-    let SaveIfHash (lexbuf: Lexbuf, lexed: string, expr: LexerIfdefExpression, range: range) =
-        let store = getStore lexbuf
-
-        let expr =
-            let rec visit (expr: LexerIfdefExpression) : IfDirectiveExpression =
-                match expr with
-                | LexerIfdefExpression.IfdefAnd(l, r) -> IfDirectiveExpression.And(visit l, visit r)
-                | LexerIfdefExpression.IfdefOr(l, r) -> IfDirectiveExpression.Or(visit l, visit r)
-                | LexerIfdefExpression.IfdefNot e -> IfDirectiveExpression.Not(visit e)
-                | LexerIfdefExpression.IfdefId id -> IfDirectiveExpression.Ident id
-
-            visit expr
-
-        let m = mkRangeWithoutLeadingWhitespace lexed range
-
-        store.Add(ConditionalDirectiveTrivia.If(expr, m))
-
-    let SaveElseHash (lexbuf: Lexbuf, lexed: string, range: range) =
-        let store = getStore lexbuf
-        let m = mkRangeWithoutLeadingWhitespace lexed range
-        store.Add(ConditionalDirectiveTrivia.Else(m))
-
-    let SaveEndIfHash (lexbuf: Lexbuf, lexed: string, range: range) =
-        let store = getStore lexbuf
-        let m = mkRangeWithoutLeadingWhitespace lexed range
-        store.Add(ConditionalDirectiveTrivia.EndIf(m))
-
-    let GetTrivia (lexbuf: Lexbuf) : ConditionalDirectiveTrivia list =
-        let store = getStore lexbuf
-        Seq.toList store
-
-/// Used to capture the ranges of code comments as syntax trivia
-module LexbufCommentStore =
-    // The key into the BufferLocalStore used to hold the compiler directives
-    let private commentKey = "Comments"
-
-    let private getStore (lexbuf: Lexbuf) : ResizeArray<CommentTrivia> =
-        match lexbuf.BufferLocalStore.TryGetValue commentKey with
-        | true, store -> store
-        | _ ->
-            let store = box (ResizeArray<CommentTrivia>())
-            lexbuf.BufferLocalStore[commentKey] <- store
-            store
-        |> unbox<ResizeArray<CommentTrivia>>
-
-    let SaveSingleLineComment (lexbuf: Lexbuf, startRange: range, endRange: range) =
-        let store = getStore lexbuf
-        let m = unionRanges startRange endRange
-        store.Add(CommentTrivia.LineComment(m))
-
-    let SaveBlockComment (lexbuf: Lexbuf, startRange: range, endRange: range) =
-        let store = getStore lexbuf
-        let m = unionRanges startRange endRange
-        store.Add(CommentTrivia.BlockComment(m))
-
-    let GetComments (lexbuf: Lexbuf) : CommentTrivia list =
-        let store = getStore lexbuf
-        Seq.toList store
-
-    let ClearComments (lexbuf: Lexbuf) : unit =
-        lexbuf.BufferLocalStore.Remove(commentKey) |> ignore
+    | IfdefSkip of int * range: range
 
 //------------------------------------------------------------------------
 // Parsing: continuations for whitespace tokens
@@ -402,7 +234,7 @@ let grabXmlDocAtRangeStart (parseState: IParseState, optAttributes: SynAttribute
         | [] -> range
         | h :: _ -> h.Range
 
-    LexbufLocalXmlDocStore.GrabXmlDocBeforeMarker(parseState.LexBuffer, grabPoint)
+    XmlDocStore.GrabXmlDocBeforeMarker(parseState.LexBuffer, grabPoint)
 
 let grabXmlDoc (parseState: IParseState, optAttributes: SynAttributeList list, elemIdx) =
     grabXmlDocAtRangeStart (parseState, optAttributes, rhs parseState elemIdx)
@@ -443,15 +275,8 @@ let mkSynMemberDefnGetSet
     let xmlDoc = grabXmlDocAtRangeStart (parseState, attrs, rangeStart)
 
     let tryMkSynMemberDefnMember
-        (
-            mOptInline: range option,
-            optAttrs: SynAttributeList list,
-            (bindingPat, mBindLhs),
-            optReturnType,
-            mEquals,
-            expr,
-            mExpr
-        ) : (SynMemberDefn * Ident option) option =
+        (mOptInline: range option, optAttrs: SynAttributeList list, (bindingPat, mBindLhs), optReturnType, mEquals, expr, mExpr)
+        : (SynMemberDefn * Ident option) option =
         let optInline = Option.isSome opt_inline || Option.isSome mOptInline
         // optional attributes are only applied to getters and setters
         // the "top level" attrs will be applied to both
@@ -852,7 +677,7 @@ let adjustHatPrefixToTyparLookup mFull rightExpr =
 let mkSynTypeTuple (elementTypes: SynTupleTypeSegment list) : SynType =
     let range =
         match elementTypes with
-        | [] -> Range.Zero
+        | [] -> range0
         | head :: tail ->
 
             (head.Range, tail)
@@ -879,10 +704,31 @@ let patFromParseError (e: SynPat) = SynPat.FromParseError(e, e.Range)
 // to form
 // binding1*sep1, binding2*sep2
 let rebindRanges first fields lastSep =
-    let rec run (name, mEquals, value) l acc =
+    let calculateFieldRange (lidwd: SynLongIdent) (mEquals: range option) (value: SynExpr option) =
+        match lidwd with
+        | SynLongIdent([], _, _) ->
+            // Special case used in inherit clause
+            match mEquals, value with
+            | Some mEq, Some expr -> unionRanges mEq expr.Range
+            | Some mEq, None -> mEq
+            | None, Some expr -> expr.Range
+            | None, None -> range0
+        | _ ->
+            // Normal case
+            match value with
+            | Some expr -> unionRanges lidwd.Range expr.Range
+            | None ->
+                match mEquals with
+                | Some mEq -> unionRanges lidwd.Range mEq
+                | None -> lidwd.Range
+
+    let rec run (name, mEquals, value: SynExpr option) l acc =
+        let lidwd, _ = name
+        let fieldRange = calculateFieldRange lidwd mEquals value
+
         match l with
-        | [] -> List.rev (SynExprRecordField(name, mEquals, value, lastSep) :: acc)
-        | (f, m) :: xs -> run f xs (SynExprRecordField(name, mEquals, value, m) :: acc)
+        | [] -> List.rev (SynExprRecordField(name, mEquals, value, fieldRange, lastSep) :: acc)
+        | (f, m) :: xs -> run f xs (SynExprRecordField(name, mEquals, value, fieldRange, m) :: acc)
 
     run first fields []
 
@@ -894,7 +740,7 @@ let mkRecdField (lidwd: SynLongIdent) = lidwd, true
 // Used for 'do expr' in a class.
 let mkSynDoBinding (vis: SynAccess option, mDo, expr, m) =
     match vis with
-    | Some vis -> errorR (Error(FSComp.SR.parsDoCannotHaveVisibilityDeclarations (vis.ToString()), m))
+    | Some vis -> errorR (Error(FSComp.SR.parsDoCannotHaveVisibilityDeclarations (vis |> string), m))
     | None -> ()
 
     SynBinding(
@@ -963,7 +809,7 @@ let checkEndOfFileError t =
 
     | LexCont.MLOnly(_, _, m) -> reportParseErrorAt m (FSComp.SR.parsEofInIfOcaml ())
 
-    | LexCont.EndLine(_, _, LexerEndlineContinuation.Skip(_, m)) -> reportParseErrorAt m (FSComp.SR.parsEofInDirective ())
+    | LexCont.EndLine(_, _, LexerEndlineContinuation.IfdefSkip(_, m)) -> reportParseErrorAt m (FSComp.SR.parsEofInDirective ())
 
     | LexCont.EndLine(endifs, nesting, LexerEndlineContinuation.Token)
     | LexCont.Token(endifs, nesting) ->
@@ -978,13 +824,8 @@ let checkEndOfFileError t =
 type BindingSet = BindingSetPreAttrs of range * bool * bool * (SynAttributes -> SynAccess option -> SynAttributes * SynBinding list) * range
 
 let mkClassMemberLocalBindings
-    (
-        isStatic,
-        initialRangeOpt,
-        attrs,
-        vis,
-        BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, bindingSetRange)
-    ) =
+    (isStatic, initialRangeOpt, attrs, vis, BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, bindingSetRange))
+    =
     let ignoredFreeAttrs, decls = declsPreAttrs attrs vis
 
     let mWhole =
@@ -1026,26 +867,32 @@ let mkClassMemberLocalBindings
 
     SynMemberDefn.LetBindings(decls, isStatic, isRec, mWhole)
 
-let mkLocalBindings (mWhole, BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, _), mIn, body: SynExpr) =
-    let ignoredFreeAttrs, decls = declsPreAttrs [] None
+/// Creates a SynExprAndBang node for and! bindings in computation expressions
+let mkAndBang (mKeyword: range, pat: SynPat, rhs: SynExpr, mWhole: range, mEquals: range, mIn: range option) =
+    let spBind = DebugPointAtBinding.Yes(unionRanges mKeyword rhs.Range)
 
-    let mWhole =
-        match decls with
-        | SynBinding(xmlDoc = xmlDoc) :: _ -> unionRangeWithXmlDoc xmlDoc mWhole
-        | _ -> mWhole
+    let trivia: SynBindingTrivia =
+        {
+            LeadingKeyword = SynLeadingKeyword.And mKeyword
+            InlineKeyword = mIn
+            EqualsRange = Some mEquals
+        }
 
-    if not (isNil ignoredFreeAttrs) then
-        warning (Error(FSComp.SR.parsAttributesIgnored (), mWhole))
-
-    let mIn =
-        mIn
-        |> Option.bind (fun (mIn: range) ->
-            if Position.posEq mIn.Start body.Range.Start then
-                None
-            else
-                Some mIn)
-
-    SynExpr.LetOrUse(isRec, isUse, decls, body, mWhole, { InKeyword = mIn })
+    SynBinding(
+        accessibility = None,
+        kind = SynBindingKind.Normal,
+        isInline = false,
+        isMutable = false,
+        attributes = [],
+        xmlDoc = PreXmlDoc.Empty,
+        valData = SynInfo.emptySynValData,
+        headPat = pat,
+        returnInfo = None,
+        expr = rhs,
+        range = mWhole,
+        debugPoint = spBind,
+        trivia = trivia
+    )
 
 let mkDefnBindings (mWhole, BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, _bindingSetRange), attrs, vis, attrsm) =
     if isUse then
@@ -1101,7 +948,8 @@ let mkSynUnionCase attributes (access: SynAccess option) id kind mDecl (xmlDoc, 
     SynUnionCase(attributes, id, kind, xmlDoc, None, mDecl, trivia)
 
 let mkAutoPropDefn mVal access ident typ mEquals (expr: SynExpr) accessors xmlDoc attribs flags rangeStart =
-    let mWith, (getSet, getSetOpt) = accessors
+    let mWith, (getSet, getSetOpt, getterAccess, setterAccess) = accessors
+    let access = SynValSigAccess.GetSet(access, getterAccess, setterAccess)
 
     let memberRange =
         match getSetOpt with
@@ -1208,3 +1056,121 @@ let mkValField
         mkSynField parseState idOpt typ isMutable access attribs mStaticOpt rangeStart (Some leadingKeyword)
 
     SynMemberDefn.ValField(field, field.Range)
+
+let leadingKeywordIsAbstract =
+    function
+    | SynLeadingKeyword.Abstract _
+    | SynLeadingKeyword.AbstractMember _
+    | SynLeadingKeyword.StaticAbstract _
+    | SynLeadingKeyword.StaticAbstractMember _ -> true
+    | _ -> false
+
+/// Unified helper for creating let/let!/use/use! expressions
+/// Creates SynExpr.LetOrUse based on isBang parameter
+/// Handles all four cases: 'let', 'let!', 'use', and 'use!'
+let mkLetExpression
+    (
+        isBang: bool,
+        mIn: range option,
+        mWhole: range,
+        body: SynExpr,
+        bindingInfo: BindingSet option,
+        bangInfo: (SynPat * SynExpr * SynBinding list * range * range option * bool) option
+    ) =
+    if isBang then
+        match bangInfo with
+        | Some(pat, rhs, andBangs, mKeyword, mEquals, isUse) ->
+            let spBind = DebugPointAtBinding.Yes(unionRanges mKeyword rhs.Range)
+
+            let trivia: SynBindingTrivia =
+                {
+                    LeadingKeyword =
+                        if isUse then
+                            SynLeadingKeyword.Use mKeyword
+                        else
+                            SynLeadingKeyword.Let mKeyword
+                    InlineKeyword = mIn
+                    EqualsRange = mEquals
+                }
+
+            let binding =
+                SynBinding(
+                    accessibility = None,
+                    kind = SynBindingKind.Normal,
+                    isInline = false,
+                    isMutable = false,
+                    attributes = [],
+                    xmlDoc = PreXmlDoc.Empty,
+                    valData = SynInfo.emptySynValData,
+                    headPat = pat,
+                    returnInfo = None,
+                    expr = rhs,
+                    range = unionRanges mKeyword rhs.Range,
+                    debugPoint = spBind,
+                    trivia = trivia
+                )
+
+            SynExpr.LetOrUse(
+                isRecursive = false,
+                isUse = isUse,
+                isFromSource = true,
+                isBang = true,
+                bindings = binding :: andBangs,
+                body = body,
+                range = mWhole,
+                trivia =
+                    {
+                        LetOrUseKeyword = mKeyword
+                        InKeyword = mIn
+                        EqualsRange = mEquals
+                    }
+            )
+
+        | None -> SynExpr.FromParseError(body, mWhole)
+    else
+        match bindingInfo with
+        | Some(BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, _)) ->
+            let ignoredFreeAttrs, decls = declsPreAttrs [] None
+
+            let mWhole =
+                match decls with
+                | SynBinding(xmlDoc = xmlDoc) :: _ -> unionRangeWithXmlDoc xmlDoc mWhole
+                | _ -> mWhole
+
+            if not (isNil ignoredFreeAttrs) then
+                warning (Error(FSComp.SR.parsAttributesIgnored (), mWhole))
+
+            let mIn' =
+                mIn
+                |> Option.bind (fun (mIn: range) ->
+                    if Position.posEq mIn.Start body.Range.Start then
+                        None
+                    else
+                        Some mIn)
+
+            let mLetOrUse =
+                match decls with
+                | SynBinding(trivia = trivia) :: _ -> trivia.LeadingKeyword.Range
+                | _ -> range0
+
+            let mEquals =
+                match decls with
+                | SynBinding(trivia = trivia) :: _ -> trivia.EqualsRange
+                | _ -> None
+
+            SynExpr.LetOrUse(
+                isRecursive = isRec,
+                isUse = isUse,
+                isFromSource = true,
+                isBang = false,
+                bindings = decls,
+                body = body,
+                range = mWhole,
+                trivia =
+                    {
+                        LetOrUseKeyword = mLetOrUse
+                        InKeyword = mIn'
+                        EqualsRange = mEquals
+                    }
+            )
+        | None -> SynExpr.FromParseError(body, mWhole)

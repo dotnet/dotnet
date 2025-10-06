@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
@@ -11,14 +11,14 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(IRazorStartupService))]
 internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IVsSolutionEvents3, IDisposable
 {
     private IVsSolution? _solution;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IProjectSnapshotManager _projectManager;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly JoinableTaskContext _joinableTaskContext;
 
     private uint _cookie;
@@ -26,7 +26,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
     [ImportingConstructor]
     public VisualStudioSolutionCloseChangeTrigger(
        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-       IProjectSnapshotManager projectManager,
+       ProjectSnapshotManager projectManager,
        JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;

@@ -1,12 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.VisualStudio.Composition;
@@ -22,19 +21,27 @@ public sealed partial class TestComposition
     public static readonly TestComposition Empty = new(
         ImmutableHashSet<Assembly>.Empty,
         ImmutableHashSet<Type>.Empty,
-        ImmutableHashSet<Type>.Empty,
-        scope: null);
+        ImmutableHashSet<Type>.Empty);
 
+    public static readonly TestComposition RoslynFeatures = Empty
+        .AddAssemblies(MefHostServices.DefaultAssemblies)
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
+        .AddParts(typeof(RazorTestWorkspaceRegistrationService));
+
+#if NETFRAMEWORK
     public static readonly TestComposition Roslyn = Empty
         .AddAssemblies(MefHostServices.DefaultAssemblies)
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.EditorFeatures.dll"))
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
         .AddParts(typeof(RazorTestWorkspaceRegistrationService));
 
-#if NETFRAMEWORK
     public static readonly TestComposition Editor = Empty
         .AddAssemblies(Assembly.LoadFrom("Microsoft.VisualStudio.Text.Implementation.dll"))
         .AddParts(typeof(TestExportJoinableTaskContext));
@@ -102,31 +109,16 @@ public sealed partial class TestComposition
     /// </summary>
     public readonly ImmutableHashSet<Type> Parts;
 
-    /// <summary>
-    /// The scope in which to create the export provider, or <see langword="null"/> to use the default scope.
-    /// </summary>
-    public readonly string? Scope;
-
     private readonly Lazy<IExportProviderFactory> _exportProviderFactory;
 
-    private TestComposition(ImmutableHashSet<Assembly> assemblies, ImmutableHashSet<Type> parts, ImmutableHashSet<Type> excludedPartTypes, string? scope)
+    private TestComposition(ImmutableHashSet<Assembly> assemblies, ImmutableHashSet<Type> parts, ImmutableHashSet<Type> excludedPartTypes)
     {
         Assemblies = assemblies;
         Parts = parts;
         ExcludedPartTypes = excludedPartTypes;
-        Scope = scope;
 
         _exportProviderFactory = new Lazy<IExportProviderFactory>(GetOrCreateFactory);
     }
-
-#if false
-/// <summary>
-/// Returns a new instance of <see cref="HostServices"/> for the composition. This will either be a MEF composition or VS MEF composition host,
-/// depending on what layer the composition is for. Editor Features and VS layers use VS MEF composition while anything else uses System.Composition.
-/// </summary>
-public HostServices GetHostServices()
-    => VisualStudioMefHostServices.Create(ExportProviderFactory.CreateExportProvider());
-#endif
 
     /// <summary>
     /// VS MEF <see cref="ExportProvider"/>.
@@ -145,7 +137,7 @@ public HostServices GetHostServices()
             }
         }
 
-        var newFactory = ExportProviderCache.CreateExportProviderFactory(GetCatalog(), Scope);
+        var newFactory = ExportProviderCache.CreateExportProviderFactory(GetCatalog());
 
         lock (s_factoryCache)
         {
@@ -215,7 +207,7 @@ public HostServices GetHostServices()
         var testAssembly = assemblies.FirstOrDefault(IsTestAssembly);
         Verify.Operation(testAssembly is null, $"Test assemblies are not allowed in test composition: {testAssembly}. Specify explicit test parts instead.");
 
-        return new TestComposition(assemblies, Parts, ExcludedPartTypes, Scope);
+        return new TestComposition(assemblies, Parts, ExcludedPartTypes);
 
         static bool IsTestAssembly(Assembly assembly)
         {
@@ -230,33 +222,25 @@ public HostServices GetHostServices()
     }
 
     public TestComposition WithParts(ImmutableHashSet<Type> parts)
-        => parts == Parts ? this : new TestComposition(Assemblies, parts, ExcludedPartTypes, Scope);
+        => parts == Parts ? this : new TestComposition(Assemblies, parts, ExcludedPartTypes);
 
     public TestComposition WithExcludedPartTypes(ImmutableHashSet<Type> excludedPartTypes)
-        => excludedPartTypes == ExcludedPartTypes ? this : new TestComposition(Assemblies, Parts, excludedPartTypes, Scope);
-
-    public TestComposition WithScope(string? scope)
-        => scope == Scope ? this : new TestComposition(Assemblies, Parts, ExcludedPartTypes, scope);
+        => excludedPartTypes == ExcludedPartTypes ? this : new TestComposition(Assemblies, Parts, excludedPartTypes);
 
     /// <summary>
     /// Use for VS MEF composition troubleshooting.
     /// </summary>
     /// <returns>All composition error messages.</returns>
-    internal string GetCompositionErrorLog()
+    public IEnumerable<string> GetCompositionErrors()
     {
         var configuration = CompositionConfiguration.Create(GetCatalog());
-
-        using var _ = StringBuilderPool.GetPooledObject(out var sb);
 
         foreach (var errorGroup in configuration.CompositionErrors)
         {
             foreach (var error in errorGroup)
             {
-                sb.Append(error.Message);
-                sb.AppendLine();
+                yield return error.Message;
             }
         }
-
-        return sb.ToString();
     }
 }

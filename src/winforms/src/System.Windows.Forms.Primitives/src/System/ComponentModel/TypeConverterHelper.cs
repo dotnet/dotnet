@@ -7,8 +7,17 @@ namespace System.ComponentModel;
 
 internal static class TypeConverterHelper
 {
+    // Feature switch, when set to true, used for trimming to access ComponentModel in a trim safe manner
+    [FeatureSwitchDefinition("System.Windows.Forms.Primitives.TypeConverterHelper.UseComponentModelRegisteredTypes")]
+#pragma warning disable IDE0075 // Simplify conditional expression - the simpler expression is hard to read
+    private static bool UseComponentModelRegisteredTypes { get; } =
+        AppContext.TryGetSwitch("System.Windows.Forms.Primitives.TypeConverterHelper.UseComponentModelRegisteredTypes", out bool isEnabled)
+            ? isEnabled
+            : false;
+#pragma warning restore IDE0075
+
     /// <summary>
-    /// Converts the given text to list of objects, using the specified context and culture information.
+    ///  Converts the given text to list of objects, using the specified context and culture information.
     /// </summary>
     /// <param name="context">An ITypeDescriptorContext that provides a format context.</param>
     /// <param name="culture">A CultureInfo. If null is passed, the current culture is assumed.</param>
@@ -28,7 +37,18 @@ internal static class TypeConverterHelper
             return false;
         }
 
-        TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+        TypeConverter converter;
+        if (!UseComponentModelRegisteredTypes)
+        {
+            converter = TypeDescriptor.GetConverter(typeof(T));
+        }
+        else
+        {
+            // Call the trim safe API
+            TypeDescriptor.RegisterType<T>();
+            converter = TypeDescriptor.GetConverterFromRegisteredType(typeof(T));
+        }
+
         for (int i = 0; i < output.Length; i++)
         {
             // Note: ConvertFromString will raise exception if value cannot be converted.

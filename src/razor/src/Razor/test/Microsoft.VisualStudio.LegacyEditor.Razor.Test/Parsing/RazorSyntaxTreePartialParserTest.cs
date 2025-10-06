@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
@@ -41,8 +40,8 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     {
         // Arrange
         var edit = (TestEdit)objectEdit;
-        var builder = TagHelperDescriptorBuilder.Create("PTagHelper", "TestAssembly");
-        builder.Metadata(TypeName("PTagHelper"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly");
+        builder.TypeName = "PTagHelper";
         builder.TagMatchingRule(rule => rule.TagName = "p");
         var descriptors = new[]
         {
@@ -54,7 +53,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
             Content = edit.OldSnapshot.GetText()
         };
         var codeDocument = projectEngine.Process(projectItem);
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         // Act
@@ -102,20 +101,20 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         // Arrange
         var edit = (TestEdit)editObject;
         var partialParseResult = (PartialParseResultInternal)partialParseResultObject;
-        var builder = TagHelperDescriptorBuilder.Create("PTagHelper", "Test");
-        builder.Metadata(TypeName("PTagHelper"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "Test");
+        builder.TypeName = "PTagHelper";
         builder.TagMatchingRule(rule => rule.TagName = "p");
         builder.BindAttribute(attribute =>
         {
             attribute.Name = "obj-attr";
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(PropertyName("ObjectAttribute"));
+            attribute.PropertyName = "ObjectAttribute";
         });
         builder.BindAttribute(attribute =>
         {
             attribute.Name = "str-attr";
             attribute.TypeName = typeof(string).FullName;
-            attribute.SetMetadata(PropertyName("StringAttribute"));
+            attribute.PropertyName = "StringAttribute";
         });
         var descriptors = new[] { builder.Build() };
         var projectEngine = CreateProjectEngine(tagHelpers: descriptors);
@@ -124,7 +123,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
             Content = edit.OldSnapshot.GetText()
         };
         var codeDocument = projectEngine.Process(sourceDocument);
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         // Act
@@ -357,9 +356,9 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     private static void RunPartialParseRejectionTest(TestEdit edit, PartialParseResultInternal additionalFlags = 0)
     {
         var templateEngine = CreateProjectEngine();
-        var document = TestRazorCodeDocument.Create(edit.OldSnapshot.GetText());
-        templateEngine.Engine.Process(document);
-        var syntaxTree = document.GetSyntaxTree();
+        var codeDocument = templateEngine.CreateCodeDocument(edit.OldSnapshot.GetText());
+        templateEngine.Engine.Process(codeDocument);
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         var (result, _) = parser.Parse(edit.Change);
@@ -369,16 +368,16 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     private void RunPartialParseTest(TestEdit edit, PartialParseResultInternal additionalFlags = 0)
     {
         var templateEngine = CreateProjectEngine();
-        var document = TestRazorCodeDocument.Create(edit.OldSnapshot.GetText());
-        templateEngine.Engine.Process(document);
-        var syntaxTree = document.GetSyntaxTree();
+        var codeDocument = templateEngine.CreateCodeDocument(edit.OldSnapshot.GetText());
+        templateEngine.Engine.Process(codeDocument);
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var parser = new RazorSyntaxTreePartialParser(syntaxTree);
 
         var (result, _) = parser.Parse(edit.Change);
         Assert.Equal(PartialParseResultInternal.Accepted | additionalFlags, result);
 
         var newSource = TestRazorSourceDocument.Create(edit.NewSnapshot.GetText());
-        var newSyntaxTree = RazorSyntaxTree.Create(parser.ModifiedSyntaxTreeRoot, newSource, parser.OriginalSyntaxTree.Diagnostics, parser.OriginalSyntaxTree.Options);
+        var newSyntaxTree = new RazorSyntaxTree(parser.ModifiedSyntaxTreeRoot, newSource, parser.OriginalSyntaxTree.Diagnostics, parser.OriginalSyntaxTree.Options);
         BaselineTest(newSyntaxTree);
     }
 
@@ -406,7 +405,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
                 builder.AddTagHelpers(tagHelpers);
             }
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         return projectEngine;

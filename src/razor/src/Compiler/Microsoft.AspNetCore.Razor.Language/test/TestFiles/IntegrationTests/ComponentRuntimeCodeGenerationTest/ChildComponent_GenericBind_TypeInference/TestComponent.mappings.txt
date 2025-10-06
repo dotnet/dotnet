@@ -17,3 +17,13 @@ Generated Location: (1409:42,0 [21] )
     string Value;
 |
 
+Source Location: (19:0,19 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2072:62,0 [4] )
+|Item|
+
+Source Location: (52:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2780:77,0 [4] )
+|Item|
+

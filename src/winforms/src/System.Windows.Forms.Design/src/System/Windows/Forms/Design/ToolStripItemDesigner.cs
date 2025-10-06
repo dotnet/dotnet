@@ -31,7 +31,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
     internal bool _dummyItemAdded;
     // Needed to Store the DRAGDROP Rect from the ToolStripItemBehavior.
     internal Rectangle _dragBoxFromMouseDown = Rectangle.Empty;
-    // defaulted to invalid index. this will be set by the behaviour.
+    // defaulted to invalid index. this will be set by the behavior.
     internal int _indexOfItemUnderMouseToDrag = -1;
     private ToolStripItemCustomMenuItemCollection _toolStripItemCustomMenuItemCollection;
 
@@ -41,7 +41,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
         set
         {
             bool autoSize = (bool)ShadowProperties[nameof(AutoSize)];
-            // always set this in regardless of whether the property changed. it can come back to bite later after in-situ editing if we don't.
+            // always set this in regardless of whether the property changed.
+            // it can come back to bite later after in-situ editing if we don't.
             ShadowProperties[nameof(AutoSize)] = value;
             if (value != autoSize)
             {
@@ -106,7 +107,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  ToolStripEditorManager used this internal property to  Activate the editor.
+    ///  ToolStripEditorManager used this internal property to Activate the editor.
     /// </summary>
     internal virtual ToolStripTemplateNode Editor
     {
@@ -129,7 +130,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  ToolStripEditorManager used this internal property to  set the designer's IsEditorActive to notify  if this item has entered or exited the InSitu Edit Mode.
+    ///  ToolStripEditorManager used this internal property to set the designer's IsEditorActive to notify
+    ///  if this item has entered or exited the InSitu Edit Mode.
     /// </summary>
     internal bool IsEditorActive
     {
@@ -138,7 +140,9 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  When the ToolStripItem is created we don't want InitializeNewComponent to set the "text" we do it ourselves from the Text the User has provided in the InSitu Edit Mode. Reason being the item and the Parent unnecessarily Layout and cause flicker.
+    ///  When the ToolStripItem is created we don't want InitializeNewComponent to set the "text" we do it ourselves
+    ///  from the Text the User has provided in the InSitu Edit Mode.
+    ///  Reason being the item and the Parent unnecessarily Layout and cause flicker.
     /// </summary>
     internal bool InternalCreate
     {
@@ -312,7 +316,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  This is called by the TemplateNode to Commit the Edit. This Function Simply changes the "Text and Image" property of the  current ToolStripItem.
+    ///  This is called by the TemplateNode to Commit the Edit.
+    ///  This Function Simply changes the "Text and Image" property of the current ToolStripItem.
     /// </summary>
     // Standard 'catch all - rethrow critical' exception pattern
     internal virtual void CommitEdit(Type type, string text, bool commit, bool enterKeyPressed, bool tabKeyPressed)
@@ -352,11 +357,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
                 }
                 finally
                 {
-                    if (designer.NewItemTransaction is not null)
-                    {
-                        designer.NewItemTransaction.Commit();
-                        designer.NewItemTransaction = null;
-                    }
+                    designer.NewItemTransaction?.Commit();
+                    designer.NewItemTransaction = null;
                 }
             }
             else
@@ -380,11 +382,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
                 }
                 catch (Exception e)
                 {
-                    if (designerTransaction is not null)
-                    {
-                        designerTransaction.Cancel();
-                        designerTransaction = null;
-                    }
+                    designerTransaction?.Cancel();
+                    designerTransaction = null;
 
                     selectionManager?.Refresh();
 
@@ -410,11 +409,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
                 _dummyItemAdded = false;
                 RemoveItem();
 
-                if (designer.NewItemTransaction is not null)
-                {
-                    designer.NewItemTransaction.Cancel();
-                    designer.NewItemTransaction = null;
-                }
+                designer.NewItemTransaction?.Cancel();
+                designer.NewItemTransaction = null;
             }
         }
 
@@ -450,26 +446,23 @@ internal class ToolStripItemDesigner : ComponentDesigner
     {
         if (disposing)
         {
-            if (_editorNode is not null)
-            {
-                _editorNode.CloseEditor();
-                _editorNode = null;
-            }
+            _editorNode?.CloseEditor();
+            _editorNode = null;
 
             if (ToolStripItem is not null)
             {
-                ToolStripItem.Paint -= new PaintEventHandler(OnItemPaint);
+                ToolStripItem.Paint -= OnItemPaint;
             }
 
             // Now, unhook the component rename event
             if (TryGetService(out IComponentChangeService cs))
             {
-                cs.ComponentRename -= new ComponentRenameEventHandler(OnComponentRename);
+                cs.ComponentRename -= OnComponentRename;
             }
 
             if (_selectionService is not null)
             {
-                _selectionService.SelectionChanged -= new EventHandler(OnSelectionChanged);
+                _selectionService.SelectionChanged -= OnSelectionChanged;
             }
 
             // Clean up the ToolStripItem Glyph if Any
@@ -623,11 +616,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
     private void HideDummyNode()
     {
         ToolStripItem.AutoSize = AutoSize;
-        if (_editorNode is not null)
-        {
-            _editorNode.CloseEditor();
-            _editorNode = null;
-        }
+        _editorNode?.CloseEditor();
+        _editorNode = null;
     }
 
     /// <summary>
@@ -644,7 +634,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
 
         // Shadow the AccessibleName as we are going to change it at DesignTime
         AccessibleName = ToolStripItem.AccessibleName;
-        ToolStripItem.Paint += new PaintEventHandler(OnItemPaint);
+        ToolStripItem.Paint += OnItemPaint;
 
         // Change the AccessibleName to point to ToolStirpItem.Name
         ToolStripItem.AccessibleName = ToolStripItem.Name;
@@ -652,17 +642,17 @@ internal class ToolStripItemDesigner : ComponentDesigner
         // Now, hook the component rename event so we can update the AccessibleName
         if (TryGetService(out IComponentChangeService cs))
         {
-            cs.ComponentRename += new ComponentRenameEventHandler(OnComponentRename);
+            cs.ComponentRename += OnComponentRename;
         }
 
         if (TryGetService(out _selectionService))
         {
-            _selectionService.SelectionChanged += new EventHandler(OnSelectionChanged);
+            _selectionService.SelectionChanged += OnSelectionChanged;
         }
     }
 
     /// <summary>
-    ///  Overriden to always Initialise the ToolStripItem with Text property.
+    ///  Overridden to always initialize the ToolStripItem with Text property.
     /// </summary>
     public override void InitializeNewComponent(IDictionary defaultValues)
     {
@@ -690,7 +680,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
         }
 
         base.InitializeNewComponent(defaultValues);
-        // ComboBoxes and TextBoxes shouldn't have Texts... In TextBoxBaseDesigner we do similar thing where we call the base (which sets the text) and then reset it back
+        // ComboBoxes and TextBoxes shouldn't have Texts... In TextBoxBaseDesigner we do similar thing where
+        // we call the base (which sets the text) and then reset it back.
         if (Component is ToolStripTextBox or ToolStripComboBox)
         {
             PropertyDescriptor textProp = TypeDescriptor.GetProperties(Component)["Text"];
@@ -846,7 +837,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
             }
 
             FireComponentChanged(dropDownItem);
-            // Add the Glyph for the DropDown ... We are responsible for the Glyph Addition since BodyGlyphs for DropDownItems are added by us.
+            // Add the Glyph for the DropDown ... We are responsible for the Glyph Addition
+            // since BodyGlyphs for DropDownItems are added by us.
             if (newItem.IsOnDropDown && ownerItemDesigner is not null)
             {
                 ownerItemDesigner.RemoveItemBodyGlyph(newItem);
@@ -877,11 +869,8 @@ internal class ToolStripItemDesigner : ComponentDesigner
         {
             host.Container.Add(ToolStripItem);
             parent.Items.Insert(dummyIndex, ToolStripItem);
-            if (designerTransaction is not null)
-            {
-                designerTransaction.Cancel();
-                designerTransaction = null;
-            }
+            designerTransaction?.Cancel();
+            designerTransaction = null;
         }
         finally
         {
@@ -892,7 +881,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  Raised when a component's name changes.  Here we update the AccessibleName Property to match the newName.
+    ///  Raised when a component's name changes. Here we update the AccessibleName Property to match the newName.
     /// </summary>
     private void OnComponentRename(object sender, ComponentRenameEventArgs e)
     {
@@ -951,7 +940,6 @@ internal class ToolStripItemDesigner : ComponentDesigner
                 acc.AddState(AccessibleStates.Selected);
                 if (tool is not null)
                 {
-                    Debug.WriteLineIf(CompModSwitches.MSAA.TraceInfo, $"MSAA: SelectionAdd, tool = {tool}");
                     PInvoke.NotifyWinEvent(
                         (uint)AccessibleEvents.SelectionAdd,
                         owner,
@@ -987,7 +975,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
                         ToolStripMenuItemDesigner parentItemDesigner = (ToolStripMenuItemDesigner)designerHost.GetDesigner(parentItem);
                         parentItemDesigner?.InitializeDropDown();
 
-                        needRefresh = true;
+                        needRefresh = GetFirstDropDown(currentSelection) is not null and not ContextMenuStrip;
                     }
                     else if (parentDropDown is ContextMenuStrip)
                     {
@@ -1022,7 +1010,10 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    ///  Allows a designer to filter the set of properties the component it is designing will expose through the TypeDescriptor object.  This method is called immediately before its corresponding "Post" method. If you are overriding this method you should call the base implementation before you perform your own filtering.
+    ///  Allows a designer to filter the set of properties the component it is designing will expose through
+    ///  the TypeDescriptor object. This method is called immediately before its corresponding "Post" method.
+    ///  If you are overriding this method you should call the base implementation before
+    ///  you perform your own filtering.
     /// </summary>
     protected override void PreFilterProperties(IDictionary properties)
     {
@@ -1064,7 +1055,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
     }
 
     /// <summary>
-    /// Resets the ToolStripItemAutoSize to be the default autosize
+    ///  Resets the ToolStripItemAutoSize to be the default autosize
     /// </summary>
     private void ResetAutoSize() => ShadowProperties[nameof(AutoSize)] = false;
 
@@ -1074,7 +1065,7 @@ internal class ToolStripItemDesigner : ComponentDesigner
     private void RestoreAutoSize() => ToolStripItem.AutoSize = (bool)ShadowProperties[nameof(AutoSize)];
 
     /// <summary>
-    /// Resets the ToolStrip Visible to be the default value
+    ///  Resets the ToolStrip Visible to be the default value
     /// </summary>
     private void ResetVisible() => Visible = true;
 
@@ -1177,22 +1168,22 @@ internal class ToolStripItemDesigner : ComponentDesigner
     private bool ShouldSerializeVisible() => !Visible;
 
     /// <summary>
-    /// Since we're shadowing autosize, we get called here to determine whether or not to serialize
+    ///  Since we're shadowing autosize, we get called here to determine whether or not to serialize
     /// </summary>
     private bool ShouldSerializeAutoSize() => (ShadowProperties.Contains(nameof(AutoSize)));
 
     /// <summary>
-    /// Since we're shadowing autosize, we get called here to determine whether or not to serialize
+    ///  Since we're shadowing autosize, we get called here to determine whether or not to serialize
     /// </summary>
     private bool ShouldSerializeAccessibleName() => (ShadowProperties[nameof(AccessibleName)] is not null);
 
     /// <summary>
-    /// Since we're Overflow Size, we get called here to determine whether or not to serialize
+    ///  Since we're Overflow Size, we get called here to determine whether or not to serialize
     /// </summary>
     private bool ShouldSerializeOverflow() => (ShadowProperties[nameof(Overflow)] is not null);
 
     /// <summary>
-    ///  This Function is called thru the ToolStripEditorManager which is listening for the  F2 command.
+    ///  This Function is called thru the ToolStripEditorManager which is listening for the F2 command.
     /// </summary>
     internal virtual void ShowEditNode(bool clicked)
     {
@@ -1287,7 +1278,10 @@ internal class ToolStripItemDesigner : ComponentDesigner
         }
     }
 
-    // This method is called by the ToolStripDesigner to SetSelections to proper ToolStripItems  after the parent ToolStripItem is committed. Consider this : the ToolStrip would cause the NEXT item on the TOPLEVEL to get selected... while on MenuStrip.. we would want the Child ToolStripItem in the DropDown to get  selected after the TopLevel MenuStripItem is commited.
+    // This method is called by the ToolStripDesigner to SetSelections to proper ToolStripItems after
+    // the parent ToolStripItem is committed. Consider this : the ToolStrip would cause the NEXT item on the
+    // TOPLEVEL to get selected... while on MenuStrip.. we would want the Child ToolStripItem in the DropDown to get
+    // selected after the TopLevel MenuStripItem is committed.
     internal virtual bool SetSelection(bool enterKeyPressed) => false;
 
     internal override void ShowContextMenu(int x, int y)

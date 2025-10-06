@@ -70,6 +70,11 @@ namespace NuGet.PackageManagement
         public event EventHandler<PackageProjectEventArgs> BatchEnd;
 
         /// <summary>
+        /// The telemetry service to use for telemetry events. The setter is exposed for test purposes.
+        /// </summary>
+        internal INuGetTelemetryService NuGetTelemetryService { get; set; }
+
+        /// <summary>
         /// To construct a NuGetPackageManager that does not need a SolutionManager like NuGet.exe
         /// </summary>
         public NuGetPackageManager(
@@ -96,6 +101,7 @@ namespace NuGet.PackageManagement
             InstallationCompatibility = PackageManagement.InstallationCompatibility.Instance;
 
             InitializePackagesFolderInfo(packagesFolderPath, excludeVersion);
+            NuGetTelemetryService = TelemetryActivity.NuGetTelemetryService;
         }
 
         /// <summary>
@@ -146,6 +152,7 @@ namespace NuGet.PackageManagement
             InitializePackagesFolderInfo(PackagesFolderPathUtility.GetPackagesFolderPath(SolutionManager, Settings), excludeVersion);
             DeleteOnRestartManager = deleteOnRestartManager ?? throw new ArgumentNullException(nameof(deleteOnRestartManager));
             RestoreProgressReporter = reporter;
+            NuGetTelemetryService = TelemetryActivity.NuGetTelemetryService;
         }
 
         /// <summary>
@@ -163,7 +170,7 @@ namespace NuGet.PackageManagement
                     var pathContext = NuGetPathContext.Create(Settings);
 
                     // count = FallbackPackageFolders.Count + 1 for UserPackageFolder
-                    var count = (pathContext.FallbackPackageFolders?.Count() ?? 0) + 1;
+                    var count = pathContext.FallbackPackageFolders.Count + 1;
                     var folders = new List<string>(count)
                     {
                         pathContext.UserPackageFolder
@@ -536,7 +543,7 @@ namespace NuGet.PackageManagement
             }
 
             var projectInstalledPackageReferences = await nuGetProject.GetInstalledPackagesAsync(token);
-            var installedPackageReference = projectInstalledPackageReferences.Where(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageId)).FirstOrDefault();
+            var installedPackageReference = projectInstalledPackageReferences.FirstOrDefault(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageId));
             if (installedPackageReference != null
                 && installedPackageReference.PackageIdentity.Version > resolvedPackage.LatestVersion)
             {
@@ -934,8 +941,7 @@ namespace NuGet.PackageManagement
                 foreach (var packageIdentity in packageIdentities)
                 {
                     var installed = projectInstalledPackageReferences
-                        .Where(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageIdentity.Id))
-                        .FirstOrDefault();
+                        .FirstOrDefault(pr => StringComparer.OrdinalIgnoreCase.Equals(pr.PackageIdentity.Id, packageIdentity.Id));
                     var autoReferenced = IsPackageReferenceAutoReferenced(installed);
 
                     //  if the package is not currently installed, or the installed one is auto referenced ignore it
@@ -1031,7 +1037,7 @@ namespace NuGet.PackageManagement
                         if (packageIdentity.HasVersion)
                         {
                             preferredVersions[packageIdentity.Id] = packageIdentity;
-                            ((List<PackageIdentity>)primaryTargets).Add(packageIdentity);
+                            primaryTargets.Add(packageIdentity);
                         }
                         // Otherwise we just have the Id and so we wil explicitly not prefer the one currently installed
                         else
@@ -1095,16 +1101,6 @@ namespace NuGet.PackageManagement
                 // If any targets are prerelease we should gather with prerelease on and filter afterwards
                 var includePrereleaseInGather = resolutionContext.IncludePrerelease || (projectInstalledPackageReferences.Any(p => (p.PackageIdentity.HasVersion && p.PackageIdentity.Version.IsPrerelease)));
 
-                // Create a modified resolution cache. This should include the same gather cache for multi-project
-                // operations.
-                var contextForGather = new ResolutionContext(
-                    resolutionContext.DependencyBehavior,
-                    includePrereleaseInGather,
-                    resolutionContext.IncludeUnlisted,
-                    VersionConstraints.None,
-                    resolutionContext.GatherCache,
-                    resolutionContext.SourceCacheContext);
-
                 // Step-1 : Get metadata resources using gatherer
                 var targetFramework = nuGetProject.GetMetadata<NuGetFramework>(NuGetProjectMetadataKeys.TargetFramework);
                 nuGetProjectContext.Log(MessageLevel.Info, Environment.NewLine);
@@ -1125,7 +1121,7 @@ namespace NuGet.PackageManagement
                     PackageSource source = enabledSource.PackageSource;
                     if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                     {
-                        nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "update", source.Source);
+                        nuGetProjectContext.Log(MessageLevel.Error, Strings.Error_HttpSource_Single, "update", source.Source);
                     }
                 }
 
@@ -1135,7 +1131,7 @@ namespace NuGet.PackageManagement
                 {
                     // Get installed package version
                     var packageTargetsForResolver = new HashSet<PackageIdentity>(oldListOfInstalledPackages, PackageIdentity.Comparer);
-                    var installedPackageWithSameId = packageTargetsForResolver.Where(p => p.Id.Equals(packageIdentities[0].Id, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var installedPackageWithSameId = packageTargetsForResolver.FirstOrDefault(p => p.Id.Equals(packageIdentities[0].Id, StringComparison.OrdinalIgnoreCase));
                     if (installedPackageWithSameId != null)
                     {
                         if (installedPackageWithSameId.Version > packageIdentities[0].Version)
@@ -1173,7 +1169,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.GatherDependencyStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(gatherTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(gatherTelemetryEvent);
                 stopWatch.Restart();
 
                 if (!availablePackageDependencyInfoWithSourceSet.Any())
@@ -1188,7 +1184,6 @@ namespace NuGet.PackageManagement
                     // BUG #1181 VS2015 : Updating from one feed fails for packages from different feed.
 
                     var packagesFolderResource = await PackagesFolderSourceRepository.GetResourceAsync<DependencyInfoResource>(token);
-                    var packages = new List<SourcePackageDependencyInfo>();
                     foreach (var installedPackage in projectInstalledPackageReferences)
                     {
                         var packageInfo = await packagesFolderResource.ResolvePackage(installedPackage.PackageIdentity, targetFramework, resolutionContext.SourceCacheContext, log, token);
@@ -1266,7 +1261,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.ResolveDependencyStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(resolveTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(resolveTelemetryEvent);
                 stopWatch.Restart();
 
                 if (newListOfInstalledPackages == null)
@@ -1305,7 +1300,7 @@ namespace NuGet.PackageManagement
                     TelemetryConstants.ResolvedActionsStepName,
                     stopWatch.Elapsed.TotalSeconds);
 
-                TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+                NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
                 if (nuGetProjectActions.Count == 0)
                 {
@@ -1475,7 +1470,7 @@ namespace NuGet.PackageManagement
             foreach (var newPackageToInstall in newPackagesToInstall)
             {
                 // find the package match based on identity
-                var sourceDepInfo = availablePackageDependencyInfoWithSourceSet.Where(p => PackageIdentity.Comparer.Equals(p, newPackageToInstall)).SingleOrDefault();
+                var sourceDepInfo = availablePackageDependencyInfoWithSourceSet.SingleOrDefault(p => PackageIdentity.Comparer.Equals(p, newPackageToInstall));
 
                 if (sourceDepInfo == null)
                 {
@@ -1817,7 +1812,7 @@ namespace NuGet.PackageManagement
                 PackageSource source = enabledSource.PackageSource;
                 if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                 {
-                    nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "install", source.Source);
+                    nuGetProjectContext.Log(MessageLevel.Error, Strings.Error_HttpSource_Single, "install", source.Source);
                 }
             }
 
@@ -1828,7 +1823,7 @@ namespace NuGet.PackageManagement
                     var downgradeAllowed = false;
                     var packageTargetsForResolver = new HashSet<PackageIdentity>(oldListOfInstalledPackages, PackageIdentity.Comparer);
                     // Note: resolver needs all the installed packages as targets too. And, metadata should be gathered for the installed packages as well
-                    var installedPackageWithSameId = packageTargetsForResolver.Where(p => p.Id.Equals(packageIdentity.Id, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var installedPackageWithSameId = packageTargetsForResolver.FirstOrDefault(p => p.Id.Equals(packageIdentity.Id, StringComparison.OrdinalIgnoreCase));
                     if (installedPackageWithSameId != null)
                     {
                         packageTargetsForResolver.Remove(installedPackageWithSameId);
@@ -1872,7 +1867,7 @@ namespace NuGet.PackageManagement
                         TelemetryConstants.GatherDependencyStepName,
                         stopWatch.Elapsed.TotalSeconds);
 
-                    TelemetryActivity.EmitTelemetryEvent(gatherTelemetryEvent);
+                    NuGetTelemetryService?.EmitTelemetryEvent(gatherTelemetryEvent);
 
                     stopWatch.Restart();
 
@@ -1941,7 +1936,7 @@ namespace NuGet.PackageManagement
                         TelemetryConstants.ResolveDependencyStepName,
                         stopWatch.Elapsed.TotalSeconds);
 
-                    TelemetryActivity.EmitTelemetryEvent(resolveTelemetryEvent);
+                    NuGetTelemetryService?.EmitTelemetryEvent(resolveTelemetryEvent);
 
                     stopWatch.Restart();
 
@@ -2035,7 +2030,7 @@ namespace NuGet.PackageManagement
                 TelemetryConstants.ResolvedActionsStepName,
                 stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             nuGetProjectContext.Log(MessageLevel.Info, Strings.ResolvedActionsToInstallPackage, packageIdentity);
             return nuGetProjectActions;
@@ -2375,7 +2370,6 @@ namespace NuGet.PackageManagement
             nuGetProjectContext.Log(NuGet.ProjectManagement.MessageLevel.Info, Environment.NewLine);
             nuGetProjectContext.Log(ProjectManagement.MessageLevel.Info, Strings.AttemptingToGatherDependencyInfo, packageIdentity, projectName, packageReferenceTargetFramework);
 
-            var log = new LoggerAdapter(nuGetProjectContext);
             var installedPackageIdentities = (await nuGetProject.GetInstalledPackagesAsync(token)).Select(pr => pr.PackageIdentity);
             var dependencyInfoFromPackagesFolder = await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities,
                 packageReferenceTargetFramework,
@@ -2816,7 +2810,7 @@ namespace NuGet.PackageManagement
                 nuGetProjectContext.OperationId.ToString(),
                 TelemetryConstants.ExecuteActionStepName, stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             if (exceptionInfo != null)
             {
@@ -2964,14 +2958,12 @@ namespace NuGet.PackageManagement
                 }
                 else
                 {
-                    if (!nugetProjectActionsLookup.ContainsKey(buildIntegratedProject.MSBuildProjectPath))
+                    if (!nugetProjectActionsLookup.TryGetValue(buildIntegratedProject.MSBuildProjectPath, out nuGetProjectActions))
                     {
                         throw new ArgumentException(
                             message: string.Format(CultureInfo.CurrentCulture, Strings.UnableToFindPathInLookupOrList, nameof(nugetProjectActionsLookup), buildIntegratedProject.MSBuildProjectPath, nameof(packageIdentity), nameof(primarySources)),
                             paramName: nameof(nugetProjectActionsLookup));
                     }
-
-                    nuGetProjectActions = nugetProjectActionsLookup[buildIntegratedProject.MSBuildProjectPath];
 
                     if (nuGetProjectActions.Length == 0)
                     {
@@ -3072,12 +3064,6 @@ namespace NuGet.PackageManagement
                 var originalPackageSpec = originalNugetPackageSpecLookup[buildIntegratedProject.MSBuildProjectPath];
                 var originalLockFile = lockFileLookup[buildIntegratedProject.MSBuildProjectPath];
                 var sources = nuGetProjectSourceLookup[buildIntegratedProject.MSBuildProjectPath];
-
-                var allFrameworks = updatedPackageSpec
-                    .TargetFrameworks
-                    .Select(t => t.FrameworkName)
-                    .Distinct()
-                    .ToList();
 
                 var restoreResult = restoreResults.Single(r =>
                     string.Equals(
@@ -3192,7 +3178,7 @@ namespace NuGet.PackageManagement
                 nuGetProjectContext.OperationId.ToString(),
                 TelemetryConstants.PreviewBuildIntegratedStepName, stopWatch.Elapsed.TotalSeconds);
 
-            TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+            NuGetTelemetryService?.EmitTelemetryEvent(actionTelemetryEvent);
 
             return result;
         }
@@ -3477,7 +3463,7 @@ namespace NuGet.PackageManagement
                 if (dgSpecForParents.Restore.Count > 0)
                 {
                     // Restore and commit the lock file to disk regardless of the result
-                    // This will restore all parents in a single restore 
+                    // This will restore all parents in a single restore
                     await DependencyGraphRestoreUtility.RestoreAsync(
                         dgSpecForParents,
                         referenceContext,
@@ -3824,8 +3810,6 @@ namespace NuGet.PackageManagement
             Common.ILogger log,
             CancellationToken token)
         {
-            var tasks = new List<Task<NuGetVersion>>();
-
             NuGetFramework framework;
             if (!project.TryGetMetadata<NuGetFramework>(NuGetProjectMetadataKeys.TargetFramework, out framework))
             {

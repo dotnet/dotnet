@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="CannotCreateEmptyPackage">
+        <source>Cannot create a package that has no dependencies nor content.</source>
+        <target state="translated">Ne bağımlığı ne de içeriği olmayan bir paket oluşturulamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyHasInvalidVersion">
+        <source>Dependency '{0}' has an invalid version.</source>
+        <target state="translated">'{0}' bağımlılığının sürümü geçersiz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependenciesDefined">
+        <source>'{0}' already has a dependency defined for '{1}'.</source>
+        <target state="translated">'{0}', zaten '{1}' için tanımlanmış bir bağımlılığa sahip.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundDuplicateFile">
+        <source>Attempted to pack multiple files into the same location(s). The following destinations were used multiple times: {0}</source>
+        <target state="translated">Aynı konumda birden çok dosya paketlenmeye çalışıldı. Şu hedefler birden çok kez kullanıldı: {0}</target>
+        <note>0 - One or more duplicate files</note>
+      </trans-unit>
+      <trans-unit id="IconCannotOpenFile">
+        <source>Cannot open the icon file '{0}': {1}.</source>
+        <target state="translated">'{0}' simge dosyası açılamıyor: {1}.</target>
+        <note>0 - Path to the icon file, 1 - Error message for not opening the icon</note>
+      </trans-unit>
+      <trans-unit id="IconErrorEmpty">
+        <source>The icon file is empty.</source>
+        <target state="translated">Simge dosyası boş.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconInvalidExtension">
+        <source>The 'icon' element '{0}' has an invalid file extension. Valid options are .png, .jpg or .jpeg.</source>
+        <target state="translated">'{0}' 'icon' öğesi geçersiz bir dosya uzantısına sahip. Geçerli seçenekler: .png, .jpg veya .jpeg.</target>
+        <note>0 - Icon entry in the nuspec</note>
+      </trans-unit>
+      <trans-unit id="IconMaxFileSizeExceeded">
+        <source>The icon file size must not exceed 1 megabyte.</source>
+        <target state="translated">Simge dosyası boyutu 1 megabayttan büyük olmamalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconMissingRequiredValue">
+        <source>The element 'icon' cannot be empty.</source>
+        <target state="translated">'icon' öğesi boş olamaz.</target>
+        <note>Please, don't localize icon</note>
+      </trans-unit>
+      <trans-unit id="IconNoFileElement">
+        <source>The icon file '{0}' does not exist in the package.</source>
+        <target state="translated">'{0}' simge dosyası pakette yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconNoFileElementWithHint">
+        <source>The icon file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">'{0}' simge dosyası pakette yok. ('{1}' kullanmak mı istediniz?)</target>
+        <note>0 - the icon file, 1 - hint to guessed icon file</note>
+      </trans-unit>
+      <trans-unit id="IncompatibleSchema">
+        <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
+        <target state="translated">'{0}' şema sürümü NuGet {1} sürümü ile uyumsuz. Lütfen NuGet'i http://go.microsoft.com/fwlink/?LinkId=213942 adresinden en son sürümüne yükseltin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageId">
+        <source>The package ID '{0}' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.</source>
+        <target state="translated">Paket kimliği '{0}' geçersiz karakterler içeriyor. Geçerli paket kimliği örnekleri arasında 'MyPackage' ve 'MyPackage.Sample' yer alır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_DependenciesHasMixedElements">
+        <source>&lt;dependencies&gt; element must not contain both &lt;group&gt; and &lt;dependency&gt; child elements.</source>
+        <target state="translated">&lt;dependencies&gt; öğesi &lt;group&gt; ve &lt;dependency&gt; alt öğelerini içermemelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ExcludeContainsInvalidCharacters">
+        <source>Exclude path '{0}' contains invalid characters.</source>
+        <target state="translated">Dışlama yolu '{0}' geçersiz karakterler içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_IdMaxLengthExceeded">
+        <source>Id must not exceed 100 characters.</source>
+        <target state="translated">Id, 100 karakteri aşmamalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidMinClientVersion">
+        <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
+        <target state="translated">Paket bildirimindeki 'minClientVersion' özniteliği geçersiz değere sahip. Öznitelik, geçerli bir sürüm dizesi olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReference">
+        <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
+        <target state="translated">Geçersiz derleme başvurusu '{0}'. lib dizininde '{0}' adında bir dosya olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReferenceFile">
+        <source>Assembly reference '{0}' contains invalid characters.</source>
+        <target state="translated">Derleme başvurusu '{0}' geçersiz karakterler içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileExtensionIsInvalid">
+        <source>The license file '{0}' has an invalid extension. Valid options are .txt, .md or none.</source>
+        <target state="translated">'{0}' lisans dosyasının uzantısı geçersiz. Geçerli seçenekler .txt, .md veya hiçbiri.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkg">
+        <source>The license file '{0}' does not exist in the package.</source>
+        <target state="translated">'{0}' lisans dosyası pakette yok.</target>
+        <note>0 - the license file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkgWithHint">
+        <source>The license file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">'{0}' lisans dosyası pakette yok. ('{1}' kullanmak mı istediniz?)</target>
+        <note>0 - the license file, 1 - hint to guessed licensed file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseUrlCannotBeUsedWithLicenseMetadata">
+        <source>The licenseUrl and license elements cannot be used together.</source>
+        <target state="translated">licenseUrl ve lisans öğeleri birlikte kullanılamaz.</target>
+        <note>Please don't localize licenseUrl and license</note>
+      </trans-unit>
+      <trans-unit id="Manifest_PropertyValueReadFailure">
+        <source>An error occured while trying to parse the value '{0}' of property '{1}' in the manifest file.</source>
+        <target state="translated">Bildirim dosyasındaki '{1}' özelliğinin '{0}' değeri ayrıştırılırken bir hata oluştu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesHasMixedElements">
+        <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
+        <target state="translated">&lt;references&gt; öğesi hem &lt;group&gt; hem de &lt;reference&gt; alt öğesini içermemelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesIsEmpty">
+        <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
+        <target state="translated">Element package\metadata\references\group, en az bir &lt;reference&gt; alt öğesi içermelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
+        <source>EmitRequireLicenseAcceptance must not be set to false if RequireLicenseAcceptance is set to true.</source>
+        <target state="translated">RequireLicenseAcceptance true olarak ayarlanırsa EmitRequireLicenseAcceptance false olarak ayarlanmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresLicenseUrl">
+        <source>Enabling license acceptance requires a license or a licenseUrl to be specified. The licenseUrl will be deprecated, consider using the license metadata.</source>
+        <target state="translated">Lisans kabulünü etkinleştirmek için lisansın veya licenseUrl öğesinin belirtilmesi gerekir. licenseUrl kullanım dışı bırakılacaktır, lisans meta verilerini kullanmayı deneyin.</target>
+        <note>Please don't localize license and licenseUrl in 'requires a license or a licenseUrl' part.</note>
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredElementMissing">
+        <source>The required element '{0}' is missing from the manifest.</source>
+        <target state="translated">Gerekli '{0}' öğesi bildirimde yer almıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredMetadataMissing">
+        <source>{0} is required.</source>
+        <target state="translated">{0} gereklidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_SourceContainsInvalidCharacters">
+        <source>Source path '{0}' contains invalid characters.</source>
+        <target state="translated">Kaynak yolu '{0}' geçersiz karakterler içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_TargetContainsInvalidCharacters">
+        <source>Target path '{0}' contains invalid characters.</source>
+        <target state="translated">Hedef yolu '{0}' geçersiz karakterler içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_UriCannotBeEmpty">
+        <source>{0} cannot be empty.</source>
+        <target state="translated">{0} boş olamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAuthoring_FileNotFound">
+        <source>File not found: '{0}'.</source>
+        <target state="translated">Dosya bulunamadı: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeCannotOpenFile">
+        <source>Cannot open the readme file '{0}': {1}.</source>
+        <target state="translated">'{0}' benioku dosyası açılamıyor: {1}.</target>
+        <note>0 - Path to the readme file, 1 - Error message for not opening the readme</note>
+      </trans-unit>
+      <trans-unit id="ReadmeErrorEmpty">
+        <source>The readme file '{0}' is empty.</source>
+        <target state="translated">'{0}' benioku dosyası boş.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeFileExtensionIsInvalid">
+        <source>The readme file '{0}' has an invalid extension. It must end in .md.</source>
+        <target state="translated">'{0}' benioku dosyası geçersiz bir uzantıya sahip. Dosya .md ile bitmelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeMissingRequiredValue">
+        <source>The element 'readme' cannot be empty.</source>
+        <target state="translated">'readme' öğesi boş olamaz. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeNoFileElement">
+        <source>The readme file '{0}' does not exist in the package.</source>
+        <target state="translated">'{0}' benioku dosyası pakette yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownSchemaVersion">
+        <source>Unknown schema version '{0}'.</source>
+        <target state="translated">Bilinmeyen şema sürümü '{0}'.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

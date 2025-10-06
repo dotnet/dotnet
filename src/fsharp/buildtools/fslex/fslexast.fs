@@ -123,7 +123,7 @@ let GetSpecificUnicodeChars() =
 
 let GetSingleCharAlphabet: Parser<Set<char>> = fun ctx ->
     if ctx.unicode
-    then Set.ofList [ yield! { char 0 .. char <| numLowUnicodeChars-1 }
+    then Set.ofList [ yield! seq { char 0 .. char <| numLowUnicodeChars-1 }
                       yield! GetSpecificUnicodeChars() ]
     else Set.ofList [ char 0 .. char 255 ]
 
@@ -258,7 +258,7 @@ let LexerStateToNfa ctx (macros: Map<string,_>) (clauses: Clause list) =
         // These cases unwind the difficult cases in the syntax that rely on knowing the
         // entire alphabet.
         //
-        // Note we've delayed the expension of these until we've worked out all the 'special' Unicode characters
+        // Note we've delayed the expansion of these until we've worked out all the 'special' Unicode characters
         // mentioned in the entire lexer spec, i.e. we wait until GetAlphabet returns a reliable and stable answer.
         | Inp (UnicodeCategory uc) ->
             let re = Alt(fun ctx -> 

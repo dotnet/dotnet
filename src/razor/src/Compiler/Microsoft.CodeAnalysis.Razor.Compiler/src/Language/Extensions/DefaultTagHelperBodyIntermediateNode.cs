@@ -29,13 +29,10 @@ public sealed class DefaultTagHelperBodyIntermediateNode : ExtensionIntermediate
             Children.Add(bodyNode.Children[i]);
         }
 
-        for (var i = 0; i < bodyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(bodyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(bodyNode);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public TagMode TagMode { get; set; }
 

@@ -1,17 +1,17 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.Razor.LiveShare.Serialization;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
@@ -20,8 +20,8 @@ public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(t
     {
         // Arrange
         var tagHelpers = ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
-            TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly2").Build());
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper2", "TestAssembly2").Build());
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         var expectedConfiguration = RazorConfiguration.Default;

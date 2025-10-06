@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -16,6 +17,9 @@ using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Moq;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.PackageManagement.UI.Models.Package;
+using NuGet.PackageManagement.UI.Test.Models.Package;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -59,10 +63,15 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _mockNuGetUI.Setup(_ => _.UIContext).Returns(_mockNuGetUIContext.Object);
 
             var searchService = new Mock<INuGetSearchService>();
-            _testViewModel = new PackageItemViewModel(searchService.Object)
+            var identity = new PackageIdentity("package", testVersion);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            // pass PackageSearchMetadataContextInfo to a factory to create the PackageItemViewModel
+            _testViewModel = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "nuget.psm",
-                Version = testVersion,
                 InstalledVersion = testVersion,
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("nuget.psm.test") },
             };
@@ -193,6 +202,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Fact]
         public void SetInstalledOrUpdateButtonIsEnabled_AfterPackageSourceMappingChanges_CanInstallWithPackageSourceMapping()
         {
+            // Arrange
             var packageIDWithSourceMapping = "a";
             var patterns = new Dictionary<string, IReadOnlyList<string>>
             {
@@ -285,11 +295,14 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Fact]
         public void PackageVulnerabilities_WhenMetadataHasVulnerability_IsOrderedBySeverityDescending()
         {
+            // Arrange
+            // Act
             IEnumerable<PackageVulnerabilityMetadataContextInfo> sortedTestVulnerabilities =
                 _testData.TestData.Vulnerabilities
                 .OrderByDescending(v => v.Severity)
                 .Select(v => new PackageVulnerabilityMetadataContextInfo(v.AdvisoryUrl, v.Severity));
 
+            // Assert
             Assert.Equal(sortedTestVulnerabilities, _testInstance.PackageVulnerabilities);
         }
 
@@ -314,15 +327,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
-            var vm = new PackageItemViewModel(searchService.Object)
+            var identity = new PackageIdentity("package", new NuGetVersion("1.0.0"));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "package",
                 InstalledVersion = installedVersion,
-                Version = installedVersion,
             };
 
             // Act
-
             await _testInstance.SetCurrentPackageAsync(
                 vm,
                 ItemFilter.All,
@@ -364,15 +380,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
-            var vm = new PackageItemViewModel(searchService.Object)
+            var identity = new PackageIdentity("package", new NuGetVersion("1.0.0"));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "package",
                 InstalledVersion = installedVersion,
-                Version = installedVersion,
             };
 
             // Act
-
             await _testInstance.SetCurrentPackageAsync(
                 vm,
                 ItemFilter.All,
@@ -412,16 +431,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var identity = new PackageIdentity("package", installedVersion);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
-            var vm = new PackageItemViewModel(searchService.Object)
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "package",
                 InstalledVersion = installedVersion,
-                Version = installedVersion,
             };
 
             // Act
-
             await _testInstance.SetCurrentPackageAsync(
                 vm,
                 tab,
@@ -429,6 +450,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             NuGetVersion selectedVersion = NuGetVersion.Parse(expectedSelectedVersion);
 
+            // Assert
             Assert.Equal(_testInstance.SelectedVersion.Version, selectedVersion);
         }
 
@@ -450,12 +472,15 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(s => s.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
                 It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
-            var vm = new PackageItemViewModel(searchService.Object);
+            var identity = new PackageIdentity("a", installedVersion);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
-            vm.Id = "a";
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel);
+
             vm.Sources = new ReadOnlyCollection<PackageSourceContextInfo>(new List<PackageSourceContextInfo>());
             vm.InstalledVersion = installedVersion;
-            vm.Version = installedVersion;
 
             // Test Setup already selected a package.
             int previousVersionListCount = _testInstance.Versions.Count;
@@ -478,7 +503,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testInstance.PropertyChanged += mockPropertyChangedEventHandler.Object.PropertyChanged;
 
             // Act
-
             //Select a different VM which should clear the Versions list from the previous selection.
             await _testInstance.SetCurrentPackageAsync(
                 vm,
@@ -486,7 +510,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 () => vm);
 
             // Assert
-
             Assert.True(previousVersionListCount > 0, "Test setup did not pre-populate versions list.");
             Assert.True(wasVersionsListCleared, "Versions list was not cleared.");
         }
@@ -625,9 +648,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData("3.0.0", "3.0.0", true, false)]
         [InlineData("3", "3.0.0", true, false)]
         [InlineData("3.0.1-beta", "3.0.1-beta", true, true)]
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -674,15 +697,17 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(packageIdentity, packagePath, embeddedResourceCapability.Object);
 
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("test_source") },
                 InstalledVersion = packageIdentity.Version,
                 AllowedVersions = VersionRange.Parse(allowedVersions),
-                Version = packageIdentity.Version,
             };
 
             await model.SetCurrentPackageAsync(
@@ -730,13 +755,13 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Theory]
         [MemberData(nameof(FloatingVersions_TestCases))]
 
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
             // Assert
             // Updates Tab wont show package if it is latest
             Assert.Equal(isLatest, false);
 
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -783,16 +808,17 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(packageIdentity, packagePath, embeddedResourceCapability.Object);
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("Contoso.A.test") },
                 InstalledVersion = packageIdentity.Version,
                 AllowedVersions = VersionRange.Parse(allowedVersions),
                 IncludePrerelease = includePrerelease,
-                Version = packageIdentity.Version,
             };
 
             await model.SetCurrentPackageAsync(
@@ -855,9 +881,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData("3.0.0", "3.0.0", true, false)]
         [InlineData("3", "3.0.0", true, false)]
         [InlineData("3.0.1-beta", "3.0.1-beta", true, true)]
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -905,16 +931,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var identity = new PackageIdentity("Contoso.A", new NuGetVersion(installedVersion));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("Contoso.A.test") },
                 InstalledVersion = NuGetVersion.Parse(installedVersion),
                 AllowedVersions = VersionRange.Parse(allowedVersions),
                 IncludePrerelease = includePrerelease,
-                Version = NuGetVersion.Parse(installedVersion),
             };
 
             await model.SetCurrentPackageAsync(
@@ -1065,9 +1093,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3,)", "3", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0,)", "3.0", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0.0,)", "3.0.0", true, false)]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1115,13 +1143,17 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
+            var identity = new PackageIdentity("Contoso.A", new NuGetVersion(installedVersion));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("Contoso.A.test") },
                 InstalledVersion = NuGetVersion.Parse(installedVersion),
-                Version = NuGetVersion.Parse(installedVersion),
             };
 
             await model.SetCurrentPackageAsync(
@@ -1168,9 +1200,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3,)", "3", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0,)", "3.0", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0.0,)", "3.0.0", true, false)]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1217,15 +1249,16 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(packageIdentity, packagePath, embeddedResourceCapability.Object);
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("Contoso.A.test") },
                 InstalledVersion = packageIdentity.Version,
                 AllowedVersions = allowedVersions != null ? VersionRange.Parse(allowedVersions) : null,
-                Version = packageIdentity.Version,
             };
 
             await model.SetCurrentPackageAsync(
@@ -1271,9 +1304,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
         [Theory]
         [MemberData(nameof(FloatingVersions_TestCases_NonPackageReferenceProject))]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1321,14 +1354,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
+            var identity = new PackageIdentity("Contoso.A", new NuGetVersion(installedVersion));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
             // Act
-            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object)
+            PackageItemViewModel vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "Contoso.A",
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("Contoso.A.test") },
                 InstalledVersion = NuGetVersion.Parse(installedVersion),
                 AllowedVersions = allowedVersions != null ? VersionRange.Parse(allowedVersions) : null,
-                Version = NuGetVersion.Parse(installedVersion),
             };
 
             await model.SetCurrentPackageAsync(
@@ -1472,15 +1509,18 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
-            var vm = new PackageItemViewModel(searchService.Object)
+            var identity = new PackageIdentity("package", installedVersion);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
+
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "package",
                 InstalledVersion = installedVersion,
-                Version = installedVersion,
             };
 
             // Act
-
             await _testInstance.SetCurrentPackageAsync(
                 vm,
                 ItemFilter.All,
@@ -1524,12 +1564,14 @@ namespace NuGet.PackageManagement.UI.Test.Models
             var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
+            var identity = new PackageIdentity("package", installedVersion);
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
-            var vm = new PackageItemViewModel(searchService.Object)
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
             {
-                Id = "package",
                 InstalledVersion = installedVersion,
-                Version = installedVersion,
             };
 
             // Act
@@ -1540,6 +1582,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             NuGetVersion selectedVersion = NuGetVersion.Parse(expectedSelectedVersion);
 
+            // Assert
             Assert.Equal(_testInstance.SelectedVersion.Version, selectedVersion);
         }
 
@@ -1561,12 +1604,14 @@ namespace NuGet.PackageManagement.UI.Test.Models
             searchService.Setup(s => s.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
                 It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
-            var vm = new PackageItemViewModel(searchService.Object);
+            var identity = new PackageIdentity("a", new NuGetVersion(installedVersion));
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var packagePath = "C:\\TestPackage";
 
-            vm.Id = "a";
+            var packageModel = PackageModelCreationTestHelper.CreateLocalPackageModel(identity, packagePath, embeddedResourceCapability.Object);
+            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel);
             vm.Sources = new ReadOnlyCollection<PackageSourceContextInfo>(new List<PackageSourceContextInfo>());
             vm.InstalledVersion = installedVersion;
-            vm.Version = installedVersion;
 
             // Test Setup already selected a package.
             int previousVersionListCount = _testInstance.Versions.Count;
@@ -1589,7 +1634,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testInstance.PropertyChanged += mockPropertyChangedEventHandler.Object.PropertyChanged;
 
             // Act
-
             //Select a different VM which should clear the Versions list from the previous selection.
             await _testInstance.SetCurrentPackageAsync(
                 vm,
@@ -1597,7 +1641,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 () => vm);
 
             // Assert
-
             Assert.True(previousVersionListCount > 0, "Test setup did not pre-populate versions list.");
             Assert.True(wasVersionsListCleared, "Versions list was not cleared.");
         }
@@ -1605,6 +1648,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Fact]
         public void SetInstalledOrUpdateButtonIsEnabled_AfterPackageSourceMappingChanges_CanInstallWithPackageSourceMapping()
         {
+            // Arrange
             var packageIDWithSourceMapping = "a";
             var patterns = new Dictionary<string, IReadOnlyList<string>>
             {
@@ -1619,6 +1663,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageInstallationInfo firstProject = _testInstance.Projects.First();
             firstProject.IsSelected = true;
             firstProject.InstalledVersion = version;
+            firstProject.PackageLevel = PackageLevel.TopLevel;
 
             // Explicitly trigger PropertyChanged event.
             _testInstance.SetInstalledOrUpdateButtonIsEnabled();
@@ -1728,6 +1773,55 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanUninstall_RaisedPropertyChanged,
                 nameof(PackageSolutionDetailControlModel.CanUninstall) + " should have raised a PropertyChanged when calling "
                 + nameof(DetailControlModel.SetInstalledOrUpdateButtonIsEnabled) + " and the value should become true.");
+        }
+
+
+        [Fact]
+        public async Task SetCurrentPackageAsync_WithKnownOwnerViewModels_PropagatedToDetailedPackageMetadata()
+        {
+            // Arrange
+            NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
+            PackageIdentity packageIdentity = new PackageIdentity("package", installedVersion);
+
+            var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
+
+            ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = new List<KnownOwnerViewModel>(capacity: 3)
+            {
+                new KnownOwnerViewModel(new KnownOwner("a", new Uri("https://dev.nugettest.org/profiles/a"))),
+                new KnownOwnerViewModel(new KnownOwner("b", new Uri("https://dev.nugettest.org/profiles/b"))),
+                new KnownOwnerViewModel(new KnownOwner("c", new Uri("https://dev.nugettest.org/profiles/c")))
+            }.ToImmutableList();
+
+            var packageSearchMetadata = PackageSearchMetadataContextInfo.Create(_testData.TestData);
+
+            var mockSearchService = new Mock<INuGetSearchService>();
+            mockSearchService.Setup(s => s.GetPackageMetadataAsync(packageIdentity,
+                It.IsAny<ReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((packageSearchMetadata, It.IsAny<PackageDeprecationMetadataContextInfo>()));
+
+            var identity = new PackageIdentity("package", installedVersion);
+            var vulnerableCapability = new Mock<IVulnerableCapable>();
+            var embeddedResourceCapability = new Mock<IEmbeddedResourcesCapable>();
+            var deprecationCapability = new Mock<IDeprecationCapable>();
+
+            var packageModel = PackageModelCreationTestHelper.CreateRemotePackageModel(identity, vulnerableCapability.Object, deprecationCapability.Object, embeddedResourceCapability.Object);
+            var packageItemViewModel = new PackageItemViewModel(mockSearchService.Object, packageModel: packageModel)
+            {
+                InstalledVersion = installedVersion,
+                KnownOwnerViewModels = knownOwnerViewModels
+            };
+
+            // Act
+            await _testInstance.SetCurrentPackageAsync(
+                packageItemViewModel,
+                ItemFilter.All,
+                () => packageItemViewModel);
+
+            // Assert
+            var resultKnownOwnerViewModels = _testInstance.PackageMetadata.KnownOwnerViewModels;
+            resultKnownOwnerViewModels.Should().NotBeNull();
+            resultKnownOwnerViewModels.Count.Should().Be(3);
+            resultKnownOwnerViewModels.Should().ContainInOrder(knownOwnerViewModels);
         }
     }
 

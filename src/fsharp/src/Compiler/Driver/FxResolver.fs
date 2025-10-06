@@ -69,7 +69,7 @@ type internal FxResolver
                 | NonNull message -> lock errorslock (fun () -> errorsList.Add(message))
 
             let psi = ProcessStartInfo()
-            psi.FileName <- pathToExe
+            psi.FileName <- !!pathToExe
 
             if workingDir.IsSome then
                 psi.WorkingDirectory <- workingDir.Value
@@ -91,20 +91,16 @@ type internal FxResolver
                 p.BeginOutputReadLine()
                 p.BeginErrorReadLine()
 
-                if not (p.WaitForExit(timeout)) then
+                if not (p.WaitForExit(timeout: int)) then
                     // Timed out resolving throw a diagnostic.
                     raise (TimeoutException(sprintf "Timeout executing command '%s' '%s'" psi.FileName psi.Arguments))
                 else
                     p.WaitForExit()
 #if DEBUG
             if workingDir.IsSome then
-                FileSystem
-                    .OpenFileForWriteShim(Path.Combine(workingDir.Value, "StandardOutput.txt"))
-                    .WriteAllLines(outputList)
+                FileSystem.OpenFileForWriteShim(Path.Combine(workingDir.Value, "StandardOutput.txt")).WriteAllLines(outputList)
 
-                FileSystem
-                    .OpenFileForWriteShim(Path.Combine(workingDir.Value, "StandardError.txt"))
-                    .WriteAllLines(errorsList)
+                FileSystem.OpenFileForWriteShim(Path.Combine(workingDir.Value, "StandardError.txt")).WriteAllLines(errorsList)
 #endif
             p.ExitCode, outputList.ToArray(), errorsList.ToArray()
         else
@@ -213,7 +209,7 @@ type internal FxResolver
         if String.IsNullOrWhiteSpace fileName then
             getFSharpCompilerLocation ()
         else
-            fileName
+            !!fileName
 
     // Compute the framework implementation directory, either of the selected SDK or the currently running process as a backup
     // F# interactive/reflective scenarios use the implementation directory of the currently running process
@@ -284,7 +280,7 @@ type internal FxResolver
             try
                 let asm = typeof<System.ValueTuple<int, int>>.Assembly
 
-                if asm.FullName.StartsWith("System.ValueTuple", StringComparison.OrdinalIgnoreCase) then
+                if (!!asm.FullName).StartsWith("System.ValueTuple", StringComparison.OrdinalIgnoreCase) then
                     Some asm.Location
                 else
                     let valueTuplePath =
@@ -318,7 +314,7 @@ type internal FxResolver
                     version, ""
 
             match Version.TryParse(ver) with
-            | true, v -> v, suffix
+            | true, v -> !!v, suffix
             | false, _ -> zeroVersion, suffix
 
         let compareVersion (v1: Version * string) (v2: Version * string) =
@@ -371,7 +367,7 @@ type internal FxResolver
                     let di = tryGetVersionedSubDirectory "packs/Microsoft.NETCore.App.Ref" version
 
                     match di with
-                    | Some di -> (Some(di.Name), Some(di.Parent.FullName)), warnings
+                    | Some di -> (Some(di.Name), Some((!!di.Parent).FullName)), warnings
                     | None -> (None, None), warnings
             with e ->
                 let warn =
@@ -416,7 +412,7 @@ type internal FxResolver
 
         match runningTfmOpt with
         | Some tfm -> tfm
-        | _ -> if isRunningOnCoreClr then "net8.0" else "net472"
+        | _ -> if isRunningOnCoreClr then "net10.0" else "net472"
 
     let trySdkRefsPackDirectory =
         lazy
@@ -495,7 +491,7 @@ type internal FxResolver
                 try
                     if FileSystem.FileExistsShim(reference) then
                         // Reference is a path to a file on disk
-                        Path.GetFileNameWithoutExtension(reference), reference
+                        !!Path.GetFileNameWithoutExtension(reference), reference
                     else
                         // Reference is a SimpleAssembly name
                         reference, frameworkPathFromSimpleName reference
@@ -936,7 +932,7 @@ type internal FxResolver
                                     if useFsiAuxLib then
                                         getFsiLibraryImplementationReference ()
                                 ]
-                                |> List.filter (Path.GetFileNameWithoutExtension >> systemAssemblies.Contains)
+                                |> List.filter (Path.GetFileNameWithoutExtension >> (!!) >> systemAssemblies.Contains)
 
                             sdkReferences, false
                         with e ->

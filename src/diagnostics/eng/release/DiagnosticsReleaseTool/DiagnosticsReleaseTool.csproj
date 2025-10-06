@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Condition="'$(DotNetBuildSourceOnly)' != 'true'" Project="$(RepositoryEngineeringDir)Analyzers.props" />
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>$(NetCoreAppMinTargetFramework)</TargetFramework>
     <NoWarn>$(NoWarn);CA2007</NoWarn>
   </PropertyGroup>
 
@@ -14,23 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsLoggingAbstractionsVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="$(MicrosoftExtensionsLoggingConfigurationVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
 
-    <PackageReference Include="Azure.Storage.Blobs" Version="[12.13.0]" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20468.1" />
+    <PackageReference Include="Azure.Core" Version="$(AzureCoreVersion)" />
+    <PackageReference Include="Azure.Identity" Version="$(AzureIdentityVersion)" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="$(AzureStorageBlobsVersion)" />
+    <PackageReference Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
   </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Remove="E:\NuGetCaches\.nuget\packages\microsoft.dotnet.codeanalysis\8.0.0-beta.23120.1\build\..\content\PinvokeAnalyzer_Win32Apis.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Remove="E:\NuGetCaches\.nuget\packages\microsoft.dotnet.codeanalysis\8.0.0-beta.23120.1\build\..\content\PinvokeAnalyzer_Win32Apis.txt" />
-  </ItemGroup>
-
 </Project>

@@ -1493,6 +1493,9 @@ namespace Mono.Cecil {
 			if (type.HasNestedTypes)
 				AddNestedTypes (type);
 
+			if (symbol_writer != null && type.HasCustomDebugInformations)
+				symbol_writer.Write (type);
+
 			WindowsRuntimeProjections.ApplyProjection (type, treatment);
 		}
 
@@ -2013,6 +2016,17 @@ namespace Mono.Cecil {
 					declaration.Action,
 					MakeCodedRID (owner, CodedIndex.HasDeclSecurity),
 					GetBlobIndex (GetSecurityDeclarationSignature (declaration))));
+			}
+		}
+
+		internal void AddDocuments (ModuleDefinition module)
+		{
+			if (module.HasDocuments)
+			{
+				var documents = module.Documents;
+				for (int i = 0; i < documents.Count; i++) {
+					GetDocumentToken (documents[i]);
+				}
 			}
 		}
 

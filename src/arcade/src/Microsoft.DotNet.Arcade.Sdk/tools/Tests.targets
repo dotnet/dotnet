@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project InitialTargets="ErrorForMissingTestRunner">
+<Project>
 
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <AutoGenerateBindingRedirects Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">true</AutoGenerateBindingRedirects>
@@ -23,8 +23,7 @@
     <TestRunnerTargets Condition="!Exists($(TestRunnerTargets))">$(MSBuildThisFileDirectory)$(TestRunnerName)\$(TestRunnerName).targets</TestRunnerTargets>
   </PropertyGroup>
 
-  <Target Name="ErrorForMissingTestRunner"
-          Condition="'$(IsTestProject)' == 'true' AND '$(TestRunnerName)' != ''">
+  <Target Name="ErrorForMissingTestRunner" Condition="'$(IsTestProject)' == 'true' AND '$(TestRunnerName)' != ''">
     <Error Condition="!Exists($(TestRunnerTargets))" Text="Test runner $(TestRunnerName) is invalid."/>
   </Target>
 
@@ -33,8 +32,8 @@
     <TestArchitectures Condition="'$(PlatformTarget)' == '' or '$(PlatformTarget)' == 'AnyCpu'">x64</TestArchitectures>
   </PropertyGroup>
 
-  <Target Name="Test" DependsOnTargets="$(_GetTestsToRunTarget);RunTests" Condition="'$(IsUnitTestProject)' == 'true' or '$(IsPerformanceTestProject)' == 'true'" />
-  <Target Name="IntegrationTest" DependsOnTargets="$(_GetTestsToRunTarget);RunTests" Condition="'$(IsIntegrationTestProject)' == 'true'" />
+  <Target Name="Test" DependsOnTargets="ErrorForMissingTestRunner;$(_GetTestsToRunTarget);RunTests" Condition="'$(IsUnitTestProject)' == 'true' or '$(IsPerformanceTestProject)' == 'true'" />
+  <Target Name="IntegrationTest" DependsOnTargets="ErrorForMissingTestRunner;$(_GetTestsToRunTarget);RunTests" Condition="'$(IsIntegrationTestProject)' == 'true'" />
 
   <ItemGroup>
     <_TestArchitectureItems Include="$(TestArchitectures)" />
@@ -44,6 +43,7 @@
   <Target Name="_InnerGetTestsToRun"
           Outputs="%(_TestArchitectureItems.Identity)"
           Returns="@(TestToRun)"
+          DependsOnTargets="ComputeRunArguments"
           Condition="'$(TestRuntime)' != '' and '$(SkipTests)' != 'true' and
                      ('$(TestTargetFrameworks)' == '' or $([System.String]::new(';$(TestTargetFrameworks);').Contains(';$(TargetFramework);')))">
 
@@ -69,7 +69,10 @@
         <ResultsTrxPath>$(ArtifactsTestResultsDir)$(_ResultFileNameNoExt).trx</ResultsTrxPath>
         <ResultsHtmlPath>$(ArtifactsTestResultsDir)$(_ResultFileNameNoExt).html</ResultsHtmlPath>
         <ResultsStdOutPath>$(TestResultsLogDir)$(_ResultFileNameNoExt).log</ResultsStdOutPath>
+        <TestRunSettingsFile>$(TestRunSettingsFile)</TestRunSettingsFile>
         <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments)</TestRunnerAdditionalArguments>
+        <RunArguments>$(RunArguments)</RunArguments>
+        <RunCommand>$(RunCommand)</RunCommand>
       </TestToRun>
     </ItemGroup>
   </Target>

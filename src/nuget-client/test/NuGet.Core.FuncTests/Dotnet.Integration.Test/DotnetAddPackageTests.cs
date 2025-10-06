@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -13,6 +14,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.XPlat.FuncTest;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
 {
@@ -20,10 +22,12 @@ namespace Dotnet.Integration.Test
     public class DotnetAddPackageTests
     {
         private readonly DotnetIntegrationTestFixture _fixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public DotnetAddPackageTests(DotnetIntegrationTestFixture fixture)
+        public DotnetAddPackageTests(DotnetIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _fixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [Fact]
@@ -53,7 +57,7 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{projectName}.csproj");
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath}");
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 // Make sure source is replaced in generated dgSpec file.
@@ -62,7 +66,7 @@ namespace Dotnet.Integration.Test
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V2.Version));
@@ -95,7 +99,7 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{projectName}.csproj");
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath}");
+                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath}", testOutputHelper: _testOutputHelper);
             }
         }
 
@@ -126,7 +130,7 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{projectName}.csproj");
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath} -v {packageX_V1.Version}");
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath} -v {packageX_V1.Version}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 // Make sure source is replaced in generated dgSpec file.
@@ -135,7 +139,7 @@ namespace Dotnet.Integration.Test
                 Assert.Equal(sources.Count(), 1);
                 Assert.Equal(sources[0], customSourcePath);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageX);
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V1.Version));
@@ -168,7 +172,7 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{projectName}.csproj");
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath} -v {packageX_V2.Version}");
+                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(projectDirectory, $"add {projectFilePath} package {packageX} -s {sourceRelativePath} -v {packageX_V2.Version}", testOutputHelper: _testOutputHelper);
             }
         }
 
@@ -197,7 +201,7 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{projectName}.csproj");
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageY}");
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(projectDirectory, $"add {projectFilePath} package {packageY}", testOutputHelper: _testOutputHelper);
 
                 // Assert
 
@@ -207,7 +211,7 @@ namespace Dotnet.Integration.Test
                 packageSpec.RestoreMetadata.Sources.Select(s => s.Name).Should().ContainSingle()
                     .Which.Should().Be(pathContext.PackageSource);
 
-                var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
+                var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == packageY);
                 // Should resolve to highest available version.
@@ -268,7 +272,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
@@ -331,7 +335,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
@@ -396,7 +400,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {pathContext.PackageSource}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {pathContext.PackageSource}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {pathContext.PackageSource}", result.AllOutput);
@@ -460,7 +464,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {packageSource2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {packageSource2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {packageSource2}", result.AllOutput);
@@ -528,7 +532,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
@@ -591,7 +595,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {packageSource2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version} -s {packageSource2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains($"Installed {packageX} {version} from {packageSource2}", result.AllOutput);
@@ -623,7 +627,8 @@ namespace Dotnet.Integration.Test
 
                 CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(
                     projectDirectory,
-                    $"add {projectFilePath} package {package.Id} -s {packageSourceDirectory.FullName} -v {package.Version}");
+                    $"add {projectFilePath} package {package.Id} -s {packageSourceDirectory.FullName} -v {package.Version}",
+                    testOutputHelper: _testOutputHelper);
 
                 if (RuntimeEnvironmentHelper.IsWindows)
                 {
@@ -649,8 +654,7 @@ namespace Dotnet.Integration.Test
                 }
 
                 LockFileTarget ridlessTarget = projectA.AssetsFile.Targets
-                    .Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier))
-                    .Single();
+                    .Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
 
                 ridlessTarget.Libraries.Should().Contain(e => e.Type == "package" && e.Name == package.Id);
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(package.Version));
@@ -693,7 +697,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -703,7 +712,7 @@ namespace Dotnet.Integration.Test
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(@$"<ItemGroup>
@@ -736,7 +745,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -746,7 +760,7 @@ namespace Dotnet.Integration.Test
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version1}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version1}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(@$"<ItemGroup>
@@ -777,10 +791,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -790,7 +808,7 @@ namespace Dotnet.Integration.Test
 
             //Act
             //By default the package version used will be 2.0.0 since no version CLI argument is passed in the CLI command.
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
 
             // Assert
             // Checking that the PackageVersion is not updated.
@@ -824,10 +842,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -836,7 +858,7 @@ namespace Dotnet.Integration.Test
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(@$"<PackageVersion Include=""X"" Version=""2.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
@@ -870,6 +892,9 @@ namespace Dotnet.Integration.Test
                     packageX100);
 
             var propsFile = @$"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include=""SomeFile"" />
   </ItemGroup>
@@ -885,7 +910,7 @@ namespace Dotnet.Integration.Test
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version}", testOutputHelper: _testOutputHelper);
 
             // Assert
             var propsFileFromDisk = File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"));
@@ -924,7 +949,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -936,7 +966,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -946,7 +976,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
@@ -981,7 +1011,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -993,7 +1028,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1003,7 +1038,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
@@ -1013,6 +1048,73 @@ namespace Dotnet.Integration.Test
             Assert.Contains(@$"<ItemGroup>
         <PackageReference Include=""X"" Version=""1.0.0""/>
     </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_NoPackageReference_NoVersionOverride_WithPackageVersion_NoVersionCLI_Success()
+        {
+            // Arrange
+
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net7.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net7.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    </ItemGroup>
+</Project>";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+
+            string projectContent =
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>
+        <TargetFramework>{packageFrameworks}</TargetFramework>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            //Act
+
+            var result = _fixture.RunDotnetExpectSuccess(
+                projectADirectory,
+                $"add {projectA.ProjectPath} package {packageX}",
+                testOutputHelper: _testOutputHelper
+            );
+
+            // Assert
+
+            // Check the csproj has reference to X without version
+            var csprojFromDisk = File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj"));
+            Assert.Contains(@"<PackageReference Include=""X"" />", csprojFromDisk);
+
+            // Check package X is restored at version 1.0.0
+            var assetsFromDisk = File.ReadAllText(Path.Combine(projectADirectory, "obj", "project.assets.json"));
+            Assert.Contains(@"""X/1.0.0"": {", assetsFromDisk);
         }
 
         [Fact]
@@ -1039,10 +1141,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-    <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
-    </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    <ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1054,7 +1160,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1064,11 +1170,13 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
-            Assert.Contains(@$"<PackageVersion Include=""{packageX}"" Version=""{version1}"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
             Assert.Contains(@$"<ItemGroup>
         <PackageReference Include=""X"" />
     </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
@@ -1098,10 +1206,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1113,7 +1225,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-    <PropertyGroup>                   
+    <PropertyGroup>
 	    <TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1123,7 +1235,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(@$"<ItemGroup>
@@ -1154,7 +1266,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1166,7 +1283,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1176,7 +1293,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
@@ -1211,7 +1328,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1223,7 +1345,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1233,7 +1355,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain(@$"<ItemGroup>
@@ -1268,10 +1390,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1283,7 +1409,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1293,13 +1419,15 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
-            Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
             Assert.Contains(@$"<ItemGroup>
-        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0"" />
     </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
         }
 
@@ -1327,10 +1455,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1342,7 +1474,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1352,7 +1484,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain(@$"<ItemGroup>
@@ -1387,10 +1519,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1402,7 +1538,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 	<TargetFramework>{packageFrameworks}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -1412,7 +1548,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(@$"<ItemGroup>
@@ -1447,11 +1583,15 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-    <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
-  </ItemGroup>
-</Project>";
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                    <ItemGroup>
+                                    <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+                                    </ItemGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1463,14 +1603,14 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
     @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-    <PropertyGroup>                   
+    <PropertyGroup>
 	    <TargetFramework>{packageFrameworks}</TargetFramework>
 	    </PropertyGroup>
     </Project>";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains("error: Package reference for package 'X' defined in incorrect location, PackageReference should be defined in project file.", result.Output);
@@ -1503,7 +1643,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1515,7 +1660,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
     @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-    <PropertyGroup>                   
+    <PropertyGroup>
 	    <TargetFramework>{packageFrameworks}</TargetFramework>
 	    </PropertyGroup>
         <ItemGroup>
@@ -1526,7 +1671,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains(" PackageVersion for package 'X' defined in incorrect location, PackageVersion should be defined in Directory.Package.props.", result.Output);
@@ -1560,7 +1705,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1572,7 +1722,7 @@ namespace Dotnet.Integration.Test
             // Arrange project file
             string projectContent =
     @$"<Project  Sdk=""Microsoft.NET.Sdk"">
-    <PropertyGroup>                   
+    <PropertyGroup>
 	    <TargetFramework>{packageFrameworks}</TargetFramework>
         <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
 	    </PropertyGroup>
@@ -1583,7 +1733,7 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}");
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.Contains("The package reference X specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.", result.Output);

@@ -4,7 +4,7 @@
             MarkupTagHelperStartTag - [0..23)::23 - [<p @DateTime.Now="btn">] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[p];
-                MarkupMiscAttributeContent - [2..22)::20
+                MarkupMiscAttributeContent - [2..16)::14
                     MarkupTextLiteral - [2..3)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
                     CSharpCodeBlock - [3..16)::13
@@ -17,6 +17,7 @@
                                         Identifier;[DateTime];
                                         Dot;[.];
                                         Identifier;[Now];
+                MarkupMiscAttributeContent - [16..22)::6
                     MarkupTextLiteral - [16..22)::6 - [="btn"] - Gen<Markup>
                         Equals;[=];
                         DoubleQuote;["];

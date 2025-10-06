@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.CodeAnalysis.Text;
@@ -17,6 +17,16 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
         EndCharacter = endCharacter;
         Modifier = modifier;
         FromRazor = fromRazor;
+    }
+
+    public SemanticRange(int kind, LinePositionSpan range, int modifier, bool fromRazor)
+        : this(kind, range.Start, range.End, modifier, fromRazor)
+    {
+    }
+
+    public SemanticRange(int kind, LinePosition start, LinePosition end, int modifier, bool fromRazor)
+        : this(kind, start.Line, start.Character, end.Line, end.Character, modifier, fromRazor)
+    {
     }
 
     public int Kind { get; }

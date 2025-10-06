@@ -30,9 +30,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task InstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -52,9 +49,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UninstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -75,9 +69,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task UpdateUnsignedToSignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var packageVersion09 = "0.9.0";
             var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
@@ -100,9 +91,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task WithExpiredAuthorCertificateAtCountersigning_InstallFromPMCForPC_WarnAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var timestampService = await Fixture.GetDefaultTrustedTimestampServiceAsync();
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
@@ -145,9 +133,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public async Task Tampered_InstallFromPMCForPC_FailAsync(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))

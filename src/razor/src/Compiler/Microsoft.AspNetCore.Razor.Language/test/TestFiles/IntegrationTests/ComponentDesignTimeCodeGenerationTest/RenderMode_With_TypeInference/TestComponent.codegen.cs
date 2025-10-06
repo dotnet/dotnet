@@ -56,7 +56,7 @@ where TRenderMode : Microsoft.AspNetCore.Components.IComponentRenderMode
             , -1, 
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                              Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                                              Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden

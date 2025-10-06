@@ -24,11 +24,15 @@ type public TypeTwo internal () = class end
 type public TypeThree private () = class end
 type public TypeFour () = class end
 """
+        |> withName "PublicTypeConstructors"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeConstructors.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 """  .class auto ansi serializable nested public TypeOne
          extends [runtime]System.Object
@@ -92,11 +96,15 @@ type private TypeOne public () = class end
 type private TypeTwo internal () = class end
 type private TypeThree private () = class end
 type private TypeFour () = class end"""
+        |> withName "PrivateTypeConstructors"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeConstructors.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 """
   .class auto ansi serializable nested private TypeOne
@@ -256,11 +264,15 @@ type public TestType () =
     member private _.PrivateMethod() = ()
     member _.DefaultMethod() = ()
 """
+        |> withName "PublicTypeInstanceMethods"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeInstanceMethods.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig instance void PublicMethod() cil managed"
                 ".method assembly hidebysig instance void InternalMethod() cil managed"
@@ -288,11 +300,15 @@ type public TestType () =
     member private _.PrivateMethod() = ()
     member _.DefaultMethod() = ()
 """
+        |> withName "PrivateTypeInstanceMethods"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeInstanceMethods.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig instance void PublicMethod() cil managed"
                 ".method assembly hidebysig instance void InternalMethod() cil managed"
@@ -321,11 +337,15 @@ type public TestType () =
     member val private PrivateProperty = 0 with get, set
     member val DefaultProperty = 0 with get, set
 """
+        |> withName "PublicTypeInstanceProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeInstanceProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32  get_PublicProperty() cil managed"
                 ".method public hidebysig specialname instance void  set_PublicProperty(int32 v) cil managed"
@@ -362,11 +382,15 @@ type public TestType () =
     member val private PrivateProperty = 0 with get, set
     member val DefaultProperty = 0 with get, set
 """
+        |> withName "PrivateTypeInstanceMixedProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeInstanceMixedProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32  get_PublicProperty() cil managed"
                 ".method public hidebysig specialname instance void  set_PublicProperty(int32 v) cil managed"
@@ -411,11 +435,15 @@ type public TestType () =
     member _.MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
+        |> withName "PublicTypeInstanceMixedProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeInstanceMixedProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32  get_MixedPropertyOne() cil managed"
                 ".method assembly hidebysig specialname instance void  set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -467,7 +495,6 @@ type public TestType () =
                 ".method public hidebysig specialname instance void  set_MixedPropertyEleven(int32 _arg11) cil managed"
                 ".method assembly hidebysig specialname instance int32  get_MixedPropertyTwelve() cil managed"
                 ".method public hidebysig specialname instance void  set_MixedPropertyTwelve(int32 _arg12) cil managed"
-
             ]
         |> shouldSucceed
 
@@ -492,11 +519,15 @@ type private TestType () =
     member _.MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
+        |> withName "PrivateTypeInstanceMixedProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeInstanceMixedProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public hidebysig specialname instance int32  get_MixedPropertyOne() cil managed"
                 ".method assembly hidebysig specialname instance void  set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -565,11 +596,15 @@ type public TestType () =
     static member private PrivateMethod() = ()
     static member DefaultMethod() = ()
 """
+        |> withName "PublicTypeStaticMethods"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeStaticMethods.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
@@ -598,17 +633,20 @@ type private TestType () =
     static member private PrivateMethod() = ()
     static member DefaultMethod() = ()
 """
+        |> withName "PrivateTypeStaticMethods"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeStaticMethods.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
                 ".method private static void  PrivateMethod() cil managed"
                 ".method public static void  DefaultMethod() cil managed"
-
             else
                 ".method assembly static void  PublicMethod() cil managed"
                 ".method assembly static void  InternalMethod() cil managed"
@@ -630,11 +668,15 @@ type public TestType () =
     static member val internal InternalProperty = 0 with get, set
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
+        |> withName "PublicTypeStaticProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeStaticProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_PublicProperty() cil managed"
                 ".method public specialname static void set_PublicProperty(int32 v) cil managed"
@@ -669,11 +711,15 @@ type private TestType () =
     static member val internal InternalProperty = 0 with get, set
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
+        |> withName "PrivateTypeStaticProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeStaticProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_PublicProperty() cil managed"
                 ".method public specialname static void set_PublicProperty(int32 v) cil managed"
@@ -717,11 +763,15 @@ type public TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
+        |> withName "PublicTypeStaticMixedProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PublicTypeStaticMixedProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_MixedPropertyOne() cil managed"
                 ".method assembly specialname static void set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -798,11 +848,15 @@ type private TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
+        |> withName "PrivateTypeStaticMixedProperties"
         |> asLibrary
-        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
-        |> withILContains [
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*PrivateTypeStaticMixedProperties.dll Verified."
+            ]
+        |> verifyILContains [
             if realSig then
                 ".method public specialname static int32 get_MixedPropertyOne() cil managed"
                 ".method assembly specialname static void set_MixedPropertyOne(int32 _arg1) cil managed"
@@ -858,12 +912,12 @@ type private TestType () =
             ]
         |> shouldSucceed
 
-    [<InlineData(true, "private")>]        // RealSig
-    [<InlineData(false, "private")>]       // Regular
+    [<InlineData(true, "private")>]         // RealSig
+    [<InlineData(false, "private")>]        // Regular
     [<InlineData(true, "internal")>]        // RealSig
     [<InlineData(false, "internal")>]       // Regular
-    [<InlineData(true, "public")>]        // RealSig
-    [<InlineData(false, "public")>]       // Regular
+    [<InlineData(true, "public")>]          // RealSig
+    [<InlineData(false, "public")>]         // Regular
     [<Theory>]
     let ``lazy operation - member with various visibilities`` (realSig, scope) =
         FSharp $"""
@@ -872,9 +926,13 @@ module internal SR =
     let getLazyThing () = lazyThing.Force()
 SR.getLazyThing ()
 """
+        |> withName "LazyOperationMemberWithVariousVisibilities"
         |> asExe
-        |> withLangVersionPreview
         |> withOptimize
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
+        |> verifyPEFileWithSystemDlls
+        |> withOutputContainsAllInOrderWithWildcards [
+            "All Classes and Methods in*LazyOperationMemberWithVariousVisibilities.exe Verified."
+            ]

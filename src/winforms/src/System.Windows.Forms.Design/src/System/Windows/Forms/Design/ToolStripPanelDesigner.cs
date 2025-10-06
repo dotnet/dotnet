@@ -1,14 +1,14 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Design;
-using System.Windows.Forms.Design.Behavior;
+using System.Drawing.Drawing2D;
 using System.Runtime.Versioning;
+using System.Windows.Forms.Design.Behavior;
 
 namespace System.Windows.Forms.Design;
 
@@ -88,7 +88,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
     public override ToolStripPanel Control => (ToolStripPanel)Component;
 
     // ToolStripPanels if Inherited ACT as Readonly.
-    protected override InheritanceAttribute InheritanceAttribute
+    protected override InheritanceAttribute? InheritanceAttribute
     {
         get => Control.Parent is ToolStripContainer && (base.InheritanceAttribute == InheritanceAttribute.Inherited)
                ? InheritanceAttribute.InheritedReadOnly
@@ -111,7 +111,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
 
     /// <summary>
     ///  Retrieves a set of rules concerning the movement capabilities of a component.
-    ///  This should be one or more flags from the SelectionRules class.  If no designer
+    ///  This should be one or more flags from the SelectionRules class. If no designer
     ///  provides rules for a component, the component will not get any UI services.
     /// </summary>
     public override SelectionRules SelectionRules
@@ -159,7 +159,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
         => _containerSelectorGlyph?.UpdateGlyph();
 
     /// <summary>
-    ///  This is the worker method of all CreateTool methods.  It is the only one
+    ///  This is the worker method of all CreateTool methods. It is the only one
     ///  that can be overridden.
     /// </summary>
     protected override IComponent[]? CreateToolCore(ToolboxItem tool, int x, int y, int width, int height, bool hasLocation, bool hasSize)
@@ -230,7 +230,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
     }
 
     /// <summary>
-    ///  This draws a nice border around our RaftingContainer.  We need
+    ///  This draws a nice border around our RaftingContainer. We need
     ///  this because the Control can have no border and you can't
     ///  tell where it is.
     /// </summary>
@@ -337,12 +337,12 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
 
         if (_componentChangeService is not null)
         {
-            _componentChangeService.ComponentChanged += new ComponentChangedEventHandler(OnComponentChanged);
+            _componentChangeService.ComponentChanged += OnComponentChanged;
         }
 
         // Hook up the ControlAdded Event
-        Control.ControlAdded += new ControlEventHandler(OnControlAdded);
-        Control.ControlRemoved += new ControlEventHandler(OnControlRemoved);
+        Control.ControlAdded += OnControlAdded;
+        Control.ControlRemoved += OnControlRemoved;
     }
 
     /// <summary>
@@ -355,7 +355,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
             return;
         }
 
-        BehaviorService.Invalidate(_containerSelectorGlyph.Bounds);
+        BehaviorService?.Invalidate(_containerSelectorGlyph.Bounds);
     }
 
     /// <summary>
@@ -371,10 +371,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
         // Change the padding which might have been set by the Behavior if the _panel is Expanded.
         Control.Padding = new Padding(0);
 
-        if (_containerSelectorGlyph is not null)
-        {
-            _containerSelectorGlyph.IsExpanded = false;
-        }
+        _containerSelectorGlyph?.IsExpanded = false;
 
         // Smoke the dock property whenever we add a toolstrip to a toolstrip _panel.
         PropertyDescriptor? dockProp = TypeDescriptor.GetProperties(e.Control)["Dock"];
@@ -390,10 +387,7 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
     {
         if (Control.Controls.Count == 0)
         {
-            if (_containerSelectorGlyph is not null)
-            {
-                _containerSelectorGlyph.IsExpanded = false;
-            }
+            _containerSelectorGlyph?.IsExpanded = false;
 
             RefreshSelection();
         }
@@ -526,7 +520,9 @@ internal class ToolStripPanelDesigner : ScrollableControlDesigner
     }
 
     /// <summary>
-    ///  Set some properties to non-browsable depending on the Parent. (StandAlone ToolStripPanel should support properties that are usually hidden when its a part of ToolStripContainer)
+    ///  Set some properties to non-browsable depending on the Parent.
+    ///  (StandAlone ToolStripPanel should support properties that are
+    ///  usually hidden when its a part of ToolStripContainer)
     /// </summary>
     protected override void PreFilterProperties(IDictionary properties)
     {

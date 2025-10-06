@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.8.3</PackageVersion>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
   </ItemGroup>
 
 </Project>

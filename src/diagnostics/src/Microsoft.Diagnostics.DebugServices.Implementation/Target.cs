@@ -17,16 +17,13 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
     public abstract class Target : ITarget
     {
         private readonly string _dumpPath;
-        private string _tempDirectory;
         private ServiceContainer _serviceContainer;
 
         protected readonly ServiceContainerFactory _serviceContainerFactory;
 
-        public Target(IHost host, int id, string dumpPath)
+        public Target(IHost host, string dumpPath)
         {
-            Trace.TraceInformation($"Creating target #{Id}");
             Host = host;
-            Id = id;
             _dumpPath = dumpPath;
 
             OnFlushEvent = new ServiceEvent();
@@ -40,9 +37,14 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
 
         protected void Finished()
         {
+            // Add the target to the host
+            Id = Host.AddTarget(this);
+
             // Now the that the target is completely initialized, finalize container and fire event
             _serviceContainer = _serviceContainerFactory.Build();
             Host.OnTargetCreate.Fire(this);
+
+            Trace.TraceInformation($"Created target #{Id} {_dumpPath}");
         }
 
         protected void FlushService<T>() => _serviceContainer?.RemoveService(typeof(T));
@@ -57,7 +59,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <summary>
         /// The target id
         /// </summary>
-        public int Id { get; }
+        public int Id { get; private set; }
 
         /// <summary>
         /// Returns the target OS (which may be different from the OS this is running on)
@@ -78,23 +80,6 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// The target's process id or null no process
         /// </summary>
         public uint? ProcessId { get; protected set; }
-
-        /// <summary>
-        /// Returns the unique temporary directory for this instance of SOS
-        /// </summary>
-        public string GetTempDirectory()
-        {
-            if (_tempDirectory == null)
-            {
-                // Use the SOS process's id if can't get the target's
-                uint processId = ProcessId.GetValueOrDefault((uint)Process.GetCurrentProcess().Id);
-
-                // SOS depends on that the temp directory ends with "/".
-                _tempDirectory = Path.Combine(Path.GetTempPath(), "sos" + processId.ToString()) + Path.DirectorySeparatorChar;
-                Directory.CreateDirectory(_tempDirectory);
-            }
-            return _tempDirectory;
-        }
 
         /// <summary>
         /// The per target services.
@@ -123,13 +108,12 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <summary>
         /// Cleans up the target and releases target's resources.
         /// </summary>
-        public void Destroy()
+        public virtual void Destroy()
         {
             Trace.TraceInformation($"Destroy target #{Id}");
             OnDestroyEvent.Fire();
             _serviceContainer.RemoveService(typeof(ITarget));
             _serviceContainer.DisposeServices();
-            CleanupTempDirectory();
         }
 
         #endregion
@@ -151,25 +135,6 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
             return new Reader(new StreamAddressSpace(stream), layoutManager);
         }
 
-        private void CleanupTempDirectory()
-        {
-            if (_tempDirectory != null)
-            {
-                try
-                {
-                    foreach (string file in Directory.EnumerateFiles(_tempDirectory))
-                    {
-                        File.Delete(file);
-                    }
-                    Directory.Delete(_tempDirectory);
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                }
-                _tempDirectory = null;
-            }
-        }
-
         public override bool Equals(object obj)
         {
             return Id == ((ITarget)obj).Id;
@@ -188,10 +153,6 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
             if (_dumpPath != null)
             {
                 sb.Append($" {_dumpPath}");
-            }
-            if (_tempDirectory != null)
-            {
-                sb.Append($" {_tempDirectory}");
             }
             return sb.ToString();
         }

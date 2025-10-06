@@ -24,7 +24,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.IsMachineWide, actualResult.IsMachineWide);
         }
 
-        public static TheoryData PackageSources => new TheoryData<PackageSource>
+        public static TheoryData<PackageSource> PackageSources => new()
             {
                 { new PackageSource(Name, Source, isEnabled: true) },
                 { new PackageSource(Name, Source, isEnabled: true) { IsMachineWide = true } },

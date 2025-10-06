@@ -7,5 +7,6 @@ namespace NuGet.PackageManagement.UI.ViewModels
     {
         ItemFilter ActiveFilter { get; set; }
         bool IsSolution { get; }
+        bool IsReadmeTabEnabled { get; }
     }
 }

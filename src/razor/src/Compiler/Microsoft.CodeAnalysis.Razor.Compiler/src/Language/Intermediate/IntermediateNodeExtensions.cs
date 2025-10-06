@@ -1,92 +1,80 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Razor.Language.Components;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public static class IntermediateNodeExtensions
 {
-    private static readonly IReadOnlyList<RazorDiagnostic> EmptyDiagnostics = Array.Empty<RazorDiagnostic>();
-
-    public static bool IsImported(this IntermediateNode node)
+    public static ImmutableArray<RazorDiagnostic> GetAllDiagnostics(this IntermediateNode node)
     {
-        return ReferenceEquals(node.Annotations[CommonAnnotations.Imported], CommonAnnotations.Imported);
-    }
+        ArgHelper.ThrowIfNull(node);
 
-    public static bool IsDesignTimePropertyAccessHelper(this IntermediateNode tagHelper)
-    {
-        return tagHelper.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] is string text &&
-            bool.TryParse(text, out var result) &&
-            result;
-    }
-
-    public static IReadOnlyList<RazorDiagnostic> GetAllDiagnostics(this IntermediateNode node)
-    {
-        if (node == null)
+        var diagnostics = new PooledHashSet<RazorDiagnostic>();
+        try
         {
-            throw new ArgumentNullException(nameof(node));
+            CollectDiagnostics(node, ref diagnostics);
+
+            return diagnostics.OrderByAsArray(static d => d.Span.AbsoluteIndex);
+        }
+        finally
+        {
+            diagnostics.ClearAndFree();
         }
 
-        HashSet<RazorDiagnostic> diagnostics = null;
-
-        AddAllDiagnostics(node);
-
-        var allOrderedDiagnostics = diagnostics?.OrderBy(diagnostic => diagnostic.Span.AbsoluteIndex);
-
-        return allOrderedDiagnostics?.ToList() ?? EmptyDiagnostics;
-
-        void AddAllDiagnostics(IntermediateNode n)
+        static void CollectDiagnostics(IntermediateNode node, ref PooledHashSet<RazorDiagnostic> diagnostics)
         {
-            if (n.HasDiagnostics)
+            if (node.HasDiagnostics)
             {
-                if (diagnostics == null)
-                {
-                    diagnostics = new HashSet<RazorDiagnostic>();
-                }
-
-                diagnostics.UnionWith(n.Diagnostics);
+                diagnostics.UnionWith(node.Diagnostics);
             }
 
-            for (var i = 0; i < n.Children.Count; i++)
+            foreach (var childNode in node.Children)
             {
-                AddAllDiagnostics(n.Children[i]);
+                CollectDiagnostics(childNode, ref diagnostics);
             }
         }
     }
 
-    public static IReadOnlyList<TNode> FindDescendantNodes<TNode>(this IntermediateNode node)
+    public static ImmutableArray<TNode> FindDescendantNodes<TNode>(this IntermediateNode node)
         where TNode : IntermediateNode
     {
-        var visitor = new Visitor<TNode>();
-        visitor.Visit(node);
+        using var results = new PooledArrayBuilder<TNode>();
+        node.CollectDescendantNodes(ref results.AsRef());
 
-        if (visitor.Results.Count > 0 && visitor.Results[0] == node)
-        {
-            // Don't put the node itself in the results
-            visitor.Results.Remove((TNode)node);
-        }
-
-        return visitor.Results;
+        return results.ToImmutableAndClear();
     }
 
-    private class Visitor<TNode> : IntermediateNodeWalker where TNode : IntermediateNode
+    internal static void CollectDescendantNodes<TNode>(this IntermediateNode root, ref PooledArrayBuilder<TNode> results)
+        where TNode : IntermediateNode
     {
-        public List<TNode> Results { get; } = new List<TNode>();
+        using var stack = new PooledArrayBuilder<IntermediateNode>();
+        ref var stackRef = ref stack.AsRef();
 
-        public override void VisitDefault(IntermediateNode node)
+        PushChildren(root, ref stackRef);
+
+        while (stack.Count > 0)
         {
-            if (node is TNode match)
+            var node = stack.Pop();
+
+            if (node is TNode target)
             {
-                Results.Add(match);
+                results.Add(target);
             }
 
-            base.VisitDefault(node);
+            PushChildren(node, ref stackRef);
+        }
+
+        static void PushChildren(IntermediateNode node, ref PooledArrayBuilder<IntermediateNode> stack)
+        {
+            // Push children in reverse order so we process them in original order.
+            var children = node.Children;
+            for (var i = children.Count - 1; i >= 0; i--)
+            {
+                stack.Push(children[i]);
+            }
         }
     }
 }

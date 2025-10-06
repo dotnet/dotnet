@@ -29,7 +29,7 @@ namespace NuGet.PackageManagement.UI
 {
     /// <summary>
     /// Interaction logic for InfiniteScrollList.xaml
-    /// </summary>    
+    /// </summary>
     public partial class InfiniteScrollList : UserControl
     {
         private readonly LoadingStatusIndicator _loadingStatusIndicator = new LoadingStatusIndicator();
@@ -183,7 +183,7 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         public IEnumerable<PackageItemViewModel> PackageItems => Items.OfType<PackageItemViewModel>().ToArray();
 
-        private int VulnerablePackagesCount => Items.OfType<PackageItemViewModel>().Where(i => i.IsPackageVulnerable).Count();
+        private int VulnerablePackagesCount => Items.OfType<PackageItemViewModel>().Count(i => i.IsPackageVulnerable);
 
         public PackageItemViewModel SelectedPackageItem => _list.SelectedItem as PackageItemViewModel;
 
@@ -195,7 +195,7 @@ namespace NuGet.PackageManagement.UI
         {
             get
             {
-                var group = ItemsView.Groups.Where(g => (g as CollectionViewGroup).Name.ToString().Equals(PackageLevel.TopLevel.ToString(), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var group = ItemsView.Groups.FirstOrDefault(g => (g as CollectionViewGroup).Name.ToString().Equals(PackageLevel.TopLevel.ToString(), StringComparison.OrdinalIgnoreCase));
                 return group is not null ? (group as CollectionViewGroup).ItemCount : 0;
             }
         }
@@ -204,7 +204,7 @@ namespace NuGet.PackageManagement.UI
         {
             get
             {
-                var group = ItemsView.Groups.Where(g => (g as CollectionViewGroup).Name.ToString().Equals(PackageLevel.Transitive.ToString(), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var group = ItemsView.Groups.FirstOrDefault(g => (g as CollectionViewGroup).Name.ToString().Equals(PackageLevel.Transitive.ToString(), StringComparison.OrdinalIgnoreCase));
                 return group is not null ? (group as CollectionViewGroup).ItemCount : 0;
             }
         }
@@ -604,7 +604,7 @@ namespace NuGet.PackageManagement.UI
             _loadingStatusBar.ItemsLoaded = 0;
         }
 
-        public void UpdatePackageStatus(PackageCollectionItem[] installedPackages)
+        public async Task UpdatePackageStatusAsync(PackageCollectionItem[] installedPackages, bool clearCache = false)
         {
             // in this case, we only need to update PackageStatus of
             // existing items in the package list
@@ -612,11 +612,11 @@ namespace NuGet.PackageManagement.UI
             {
                 if (package.PackageLevel == PackageLevel.TopLevel)
                 {
-                    package.UpdatePackageStatus(installedPackages);
+                    await package.UpdatePackageStatusAsync(installedPackages, clearCache);
                 }
                 else
                 {
-                    package.UpdateTransitivePackageStatus(package.InstalledVersion);
+                    await package.UpdateTransitivePackageStatusAsync();
                 }
             }
         }
@@ -751,9 +751,7 @@ namespace NuGet.PackageManagement.UI
                 var last = _scrollViewer.ViewportHeight + first;
                 if (_scrollViewer.ViewportHeight > 0 && last >= packagesCount)
                 {
-                    NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                        LoadItemsAsync(selectedPackageItem: null, token: CancellationToken.None)
-                    ).PostOnFailure(nameof(InfiniteScrollList));
+                    _ = LoadItemsAsync(selectedPackageItem: null, token: CancellationToken.None);
                 }
             }
         }

@@ -32,8 +32,11 @@ namespace EventPipeTracee
             string loggerCategory = args[1];
 
             bool diagMetrics = args.Any("DiagMetrics".Equals);
+            bool duplicateNameMetrics = args.Any("DuplicateNameMetrics".Equals);
+            bool useActivitySource = args.Any("UseActivitySource".Equals);
 
-            Console.WriteLine($"{pid} EventPipeTracee: DiagMetrics {diagMetrics}");
+            Console.WriteLine($"{pid} EventPipeTracee: DiagMetrics {diagMetrics} UseActivitySource {useActivitySource}");
+            Console.WriteLine($"{pid} EventPipeTracee: DuplicateNameMetrics {duplicateNameMetrics}");
 
             Console.WriteLine($"{pid} EventPipeTracee: start process");
             Console.Out.Flush();
@@ -57,10 +60,12 @@ namespace EventPipeTracee
             ILogger customCategoryLogger = loggerFactory.CreateLogger(loggerCategory);
             ILogger appCategoryLogger = loggerFactory.CreateLogger(AppLoggerCategoryName);
 
+            using ActivitySource activitySource = useActivitySource
+                ? new ActivitySource("EventPipeTracee.ActivitySource", version: "1.0.0")
+                : null;
+
             Console.WriteLine($"{pid} EventPipeTracee: {DateTime.UtcNow} Awaiting start");
             Console.Out.Flush();
-
-            using CustomMetrics metrics = diagMetrics ? new CustomMetrics() : null;
 
             // Wait for server to send something
             int input = pipeStream.ReadByte();
@@ -70,10 +75,14 @@ namespace EventPipeTracee
 
             CancellationTokenSource recordMetricsCancellationTokenSource = new();
 
-            if (diagMetrics)
+            if (diagMetrics || duplicateNameMetrics)
             {
                 _ = Task.Run(async () => {
 
+                    using CustomMetrics metrics = diagMetrics ? new CustomMetrics() : null;
+#if NET8_0_OR_GREATER
+                    using DuplicateNameMetrics dupMetrics = duplicateNameMetrics ? new DuplicateNameMetrics() : null;
+#endif
                     // Recording a single value appeared to cause test flakiness due to a race
                     // condition with the timing of when dotnet-counters starts collecting and
                     // when these values are published. Publishing values repeatedly bypasses this problem.
@@ -81,15 +90,19 @@ namespace EventPipeTracee
                     {
                         recordMetricsCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        metrics.IncrementCounter();
-                        metrics.RecordHistogram(10.0f);
+                        metrics?.IncrementCounter();
+                        metrics?.IncrementUpDownCounter();
+                        metrics?.RecordHistogram(10.0f);
+#if NET8_0_OR_GREATER
+                        dupMetrics?.IncrementCounter();
+#endif
                         await Task.Delay(1000).ConfigureAwait(true);
                     }
 
                 }).ConfigureAwait(true);
             }
 
-            await TestBodyCore(customCategoryLogger, appCategoryLogger).ConfigureAwait(false);
+            await TestBodyCore(customCategoryLogger, appCategoryLogger, activitySource).ConfigureAwait(false);
 
             Console.WriteLine($"{pid} EventPipeTracee: signal end of test data");
             Console.Out.Flush();
@@ -123,8 +136,32 @@ namespace EventPipeTracee
         }
 
         // TODO At some point we may want parameters to choose different test bodies.
-        private static async Task TestBodyCore(ILogger customCategoryLogger, ILogger appCategoryLogger)
+        private static async Task TestBodyCore(ILogger customCategoryLogger, ILogger appCategoryLogger, ActivitySource activitySource)
         {
+            using Activity activity = activitySource?.StartActivity(
+                name: "TestBodyCore",
+                kind: ActivityKind.Client,
+                links: new ActivityLink[] {
+                    new(
+                        ActivityContext.Parse(
+                            traceParent: "00-99d43cb30a4cdb4fbeee3a19c29201b0-e82825765f051b47-01",
+                            traceState: "k1=v1;k2=v2"))
+                });
+
+            if (activity != null)
+            {
+                activity.DisplayName = "Display name";
+                if (activity.IsAllDataRequested)
+                {
+                    activity.SetTag("custom.tag.string", "value1");
+                    activity.SetTag("custom.tag.int", 18);
+                }
+                activity.SetStatus(ActivityStatusCode.Error, "Error occurred");
+                activity.AddEvent(new ActivityEvent(
+                    name: "MyEvent",
+                    tags: new ActivityTagsCollection { ["tag1"] = "value1", ["tag2"] = 18 }));
+            }
+
             TaskCompletionSource secondSetScopes = new(TaskCreationOptions.RunContinuationsAsynchronously);
             TaskCompletionSource firstFinishedLogging = new(TaskCreationOptions.RunContinuationsAsynchronously);
             TaskCompletionSource secondFinishedLogging = new(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -33,8 +33,12 @@ extends:
     sdl:
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -55,7 +59,7 @@ extends:
           - job: Windows_NT
             pool:
               name: $(DncEngInternalBuildPool)
-              image: 1es-windows-2022-pt
+              image: 1es-windows-2022
 
             variables:
             - _Script: eng\common\cibuild.cmd
@@ -86,7 +90,7 @@ extends:
               clean: true
             # Use utility script to run script command dependent on agent OS.
             - script: $(_Script)
-                -configuration $(_BuildConfig) 
+                -configuration $(_BuildConfig)
                 -prepareMachine
                 $(_InternalBuildArgs)
                 $(_ValidateSdkArgs)

@@ -8,8 +8,8 @@ using System.Windows.Forms.Design.Behavior;
 namespace System.Windows.Forms.Design;
 
 /// <summary>
-/// Provides a designer that can design components
-/// that extend TextBoxBase.
+///  Provides a designer that can design components
+///  that extend TextBoxBase.
 /// </summary>
 internal class TextBoxBaseDesigner : ControlDesigner
 {
@@ -19,8 +19,8 @@ internal class TextBoxBaseDesigner : ControlDesigner
     }
 
     /// <summary>
-    /// Adds a baseline SnapLine to the list of SnapLines related
-    /// to this control.
+    ///  Adds a baseline SnapLine to the list of SnapLines related
+    ///  to this control.
     /// </summary>
     public override IList SnapLines
     {
@@ -83,10 +83,10 @@ internal class TextBoxBaseDesigner : ControlDesigner
     }
 
     /// <summary>
-    /// We override this so we can clear the text field set by controldesigner.
+    ///  We override this so we can clear the text field set by controldesigner.
     /// </summary>
     /// <param name="defaultValues">The default values.</param>
-    public override void InitializeNewComponent(IDictionary defaultValues)
+    public override void InitializeNewComponent(IDictionary? defaultValues)
     {
         base.InitializeNewComponent(defaultValues);
 
@@ -107,22 +107,19 @@ internal class TextBoxBaseDesigner : ControlDesigner
             "Text",
         ];
 
-        Attribute[] empty = [];
-
         for (int i = 0; i < shadowProps.Length; i++)
         {
-            PropertyDescriptor? prop = (PropertyDescriptor?)properties[shadowProps[i]];
-            if (prop is not null)
+            if (properties[shadowProps[i]] is PropertyDescriptor prop)
             {
-                properties[shadowProps[i]] = TypeDescriptor.CreateProperty(typeof(TextBoxBaseDesigner), prop, empty);
+                properties[shadowProps[i]] = TypeDescriptor.CreateProperty(typeof(TextBoxBaseDesigner), prop, []);
             }
         }
     }
 
     /// <summary>
-    /// Retrieves a set of rules concerning the movement capabilities of a component.
-    /// This should be one or more flags from the SelectionRules class.  If no designer
-    /// provides rules for a component, the component will not get any UI services.
+    ///  Retrieves a set of rules concerning the movement capabilities of a component.
+    ///  This should be one or more flags from the SelectionRules class. If no designer
+    ///  provides rules for a component, the component will not get any UI services.
     /// </summary>
     public override SelectionRules SelectionRules
     {

@@ -69,7 +69,7 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(1);
             testLogger.Errors.Should().Be(0);
-            testLogger.Messages.Where(e => e.Contains("Skipping restore for project 'b.csproj'. The project file may be invalid or missing targets required for restore.")).Count().Should().Be(1);
+            testLogger.Messages.Count(e => e.Contains("Skipping restore for project 'b.csproj'. The project file may be invalid or missing targets required for restore.")).Should().Be(1);
         }
 
         [Fact]

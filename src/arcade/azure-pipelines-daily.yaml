@@ -1,0 +1,42 @@
+trigger: none
+
+schedules:
+- cron: 0 12 * * *
+  displayName: Daily build
+  branches:
+    include:
+    - main
+  always: true
+
+name: $(Date:yyyMMdd)$(Rev:rr)
+stages:
+  - stage: SynchronizeSecrets
+    jobs:
+    - job: Synchronize
+      displayName: Synchronize secrets
+      pool:
+        name: NetCore1ESPool-Internal-NoMSI
+        demands: ImageOverride -equals 1es-windows-2022
+
+      steps:
+      - script: restore.cmd -ci
+        displayName: Run restore.cmd
+
+      - task: UseDotNet@2
+        displayName: Install .NET 8 runtime
+        inputs:
+          packageType: runtime
+          version: 8.x
+          installationPath: $(System.DefaultWorkingDirectory)/.dotnet
+
+      - script: $(System.DefaultWorkingDirectory)/.dotnet/dotnet.exe tool restore
+        displayName: Restore dotnet tools
+
+      - task: AzureCLI@2
+        displayName: Run secret-manager synchronize
+        inputs:
+          azureSubscription: DotNet Eng Services Secret Manager
+          scriptType: pscore
+          scriptLocation: inlineScript
+          inlineScript: |
+            Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize --skip-untracked $_}

@@ -1,13 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Abstractions.Installer;
 using Microsoft.TemplateEngine.Abstractions.TemplatePackage;
@@ -24,7 +18,6 @@ namespace Microsoft.TemplateEngine.IDE
 {
     public class Bootstrapper : IDisposable
     {
-        private readonly ITemplateEngineHost _host;
         private readonly TemplateCreator _templateCreator;
         private readonly TemplatePackageManager _templatePackagesManager;
         private readonly EngineEnvironmentSettings _engineEnvironmentSettings;
@@ -45,7 +38,7 @@ namespace Microsoft.TemplateEngine.IDE
             string? hostSettingsLocation = null,
             IEnvironment? environment = null)
         {
-            _host = host ?? throw new ArgumentNullException(nameof(host));
+            _ = host ?? throw new ArgumentNullException(nameof(host));
             environment ??= new DefaultEnvironment();
 
             if (string.IsNullOrWhiteSpace(hostSettingsLocation))
@@ -124,7 +117,7 @@ namespace Microsoft.TemplateEngine.IDE
             {
                 // returns all templates
                 criteria = (t) => true;
-                filters ??= Array.Empty<Func<ITemplateInfo, MatchInfo?>>();
+                filters ??= [];
             }
             else
             {
@@ -429,7 +422,7 @@ namespace Microsoft.TemplateEngine.IDE
 
             if (!paths.Any())
             {
-                return Array.Empty<string>();
+                return [];
             }
 
             var task = GetManagedTemplatePackagesAsync();

@@ -4,8 +4,11 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 
 namespace NuGet.ProjectModel
@@ -52,10 +55,19 @@ namespace NuGet.ProjectModel
             _buffer = _bufferPool.Rent(bufferSize);
             _disposed = false;
             _stream = stream;
-            _stream.Read(_buffer, 0, 3);
-            if (!Utf8Bom.AsSpan().SequenceEqual(_buffer.AsSpan(0, 3)))
+
+            if (_stream.Read(_buffer, offset: 0, count: 1) == 1 &&
+                _stream.Read(_buffer, offset: ++_bufferUsed, count: 1) == 1 &&
+                _stream.Read(_buffer, offset: ++_bufferUsed, count: 1) == 1)
             {
-                _bufferUsed = 3;
+                ++_bufferUsed;
+
+                bool hasUtf8Bom = Utf8Bom.AsSpan().SequenceEqual(_buffer.AsSpan(start: 0, length: 3));
+
+                if (hasUtf8Bom)
+                {
+                    _bufferUsed = 0;
+                }
             }
 
             var initialJsonReaderState = new JsonReaderState(DefaultJsonReaderOptions);
@@ -77,6 +89,8 @@ namespace NuGet.ProjectModel
         internal bool GetBoolean() => _reader.GetBoolean();
 
         internal int GetInt32() => _reader.GetInt32();
+
+        internal int CurrentDepth => _reader.CurrentDepth;
 
         internal bool Read()
         {
@@ -186,6 +200,44 @@ namespace NuGet.ProjectModel
             return strings;
         }
 
+        internal ImmutableArray<string> ReadStringArrayAsImmutableArray()
+        {
+            string[] strings = null;
+            var index = 0;
+
+            if (TokenType == JsonTokenType.StartArray)
+            {
+                while (Read() && TokenType != JsonTokenType.EndArray)
+                {
+                    if (strings == null)
+                    {
+                        strings = ArrayPool<string>.Shared.Rent(16);
+                    }
+                    else if (strings.Length == index)
+                    {
+                        var oldStrings = strings;
+
+                        strings = ArrayPool<string>.Shared.Rent(strings.Length * 2);
+                        oldStrings.CopyTo(strings, index: 0);
+
+                        ArrayPool<string>.Shared.Return(oldStrings);
+                    }
+
+                    strings[index++] = _reader.ReadTokenAsString();
+                }
+            }
+
+            if (strings == null)
+            {
+                return [];
+            }
+
+            var retVal = strings.AsSpan(0, index).ToImmutableArray();
+            ArrayPool<string>.Shared.Return(strings);
+
+            return retVal;
+        }
+
         internal IReadOnlyList<string> ReadDelimitedString()
         {
             ThrowExceptionIfDisposed();
@@ -218,6 +270,25 @@ namespace NuGet.ProjectModel
             return false;
         }
 
+        internal bool ReadNextTokenAsBoolOrThrowAnException(byte[] propertyName)
+        {
+            ThrowExceptionIfDisposed();
+
+            if (Read() && (TokenType == JsonTokenType.False || TokenType == JsonTokenType.True))
+            {
+                return GetBoolean();
+            }
+            else
+            {
+                throw new ArgumentException(
+                    string.Format(CultureInfo.CurrentCulture,
+                    Strings.Invalid_AttributeValue,
+                    Encoding.UTF8.GetString(propertyName),
+                    _reader.ReadTokenAsString(),
+                    "false"));
+            }
+        }
+
         internal IReadOnlyList<string> ReadNextStringOrArrayOfStringsAsReadOnlyList()
         {
             ThrowExceptionIfDisposed();
@@ -227,7 +298,7 @@ namespace NuGet.ProjectModel
                 switch (_reader.TokenType)
                 {
                     case JsonTokenType.String:
-                        return new[] { (string)_reader.GetString() };
+                        return new[] { _reader.GetString() };
 
                     case JsonTokenType.StartArray:
                         return ReadStringArrayAsReadOnlyListFromArrayStart();
@@ -289,7 +360,7 @@ namespace NuGet.ProjectModel
         }
 
         /// <summary>
-        /// Loops through the stream and reads it into the buffer until the buffer is full or the stream is empty, creates the Utf8JsonReader. 
+        /// Loops through the stream and reads it into the buffer until the buffer is full or the stream is empty, creates the Utf8JsonReader.
         /// </summary>
         private void ReadStreamIntoBuffer(JsonReaderState jsonReaderState)
         {

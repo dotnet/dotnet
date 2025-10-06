@@ -1,0 +1,405 @@
+{
+  "properties": {
+    "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/baselines"
+  },
+  "version": "1.0.0",
+  "baselines": {
+    "default": {
+      "name": "default",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "lastUpdatedDate": "2025-01-09 16:50:29Z"
+    }
+  },
+  "results": {
+    "430605dca7680cc9342d894a05cb82021494f22e5d936cde5ba786b62395041e": {
+      "signature": "430605dca7680cc9342d894a05cb82021494f22e5d936cde5ba786b62395041e",
+      "alternativeSignatures": [
+        "64925aff742075c7456cc2ada573987af9ad550112644a9d4b236454522beda4"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignCheck/x86/Release/net472/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "bfff9199e39779506a656a3787aa08e39231586c374b071ec14e9bab7bfc7f32": {
+      "signature": "bfff9199e39779506a656a3787aa08e39231586c374b071ec14e9bab7bfc7f32",
+      "alternativeSignatures": [
+        "609e00903fa66b2435c486ed757fb655ad36340a98fda1efd881c7d434e927ae"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignCheckLibrary/x86/Release/net462/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "4f01883f5980fd6bfc45441c7ca8da9e3b0070d9702dfafbbef4970d542cab65": {
+      "signature": "4f01883f5980fd6bfc45441c7ca8da9e3b0070d9702dfafbbef4970d542cab65",
+      "alternativeSignatures": [
+        "33f575589f4f19b6f6c45fbd5245779663124297f5db8f4c881308f525b33aef"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/Resources/Crossgenned.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "89e78c22df7a42d481ded6ef37604b25531852b2d65584988d21c5f6e40af2e7": {
+      "signature": "89e78c22df7a42d481ded6ef37604b25531852b2d65584988d21c5f6e40af2e7",
+      "alternativeSignatures": [
+        "1d8b2b08bd4c679d7461e3c59991baa2896cfd8d24c7eeb9b8d820fd9fc67ecf"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/Resources/SPCNoPKT.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2021",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "f3f4df6eb33cffa5a4408e2082a165ae3cc15a65dd08deb264545e48cdb68906": {
+      "signature": "f3f4df6eb33cffa5a4408e2082a165ae3cc15a65dd08deb264545e48cdb68906",
+      "alternativeSignatures": [
+        "16cca7f5bda3415c4b6c5477cb3d1472f2445b886659e45f50a92d7a7ff9c819"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/Resources/Crossgenned.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "ec6fcfff86017c7ce4ef5a1a33db9027ea33cd2524738fa79d4d7fc4cd089d8c": {
+      "signature": "ec6fcfff86017c7ce4ef5a1a33db9027ea33cd2524738fa79d4d7fc4cd089d8c",
+      "alternativeSignatures": [
+        "572830450224b4b1959fb45f2f03711da6b08ff684a52becbd8b286a185ce601"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/Resources/SPCNoPKT.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2021",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "f0b9395b85789d2b47daa8cde5d56bbbff0ece9e8306ed3c96b7b7e518c4fb6b": {
+      "signature": "f0b9395b85789d2b47daa8cde5d56bbbff0ece9e8306ed3c96b7b7e518c4fb6b",
+      "alternativeSignatures": [
+        "856ed77dee31bd134ecb536900da2a415b7ce8f5c34bf9a354e59afb3f41aa38"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net10.0/testassets/wix/mspatchc.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "11ece67e8948ecc07df57ed96f55eb8622b7e6af8ed421943e8728ddab06c4fa": {
+      "signature": "11ece67e8948ecc07df57ed96f55eb8622b7e6af8ed421943e8728ddab06c4fa",
+      "alternativeSignatures": [
+        "595ba3fff03fdae599b4053234657cee46b2c231c62d61b909b435e86b2189a8"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net10.0/testassets/wix/ThmViewer.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "a5bc446bc98bbf309b0fc694f27a8b14a2c7fc33f90a306df30c91ce702addef": {
+      "signature": "a5bc446bc98bbf309b0fc694f27a8b14a2c7fc33f90a306df30c91ce702addef",
+      "alternativeSignatures": [
+        "e84ed2b7dfd98c4e807e73590ebdc21df15c75cc1f3a25cd1b53ec101a7d6195"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net10.0/testassets/wix/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "3186dbf50e4e7cb5968014045e3f7f9bb3bee99ca484057207e65b73dfb0d721": {
+      "signature": "3186dbf50e4e7cb5968014045e3f7f9bb3bee99ca484057207e65b73dfb0d721",
+      "alternativeSignatures": [
+        "65272ad6a0cd3ec5954e1cc1bbbf6d5b3fc4bffb6ab45017041c7bd6acf07d29"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net472/testassets/wix/mspatchc.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "14ec588f4f7902e1d5f63d3f0bd567dd7b61d85c4e330744a8ae6e40b9afd132": {
+      "signature": "14ec588f4f7902e1d5f63d3f0bd567dd7b61d85c4e330744a8ae6e40b9afd132",
+      "alternativeSignatures": [
+        "26fd903c1eb8253d3a3d27c0e115767b414884903e0739b9d6d1e54e18ee3446"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net472/testassets/wix/ThmViewer.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "10b51882d3a6960f087fe8f4a07f4474eb24b5a75ec30e164b0f7f363c69ba85": {
+      "signature": "10b51882d3a6960f087fe8f4a07f4474eb24b5a75ec30e164b0f7f363c69ba85",
+      "alternativeSignatures": [
+        "516d65f89696cd9db6870bc84d2053a4bba33b56aedcab074ae62a1aede258e0"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net472/testassets/wix/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "81318047fcf03630e2e4701f4b2ebc9b906ad761078ad4f7d6aa1e69cc406810": {
+      "signature": "81318047fcf03630e2e4701f4b2ebc9b906ad761078ad4f7d6aa1e69cc406810",
+      "alternativeSignatures": [
+        "8cb3d8c968d3c41404712c1029e10a4a14bbfa701f72432f54121732a7d6dafd"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/tools/wix/mspatchc.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "c96dac5d77c4e8d82e958d3cdc9277e23ade6bbdb1a39a27553475aec98f113a": {
+      "signature": "c96dac5d77c4e8d82e958d3cdc9277e23ade6bbdb1a39a27553475aec98f113a",
+      "alternativeSignatures": [
+        "51decda4eb37f548d9c178aaa98e467de87db5127c8d306208789918d772b60a"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/tools/wix/ThmViewer.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "cce47d8d224193c299b25f704b06997069218c295266c4e01dda4a451bb7e8d4": {
+      "signature": "cce47d8d224193c299b25f704b06997069218c295266c4e01dda4a451bb7e8d4",
+      "alternativeSignatures": [
+        "90d9cba297701c5b8c0223bfff84a0c864704d95e3fcca5e504ffead0cbd69e4"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/tools/wix/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "ad34e3ce30f1a4abbe22af5ae76bec36a6eac98d4a606f19886d3fe05aa6e54a": {
+      "signature": "ad34e3ce30f1a4abbe22af5ae76bec36a6eac98d4a606f19886d3fe05aa6e54a",
+      "alternativeSignatures": [
+        "e191bbb317a570dabaa1bacb0870387041f0280638474c5099e7ce27f21fdcfe"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/tools/wix/mspatchc.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "99c7f40d8e1cfb0da2fcfa2e7cc5623386dec53ab3e034bd162af8f4b0b9f045": {
+      "signature": "99c7f40d8e1cfb0da2fcfa2e7cc5623386dec53ab3e034bd162af8f4b0b9f045",
+      "alternativeSignatures": [
+        "14b78dd8adac1070e356156c8fb1c3aff47fbecac420e05626a301c09d3e069d"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/tools/wix/ThmViewer.exe",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "738e55be7414868543f3077df00363f02546bb1ca764ea66747c3ad251b1b9b2": {
+      "signature": "738e55be7414868543f3077df00363f02546bb1ca764ea66747c3ad251b1b9b2",
+      "alternativeSignatures": [
+        "b7c51ea83e615063a2a638e81d46fa7e95a35a1f7fa887a199f22e2866b4a5d7"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/tools/wix/winterop.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "5341e4d6054b93e08b10fd283ede708ecf4e4f95232f04652678cc19b81629b5": {
+      "signature": "5341e4d6054b93e08b10fd283ede708ecf4e4f95232f04652678cc19b81629b5",
+      "alternativeSignatures": [
+        "fed997915c2b3a929f3aa5230f616c505a46e7bb3d9529438d1d20433340e6f5"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net10.0/testassets/wix/sdk/x64/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "9e00aa15154c3c7419cb2965caa544c820ef0c3eaedeb838caf11a9ba2f3890b": {
+      "signature": "9e00aa15154c3c7419cb2965caa544c820ef0c3eaedeb838caf11a9ba2f3890b",
+      "alternativeSignatures": [
+        "60b74803f542a9e640a6aea62e236b4ce2d07fd272603edf87e1a82e9d91a2a5"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net10.0/testassets/wix/sdk/x86/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "78e6a3bb1ad6fdc3f497efd8ac5fde7cde20568532787bce12eb908fe45a3281": {
+      "signature": "78e6a3bb1ad6fdc3f497efd8ac5fde7cde20568532787bce12eb908fe45a3281",
+      "alternativeSignatures": [
+        "7154d8897cab50563396a4639bc4d045ccc55f31958b91a08f2173e2eafcb1c8"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net472/testassets/wix/sdk/x64/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "813dccaf767edeb70916017447415128d47e8875f703794b05faaa1dfbe087c4": {
+      "signature": "813dccaf767edeb70916017447415128d47e8875f703794b05faaa1dfbe087c4",
+      "alternativeSignatures": [
+        "241e902c97706088002cc465e62476a0268abda2eaf847b46108ab104947a753"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Release/net472/testassets/wix/sdk/x86/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "bb0b66efabdc0fe2546423959571cf10b81c4a40252d75eac83811c74a2c0ff3": {
+      "signature": "bb0b66efabdc0fe2546423959571cf10b81c4a40252d75eac83811c74a2c0ff3",
+      "alternativeSignatures": [
+        "2629f21476cfc358cc82c73cd02679800437f5e6b8c503428ae39c93cd083813"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/tools/wix/sdk/x64/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "23a1a31aea2d1f7cc327693256aabda2ed0690e371920df3fd93c8af51baaa57": {
+      "signature": "23a1a31aea2d1f7cc327693256aabda2ed0690e371920df3fd93c8af51baaa57",
+      "alternativeSignatures": [
+        "eb1300bc4660adbe77900a9d7a70f0ef461709a3e7abe5af5499151a0d5a5c7e"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net10.0/tools/wix/sdk/x86/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "793ac4019b05ad9ec473774b2e6b559cda939e542e9a2da0a82e717493188258": {
+      "signature": "793ac4019b05ad9ec473774b2e6b559cda939e542e9a2da0a82e717493188258",
+      "alternativeSignatures": [
+        "3888f3b36433cad55c1af3d7909f5b432f4e6ba6a171344bb3c9c32725e559bf"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/tools/wix/sdk/x64/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    },
+    "aa1dceddf0d3597d9eccc7b52faf75c16d995231dc90c2c8593fbaa124420db6": {
+      "signature": "aa1dceddf0d3597d9eccc7b52faf75c16d995231dc90c2c8593fbaa124420db6",
+      "alternativeSignatures": [
+        "1c89290c6c792954b5f6fa38a5872ed6781dbb1704557c6e3f38406843243737"
+      ],
+      "target": "artifacts/bin/Microsoft.DotNet.SignTool.Tests/Release/net472/tools/wix/sdk/x86/sfxca.dll",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2025-01-09 16:50:29Z",
+      "expirationDate": "2025-06-28 18:09:47Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-01-09 18:09:47Z"
+    }
+  }
+}

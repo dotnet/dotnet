@@ -29,7 +29,10 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IsTestProject)' == 'true' and '$(ExcludeMicrosoftNetTestSdk)' != 'true'">
+  <!-- Microsoft.NET.Test.Sdk is VSTest-specific package. -->
+  <!-- If EnableMSTestRunner, EnableNUnitRunner, or UseMicrosoftTestingPlatformRunner is true, then the repo is using Microsoft.Testing.Platform -->
+  <!-- In that case, we don't need Microsoft.NET.Test.Sdk -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true' and '$(ExcludeMicrosoftNetTestSdk)' != 'true' and '$(EnableMSTestRunner)' != 'true' and '$(EnableNUnitRunner)' != 'true' and '$(UseMicrosoftTestingPlatformRunner)' != 'true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 

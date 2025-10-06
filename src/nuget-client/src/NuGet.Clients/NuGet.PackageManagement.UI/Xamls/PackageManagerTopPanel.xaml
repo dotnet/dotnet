@@ -6,6 +6,7 @@
              xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="800">
@@ -180,18 +181,16 @@
     <!-- search control and include prerelease checkbox -->
     <Grid Grid.Row="2" Margin="20,0,0,0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" MinWidth="269"/>
-        <ColumnDefinition Width="0.01*" MinWidth="5" />
-        <ColumnDefinition Width="*" MinWidth="192" />
+        <ColumnDefinition Width="2*"/>
+        <ColumnDefinition MinWidth="192" />
       </Grid.ColumnDefinitions>
-
       <Grid
         Grid.Column="0">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" MaxWidth="320" MinWidth="118"/>
+          <ColumnDefinition MaxWidth="320" MinWidth="118"/>
           <ColumnDefinition Width="auto" />
-          <ColumnDefinition Width="auto" />
-          <ColumnDefinition Width="auto" />
+          <ColumnDefinition MaxWidth="125" />
+          <ColumnDefinition MaxWidth="150"/>
         </Grid.ColumnDefinitions>
         <!-- container of the search control -->
         <Border
@@ -226,12 +225,13 @@
           AutomationProperties.AutomationId="CheckBox_Prerelease"
           Margin="3,0"
           VerticalAlignment="Center"
-          Content="{x:Static nuget:Resources.Checkbox_IncludePrerelease}"
           Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
           VerticalContentAlignment="Center"
           Checked="_checkboxPrerelease_Checked"
           Unchecked="_checkboxPrerelease_Unchecked"
-          IsChecked="True" />
+          IsChecked="True">
+          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_IncludePrerelease}" />
+        </CheckBox>
 
         <!-- show vulnerabilities checkbox -->
         <CheckBox
@@ -246,7 +246,7 @@
           Unchecked="_checkboxVulnerabilities_Unchecked"
           Visibility="Hidden"
           IsChecked="False">
-          <TextBlock Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
+          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
         </CheckBox>
       </Grid>
       <Grid
@@ -266,37 +266,35 @@
           Margin="0,4,0,0"
           HorizontalAlignment="Right"/>
 
-        <ComboBox
+        <shell_controls:ComboBox
           Grid.Column="1"
           x:Name="_sourceRepoList"
           Margin="6,0,0,0"
-          AutomationProperties.AutomationId="ComboBox_PackageSource"
-          MinHeight="22"
           AutomationProperties.Name="{x:Static nuget:Resources.Label_Repository}"
           SelectionChanged="_sourceRepoList_SelectionChanged"
           HorizontalAlignment="Right"
           PreviewKeyDown="SourceRepoList_PreviewKeyDown"
           ItemsSource="{Binding Source={StaticResource cvsPackageSources}}">
-          <ComboBox.ItemTemplate>
+          <shell_controls:ComboBox.ItemTemplate>
             <DataTemplate>
               <TextBlock
                 Text="{Binding SourceName}"
                 TextTrimming="CharacterEllipsis" />
             </DataTemplate>
-          </ComboBox.ItemTemplate>
-          <ComboBox.ToolTip>
+          </shell_controls:ComboBox.ItemTemplate>
+          <shell_controls:ComboBox.ToolTip>
             <ToolTip
               x:Name="_sourceTooltip">
               <TextBlock
                 Text="{Binding}" />
             </ToolTip>
-          </ComboBox.ToolTip>
-          <ComboBox.ItemContainerStyle>
-            <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+          </shell_controls:ComboBox.ToolTip>
+          <shell_controls:ComboBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ComboBoxItem}">
               <Setter Property="AutomationProperties.Name" Value="{Binding SourceName}"/>
             </Style>
-          </ComboBox.ItemContainerStyle>
-        </ComboBox>
+          </shell_controls:ComboBox.ItemContainerStyle>
+        </shell_controls:ComboBox>
         <Button
           Grid.Column="3"
           x:Name="_settingsButton"

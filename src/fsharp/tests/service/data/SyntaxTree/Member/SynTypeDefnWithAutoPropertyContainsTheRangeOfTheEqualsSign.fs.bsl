@@ -3,7 +3,7 @@ ImplFile
      ("/root/Member/SynTypeDefnWithAutoPropertyContainsTheRangeOfTheEqualsSign.fs",
       false,
       QualifiedNameOfFile
-        SynTypeDefnWithAutoPropertyContainsTheRangeOfTheEqualsSign, [], [],
+        SynTypeDefnWithAutoPropertyContainsTheRangeOfTheEqualsSign, [],
       [SynModuleOrNamespace
          ([SynTypeDefnWithAutoPropertyContainsTheRangeOfTheEqualsSign], false,
           AnonModule,
@@ -51,7 +51,7 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Ident name, (4,4--5,40),
+                         GetSet (None, None, None), Ident name, (4,4--5,40),
                          { LeadingKeyword =
                             MemberVal ((5,4--5,10), (5,11--5,14))
                            WithKeyword = Some (5,27--5,31)
@@ -86,4 +86,5 @@ ImplFile
                     WithKeyword = None })], (2,0--5,40))], PreXmlDocEmpty, [],
           None, (3,0--6,0), { LeadingKeyword = None })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

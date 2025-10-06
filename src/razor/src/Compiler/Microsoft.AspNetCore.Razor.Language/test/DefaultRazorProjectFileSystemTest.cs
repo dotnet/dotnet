@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -18,17 +17,24 @@ public class DefaultRazorProjectFileSystemTest
         "TestFiles",
         "DefaultRazorProjectFileSystem");
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsNullOrEmpty(string path)
+    [Fact]
+    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsNull()
     {
         // Arrange
         var fileSystem = new TestRazorProjectFileSystem("C:/some/test/path/root");
 
         // Act and Assert
-        var exception = Assert.Throws<ArgumentException>(() => fileSystem.NormalizeAndEnsureValidPath(path));
-        Assert.Equal("path", exception.ParamName);
+        Assert.Throws<ArgumentNullException>(paramName: "path", () => fileSystem.NormalizeAndEnsureValidPath(null!));
+    }
+
+    [Fact]
+    public void NormalizeAndEnsureValidPath_ThrowsIfPathIsEmpty()
+    {
+        // Arrange
+        var fileSystem = new TestRazorProjectFileSystem("C:/some/test/path/root");
+
+        // Act and Assert
+        Assert.Throws<ArgumentException>(paramName: "path", () => fileSystem.NormalizeAndEnsureValidPath(""));
     }
 
     [Fact]
@@ -222,10 +228,10 @@ public class DefaultRazorProjectFileSystemTest
             items,
             item =>
             {
-                Assert.Equal("/Views/Home/_ViewImports.cshtml", item.FilePath);
+                Assert.Equal("/_ViewImports.cshtml", item.FilePath);
                 Assert.Equal("/", item.BasePath);
-                Assert.Equal(Path.Combine(TestFolder, "Views", "Home", "_ViewImports.cshtml"), item.PhysicalPath);
-                Assert.Equal(Path.Combine("Views", "Home", "_ViewImports.cshtml"), item.RelativePhysicalPath);
+                Assert.Equal(Path.Combine(TestFolder, "_ViewImports.cshtml"), item.PhysicalPath);
+                Assert.Equal("_ViewImports.cshtml", item.RelativePhysicalPath);
             },
             item =>
             {
@@ -236,10 +242,10 @@ public class DefaultRazorProjectFileSystemTest
             },
             item =>
             {
-                Assert.Equal("/_ViewImports.cshtml", item.FilePath);
+                Assert.Equal("/Views/Home/_ViewImports.cshtml", item.FilePath);
                 Assert.Equal("/", item.BasePath);
-                Assert.Equal(Path.Combine(TestFolder, "_ViewImports.cshtml"), item.PhysicalPath);
-                Assert.Equal("_ViewImports.cshtml", item.RelativePhysicalPath);
+                Assert.Equal(Path.Combine(TestFolder, "Views", "Home", "_ViewImports.cshtml"), item.PhysicalPath);
+                Assert.Equal(Path.Combine("Views", "Home", "_ViewImports.cshtml"), item.RelativePhysicalPath);
             });
     }
 
@@ -261,15 +267,10 @@ public class DefaultRazorProjectFileSystemTest
         Assert.Equal(Path.Combine("Views", "About", "About.cshtml"), item.RelativePhysicalPath);
     }
 
-    [Fact]
+    // "This test does not makes sense for case sensitive Operating Systems."
+    [ConditionalFact(Is.Windows)]
     public void GetItem_MismatchedCase_ReturnsFileFromDisk()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            // "This test does not makes sense for case sensitive Operating Systems."
-            return;
-        }
-
         // Arrange
         var filePath = "/Views/About/About.cshtml";
         var lowerCaseTestFolder = TestFolder.ToLowerInvariant();

@@ -43,10 +43,11 @@ param (
   [switch]$prepareMachine,
   [switch]$useGlobalNuGetCache = $true,
   [switch]$warnAsError = $false,
-  [switch]$sourceBuild = $false,
+  [switch][Alias('pb')]$productBuild = $false,
+  [switch]$fromVMR = $false,
   [switch]$oop64bit = $true,
-  [switch]$oopCoreClr = $false,
   [switch]$lspEditor = $false,
+  [string]$solution = "Roslyn.sln",
 
   # official build settings
   [string]$officialBuildId = "",
@@ -112,7 +113,9 @@ function Print-Usage() {
   Write-Host "  -prepareMachine           Prepare machine for CI run, clean up processes after build"
   Write-Host "  -useGlobalNuGetCache      Use global NuGet cache."
   Write-Host "  -warnAsError              Treat all warnings as errors"
-  Write-Host "  -sourceBuild              Simulate building source-build"
+  Write-Host "  -productBuild             Build the repository in product-build mode"
+  Write-Host "  -fromVMR                  Set when building from within the VMR"
+  Write-Host "  -solution                 Solution to build (default is Roslyn.sln)"
   Write-Host ""
   Write-Host "Official build settings:"
   Write-Host "  -officialBuildId                                  An official build id, e.g. 20190102.3"
@@ -209,7 +212,7 @@ function Process-Arguments() {
     $script:restore = $true
   }
 
-  if ($sourceBuild) {
+  if ($productBuild) {
     $script:msbuildEngine = "dotnet"
   }
 
@@ -222,9 +225,15 @@ function Process-Arguments() {
   }
 }
 
-function BuildSolution() {
-  $solution = "Roslyn.sln"
+function RestoreInternalTooling() {
+  $internalToolingProject = Join-Path $RepoRoot 'eng/common/internal/Tools.csproj'
+  # The restore config file might be set via env var. Ignore that for this operation,
+  # as the internal nuget.config should be used.
+  $restoreConfigFile = Join-Path $RepoRoot 'eng/common/internal/NuGet.config'
+  MSBuild $internalToolingProject /t:Restore /p:RestoreConfigFile=$restoreConfigFile
+}
 
+function BuildSolution() {
   Write-Host "$($solution):"
 
   $bl = ""
@@ -253,14 +262,9 @@ function BuildSolution() {
   # Workaround for some machines in the AzDO pool not allowing long paths
   $ibcDir = $RepoRoot
 
-  # Set DotNetBuildFromSource to 'true' if we're simulating building for source-build.
-  $buildFromSource = if ($sourceBuild) { "/p:DotNetBuildFromSource=true" } else { "" }
-
   $generateDocumentationFile = if ($skipDocumentation) { "/p:GenerateDocumentationFile=false" } else { "" }
   $roslynUseHardLinks = if ($ci) { "/p:ROSLYNUSEHARDLINKS=true" } else { "" }
 
-  $restoreUseStaticGraphEvaluation = $true
-  
   try {
     MSBuild $toolsetBuildProj `
       $bl `
@@ -280,12 +284,12 @@ function BuildSolution() {
       /p:TreatWarningsAsErrors=$warnAsError `
       /p:EnableNgenOptimization=$applyOptimizationData `
       /p:IbcOptimizationDataDir=$ibcDir `
-      /p:RestoreUseStaticGraphEvaluation=$restoreUseStaticGraphEvaluation `
       /p:VisualStudioIbcDrop=$ibcDropName `
       /p:VisualStudioDropAccessToken=$officialVisualStudioDropAccessToken `
+      /p:DotNetBuild=$productBuild `
+      /p:DotNetBuildFromVMR=$fromVMR `
       $suppressExtensionDeployment `
       $msbuildWarnAsError `
-      $buildFromSource `
       $generateDocumentationFile `
       $roslynUseHardLinks `
       @properties
@@ -303,15 +307,7 @@ function GetIbcSourceBranchName() {
   }
 
   function calculate {
-    $fallback = "main"
-
-    $branchData = GetBranchPublishData $officialSourceBranchName
-    if ($branchData -eq $null) {
-      Write-LogIssue -Type "warning" -Message "Branch $officialSourceBranchName is not listed in PublishData.json. Using IBC data from '$fallback'."
-      Write-Host "Override by setting IbcDrop build variable." -ForegroundColor Yellow
-      return $fallback
-    }
-
+    $branchData = GetBranchPublishData
     return $branchData.vsBranch
   }
 
@@ -319,6 +315,11 @@ function GetIbcSourceBranchName() {
 }
 
 function GetIbcDropName() {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+     'PSAvoidUsingConvertToSecureStringWithPlainText',
+     '',
+     Justification='$officialVisualStudioDropAccessToken is a script parameter so it needs to be plain text')]
+    param()
 
     if ($officialIbcDrop -and $officialIbcDrop -ne "default"){
         return $officialIbcDrop
@@ -328,6 +329,9 @@ function GetIbcDropName() {
     if (!$applyOptimizationData -or !$officialBuildId) {
         return ""
     }
+
+    # Ensure that we have the internal tooling restored before attempting to load the powershell module.
+    RestoreInternalTooling
 
     # Bring in the ibc tools
     $packagePath = Join-Path (Get-PackageDir "Microsoft.DevDiv.Optimization.Data.PowerShell") "lib\net472"
@@ -350,6 +354,7 @@ function GetCompilerTestAssembliesIncludePaths() {
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.Semantic\.UnitTests$'"
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.Emit\.UnitTests$'"
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.Emit2\.UnitTests$'"
+  $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.Emit3\.UnitTests$'"
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.IOperation\.UnitTests$'"
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.CSharp\.CommandLine\.UnitTests$'"
   $assemblies += " --include '^Microsoft\.CodeAnalysis\.VisualBasic\.Syntax\.UnitTests$'"
@@ -389,7 +394,7 @@ function TestUsingRunTests() {
     $env:ROSLYN_TEST_USEDASSEMBLIES = "true"
   }
 
-  $runTests = GetProjectOutputBinary "RunTests.dll" -tfm "net8.0"
+  $runTests = GetProjectOutputBinary "RunTests.dll" -tfm "net9.0"
 
   if (!(Test-Path $runTests)) {
     Write-Host "Test runner not found: '$runTests'. Run Build.cmd first." -ForegroundColor Red
@@ -425,7 +430,7 @@ function TestUsingRunTests() {
     }
 
   } elseif ($testVsi) {
-    $args += " --timeout 110"
+    $args += " --timeout 220"
     $args += " --runtime both"
     $args += " --sequential"
     $args += " --include '\.IntegrationTests'"
@@ -541,7 +546,7 @@ function EnablePreviewSdks() {
 # deploying at build time.
 function Deploy-VsixViaTool() {
 
-  $vsixExe = Join-Path $ArtifactsDir "bin\RunTests\$configuration\net8.0\VSIXExpInstaller\VSIXExpInstaller.exe"
+  $vsixExe = Join-Path $ArtifactsDir "bin\RunTests\$configuration\net9.0\VSIXExpInstaller\VSIXExpInstaller.exe"
   Write-Host "VSIX EXE path: " $vsixExe
   if (-not (Test-Path $vsixExe)) {
     Write-Host "VSIX EXE not found: '$vsixExe'." -ForegroundColor Red
@@ -612,6 +617,9 @@ function Deploy-VsixViaTool() {
   # Disable text spell checker to avoid spurious warnings in the error list
   &$vsRegEdit set "$vsDir" $hive HKCU "FeatureFlags\Editor\EnableSpellChecker" Value dword 0
 
+  # Run source generators automatically during integration tests.
+  &$vsRegEdit set "$vsDir" $hive HKCU "FeatureFlags\Roslyn\SourceGeneratorExecutionBalanced" Value dword 0
+
   # Configure LSP
   $lspRegistryValue = [int]$lspEditor.ToBool()
   &$vsRegEdit set "$vsDir" $hive HKCU "FeatureFlags\Roslyn\LSP\Editor" Value dword $lspRegistryValue
@@ -625,9 +633,12 @@ function Deploy-VsixViaTool() {
   $oop64bitValue = [int]$oop64bit.ToBool()
   &$vsRegEdit set "$vsDir" $hive HKCU "Roslyn\Internal\OnOff\Features" OOP64Bit dword $oop64bitValue
 
-  # Configure RemoteHostOptions.OOPCoreClr for testing
-  $oopCoreClrValue = [int]$oopCoreClr.ToBool()
-  &$vsRegEdit set "$vsDir" $hive HKCU "Roslyn\Internal\OnOff\Features" OOPCoreClr dword $oopCoreClrValue
+  # Disable targeted notifications
+  if ($ci) {
+    # Currently does not work via vsregedit, so only apply this setting in CI
+    #&$vsRegEdit set "$vsDir" $hive HKCU "RemoteSettings" TurnOffSwitch dword 1
+    reg add hkcu\Software\Microsoft\VisualStudio\RemoteSettings /f /t REG_DWORD /v TurnOffSwitch /d 1
+  }
 }
 
 # Ensure that procdump is available on the machine.  Returns the path to the directory that contains
@@ -696,16 +707,7 @@ function Setup-IntegrationTestRun() {
   }
 
   $env:ROSLYN_OOP64BIT = "$oop64bit"
-  $env:ROSLYN_OOPCORECLR = "$oopCoreClr"
   $env:ROSLYN_LSPEDITOR = "$lspEditor"
-}
-
-function Prepare-TempDir() {
-  Copy-Item (Join-Path $RepoRoot "src\Workspaces\MSBuildTest\Resources\global.json") $TempDir
-  Copy-Item (Join-Path $RepoRoot "src\Workspaces\MSBuildTest\Resources\Directory.Build.props") $TempDir
-  Copy-Item (Join-Path $RepoRoot "src\Workspaces\MSBuildTest\Resources\Directory.Build.targets") $TempDir
-  Copy-Item (Join-Path $RepoRoot "src\Workspaces\MSBuildTest\Resources\Directory.Build.rsp") $TempDir
-  Copy-Item (Join-Path $RepoRoot "src\Workspaces\MSBuildTest\Resources\NuGet.Config") $TempDir
 }
 
 function List-Processes() {
@@ -736,7 +738,6 @@ try {
 
   if ($ci) {
     List-Processes
-    Prepare-TempDir
     EnablePreviewSdks
     if ($testVsi) {
       Setup-IntegrationTestRun

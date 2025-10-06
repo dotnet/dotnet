@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Moq;
 using Xunit;
 
 namespace NuGet.Common.Test

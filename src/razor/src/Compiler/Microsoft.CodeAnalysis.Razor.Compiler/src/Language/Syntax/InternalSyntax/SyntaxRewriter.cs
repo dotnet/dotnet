@@ -9,22 +9,6 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<GreenNode>
 {
     public override GreenNode VisitToken(SyntaxToken token)
     {
-        var leading = VisitList(token.LeadingTrivia);
-        var trailing = VisitList(token.TrailingTrivia);
-
-        if (leading != token.LeadingTrivia || trailing != token.TrailingTrivia)
-        {
-            if (leading != token.LeadingTrivia)
-            {
-                token = token.TokenWithLeadingTrivia(leading.Node);
-            }
-
-            if (trailing != token.TrailingTrivia)
-            {
-                token = token.TokenWithTrailingTrivia(trailing.Node);
-            }
-        }
-
         return token;
     }
 

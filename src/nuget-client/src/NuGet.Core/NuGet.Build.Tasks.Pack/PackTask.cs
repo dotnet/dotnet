@@ -2,18 +2,32 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using Microsoft.Build.Framework;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging;
 using ILogger = NuGet.Common.ILogger;
-using PackageSpecificWarningProperties = NuGet.Commands.PackCommand.PackageSpecificWarningProperties;
+
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace NuGet.Build.Tasks.Pack
 {
     public class PackTask : Microsoft.Build.Utilities.Task, IPackTaskRequest<ITaskItem>
     {
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
+
+        public PackTask()
+            : this(EnvironmentVariableWrapper.Instance)
+        {
+        }
+
+        internal PackTask(IEnvironmentVariableReader environmentVariableReader)
+        {
+            _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
+        }
+
         [Required]
         public ITaskItem PackItem { get; set; }
 
@@ -107,7 +121,7 @@ namespace NuGet.Build.Tasks.Pack
             try
             {
 #if DEBUG
-                var debugPackTask = Environment.GetEnvironmentVariable("DEBUG_PACK_TASK");
+                var debugPackTask = _environmentVariableReader.GetEnvironmentVariable("DEBUG_PACK_TASK");
                 if (!string.IsNullOrEmpty(debugPackTask) && debugPackTask.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase))
                 {
                     Debugger.Launch();

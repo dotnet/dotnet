@@ -11,18 +11,34 @@ using System.Reflection.Metadata;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Microsoft.DotNet.SignTool
 {
     internal static class ContentUtil
     {
+        /// <summary>
+        /// Returns the hash of the content of the file at the given path.
+        /// If the file is empty, returns the hash of an empty stream.
+        /// </summary>
+        /// <param name="fullPath">Path of file to hash</param>
+        /// <returns>Hash of content.</returns>
         public static ImmutableArray<byte> GetContentHash(string fullPath)
         {
             using (var stream = File.OpenRead(fullPath))
             {
+                if (stream.Length == 0)
+                {
+                    return EmptyFileContentHash;
+                }
                 return GetContentHash(stream);
             }
         }
+
+        public static readonly ImmutableArray<byte> EmptyFileContentHash = GetContentHash(new MemoryStream()).ToImmutableArray();
 
         public static ImmutableArray<byte> GetContentHash(Stream stream)
         {
@@ -43,27 +59,6 @@ namespace Microsoft.DotNet.SignTool
                 bytes[i / 2] = Convert.ToByte(hash.Substring(i, 2), 16);
             return bytes.ToImmutableArray<byte>();
 
-        }
-
-        /// <summary>
-        /// Returns true if the PE file meets all of the pre-conditions to be Open Source Signed.
-        /// Returns false and logs msbuild errors otherwise.
-        /// </summary>
-        public static bool IsPublicSigned(PEReader peReader)
-        {
-            if (!peReader.HasMetadata)
-            {
-                return false;
-            }
-
-            var mdReader = peReader.GetMetadataReader();
-            if (!mdReader.IsAssembly)
-            {
-                return false;
-            }
-
-            CorHeader header = peReader.PEHeaders.CorHeader;
-            return (header.Flags & CorFlags.StrongNameSigned) == CorFlags.StrongNameSigned;
         }
 
         public static bool IsManaged(string filePath)
@@ -93,17 +88,6 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        public static bool IsAuthenticodeSigned(Stream assemblyStream)
-        {
-            using (var peReader = new PEReader(assemblyStream))
-            {
-                var headers = peReader.PEHeaders;
-                var entry = headers.PEHeader.CertificateTableDirectory;
-
-                return entry.Size > 0;
-            }
-        }
-
         public static string GetPublicKeyToken(string fullPath)
         {
             try
@@ -118,6 +102,50 @@ namespace Microsoft.DotNet.SignTool
             catch (BadImageFormatException)
             {
                 return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Determines the executable type of a file by examining its binary format.
+        /// Returns PE, MachO, ELF, or None if the format is not recognized.
+        /// </summary>
+        /// <param name="filePath">Path to the file to examine</param>
+        /// <returns>The executable type or None if not recognized</returns>
+        public static ExecutableType GetExecutableType(string filePath)
+        {
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    if (stream.Length < 4)
+                        return ExecutableType.None;
+
+                    var buffer = new byte[4]; // Read enough for MachO and ELF magic numbers
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    if (bytesRead < 4)
+                        return ExecutableType.None;
+
+                    // Check for ELF magic: 7F 45 4C 46
+                    if (buffer[0] == 0x7F && buffer[1] == 0x45 && buffer[2] == 0x4C && buffer[3] == 0x46)
+                        return ExecutableType.ELF;
+
+                    // Check for Mach-O magic numbers
+                    uint magic = BitConverter.ToUInt32(buffer, 0);
+                    if (magic == 0xFEEDFACE || magic == 0xFEEDFACF || 
+                        magic == 0xCEFAEDFE || magic == 0xCFFAEDFE)
+                        return ExecutableType.MachO;
+
+                    stream.Seek(0, SeekOrigin.Begin);
+                    using (var peReader = new PEReader(stream))
+                    {
+                        // This will throw if it's not a PE.
+                        return (peReader.PEHeaders.PEHeaderStartOffset != 0) ? ExecutableType.PE : ExecutableType.None;
+                    }
+                }
+            }
+            catch
+            {
+                return ExecutableType.None;
             }
         }
     }

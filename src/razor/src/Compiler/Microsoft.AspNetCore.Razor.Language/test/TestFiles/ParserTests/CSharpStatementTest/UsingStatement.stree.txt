@@ -8,7 +8,7 @@
             CSharpStatementLiteral - [1..42)::41 - [using(var foo = new Foo()) { foo.Bar(); }] - Gen<Stmt>
                 Keyword;[using];
                 LeftParenthesis;[(];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[foo];
                 Whitespace;[ ];

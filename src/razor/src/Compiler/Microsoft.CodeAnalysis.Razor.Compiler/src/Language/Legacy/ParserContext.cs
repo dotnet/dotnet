@@ -4,61 +4,68 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal partial class ParserContext
+internal sealed partial class ParserContext : IDisposable
 {
-    public ParserContext(RazorSourceDocument source, RazorParserOptions options)
-    {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        SourceDocument = source;
-
-        Source = new SeekableTextReader(SourceDocument);
-        DesignTimeMode = options.DesignTime;
-        FeatureFlags = options.FeatureFlags;
-        ParseLeadingDirectives = options.ParseLeadingDirectives;
-        ErrorSink = new ErrorSink();
-        SeenDirectives = new HashSet<string>(StringComparer.Ordinal);
-        EnableSpanEditHandlers = options.EnableSpanEditHandlers;
-    }
-
-    public ErrorSink ErrorSink { get; set; }
-
-    public RazorParserFeatureFlags FeatureFlags { get; }
-
-    public HashSet<string> SeenDirectives { get; }
-
-    public ITextDocument Source { get; }
+    private readonly Stack<ErrorSink> _errorSinkStack;
+    private readonly HashSet<string> _seenDirectivesSet;
 
     public RazorSourceDocument SourceDocument { get; }
-
-    public bool DesignTimeMode { get; }
-
-    public bool ParseLeadingDirectives { get; }
-
-    public bool EnableSpanEditHandlers { get; }
+    public SeekableTextReader Source { get; }
+    public RazorParserOptions Options { get; }
 
     public bool WhiteSpaceIsSignificantToAncestorBlock { get; set; }
-
     public bool NullGenerateWhitespaceAndNewLine { get; set; }
-
     public bool InTemplateContext { get; set; }
-
     public bool StartOfLine { get; set; } = true;
-
     public bool MakeMarkerNode { get; set; } = true;
-
     public AcceptedCharactersInternal CurrentAcceptedCharacters { get; set; } = AcceptedCharactersInternal.Any;
 
-    public bool EndOfFile
+    public ParserContext(RazorSourceDocument source, RazorParserOptions options)
     {
-        get { return Source.Peek() == -1; }
+        ArgHelper.ThrowIfNull(source);
+        ArgHelper.ThrowIfNull(options);
+
+        SourceDocument = source;
+        Options = options;
+
+        _errorSinkStack = StackPool<ErrorSink>.Default.Get();
+        _errorSinkStack.Push(new ErrorSink());
+
+        _seenDirectivesSet = StringHashSetPool.Ordinal.Get();
+
+        Source = new SeekableTextReader(SourceDocument);
+    }
+
+    public void Dispose()
+    {
+        while (_errorSinkStack.Count > 0)
+        {
+            var errorSink = _errorSinkStack.Pop();
+            errorSink.Dispose();
+        }
+
+        StackPool<ErrorSink>.Default.Return(_errorSinkStack);
+        StringHashSetPool.Ordinal.Return(_seenDirectivesSet);
+    }
+
+    public ErrorSink ErrorSink => _errorSinkStack.Peek();
+
+    public HashSet<string> SeenDirectives => _seenDirectivesSet;
+
+    public bool DesignTimeMode => Options.DesignTime;
+
+    public bool IsEndOfFile
+        => Source.Peek() == -1;
+
+    public ErrorScope PushNewErrorScope(ErrorSink errorSink)
+    {
+        _errorSinkStack.Push(errorSink);
+        return new(this);
     }
 }
 
@@ -68,44 +75,15 @@ internal partial class ParserContext
 [DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
 internal partial class ParserContext
 {
-    private const int InfiniteLoopCountThreshold = 1000;
-    private int _infiniteLoopGuardCount;
-    private SourceLocation? _infiniteLoopGuardLocation;
-
-    internal string Unparsed
+    private string Unparsed
     {
         get
         {
-            var remaining = ((TextReader)Source).ReadToEnd();
-            Source.Position -= remaining.Length;
+            var bookmark = Source.Position;
+            var remaining = Source.ReadToEnd();
+            Source.Position = bookmark;
             return remaining;
         }
-    }
-
-    private bool CheckInfiniteLoop()
-    {
-        // Infinite loop guard
-        //  Basically, if this property is accessed 1000 times in a row without having advanced the source reader to the next position, we
-        //  cause a parser error
-        if (_infiniteLoopGuardLocation != null)
-        {
-            if (Source.Location.Equals(_infiniteLoopGuardLocation.Value))
-            {
-                _infiniteLoopGuardCount++;
-                if (_infiniteLoopGuardCount > InfiniteLoopCountThreshold)
-                {
-                    Debug.Fail("An internal parser error is causing an infinite loop at this location.");
-
-                    return true;
-                }
-            }
-            else
-            {
-                _infiniteLoopGuardCount = 0;
-            }
-        }
-        _infiniteLoopGuardLocation = Source.Location;
-        return false;
     }
 
     private string DebuggerToString()

@@ -12,7 +12,7 @@
                     CSharpCodeBlock - [2..23)::21
                         CSharpStatementLiteral - [2..13)::11 - [ var foo = ] - Gen<Stmt>
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[foo];
                             Whitespace;[ ];

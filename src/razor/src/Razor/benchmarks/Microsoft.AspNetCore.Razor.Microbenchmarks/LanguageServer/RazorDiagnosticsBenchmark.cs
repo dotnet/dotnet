@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -10,16 +10,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
@@ -27,14 +28,14 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 [ShortRunJob]
 public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 {
-    private DocumentPullDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
+    private VSDocumentDiagnosticsEndpoint? DocumentPullDiagnosticsEndpoint { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }
     private RazorCodeDocument? RazorCodeDocument { get; set; }
     private SourceText? SourceText { get; set; }
     private ImmutableArray<SourceMapping> SourceMappings { get; set; }
-    private string? GeneratedCode { get; set; }
+    private SourceText? GeneratedCode { get; set; }
     private object? Diagnostics { get; set; }
-    private VersionedDocumentContext? VersionedDocumentContext { get; set; }
+    private DocumentContext? DocumentContext { get; set; }
     private VSInternalDocumentDiagnosticsParams? Request { get; set; }
     private IEnumerable<VSInternalDiagnosticReport?>? Response { get; set; }
 
@@ -51,46 +52,43 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var uri = new Uri(razorFilePath);
         Request = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
-        var stringSourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
-        var mockRazorCodeDocument = new Mock<RazorCodeDocument>(MockBehavior.Strict);
+        var sourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(sourceDocument, RazorParserOptions.Default, RazorCodeGenerationOptions.DesignTimeDefault);
 
-        var mockRazorCSharpDocument = RazorCSharpDocument.Create(
-            mockRazorCodeDocument.Object,
+        var csharpDocument = new RazorCSharpDocument(
+            codeDocument,
             GeneratedCode,
-            RazorCodeGenerationOptions.CreateDesignTimeDefault(),
-            Array.Empty<RazorDiagnostic>(),
+            diagnostics: [],
             SourceMappings,
-            new List<LinePragma>()
-        );
+            linePragmas: []);
 
-        var itemCollection = new ItemCollection();
-        itemCollection[typeof(RazorCSharpDocument)] = mockRazorCSharpDocument;
-        mockRazorCodeDocument.Setup(r => r.Source).Returns(stringSourceDocument);
-        mockRazorCodeDocument.Setup(r => r.Items).Returns(itemCollection);
-        RazorCodeDocument = mockRazorCodeDocument.Object;
+        codeDocument.SetCSharpDocument(csharpDocument);
+
+        RazorCodeDocument = codeDocument;
 
         SourceText = RazorCodeDocument.Source.Text;
-        var documentContext = new Mock<VersionedDocumentContext>(
+        var documentContext = new Mock<DocumentContext>(
             MockBehavior.Strict,
             new object[] { It.IsAny<Uri>(), It.IsAny<IDocumentSnapshot>(), It.IsAny<VSProjectContext>(), It.IsAny<int>() });
         documentContext
             .Setup(r => r.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(RazorCodeDocument);
         documentContext.Setup(r => r.Uri).Returns(It.IsAny<Uri>());
-        documentContext.Setup(r => r.Version).Returns(It.IsAny<int>());
+        documentContext.Setup(r => r.Snapshot.Version).Returns(It.IsAny<int>());
         documentContext.Setup(r => r.GetSourceTextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(It.IsAny<SourceText>());
         RazorRequestContext = new RazorRequestContext(documentContext.Object, null!, "lsp/method", uri: null);
-        VersionedDocumentContext = documentContext.Object;
+        DocumentContext = documentContext.Object;
 
-        var loggerFactory = BuildLoggerFactory();
+        var loggerFactory = EmptyLoggerFactory.Instance;
         var languageServerFeatureOptions = BuildFeatureOptions();
         var languageServer = new ClientNotifierService(Diagnostics!);
         var documentMappingService = BuildRazorDocumentMappingService();
 
+        var optionsMonitor = Mock.Of<RazorLSPOptionsMonitor>(MockBehavior.Strict);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, loggerFactory);
-        DocumentPullDiagnosticsEndpoint = new DocumentPullDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, languageServer, telemetryReporter: null);
+        DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
     }
 
     private object BuildDiagnostics()
@@ -108,37 +106,36 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         return Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
             options.SingleServerSupport == true &&
-            options.SingleServerCompletionSupport == true &&
             options.CSharpVirtualDocumentSuffix == ".ide.g.cs" &&
             options.HtmlVirtualDocumentSuffix == "__virtual.html",
             MockBehavior.Strict);
     }
 
-    private IRazorDocumentMappingService BuildRazorDocumentMappingService()
+    private IDocumentMappingService BuildRazorDocumentMappingService()
     {
-        var razorDocumentMappingService = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
+        var razorDocumentMappingService = new Mock<IDocumentMappingService>(MockBehavior.Strict);
 
-        Range? hostDocumentRange;
+        LspRange? hostDocumentRange;
         razorDocumentMappingService.Setup(
-            r => r.TryMapToHostDocumentRange(
-                It.IsAny<IRazorGeneratedDocument>(),
+            r => r.TryMapToRazorDocumentRange(
+                It.IsAny<RazorCSharpDocument>(),
                 InRange,
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((RazorCSharpDocument csharpDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = OutRange;
                 return true;
             });
 
-        Range? hostDocumentRange2;
+        LspRange? hostDocumentRange2;
         razorDocumentMappingService.Setup(
-            r => r.TryMapToHostDocumentRange(
-                It.IsAny<IRazorGeneratedDocument>(),
+            r => r.TryMapToRazorDocumentRange(
+                It.IsAny<RazorCSharpDocument>(),
                 It.IsNotIn(InRange),
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange2))
-            .Returns((IRazorGeneratedDocument generatedDocument, Range range, MappingBehavior mappingBehavior, out Range? actualOutRange) =>
+            .Returns((RazorCSharpDocument csharpDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = null;
                 return false;
@@ -146,11 +143,6 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         return razorDocumentMappingService.Object;
     }
-
-    private IRazorLoggerFactory BuildLoggerFactory() => Mock.Of<IRazorLoggerFactory>(
-        r => r.CreateLogger(
-            It.IsAny<string>()) == new NoopLogger(),
-        MockBehavior.Strict);
 
     private string GetFileContents()
         => """
@@ -211,10 +203,10 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         }
     }
 
-    private Range InRange { get; set; } = new Range { Start = new Position(85, 8), End = new Position(85, 16) };
-    private Range OutRange { get; set; } = new Range { Start = new Position(6, 8), End = new Position(6, 16) };
+    private LspRange InRange { get; set; } = LspFactory.CreateSingleLineRange(line: 85, character: 8, length: 8);
+    private LspRange OutRange { get; set; } = LspFactory.CreateSingleLineRange(line: 6, character: 8, length: 8);
 
-    private Diagnostic[] GetDiagnostics(int N) => Enumerable.Range(1, N).Select(_ => new Diagnostic()
+    private Diagnostic[] GetDiagnostics(int n) => Enumerable.Range(1, n).Select(_ => new Diagnostic()
     {
         Range = InRange,
         Code = "CS0103",
@@ -222,8 +214,8 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         Message = "The name 'CallOnMe' does not exist in the current context"
     }).ToArray();
 
-    private string GetGeneratedCode()
-        => """
+    private static SourceText GetGeneratedCode()
+        => SourceText.From("""
 // <auto-generated/>
 #pragma warning disable 1591
 namespace AspNetCore
@@ -319,7 +311,7 @@ using Microsoft.AspNetCore.Components.Web;
 }
 #pragma warning restore 1591
 
-""";
+""", Encoding.UTF8);
 
     private ImmutableArray<SourceMapping> GetSourceMappings()
         => ImmutableArray<SourceMapping>.Empty.Add(

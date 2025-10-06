@@ -10,13 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Contracts.EditAndContinue;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.ErrorReporting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Shared.Extensions;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.Contracts.EditAndContinue;
 using Roslyn.Utilities;
-using Microsoft.CodeAnalysis.ErrorReporting;
 
 namespace Microsoft.CodeAnalysis.EditAndContinue;
 
@@ -29,15 +29,28 @@ internal sealed class EditAndContinueService : IEditAndContinueService
     [ExportWorkspaceService(typeof(IEditAndContinueWorkspaceService)), Shared]
     [method: ImportingConstructor]
     [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    internal sealed class WorkspaceService(IEditAndContinueService service) : IEditAndContinueWorkspaceService
+    internal sealed class WorkspaceService(
+        IEditAndContinueService service,
+        [Import(AllowDefault = true)] IEditAndContinueSessionTracker? sessionTracker = null) : IEditAndContinueWorkspaceService
     {
         public IEditAndContinueService Service { get; } = service;
+        public IEditAndContinueSessionTracker SessionTracker { get; } = sessionTracker ?? VoidSessionTracker.Instance;
     }
 
-    internal static readonly TraceLog Log;
-    internal static readonly TraceLog AnalysisLog;
+    private sealed class VoidSessionTracker : IEditAndContinueSessionTracker
+    {
+        public static readonly VoidSessionTracker Instance = new();
 
-    private Func<Project, CompilationOutputs> _compilationOutputsProvider;
+        public bool IsSessionActive => false;
+        public ImmutableArray<DiagnosticData> ApplyChangesDiagnostics => [];
+    }
+
+    private static readonly string? s_logDir = GetLogDirectory();
+
+    internal readonly TraceLog Log;
+    internal readonly TraceLog AnalysisLog;
+
+    private Func<Project, CompilationOutputs> _compilationOutputsProvider = GetCompilationOutputs;
 
     /// <summary>
     /// List of active debugging sessions (small number of simoultaneously active sessions is expected).
@@ -47,21 +60,16 @@ internal sealed class EditAndContinueService : IEditAndContinueService
 
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EditAndContinueService()
+    public EditAndContinueService(
+        [Import(AllowDefault = true)] IEditAndContinueLogReporter? logReporter)
     {
-        _compilationOutputsProvider = GetCompilationOutputs;
-    }
+        Log = new TraceLog("Session", logReporter);
+        AnalysisLog = new TraceLog("Analysis", logReporter);
 
-    static EditAndContinueService()
-    {
-        Log = new(2048, "EnC", "Trace.log");
-        AnalysisLog = new(1024, "EnC", "Analysis.log");
-
-        var logDir = GetLogDirectory();
-        if (logDir != null)
+        if (s_logDir != null)
         {
-            Log.SetLogDirectory(logDir);
-            AnalysisLog.SetLogDirectory(logDir);
+            Log.SetLogDirectory(s_logDir);
+            AnalysisLog.SetLogDirectory(s_logDir);
         }
     }
 
@@ -86,7 +94,9 @@ internal sealed class EditAndContinueService : IEditAndContinueService
 
     public void SetFileLoggingDirectory(string? logDirectory)
     {
-        Log.SetLogDirectory(logDirectory ?? GetLogDirectory());
+        logDirectory ??= GetLogDirectory();
+        Log.SetLogDirectory(logDirectory);
+        AnalysisLog.SetLogDirectory(logDirectory);
     }
 
     private static CompilationOutputs GetCompilationOutputs(Project project)
@@ -109,7 +119,7 @@ internal sealed class EditAndContinueService : IEditAndContinueService
     {
         lock (_debuggingSessions)
         {
-            return _debuggingSessions.ToImmutableArray();
+            return [.. _debuggingSessions];
         }
     }
 
@@ -117,7 +127,7 @@ internal sealed class EditAndContinueService : IEditAndContinueService
     {
         lock (_debuggingSessions)
         {
-            return _debuggingSessions.Where(s => s.ReportDiagnostics).ToImmutableArray();
+            return [.. _debuggingSessions.Where(s => s.ReportDiagnostics)];
         }
     }
 
@@ -142,22 +152,25 @@ internal sealed class EditAndContinueService : IEditAndContinueService
                     ? solution.Projects.Select(project => (project, project.State.DocumentStates.States.Values))
                     : GetDocumentStatesGroupedByProject(solution, captureMatchingDocuments);
 
-                initialDocumentStates = await CommittedSolution.GetMatchingDocumentsAsync(documentsByProject, _compilationOutputsProvider, sourceTextProvider, cancellationToken).ConfigureAwait(false);
+                initialDocumentStates = await CommittedSolution.GetMatchingDocumentsAsync(Log, documentsByProject, _compilationOutputsProvider, sourceTextProvider, cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                initialDocumentStates = SpecializedCollections.EmptyEnumerable<KeyValuePair<DocumentId, CommittedSolution.DocumentState>>();
+                initialDocumentStates = [];
             }
 
+            // Make sure the solution snapshot has all source-generated documents up-to-date:
+            solution = solution.WithUpToDateSourceGeneratorDocuments(solution.ProjectIds);
+
             var sessionId = new DebuggingSessionId(Interlocked.Increment(ref s_debuggingSessionId));
-            var session = new DebuggingSession(sessionId, solution, debuggerService, _compilationOutputsProvider, sourceTextProvider, initialDocumentStates, reportDiagnostics);
+            var session = new DebuggingSession(sessionId, solution, debuggerService, _compilationOutputsProvider, sourceTextProvider, initialDocumentStates, Log, AnalysisLog, reportDiagnostics);
 
             lock (_debuggingSessions)
             {
                 _debuggingSessions.Add(session);
             }
 
-            Log.Write("Session #{0} started.", sessionId.Ordinal);
+            Log.Write($"Session #{sessionId} started.");
             return sessionId;
 
         }
@@ -174,7 +187,7 @@ internal sealed class EditAndContinueService : IEditAndContinueService
            let project = solution.GetRequiredProject(projectDocumentIds.Key)
            select (project, from documentId in projectDocumentIds select project.State.DocumentStates.GetState(documentId));
 
-    public void EndDebuggingSession(DebuggingSessionId sessionId, out ImmutableArray<DocumentId> documentsToReanalyze)
+    public void EndDebuggingSession(DebuggingSessionId sessionId)
     {
         DebuggingSession? debuggingSession;
         lock (_debuggingSessions)
@@ -184,16 +197,16 @@ internal sealed class EditAndContinueService : IEditAndContinueService
 
         Contract.ThrowIfNull(debuggingSession, "Debugging session has not started.");
 
-        debuggingSession.EndSession(out documentsToReanalyze, out var telemetryData);
+        debuggingSession.EndSession(out var telemetryData);
 
-        Log.Write("Session #{0} ended.", debuggingSession.Id.Ordinal);
+        Log.Write($"Session #{debuggingSession.Id} ended.");
     }
 
-    public void BreakStateOrCapabilitiesChanged(DebuggingSessionId sessionId, bool? inBreakState, out ImmutableArray<DocumentId> documentsToReanalyze)
+    public void BreakStateOrCapabilitiesChanged(DebuggingSessionId sessionId, bool? inBreakState)
     {
         var debuggingSession = TryGetDebuggingSession(sessionId);
         Contract.ThrowIfNull(debuggingSession);
-        debuggingSession.BreakStateOrCapabilitiesChanged(inBreakState, out documentsToReanalyze);
+        debuggingSession.BreakStateOrCapabilitiesChanged(inBreakState);
     }
 
     public ValueTask<ImmutableArray<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, ActiveStatementSpanProvider activeStatementSpanProvider, CancellationToken cancellationToken)
@@ -207,24 +220,25 @@ internal sealed class EditAndContinueService : IEditAndContinueService
     public ValueTask<EmitSolutionUpdateResults> EmitSolutionUpdateAsync(
         DebuggingSessionId sessionId,
         Solution solution,
+        ImmutableDictionary<ProjectId, RunningProjectOptions> runningProjects,
         ActiveStatementSpanProvider activeStatementSpanProvider,
         CancellationToken cancellationToken)
     {
         var debuggingSession = TryGetDebuggingSession(sessionId);
         if (debuggingSession == null)
         {
-            return ValueTaskFactory.FromResult(EmitSolutionUpdateResults.Empty);
+            return ValueTask.FromResult(EmitSolutionUpdateResults.Empty);
         }
 
-        return debuggingSession.EmitSolutionUpdateAsync(solution, activeStatementSpanProvider, cancellationToken);
+        return debuggingSession.EmitSolutionUpdateAsync(solution, runningProjects, activeStatementSpanProvider, cancellationToken);
     }
 
-    public void CommitSolutionUpdate(DebuggingSessionId sessionId, out ImmutableArray<DocumentId> documentsToReanalyze)
+    public void CommitSolutionUpdate(DebuggingSessionId sessionId)
     {
         var debuggingSession = TryGetDebuggingSession(sessionId);
         Contract.ThrowIfNull(debuggingSession);
 
-        debuggingSession.CommitSolutionUpdate(out documentsToReanalyze);
+        debuggingSession.CommitSolutionUpdate();
     }
 
     public void DiscardSolutionUpdate(DebuggingSessionId sessionId)
@@ -251,7 +265,7 @@ internal sealed class EditAndContinueService : IEditAndContinueService
         var debuggingSession = TryGetDebuggingSession(sessionId);
         if (debuggingSession == null)
         {
-            return ValueTaskFactory.FromResult(ImmutableArray<ActiveStatementSpan>.Empty);
+            return ValueTask.FromResult(ImmutableArray<ActiveStatementSpan>.Empty);
         }
 
         return debuggingSession.GetAdjustedActiveStatementSpansAsync(mappedDocument, activeStatementSpanProvider, cancellationToken);

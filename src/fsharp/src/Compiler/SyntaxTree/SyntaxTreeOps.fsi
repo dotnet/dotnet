@@ -2,10 +2,12 @@
 
 module internal FSharp.Compiler.SyntaxTreeOps
 
+open FSharp.Compiler.Features
 open FSharp.Compiler.Text
 open FSharp.Compiler.Xml
 open FSharp.Compiler.Syntax
 open FSharp.Compiler.SyntaxTrivia
+open Internal.Utilities
 
 [<Class>]
 type SynArgNameGenerator =
@@ -42,6 +44,8 @@ val mkSynSimplePatVar: isOpt: bool -> id: Ident -> SynSimplePat
 val mkSynCompGenSimplePatVar: id: Ident -> SynSimplePat
 
 val pushUnaryArg: expr: SynExpr -> arg: Ident -> SynExpr
+
+val inline findSynAttribute: attrName: string -> synAttrs: SynAttributes -> bool
 
 /// Match a long identifier, including the case for single identifiers which gets a more optimized node in the syntax tree.
 [<return: Struct>]
@@ -319,7 +323,17 @@ val unionBindingAndMembers: bindings: SynBinding list -> members: SynMemberDefn 
 
 val synExprContainsError: inpExpr: SynExpr -> bool
 
-val (|ParsedHashDirectiveArguments|): ParsedHashDirectiveArgument list -> string list
+val stdinMockFileName: string
+
+val getSourceIdentifierValue: PathMap -> string -> range -> string
+
+val applyLineDirectivesToSourceIdentifier: string -> string -> range -> string
+
+val parsedHashDirectiveArguments: ParsedHashDirectiveArgument list -> LanguageVersion -> string list
+
+val parsedHashDirectiveArgumentsNoCheck: ParsedHashDirectiveArgument list -> string list
+
+val parsedHashDirectiveStringArguments: ParsedHashDirectiveArgument list -> LanguageVersion -> string list
 
 /// 'e1 && e2'
 [<return: Struct>]
@@ -359,3 +373,9 @@ val (|TypesForTypar|): t: SynType -> SynType list
 /// Generated get_XYZ or set_XYZ ident text
 [<return: Struct>]
 val (|Get_OrSet_Ident|_|): Ident -> unit voption
+
+val getGetterSetterAccess:
+    SynValSigAccess -> SynMemberKind -> Features.LanguageVersion -> SynAccess option * SynAccess option
+
+/// Adds SynPat.Or pattern for unfinished empty clause above
+val addEmptyMatchClause: mBar1: range -> mBar2: range -> clauses: SynMatchClause list -> SynMatchClause list

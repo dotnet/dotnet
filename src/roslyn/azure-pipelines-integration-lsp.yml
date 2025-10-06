@@ -6,6 +6,7 @@ trigger:
     include:
     - main
     - main-vs-deps
+    - community
     - release/*
     - features/*
     - demos/*
@@ -24,6 +25,7 @@ pr:
     include:
     - main
     - main-vs-deps
+    - community
     - release/*
     - features/*
     - demos/*
@@ -71,6 +73,5 @@ stages:
     configuration: Debug
     testRuns:
       - oop64bit: true
-        oopCoreClr: false
         lspEditor: true
         runName: VS_Integration_LSP_Debug_64

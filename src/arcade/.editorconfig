@@ -167,3 +167,17 @@ dotnet_code_quality.CA2208.api_surface = public
 # IDE0073: The file header is missing or not located at the top of the file
 file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
 dotnet_diagnostic.IDE0073.severity = error
+
+# Build Checks
+[*.{csproj,proj,metaproj}]
+build_check.BC0101.Severity=suggestion
+build_check.BC0102.Severity=suggestion
+build_check.BC0103.Severity=suggestion
+build_check.BC0104.Severity=suggestion
+build_check.BC0105.Severity=suggestion
+build_check.BC0106.Severity=suggestion
+build_check.BC0107.Severity=suggestion
+
+build_check.BC0201.Severity=suggestion
+build_check.BC0202.Severity=suggestion
+build_check.BC0203.Severity=suggestion

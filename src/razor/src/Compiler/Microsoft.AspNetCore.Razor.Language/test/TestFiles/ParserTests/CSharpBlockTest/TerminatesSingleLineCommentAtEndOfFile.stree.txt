@@ -8,7 +8,7 @@
             CSharpStatementLiteral - [1..39)::38 - [foreach(var f in Foo) { // foo bar baz] - Gen<Stmt>
                 Keyword;[foreach];
                 LeftParenthesis;[(];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[f];
                 Whitespace;[ ];

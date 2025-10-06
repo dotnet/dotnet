@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace NuGet.Packaging.Signing.DerEncoding
 {

@@ -7,7 +7,7 @@ parameters:
   _const_paths:
     _wasm_specific_only: [
         eng/testing/bump-chrome-version.proj
-        eng/testing/ChromeVersions.props
+        eng/testing/BrowserVersions.props
         eng/testing/WasmRunner*
         eng/testing/WasiRunner*
         eng/testing/scenarios/BuildWasiAppsJobsList.txt
@@ -22,6 +22,7 @@ parameters:
         src/libraries/sendtohelix-browser.targets
         src/libraries/sendtohelix-wasi.targets
         src/libraries/sendtohelix-wasm.targets
+        src/libraries/System.Runtime.InteropServices.JavaScript/src/*
         src/mono/mono/**/*wasm*
         src/mono/nuget/Microsoft.NET.Runtime.WebAssembly.Sdk/*
         src/mono/nuget/Microsoft.NET.Runtime.WebAssembly.Wasi.Sdk/*
@@ -41,11 +42,17 @@ parameters:
         src/tasks/Microsoft.NET.Sdk.WebAssembly.Pack.Tasks/*
         src/tasks/Microsoft.NET.WebAssembly.Webcil/*
         src/tests/Common/wasm-test-runner/*
+        src/coreclr/vm/wasm/*
+        src/native/corehost/browserhost/*
+        src/native/libs/Common/JavaScript/*
+        src/native/libs/System.Native.Browser/*
+        src/native/libs/System.Runtime.InteropServices.JavaScript.Native/*
     ]
     _wasm_pipelines: [
         eng/pipelines/**/*wasm*
     ]
     _wasm_src_native: [
+        src/coreclr/vm/wasm/*
         src/native/minipal/*
         src/native/libs/CMakeLists.txt
         src/native/libs/configure.cmake
@@ -54,18 +61,17 @@ parameters:
         src/native/libs/System.Globalization.Native/*
         src/native/libs/System.IO.Compression.Native/*
         src/native/libs/System.Native/*
+        src/native/corehost/browserhost/*
+        src/native/libs/Common/JavaScript/*
+        src/native/libs/System.Native.Browser/*
+        src/native/libs/System.Runtime.InteropServices.JavaScript.Native/*
     ]
     _wasm_chrome: [
         eng/testing/bump-chrome-version.proj
-        eng/testing/ChromeVersions.props
+        eng/testing/BrowserVersions.props
     ]
     _perf_pipeline_specific_only: [
-        eng/pipelines/runtime-wasm-perf.yml
-        eng/pipelines/coreclr/perf*.yml
-        eng/pipelines/coreclr/templates/perf-job.yml
-        eng/pipelines/coreclr/templates/*-perf-*
-        eng/pipelines/coreclr/templates/run-perf*
-        eng/pipelines/coreclr/templates/run-scenarios-job.yml
+        eng/pipelines/performance/*
         eng/testing/performance/*
     ]
 
@@ -98,6 +104,7 @@ jobs:
       - src/mono/*
       - src/libraries/*
       - src/native/libs/*
+      - src/native/managed/cdac/*
       - src/tests/*
       - src/tools/*
       - eng/pipelines/installer/*
@@ -126,6 +133,7 @@ jobs:
       - src/coreclr/*
       - src/libraries/*
       - src/native/libs/*
+      - src/native/managed/cdac/*
       - src/tests/*
       - src/tools/*
       - eng/pipelines/installer/*
@@ -142,6 +150,7 @@ jobs:
       - src/tests/*
       - src/tools/*
       - src/native/eventpipe/*
+      - src/native/managed/cdac/*
       - eng/pipelines/coreclr/*
       - eng/pipelines/mono/*
       - eng/pipelines/installer/*
@@ -161,7 +170,14 @@ jobs:
     - subset: tools_illink
       include:
       - src/tools/illink/*
+      - src/coreclr/tools/aot/ILCompiler.DependencyAnalysisFramework/*
+      - src/coreclr/tools/ILVerification/*
       - global.json
+
+    - subset: tools_cdac
+      include:
+      - src/native/managed/cdac/*
+      - src/coreclr/debug/runtimeinfo/*
 
     - subset: installer
       include:
@@ -174,6 +190,7 @@ jobs:
       - src/tests/*
       - src/tools/*
       - src/native/eventpipe/*
+      - src/native/managed/cdac/*
       - eng/pipelines/coreclr/*
       - eng/pipelines/mono/*
       - eng/pipelines/libraries/*
@@ -195,20 +212,19 @@ jobs:
       - src/coreclr/jit/*
       - src/coreclr/pal/*
       - src/coreclr/vm/*
-    - subset: coreclr_jit
-      include:
-      - src/coreclr/jit/*
 
     #
     # ** WASM **
     # Changes in *only* Wasm.Build.Tests, debugger, or runtime-tests are very
-    # self-contained, so we try to trigger only those relevants tests
+    # self-contained, so we try to trigger only those relevant tests
     #
     - subset: wasmbuildtests
       combined: true
       include:
       - eng/Version.Details.xml
       - eng/Versions.props
+      - eng/AcquireWasiSdk.targets
+      - eng/download-wasi-sdk.ps1
       - eng/testing/scenarios/BuildWasiAppsJobsList.txt
       - eng/testing/scenarios/BuildWasmAppsJobsList.txt
       - eng/testing/tests.browser.targets
@@ -254,22 +270,6 @@ jobs:
       - ${{ parameters._const_paths._always_exclude }}
       - ${{ parameters._const_paths._perf_pipeline_specific_only }}
 
-    - subset: wasmdebuggertests
-      combined: true
-      include:
-      - ${{ parameters._const_paths._wasm_chrome }}
-      - src/libraries/System.Runtime.InteropServices/*
-      - src/libraries/System.Runtime.InteropServices.JavaScript/*
-      - src/mono/mono/*
-      - src/mono/browser/debugger/*
-      - src/mono/browser/runtime/*
-      - ${{ parameters._const_paths._wasm_src_native }}
-      - ${{ parameters._const_paths._wasm_pipelines }}
-      exclude:
-      - src/mono/nuget/*
-      - ${{ parameters._const_paths._always_exclude }}
-      - ${{ parameters._const_paths._perf_pipeline_specific_only }}
-
     # wasm/runtimetests need to be run
     - subset: wasm_runtimetests
       combined: true
@@ -283,7 +283,7 @@ jobs:
       - src/mono/tests/*
       - src/mono/tools/*
       - src/mono/wasi/*
-      - src/mono/wasm/debugger/*
+      - src/mono/browser/debugger/*
       - src/mono/wasm/host/*
       - src/mono/wasm/templates/*
       - src/mono/wasm/testassets/*

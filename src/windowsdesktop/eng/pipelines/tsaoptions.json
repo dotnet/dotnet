@@ -1,0 +1,10 @@
+{  
+    "instanceUrl": "https://devdiv.visualstudio.com/",
+    "template": "TFSDEVDIV",
+    "projectName": "DEVDIV",
+    "areaPath": "DevDiv\\NET Fundamentals\\WindowsDesktop",
+    "iterationPath": "DevDiv",
+    "notificationAliases": [ "windowsdesktopdevs@service.microsoft.com" ],
+    "repositoryName":"WindowsDesktop",
+    "codebaseName": "WindowsDesktop"
+}

@@ -103,8 +103,7 @@ let RepresentBindingAsStateVar g (bind: Binding) (resBody: StateMachineConversio
         stateVars = vref :: resBody.stateVars }
 
 let isExpandVar g (v: Val) = 
-    isReturnsResumableCodeTy g v.TauType &&
-    not v.IsCompiledAsTopLevel
+    isReturnsResumableCodeTy g v.TauType
 
 // We allow a prefix of bindings prior to the state machine, e.g. 
 //     task { .. }
@@ -114,8 +113,7 @@ let isExpandVar g (v: Val) =
 let isStateMachineBindingVar g (v: Val) = 
     isExpandVar g v  ||
     (let nm = v.LogicalName
-     (nm.StartsWithOrdinal("builder@") || v.IsMemberThisVal) &&
-     not v.IsCompiledAsTopLevel)
+     (nm.StartsWithOrdinal("builder@") || v.IsMemberThisVal))
 
 type env = 
     { 
@@ -448,7 +446,7 @@ type LowerStateMachine(g: TcGlobals) =
         let res = 
             match expr with 
             | ResumableCodeInvoke g (_, _, _, m, _) ->
-                Result.Error (FSComp.SR.reprResumableCodeInvokeNotReduced(m.ToString()))
+                Result.Error (FSComp.SR.reprResumableCodeInvokeNotReduced(!!m.ToString()))
 
             // Eliminate 'if __useResumableCode ...' within.  
             | IfUseResumableStateMachinesExpr g (thenExpr, _) -> 

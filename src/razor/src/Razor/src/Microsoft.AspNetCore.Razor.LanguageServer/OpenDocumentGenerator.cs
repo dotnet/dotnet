@@ -1,120 +1,159 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class OpenDocumentGenerator : IRazorStartupService, IDisposable
+internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
 {
     // Using 10 milliseconds for the delay here because we want document synchronization to be very fast,
     // so that features like completion are not delayed, but at the same time we don't want to do more work
     // than necessary when both C# and HTML documents change at the same time, firing our event handler
     // twice. Through testing 10ms was a good balance towards providing some de-bouncing but having minimal
     // to no impact on results.
+    //
     // It's worth noting that the queue implementation means that this delay is not restarted with each new
-    // work item, so even in very high speed typing, with changings coming in at sub-10-millisecond speed,
+    // work item, so even in very high speed typing, with changes coming in at sub-10-millisecond speed,
     // the queue will still process documents even if the user doesn't pause at all, but also will not process
     // a document for each keystroke.
-    private static readonly TimeSpan s_batchingTimeSpan = TimeSpan.FromMilliseconds(10);
+    private static readonly TimeSpan s_delay = TimeSpan.FromMilliseconds(10);
 
-    private readonly IProjectSnapshotManager _projectManager;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly ImmutableArray<IDocumentProcessedListener> _listeners;
+    private readonly ProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _options;
-    private readonly IReadOnlyList<DocumentProcessedListener> _listeners;
-    private readonly BatchingWorkQueue _workQueue;
+    private readonly ILogger _logger;
+
+    private readonly AsyncBatchingWorkQueue<DocumentKey> _workQueue;
+    private readonly CancellationTokenSource _disposeTokenSource;
+    private readonly HashSet<DocumentKey> _workerSet;
+
+    // Note: This is likely to always be false. Only the Visual Studio ProjectSnapshotManager
+    // is notified of the solution opening and closing, so the language server shouldn't
+    // update this value. However, this may change at some point and keeping the check here means
+    // that the logic between this class and the Visual Studio BackgroundDocumentGenerator are in sync.
+    private bool _solutionIsClosing;
 
     public OpenDocumentGenerator(
-        IEnumerable<DocumentProcessedListener> listeners,
-        IProjectSnapshotManager projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
+        IEnumerable<IDocumentProcessedListener> listeners,
+        ProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
-        IErrorReporter errorReporter)
+        ILoggerFactory loggerFactory)
     {
-        _listeners = listeners.ToArray();
+        _listeners = [.. listeners];
         _projectManager = projectManager;
-        _dispatcher = dispatcher;
         _options = options;
-        _workQueue = new BatchingWorkQueue(s_batchingTimeSpan, FilePathComparer.Instance, errorReporter);
+
+        _workerSet = [];
+        _disposeTokenSource = new();
+        _workQueue = new AsyncBatchingWorkQueue<DocumentKey>(
+            s_delay,
+            ProcessBatchAsync,
+            _disposeTokenSource.Token);
 
         _projectManager.Changed += ProjectManager_Changed;
-
-        foreach (var listener in _listeners)
-        {
-            listener.Initialize(_projectManager);
-        }
+        _logger = loggerFactory.GetOrCreateLogger<OpenDocumentGenerator>();
     }
 
     public void Dispose()
     {
-        _workQueue.Dispose();
-    }
-
-    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
-    {
-        // Don't do any work if the solution is closing
-        if (args.SolutionIsClosing)
+        if (_disposeTokenSource.IsCancellationRequested)
         {
             return;
         }
 
-        _dispatcher.AssertRunningOnDispatcher();
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
+    }
+
+    private async ValueTask ProcessBatchAsync(ImmutableArray<DocumentKey> items, CancellationToken token)
+    {
+        _workerSet.Clear();
+
+        foreach (var key in items.GetMostRecentUniqueItems(_workerSet))
+        {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            // If the solution is closing, avoid any in-progress work.
+            if (_solutionIsClosing)
+            {
+                return;
+            }
+
+            if (!_projectManager.TryGetDocument(key, out var document))
+            {
+                continue;
+            }
+
+            _logger.LogDebug($"Generating {key} at version {document.Version}");
+
+            var codeDocument = await document.GetGeneratedOutputAsync(token).ConfigureAwait(false);
+
+            foreach (var listener in _listeners)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                listener.DocumentProcessed(codeDocument, document);
+            }
+        }
+    }
+
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
+    {
+        // We don't want to do any work on solution close.
+        if (args.IsSolutionClosing)
+        {
+            _solutionIsClosing = true;
+            return;
+        }
+
+        _solutionIsClosing = false;
+
+        _logger.LogDebug($"Got a project change of type {args.Kind} for {args.ProjectKey.Id}");
 
         switch (args.Kind)
         {
+            case ProjectChangeKind.ProjectAdded:
             case ProjectChangeKind.ProjectChanged:
                 {
                     var newProject = args.Newer.AssumeNotNull();
 
                     foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        if (newProject.GetDocument(documentFilePath) is { } document)
-                        {
-                            TryEnqueue(document);
-                        }
+                        EnqueueIfNecessary(new(newProject.Key, documentFilePath));
                     }
 
                     break;
                 }
 
             case ProjectChangeKind.DocumentAdded:
-                {
-                    var newProject = args.Newer.AssumeNotNull();
-                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
-
-                    if (newProject.GetDocument(documentFilePath) is { } document)
-                    {
-                        // We don't enqueue the current document because added documents are by default closed.
-
-                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
-                        {
-                            TryEnqueue(relatedDocument);
-                        }
-                    }
-
-                    break;
-                }
-
             case ProjectChangeKind.DocumentChanged:
                 {
+                    // Most of the time Add will be called on closed files, but when migrating files to/from the misc files
+                    // project they could already be open, but with a different generated C# path
+
                     var newProject = args.Newer.AssumeNotNull();
                     var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    if (newProject.GetDocument(documentFilePath) is { } document)
-                    {
-                        TryEnqueue(document);
+                    EnqueueIfNecessary(new(newProject.Key, documentFilePath));
 
-                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
-                        {
-                            TryEnqueue(relatedDocument);
-                        }
+                    foreach (var relatedDocumentFilePath in newProject.GetRelatedDocumentFilePaths(documentFilePath))
+                    {
+                        EnqueueIfNecessary(new(newProject.Key, relatedDocumentFilePath));
                     }
 
                     break;
@@ -126,16 +165,14 @@ internal class OpenDocumentGenerator : IRazorStartupService, IDisposable
                     var oldProject = args.Older.AssumeNotNull();
                     var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    if (oldProject.GetDocument(documentFilePath) is { } document)
-                    {
-                        foreach (var relatedDocument in oldProject.GetRelatedDocuments(document))
-                        {
-                            var relatedDocumentFilePath = relatedDocument.FilePath.AssumeNotNull();
+                    // For removals use the old snapshot to find related documents to update if they exist
+                    // in the new snapshot.
 
-                            if (newProject.GetDocument(relatedDocumentFilePath) is { } newRelatedDocument)
-                            {
-                                TryEnqueue(newRelatedDocument);
-                            }
+                    foreach (var relatedDocumentFilePath in oldProject.GetRelatedDocumentFilePaths(documentFilePath))
+                    {
+                        if (newProject.ContainsDocument(relatedDocumentFilePath))
+                        {
+                            EnqueueIfNecessary(new(newProject.Key, relatedDocumentFilePath));
                         }
                     }
 
@@ -144,54 +181,24 @@ internal class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
             case ProjectChangeKind.ProjectRemoved:
                 {
-                    // No-op. We don't need to enqueue recompilations if the project is being removed
+                    // No-op. We don't need to compile anything if the project is being removed
                     break;
                 }
+
+            default:
+                Assumed.Unreachable($"Unknown {nameof(ProjectChangeKind)}: {args.Kind}");
+                break;
         }
 
-        void TryEnqueue(IDocumentSnapshot document)
+        void EnqueueIfNecessary(DocumentKey documentKey)
         {
-            var documentFilePath = document.FilePath.AssumeNotNull();
-
-            if (!_projectManager.IsDocumentOpen(documentFilePath) &&
-                !_options.UpdateBuffersForClosedDocuments)
+            if (!_options.UpdateBuffersForClosedDocuments &&
+                !_projectManager.IsDocumentOpen(documentKey.FilePath))
             {
                 return;
             }
 
-            var key = $"{document.Project.Key.Id}:{documentFilePath}";
-            var workItem = new ProcessWorkItem(document, _listeners, _dispatcher);
-            _workQueue.Enqueue(key, workItem);
-        }
-    }
-
-    private class ProcessWorkItem : BatchableWorkItem
-    {
-        private readonly IDocumentSnapshot _latestDocument;
-        private readonly IEnumerable<DocumentProcessedListener> _documentProcessedListeners;
-        private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-
-        public ProcessWorkItem(
-            IDocumentSnapshot latestDocument,
-            IReadOnlyList<DocumentProcessedListener> documentProcessedListeners,
-            ProjectSnapshotManagerDispatcher dispatcher)
-        {
-            _latestDocument = latestDocument;
-            _documentProcessedListeners = documentProcessedListeners;
-            _dispatcher = dispatcher;
-        }
-
-        public override async ValueTask ProcessAsync(CancellationToken cancellationToken)
-        {
-            var codeDocument = await _latestDocument.GetGeneratedOutputAsync().ConfigureAwait(false);
-
-            await _dispatcher.RunAsync(() =>
-            {
-                foreach (var listener in _documentProcessedListeners)
-                {
-                    listener.DocumentProcessed(codeDocument, _latestDocument);
-                }
-            }, cancellationToken).ConfigureAwait(false);
+            _workQueue.AddWork(documentKey);
         }
     }
 }

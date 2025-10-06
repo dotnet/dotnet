@@ -1,48 +1,60 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using System.Text.Json;
 using Microsoft.NET.Sdk.WebAssembly;
 
 namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 {
-    public class WasmBuildIncrementalismTest : AspNetSdkTest
+    public class WasmBuildIncrementalismTest(ITestOutputHelper log) : AspNetSdkTest(log)
     {
-        public WasmBuildIncrementalismTest(ITestOutputHelper log) : base(log) { }
-
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_IsIncremental()
         {
             // Arrange
             var testAsset = "BlazorWasmWithLibrary";
             var projectDirectory = CreateAspNetSdkTestAsset(testAsset);
 
-            var build = new BuildCommand(projectDirectory, "blazorwasm");
-            build.Execute()
+            var build = CreateBuildCommand(projectDirectory, "blazorwasm");
+            build.Execute("/bl")
                 .Should()
                 .Pass();
 
             var buildOutputDirectory = build.GetOutputDirectory(DefaultTfm).ToString();
 
+            // ActiveIssue https://github.com/dotnet/runtime/issues/115646
+            var filesToIgnore = new[]
+            {
+                Path.Combine(buildOutputDirectory, "blazorwasm.runtimeconfig.json"),
+                Path.Combine(buildOutputDirectory, "RazorClassLibrary.staticwebassets.endpoints.json"),
+                Path.Combine(buildOutputDirectory, "blazorwasm.staticwebassets.endpoints.json")
+            };
+
             // Act
-            var thumbPrint = FileThumbPrint.CreateFolderThumbprint(projectDirectory, buildOutputDirectory);
+            var thumbPrint = FileThumbPrint.CreateFolderThumbprint(projectDirectory, buildOutputDirectory, filesToIgnore);
 
             // Assert
             for (var i = 0; i < 3; i++)
             {
-                build = new BuildCommand(projectDirectory, "blazorwasm");
-                build.Execute().Should().Pass();
+                build = CreateBuildCommand(projectDirectory, "blazorwasm");
+                build.Execute($"/bl:msbuild{i}.binlog").Should().Pass();
 
-                var newThumbPrint = FileThumbPrint.CreateFolderThumbprint(projectDirectory, buildOutputDirectory);
+                var newThumbPrint = FileThumbPrint.CreateFolderThumbprint(projectDirectory, buildOutputDirectory, filesToIgnore);
                 newThumbPrint.Count.Should().Be(thumbPrint.Count);
                 for (var j = 0; j < thumbPrint.Count; j++)
                 {
-                    thumbPrint[j].Equals(newThumbPrint[j]).Should().BeTrue();
+                    var first = thumbPrint[j];
+                    var actual = newThumbPrint[j];
+                    actual.Path.Equals(first.Path).Should().BeTrue($"because {actual.Path} should match {first.Path} on build {i}");
+                    actual.Hash.Equals(first.Hash).Should().BeTrue($"because {actual.Hash} should match {first.Hash} for {first.Path} on build {i}");
+                    actual.LastWriteTimeUtc.Equals(first.LastWriteTimeUtc).Should().BeTrue($"because {actual.LastWriteTimeUtc} should match {first.LastWriteTimeUtc} for {first.Path} on build {i}");
                 }
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_GzipCompression_IsIncremental()
         {
             // Arrange
@@ -51,18 +63,13 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             {
                 if (Path.GetFileNameWithoutExtension(path) == "blazorwasm")
                 {
-                    // Since blazor.boot.json gets modified on each build, we explicitly exclude it from compression so
+                    // Since boot config gets modified on each build, we explicitly exclude it from compression so
                     // its compressed asset doesn't fail the thumb print check.
-                    document.Root.Add(XElement.Parse("""
-                        <PropertyGroup>
-                          <CompressionExcludePatterns>$(CompressionExcludePatterns);_framework\blazor.boot.json</CompressionExcludePatterns>
-                        </PropertyGroup>
-                        """));
+                    document.Root.Add(XElement.Parse($"<PropertyGroup><CompressionExcludePatterns>$(CompressionExcludePatterns);_framework\\{WasmBootConfigFileName}</CompressionExcludePatterns></PropertyGroup>"));
                 }
             });
 
-            var build = new BuildCommand(projectDirectory, "blazorwasm");
-            build.WithWorkingDirectory(projectDirectory.TestRoot);
+            var build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute("/bl")
                 .Should()
                 .Pass();
@@ -76,8 +83,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             // Assert
             for (var i = 0; i < 3; i++)
             {
-                build = new BuildCommand(projectDirectory, "blazorwasm");
-                build.WithWorkingDirectory(projectDirectory.TestRoot);
+                build = CreateBuildCommand(projectDirectory, "blazorwasm");
                 build.Execute($"/bl:msbuild{i}.binlog")
                     .Should()
                     .Pass();
@@ -91,26 +97,34 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_SatelliteAssembliesFileIsPreserved()
         {
             // Arrange
             var testAsset = "BlazorWasmWithLibrary";
-            var projectDirectory = CreateAspNetSdkTestAsset(testAsset);
+            var projectDirectory = CreateAspNetSdkTestAsset(testAsset)
+                .WithProjectChanges((p, doc) =>
+                {
+                    var itemGroup = new XElement("PropertyGroup");
+                    var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                    itemGroup.Add(fingerprintAssets);
+                    doc.Root.Add(itemGroup);
+                });
+
             File.Move(Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resources.ja.resx.txt"), Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resource.ja.resx"));
 
-            var build = new BuildCommand(projectDirectory, "blazorwasm");
+            var build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute()
                 .Should()
                 .Pass();
 
             var satelliteAssemblyFile = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "ja", "blazorwasm.resources.wasm");
-            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "blazor.boot.json");
+            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", WasmBootConfigFileName);
 
             // Assert
             for (var i = 0; i < 3; i++)
             {
-                build = new BuildCommand(projectDirectory, "blazorwasm");
+                build = CreateBuildCommand(projectDirectory, "blazorwasm");
                 build.Execute()
                     .Should()
                     .Pass();
@@ -121,7 +135,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             // Assert - incremental builds with BuildingProject=false
             for (var i = 0; i < 3; i++)
             {
-                build = new BuildCommand(projectDirectory, "blazorwasm");
+                build = CreateBuildCommand(projectDirectory, "blazorwasm");
                 build.Execute("/p:BuildingProject=false")
                     .Should()
                     .Pass();
@@ -133,7 +147,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             {
                 new FileInfo(satelliteAssemblyFile).Should().Exist();
 
-                var bootJsonFile = JsonSerializer.Deserialize<BootJsonData>(File.ReadAllText(bootJson), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var bootJsonFile = BootJsonDataLoader.ParseBootData(bootJson);
                 var satelliteResources = bootJsonFile.resources.satelliteResources;
 
 
@@ -146,43 +160,47 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_SatelliteAssembliesFileIsCreated_IfNewFileIsAdded()
         {
             // Arrange
             var testAsset = "BlazorWasmWithLibrary";
-            var projectDirectory = CreateAspNetSdkTestAsset(testAsset);
+            var projectDirectory = CreateAspNetSdkTestAsset(testAsset)
+                .WithProjectChanges((p, doc) =>
+                {
+                    var itemGroup = new XElement("PropertyGroup");
+                    var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                    itemGroup.Add(fingerprintAssets);
+                    doc.Root.Add(itemGroup);
+                });
 
-            var build = new BuildCommand(projectDirectory, "blazorwasm");
-            build.WithWorkingDirectory(projectDirectory.TestRoot);
+            var build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute("/bl:build1-msbuild.binlog")
                 .Should()
                 .Pass();
 
             var satelliteAssemblyFile = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "ja", "blazorwasm.resources.wasm");
-            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "blazor.boot.json");
+            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", WasmBootConfigFileName);
 
-            build = new BuildCommand(projectDirectory, "blazorwasm");
-            build.WithWorkingDirectory(projectDirectory.TestRoot);
+            build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute("/bl:build2-msbuild.binlog")
                 .Should()
                 .Pass();
 
             new FileInfo(satelliteAssemblyFile).Should().NotExist();
 
-            var bootJsonFile = JsonSerializer.Deserialize<BootJsonData>(File.ReadAllText(bootJson), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var bootJsonFile = BootJsonDataLoader.ParseBootData(bootJson);
             var satelliteResources = bootJsonFile.resources.satelliteResources;
             satelliteResources.Should().BeNull();
 
             File.Move(Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resources.ja.resx.txt"), Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resource.ja.resx"));
-            build = new BuildCommand(projectDirectory, "blazorwasm");
-            build.WithWorkingDirectory(projectDirectory.TestRoot);
+            build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute("/bl:build3-msbuild.binlog")
                 .Should()
                 .Pass();
 
             new FileInfo(satelliteAssemblyFile).Should().Exist();
-            bootJsonFile = JsonSerializer.Deserialize<BootJsonData>(File.ReadAllText(bootJson), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            bootJsonFile = BootJsonDataLoader.ParseBootData(bootJson);
             satelliteResources = bootJsonFile.resources.satelliteResources;
             satelliteResources.Should().HaveCount(1);
 
@@ -192,30 +210,37 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             kvp.Value.Should().ContainKey("blazorwasm.resources.wasm");
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_SatelliteAssembliesFileIsDeleted_IfAllSatelliteFilesAreRemoved()
         {
             // Arrange
             var testAsset = "BlazorWasmWithLibrary";
-            var projectDirectory = CreateAspNetSdkTestAsset(testAsset);
+            var projectDirectory = CreateAspNetSdkTestAsset(testAsset)
+                .WithProjectChanges((p, doc) =>
+                {
+                    var itemGroup = new XElement("PropertyGroup");
+                    var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                    itemGroup.Add(fingerprintAssets);
+                    doc.Root.Add(itemGroup);
+                });
             File.Move(Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resources.ja.resx.txt"), Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resource.ja.resx"));
 
-            var build = new BuildCommand(projectDirectory, "blazorwasm");
+            var build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute()
                 .Should()
                 .Pass();
 
             var satelliteAssemblyFile = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "ja", "blazorwasm.resources.wasm");
-            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", "blazor.boot.json");
+            var bootJson = Path.Combine(build.GetOutputDirectory(DefaultTfm).ToString(), "wwwroot", "_framework", WasmBootConfigFileName);
 
-            build = new BuildCommand(projectDirectory, "blazorwasm");
+            build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute()
                 .Should()
                 .Pass();
 
             new FileInfo(satelliteAssemblyFile).Should().Exist();
 
-            var bootJsonFile = JsonSerializer.Deserialize<BootJsonData>(File.ReadAllText(bootJson), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var bootJsonFile = BootJsonDataLoader.ParseBootData(bootJson);
             var satelliteResources = bootJsonFile.resources.satelliteResources;
             satelliteResources.Should().HaveCount(1);
 
@@ -226,12 +251,12 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 
 
             File.Delete(Path.Combine(projectDirectory.TestRoot, "blazorwasm", "Resource.ja.resx"));
-            build = new BuildCommand(projectDirectory, "blazorwasm");
+            build = CreateBuildCommand(projectDirectory, "blazorwasm");
             build.Execute()
                 .Should()
                 .Pass();
 
-            bootJsonFile = JsonSerializer.Deserialize<BootJsonData>(File.ReadAllText(bootJson), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            bootJsonFile = BootJsonDataLoader.ParseBootData(bootJson);
             satelliteResources = bootJsonFile.resources.satelliteResources;
             satelliteResources.Should().BeNull();
         }

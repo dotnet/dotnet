@@ -2309,7 +2309,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         }
                     }
 
-                    Assert.Equal(1, targetFramework.Dependencies.Count);
+                    Assert.Equal(1, targetFramework.Dependencies.Length);
                     Assert.Equal(packageA.PackageId, targetFramework.Dependencies.First().Name);
                     Assert.Equal(VersionRange.Parse(packageA.Version), targetFramework.Dependencies.First().LibraryRange.VersionRange);
                     Assert.True(targetFramework.Dependencies.First().VersionCentrallyManaged);

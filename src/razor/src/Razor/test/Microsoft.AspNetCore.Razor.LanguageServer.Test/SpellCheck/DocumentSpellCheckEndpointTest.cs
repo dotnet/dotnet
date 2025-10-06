@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -7,10 +7,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.SpellCheck;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -168,18 +167,20 @@ public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : Sing
         TestFileMarkupParser.GetSpans(originalInput, out var testInput, out ImmutableArray<TextSpan> spans);
 
         var codeDocument = CreateCodeDocument(testInput, filePath: filePath);
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
+        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
-        var endpoint = new DocumentSpellCheckEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer);
+        var csharpSpellCheckService = new LspCSharpSpellCheckRangeProvider(LanguageServerFeatureOptions, languageServer);
+        var spellCheckService = new SpellCheckService(csharpSpellCheckService, DocumentMappingService);
+        var endpoint = new DocumentSpellCheckEndpoint(spellCheckService);
 
         var request = new VSInternalDocumentSpellCheckableParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
 
         var response = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);

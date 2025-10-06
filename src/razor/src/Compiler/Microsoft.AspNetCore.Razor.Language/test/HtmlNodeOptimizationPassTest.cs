@@ -21,10 +21,16 @@ public class HtmlNodeOptimizationPassTest
             
                 @true
             """;
-        var sourceDocument = TestRazorSourceDocument.Create(content);
-        var originalTree = RazorSyntaxTree.Parse(sourceDocument);
-        var pass = new HtmlNodeOptimizationPass();
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+
+        var projectEngine = RazorProjectEngine.CreateEmpty(builder =>
+        {
+            builder.Features.Add(new HtmlNodeOptimizationPass());
+        });
+
+        var source = TestRazorSourceDocument.Create(content);
+        var originalTree = RazorSyntaxTree.Parse(source);
+        var codeDocument = projectEngine.CreateCodeDocument(source);
+        Assert.True(projectEngine.Engine.TryGetFeature<HtmlNodeOptimizationPass>(out var pass));
 
         // Act
         var outputTree = pass.Execute(codeDocument, originalTree);

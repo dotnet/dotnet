@@ -1,23 +1,22 @@
-﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
+// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-
 namespace System.CommandLine
 {
-    /// <inheritdoc cref="CliArgument" />
-    public class CliArgument<T> : CliArgument
+    /// <inheritdoc cref="Argument" />
+    public class Argument<T> : Argument
     {
         private Func<ArgumentResult, T?>? _customParser;
+        private Func<ArgumentResult, T>? _defaultValueFactory;
 
         /// <summary>
         /// Initializes a new instance of the Argument class.
         /// </summary>
-        /// <param name="name">The name of the argument. It's not used for parsing, only when displaying Help or creating parse errors.</param>>
-        public CliArgument(string name) : base(name)
+        /// <param name="name">The name of the argument. This can be used to look up the parsed value and is displayed in help</param>
+        public Argument(string name) : base(name)
         {
         }
 
@@ -29,7 +28,21 @@ namespace System.CommandLine
         /// The same instance can be set as <see cref="CustomParser"/>, in such case
         /// the delegate is also invoked when an input was provided.
         /// </remarks>
-        public Func<ArgumentResult, T>? DefaultValueFactory { get; set; }
+        public Func<ArgumentResult, T>? DefaultValueFactory
+        {
+            get
+            {
+                if (_defaultValueFactory is null)
+                {
+                    if (this is Argument<bool> boolArgument)
+                    {
+                        boolArgument.DefaultValueFactory = _ => false;
+                    }
+                }
+                return _defaultValueFactory;
+            }
+            set => _defaultValueFactory = value;
+        }
 
         /// <summary>
         /// A custom argument parser.
@@ -82,85 +95,6 @@ namespace System.CommandLine
             }
 
             return DefaultValueFactory.Invoke(argumentResult);
-        }
-
-        /// <summary>
-        /// Configures the argument to accept only the specified values, and to suggest them as command line completions.
-        /// </summary>
-        /// <param name="values">The values that are allowed for the argument.</param>
-        public void AcceptOnlyFromAmong(params string[] values)
-        {
-            if (values is not null && values.Length > 0)
-            {
-                Validators.Clear();
-                Validators.Add(UnrecognizedArgumentError);
-                CompletionSources.Clear();
-                CompletionSources.Add(values);
-            }
-
-            void UnrecognizedArgumentError(ArgumentResult argumentResult)
-            {
-                for (var i = 0; i < argumentResult.Tokens.Count; i++)
-                {
-                    var token = argumentResult.Tokens[i];
-
-                    if (token.Symbol is null || token.Symbol == this)
-                    {
-                        if (Array.IndexOf(values, token.Value) < 0)
-                        {
-                            argumentResult.AddError(LocalizationResources.UnrecognizedArgument(token.Value, values));
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Configures the argument to accept only values representing legal file paths.
-        /// </summary>
-        public void AcceptLegalFilePathsOnly()
-        {
-            Validators.Add(static result =>
-            {
-                var invalidPathChars = Path.GetInvalidPathChars();
-
-                for (var i = 0; i < result.Tokens.Count; i++)
-                {
-                    var token = result.Tokens[i];
-
-                    // File class no longer check invalid character
-                    // https://blogs.msdn.microsoft.com/jeremykuhne/2018/03/09/custom-directory-enumeration-in-net-core-2-1/
-                    var invalidCharactersIndex = token.Value.IndexOfAny(invalidPathChars);
-
-                    if (invalidCharactersIndex >= 0)
-                    {
-                        result.AddError(LocalizationResources.InvalidCharactersInPath(token.Value[invalidCharactersIndex]));
-                    }
-                }
-            });
-        }
-
-        /// <summary>
-        /// Configures the argument to accept only values representing legal file names.
-        /// </summary>
-        /// <remarks>A parse error will result, for example, if file path separators are found in the parsed value.</remarks>
-        public void AcceptLegalFileNamesOnly()
-        {
-            Validators.Add(static result =>
-            {
-                var invalidFileNameChars = Path.GetInvalidFileNameChars();
-
-                for (var i = 0; i < result.Tokens.Count; i++)
-                {
-                    var token = result.Tokens[i];
-                    var invalidCharactersIndex = token.Value.IndexOfAny(invalidFileNameChars);
-
-                    if (invalidCharactersIndex >= 0)
-                    {
-                        result.AddError(LocalizationResources.InvalidCharactersInFileName(token.Value[invalidCharactersIndex]));
-                    }
-                }
-            });
         }
 
         [UnconditionalSuppressMessage("ReflectionAnalysis", "IL3050", Justification = "https://github.com/dotnet/command-line-api/issues/1638")]

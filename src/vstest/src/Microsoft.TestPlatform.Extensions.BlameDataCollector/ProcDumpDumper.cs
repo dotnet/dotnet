@@ -241,7 +241,7 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
     {
         var allDumps = _fileHelper.DirectoryExists(_outputDirectory)
             ? _fileHelper.GetFiles(_outputDirectory, "*_crashdump*.dmp", SearchOption.AllDirectories)
-            : Array.Empty<string>();
+            : [];
 
         // We are always collecting dump on exit even when collectAlways option is false, to make sure we collect
         // dump for Environment.FailFast. So there always can be a dump if the process already exited. In most cases

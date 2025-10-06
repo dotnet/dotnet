@@ -60,7 +60,7 @@ public class FileTransferInformation : BasicTransferInformation
         // Make sure the file exists.
         if (!_fileHelper.Exists(path))
         {
-            throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.Common_FileNotExist, new object[] { path }), path);
+            throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.Common_FileNotExist, [path]), path);
         }
 
         // Make sure the path we have is a full path (not relative).

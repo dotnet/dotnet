@@ -96,7 +96,7 @@ internal class AssemblyLoadWorker : MarshalByRefObject
 
         AssemblyName[] assemblies = a.GetReferencedAssemblies();
         return assemblies == null || assemblies.Length == 0
-            ? (new string[0])
+            ? ([])
             : (from assembly in assemblies
                select assembly.FullName).ToArray();
     }

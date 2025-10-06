@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
@@ -103,6 +103,11 @@ public sealed class ProjectInfo
     /// True if we should run analyzers for this project.
     /// </summary>
     internal bool RunAnalyzers => Attributes.RunAnalyzers;
+
+    /// <summary>
+    /// True if the project contains references to the SDK CodeStyle analyzers.
+    /// </summary>
+    internal bool HasSdkCodeStyleAnalyzers => Attributes.HasSdkCodeStyleAnalyzers;
 
     /// <summary>
     /// The initial compilation options for the project, or null if the default options should be used.
@@ -231,7 +236,7 @@ public sealed class ProjectInfo
                 name ?? throw new ArgumentNullException(nameof(name)),
                 assemblyName ?? throw new ArgumentNullException(nameof(assemblyName)),
                 language ?? throw new ArgumentNullException(nameof(language)),
-                compilationOutputFilePaths: default,
+                compilationOutputInfo: default,
                 checksumAlgorithm: SourceHashAlgorithm.Sha1,
                 defaultNamespace: null,
                 filePath: filePath,
@@ -327,6 +332,9 @@ public sealed class ProjectInfo
             newHostObjectType);
     }
 
+    public ProjectInfo WithId(ProjectId id)
+        => With(attributes: Attributes.With(id: id ?? throw new ArgumentNullException(nameof(id))));
+
     public ProjectInfo WithVersion(VersionStamp version)
         => With(attributes: Attributes.With(version: version));
 
@@ -389,6 +397,11 @@ public sealed class ProjectInfo
         return With(attributes: Attributes.With(telemetryId: telemetryId));
     }
 
+    internal ProjectInfo WithHasSdkCodeStyleAnalyzers(bool hasSdkCodeStyleAnalyzers)
+    {
+        return With(attributes: Attributes.With(hasSdkCodeStyleAnalyzers: hasSdkCodeStyleAnalyzers));
+    }
+
     internal string GetDebuggerDisplay()
         => nameof(ProjectInfo) + " " + Name + (!string.IsNullOrWhiteSpace(FilePath) ? " " + FilePath : "");
 
@@ -402,7 +415,7 @@ public sealed class ProjectInfo
         string name,
         string assemblyName,
         string language,
-        CompilationOutputInfo compilationOutputFilePaths,
+        CompilationOutputInfo compilationOutputInfo,
         SourceHashAlgorithm checksumAlgorithm,
         string? defaultNamespace = null,
         string? filePath = null,
@@ -411,7 +424,8 @@ public sealed class ProjectInfo
         Guid telemetryId = default,
         bool isSubmission = false,
         bool hasAllInformation = true,
-        bool runAnalyzers = true)
+        bool runAnalyzers = true,
+        bool hasSdkCodeStyleAnalyzers = false)
     {
         /// <summary>
         /// Matches names like: Microsoft.CodeAnalysis.Features (netcoreapp3.1)
@@ -461,7 +475,7 @@ public sealed class ProjectInfo
         /// <summary>
         /// Paths to the compiler output files.
         /// </summary>
-        public CompilationOutputInfo CompilationOutputInfo { get; } = compilationOutputFilePaths;
+        public CompilationOutputInfo CompilationOutputInfo { get; } = compilationOutputInfo;
 
         /// <summary>
         /// The default namespace of the project.
@@ -495,6 +509,11 @@ public sealed class ProjectInfo
         /// </summary>
         public Guid TelemetryId { get; } = telemetryId;
 
+        /// <summary>
+        /// True if the project contains references to the SDK CodeStyle analyzers.
+        /// </summary>
+        public bool HasSdkCodeStyleAnalyzers { get; } = hasSdkCodeStyleAnalyzers;
+
         private SingleInitNullable<(string? name, string? flavor)> _lazyNameAndFlavor;
         private SingleInitNullable<Checksum> _lazyChecksum;
 
@@ -512,10 +531,10 @@ public sealed class ProjectInfo
             }, this);
 
         public ProjectAttributes With(
+            ProjectId? id = null,
             VersionStamp? version = null,
             string? name = null,
             string? assemblyName = null,
-            string? language = null,
             Optional<string?> filePath = default,
             Optional<string?> outputPath = default,
             Optional<string?> outputRefPath = default,
@@ -525,12 +544,13 @@ public sealed class ProjectInfo
             Optional<bool> isSubmission = default,
             Optional<bool> hasAllInformation = default,
             Optional<bool> runAnalyzers = default,
-            Optional<Guid> telemetryId = default)
+            Optional<Guid> telemetryId = default,
+            Optional<bool> hasSdkCodeStyleAnalyzers = default)
         {
+            var newId = id ?? Id;
             var newVersion = version ?? Version;
             var newName = name ?? Name;
             var newAssemblyName = assemblyName ?? AssemblyName;
-            var newLanguage = language ?? Language;
             var newFilePath = filePath.HasValue ? filePath.Value : FilePath;
             var newOutputPath = outputPath.HasValue ? outputPath.Value : OutputFilePath;
             var newOutputRefPath = outputRefPath.HasValue ? outputRefPath.Value : OutputRefFilePath;
@@ -541,11 +561,12 @@ public sealed class ProjectInfo
             var newHasAllInformation = hasAllInformation.HasValue ? hasAllInformation.Value : HasAllInformation;
             var newRunAnalyzers = runAnalyzers.HasValue ? runAnalyzers.Value : RunAnalyzers;
             var newTelemetryId = telemetryId.HasValue ? telemetryId.Value : TelemetryId;
+            var newHasSdkCodeStyleAnalyzers = hasSdkCodeStyleAnalyzers.HasValue ? hasSdkCodeStyleAnalyzers.Value : HasSdkCodeStyleAnalyzers;
 
-            if (newVersion == Version &&
+            if (newId == Id &&
+                newVersion == Version &&
                 newName == Name &&
                 newAssemblyName == AssemblyName &&
-                newLanguage == Language &&
                 newFilePath == FilePath &&
                 newOutputPath == OutputFilePath &&
                 newOutputRefPath == OutputRefFilePath &&
@@ -555,17 +576,18 @@ public sealed class ProjectInfo
                 newIsSubmission == IsSubmission &&
                 newHasAllInformation == HasAllInformation &&
                 newRunAnalyzers == RunAnalyzers &&
-                newTelemetryId == TelemetryId)
+                newTelemetryId == TelemetryId &&
+                newHasSdkCodeStyleAnalyzers == HasSdkCodeStyleAnalyzers)
             {
                 return this;
             }
 
             return new ProjectAttributes(
-                Id,
+                newId,
                 newVersion,
                 newName,
                 newAssemblyName,
-                newLanguage,
+                Language,
                 newCompilationOutputPaths,
                 newChecksumAlgorithm,
                 defaultNamespace: newDefaultNamespace,
@@ -575,7 +597,8 @@ public sealed class ProjectInfo
                 newTelemetryId,
                 newIsSubmission,
                 newHasAllInformation,
-                newRunAnalyzers);
+                newRunAnalyzers,
+                newHasSdkCodeStyleAnalyzers);
         }
 
         public void WriteTo(ObjectWriter writer)
@@ -598,6 +621,7 @@ public sealed class ProjectInfo
             writer.WriteBoolean(HasAllInformation);
             writer.WriteBoolean(RunAnalyzers);
             writer.WriteGuid(TelemetryId);
+            writer.WriteBoolean(HasSdkCodeStyleAnalyzers);
 
             // TODO: once CompilationOptions, ParseOptions, ProjectReference, MetadataReference, AnalyzerReference supports
             //       serialization, we should include those here as well.
@@ -621,6 +645,7 @@ public sealed class ProjectInfo
             var hasAllInformation = reader.ReadBoolean();
             var runAnalyzers = reader.ReadBoolean();
             var telemetryId = reader.ReadGuid();
+            var hasSdkCodeStyleAnalyzers = reader.ReadBoolean();
 
             return new ProjectAttributes(
                 projectId,
@@ -637,7 +662,8 @@ public sealed class ProjectInfo
                 telemetryId,
                 isSubmission: isSubmission,
                 hasAllInformation: hasAllInformation,
-                runAnalyzers: runAnalyzers);
+                runAnalyzers: runAnalyzers,
+                hasSdkCodeStyleAnalyzers: hasSdkCodeStyleAnalyzers);
         }
 
         public Checksum Checksum

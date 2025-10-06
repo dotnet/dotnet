@@ -1,12 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -20,37 +19,19 @@ internal static class TestDocumentContext
         return new DocumentContext(uri, snapshot, projectContext: null);
     }
 
-    public static VersionedDocumentContext From(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    public static DocumentContext Create(string filePath, RazorCodeDocument codeDocument)
     {
-        var content = codeDocument.GetSourceText().ToString();
-        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
-        documentSnapshot.With(codeDocument);
-        var uri = new Uri(filePath);
-        return new VersionedDocumentContext(uri, documentSnapshot, projectContext: null, hostDocumentVersion);
-    }
-
-    public static DocumentContext From(string filePath, RazorCodeDocument codeDocument)
-    {
-        var content = codeDocument.GetSourceText().ToString();
-        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
-        documentSnapshot.With(codeDocument);
+        var documentSnapshot = TestDocumentSnapshot.Create(filePath, codeDocument);
         var uri = new Uri(filePath);
         return new DocumentContext(uri, documentSnapshot, projectContext: null);
     }
 
-    public static DocumentContext From(string filePath)
+    public static DocumentContext Create(string filePath)
     {
         var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
-        var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        return From(filePath, codeDocument);
-    }
+        var source = RazorSourceDocument.Create(content: string.Empty, properties);
+        var codeDocument = RazorCodeDocument.Create(source);
 
-    public static VersionedDocumentContext From(string filePath, int hostDocumentVersion)
-    {
-        var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
-        var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        return From(filePath, codeDocument, hostDocumentVersion);
+        return Create(filePath, codeDocument);
     }
 }

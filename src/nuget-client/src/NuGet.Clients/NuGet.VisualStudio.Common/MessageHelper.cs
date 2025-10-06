@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Common;
@@ -51,13 +50,18 @@ namespace NuGet.VisualStudio
 
         public static bool? ShowQueryMessage(string message, string title, bool showCancelButton)
         {
+            return ShowQueryMessage(message, title, showCancelButton, defaultButton: OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        }
+
+        public static bool? ShowQueryMessage(string message, string title, bool showCancelButton, OLEMSGDEFBUTTON defaultButton)
+        {
             int result = VsShellUtilities.ShowMessageBox(
                 GetServiceProvider(),
                 message,
                 title,
                 OLEMSGICON.OLEMSGICON_QUERY,
                 showCancelButton ? OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL : OLEMSGBUTTON.OLEMSGBUTTON_YESNO,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                defaultButton);
 
             if (result == NativeMethods.IDCANCEL)
             {

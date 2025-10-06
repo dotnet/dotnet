@@ -1,20 +1,17 @@
 ﻿module Signatures.TestHelpers
 
 open System
-open FsUnit
+open Xunit
 open FSharp.Test.Compiler
 
 let prependNewline v = String.Concat("\n", v)
 
-let equal x =
-    let x =
-        match box x with
-        | :? String as s -> s.Replace("\r\n", "\n") |> box
-        | x -> x
-
-    equal x
+let assertEqualIgnoreLineEnding (x: string) (y: string) =
+    if (x<>y) then
+      printfn "Expected:\n%s\n\nActual:\n%s" x y
+    Assert.Equal(x, y, ignoreLineEndingDifferences = true)
 
 let assertSingleSignatureBinding implementation signature =
     FSharp $"module A\n\n{implementation}"
     |> printSignatures
-    |> should equal $"\nmodule A\n\n{signature}"
+    |> assertEqualIgnoreLineEnding $"\nmodule A\n\n{signature}"

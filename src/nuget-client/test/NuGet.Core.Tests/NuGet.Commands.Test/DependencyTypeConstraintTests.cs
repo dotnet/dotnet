@@ -54,7 +54,7 @@ namespace NuGet.Commands.Test
                 File.WriteAllText(Path.Combine(project1.FullName, "project.json"), project1Json);
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
 
                 var project1PackagePath = await SimpleTestPackageUtility.CreateFullPackageAsync(
                     packageSource.FullName,
@@ -190,11 +190,11 @@ namespace NuGet.Commands.Test
 
             var project1Json = @"
             {
-              ""dependencies"": {
-                ""packageA"": ""1.0.0""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""packageA"": ""1.0.0""
+                  }
                 }
               }
             }";
@@ -249,9 +249,9 @@ namespace NuGet.Commands.Test
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var specPath2 = Path.Combine(packageAProject.FullName, "project.json");
                 var specPath3 = Path.Combine(packageAExternalProject.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(packageAProjectJson, "packageA", specPath2).EnsureProjectJsonRestoreMetadata();
-                var spec3 = JsonPackageSpecReader.GetPackageSpec(packageAExternalProjectJson, "packageA", specPath3).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
+                var spec2 = JsonPackageSpecReader.GetPackageSpec(packageAProjectJson, "packageA", specPath2).WithTestRestoreMetadata();
+                var spec3 = JsonPackageSpecReader.GetPackageSpec(packageAExternalProjectJson, "packageA", specPath3).WithTestRestoreMetadata();
 
                 var packageAPath = await SimpleTestPackageUtility.CreateFullPackageAsync(
                     packageSource.FullName,
@@ -301,32 +301,19 @@ namespace NuGet.Commands.Test
 
             var project1Json = @"
             {
-              ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""packageA"": {
-                    ""version"": ""1.0.0"",
-                    ""target"": ""package""
-                }
-              },
               ""frameworks"": {
                 ""net45"": {
-                }
+                  ""dependencies"": {
+                    ""packageA"": {
+                        ""version"": ""1.0.0"",
+                        ""target"": ""package""
+                    }
+                  }                }
               }
             }";
 
             var packageAProjectJson = @"
             {
-              ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }
@@ -356,8 +343,8 @@ namespace NuGet.Commands.Test
 
                 var specPath1 = Path.Combine(project1.FullName, "project.json");
                 var specPath2 = Path.Combine(packageAProject.FullName, "project.json");
-                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).EnsureProjectJsonRestoreMetadata();
-                var spec2 = JsonPackageSpecReader.GetPackageSpec(packageAProjectJson, "packageA", specPath2).EnsureProjectJsonRestoreMetadata();
+                var spec1 = JsonPackageSpecReader.GetPackageSpec(project1Json, "project1", specPath1).WithTestRestoreMetadata();
+                var spec2 = JsonPackageSpecReader.GetPackageSpec(packageAProjectJson, "packageA", specPath2).WithTestRestoreMetadata();
 
                 var packageAPath = await SimpleTestPackageUtility.CreateFullPackageAsync(
                     packageSource.FullName,

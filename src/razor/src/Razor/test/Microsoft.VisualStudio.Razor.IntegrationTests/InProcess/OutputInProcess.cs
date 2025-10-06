@@ -1,12 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
+using Microsoft.VisualStudio.Razor.IntegrationTests.Logging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -19,33 +20,33 @@ internal partial class OutputInProcess
 {
     private const string RazorPaneName = "Razor Logger Output";
 
-    // private TestOutputLoggerProvider? _testLoggerProvider;
+    private IntegrationTestOutputLoggerProvider? _testLoggerProvider;
 
-#pragma warning disable IDE0060 // Remove unused parameter
-    public Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
-#pragma warning restore IDE0060 // Remove unused parameter
+    public async Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ILogger>(NullLogger.Instance);
+        // Make sure we log as much as possible for integration tests
+        var clientSettingsManager = await TestServices.Shell.GetComponentModelServiceAsync<IClientSettingsManager>(cancellationToken);
+        clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with { LogLevel = LogLevel.Trace });
 
-        // var logger = await TestServices.Shell.GetComponentModelServiceAsync<IRazorLoggerFactory>(cancellationToken);
+        var loggerFactory = await TestServices.Shell.GetComponentModelServiceAsync<ILoggerFactory>(cancellationToken);
 
-        // // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
-        // if (_testLoggerProvider is null)
-        // {
-        //     _testLoggerProvider = new TestOutputLoggerProvider(testOutputHelper);
-        //     logger.AddLoggerProvider(_testLoggerProvider);
-        // }
-        // else
-        // {
-        //     _testLoggerProvider.SetTestOutputHelper(testOutputHelper);
-        // }
+        // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
+        if (_testLoggerProvider is null)
+        {
+            _testLoggerProvider = new IntegrationTestOutputLoggerProvider(testOutputHelper);
+            loggerFactory.AddLoggerProvider(_testLoggerProvider);
+        }
+        else
+        {
+            _testLoggerProvider.SetOutput(testOutputHelper);
+        }
 
-        // return logger.CreateLogger(GetType().Name);
+        return loggerFactory.GetOrCreateLogger(GetType().Name);
     }
 
     public void ClearIntegrationTestLogger()
     {
-        // _testLoggerProvider?.SetTestOutputHelper(null);
+        _testLoggerProvider?.SetOutput(null);
     }
 
     public async Task<bool> HasErrorsAsync(CancellationToken cancellationToken)

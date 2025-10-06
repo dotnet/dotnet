@@ -172,6 +172,42 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
             }
         }
 
+        /// <summary>
+        /// Create a module instance
+        /// </summary>
+        /// <param name="moduleIndex">artificial index or -1 for none</param>
+        /// <param name="imageBase">module base address</param>
+        /// <param name="imageSize">module size</param>
+        /// <param name="imageName">module name</param>
+        /// <returns>IModule</returns>
+        /// <exception cref="ArgumentNullException">thrown if imageBase or imageSize is 0</exception>
+        public IModule CreateModule(int moduleIndex, ulong imageBase, ulong imageSize, string imageName)
+        {
+            if (imageBase == 0)
+            {
+                throw new ArgumentNullException(nameof(imageBase));
+            }
+            if (imageSize == 0)
+            {
+                throw new ArgumentNullException(nameof(imageSize));
+            }
+            return new ModuleFromAddress(this, moduleIndex, imageBase, imageSize, imageName);
+        }
+
+        /// <summary>
+        /// Gets the entrypoint module for the target.  This is the first module in the sorted list of modules.
+        /// </summary>
+        public virtual IModule EntryPointModule
+        {
+            get
+            {
+                // The entry point module is the first module in the sorted list of modules.
+                // This is not necessarily the same as the entry point module in the target.
+                IModule[] modules = GetSortedModules();
+                return modules.Length > 0 ? modules[0] : null;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -220,7 +256,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 // First try getting the PE info as loaded layout (native Windows DLLs and most managed PEs).
                 peFile = GetPEInfo(isVirtual: true, address, size, out List<PdbFileInfo> pdbs, out Module.Flags flags);
 
-                // Continue only if marked as a PE. This bit regardless of the layout if the module has a PE header/signature.
+                // Continue only if marked as a PE. This bit is set regardless of the layout if the module has a PE header/signature.
                 if ((flags & Module.Flags.IsPEImage) != 0)
                 {
                     if (peFile is null || pdbs.Count == 0)
@@ -288,9 +324,6 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <returns>build id or null</returns>
         internal byte[] GetBuildId(ulong address)
         {
-            // This code is called by the image mapping memory service so it needs to use the
-            // original or raw memory service to prevent recursion so it can't use the ELFFile
-            // or MachOFile instance that is available from the IModule.Services provider.
             Stream stream = MemoryService.CreateMemoryStream();
             byte[] buildId = null;
             try

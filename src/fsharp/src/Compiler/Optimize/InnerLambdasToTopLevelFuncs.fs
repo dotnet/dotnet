@@ -296,7 +296,7 @@ module Pass1_DetermineTLRAndArities =
 //      so better not have env(h) in env(f)!!!].
 
 
-/// The subset of ids from a mutal binding that are chosen to be TLR.
+/// The subset of ids from a mutual binding that are chosen to be TLR.
 /// They share a common env.
 /// [Each fclass has an env, the fclass are the handles to envs.]
 type BindingGroupSharingSameReqdItems(bindings: Bindings) =
@@ -330,8 +330,8 @@ type ReqdItem =
 
 let reqdItemOrder =
     let rep = function
-      | ReqdSubEnv v -> true, v
-      | ReqdVal    v -> false, v
+      | ReqdSubEnv v -> struct (true, v)
+      | ReqdVal    v -> struct (false, v)
 
     Order.orderOn rep (Pair.order (Bool.order, valOrder))
 
@@ -724,7 +724,7 @@ let FlatEnvPacks g fclassM topValS declist (reqdItemsMap: Zmap<BindingGroupShari
        //
        //    let mutable a = 1
        //
-       //    let resutl1 =
+       //    let result1 =
        //        let x = &a  // This is NOT given TLR, because it is byref
        //        x <- 111
        //        let temp = x // This is given a static field TLR, not a method TLR
@@ -1159,7 +1159,7 @@ module Pass4_RewriteAssembly =
             let targets = Array.toList targets
             let dtree, z = TransDecisionTree penv z dtree
             let targets, z = List.mapFold (TransDecisionTreeTarget penv) z targets
-            // TransDecisionTreeTarget wraps EnterInner/exitInnter, so need to collect any top decs 
+            // TransDecisionTreeTarget wraps EnterInner/exitInner, so need to collect any top decs 
             let pds,z = ExtractPreDecs z
             MakePreDecs m pds (mkAndSimplifyMatch spBind mExpr m ty dtree targets), z
 
@@ -1332,9 +1332,9 @@ module Pass4_RewriteAssembly =
             let rhs, z = TransModuleContents penv z rhs
             ModuleOrNamespaceBinding.Module(nm, rhs), z
 
-    let TransImplFile penv z (CheckedImplFile (fragName, pragmas, signature, contents, hasExplicitEntryPoint, isScript, anonRecdTypes, namedDebugPointsForInlinedCode)) =
+    let TransImplFile penv z (CheckedImplFile (fragName, signature, contents, hasExplicitEntryPoint, isScript, anonRecdTypes, namedDebugPointsForInlinedCode)) =
         let contentsR, z = TransModuleContents penv z contents
-        (CheckedImplFile (fragName, pragmas, signature, contentsR, hasExplicitEntryPoint, isScript, anonRecdTypes, namedDebugPointsForInlinedCode)), z
+        (CheckedImplFile (fragName, signature, contentsR, hasExplicitEntryPoint, isScript, anonRecdTypes, namedDebugPointsForInlinedCode)), z
 
 //-------------------------------------------------------------------------
 // pass5: copyExpr

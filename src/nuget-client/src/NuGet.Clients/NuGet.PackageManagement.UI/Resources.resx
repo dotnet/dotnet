@@ -279,6 +279,12 @@
   <data name="Text_Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
+  <data name="Text_LoadingReadme" xml:space="preserve">
+    <value>Loading README...</value>
+  </data>
+  <data name="Text_ReadmeLoaded" xml:space="preserve">
+    <value>README loaded</value>
+  </data>
   <data name="Text_NoPackagesFound" xml:space="preserve">
     <value>No packages found</value>
   </data>
@@ -429,7 +435,7 @@
     <value>Learn about Uninstall Options</value>
   </data>
   <data name="Label_InstalledVersionsCount" xml:space="preserve">
-    <value>Versions - {0}</value>
+    <value>Versions: {0}</value>
   </data>
   <data name="GroupBoxHeader_InstallOptions" xml:space="preserve">
     <value>Install and Update Options</value>
@@ -543,18 +549,6 @@
     <value>Select this checkbox to install the NuGet Package to all projects in the solution</value>
     <comment>Help text for the checkbox to be narrated by UI Automation Tree</comment>
   </data>
-  <data name="BrowseFolderDialogDescription" xml:space="preserve">
-    <value>Select a Package Source Folder</value>
-  </data>
-  <data name="BrowseFolderDialogSelectButton" xml:space="preserve">
-    <value>Select</value>
-  </data>
-  <data name="ErrorDialogBoxTitle" xml:space="preserve">
-    <value>Operation failed</value>
-  </data>
-  <data name="ShowError_ConfigUnauthorizedAccess" xml:space="preserve">
-    <value>Can not access NuGet.Config, Please check NuGet.Config</value>
-  </data>
   <data name="ShowMessage_LocalsCommandFailure" xml:space="preserve">
     <value>NuGet storage clear failed at {0}. 
 Error: {1}
@@ -568,19 +562,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <comment>{0} for date and time string</comment>
   </data>
   <data name="ShowMessage_LocalsCommandWorking" xml:space="preserve">
-    <value>Clearing all NuGet storage. </value>
-  </data>
-  <data name="ShowWarning_InvalidSource" xml:space="preserve">
-    <value>The source specified is invalid. Please provide a valid source.</value>
-  </data>
-  <data name="ShowWarning_NameAndSourceRequired" xml:space="preserve">
-    <value>The name and source specified cannot be empty. Please provide a valid name and source.</value>
-  </data>
-  <data name="ShowWarning_NameRequired" xml:space="preserve">
-    <value>The name specified cannot be empty. Please provide a valid name.</value>
-  </data>
-  <data name="ShowWarning_SourceRequried" xml:space="preserve">
-    <value>The source specified cannot be empty. Please provide a valid source.</value>
+    <value>Clearing all NuGet storage...</value>
   </data>
   <data name="ShowWarning_Title" xml:space="preserve">
     <value>Package Manager Options</value>
@@ -603,17 +585,8 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Description_LearnMore" xml:space="preserve">
     <value>Learn more</value>
   </data>
-  <data name="CheckBox_DefaultAction_Check" xml:space="preserve">
-    <value>Check</value>
-  </data>
-  <data name="CheckBox_DefaultAction_Uncheck" xml:space="preserve">
-    <value>Uncheck</value>
-  </data>
   <data name="Tooltip_PrefixReserved" xml:space="preserve">
     <value>The ID prefix of this package has been reserved for the owner of the package by the currently selected feed</value>
-  </data>
-  <data name="ShowError_ApplySettingFailed" xml:space="preserve">
-    <value>Failed to apply NuGet Package Manager settings. Please report a problem using Help &gt; Send Feedback &gt; Report a Problem.</value>
   </data>
   <data name="NuGetUpgrade_Progress_Installing" xml:space="preserve">
     <value>Installing required packages</value>
@@ -693,9 +666,6 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="Link_DoNotShowAgain" xml:space="preserve">
     <value>Don't show again</value>
-  </data>
-  <data name="ShowError_SettingActivatedFailed" xml:space="preserve">
-    <value>Failed to initialize NuGet Package Manager Settings. Please report a problem using Help &gt; Send Feedback &gt; Report a Problem.</value>
   </data>
   <data name="Accessibility_PackageIcon" xml:space="preserve">
     <value>Package icon</value>
@@ -804,12 +774,6 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="Status_Ready" xml:space="preserve">
     <value>Package list loaded</value>
-  </data>
-  <data name="PackageSourceOptions_OnActivated" xml:space="preserve">
-    <value>Getting Package Sources...</value>
-  </data>
-  <data name="PackageSourceOptions_OnApply" xml:space="preserve">
-    <value>Applying changes...</value>
   </data>
   <data name="ColumnHeader_InstalledVersion" xml:space="preserve">
     <value>Installed</value>
@@ -933,44 +897,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <comment>{0} is a version number</comment>
   </data>
   <data name="Warning_HTTPSource" xml:space="preserve">
-    <value>Warning: Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
-  </data>
-  <data name="Warning_NewHTTPSource_VSOptions" xml:space="preserve">
-    <value>Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
-  </data>
-  <data name="VSOptions_Button_Add" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="VSOptions_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="VSOptions_Button_RemoveAll" xml:space="preserve">
-    <value>Remove All</value>
-  </data>
-  <data name="VSOptions_Button_Remove" xml:space="preserve">
-    <value>Remove</value>
-  </data>
-  <data name="VSOptions_Label_AddPackageNamespace" xml:space="preserve">
-    <value>Add New Package Source Mapping</value>
-  </data>
-  <data name="VSOptions_Label_PackageSourceMappings" xml:space="preserve">
-    <value>Package Source Mappings:</value>
-  </data>
-  <data name="VSOptions_Label_Source" xml:space="preserve">
-    <value>Source</value>
-  </data>
-  <data name="VSOptions_Watermark_AddPackageNamespace" xml:space="preserve">
-    <value>Example: Contoso.Contracts or System.*</value>
-    <comment>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</comment>
-  </data>
-  <data name="PackageSourceMappingOptions_OnActivated" xml:space="preserve">
-    <value>Getting Package Source Mappings...</value>
-  </data>
-  <data name="VSOptions_Accessibility_SourcesList" xml:space="preserve">
-    <value>Package sources list</value>
-  </data>
-  <data name="VSOptions_Label_PackagePattern" xml:space="preserve">
-    <value>Package pattern:</value>
+    <value>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</value>
   </data>
   <data name="UpdateButton_VersionOverride_Tooltip" xml:space="preserve">
     <value>Dependency version defined by VersionOverride, modify project file to change package version.</value>
@@ -990,21 +917,6 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Label_Vulnerable" xml:space="preserve">
     <value>Vulnerable</value>
   </data>
-  <data name="Text_ApplyingConfigurationFiles" xml:space="preserve">
-    <value>Note: Configuration files are listed in order from highest to lowest priority.</value>
-  </data>
-  <data name="Text_ApplyingConfigurationFiles_DocumentLink" xml:space="preserve">
-    <value>Common NuGet configurations: How settings are applied</value>
-  </data>
-  <data name="VSOptions_Accessibility_ConfigurationFilesList" xml:space="preserve">
-    <value>Configuration files list</value>
-  </data>
-  <data name="VSOptions_Button_Open" xml:space="preserve">
-    <value>_Open</value>
-  </data>
-  <data name="VSOptions_Label_ConfigurationFiles" xml:space="preserve">
-    <value>Configuration Files:</value>
-  </data>
   <data name="Button_OK" xml:space="preserve">
     <value>_OK</value>
     <comment>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
@@ -1015,12 +927,6 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="Label_NetworkError" xml:space="preserve">
     <value>An error occurred while fetching additional information about the package. Refresh to try again.</value>
-  </data>
-  <data name="ShowError_FileNotFound" xml:space="preserve">
-    <value>The following file could not be found:</value>
-  </data>
-  <data name="ConfigurationFilesOptions_OnActivated" xml:space="preserve">
-    <value>Getting Configuration Files...</value>
   </data>
   <data name="Error_MetadataNotFound" xml:space="preserve">
     <value>Unable to find metadata of {0}</value>
@@ -1041,5 +947,70 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Error_SourceMapping_GPF_NotEnabled" xml:space="preserve">
     <value>The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of the configured sources.</value>
     <comment>{0} is the package ID. {1} is the URI of the package source found in the Global packages folder.</comment>
+  </data>
+  <data name="Text_ByOwner" xml:space="preserve">
+    <value>by {0}</value>
+  </data>
+  <data name="Text_By" xml:space="preserve">
+    <value>by</value>
+  </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</value>
+  </data>
+  <data name="Warn_Adding_HttpSource" xml:space="preserve">
+    <value>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</value>
+  </data>
+  <data name="Link_configuration" xml:space="preserve">
+    <value>Common NuGet configurations; How settings are applied.</value>
+  </data>
+  <data name="DialogTitle_HttpSource" xml:space="preserve">
+    <value>HTTP Source</value>
+  </data>
+  <data name="Hyperlink_Owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="ToolTip_TransitivePathHelp" xml:space="preserve">
+    <value>To learn more about transitive paths, see</value>
+  </data>
+  <data name="Text_PackageLevelTransitive" xml:space="preserve">
+    <value>Transitive</value>
+  </data>
+  <data name="Text_PackageLevelTopLevel" xml:space="preserve">
+    <value>Top-level</value>
+  </data>
+  <data name="Label_MultiplePackageVulnerableVersionToolTip" xml:space="preserve">
+    <value>These installed package versions contain vulnerabilities: {0}</value>
+    <comment>{0} are package versions</comment>
+  </data>
+  <data name="ColumnHeader_PackageLevel" xml:space="preserve">
+    <value>Package Level</value>
+  </data>
+  <data name="Label_PackageDetails" xml:space="preserve">
+    <value>Package Details</value>
+  </data>
+  <data name="Error_UnableToLoadReadme" xml:space="preserve">
+    <value>An error occurred while trying to load the README.</value>
+  </data>
+  <data name="Label_Readme_Tab" xml:space="preserve">
+    <value>README</value>
+  </data>
+  <data name="Text_NoReadme" xml:space="preserve">
+    <value>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</value>
+    <comment>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</comment>
+  </data>
+  <data name="VSOptions_Text_ClearLocalResourcesTitle" xml:space="preserve">
+    <value>NuGet Package Manager</value>
+  </data>
+  <data name="VSOptions_Button_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="VSOptions_Text_ClearLocalsPromptMessage" xml:space="preserve">
+    <value>Once started, this action cannot be cancelled.</value>
+  </data>
+  <data name="CopyMenuCommandLabel" xml:space="preserve">
+    <value>_Copy</value>
+  </data>
+  <data name="VSOptions_Text_ClearLocalsPromptTitle" xml:space="preserve">
+    <value>Clear all local NuGet resources?</value>
   </data>
 </root>

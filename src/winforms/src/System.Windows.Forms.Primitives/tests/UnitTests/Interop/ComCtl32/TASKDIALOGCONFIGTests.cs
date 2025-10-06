@@ -7,7 +7,7 @@ namespace System.Windows.Forms.Primitives.Tests.Interop.ComCtl32;
 
 public class TASKDIALOGCONFIGTests
 {
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is32bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is32bit))]
     public unsafe void TASKDIALOGCONFIG_x32_Size()
     {
         if (Environment.Is64BitProcess)
@@ -18,7 +18,7 @@ public class TASKDIALOGCONFIGTests
         Assert.Equal(96, sizeof(TASKDIALOGCONFIG));
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is32bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is32bit))]
     public unsafe void TASKDIALOGCONFIG_x32_ensure_layout()
     {
         if (Environment.Is64BitProcess)
@@ -26,7 +26,7 @@ public class TASKDIALOGCONFIGTests
             return;
         }
 
-        TASKDIALOGCONFIG sut = new();
+        TASKDIALOGCONFIG sut = default;
         byte* addr = (byte*)&sut;
         fixed (void* mainIconPtr = &sut.mainIcon)
         fixed (void* footerIconPtr = &sut.footerIcon)
@@ -37,7 +37,7 @@ public class TASKDIALOGCONFIGTests
             Assert.Equal(12, (byte*)&sut.dwFlags - addr);                 // 4, TASKDIALOG_FLAGS
             Assert.Equal(16, (byte*)&sut.dwCommonButtons - addr);         // 4, TASKDIALOG_COMMON_BUTTON_FLAGS
             Assert.Equal(20, (byte*)&sut.pszWindowTitle - addr);          // 4, PCWSTR
-            Assert.Equal(24, (byte*)mainIconPtr - addr);                // 4, union { HICON; PCWSTR; }
+            Assert.Equal(24, (byte*)mainIconPtr - addr);                  // 4, union { HICON; PCWSTR; }
             Assert.Equal(28, (byte*)&sut.pszMainInstruction - addr);      // 4, PCWSTR
             Assert.Equal(32, (byte*)&sut.pszContent - addr);              // 4, PCWSTR
             Assert.Equal(36, (byte*)&sut.cButtons - addr);                // 4, UINT
@@ -58,7 +58,7 @@ public class TASKDIALOGCONFIGTests
         }
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is64bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is64bit))]
     public unsafe void TASKDIALOGCONFIG_x64_Size()
     {
         if (!Environment.Is64BitProcess)
@@ -69,7 +69,7 @@ public class TASKDIALOGCONFIGTests
         Assert.Equal(160, sizeof(TASKDIALOGCONFIG));
     }
 
-    [ConditionalFact(typeof(ArchitectureDetection), nameof(ArchitectureDetection.Is64bit))]
+    [Fact(Skip = "Condition not met", SkipType = typeof(ArchitectureDetection), SkipUnless = nameof(ArchitectureDetection.Is64bit))]
     public unsafe void TASKDIALOGCONFIG_x64_ensure_layout()
     {
         if (!Environment.Is64BitProcess)
@@ -77,7 +77,7 @@ public class TASKDIALOGCONFIGTests
             return;
         }
 
-        TASKDIALOGCONFIG sut = new();
+        TASKDIALOGCONFIG sut = default;
         byte* addr = (byte*)&sut;
         fixed (void* mainIconPtr = &sut.mainIcon)
         fixed (void* footerIconPtr = &sut.footerIcon)

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
+using System.Linq;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Roslyn.Utilities;
 
@@ -15,6 +15,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     internal static partial class TypeSymbolExtensions
     {
+        private sealed class VisitTypeData
+        {
+            public Symbol? Symbol;
+            public CompoundUseSiteInfo<AssemblySymbol> UseSiteInfo;
+        }
+
+        private static readonly ObjectPool<VisitTypeData> s_visitTypeDataPool
+            = new ObjectPool<VisitTypeData>(() => new VisitTypeData(), size: 4);
+
         public static bool ImplementsInterface(this TypeSymbol subType, TypeSymbol superInterface, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
             foreach (NamedTypeSymbol @interface in subType.AllInterfacesWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
@@ -218,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             var underlyingType = type.GetEnumUnderlyingType();
             // SpecialType will be None if the underlying type is invalid.
-            return (underlyingType is object) && (underlyingType.SpecialType != SpecialType.None);
+            return underlyingType is not null && underlyingType.SpecialType.CanOptimizeBehavior();
         }
 
         /// <summary>
@@ -528,9 +537,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return false;
         }
 
-        internal static bool IsErrorTypeOrRefLikeType(this TypeSymbol type)
+        internal static bool IsErrorOrRefLikeOrAllowsRefLikeType(this TypeSymbol type)
         {
-            return type.IsErrorType() || type.IsRefLikeType;
+            return type.IsErrorType() || type.IsRefLikeOrAllowsRefLikeType();
+        }
+
+        internal static bool IsRefLikeOrAllowsRefLikeType(this TypeSymbol type)
+        {
+            return type is { IsRefLikeType: true } or TypeParameterSymbol { AllowsRefLikeType: true };
         }
 
         private static readonly string[] s_expressionsNamespaceName = { "Expressions", "Linq", MetadataHelpers.SystemString, "" };
@@ -659,11 +673,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static bool IsAtLeastAsVisibleAs(this TypeSymbol type, Symbol sym, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            CompoundUseSiteInfo<AssemblySymbol> localUseSiteInfo = useSiteInfo;
-            var result = type.VisitType((type1, symbol, unused) => IsTypeLessVisibleThan(type1, symbol, ref localUseSiteInfo), sym,
-                                        canDigThroughNullable: true); // System.Nullable is public
-            useSiteInfo = localUseSiteInfo;
-            return result is null;
+            var visitTypeData = s_visitTypeDataPool.Allocate();
+
+            try
+            {
+                visitTypeData.UseSiteInfo = useSiteInfo;
+                visitTypeData.Symbol = sym;
+
+                var result = type.VisitType(static (type1, arg, unused) => IsTypeLessVisibleThan(type1, arg.Symbol!, ref arg.UseSiteInfo),
+                                            arg: visitTypeData,
+                                            canDigThroughNullable: true); // System.Nullable is public
+
+                useSiteInfo = visitTypeData.UseSiteInfo;
+                return result is null;
+            }
+            finally
+            {
+                visitTypeData.UseSiteInfo = default;
+                visitTypeData.Symbol = null;
+                s_visitTypeDataPool.Free(visitTypeData);
+            }
         }
 
         private static bool IsTypeLessVisibleThan(TypeSymbol type, Symbol sym, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
@@ -823,6 +852,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     case TypeKind.Struct:
                     case TypeKind.Interface:
                     case TypeKind.Delegate:
+                    case TypeKind.Extension:
 
                         if (current.IsAnonymousType)
                         {
@@ -1175,16 +1205,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private static readonly Func<TypeSymbol, TypeParameterSymbol?, bool, bool> s_containsTypeParameterPredicate =
             (type, parameter, unused) => type.TypeKind == TypeKind.TypeParameter && (parameter is null || TypeSymbol.Equals(type, parameter, TypeCompareKind.ConsiderEverything2));
 
-        public static bool ContainsTypeParameter(this TypeSymbol type, MethodSymbol parameterContainer)
+        public static bool ContainsTypeParameter(this TypeSymbol type, Symbol typeParameterContainer)
         {
-            RoslynDebug.Assert((object)parameterContainer != null);
+            RoslynDebug.Assert((object)typeParameterContainer != null);
 
-            var result = type.VisitType(s_isTypeParameterWithSpecificContainerPredicate, parameterContainer);
+            var result = type.VisitType(s_isTypeParameterWithSpecificContainerPredicate, typeParameterContainer);
             return result is object;
         }
 
         private static readonly Func<TypeSymbol, Symbol, bool, bool> s_isTypeParameterWithSpecificContainerPredicate =
-             (type, parameterContainer, unused) => type.TypeKind == TypeKind.TypeParameter && (object)type.ContainingSymbol == (object)parameterContainer;
+             (type, typeParameterContainer, unused) => type.TypeKind == TypeKind.TypeParameter && (object)type.ContainingSymbol == (object)typeParameterContainer;
 
         public static bool ContainsTypeParameters(this TypeSymbol type, HashSet<TypeParameterSymbol> parameters)
         {
@@ -1250,7 +1280,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static bool ContainsFunctionPointer(this TypeSymbol type) =>
             type.VisitType((TypeSymbol t, object? _, bool _) => t.IsFunctionPointer(), null) is object;
 
-        internal static bool ContainsPointer(this TypeSymbol type) =>
+        internal static bool ContainsPointerOrFunctionPointer(this TypeSymbol type) =>
             type.VisitType((TypeSymbol t, object? _, bool _) => t.TypeKind is TypeKind.Pointer or TypeKind.FunctionPointer, null) is object;
 
         /// <summary>
@@ -1334,6 +1364,32 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return false;
         }
 
+        internal static bool IsSpan(this TypeSymbol type)
+        {
+            return type is NamedTypeSymbol
+            {
+                Name: "Span",
+                IsValueType: true,
+                IsRefLikeType: true,
+                Arity: 1,
+                ContainingType: null,
+                ContainingNamespace: { Name: nameof(System), ContainingNamespace.IsGlobalNamespace: true },
+            };
+        }
+
+        internal static bool IsReadOnlySpan(this TypeSymbol type)
+        {
+            return type is NamedTypeSymbol
+            {
+                Name: "ReadOnlySpan",
+                IsValueType: true,
+                IsRefLikeType: true,
+                Arity: 1,
+                ContainingType: null,
+                ContainingNamespace: { Name: nameof(System), ContainingNamespace.IsGlobalNamespace: true },
+            };
+        }
+
         internal static bool IsSpanChar(this TypeSymbol type)
         {
             return type is NamedTypeSymbol
@@ -1387,9 +1443,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
             }
 
-            return ignoreSpanLikeTypes ?
-                        false :
-                        type.IsRefLikeType;
+            return ignoreSpanLikeTypes ? false : type.IsRefLikeOrAllowsRefLikeType();
         }
 
         public static bool IsIntrinsicType(this TypeSymbol type)
@@ -1663,22 +1717,21 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static TypeParameterSymbol? FindEnclosingTypeParameter(this NamedTypeSymbol type, string name)
         {
-            var allTypeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance();
-            type.GetAllTypeParameters(allTypeParameters);
-
-            TypeParameterSymbol? result = null;
-
-            foreach (TypeParameterSymbol tpEnclosing in allTypeParameters)
+            do
             {
-                if (name == tpEnclosing.Name)
+                foreach (TypeParameterSymbol tpEnclosing in type.TypeParameters)
                 {
-                    result = tpEnclosing;
-                    break;
+                    if (name == tpEnclosing.Name)
+                    {
+                        return tpEnclosing;
+                    }
                 }
-            }
 
-            allTypeParameters.Free();
-            return result;
+                type = type.ContainingType;
+            }
+            while (type is not null);
+
+            return null;
         }
 
         /// <summary>
@@ -2083,6 +2136,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             return typeSymbol is NamedTypeSymbol { Name: WellKnownMemberNames.LockTypeName, Arity: 0, ContainingType: null } &&
                 typeSymbol.IsContainedInNamespace(nameof(System), nameof(System.Threading));
+        }
+
+        internal static bool IsMicrosoftCodeAnalysisEmbeddedAttribute(this TypeSymbol typeSymbol)
+        {
+            return typeSymbol is NamedTypeSymbol
+            {
+                Name: "EmbeddedAttribute",
+                Arity: 0,
+                ContainingType: null,
+            }
+            && typeSymbol.IsContainedInNamespace("Microsoft", "CodeAnalysis");
         }
 
         private static bool IsWellKnownInteropServicesTopLevelType(this TypeSymbol typeSymbol, string name)

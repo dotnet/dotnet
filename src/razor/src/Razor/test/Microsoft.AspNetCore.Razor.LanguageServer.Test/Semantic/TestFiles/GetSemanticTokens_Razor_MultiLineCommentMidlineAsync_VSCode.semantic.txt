@@ -1,0 +1,12 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 markupTagDelimiter 0 [<]
+0 1 1 markupElement 0 [a]
+0 2 1 markupTagDelimiter 0 [/]
+0 1 1 markupTagDelimiter 0 [>]
+0 1 1 razorCommentTransition 0 [@]
+0 1 1 razorCommentStar 0 [*]
+0 1 4 razorComment 0 [ kdl]
+1 0 3 razorComment 0 [skd]
+1 0 3 razorComment 0 [slf]
+0 3 1 razorCommentStar 0 [*]
+0 1 1 razorCommentTransition 0 [@]

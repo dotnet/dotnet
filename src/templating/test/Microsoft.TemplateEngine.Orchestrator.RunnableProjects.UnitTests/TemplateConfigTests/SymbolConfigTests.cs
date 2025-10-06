@@ -68,59 +68,6 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
             }
         }
 
-        private static JObject ConfigWithNameSymbolWithoutBinding
-        {
-            get
-            {
-                string configString = /*lang=json*/ """
-                {
-                  "author": "Test Asset",
-                  "classifications": [ "Test Asset" ],
-                  "name": "TemplateWithNameSymbolWithoutBinding",
-                  "generatorVersions": "[1.0.0.0-*)",
-                  "groupIdentity": "TestAssets.TemplateWithNameSymbolWithoutBinding",
-                  "precedence": "100",
-                  "identity": "TestAssets.TemplateWithNameSymbolWithoutBinding",
-                  "shortName": "TestAssets.TemplateWithNameSymbolWithoutBinding",
-                  "symbols": {
-                    "name": {
-                      "type": "parameter",
-                      "dataType": "string",
-                    }
-                  }
-                }
-                """;
-                return JObject.Parse(configString);
-            }
-        }
-
-        private static JObject ConfigWithNameSymbolWithCustomBinding
-        {
-            get
-            {
-                string configString = /*lang=json*/ """
-                {
-                  "author": "Test Asset",
-                  "classifications": [ "Test Asset" ],
-                  "name": "ConfigWithNameSymbolWithCustomBinding",
-                  "generatorVersions": "[1.0.0.0-*)",
-                  "groupIdentity": "TestAssets.ConfigWithNameSymbolWithCustomBinding",
-                  "precedence": "100",
-                  "identity": "TestAssets.ConfigWithNameSymbolWithCustomBinding",
-                  "shortName": "TestAssets.ConfigWithNameSymbolWithCustomBinding",
-                  "symbols": {
-                    "name": {
-                      "type": "parameter",
-                      "dataType": "string",
-                      "binding": "customBinding",
-                    }
-                  }
-                }
-                """;
-                return JObject.Parse(configString);
-            }
-        }
-
         private static JObject ArrayConfigWithNameSymbolAndValueFormsWithIdentity
         {
             get
@@ -617,8 +564,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            Assert.Single(paramSymbol!.Forms.GlobalForms.ToList()
-                                                .Where(x => string.Equals(x, IdentityValueFormFactory.FormIdentifier, StringComparison.OrdinalIgnoreCase)));
+            Assert.Single(paramSymbol!.Forms.GlobalForms.ToList(), x => string.Equals(x, IdentityValueFormFactory.FormIdentifier, StringComparison.OrdinalIgnoreCase));
             Assert.Equal(0, paramSymbol.Forms.GlobalForms.ToList().IndexOf(IdentityValueFormFactory.FormIdentifier));
         }
 
@@ -670,7 +616,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? nameSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(nameSymbol);
-            IList<string> configuredValueFormNames = nameSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = nameSymbol!.Forms.GlobalForms;
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
             Assert.Equal("bar", configuredValueFormNames[1]);
@@ -688,7 +634,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? nameSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(nameSymbol);
-            IList<string> configuredValueFormNames = nameSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = nameSymbol!.Forms.GlobalForms;
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
             Assert.Equal("bar", configuredValueFormNames[1]);
@@ -706,7 +652,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal(IdentityValueFormFactory.FormIdentifier, configuredValueFormNames[0]);
@@ -725,7 +671,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(3, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
@@ -743,7 +689,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal(IdentityValueFormFactory.FormIdentifier, configuredValueFormNames[0]);
@@ -762,7 +708,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
@@ -781,7 +727,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Single(configuredValueFormNames);
             Assert.Equal(IdentityValueFormFactory.FormIdentifier, configuredValueFormNames[0]);
@@ -797,7 +743,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
@@ -850,7 +796,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? nameSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(nameSymbol);
-            IList<string> configuredValueFormNames = nameSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = nameSymbol!.Forms.GlobalForms;
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
             Assert.Equal("bar", configuredValueFormNames[1]);
@@ -867,7 +813,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? nameSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(nameSymbol);
-            IList<string> configuredValueFormNames = nameSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = nameSymbol!.Forms.GlobalForms;
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
             Assert.Equal("bar", configuredValueFormNames[1]);
@@ -884,7 +830,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal("foo", configuredValueFormNames[0]);
@@ -902,7 +848,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
 
             ParameterSymbol? paramSymbol = symbolInfo as ParameterSymbol;
             Assert.NotNull(paramSymbol);
-            IList<string> configuredValueFormNames = paramSymbol!.Forms.GlobalForms.ToList();
+            var configuredValueFormNames = paramSymbol!.Forms.GlobalForms;
 
             Assert.Equal(4, configuredValueFormNames.Count);
             Assert.Equal(IdentityValueFormFactory.FormIdentifier, configuredValueFormNames[0]);

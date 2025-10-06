@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -175,34 +176,44 @@ internal static class TagHelperMatchingConventions
         return true;
     }
 
-    public static bool TryGetFirstBoundAttributeMatch(
-        TagHelperDescriptor descriptor,
+    /// <summary>
+    ///  Gets all attribute matches from the specified tag helpers for the given attribute name.
+    /// </summary>
+    /// <param name="tagHelpers">The collection of tag helper descriptors to search through.</param>
+    /// <param name="name">The attribute name to match against.</param>
+    /// <param name="matches">A pooled array builder that will be populated with matching attribute descriptors.</param>
+    /// <remarks>
+    ///  This method iterates through all provided tag helpers and attempts to find bound attribute matches
+    ///  for the specified attribute name. Each successful match is added to the provided matches collection.
+    /// </remarks>
+    public static void GetAttributeMatches(
+        ImmutableArray<TagHelperDescriptor> tagHelpers,
         string name,
-        out BoundAttributeDescriptor? boundAttribute,
-        out bool indexerMatch,
-        out bool parameterMatch,
-        out BoundAttributeParameterDescriptor? boundAttributeParameter)
+        ref PooledArrayBuilder<TagHelperAttributeMatch> matches)
     {
-        indexerMatch = false;
-        parameterMatch = false;
-        boundAttribute = null;
-        boundAttributeParameter = null;
+        foreach (var tagHelper in tagHelpers)
+        {
+            if (TryGetFirstBoundAttributeMatch(tagHelper, name, out var match))
+            {
+                matches.Add(match);
+            }
+        }
+    }
 
+    public static bool TryGetFirstBoundAttributeMatch(TagHelperDescriptor descriptor, string name, out TagHelperAttributeMatch match)
+    {
         if (descriptor == null || name.IsNullOrEmpty())
         {
+            match = default;
             return false;
         }
 
         // First, check if we have a bound attribute descriptor that matches the parameter if it exists.
         foreach (var attribute in descriptor.BoundAttributes)
         {
-            boundAttributeParameter = GetSatisfyingBoundAttributeWithParameter(attribute, name);
-
-            if (boundAttributeParameter != null)
+            if (GetSatisfyingBoundAttributeWithParameter(attribute, name) is { } parameter)
             {
-                boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
-                parameterMatch = true;
+                match = new(name, attribute, parameter);
                 return true;
             }
         }
@@ -213,13 +224,13 @@ internal static class TagHelperMatchingConventions
         {
             if (CanSatisfyBoundAttribute(name, attribute))
             {
-                boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
+                match = new(name, attribute, parameter: null);
                 return true;
             }
         }
 
         // No matches found.
+        match = default;
         return false;
     }
 
@@ -235,11 +246,11 @@ internal static class TagHelperMatchingConventions
         string attributeValue)
     {
         var nameMatches = false;
-        if (descriptor.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
+        if (descriptor.NameComparison == RequiredAttributeNameComparison.FullMatch)
         {
             nameMatches = string.Equals(descriptor.Name, attributeName, descriptor.GetComparison());
         }
-        else if (descriptor.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)
+        else if (descriptor.NameComparison == RequiredAttributeNameComparison.PrefixMatch)
         {
             // attributeName cannot equal the Name if comparing as a PrefixMatch.
             nameMatches = attributeName.Length != descriptor.Name.Length &&
@@ -257,13 +268,13 @@ internal static class TagHelperMatchingConventions
 
         switch (descriptor.ValueComparison)
         {
-            case RequiredAttributeDescriptor.ValueComparisonMode.None:
+            case RequiredAttributeValueComparison.None:
                 return true;
-            case RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch: // Value starts with
+            case RequiredAttributeValueComparison.PrefixMatch: // Value starts with
                 return attributeValue.StartsWith(descriptor.Value.AssumeNotNull(), StringComparison.Ordinal);
-            case RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch: // Value ends with
+            case RequiredAttributeValueComparison.SuffixMatch: // Value ends with
                 return attributeValue.EndsWith(descriptor.Value.AssumeNotNull(), StringComparison.Ordinal);
-            case RequiredAttributeDescriptor.ValueComparisonMode.FullMatch: // Value equals
+            case RequiredAttributeValueComparison.FullMatch: // Value equals
                 return string.Equals(attributeValue, descriptor.Value, StringComparison.Ordinal);
             default:
                 Debug.Assert(false, "Unknown value comparison.");
@@ -271,7 +282,7 @@ internal static class TagHelperMatchingConventions
         }
     }
 
-    private static StringComparison GetComparison(this BoundAttributeDescriptor descriptor)
+    internal static StringComparison GetComparison(this BoundAttributeDescriptor descriptor)
         => descriptor.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
     private static StringComparison GetComparison(this BoundAttributeParameterDescriptor descriptor)

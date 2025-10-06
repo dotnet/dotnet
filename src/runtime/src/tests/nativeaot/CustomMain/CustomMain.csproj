@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <CustomNativeMain>true</CustomNativeMain>
     <StaticLibraryPrefix Condition="'$(TargetOS)' != 'windows'">lib</StaticLibraryPrefix>
     <RequiresProcessIsolation>true</RequiresProcessIsolation>
+    <ReferenceXUnitWrapperGenerator>false</ReferenceXUnitWrapperGenerator>
   </PropertyGroup>
 
   <ItemGroup>

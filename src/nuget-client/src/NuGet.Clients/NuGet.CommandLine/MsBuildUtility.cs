@@ -284,6 +284,12 @@ namespace NuGet.CommandLine
                 AddProperty(args, "RestoreUseSkipNonexistentTargets", bool.FalseString);
             }
 
+            // Checking the SDK uses MSBuild intrinsic functions that were added in 16.5
+            if (toolset.ParsedVersion.CompareTo(new Version(16, 5)) < 0)
+            {
+                AddProperty(args, "NuGetExeSkipSdkAnalysisLevelCheck", bool.TrueString);
+            }
+
             // Add additional args to msbuild if needed
             var msbuildAdditionalArgs = reader.GetEnvironmentVariable("NUGET_RESTORE_MSBUILD_ARGS");
 
@@ -701,41 +707,6 @@ namespace NuGet.CommandLine
         }
 
         /// <summary>
-        /// Gets the (first) path of MSBuild to appear in environment variable PATH.
-        /// </summary>
-        /// <returns>The path of MSBuild in PATH environment variable. Returns null if MSBuild location does not exist
-        /// in the variable string.</returns>
-        private static string GetMsBuildPathInPathVar(IEnvironmentVariableReader reader)
-        {
-            var path = reader.GetEnvironmentVariable("PATH");
-            var paths = path?.Split(new char[] { ';' });
-            return paths?.Select(p =>
-            {
-                // Strip leading/trailing quotes
-                if (p.Length > 0 && p[0] == '\"')
-                {
-                    p = p.Substring(1);
-                }
-                if (p.Length > 0 && p[p.Length - 1] == '\"')
-                {
-                    p = p.Substring(0, p.Length - 1);
-                }
-
-                return p;
-            }).FirstOrDefault(p =>
-            {
-                try
-                {
-                    return File.Exists(Path.Combine(p, "msbuild.exe"));
-                }
-                catch
-                {
-                    return false;
-                }
-            });
-        }
-
-        /// <summary>
         /// Gets the msbuild toolset found in/under the path passed.
         /// </summary>
         /// <param name="msBuildPath">The msbuild path as found in PATH env var. Can be null.</param>
@@ -869,6 +840,16 @@ namespace NuGet.CommandLine
                                nameof(NuGetResources.MSbuildFromPath)),
                            msbuildPath);
 
+                if (msbuildPath.EndsWith("MSBuild.exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    string msbuildDirectory = Path.GetDirectoryName(msbuildPath);
+
+                    if (!string.IsNullOrWhiteSpace(msbuildDirectory))
+                    {
+                        msbuildPath = msbuildDirectory;
+                    }
+                }
+
                 if (!Directory.Exists(msbuildPath))
                 {
                     var message = string.Format(
@@ -922,16 +903,11 @@ namespace NuGet.CommandLine
             ISetupConfiguration configuration;
             try
             {
-                configuration = new SetupConfiguration() as ISetupConfiguration2;
+                configuration = new SetupConfiguration();
             }
             catch (Exception)
             {
                 return null; // No COM class
-            }
-
-            if (configuration == null)
-            {
-                return null;
             }
 
             var enumerator = configuration.EnumInstances();

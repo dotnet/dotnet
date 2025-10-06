@@ -22,9 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
-      <group targetFramework=".NETStandard1.0">
-        <dependency id="System.Runtime" version="4.3.0" />
-      </group>
       <group targetFramework=".NETStandard2.0" />
       <group targetFramework=".NETStandard2.1" />
     </dependencies>

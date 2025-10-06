@@ -1,14 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using NuGet.Commands;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
 using NuGet.Versioning;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.Common.Test
@@ -50,7 +49,7 @@ namespace NuGet.Common.Test
         {
 
             // Arrange
-            var codes = new List<NuGetLogCode> { NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1701 };
+            ImmutableArray<NuGetLogCode> codes = [NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1701];
             var libraryId = "test_libraryId";
             var targetFramework = NuGetFramework.Parse("net45");
             var properties = new PackageSpecificWarningProperties();
@@ -73,11 +72,6 @@ namespace NuGet.Common.Test
             var netcoreappFramework = NuGetFramework.Parse("netcoreapp1.1");
             var libraryId = "test_library";
             var libraryVersion = "1.0.0";
-            var NoWarnList = new List<NuGetLogCode>
-            {
-                NuGetLogCode.NU1603,
-                NuGetLogCode.NU1605
-            };
 
             var targetFrameworkInformation = new List<TargetFrameworkInformation>
             {
@@ -103,7 +97,7 @@ namespace NuGet.Common.Test
                             TypeConstraint = LibraryDependencyTarget.Package,
                             VersionRange = VersionRange.Parse(libraryVersion)
                         },
-                        NoWarn = NoWarnList
+                        NoWarn = [NuGetLogCode.NU1603, NuGetLogCode.NU1605]
                     }
                 }
             };
@@ -141,11 +135,7 @@ namespace NuGet.Common.Test
                     TypeConstraint = LibraryDependencyTarget.Package,
                     VersionRange = VersionRange.Parse("1.0.0")
                 },
-                NoWarn = new List<NuGetLogCode>
-                {
-                    NuGetLogCode.NU1603,
-                    NuGetLogCode.NU1107
-                }
+                NoWarn = [NuGetLogCode.NU1603, NuGetLogCode.NU1107]
             };
 
             var dependency2 = new LibraryDependency()
@@ -156,11 +146,7 @@ namespace NuGet.Common.Test
                     TypeConstraint = LibraryDependencyTarget.Package,
                     VersionRange = VersionRange.Parse("1.0.0")
                 },
-                NoWarn = new List<NuGetLogCode>
-                {
-                    NuGetLogCode.NU1603,
-                    NuGetLogCode.NU1605
-                }
+                NoWarn = [NuGetLogCode.NU1603, NuGetLogCode.NU1605]
             };
 
             var targetFrameworkInformation = new List<TargetFrameworkInformation>
@@ -168,18 +154,12 @@ namespace NuGet.Common.Test
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = net45Framework,
-                    Dependencies = new List<LibraryDependency>
-                    {
-                        dependency1
-                    }
+                    Dependencies = [dependency1]
                 },
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = netcoreappFramework,
-                    Dependencies = new List<LibraryDependency>
-                    {
-                        dependency2
-                    }
+                    Dependencies = [dependency2]
                 }
             };
 

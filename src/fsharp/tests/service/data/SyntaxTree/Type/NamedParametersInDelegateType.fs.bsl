@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Type/NamedParametersInDelegateType.fs", false,
-      QualifiedNameOfFile NamedParametersInDelegateType, [], [],
+      QualifiedNameOfFile NamedParametersInDelegateType, [],
       [SynModuleOrNamespace
          ([NamedParametersInDelegateType], false, AnonModule,
           [Types
@@ -70,7 +70,7 @@ ImplFile
                                  SynArgInfo ([], false, Some b)];
                                 [SynArgInfo ([], false, Some c)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, None, None, (2,11--2,46),
+                            PreXmlDocEmpty, Single None, None, (2,11--2,46),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None
@@ -87,4 +87,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--2,46))],
           PreXmlDocEmpty, [], None, (2,0--3,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

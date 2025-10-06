@@ -27,7 +27,7 @@
   -->
   <Target Name="SetLastReleasedVersionForSourceBuild"
           Condition="
-            ('$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true') and
+            '$(DotNetBuildSourceOnly)' == 'true' and
             '$(SkipSetLastReleasedVersionForSourceBuild)' != 'true'"
           BeforeTargets="GetProductVersions"
           DependsOnTargets="_GetCurrentProjectServicingConfiguration">
@@ -75,44 +75,16 @@
       ComponentMsiFile;
       InstallerRuntimeIdentifier;
       InstallerTargetArchitecture;
-      CrossArchContentsArch
+      CrossArchContentsArch;
+      _IsIndividualInstallerBuild
     </_GlobalPropertiesToRemoveForPublish>
   </PropertyGroup>
   
   <ItemGroup>
     <_GlobalPropertiesToRemoveForPublish Include="$(_GlobalPropertiesToRemoveForPublish)" />
   </ItemGroup>
-  
-  <Target Name="_GetTargetOSArchInfo">
-    <Error Condition="'$(InstallerRuntimeIdentifier)' == ''"
-           Text="An InstallerRuntimeIdentifier must be specified when building installers." />
-    <PropertyGroup>
-      <TargetRuntimeOS>$(InstallerRuntimeIdentifier.Substring(0, $(InstallerRuntimeIdentifier.LastIndexOf('-'))))</TargetRuntimeOS>
-      <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(InstallerRuntimeIdentifier.Substring($(InstallerRuntimeIdentifier.LastIndexOf('-'))).TrimStart('-'))</TargetArchitecture>
-      <_TargetArch>$(TargetArchitecture)</_TargetArch>
-      <_TargetArch Condition="'$(BuildRpmPackage)' == 'true' and '$(TargetArchitecture)' == 'arm64'">aarch64</_TargetArch>
-      <InstallerTargetArchitecture Condition="'$(InstallerTargetArchitecture)' == ''">$(_TargetArch)</InstallerTargetArchitecture>
-    </PropertyGroup>
-    <ItemGroup>
-      <CrossArchMsiToBuild Include="@(CrossArchSdkMsiInstallerArch)" Exclude="$(TargetArchitecture)" />
-    </ItemGroup>
-    <PropertyGroup>
-      <_osSupportsWixBasedInstallers Condition="$([MSBuild]::IsOsPlatform(Windows)) and '$(TargetRuntimeOS)' == 'win'">true</_osSupportsWixBasedInstallers>
 
-      <_osArchSupportsWixBasedInstallers>$(_osSupportsWixBasedInstallers)</_osArchSupportsWixBasedInstallers>
-      <_osArchSupportsWixBasedInstallers Condition="'$(TargetArchitecture)' == 'arm'">false</_osArchSupportsWixBasedInstallers>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_GetVersionInfo">
-    <PropertyGroup>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(DotNetFinalVersionKind)' != 'release'">true</IncludePreReleaseLabelInPackageVersion>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(SuppressFinalPackageVersion)' == 'true'">true</IncludePreReleaseLabelInPackageVersion>
-      <IncludePreReleaseLabelInPackageVersion Condition="'$(IsShipping)' != 'true'">true</IncludePreReleaseLabelInPackageVersion>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_GetProductBrandName" DependsOnTargets="_GetVersionInfo">
+  <Target Name="_GetProductBrandName">
     <PropertyGroup
       Condition="
         '$(ReleaseBrandSuffix)' == '' and
@@ -149,6 +121,8 @@
   <PropertyGroup>
     <InstallerRuntimeIdentifiers Condition="'$(InstallerRuntimeIdentifiers)' == ''">$(RuntimeIdentifiers)</InstallerRuntimeIdentifiers>
     <InstallerRuntimeIdentifier Condition="'$(InstallerRuntimeIdentifier)' == ''">$(RuntimeIdentifier)</InstallerRuntimeIdentifier>
+    <!-- When building a non-portable build, PortableTargetRid specifies a known (portable) RID that is a parent of the curent runtime identifier. -->
+    <InstallerRuntimeIdentifier Condition="'$(PortableTargetRid)' != ''">$(PortableTargetRid)</InstallerRuntimeIdentifier>
   </PropertyGroup>
   
   <Import Project="$(MSBuildThisFileDirectory)installer.singlerid.targets"

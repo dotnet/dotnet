@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -482,9 +483,45 @@ namespace NuGet.Protocol.Tests
             }
         }
 
+        [Fact]
+        public async Task GetAsync_HttpUriAndFalseAllowInsecureConnections_ThrowsAnException()
+        {
+            // Arrange
+            using var td = TestDirectory.Create();
+            string uri = "http://test/index.json";
+            var tc = new TestContext(td, throttle: null, uri, allowInsecureConnections: false);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<HttpSourceException>(() => tc.HttpSource.GetAsync(
+                new HttpSourceCachedRequest(tc.Url, tc.CacheKey, tc.CacheContext),
+                result => Task.FromResult(tc.ReadStream(result.Stream)),
+                tc.Logger,
+                token: CancellationToken.None));
+
+            exception.Message.Should().Contain(string.Format(Strings.Error_Insecure_HTTP, FakeSource, uri));
+        }
+
+        [Fact]
+        public async Task GetAsync_HttpUriAndTrueAllowInsecureConnections_DoesNotThrowAnException()
+        {
+            // Arrange
+            using var td = TestDirectory.Create();
+            string uri = "http://test/index.json";
+            var tc = new TestContext(td, throttle: null, uri, allowInsecureConnections: true);
+
+            // Act & Assert
+            var actual = await tc.HttpSource.GetAsync(
+                new HttpSourceCachedRequest(tc.Url, tc.CacheKey, tc.CacheContext),
+                result => Task.FromResult(tc.ReadStream(result.Stream)),
+                tc.Logger,
+                token: CancellationToken.None);
+
+            Assert.True(true, "No exception was thrown.");
+        }
+
         private class TestContext
         {
-            public TestContext(TestDirectory testDirectory, IThrottle throttle = null)
+            public TestContext(TestDirectory testDirectory, IThrottle throttle, string requestUri, bool allowInsecureConnections)
             {
                 // data
                 var source = FakeSource;
@@ -493,12 +530,13 @@ namespace NuGet.Protocol.Tests
                 CacheContent = "cache";
                 NetworkContent = "network";
                 CacheKey = "CacheKey";
-                Url = "https://fake.server/foo/bar/something.json";
+                Url = requestUri;
                 Credentials = new NetworkCredential("foo", "bar");
                 Throttle = new Mock<IThrottle>();
 
                 // dependencies
                 var packageSource = new PackageSource(source);
+                packageSource.AllowInsecureConnections = allowInsecureConnections;
                 var networkResponses = new Dictionary<string, string> { { Url, NetworkContent } };
                 MessageHandler = new TestMessageHandler(networkResponses, string.Empty);
                 var handlerResource = new TestHttpHandler(MessageHandler);
@@ -512,6 +550,11 @@ namespace NuGet.Protocol.Tests
                 {
                     HttpCacheDirectory = TestDirectory
                 };
+            }
+
+            public TestContext(TestDirectory testDirectory, IThrottle throttle = null)
+                : this(testDirectory, throttle, "https://fake.server/foo/bar/something.json", allowInsecureConnections: false)
+            {
             }
 
             public Exception CacheValidationException { get; }

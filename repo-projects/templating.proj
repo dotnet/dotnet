@@ -1,19 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" />
+    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

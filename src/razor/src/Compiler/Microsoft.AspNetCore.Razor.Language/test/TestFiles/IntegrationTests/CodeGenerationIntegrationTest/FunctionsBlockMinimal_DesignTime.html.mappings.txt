@@ -1,9 +1,0 @@
-﻿Source Location: (0:0,0 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlockMinimal.cshtml)
-|
-
-	|
-Generated Location: (0:0,0 [5] )
-|
-
-	|
-

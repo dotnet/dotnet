@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
 using Xunit;
 
 namespace NuGet.Packaging.Test
@@ -14,7 +14,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Constructor_WhenV3ServiceIndexUrlNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => new NuGetV3ServiceIndexUrl(v3ServiceIndexUrl: null));
 
             Assert.Equal("v3ServiceIndexUrl", exception.ParamName);
@@ -24,7 +24,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_WhenV3ServiceIndexNotAbsolute_Throws()
         {
             var url = new Uri("/", UriKind.Relative);
-            var exception = Assert.Throws<ArgumentException>(() => new NuGetV3ServiceIndexUrl(url));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => new NuGetV3ServiceIndexUrl(url));
 
             Assert.Equal("v3ServiceIndexUrl", exception.ParamName);
             Assert.StartsWith("The URL value is invalid.", exception.Message);
@@ -34,7 +34,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_WhenV3ServiceIndexSchemeIsNotHttps_Throws()
         {
             var url = new Uri("http://test.test", UriKind.Absolute);
-            var exception = Assert.Throws<ArgumentException>(
+            ArgumentException exception = Assert.Throws<ArgumentException>(
                 () => new NuGetV3ServiceIndexUrl(url));
 
             Assert.Equal("v3ServiceIndexUrl", exception.ParamName);
@@ -56,10 +56,14 @@ namespace NuGet.Packaging.Test
         {
             const string url = "https://test.test";
 
-            var expectedBytes = new DerIA5String(url).GetDerEncoded();
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            writer.WriteCharacterString(UniversalTagNumber.IA5String, url);
+
+            byte[] expectedBytes = writer.Encode();
             var nugetV3ServiceIndexUrl = new NuGetV3ServiceIndexUrl(new Uri(url));
 
-            var actualBytes = nugetV3ServiceIndexUrl.Encode();
+            byte[] actualBytes = nugetV3ServiceIndexUrl.Encode();
 
             Assert.Equal(expectedBytes, actualBytes);
         }
@@ -73,7 +77,11 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithInvalidType_Throws()
         {
-            var bytes = new DerUtf8String("a").GetDerEncoded();
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            writer.WriteCharacterString(UniversalTagNumber.UTF8String, "a");
+
+            byte[] bytes = writer.Encode();
 
             Assert.Throws<CryptographicException>(() => NuGetV3ServiceIndexUrl.Read(bytes));
         }
@@ -83,9 +91,12 @@ namespace NuGet.Packaging.Test
         {
             const string url = "https://test.test";
 
-            var bytes = new DerIA5String(url).GetDerEncoded();
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var nugetV3ServiceIndexUrl = NuGetV3ServiceIndexUrl.Read(bytes);
+            writer.WriteCharacterString(UniversalTagNumber.IA5String, url);
+
+            byte[] bytes = writer.Encode();
+            NuGetV3ServiceIndexUrl nugetV3ServiceIndexUrl = NuGetV3ServiceIndexUrl.Read(bytes);
 
             Assert.True(nugetV3ServiceIndexUrl.V3ServiceIndexUrl.IsAbsoluteUri);
             Assert.Equal(url, nugetV3ServiceIndexUrl.V3ServiceIndexUrl.OriginalString);

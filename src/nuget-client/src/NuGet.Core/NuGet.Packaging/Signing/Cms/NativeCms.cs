@@ -3,14 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-#if IS_SIGNING_SUPPORTED
-using System.Security.Cryptography;
-using System.Security.Cryptography.Pkcs;
-#endif
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing.Utility;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 
 namespace NuGet.Packaging.Signing
 {
@@ -267,7 +265,6 @@ namespace NuGet.Packaging.Signing
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         internal unsafe void AddCountersignature(CmsSigner cmsSigner, CngKey privateKey)
         {
             using (var hb = new HeapBlockRetainer())
@@ -436,7 +433,6 @@ namespace NuGet.Packaging.Signing
                 }
             }
         }
-#endif
 
         private static CRYPT_ATTRIBUTE GetCryptAttributeForData(byte[] data, string attributeOid, HeapBlockRetainer hb)
         {

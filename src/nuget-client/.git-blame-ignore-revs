@@ -1,0 +1,6 @@
+# Specifies commit IDs to ignore when using git blame
+# These commits are ignored in GitHub blame view (https://docs.github.com/en/repositories/working-with-files/using-files/viewing-and-understanding-files#ignore-commits-in-the-blame-view)
+# To make it work locally for the git blame command, you must run "git config blame.ignoreRevsFile .git-blame-ignore-revs" in the repository first
+
+# automatic formatting (https://github.com/NuGet/NuGet.Client/pull/3587)
+65abcc61f73ab3d87928495f789ec74011edde7f

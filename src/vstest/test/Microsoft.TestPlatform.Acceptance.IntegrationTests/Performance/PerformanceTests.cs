@@ -30,7 +30,7 @@ public class PerformanceTests : TelemetryPerfTestBase
 
         var actualExecutionTime = GetExecutionTime();
 
-        actualExecutionTime.Should().BeLessOrEqualTo(thresholdInMs.Milliseconds());
+        actualExecutionTime.Should().BeLessThanOrEqualTo(thresholdInMs.Milliseconds());
     }
 
     [TestMethod]
@@ -45,7 +45,7 @@ public class PerformanceTests : TelemetryPerfTestBase
 
         var actualDiscoveryTime = GetDiscoveryTime();
 
-        actualDiscoveryTime.Should().BeLessOrEqualTo(500.Milliseconds());
+        actualDiscoveryTime.Should().BeLessThanOrEqualTo(500.Milliseconds());
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public class PerformanceTests : TelemetryPerfTestBase
 
         var actualVsTestTime = GetVsTestTime();
 
-        actualVsTestTime.Should().BeLessOrEqualTo(2500.Milliseconds());
+        actualVsTestTime.Should().BeLessThanOrEqualTo(2500.Milliseconds());
     }
 
     [TestMethod]
@@ -75,7 +75,7 @@ public class PerformanceTests : TelemetryPerfTestBase
 
         var actualTestHostTime = GetTestHostTime();
 
-        actualTestHostTime.Should().BeLessOrEqualTo(2000.Milliseconds());
+        actualTestHostTime.Should().BeLessThanOrEqualTo(2000.Milliseconds());
     }
 
     [TestMethod]
@@ -90,7 +90,7 @@ public class PerformanceTests : TelemetryPerfTestBase
 
         var actualAdapterTimeTaken = GetAdapterExecutionTime("executor://mstestadapter/v2");
 
-        actualAdapterTimeTaken.Should().BeLessOrEqualTo(1500.Milliseconds());
+        actualAdapterTimeTaken.Should().BeLessThanOrEqualTo(1500.Milliseconds());
     }
 }
 #endif

@@ -1,10 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -63,7 +63,7 @@ public class FindNodeTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
             }
             """;
 
-    private static readonly string s_fetchDataContents = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+    private static readonly string s_fetchDataContents = PlatformInformation.IsWindows
         ? FetchDataContents
         : FetchDataContents.Replace("\n", "\r\n");
 
@@ -75,8 +75,9 @@ public class FindNodeTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
     [InlineData(5, 20, SyntaxKind.MarkupTextLiteral, true)]
     [InlineData(20, 21, SyntaxKind.CSharpTransition, false)]
     [InlineData(20, 21, SyntaxKind.CSharpTransition, true)]
-    [InlineData(21, 43, SyntaxKind.CSharpStatementLiteral, false)]
-    [InlineData(21, 43, SyntaxKind.CSharpStatementLiteral, true)]
+    [InlineData(21, 41, SyntaxKind.CSharpStatementLiteral, false)]
+    [InlineData(21, 41, SyntaxKind.CSharpStatementLiteral, true)]
+    [InlineData(41, 43, SyntaxKind.RazorMetaCode, true)]
     [InlineData(43, 44, SyntaxKind.CSharpTransition, false)]
     [InlineData(43, 44, SyntaxKind.CSharpTransition, true)]
     [InlineData(44, 50, SyntaxKind.CSharpExpressionLiteral, false)]

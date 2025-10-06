@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using SourceGenerators.Tests;
@@ -20,7 +21,7 @@ namespace Microsoft.Extensions.Logging.Generators.Tests
             string[] sources = Directory.GetFiles("TestClasses");
             foreach (var src in sources)
             {
-                var testSourceCode = await File.ReadAllTextAsync(src).ConfigureAwait(false);
+                var testSourceCode = File.ReadAllText(src);
 
                 var (d, r) = await RoslynTestUtils.RunGenerator(
                     new LoggerMessageGenerator(),
@@ -187,6 +188,60 @@ namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
             await VerifyAgainstBaselineUsingFile("TestWithNestedClassWithGenericTypesWithAttributes.generated.txt", testSourceCode);
         }
 
+#if ROSLYN4_8_OR_GREATER
+        [Fact]
+        public async Task TestBaseline_TestWithLoggerFromPrimaryConstructor_Success()
+        {
+            string testSourceCode = @"
+namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
+{
+    internal partial class TestWithLoggerFromPrimaryConstructor(ILogger logger)
+    {
+        [LoggerMessage(EventId = 0, Level = LogLevel.Debug, Message = ""M0"")]
+        public partial void M0();
+    }
+}";
+            await VerifyAgainstBaselineUsingFile("TestWithLoggerFromPrimaryConstructor.generated.txt", testSourceCode);
+        }
+
+        [Fact]
+        public async Task TestBaseline_TestWithLoggerFromPrimaryConstructorWithParameterUsedInMethod_Success()
+        {
+            string testSourceCode = @"
+namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
+{
+    internal partial class TestWithLoggerFromPrimaryConstructorWithParameterUsedInMethod(ILogger logger)
+    {
+        [LoggerMessage(EventId = 0, Level = LogLevel.Debug, Message = ""M0"")]
+        public partial void M0();
+
+        private void M1()
+        {
+            logger.LogInformation(""M1"");
+        }
+    }
+}";
+            await VerifyAgainstBaselineUsingFile("TestWithLoggerFromPrimaryConstructorWithParameterUsedInMethod.generated.txt", testSourceCode);
+        }
+
+        [Fact]
+        public async Task TestBaseline_TestWithLoggerInFieldAndFromPrimaryConstructor_UsesField()
+        {
+            string testSourceCode = @"
+namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
+{
+    internal partial class TestWithLoggerFromPrimaryConstructor(ILogger logger)
+    {
+        private readonly ILogger _logger = logger;
+
+        [LoggerMessage(EventId = 0, Level = LogLevel.Debug, Message = ""M0"")]
+        public partial void M0();
+    }
+}";
+            await VerifyAgainstBaselineUsingFile("TestWithLoggerInFieldAndFromPrimaryConstructor.generated.txt", testSourceCode);
+        }
+#endif
+
         [Fact]
         public void GenericTypeParameterAttributesAreRetained()
         {
@@ -199,9 +254,9 @@ namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
 
         private async Task VerifyAgainstBaselineUsingFile(string filename, string testSourceCode)
         {
-            string baseline = LineEndingsHelper.Normalize(await File.ReadAllTextAsync(Path.Combine("Baselines", filename)).ConfigureAwait(false));
+            string baseline = LineEndingsHelper.Normalize(File.ReadAllText(Path.Combine("Baselines", filename)));
             string[] expectedLines = baseline.Replace("%VERSION%", typeof(LoggerMessageGenerator).Assembly.GetName().Version?.ToString())
-                                             .Split(Environment.NewLine);
+                                             .Split([Environment.NewLine], StringSplitOptions.None);
 
             var (d, r) = await RoslynTestUtils.RunGenerator(
                 new LoggerMessageGenerator(),
@@ -210,6 +265,13 @@ namespace Microsoft.Extensions.Logging.Generators.Tests.TestClasses
 
             Assert.Empty(d);
             Assert.Single(r);
+
+            if (PlatformDetection.IsNetFramework)
+            {
+                expectedLines = expectedLines.Select(line => line.Replace(
+                    "string.Create(global::System.Globalization.CultureInfo.InvariantCulture, ",
+                    "global::System.FormattableString.Invariant(")).ToArray();
+            }
 
             Assert.True(RoslynTestUtils.CompareLines(expectedLines, r[0].SourceText,
                 out string errorMessage), errorMessage);

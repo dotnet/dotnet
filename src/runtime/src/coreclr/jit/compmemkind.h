@@ -10,6 +10,7 @@
 // and the corresponding array of string names for these enum members.
 
 // clang-format off
+CompMemKindMacro(ABI)
 CompMemKindMacro(AssertionProp)
 CompMemKindMacro(ASTNode)
 CompMemKindMacro(InstDesc)
@@ -63,6 +64,10 @@ CompMemKindMacro(TailMergeThrows)
 CompMemKindMacro(EarlyProp)
 CompMemKindMacro(ZeroInit)
 CompMemKindMacro(Pgo)
+CompMemKindMacro(MaskConversionOpt)
+CompMemKindMacro(TryRegionClone)
+CompMemKindMacro(Async)
+CompMemKindMacro(RangeCheckCloning)
 //clang-format on
 
 #undef CompMemKindMacro

@@ -12,7 +12,7 @@ namespace NuGet.ProjectModel.Test
     public class ImportFrameworkTest
     {
         [Fact]
-        public void ImportFramwork_UnknowFramework()
+        public void ImportFramework_UnknownFramework()
         {
             JObject configJson = JObject.Parse(@"
                 {
@@ -29,7 +29,7 @@ namespace NuGet.ProjectModel.Test
 
             // Act & Assert
             var ex = Assert.Throws<FileFormatException>(() => JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", "project.json"));
-            Assert.Equal("Imports contains an invalid framework: 'futureFramework' in 'project.json'.", ex.InnerException.Message);
+            Assert.Equal("Imports contains an invalid framework: 'futureFramework' in ''.", ex.InnerException.Message);
         }
 
         [Fact]

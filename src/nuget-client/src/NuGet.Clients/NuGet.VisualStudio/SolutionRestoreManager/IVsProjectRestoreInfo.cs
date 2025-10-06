@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -11,6 +13,7 @@ namespace NuGet.SolutionRestoreManager
     /// </summary>
     [ComImport]
     [Guid("ab43992d-b977-436d-84c2-e76aeed20de2")]
+    [Obsolete]
     public interface IVsProjectRestoreInfo
     {
         /// <summary>
@@ -27,11 +30,11 @@ namespace NuGet.SolutionRestoreManager
         /// <summary>
         /// Collection of tool references.
         /// </summary>
-        IVsReferenceItems ToolReferences { get; }
+        IVsReferenceItems? ToolReferences { get; }
 
         /// <summary>
         /// Original raw value of TargetFrameworks property as set in a project file.
         /// </summary>
-        string OriginalTargetFrameworks { get; }
+        string? OriginalTargetFrameworks { get; }
     }
 }

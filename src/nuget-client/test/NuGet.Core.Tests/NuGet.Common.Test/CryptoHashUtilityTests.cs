@@ -2,10 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Reflection;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
 using Xunit;
+
+#if !IS_CORECLR
+using System.Reflection;
+#endif
 
 namespace NuGet.Common.Test
 {
@@ -128,9 +131,9 @@ namespace NuGet.Common.Test
             }
         }
 
+#if !IS_CORECLR
         private static bool AllowOnlyFipsAlgorithms()
         {
-#if !IS_CORECLR
             // Mono does not currently support this method. Have this in a separate method to avoid JITing exceptions.
             var cryptoConfig = typeof(CryptoConfig);
 
@@ -145,9 +148,7 @@ namespace NuGet.Common.Test
             }
 
             return false;
-#else
-            return false;
-#endif
         }
+#endif
     }
 }

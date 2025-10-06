@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.IO;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Core.Contracts;
@@ -26,17 +25,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.TrimWhitespace(true, false, ref length, ref position);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("Hello"));
+                "Hello"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There");
+            byte[] data = "Hello    \r\n    There"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -51,17 +50,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.TrimWhitespace(false, true, ref length, ref position);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There");
+            byte[] data = "Hello    \r\n    There"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -76,17 +75,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.TrimWhitespace(true, true, ref length, ref position);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There    \r\n    You");
+            byte[] data = "Hello    \r\n    There    \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -101,17 +100,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.TrimWhitespace(false, false, ref length, ref position);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There    \r\n    You");
+            byte[] data = "Hello    \r\n    There    \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -126,17 +125,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.ConsumeWholeLine(ref length, ref position);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There    \r\n    You");
+            byte[] data = "Hello    \r\n    There    \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -159,17 +158,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.WhitespaceHandler(ref length, ref position, true, trim, trimForward, trimBackward);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There    \r\n    You");
+            byte[] data = "Hello    \r\n    There    \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -188,17 +187,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.WhitespaceHandler(ref length, ref position, false, true, trimForward, trimBackward);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There    \r\n    You");
+            byte[] data = "Hello    \r\n    There    \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -214,17 +213,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.WhitespaceHandler(ref length, ref position, false, false, true, false);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There     \r\n    You");
+            byte[] data = "Hello    \r\n    There     \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -239,17 +238,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.WhitespaceHandler(ref length, ref position, false, false, false, true);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There     \r\n    You");
+            byte[] data = "Hello    \r\n    There     \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);
@@ -264,17 +263,17 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
         {
             MockOperation o = new MockOperation(
                 null,
-                (IProcessorState state, int length, ref int position, int token) =>
+                (state, length, ref position, token) =>
                 {
                     state.WhitespaceHandler(ref length, ref position, false, false, true, true);
                     return 0;
                 },
                 true,
-                Encoding.UTF8.GetBytes("There"));
+                "There"u8.ToArray());
 
             EngineConfig cfg = new EngineConfig(_logger, new VariableCollection());
             IProcessor processor = Processor.Create(cfg, o.Provider);
-            byte[] data = Encoding.UTF8.GetBytes("Hello    \r\n    There     \r\n    You");
+            byte[] data = "Hello    \r\n    There     \r\n    You"u8.ToArray();
             Stream d = new MemoryStream(data);
             MemoryStream result = new MemoryStream();
             bool modified = processor.Run(d, result);

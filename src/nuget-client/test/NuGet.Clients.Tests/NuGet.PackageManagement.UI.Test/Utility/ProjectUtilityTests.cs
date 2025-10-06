@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
 using Moq;
-using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
 

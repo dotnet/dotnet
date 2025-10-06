@@ -20,26 +20,28 @@ internal sealed class ComponentRenderModeLoweringPass : ComponentIntermediateNod
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         foreach (var reference in references)
         {
-            if (reference is { Node: TagHelperDirectiveAttributeIntermediateNode node, Parent: IntermediateNode parentNode } && node.TagHelper.IsRenderModeTagHelper())
+            var (node, parent) = reference;
+
+            if (node.TagHelper.Kind == TagHelperKind.RenderMode)
             {
-                if (parentNode is not ComponentIntermediateNode componentNode)
+                if (parent is not ComponentIntermediateNode componentNode)
                 {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateAttribute_ValidOnlyOnComponent(node.Source, node.OriginalAttributeName));
+                    node.AddDiagnostic(ComponentDiagnosticFactory.CreateAttribute_ValidOnlyOnComponent(node.Source, node.OriginalAttributeName));
                     continue;
                 }
 
                 var expression = node.Children[0] switch
                 {
-                    CSharpExpressionIntermediateNode cSharpNode => cSharpNode.Children[0],
+                    CSharpExpressionIntermediateNode csharpNode => csharpNode.Children[0],
                     IntermediateNode token => token
                 };
 
                 var renderModeNode = new RenderModeIntermediateNode() { Source = node.Source, Children = { expression } };
-                renderModeNode.Diagnostics.AddRange(node.Diagnostics);
+                renderModeNode.AddDiagnosticsFromNode(node);
 
-                if (componentNode.Component.Metadata.ContainsKey(ComponentMetadata.Component.HasRenderModeDirectiveKey))
+                if (componentNode.Component.Metadata is ComponentMetadata { HasRenderModeDirective: true })
                 {
-                    renderModeNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateRenderModeAttribute_ComponentDeclaredRenderMode(
+                    renderModeNode.AddDiagnostic(ComponentDiagnosticFactory.CreateRenderModeAttribute_ComponentDeclaredRenderMode(
                        node.Source,
                        componentNode.Component.Name));
                 }

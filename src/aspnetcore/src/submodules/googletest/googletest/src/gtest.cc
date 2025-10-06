@@ -192,12 +192,17 @@ static const char kDefaultOutputFormat[] = "xml";
 // The default output file.
 static const char kDefaultOutputFile[] = "test_detail";
 
+// These environment variables are set by Bazel.
+// https://bazel.build/reference/test-encyclopedia#initial-conditions
+//
 // The environment variable name for the test shard index.
 static const char kTestShardIndex[] = "GTEST_SHARD_INDEX";
 // The environment variable name for the total number of test shards.
 static const char kTestTotalShards[] = "GTEST_TOTAL_SHARDS";
 // The environment variable name for the test shard status file.
 static const char kTestShardStatusFile[] = "GTEST_SHARD_STATUS_FILE";
+// The environment variable name for the test output warnings file.
+static const char kTestWarningsOutputFile[] = "TEST_WARNINGS_OUTPUT_FILE";
 
 namespace internal {
 
@@ -257,6 +262,19 @@ GTEST_DEFINE_bool_(
     testing::internal::BoolFromGTestEnv("fail_fast",
                                         testing::GetDefaultFailFast()),
     "True if and only if a test failure should stop further test execution.");
+
+GTEST_DEFINE_bool_(
+    fail_if_no_test_linked,
+    testing::internal::BoolFromGTestEnv("fail_if_no_test_linked", false),
+    "True if and only if the test should fail if no test case (including "
+    "disabled test cases) is linked.");
+
+GTEST_DEFINE_bool_(
+    fail_if_no_test_selected,
+    testing::internal::BoolFromGTestEnv("fail_if_no_test_selected", false),
+    "True if and only if the test should fail if no test case is selected to "
+    "run. A test case is selected to run if it is not disabled and is matched "
+    "by the filter flag so that it starts executing.");
 
 GTEST_DEFINE_bool_(
     also_run_disabled_tests,
@@ -379,7 +397,7 @@ GTEST_DEFINE_string_(
     testing::internal::StringFromGTestEnv("stream_result_to", ""),
     "This flag specifies the host name and the port number on which to stream "
     "test results. Example: \"localhost:555\". The flag is effective only on "
-    "Linux.");
+    "Linux and macOS.");
 
 GTEST_DEFINE_bool_(
     throw_on_failure,
@@ -661,11 +679,14 @@ static ::std::vector<std::string> g_argvs;
 FilePath GetCurrentExecutableName() {
   FilePath result;
 
+  auto args = GetArgvs();
+  if (!args.empty()) {
 #if defined(GTEST_OS_WINDOWS) || defined(GTEST_OS_OS2)
-  result.Set(FilePath(GetArgvs()[0]).RemoveExtension("exe"));
+    result.Set(FilePath(args[0]).RemoveExtension("exe"));
 #else
-  result.Set(FilePath(GetArgvs()[0]));
+    result.Set(FilePath(args[0]));
 #endif  // GTEST_OS_WINDOWS
+  }
 
   return result.RemoveDirectoryName();
 }
@@ -692,7 +713,7 @@ std::string UnitTestOptions::GetAbsolutePathToOutputFile() {
   const char* const gtest_output_flag = s.c_str();
 
   std::string format = GetOutputFormat();
-  if (format.empty()) format = std::string(kDefaultOutputFormat);
+  if (format.empty()) format = kDefaultOutputFormat;
 
   const char* const colon = strchr(gtest_output_flag, ':');
   if (colon == nullptr)
@@ -1474,17 +1495,17 @@ class Hunk {
   // Print a unified diff header for one hunk.
   // The format is
   //   "@@ -<left_start>,<left_length> +<right_start>,<right_length> @@"
-  // where the left/right parts are omitted if unnecessary.
+  // where the left/right lengths are omitted if unnecessary.
   void PrintHeader(std::ostream* ss) const {
-    *ss << "@@ ";
-    if (removes_) {
-      *ss << "-" << left_start_ << "," << (removes_ + common_);
+    size_t left_length = removes_ + common_;
+    size_t right_length = adds_ + common_;
+    *ss << "@@ " << "-" << left_start_;
+    if (left_length != 1) {
+      *ss << "," << left_length;
     }
-    if (removes_ && adds_) {
-      *ss << " ";
-    }
-    if (adds_) {
-      *ss << "+" << right_start_ << "," << (adds_ + common_);
+    *ss << " " << "+" << right_start_;
+    if (right_length != 1) {
+      *ss << "," << right_length;
     }
     *ss << " @@\n";
   }
@@ -1657,10 +1678,25 @@ std::string GetBoolAssertionFailureMessage(
   return msg.GetString();
 }
 
-// Helper function for implementing ASSERT_NEAR.
+// Helper function for implementing ASSERT_NEAR. Treats infinity as a specific
+// value, such that comparing infinity to infinity is equal, the distance
+// between -infinity and +infinity is infinity, and infinity <= infinity is
+// true.
 AssertionResult DoubleNearPredFormat(const char* expr1, const char* expr2,
                                      const char* abs_error_expr, double val1,
                                      double val2, double abs_error) {
+  // We want to return success when the two values are infinity and at least
+  // one of the following is true:
+  //  * The values are the same-signed infinity.
+  //  * The error limit itself is infinity.
+  // This is done here so that we don't end up with a NaN when calculating the
+  // difference in values.
+  if (std::isinf(val1) && std::isinf(val2) &&
+      (std::signbit(val1) == std::signbit(val2) ||
+       (abs_error > 0.0 && std::isinf(abs_error)))) {
+    return AssertionSuccess();
+  }
+
   const double diff = fabs(val1 - val2);
   if (diff <= abs_error) return AssertionSuccess();
 
@@ -2340,7 +2376,7 @@ static const char* const kReservedTestCaseAttributes[] = {
     "type_param", "value_param", "file",   "line"};
 
 // Use a slightly different set for allowed output to ensure existing tests can
-// still RecordProperty("result") or "RecordProperty(timestamp")
+// still RecordProperty("result") or RecordProperty("timestamp")
 static const char* const kReservedOutputTestCaseAttributes[] = {
     "classname",   "name", "status", "time",   "type_param",
     "value_param", "file", "line",   "result", "timestamp"};
@@ -3184,9 +3220,9 @@ static void PrintTestPartResult(const TestPartResult& test_part_result) {
 }
 
 // class PrettyUnitTestResultPrinter
-#if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MOBILE) &&    \
-    !defined(GTEST_OS_WINDOWS_PHONE) && !defined(GTEST_OS_WINDOWS_RT) && \
-    !defined(GTEST_OS_WINDOWS_MINGW)
+#if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MOBILE) &&       \
+    !defined(GTEST_OS_WINDOWS_GAMES) && !defined(GTEST_OS_WINDOWS_PHONE) && \
+    !defined(GTEST_OS_WINDOWS_RT) && !defined(GTEST_OS_WINDOWS_MINGW)
 
 // Returns the character attribute for the given color.
 static WORD GetColorAttribute(GTestColor color) {
@@ -3269,6 +3305,7 @@ bool ShouldUseColor(bool stdout_is_tty) {
     const bool term_supports_color =
         term != nullptr && (String::CStringEquals(term, "xterm") ||
                             String::CStringEquals(term, "xterm-color") ||
+                            String::CStringEquals(term, "xterm-ghostty") ||
                             String::CStringEquals(term, "xterm-kitty") ||
                             String::CStringEquals(term, "alacritty") ||
                             String::CStringEquals(term, "screen") ||
@@ -3313,9 +3350,9 @@ static void ColoredPrintf(GTestColor color, const char* fmt, ...) {
     return;
   }
 
-#if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MOBILE) &&    \
-    !defined(GTEST_OS_WINDOWS_PHONE) && !defined(GTEST_OS_WINDOWS_RT) && \
-    !defined(GTEST_OS_WINDOWS_MINGW)
+#if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MOBILE) &&       \
+    !defined(GTEST_OS_WINDOWS_GAMES) && !defined(GTEST_OS_WINDOWS_PHONE) && \
+    !defined(GTEST_OS_WINDOWS_RT) && !defined(GTEST_OS_WINDOWS_MINGW)
   const HANDLE stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
   // Gets the current text color.
@@ -3971,6 +4008,12 @@ class XmlUnitTestResultPrinter : public EmptyTestEventListener {
   static void OutputXmlTestSuiteForTestResult(::std::ostream* stream,
                                               const TestResult& result);
 
+  // Streams a test case XML stanza containing the given test result.
+  //
+  // Requires: result.Failed()
+  static void OutputXmlTestCaseForTestResult(::std::ostream* stream,
+                                             const TestResult& result);
+
   // Streams an XML representation of a TestResult object.
   static void OutputXmlTestResult(::std::ostream* stream,
                                   const TestResult& result);
@@ -3988,16 +4031,11 @@ class XmlUnitTestResultPrinter : public EmptyTestEventListener {
   static void PrintXmlUnitTest(::std::ostream* stream,
                                const UnitTest& unit_test);
 
-  // Produces a string representing the test properties in a result as space
-  // delimited XML attributes based on the property key="value" pairs.
-  // When the std::string is not empty, it includes a space at the beginning,
-  // to delimit this attribute from prior attributes.
-  static std::string TestPropertiesAsXmlAttributes(const TestResult& result);
-
   // Streams an XML representation of the test properties of a TestResult
   // object.
   static void OutputXmlTestProperties(std::ostream* stream,
-                                      const TestResult& result);
+                                      const TestResult& result,
+                                      const std::string& indent);
 
   // The output file.
   const std::string output_file_;
@@ -4218,6 +4256,15 @@ void XmlUnitTestResultPrinter::OutputXmlTestSuiteForTestResult(
       FormatEpochTimeInMillisAsIso8601(result.start_timestamp()));
   *stream << ">";
 
+  OutputXmlTestCaseForTestResult(stream, result);
+
+  // Complete the test suite.
+  *stream << "  </testsuite>\n";
+}
+
+// Streams a test case XML stanza containing the given test result.
+void XmlUnitTestResultPrinter::OutputXmlTestCaseForTestResult(
+    ::std::ostream* stream, const TestResult& result) {
   // Output the boilerplate for a minimal test case with a single test.
   *stream << "    <testcase";
   OutputXmlAttribute(stream, "testcase", "name", "");
@@ -4232,9 +4279,6 @@ void XmlUnitTestResultPrinter::OutputXmlTestSuiteForTestResult(
 
   // Output the actual test result.
   OutputXmlTestResult(stream, result);
-
-  // Complete the test suite.
-  *stream << "  </testsuite>\n";
 }
 
 // Prints an XML representation of a TestInfo object.
@@ -4311,8 +4355,8 @@ void XmlUnitTestResultPrinter::OutputXmlTestResult(::std::ostream* stream,
           internal::FormatCompilerIndependentFileLocation(part.file_name(),
                                                           part.line_number());
       const std::string summary = location + "\n" + part.summary();
-      *stream << "      <skipped message=\""
-              << EscapeXmlAttribute(summary.c_str()) << "\">";
+      *stream << "      <skipped message=\"" << EscapeXmlAttribute(summary)
+              << "\">";
       const std::string detail = location + "\n" + part.message();
       OutputXmlCDataSection(stream, RemoveInvalidXmlCharacters(detail).c_str());
       *stream << "</skipped>\n";
@@ -4325,7 +4369,7 @@ void XmlUnitTestResultPrinter::OutputXmlTestResult(::std::ostream* stream,
     if (failures == 0 && skips == 0) {
       *stream << ">\n";
     }
-    OutputXmlTestProperties(stream, result);
+    OutputXmlTestProperties(stream, result, /*indent=*/"      ");
     *stream << "    </testcase>\n";
   }
 }
@@ -4354,13 +4398,18 @@ void XmlUnitTestResultPrinter::PrintXmlTestSuite(std::ostream* stream,
     OutputXmlAttribute(
         stream, kTestsuite, "timestamp",
         FormatEpochTimeInMillisAsIso8601(test_suite.start_timestamp()));
-    *stream << TestPropertiesAsXmlAttributes(test_suite.ad_hoc_test_result());
   }
   *stream << ">\n";
+  OutputXmlTestProperties(stream, test_suite.ad_hoc_test_result(),
+                          /*indent=*/"    ");
   for (int i = 0; i < test_suite.total_test_count(); ++i) {
     if (test_suite.GetTestInfo(i)->is_reportable())
       OutputXmlTestInfo(stream, test_suite.name(), *test_suite.GetTestInfo(i));
   }
+  if (test_suite.ad_hoc_test_result().Failed()) {
+    OutputXmlTestCaseForTestResult(stream, test_suite.ad_hoc_test_result());
+  }
+
   *stream << "  </" << kTestsuite << ">\n";
 }
 
@@ -4390,11 +4439,12 @@ void XmlUnitTestResultPrinter::PrintXmlUnitTest(std::ostream* stream,
     OutputXmlAttribute(stream, kTestsuites, "random_seed",
                        StreamableToString(unit_test.random_seed()));
   }
-  *stream << TestPropertiesAsXmlAttributes(unit_test.ad_hoc_test_result());
 
   OutputXmlAttribute(stream, kTestsuites, "name", "AllTests");
   *stream << ">\n";
 
+  OutputXmlTestProperties(stream, unit_test.ad_hoc_test_result(),
+                          /*indent=*/"  ");
   for (int i = 0; i < unit_test.total_test_suite_count(); ++i) {
     if (unit_test.GetTestSuite(i)->reportable_test_count() > 0)
       PrintXmlTestSuite(stream, *unit_test.GetTestSuite(i));
@@ -4431,21 +4481,8 @@ void XmlUnitTestResultPrinter::PrintXmlTestsList(
   *stream << "</" << kTestsuites << ">\n";
 }
 
-// Produces a string representing the test properties in a result as space
-// delimited XML attributes based on the property key="value" pairs.
-std::string XmlUnitTestResultPrinter::TestPropertiesAsXmlAttributes(
-    const TestResult& result) {
-  Message attributes;
-  for (int i = 0; i < result.test_property_count(); ++i) {
-    const TestProperty& property = result.GetTestProperty(i);
-    attributes << " " << property.key() << "=" << "\""
-               << EscapeXmlAttribute(property.value()) << "\"";
-  }
-  return attributes.GetString();
-}
-
 void XmlUnitTestResultPrinter::OutputXmlTestProperties(
-    std::ostream* stream, const TestResult& result) {
+    std::ostream* stream, const TestResult& result, const std::string& indent) {
   const std::string kProperties = "properties";
   const std::string kProperty = "property";
 
@@ -4453,15 +4490,15 @@ void XmlUnitTestResultPrinter::OutputXmlTestProperties(
     return;
   }
 
-  *stream << "      <" << kProperties << ">\n";
+  *stream << indent << "<" << kProperties << ">\n";
   for (int i = 0; i < result.test_property_count(); ++i) {
     const TestProperty& property = result.GetTestProperty(i);
-    *stream << "        <" << kProperty;
+    *stream << indent << "  <" << kProperty;
     *stream << " name=\"" << EscapeXmlAttribute(property.key()) << "\"";
     *stream << " value=\"" << EscapeXmlAttribute(property.value()) << "\"";
     *stream << "/>\n";
   }
-  *stream << "      </" << kProperties << ">\n";
+  *stream << indent << "</" << kProperties << ">\n";
 }
 
 // End XmlUnitTestResultPrinter
@@ -4499,6 +4536,12 @@ class JsonUnitTestResultPrinter : public EmptyTestEventListener {
   // Requires: result.Failed()
   static void OutputJsonTestSuiteForTestResult(::std::ostream* stream,
                                                const TestResult& result);
+
+  // Streams a test case JSON stanza containing the given test result.
+  //
+  // Requires: result.Failed()
+  static void OutputJsonTestCaseForTestResult(::std::ostream* stream,
+                                              const TestResult& result);
 
   // Streams a JSON representation of a TestResult object.
   static void OutputJsonTestResult(::std::ostream* stream,
@@ -4670,6 +4713,15 @@ void JsonUnitTestResultPrinter::OutputJsonTestSuiteForTestResult(
   }
   *stream << Indent(6) << "\"testsuite\": [\n";
 
+  OutputJsonTestCaseForTestResult(stream, result);
+
+  // Finish the test suite.
+  *stream << "\n" << Indent(6) << "]\n" << Indent(4) << "}";
+}
+
+// Streams a test case JSON stanza containing the given test result.
+void JsonUnitTestResultPrinter::OutputJsonTestCaseForTestResult(
+    ::std::ostream* stream, const TestResult& result) {
   // Output the boilerplate for a new test case.
   *stream << Indent(8) << "{\n";
   OutputJsonKey(stream, "testcase", "name", "", Indent(10));
@@ -4686,9 +4738,6 @@ void JsonUnitTestResultPrinter::OutputJsonTestSuiteForTestResult(
 
   // Output the actual test result.
   OutputJsonTestResult(stream, result);
-
-  // Finish the test suite.
-  *stream << "\n" << Indent(6) << "]\n" << Indent(4) << "}";
 }
 
 // Prints a JSON representation of a TestInfo object.
@@ -4743,26 +4792,53 @@ void JsonUnitTestResultPrinter::OutputJsonTestResult(::std::ostream* stream,
                                                      const TestResult& result) {
   const std::string kIndent = Indent(10);
 
-  int failures = 0;
-  for (int i = 0; i < result.total_part_count(); ++i) {
-    const TestPartResult& part = result.GetTestPartResult(i);
-    if (part.failed()) {
-      *stream << ",\n";
-      if (++failures == 1) {
-        *stream << kIndent << "\"" << "failures" << "\": [\n";
+  {
+    int failures = 0;
+    for (int i = 0; i < result.total_part_count(); ++i) {
+      const TestPartResult& part = result.GetTestPartResult(i);
+      if (part.failed()) {
+        *stream << ",\n";
+        if (++failures == 1) {
+          *stream << kIndent << "\"" << "failures" << "\": [\n";
+        }
+        const std::string location =
+            internal::FormatCompilerIndependentFileLocation(part.file_name(),
+                                                            part.line_number());
+        const std::string message =
+            EscapeJson(location + "\n" + part.message());
+        *stream << kIndent << "  {\n"
+                << kIndent << "    \"failure\": \"" << message << "\",\n"
+                << kIndent << "    \"type\": \"\"\n"
+                << kIndent << "  }";
       }
-      const std::string location =
-          internal::FormatCompilerIndependentFileLocation(part.file_name(),
-                                                          part.line_number());
-      const std::string message = EscapeJson(location + "\n" + part.message());
-      *stream << kIndent << "  {\n"
-              << kIndent << "    \"failure\": \"" << message << "\",\n"
-              << kIndent << "    \"type\": \"\"\n"
-              << kIndent << "  }";
     }
+
+    if (failures > 0) *stream << "\n" << kIndent << "]";
   }
 
-  if (failures > 0) *stream << "\n" << kIndent << "]";
+  {
+    int skipped = 0;
+    for (int i = 0; i < result.total_part_count(); ++i) {
+      const TestPartResult& part = result.GetTestPartResult(i);
+      if (part.skipped()) {
+        *stream << ",\n";
+        if (++skipped == 1) {
+          *stream << kIndent << "\"" << "skipped" << "\": [\n";
+        }
+        const std::string location =
+            internal::FormatCompilerIndependentFileLocation(part.file_name(),
+                                                            part.line_number());
+        const std::string message =
+            EscapeJson(location + "\n" + part.message());
+        *stream << kIndent << "  {\n"
+                << kIndent << "    \"message\": \"" << message << "\"\n"
+                << kIndent << "  }";
+      }
+    }
+
+    if (skipped > 0) *stream << "\n" << kIndent << "]";
+  }
+
   *stream << "\n" << Indent(8) << "}";
 }
 
@@ -4806,6 +4882,16 @@ void JsonUnitTestResultPrinter::PrintJsonTestSuite(
       OutputJsonTestInfo(stream, test_suite.name(), *test_suite.GetTestInfo(i));
     }
   }
+
+  // If there was a failure in the test suite setup or teardown include that in
+  // the output.
+  if (test_suite.ad_hoc_test_result().Failed()) {
+    if (comma) {
+      *stream << ",\n";
+    }
+    OutputJsonTestCaseForTestResult(stream, test_suite.ad_hoc_test_result());
+  }
+
   *stream << "\n" << kIndent << "]\n" << Indent(4) << "}";
 }
 
@@ -5473,7 +5559,7 @@ int UnitTest::Run() {
   // about crashes - they are expected.
   if (impl()->catch_exceptions() || in_death_test_child_process) {
 #if !defined(GTEST_OS_WINDOWS_MOBILE) && !defined(GTEST_OS_WINDOWS_PHONE) && \
-    !defined(GTEST_OS_WINDOWS_RT)
+    !defined(GTEST_OS_WINDOWS_RT) && !defined(GTEST_OS_WINDOWS_GAMES)
     // SetErrorMode doesn't exist on CE.
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOALIGNMENTFAULTEXCEPT |
                  SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
@@ -5802,6 +5888,23 @@ TestSuite* UnitTestImpl::GetTestSuite(
 static void SetUpEnvironment(Environment* env) { env->SetUp(); }
 static void TearDownEnvironment(Environment* env) { env->TearDown(); }
 
+// If the environment variable TEST_WARNINGS_OUTPUT_FILE was provided, appends
+// `str` to the file, creating the file if necessary.
+#if GTEST_HAS_FILE_SYSTEM
+static void AppendToTestWarningsOutputFile(const std::string& str) {
+  const char* const filename = posix::GetEnv(kTestWarningsOutputFile);
+  if (filename == nullptr) {
+    return;
+  }
+  auto* const file = posix::FOpen(filename, "a");
+  if (file == nullptr) {
+    return;
+  }
+  GTEST_CHECK_(fwrite(str.data(), 1, str.size(), file) == str.size());
+  GTEST_CHECK_(posix::FClose(file) == 0);
+}
+#endif  // GTEST_HAS_FILE_SYSTEM
+
 // Runs all tests in this UnitTest object, prints the result, and
 // returns true if all tests are successful.  If any exception is
 // thrown during a test, the test is considered to be failed, but the
@@ -5822,6 +5925,28 @@ bool UnitTestImpl::RunAllTests() {
   // Repeats the call to the post-flag parsing initialization in case the
   // user didn't call InitGoogleTest.
   PostFlagParsingInit();
+
+  // Handle the case where the program has no tests linked.
+  // Sometimes this is a programmer mistake, but sometimes it is intended.
+  if (total_test_count() == 0) {
+    constexpr char kNoTestLinkedMessage[] =
+        "This test program does NOT link in any test case.";
+    constexpr char kNoTestLinkedFatal[] =
+        "This is INVALID. Please make sure to link in at least one test case.";
+    constexpr char kNoTestLinkedWarning[] =
+        "Please make sure this is intended.";
+    const bool fail_if_no_test_linked = GTEST_FLAG_GET(fail_if_no_test_linked);
+    ColoredPrintf(
+        GTestColor::kRed, "%s %s\n", kNoTestLinkedMessage,
+        fail_if_no_test_linked ? kNoTestLinkedFatal : kNoTestLinkedWarning);
+    if (fail_if_no_test_linked) {
+      return false;
+    }
+#if GTEST_HAS_FILE_SYSTEM
+    AppendToTestWarningsOutputFile(std::string(kNoTestLinkedMessage) + ' ' +
+                                   kNoTestLinkedWarning + '\n');
+#endif  // GTEST_HAS_FILE_SYSTEM
+  }
 
 #if GTEST_HAS_FILE_SYSTEM
   // Even if sharding is not on, test runners may want to use the
@@ -5962,6 +6087,18 @@ bool UnitTestImpl::RunAllTests() {
                       TearDownEnvironment);
         repeater->OnEnvironmentsTearDownEnd(*parent_);
       }
+    } else if (GTEST_FLAG_GET(fail_if_no_test_selected)) {
+      // If there were no tests to run, bail if we were requested to be strict.
+      constexpr char kNoTestsSelectedMessage[] =
+          "No tests were selected to run. Please make sure at least one test "
+          "exists and is not disabled! If the test is sharded, you may have "
+          "defined more shards than test cases, which is wasteful. If you also "
+          "defined --gtest_filter, that filter is taken into account, so "
+          "shards with no matching test cases will hit this error. Either "
+          "disable sharding, set --gtest_fail_if_no_test_selected=false, or "
+          "remove the filter to resolve this error.";
+      ColoredPrintf(GTestColor::kRed, "%s\n", kNoTestsSelectedMessage);
+      return false;
     }
 
     elapsed_time_ = timer.Elapsed();
@@ -5994,6 +6131,17 @@ bool UnitTestImpl::RunAllTests() {
   if (delete_environment_on_teardown) {
     ForEach(environments_, internal::Delete<Environment>);
     environments_.clear();
+  }
+
+  // Try to warn the user if no tests matched the test filter.
+  if (ShouldWarnIfNoTestsMatchFilter()) {
+    const std::string filter_warning =
+        std::string("filter \"") + GTEST_FLAG_GET(filter) +
+        "\" did not match any test; no tests were run\n";
+    ColoredPrintf(GTestColor::kRed, "WARNING: %s", filter_warning.c_str());
+#if GTEST_HAS_FILE_SYSTEM
+    AppendToTestWarningsOutputFile(filter_warning);
+#endif  // GTEST_HAS_FILE_SYSTEM
   }
 
   if (!gtest_is_initialized_before_run_all_tests) {
@@ -6162,6 +6310,30 @@ int UnitTestImpl::FilterTests(ReactionToSharding shard_tests) {
     }
   }
   return num_selected_tests;
+}
+
+// Returns true if a warning should be issued if no tests match the test filter
+// flag. We can't simply count the number of tests that ran because, for
+// instance, test sharding and death tests might mean no tests are expected to
+// run in this process, but will run in another process.
+bool UnitTestImpl::ShouldWarnIfNoTestsMatchFilter() const {
+  if (total_test_count() == 0) {
+    // No tests were linked in to program.
+    // This case is handled by a different warning.
+    return false;
+  }
+  const PositiveAndNegativeUnitTestFilter gtest_flag_filter(
+      GTEST_FLAG_GET(filter));
+  for (auto* test_suite : test_suites_) {
+    const std::string& test_suite_name = test_suite->name_;
+    for (TestInfo* test_info : test_suite->test_info_list()) {
+      const std::string& test_name = test_info->name_;
+      if (gtest_flag_filter.MatchesTest(test_suite_name, test_name)) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 // Prints the given C-string on a single line by replacing all '\n'
@@ -6610,6 +6782,8 @@ static bool ParseGoogleTestFlag(const char* const arg) {
   GTEST_INTERNAL_PARSE_FLAG(death_test_style);
   GTEST_INTERNAL_PARSE_FLAG(death_test_use_fork);
   GTEST_INTERNAL_PARSE_FLAG(fail_fast);
+  GTEST_INTERNAL_PARSE_FLAG(fail_if_no_test_linked);
+  GTEST_INTERNAL_PARSE_FLAG(fail_if_no_test_selected);
   GTEST_INTERNAL_PARSE_FLAG(filter);
   GTEST_INTERNAL_PARSE_FLAG(internal_run_death_test);
   GTEST_INTERNAL_PARSE_FLAG(list_tests);
@@ -6673,16 +6847,16 @@ void ParseGoogleTestFlagsOnlyImpl(int* argc, CharType** argv) {
     }
 
     if (remove_flag) {
-      // Shift the remainder of the argv list left by one.  Note
-      // that argv has (*argc + 1) elements, the last one always being
-      // NULL.  The following loop moves the trailing NULL element as
-      // well.
-      for (int j = i; j != *argc; j++) {
-        argv[j] = argv[j + 1];
+      // Shift the remainder of the argv list left by one.
+      for (int j = i + 1; j < *argc; ++j) {
+        argv[j - 1] = argv[j];
       }
 
       // Decrements the argument count.
       (*argc)--;
+
+      // Terminate the array with nullptr.
+      argv[*argc] = nullptr;
 
       // We also need to decrement the iterator as we just removed
       // an element.

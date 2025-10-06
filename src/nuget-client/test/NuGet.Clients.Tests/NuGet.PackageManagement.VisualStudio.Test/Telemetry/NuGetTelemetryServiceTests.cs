@@ -6,8 +6,8 @@ using System.Linq;
 using Moq;
 using NuGet.Common;
 using NuGet.PackageManagement.Telemetry;
-using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
@@ -70,8 +70,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             var projectFilePath = lastTelemetryEvent
                 .GetPiiData()
-                .Where(kv => kv.Key == ProjectTelemetryEvent.ProjectFilePath)
-                .First()
+                .First(kv => kv.Key == ProjectTelemetryEvent.ProjectFilePath)
                 .Value;
             Assert.IsType<string>(projectFilePath);
             Assert.True(!string.IsNullOrEmpty((string)projectFilePath));

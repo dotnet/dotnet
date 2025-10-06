@@ -114,7 +114,7 @@ public class CliRunSettingsArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldNotThrowExceptionIfArgumentIsEmpty()
     {
-        _executor.Initialize(Array.Empty<string>());
+        _executor.Initialize([]);
 
         Assert.IsNull(_settingsProvider.ActiveRunSettings);
     }
@@ -122,7 +122,7 @@ public class CliRunSettingsArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldCreateEmptyRunSettingsIfArgumentsHasOnlyWhiteSpace()
     {
-        _executor.Initialize(new string[] { " " });
+        _executor.Initialize([" "]);
 
         Assert.IsNull(_settingsProvider.ActiveRunSettings);
     }
@@ -344,42 +344,43 @@ public class CliRunSettingsArgumentProcessorTests
         return InvalidTestCases;
     }
 
-    private static readonly List<object[]> InvalidTestCases = new()
-    {
-        new object[] { "TestRunParameters.Parameter(name=asf,value=rgq)" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=\"rgq\" )" },
-        new object[] { "TestRunParameters.Parameter( name=\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParametersParameter(name=\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Paramete(name=\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parametername=\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(ame=\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name\"asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\" value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",alue=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=\"rgq\"" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=\"rgq\")wfds" },
-        new object[] { "TestRunParameters.Parameter(name=\"\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=\"\")" },
-        new object[] { "TestRunParameters.Parameter(name=asf\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf,value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf\",value=\"rgq)" },
-        new object[] { "TestRunParameters.Parameter(name=\"asf@#!\",value=\"rgq\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"\",value=\"fgf\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"gag\",value=\"\")" },
-        new object[] { "TestRunParameters.Parameter(name=\"gag\")" }
-    };
+    private static readonly List<object[]> InvalidTestCases =
+    [
+        ["TestRunParameters.Parameter(name=asf,value=rgq)"],
+        ["TestRunParameters.Parameter(name=\"asf\",value=\"rgq\" )"],
+        ["TestRunParameters.Parameter( name=\"asf\",value=\"rgq\")"],
+        ["TestRunParametersParameter(name=\"asf\",value=\"rgq\")"],
+        ["TestRunParameters.Paramete(name=\"asf\",value=\"rgq\")"],
+        ["TestRunParameters.Parametername=\"asf\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(ame=\"asf\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name\"asf\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\" value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",alue=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",value\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",value=\"rgq\""],
+        ["TestRunParameters.Parameter(name=\"asf\",value=\"rgq\")wfds"],
+        ["TestRunParameters.Parameter(name=\"\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",value=\"\")"],
+        ["TestRunParameters.Parameter(name=asf\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf,value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",value=rgq\")"],
+        ["TestRunParameters.Parameter(name=\"asf\",value=\"rgq)"],
+        ["TestRunParameters.Parameter(name=\"asf@#!\",value=\"rgq\")"],
+        ["TestRunParameters.Parameter(name=\"\",value=\"fgf\")"],
+        ["TestRunParameters.Parameter(name=\"gag\",value=\"\")"],
+        ["TestRunParameters.Parameter(name=\"gag\")"]
+    ];
 
     public static IEnumerable<object[]> TestRunParameterArgValidTestCases()
     {
         return ValidTestCases;
     }
 
-    private static readonly List<object[]> ValidTestCases = new()
-    {
-        new object[] { "TestRunParameters.Parameter(name=\"weburl\",value=\"&><\")" ,
-            string.Join(Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
+    private static readonly List<object[]> ValidTestCases =
+    [
+        [
+            "TestRunParameters.Parameter(name=\"weburl\",value=\"&><\")", string.Join(Environment.NewLine,
+                "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
                 "<RunSettings>",
                 "  <DataCollectionRunSettings>",
                 "    <DataCollectors />",
@@ -388,9 +389,10 @@ public class CliRunSettingsArgumentProcessorTests
                 "    <Parameter name=\"weburl\" value=\"&amp;&gt;&lt;\" />",
                 "  </TestRunParameters>",
                 "</RunSettings>")
-        },
-        new object[] { "TestRunParameters.Parameter(name=\"weburl\",value=\"http://localhost//abc\")" ,
-            string.Join(Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
+        ],
+        [
+            "TestRunParameters.Parameter(name=\"weburl\",value=\"http://localhost//abc\")", string.Join(
+                Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
                 "<RunSettings>",
                 "  <DataCollectionRunSettings>",
                 "    <DataCollectors />",
@@ -399,8 +401,9 @@ public class CliRunSettingsArgumentProcessorTests
                 "    <Parameter name=\"weburl\" value=\"http://localhost//abc\" />",
                 "  </TestRunParameters>",
                 "</RunSettings>")
-        },
-        new object[] { "TestRunParameters.Parameter(name= \"a_sf123_12\",value= \"2324346a!@#$%^*()_+-=':;.,/?{}[]|\")" ,
+        ],
+        [
+            "TestRunParameters.Parameter(name= \"a_sf123_12\",value= \"2324346a!@#$%^*()_+-=':;.,/?{}[]|\")",
             string.Join(Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
                 "<RunSettings>",
                 "  <DataCollectionRunSettings>",
@@ -410,9 +413,10 @@ public class CliRunSettingsArgumentProcessorTests
                 "    <Parameter name=\"a_sf123_12\" value=\"2324346a!@#$%^*()_+-=':;.,/?{}[]|\" />",
                 "  </TestRunParameters>",
                 "</RunSettings>")
-        },
-        new object[] { "TestRunParameters.Parameter(name = \"weburl\" , value = \"http://localhost//abc\")" ,
-            string.Join(Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
+        ],
+        [
+            "TestRunParameters.Parameter(name = \"weburl\" , value = \"http://localhost//abc\")", string.Join(
+                Environment.NewLine, "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
                 "<RunSettings>",
                 "  <DataCollectionRunSettings>",
                 "    <DataCollectors />",
@@ -421,8 +425,8 @@ public class CliRunSettingsArgumentProcessorTests
                 "    <Parameter name=\"weburl\" value=\"http://localhost//abc\" />",
                 "  </TestRunParameters>",
                 "</RunSettings>")
-        },
-    };
+        ]
+    ];
     #endregion
 
     [TestMethod]
@@ -459,7 +463,7 @@ public class CliRunSettingsArgumentProcessorTests
             "value=\"myValue 2\")",
         };
 
-        var runsettings = string.Join(Environment.NewLine, new[]{
+        var runsettings = string.Join(Environment.NewLine, [
             "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
             "<RunSettings>",
             "  <DataCollectionRunSettings>",
@@ -469,7 +473,8 @@ public class CliRunSettingsArgumentProcessorTests
             "    <Parameter name=\"myParam\" value=\"myValue\" />",
             "    <Parameter name=\"myParam2\" value=\"myValue 2\" />",
             "  </TestRunParameters>",
-            "</RunSettings>"});
+            "</RunSettings>"
+        ]);
 
         _executor.Initialize(args);
 

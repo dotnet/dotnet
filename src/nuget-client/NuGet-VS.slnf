@@ -16,7 +16,6 @@
       "src\\NuGet.Clients\\NuGet.VisualStudio.Implementation\\NuGet.VisualStudio.Implementation.csproj",
       "src\\NuGet.Clients\\NuGet.VisualStudio.Internal.Contracts\\NuGet.VisualStudio.Internal.Contracts.csproj",
       "src\\NuGet.Clients\\NuGet.VisualStudio.Interop\\NuGet.VisualStudio.Interop.csproj",
-      "src\\NuGet.Clients\\NuGet.VisualStudio.OnlineEnvironment.Client\\NuGet.VisualStudio.OnlineEnvironment.Client.csproj",
     ]
   }
 }

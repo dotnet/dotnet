@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
+    <body>
+      <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
+        <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
+        <target state="translated">Le fichier d'actifs trouvé ne contient pas de spec de package valide. Réessayez de restaurer le projet. Emplacement du fichier d'actifs : {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="AssetsFileNotFound">
+        <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
+        <target state="translated">Le fichier d'actifs produit par la restauration n'existe pas. Réessayez de restaurer le projet. Emplacement attendu du fichier d'actifs : {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileNotFound">
+        <source>The file '{0}' to be packed was not found on disk.</source>
+        <target state="translated">Le fichier '{0}' à compresser est introuvable sur le disque.</target>
+        <note>{0} is the file being packed.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseCombination">
+        <source>Invalid metadata. Cannot specify both a PackageLicenseExpression and a PackageLicenseFile.</source>
+        <target state="translated">Métadonnées non valides. Impossible de spécifier à la fois une PackageLicenseExpression et un PackageLicenseFile.</target>
+        <note>Please don't localize PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">La chaîne de version '{0}' n'est pas prise en charge par cet ensemble d'outils. La version la plus élevée prise en charge est '{1}'. Utilisez une version inférieure ou mettez à niveau votre ensemble d'outils.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpression">
+        <source>The license expression '{0}' cannot be parsed succesfully. {1}</source>
+        <target state="translated">L'expression de licence '{0}' ne peut pas être analysée correctement. {1}</target>
+        <note>0 - the license expression, 1 further details</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpressionVersion">
+        <source>The PackageLicenseExpressionVersion string '{0}' is not a valid version.</source>
+        <target state="translated">La chaîne PackageLicenseExpressionVersion '{0}' n'est pas une version valide.</target>
+        <note>{0} version string</note>
+      </trans-unit>
+      <trans-unit id="InvalidMinClientVersion">
+        <source>MinClientVersion string specified '{0}' is invalid.</source>
+        <target state="translated">La chaîne MinClientVersion spécifiée ('{0}') n'est pas valide.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecProperties">
+        <source>NuspecProperties should be in the form of "key1=value1;key2=value2".</source>
+        <target state="translated">NuspecProperties doit être au format "key1=value1;key2=value2".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageReferenceVersion">
+        <source>PackageReference {0} needs to have a valid version.</source>
+        <target state="translated">PackageReference {0} doit avoir une version valide.</target>
+        <note>{0} is the ID of the PackageReference.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageVersion">
+        <source>PackageVersion string specified '{0}' is invalid.</source>
+        <target state="translated">La chaîne PackageVersion spécifiée ('{0}') n'est pas valide.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidTargetFramework">
+        <source>Invalid target framework for the file '{0}'.</source>
+        <target state="translated">Version cible de .NET Framework non valide pour le fichier '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsPackableFalseError">
+        <source>This project cannot be packaged because packaging has been disabled. Add &lt;IsPackable&gt;true&lt;/IsPackable&gt; to the project file to enable producing a package from this project.</source>
+        <target state="translated">Impossible de packager ce projet, car la création de package a été désactivée. Ajoutez &lt;IsPackable&gt;true&lt;/IsPackable&gt; au fichier projet pour permettre la production d'un package à partir de ce projet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackItemProvided">
+        <source>No project was provided to the PackTask.</source>
+        <target state="translated">Aucun projet n'a été fourni à PackTask.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenses_LicenseUrlCannotBeUsedInConjuctionWithLicense">
+        <source>The PackageLicenseUrl is being deprecated and cannot be used in conjunction with the PackageLicenseFile or PackageLicenseExpression.</source>
+        <target state="translated">Le PackageLicenseUrl est en cours de dépréciation et ne peut pas être utilisé conjointement avec le PackageLicenseFile ou le PackageLicenseExpression.</target>
+        <note>Please don't localize PackageLicenseUrl, PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

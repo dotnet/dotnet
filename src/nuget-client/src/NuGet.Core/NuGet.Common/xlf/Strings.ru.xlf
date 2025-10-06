@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Аргумент не может быть равен NULL или быть пустым</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}</source>
+        <target state="translated">Значение должно быть больше или равно {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVar">
+        <source>Required environment variable '{0}' is not set. Try setting '{0}' and running the operation again.</source>
+        <target state="translated">Требуемая переменная среды "{0}" не установлена. Попробуйте установить переменную среды "{0}" и повторить операцию.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVarsDotnet">
+        <source>Required environment variable '{0}' is not set. Try setting '{1}' or '{0}' and running the operation</source>
+        <target state="translated">Не задана обязательная переменная среды "{0}". Попробуйте задать "{1}" или "{0}" и выполнить операцию</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimeUnits_Hour">
+        <source>{0:0.##} hr</source>
+        <target state="translated">{0:0.##} ч</target>
+        <note>{0:0.##} is number of hours, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Millisecond">
+        <source>{0:0.##} ms</source>
+        <target state="translated">{0:0.##} мс</target>
+        <note>{0:0.##} is number of milliseconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Minute">
+        <source>{0:0.##} min</source>
+        <target state="translated">{0:0.##} мин</target>
+        <note>{0:0.##} is number of minutes, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Second">
+        <source>{0:0.##} sec</source>
+        <target state="translated">{0:0.##} с</target>
+        <note>{0:0.##} is number of seconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="UnableToDetemineClientVersion">
+        <source>Unable to determine the current NuGet client version.</source>
+        <target state="translated">Не удалось определить текущую версию клиента NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToSetNuGetTempFolderPermission">
+        <source>User is unable to set permission to 700 while creating {0}, errno={1}.</source>
+        <target state="translated">Пользователю не удалось задать разрешение 700 при создании {0}, errno={1}.</target>
+        <note>{0} is a file path; {1} is an error code.</note>
+      </trans-unit>
+      <trans-unit id="UnauthorizedLockFail">
+        <source>Unable to obtain lock file access on '{0}' for operations on '{1}'. This may mean that a different user or administrator is holding this lock and that this process does not have permission to access it. If no other process is currently performing an operation on this file it may mean that an earlier NuGet process crashed and left an inaccessible lock file, in this case removing the file '{0}' will allow NuGet to continue.</source>
+        <target state="translated">Не удалось получить доступ к файлу блокировки в "{0}" для операций с "{1}". Это может означать, что другой пользователь или администратор удерживает эту блокировку, и у этого процесса нет разрешения на доступ к файлу блокировки. Если ни один из других процессов сейчас не выполняет операцию с этим файлом, это может означать, что произошел сбой более раннего процесса NuGet, в результате которого остался недоступный файл блокировки. В этом случае для продолжения работы NuGet необходимо удалить файл "{0}".</target>
+        <note>{0} and {1} are both file paths.</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.</source>
+        <target state="translated">Хэш-алгоритм "{0}" не поддерживается. Поддерживаемые алгоритмы: SHA512 и SHA256.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithmName">
+        <source>Hash algorithm '{0}' is unsupported.</source>
+        <target state="translated">Хэш-алгоритм "{0}" не поддерживается.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureAlgorithmName">
+        <source>Signature algorithm '{0}' is unsupported.</source>
+        <target state="translated">Алгоритм подписей "{0}" не поддерживается.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

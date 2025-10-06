@@ -252,6 +252,50 @@ Includes a reference to `SomeDependency` into `MyProjectFile`. The referenced pr
 }]
 ```
 
+## Adding references to existing projects
+
+It is possible to add references to existing projects in your working directory. Since the name of the existing project is likely not a constant value for all template instantiations, a symbol can be used to pass the name of the existing project.
+
+The example below demonstrates how to add the existing project ```src/AlreadyExisting/AlreadyExisting.csproj``` as a reference to the template source project ```Project1/Project1.csproj```.
+
+```
+{
+  "symbols": {
+    "existingProject": {
+      ...
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "ExistingProject/ExistingProject.csproj",
+      "fileRename": "ExistingProjectPath" // Must be same as targetFile
+    }
+  },
+  "postActions": [
+    {
+      "Description": "Add ProjectReference to ExistingProject/ExistingProject.csproj",
+      "applyFileRenamesToArgs": [
+        "targetFiles" // Must be specified
+      ],
+      "args": {
+        "targetFiles": [
+          "ExistingProjectPath" // Must be same as fileRename
+        ],
+        "referenceType": "project",
+        "reference": "Project1/Project1.csproj"
+      }
+    }]
+}
+```
+
+The template above:
+- Configures the ```existingProject``` parameter *symbol* with a ```fileRename``` configuration. 
+- Instructs the *'add reference to a project file'* post action to apply ```fileRename``` to the ```targetFiles``` argument.
+- Uses the value passed to the ```existingProject``` *symbol* to replace the value of the matching  ```targetFiles```.
+
+This template can be instantiated using:
+
+```dotnet new [templateName] --existingProject src/AlreadyExisting/AlreadyExisting.csproj```
+
+
 # Add project(s) to a solution file
 
  - **Action ID** : `D396686C-DE0E-4DE6-906D-291CD29FC5DE`
@@ -424,6 +468,10 @@ Adds a new JSON property in an existing JSON file.
       - `parentPropertyPath (string)` (optional): Specifies an existing property in the JSON file for which the new property must be a child property. The complete path must be specified, using a colon (:) as a separator character, for instance, `Person:Address`. If parentPropertyPath is not defined, the new property will be added to the root of the JSON document.
    - `newJsonPropertyName (string)`: The name that must be given to the new property.
    - `newJsonPropertyValue (string)`: The value that must be assigned to the new property. This must be a valid JSON.
+   - Starting in .NET 10 SDK, the following are also supported:
+       - `detectRepositoryRoot (bool)`: Whether or not a detection logic to find repo root is enabled. When the JSON file is not found, it will be created in the detected repo root if this option is true. Also when searching for an existing JSON file, the search will stop at the repo root and won't consider any parent directories. The default is `false`.
+       - `includeAllDirectoriesInSearch (bool)`: Whether or not sub-directories are searched for a matching json file (i.e, use `SearchOption.AllDirectories`). The default is `true`.
+       - `includeAllParentDirectories (bool)`: Whether or not all parent directories (up to repo root, if `detectRepositoryRoot` is true) are searched for a matching JSON file. When `false`, only one level up is searched. The default is `false`.
 - **Supported in** :
    - dotnet new3
    - dotnet new (2.0.0 or higher)

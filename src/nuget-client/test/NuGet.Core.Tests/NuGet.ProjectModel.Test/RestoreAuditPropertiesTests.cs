@@ -3,6 +3,7 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 
@@ -78,6 +79,62 @@ namespace NuGet.ProjectModel.Test
             properties1.Equals((object)properties2).Should().BeFalse(); ;
             (properties1 == properties2).Should().BeFalse();
             (properties1 != properties2).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Equals_InstancesWithDifferentSuppressionValues_ReturnsFalse()
+        {
+            // Arrange
+            var properties1 = new RestoreAuditProperties()
+            {
+                AuditLevel = "high",
+                SuppressedAdvisories = new HashSet<string> {
+                    "cve-1",
+                    "cve-2"
+                }
+            };
+            var properties2 = new RestoreAuditProperties()
+            {
+                AuditLevel = properties1.AuditLevel,
+                SuppressedAdvisories = new HashSet<string> {
+                    "cve-1",
+                    "cve-3"
+                }
+            };
+
+            // Act & Assert
+            properties1.Equals(properties2).Should().BeFalse();
+            properties1.Equals((object)properties2).Should().BeFalse(); ;
+            (properties1 == properties2).Should().BeFalse();
+            (properties1 != properties2).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Equals_InstancesWithSuppressionsInDifferentOrders_ReturnsTrue()
+        {
+            // Arrange
+            var properties1 = new RestoreAuditProperties()
+            {
+                AuditLevel = "moderate",
+                SuppressedAdvisories = new HashSet<string> {
+                    "cve-1",
+                    "cve-2"
+                }
+            };
+            var properties2 = new RestoreAuditProperties()
+            {
+                AuditLevel = properties1.AuditLevel,
+                SuppressedAdvisories = new HashSet<string> {
+                    "cve-2",
+                    "cve-1"
+                }
+            };
+
+            // Act & Assert
+            properties1.Equals(properties2).Should().BeTrue();
+            properties1.Equals((object)properties2).Should().BeTrue();
+            (properties1 == properties2).Should().BeTrue();
+            (properties1 != properties2).Should().BeFalse();
         }
 
         [Fact]

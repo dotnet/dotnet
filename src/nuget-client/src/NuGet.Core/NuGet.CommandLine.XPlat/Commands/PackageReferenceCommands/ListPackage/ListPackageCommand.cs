@@ -129,7 +129,7 @@ namespace NuGet.CommandLine.XPlat
                         isVulnerable: vulnerableReport.HasValue());
 
                     IReportRenderer reportRenderer = GetOutputType(outputFormat.Value(), outputVersionOption: outputVersion.Value());
-
+                    var provider = new PackageSourceProvider(settings);
                     var packageRefArgs = new ListPackageArgs(
                         path.Value,
                         packageSources,
@@ -140,6 +140,7 @@ namespace NuGet.CommandLine.XPlat
                         prerelease.HasValue(),
                         highestPatch.HasValue(),
                         highestMinor.HasValue(),
+                        provider.LoadAuditSources(),
                         logger,
                         CancellationToken.None);
 

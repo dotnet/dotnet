@@ -1,19 +1,22 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Utilities;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis.Razor;
 
 internal static class StringExtensions
 {
+    public static bool IsRazorFilePath(this string filePath)
+    {
+        var comparison = PathUtilities.OSSpecificPathComparison;
+
+        return FileUtilities.IsAnyRazorFilePath(filePath, comparison);
+    }
+
     public static int? GetFirstNonWhitespaceOffset(this string line)
     {
-        if (line is null)
-        {
-            throw new ArgumentNullException(nameof(line));
-        }
-
         for (var i = 0; i < line.Length; i++)
         {
             if (!char.IsWhiteSpace(line[i]))
@@ -27,11 +30,6 @@ internal static class StringExtensions
 
     public static int? GetLastNonWhitespaceOffset(this string line)
     {
-        if (line is null)
-        {
-            throw new ArgumentNullException(nameof(line));
-        }
-
         for (var i = line.Length - 1; i >= 0; i--)
         {
             if (!char.IsWhiteSpace(line[i]))
@@ -45,11 +43,6 @@ internal static class StringExtensions
 
     public static string GetLeadingWhitespace(this string lineText)
     {
-        if (lineText is null)
-        {
-            throw new ArgumentNullException(nameof(lineText));
-        }
-
         var firstOffset = lineText.GetFirstNonWhitespaceOffset();
 
         return firstOffset.HasValue
@@ -59,11 +52,6 @@ internal static class StringExtensions
 
     public static string GetTrailingWhitespace(this string lineText)
     {
-        if (lineText is null)
-        {
-            throw new ArgumentNullException(nameof(lineText));
-        }
-
         var lastOffset = lineText.GetLastNonWhitespaceOffset();
 
         return lastOffset.HasValue

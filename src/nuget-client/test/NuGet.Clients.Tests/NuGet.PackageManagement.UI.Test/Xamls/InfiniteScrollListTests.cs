@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,11 @@ using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using NuGet.Common;
-using NuGet.PackageManagement.UI.Utility;
+using NuGet.PackageManagement.UI.Models.Package;
+using NuGet.PackageManagement.UI.Test.Models.Package;
 using NuGet.PackageManagement.VisualStudio;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
@@ -99,7 +103,7 @@ namespace NuGet.PackageManagement.UI.Test
                         loader: null,
                         loadingMessage: "a",
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: CancellationToken.None);
                 });
 
@@ -109,7 +113,7 @@ namespace NuGet.PackageManagement.UI.Test
         [WpfTheory(Skip = "https://github.com/NuGet/Home/issues/10938")]
         [InlineData(null)]
         [InlineData("")]
-        public async Task LoadItems_LoadingMessageIsNullOrEmpty_Throws(string loadingMessage)
+        public async Task LoadItems_LoadingMessageIsNullOrEmpty_Throws(string? loadingMessage)
         {
             var list = new InfiniteScrollList();
 
@@ -120,7 +124,7 @@ namespace NuGet.PackageManagement.UI.Test
                         Mock.Of<IPackageItemLoader>(),
                         loadingMessage,
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: CancellationToken.None);
                 });
 
@@ -158,7 +162,7 @@ namespace NuGet.PackageManagement.UI.Test
                         Mock.Of<IPackageItemLoader>(),
                         loadingMessage: "a",
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: new CancellationToken(canceled: true));
                 });
         }
@@ -223,7 +227,7 @@ namespace NuGet.PackageManagement.UI.Test
             var searchResultTask = Task.FromResult(new SearchResultContextInfo());
 
             var list = new InfiniteScrollList();
-            var taskCompletionSource = new TaskCompletionSource<string>();
+            var taskCompletionSource = new TaskCompletionSource<string?>();
 
             // Despite LoadItems(...) being a synchronous method, the method internally fires an asynchronous task.
             // We'll know when that task completes successfully when the LoadItemsCompleted event fires,
@@ -277,6 +281,11 @@ namespace NuGet.PackageManagement.UI.Test
             var tcs = new TaskCompletionSource<int>();
             var list = new InfiniteScrollList();
             var searchService = new Mock<INuGetSearchService>();
+            var packageIdentity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
+            var embeddedResource = new Mock<IEmbeddedResourcesCapable>();
+            var vulnerableCapability = new Mock<IVulnerableCapable>();
+            var deprecatedCapability = new Mock<IDeprecationCapable>();
+            var packageModel = PackageModelCreationTestHelper.CreateRemotePackageModel(packageIdentity, vulnerableCapability.Object, deprecatedCapability.Object, embeddedResource.Object);
 
             var currentStatus = LoadingStatus.Loading;
 
@@ -302,7 +311,7 @@ namespace NuGet.PackageManagement.UI.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(() => Task.CompletedTask);
             loaderMock.Setup(x => x.GetCurrent())
-                .Returns(() => searchItems.Select(x => new PackageItemViewModel(searchService.Object)));
+                .Returns(() => searchItems.Select(x => new PackageItemViewModel(searchService.Object, packageModel: packageModel)));
 
             list.LoadItemsCompleted += (sender, args) =>
             {

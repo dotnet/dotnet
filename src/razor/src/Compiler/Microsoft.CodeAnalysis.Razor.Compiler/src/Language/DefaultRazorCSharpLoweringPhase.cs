@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -11,9 +12,9 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSharpLoweringPhase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument)
+    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
 
         var target = documentNode.Target;
@@ -27,7 +28,7 @@ internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSh
         }
 
         var writer = DocumentWriter.CreateDefault(documentNode.Target, documentNode.Options);
-        var cSharpDocument = writer.WriteDocument(codeDocument, documentNode);
-        codeDocument.SetCSharpDocument(cSharpDocument);
+        var csharpDocument = writer.WriteDocument(codeDocument, documentNode);
+        codeDocument.SetCSharpDocument(csharpDocument);
     }
 }

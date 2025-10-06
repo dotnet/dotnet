@@ -361,7 +361,7 @@ internal abstract class SyntaxList : GreenNode
         /// <summary>
         /// Find the slot that contains the given offset.
         /// </summary>
-        /// <param name="offset">The target offset. Must be between 0 and <see cref="GreenNode.FullWidth"/>.</param>
+        /// <param name="offset">The target offset. Must be between 0 and <see cref="GreenNode.Width"/>.</param>
         /// <returns>The slot index of the slot containing the given offset.</returns>
         /// <remarks>
         /// This implementation uses a binary search to find the first slot that contains
@@ -369,7 +369,7 @@ internal abstract class SyntaxList : GreenNode
         /// </remarks>
         public override int FindSlotIndexContainingOffset(int offset)
         {
-            Debug.Assert(offset >= 0 && offset < FullWidth);
+            Debug.Assert(offset >= 0 && offset < Width);
             return BinarySearchUpperBound(_childOffsets, offset) - 1;
         }
 
@@ -381,7 +381,7 @@ internal abstract class SyntaxList : GreenNode
             for (var i = 0; i < n; i++)
             {
                 childOffsets[i] = offset;
-                offset += children[i].Value.FullWidth;
+                offset += children[i].Value.Width;
             }
             return childOffsets;
         }

@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(ManualNuspecTargets)" />
 
   <Target Name="PatchIl"
           Condition="'@(TargetingPackSrcRequiringConstraintPatch)' != ''">

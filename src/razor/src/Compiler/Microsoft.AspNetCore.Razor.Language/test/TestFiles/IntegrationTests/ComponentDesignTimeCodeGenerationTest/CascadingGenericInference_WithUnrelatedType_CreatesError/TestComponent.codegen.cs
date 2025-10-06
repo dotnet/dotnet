@@ -85,9 +85,9 @@ namespace __Blazor.Test.TestComponent
         {
             __arg0_out = __arg0;
         }
-        public static global::Test.Column<System.Object> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
+        public static global::Test.Column<object> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
         {
-        __builder.OpenComponent<global::Test.Column<System.Object>>(seq);
+        __builder.OpenComponent<global::Test.Column<object>>(seq);
         __builder.CloseComponent();
         return default;
         }

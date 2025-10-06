@@ -1,49 +1,39 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- All packages built in SBRP repo are copied to prereqs/package/reference.
-         Nothing gets copied to the artifacts/packages folder. -->
-    <ReferenceOnlyRepoArtifacts>true</ReferenceOnlyRepoArtifacts>
-
-    <!-- SBRP builds before Arcade so it also needs the bootstrap Arcade version -->
-    <UseBootstrapArcade>true</UseBootstrapArcade>
-
-    <LocalNuGetPackageCacheDirectory>$(ArtifactsObjDir)source-build-reference-package-cache</LocalNuGetPackageCacheDirectory>
+    <ToolPackagesRoot>$(RepoArtifactsShippingPackagesDir)</ToolPackagesRoot>
 
     <BuildArgs>$(BuildArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
-    <BuiltSdkPackageOverride Include="@(NoTargetsSdkOverride)" />
-    <BuiltSdkPackageOverride Include="@(TraversalSdkOverride)" />
+    <BuiltSdkPackage Include="Microsoft.Build.NoTargets" />
+    <BuiltSdkPackage Include="Microsoft.Build.Traversal" />
   </ItemGroup>
 
-  <Target Name="AddLocalNuGetPackageCacheDirectory"
-          AfterTargets="CopyNuGetConfig"
-          BeforeTargets="UpdateNuGetConfig">
-    <MakeDir Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
-             Directories="$(LocalNuGetPackageCacheDirectory)" />
-
-    <AddSourceToNuGetConfig
-      NuGetConfigFile="$(NuGetConfigFile)"
-      SourceName="source-build-reference-package-cache"
-      SourcePath="$(LocalNuGetPackageCacheDirectory)" />
+  <Target Name="GetProducedReferenceOnlyPackages"
+          Returns="@(_ReferenceOnlyPackages)">
+    <ItemGroup>
+      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\*" />
+    </ItemGroup>
   </Target>
 
-  <!--
-    Remove this target after VMR picks up new arcade publishing changes: https://github.com/dotnet/arcade/pull/14559
-    Tracking issue: https://github.com/dotnet/source-build/issues/4210
+  <!-- Copy reference only packages to prereqs/package/reference -->
+  <Target Name="CopyReferenceOnlyPackages"
+          DependsOnTargets="GetProducedReferenceOnlyPackages"
+          AfterTargets="RepoBuild"
+          BeforeTargets="CleanupRepo" >
+    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
+          DestinationFolder="$(ReferencePackagesDir)" />
+  </Target>
 
-    We only run this target if we're publishing using repo manifest.
-  -->
-  <Target Name="ClearPreviousSBRP"
-          Condition="Exists('$(RepoManifestFile)')"
-          BeforeTargets="CopyRepoArtifacts"
-          DependsOnTargets="RepoBuild">
-    <!-- Building SBRP: At this point the References directory contains the previously-source-built SBRPs,
-         clear it before copying the current SBRPs.  This ensures n-1 SBRPs aren't required to build the product repos. -->
-    <RemoveDir Directories="$(ReferencePackagesDir)" />
+  <!-- Log the new repo artifacts -->
+  <Target Name="LogReferenceOnlyPackages"
+          DependsOnTargets="GetProducedReferenceOnlyPackages"
+          AfterTargets="LogRepoArtifacts"
+          BeforeTargets="CleanupRepo" >
+    <Message Importance="High" Text="New reference package(s) after building $(RepositoryName):" />
+    <Message Importance="High" Text="  -> %(_ReferenceOnlyPackages.Filename)" />
   </Target>
 
 </Project>

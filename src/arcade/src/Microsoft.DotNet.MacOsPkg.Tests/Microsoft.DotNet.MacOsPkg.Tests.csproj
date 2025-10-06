@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\**"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
+
+    <ProjectReference Condition="$([MSBuild]::IsOSPlatform('osx'))"
+                  Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
+                  ReferenceOutputAssembly="false"
+                  SetTargetFramework="TargetFramework=$(NetToolCurrent)"
+                  SkipGetTargetFrameworkProperties="true"
+                  Private="false"
+                  OutputItemType="_MacOsPkgToolPath" />
+  </ItemGroup>
+
+  <Target Name="_CopyMacOsPkgTool" AfterTargets="ResolveProjectReferences" Condition="$([MSBuild]::IsOSPlatform('osx'))">
+    <PropertyGroup>
+      <_MacOSPkgToolPattern>@(_MacOsPkgToolPath->'%(RootDir)%(Directory)')**\*.*</_MacOSPkgToolPattern>
+    </PropertyGroup>
+    <ItemGroup>
+      <_MacOSPkgToolFiles Include="$(_MacOsPkgToolPattern)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="@(_MacOsPkgToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\macospkg\%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -1,27 +1,18 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
-public class TestOutputLoggerProvider(ITestOutputHelper output) : IRazorLoggerProvider
+internal class TestOutputLoggerProvider(ITestOutputHelper output, LogLevel logLevel = LogLevel.Trace) : ILoggerProvider
 {
-    private ITestOutputHelper? _output = output;
+    private readonly ITestOutputHelper _output = output;
+    private readonly LogLevel _logLevel = logLevel;
 
-    public ITestOutputHelper? TestOutputHelper => _output;
+    public ITestOutputHelper Output => _output;
 
     public ILogger CreateLogger(string categoryName)
-        => new TestOutputLogger(this, categoryName);
-
-    public void Dispose()
-    {
-    }
-
-    internal void SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
-    {
-        _output = testOutputHelper;
-    }
+        => new TestOutputLogger(this, categoryName, _logLevel);
 }

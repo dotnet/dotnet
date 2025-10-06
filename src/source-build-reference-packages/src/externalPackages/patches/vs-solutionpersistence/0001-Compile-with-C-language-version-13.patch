@@ -1,0 +1,22 @@
+From faade5e8eb4f3164832ec23f25234518ecc5d8ca Mon Sep 17 00:00:00 2001
+From: Andrew Arnott <andrewarnott@live.com>
+Date: Tue, 12 Nov 2024 16:51:17 -0700
+Subject: [PATCH] Compile with C# language version 13
+
+---
+ Directory.Build.targets | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Directory.Build.targets b/Directory.Build.targets
+index ecd71a31..ffbdb502 100644
+--- a/Directory.Build.targets
++++ b/Directory.Build.targets
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <Project>
+   <PropertyGroup>
+-    <LangVersion Condition="'$(Language)'=='C#'">12</LangVersion>
++    <LangVersion Condition="'$(Language)'=='C#'">13</LangVersion>
+     <LangVersion Condition="'$(Language)'=='VB'">16.9</LangVersion>
+   </PropertyGroup>
+   <ItemGroup>

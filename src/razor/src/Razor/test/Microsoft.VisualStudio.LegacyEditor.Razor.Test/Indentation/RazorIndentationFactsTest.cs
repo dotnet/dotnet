@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
@@ -37,7 +38,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
     public void IsCSharpOpenCurlyBrace_SpanWithLeftBrace_ReturnTrue()
     {
         // Arrange
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+        using PooledArrayBuilder<SyntaxToken> builder = [];
         builder.Add(SyntaxFactory.Token(SyntaxKind.LeftBrace, "{"));
         var child = SyntaxFactory.RazorMetaCode(builder.ToList(), chunkGenerator: null);
 
@@ -57,7 +58,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
     {
         // Arrange
         var symbolType = (SyntaxKind)symbolTypeObject;
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+        using PooledArrayBuilder<SyntaxToken> builder = [];
         builder.Add(SyntaxFactory.Token(symbolType, content));
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
@@ -72,7 +73,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
     public void IsCSharpOpenCurlyBrace_MultipleSymbols_ReturnFalse()
     {
         // Arrange
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+        using PooledArrayBuilder<SyntaxToken> builder = [];
         builder.Add(SyntaxFactory.Token(SyntaxKind.Identifier, "hello"));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Comma, ","));
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
@@ -88,7 +89,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
     public void IsCSharpOpenCurlyBrace_SpanWithHtmlSymbol_ReturnFalse()
     {
         // Arrange
-        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+        using PooledArrayBuilder<SyntaxToken> builder = [];
         builder.Add(SyntaxFactory.Token(SyntaxKind.Text, "hello"));
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
@@ -352,7 +353,7 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
                 builder.AddDirective(directive);
             }
 
-            builder.Features.Add(new VisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
+            builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);
         });
 
         var sourceProjectItem = new TestRazorProjectItem("test.cshtml")
@@ -362,6 +363,6 @@ public class RazorIndentationFactsTest(ITestOutputHelper testOutput) : ToolingTe
 
         var codeDocument = engine.ProcessDesignTime(sourceProjectItem);
 
-        return codeDocument.GetSyntaxTree();
+        return codeDocument.GetRequiredSyntaxTree();
     }
 }

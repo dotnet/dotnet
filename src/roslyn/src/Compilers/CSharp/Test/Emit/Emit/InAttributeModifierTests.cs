@@ -1565,6 +1565,9 @@ class Test
 }";
 
             CreateEmptyCompilation(code).VerifyDiagnostics(
+                // (9,27): error CS0656: Missing compiler required member 'System.Reflection.DefaultMemberAttribute..ctor'
+                //     public virtual object this[in object p] => null;
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "this").WithArguments("System.Reflection.DefaultMemberAttribute", ".ctor").WithLocation(9, 27),
                 // (9,32): error CS0518: Predefined type 'System.Runtime.InteropServices.InAttribute' is not defined or imported
                 //     public virtual object this[in object p] => null;
                 Diagnostic(ErrorCode.ERR_PredefinedTypeNotFound, "in object p").WithArguments("System.Runtime.InteropServices.InAttribute").WithLocation(9, 32));
@@ -1588,7 +1591,11 @@ class Test
             CreateEmptyCompilation(code).VerifyDiagnostics(
                 // (10,20): error CS0518: Predefined type 'System.Runtime.InteropServices.InAttribute' is not defined or imported
                 //     public virtual ref readonly object this[object p] => ref value;
-                Diagnostic(ErrorCode.ERR_PredefinedTypeNotFound, "ref readonly object").WithArguments("System.Runtime.InteropServices.InAttribute").WithLocation(10, 20));
+                Diagnostic(ErrorCode.ERR_PredefinedTypeNotFound, "ref readonly object").WithArguments("System.Runtime.InteropServices.InAttribute").WithLocation(10, 20),
+                // (10,40): error CS0656: Missing compiler required member 'System.Reflection.DefaultMemberAttribute..ctor'
+                //     public virtual ref readonly object this[object p] => ref value;
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "this").WithArguments("System.Reflection.DefaultMemberAttribute", ".ctor").WithLocation(10, 40)
+                );
         }
 
         [Fact]
@@ -4447,7 +4454,7 @@ namespace System
 }
 ";
 
-            var corlibWithoutInAttributeRef = CreateEmptyCompilation(corlib_cs).EmitToImageReference();
+            var corlibWithoutInAttributeRef = CreateEmptyCompilation(corlib_cs, assemblyName: "corlibWithoutInAttributeRef").EmitToImageReference();
 
             var refCode = @"
 namespace System.Runtime.InteropServices
@@ -4455,8 +4462,8 @@ namespace System.Runtime.InteropServices
     public class InAttribute {}
 }";
 
-            var ref1 = CreateEmptyCompilation(refCode, references: new[] { corlibWithoutInAttributeRef }).EmitToImageReference();
-            var ref2 = CreateEmptyCompilation(refCode, references: new[] { corlibWithoutInAttributeRef }).EmitToImageReference();
+            var ref1 = CreateEmptyCompilation(refCode, references: new[] { corlibWithoutInAttributeRef }, assemblyName: "ref1").EmitToImageReference();
+            var ref2 = CreateEmptyCompilation(refCode, references: new[] { corlibWithoutInAttributeRef }, assemblyName: "ref2").EmitToImageReference();
 
             var user = @"
 public class Test
@@ -4466,9 +4473,9 @@ public class Test
 
             CreateEmptyCompilation(user, references: new[] { ref1, ref2, corlibWithoutInAttributeRef })
                 .VerifyDiagnostics(
-                    // (4,12): error CS0518: Predefined type 'System.Runtime.InteropServices.InAttribute' is not defined or imported
+                    // (4,12): error CS8356: Predefined type 'System.Runtime.InteropServices.InAttribute' is declared in multiple referenced assemblies: 'ref1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'ref2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'
                     //     public ref readonly int M() => throw null;
-                    Diagnostic(ErrorCode.ERR_PredefinedTypeNotFound, "ref readonly int").WithArguments("System.Runtime.InteropServices.InAttribute").WithLocation(4, 12));
+                    Diagnostic(ErrorCode.ERR_PredefinedTypeAmbiguous, "ref readonly int").WithArguments("System.Runtime.InteropServices.InAttribute", "ref1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "ref2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null").WithLocation(4, 12));
         }
 
         [Fact]

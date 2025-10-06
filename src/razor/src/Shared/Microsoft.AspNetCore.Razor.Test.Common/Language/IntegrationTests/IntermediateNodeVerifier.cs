@@ -1,12 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
@@ -23,7 +19,7 @@ public static class IntermediateNodeVerifier
         walker.AssertReachedEndOfBaseline();
     }
 
-    private class Walker : IntermediateNodeWalker
+    private sealed class Walker : IntermediateNodeWalker
     {
         private readonly string[] _baseline;
         private readonly IntermediateNodeWriter _visitor;
@@ -33,14 +29,10 @@ public static class IntermediateNodeVerifier
 
         public Walker(string[] baseline)
         {
-            _writer = new StringWriter();
-
-            _visitor = new IntermediateNodeWriter(_writer);
             _baseline = baseline;
-
+            _writer = new StringWriter();
+            _visitor = new IntermediateNodeWriter(_writer);
         }
-
-        public TextWriter Writer { get; }
 
         public override void VisitDefault(IntermediateNode node)
         {
@@ -64,7 +56,7 @@ public static class IntermediateNodeVerifier
             Assert.True(_baseline.Length == _index, "Not all lines of the baseline were visited!");
         }
 
-        private void AssertNodeEquals(IntermediateNode node, IEnumerable<IntermediateNode> ancestors, string expected, string actual)
+        private static void AssertNodeEquals(IntermediateNode node, ReadOnlySpan<IntermediateNode> ancestors, string? expected, string actual)
         {
             if (string.Equals(expected, actual))
             {
@@ -75,21 +67,22 @@ public static class IntermediateNodeVerifier
             if (expected == null)
             {
                 var message = "The node is missing from baseline.";
-                throw new IntermediateNodeBaselineException(node, Ancestors.ToArray(), expected, actual, message);
+                throw new IntermediateNodeBaselineException(node, ancestors, expected, actual, message);
             }
 
-            int charsVerified = 0;
+            var charsVerified = 0;
             AssertNestingEqual(node, ancestors, expected, actual, ref charsVerified);
             AssertNameEqual(node, ancestors, expected, actual, ref charsVerified);
-            AssertDelimiter(node, expected, actual, true, ref charsVerified);
+            AssertDelimiter(expected, actual, true, ref charsVerified);
             AssertLocationEqual(node, ancestors, expected, actual, ref charsVerified);
-            AssertDelimiter(node, expected, actual, false, ref charsVerified);
+            AssertDelimiter(expected, actual, false, ref charsVerified);
             AssertContentEqual(node, ancestors, expected, actual, ref charsVerified);
 
             throw new InvalidOperationException("We can't figure out HOW these two things are different. This is a bug.");
         }
 
-        private static void AssertNestingEqual(IntermediateNode node, IEnumerable<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
+        private static void AssertNestingEqual(
+            IntermediateNode node, ReadOnlySpan<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
         {
             var i = 0;
             for (; i < expected.Length; i++)
@@ -119,13 +112,14 @@ public static class IntermediateNodeVerifier
             if (failed)
             {
                 var message = "The node is at the wrong level of nesting. This usually means a child is missing.";
-                throw new IntermediateNodeBaselineException(node, ancestors.ToArray(), expected, actual, message);
+                throw new IntermediateNodeBaselineException(node, ancestors, expected, actual, message);
             }
 
             charsVerified = j;
         }
 
-        private static void AssertNameEqual(IntermediateNode node, IEnumerable<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
+        private static void AssertNameEqual(
+            IntermediateNode node, ReadOnlySpan<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
         {
             var expectedName = GetName(expected, charsVerified);
             var actualName = GetName(actual, charsVerified);
@@ -133,14 +127,14 @@ public static class IntermediateNodeVerifier
             if (!string.Equals(expectedName, actualName))
             {
                 var message = "Node names are not equal.";
-                throw new IntermediateNodeBaselineException(node, ancestors.ToArray(), expected, actual, message);
+                throw new IntermediateNodeBaselineException(node, ancestors, expected, actual, message);
             }
 
             charsVerified += expectedName.Length;
         }
 
         // Either both strings need to have a delimiter next or neither should.
-        private static void AssertDelimiter(IntermediateNode node, string expected, string actual, bool required, ref int charsVerified)
+        private static void AssertDelimiter(string expected, string actual, bool required, ref int charsVerified)
         {
             if (charsVerified == expected.Length && required)
             {
@@ -174,29 +168,31 @@ public static class IntermediateNodeVerifier
             charsVerified += 3;
         }
 
-        private static void AssertLocationEqual(IntermediateNode node, IEnumerable<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
+        private static void AssertLocationEqual(
+            IntermediateNode node, ReadOnlySpan<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
         {
             var expectedLocation = GetLocation(expected, charsVerified);
             var actualLocation = GetLocation(actual, charsVerified);
 
-            if (!string.Equals(expectedLocation, actualLocation))
+            if (expectedLocation != actualLocation)
             {
                 var message = "Locations are not equal.";
-                throw new IntermediateNodeBaselineException(node, ancestors.ToArray(), expected, actual, message);
+                throw new IntermediateNodeBaselineException(node, ancestors, expected, actual, message);
             }
 
             charsVerified += expectedLocation.Length;
         }
 
-        private static void AssertContentEqual(IntermediateNode node, IEnumerable<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
+        private static void AssertContentEqual(
+            IntermediateNode node, ReadOnlySpan<IntermediateNode> ancestors, string expected, string actual, ref int charsVerified)
         {
             var expectedContent = GetContent(expected, charsVerified);
             var actualContent = GetContent(actual, charsVerified);
 
-            if (!string.Equals(expectedContent, actualContent))
+            if (expectedContent != actualContent)
             {
                 var message = "Contents are not equal.";
-                throw new IntermediateNodeBaselineException(node, ancestors.ToArray(), expected, actual, message);
+                throw new IntermediateNodeBaselineException(node, ancestors, expected, actual, message);
             }
 
             charsVerified += expectedContent.Length;
@@ -210,7 +206,7 @@ public static class IntermediateNodeVerifier
                 throw new InvalidOperationException($"Baseline text is not well-formed: '{text}'.");
             }
 
-            return text.Substring(start, delimiter - start);
+            return text[start..delimiter];
         }
 
         private static string GetLocation(string text, int start)
@@ -224,23 +220,26 @@ public static class IntermediateNodeVerifier
             return start == text.Length ? string.Empty : text[start..];
         }
 
-        private class IntermediateNodeBaselineException : XunitException
+        private sealed class IntermediateNodeBaselineException : XunitException
         {
-            public IntermediateNodeBaselineException(IntermediateNode node, IntermediateNode[] ancestors, string expected, string actual, string userMessage)
-                : base(Format(node, ancestors, expected, actual, userMessage))
+            public IntermediateNode Node { get; }
+            public string? Actual { get; }
+            public string? Expected { get; }
+
+            public IntermediateNodeBaselineException(
+                IntermediateNode node,
+                ReadOnlySpan<IntermediateNode> ancestors,
+                string? expected,
+                string? actual,
+                string userMessage)
+                : base(Format(ancestors, expected, actual, userMessage))
             {
                 Node = node;
                 Expected = expected;
                 Actual = actual;
             }
 
-            public IntermediateNode Node { get; }
-
-            public string Actual { get; }
-
-            public string Expected { get; }
-
-            private static string Format(IntermediateNode node, IntermediateNode[] ancestors, string expected, string actual, string userMessage)
+            private static string Format(ReadOnlySpan<IntermediateNode> ancestors, string? expected, string? actual, string userMessage)
             {
                 using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
@@ -259,7 +258,7 @@ public static class IntermediateNodeVerifier
                     builder.AppendLine(actual);
                 }
 
-                if (ancestors != null)
+                if (!ancestors.IsEmpty)
                 {
                     builder.AppendLine();
                     builder.AppendLine("Path:");

@@ -27,17 +27,31 @@ namespace NuGet.ProjectModel
 
         private readonly bool _useLegacyAssetTargetFallbackBehavior;
 
+        private readonly bool _useLegacyDependencyGraphResolution = false;
+
         public PackageSpecReferenceDependencyProvider(
             IEnumerable<ExternalProjectReference> externalProjects,
             ILogger logger) :
             this(externalProjects,
-                environmentVariableReader: EnvironmentVariableWrapper.Instance)
+                environmentVariableReader: EnvironmentVariableWrapper.Instance,
+                useLegacyDependencyGraphResolution: false)
+        {
+        }
+
+        public PackageSpecReferenceDependencyProvider(
+            IEnumerable<ExternalProjectReference> externalProjects,
+            ILogger logger,
+            bool useLegacyDependencyGraphResolution) :
+            this(externalProjects,
+                environmentVariableReader: EnvironmentVariableWrapper.Instance,
+                useLegacyDependencyGraphResolution)
         {
         }
 
         internal PackageSpecReferenceDependencyProvider(
             IEnumerable<ExternalProjectReference> externalProjects,
-            IEnvironmentVariableReader environmentVariableReader)
+            IEnvironmentVariableReader environmentVariableReader,
+            bool useLegacyDependencyGraphResolution = false)
         {
             if (externalProjects == null)
             {
@@ -70,6 +84,7 @@ namespace NuGet.ProjectModel
                 }
             }
             _useLegacyAssetTargetFallbackBehavior = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable("NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION"));
+            _useLegacyDependencyGraphResolution = useLegacyDependencyGraphResolution;
         }
 
         public bool SupportsType(LibraryDependencyTarget libraryType)
@@ -99,7 +114,7 @@ namespace NuGet.ProjectModel
 
             var projectStyle = packageSpec?.RestoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
 
-            // Read references from external project - we don't care about dotnettool projects, since they don't have project refs
+            // Read references from external project
             if (projectStyle == ProjectStyle.PackageReference)
             {
                 // NETCore
@@ -249,7 +264,7 @@ namespace NuGet.ProjectModel
                         }
                     }
 
-                    var dependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                    var dependency = new LibraryDependency()
                     {
                         IncludeType = (reference.IncludeAssets & ~reference.ExcludeAssets),
                         SuppressParent = reference.PrivateAssets,
@@ -294,10 +309,17 @@ namespace NuGet.ProjectModel
                 // Set all dependencies from project.json to external if an external match was passed in
                 // This is viral and keeps p2ps from looking into directories when we are going down
                 // a path already resolved by msbuild.
-                foreach (var dependency in dependencies.Where(d => IsProject(d)
-                    && filteredExternalDependencies.Contains(d.Name)))
+                for (int i = 0; i < dependencies.Count; i++)
                 {
-                    dependency.LibraryRange.TypeConstraint = LibraryDependencyTarget.ExternalProject;
+                    var d = dependencies[i];
+                    if (IsProject(d) && filteredExternalDependencies.Contains(d.Name))
+                    {
+                        var libraryRange = new LibraryRange(d.LibraryRange) { TypeConstraint = LibraryDependencyTarget.ExternalProject };
+
+                        // Do not push the dependency changes here upwards, as the original package
+                        // spec should not be modified.
+                        dependencies[i] = new LibraryDependency(d) { LibraryRange = libraryRange };
+                    }
                 }
 
                 // Add dependencies passed in externally
@@ -306,7 +328,7 @@ namespace NuGet.ProjectModel
                 // Note: Only add in dependencies that are in the filtered list to avoid getting the wrong TxM
                 dependencies.AddRange(childReferences
                     .Where(reference => filteredExternalDependencies.Contains(reference.ProjectName))
-                    .Select(reference => new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                    .Select(reference => new LibraryDependency()
                     {
                         LibraryRange = new LibraryRange
                         {
@@ -328,9 +350,6 @@ namespace NuGet.ProjectModel
 
             if (packageSpec != null)
             {
-                // Add dependencies section
-                dependencies.AddRange(packageSpec.Dependencies);
-
                 // Add framework specific dependencies
                 var targetFrameworkInfo = packageSpec.GetTargetFramework(targetFramework);
 
@@ -344,13 +363,13 @@ namespace NuGet.ProjectModel
 
                 dependencies.AddRange(targetFrameworkInfo.Dependencies);
 
-                if (packageSpec.RestoreMetadata?.CentralPackageVersionsEnabled == true &&
+                if (_useLegacyDependencyGraphResolution && packageSpec.RestoreMetadata?.CentralPackageVersionsEnabled == true &&
                     packageSpec.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true)
                 {
                     var dependencyNamesSet = new HashSet<string>(targetFrameworkInfo.Dependencies.Select(d => d.Name), StringComparer.OrdinalIgnoreCase);
                     dependencies.AddRange(targetFrameworkInfo.CentralPackageVersions
                         .Where(item => !dependencyNamesSet.Contains(item.Key))
-                        .Select(item => new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
+                        .Select(item => new LibraryDependency()
                         {
                             LibraryRange = new LibraryRange(item.Value.Name, item.Value.VersionRange, LibraryDependencyTarget.Package),
                             VersionCentrallyManaged = true,
@@ -363,17 +382,35 @@ namespace NuGet.ProjectModel
 
                 for (var i = 0; i < dependencies.Count; i++)
                 {
-                    // Clone the library dependency so we can safely modify it. The instance cloned here is from the
-                    // original package spec, which should not be modified.
-                    dependencies[i] = dependencies[i].Clone();
+                    // Do not push the dependency changes here upwards, as the original package
+                    // spec should not be modified.
+
                     // Remove "project" from the allowed types for this dependency
                     // This will require that projects referenced by an msbuild project
                     // must be external projects.
-                    dependencies[i].LibraryRange.TypeConstraint &= ~LibraryDependencyTarget.Project;
+                    var dependency = dependencies[i];
+                    bool isPruned = IsDependencyPruned(dependency, targetFrameworkInfo.PackagesToPrune);
+                    var libraryRange = new LibraryRange(dependency.LibraryRange) { TypeConstraint = dependency.LibraryRange.TypeConstraint & ~LibraryDependencyTarget.Project };
+                    dependencies[i] = new LibraryDependency(dependency)
+                    {
+                        LibraryRange = libraryRange,
+                        SuppressParent = isPruned ? LibraryIncludeFlags.All : dependency.SuppressParent,
+                        IncludeType = isPruned ? LibraryIncludeFlags.None : dependency.IncludeType,
+                    };
                 }
             }
 
             return dependencies;
+
+            static bool IsDependencyPruned(LibraryDependency dependency, IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune)
+            {
+                if (packagesToPrune?.TryGetValue(dependency.Name, out PrunePackageReference packageToPrune) == true
+                    && dependency.LibraryRange.VersionRange.Satisfies(packageToPrune.VersionRange.MaxVersion))
+                {
+                    return true;
+                }
+                return false;
+            }
         }
 
         private bool IsProject(LibraryDependency dependency)

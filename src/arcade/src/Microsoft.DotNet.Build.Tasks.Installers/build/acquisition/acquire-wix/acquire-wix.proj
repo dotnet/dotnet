@@ -8,10 +8,23 @@
 
     Adapted from https://github.com/dotnet/core-sdk/blob/6aed0cd3614f9b740cfb3f21fdb795bab53ef7e9/src/redist/targets/GenerateMSIs.targets#L80-L102
   -->
+  <PropertyGroup>
+    <_WixIntermediateOutputPath>$(BaseIntermediateOutputPath)wix</_WixIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WixVersion>3.14.1-9323.2545153</WixVersion>
+    <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
+
+    <WixDownloadFilename>Microsoft.Signed.Wix-$(WixVersion).zip</WixDownloadFilename>
+    <WixDownloadUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/wix/$(WixDownloadFilename)</WixDownloadUrl>
+    <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
+    <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
+  </PropertyGroup>
   <Target Name="AcquireWixCore"
-          DependsOnTargets="GetAcquireWixProperties"
           Inputs="$(WixDownloadSentinel)"
-          Outputs="$(WixDestinationPath)">
+          Outputs="$(WixDestinationPath)"
+          Returns="$(WixToolsDir)">
     <!-- Setup sentinel to take advantage of incrementality -->
     <MakeDir Directories="$(WixToolsDir)" />
     <WriteLinesToFile

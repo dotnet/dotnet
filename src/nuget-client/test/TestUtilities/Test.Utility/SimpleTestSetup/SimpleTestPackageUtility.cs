@@ -7,7 +7,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,8 +17,9 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.PackageExtraction;
-using NuGet.Packaging.Signing;
 using NuGet.Versioning;
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Packaging.Signing;
 
 namespace NuGet.Test.Utility
 {
@@ -153,8 +153,8 @@ namespace NuGet.Test.Utility
                 }
                 else
                 {
-                    zip.AddEntry("contentFiles/any/any/config.xml", new byte[] { 0 });
-                    zip.AddEntry("contentFiles/cs/net45/code.cs", new byte[] { 0 });
+                    zip.AddEntry("contentFiles/any/any/config.xml", @"", Encoding.UTF8);
+                    zip.AddEntry("contentFiles/cs/net45/code.cs", @"", Encoding.UTF8);
                     zip.AddEntry("lib/net45/a.dll", new byte[] { 0 });
                     zip.AddEntry("lib/netstandard1.0/a.dll", new byte[] { 0 });
                     zip.AddEntry($"build/net45/{id}.targets", @"<Project />", Encoding.UTF8);
@@ -281,11 +281,8 @@ namespace NuGet.Test.Utility
             if (isUsingTempStream)
             {
                 using (tempStream)
-#if IS_SIGNING_SUPPORTED
                 using (var signPackage = new SignedPackageArchive(tempStream, stream))
-#endif
                 {
-#if IS_SIGNING_SUPPORTED
                     using (var request = GetPrimarySignRequest(packageContext))
                     {
                         await AddSignatureToPackageAsync(packageContext, signPackage, request, testLogger);
@@ -302,7 +299,6 @@ namespace NuGet.Test.Utility
                             await AddRepositoryCountersignatureToSignedPackageAsync(packageContext, signPackage, request, testLogger);
                         }
                     }
-#endif
                 }
             }
 
@@ -339,7 +335,7 @@ namespace NuGet.Test.Utility
             return packages.Select(e =>
                 new PackageDependency(
                     e.Id,
-                    VersionRange.Parse(e.Version),
+                    e.Version != null ? VersionRange.Parse(e.Version) : null,
                     string.IsNullOrEmpty(e.Include)
                         ? new List<string>()
                         : e.Include.Split(',').ToList(),
@@ -348,7 +344,6 @@ namespace NuGet.Test.Utility
                         : e.Exclude.Split(',').ToList())).ToList();
         }
 
-#if IS_SIGNING_SUPPORTED
         private static SignPackageRequest GetPrimarySignRequest(SimpleTestPackageContext packageContext)
         {
             if (packageContext.V3ServiceIndexUrl != null)
@@ -399,7 +394,6 @@ namespace NuGet.Test.Utility
                 }
             }
         }
-#endif
 
         /// <summary>
         /// Create packages.
@@ -412,7 +406,23 @@ namespace NuGet.Test.Utility
         /// <summary>
         /// Create all packages in the list, including dependencies.
         /// </summary>
-        public static async Task CreatePackagesAsync(List<SimpleTestPackageContext> packages, string repositoryPath)
+        public static Task CreatePackagesAsync(List<SimpleTestPackageContext> packages, string repositoryPath)
+        {
+            return CreatePackagesAsync(packages, repositoryPath, skipDependencies: false);
+        }
+
+        /// <summary>
+        /// Create packages, but skip creating the dependencies. This makes it easier to test missing versions/missing dependencies scenarios
+        /// </summary>
+        public static async Task CreatePackagesWithoutDependenciesAsync(string repositoryPath, params SimpleTestPackageContext[] package)
+        {
+            await CreatePackagesAsync([.. package], repositoryPath, skipDependencies: true);
+        }
+
+        /// <summary>
+        /// Create all packages in the list, including dependencies.
+        /// </summary>
+        internal static async Task CreatePackagesAsync(List<SimpleTestPackageContext> packages, string repositoryPath, bool skipDependencies = false)
         {
             var done = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var toCreate = new Stack<SimpleTestPackageContext>(packages);
@@ -426,10 +436,12 @@ namespace NuGet.Test.Utility
                     await CreateFullPackageAsync(
                         repositoryPath,
                         package);
-
-                    foreach (var dep in package.Dependencies)
+                    if (!skipDependencies)
                     {
-                        toCreate.Push(dep);
+                        foreach (var dep in package.Dependencies)
+                        {
+                            toCreate.Push(dep);
+                        }
                     }
                 }
             }
@@ -686,7 +698,7 @@ namespace NuGet.Test.Utility
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        var nuspec = archive.Entries.Where(entry => entry.Name.EndsWith(NuGetConstants.ManifestExtension)).SingleOrDefault();
+                        var nuspec = archive.Entries.SingleOrDefault(entry => entry.Name.EndsWith(NuGetConstants.ManifestExtension));
                         nuspec?.Delete();
                     }
                 }

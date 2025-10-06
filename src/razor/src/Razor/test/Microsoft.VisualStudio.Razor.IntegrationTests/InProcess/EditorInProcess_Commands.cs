@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -58,7 +58,8 @@ internal partial class EditorInProcess
         var commandId = VSStd2KCmdID.RENAME;
 
         // Rename seems to be extra-succeptable to COM exceptions
-        await Helper.RetryAsync<bool?>(async (cancellationToken) => {
+        await Helper.RetryAsync<bool?>(async (cancellationToken) =>
+        {
             await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
             return true;
         }, TimeSpan.FromSeconds(1), cancellationToken);
@@ -69,7 +70,7 @@ internal partial class EditorInProcess
         await CloseFileAsync(projectName, relativeFilePath, VSConstants.LOGVIEWID.Code_guid, saveFile, cancellationToken);
     }
 
-    public async Task CloseCurrentlyFocusedWindowAsync(CancellationToken cancellationToken)
+    public async Task CloseCurrentlyFocusedWindowAsync(CancellationToken cancellationToken, bool save = false)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
@@ -77,7 +78,10 @@ internal partial class EditorInProcess
         ErrorHandler.ThrowOnFailure(monitorSelection.GetCurrentElementValue((uint)VSSELELEMID.SEID_WindowFrame, out var windowFrameObj));
         var windowFrame = (IVsWindowFrame)windowFrameObj;
 
-        ErrorHandler.ThrowOnFailure(windowFrame.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave));
+        var closeFlags = save
+            ? __FRAMECLOSE.FRAMECLOSE_SaveIfDirty
+            : __FRAMECLOSE.FRAMECLOSE_NoSave;
+        ErrorHandler.ThrowOnFailure(windowFrame.CloseFrame((uint)closeFlags));
     }
 
     private async Task ExecuteCommandAsync(Guid commandGuid, uint commandId, CancellationToken cancellationToken)

@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 namespace NuGet.ProjectManagement
 {
     /// <summary>
@@ -60,5 +59,10 @@ namespace NuGet.ProjectManagement
         public const string NuGetAuditLevel = nameof(NuGetAuditLevel);
         public const string NuGetAuditMode = nameof(NuGetAuditMode);
         public const string CentralPackageFloatingVersionsEnabled = nameof(CentralPackageFloatingVersionsEnabled);
+        public const string SdkAnalysisLevel = nameof(SdkAnalysisLevel);
+        public const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
+        public const string RestoreUseLegacyDependencyResolver = nameof(RestoreUseLegacyDependencyResolver);
+        public const string RestoreEnablePackagePruning = nameof(RestoreEnablePackagePruning);
+        public const string RestorePackagePruningDefault = "_" + nameof(RestorePackagePruningDefault);
     }
 }

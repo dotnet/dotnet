@@ -17,7 +17,7 @@
                         CSharpCodeBlock - [12..55)::43
                             CSharpStatementLiteral - [12..55)::43 - [ var foo = bar; if(foo != null) { bar(); } ] - Gen<Stmt>
                                 Whitespace;[ ];
-                                Identifier;[var];
+                                Keyword;[var];
                                 Whitespace;[ ];
                                 Identifier;[foo];
                                 Whitespace;[ ];
@@ -30,7 +30,7 @@
                                 LeftParenthesis;[(];
                                 Identifier;[foo];
                                 Whitespace;[ ];
-                                NotEqual;[!=];
+                                CSharpOperator;[!=];
                                 Whitespace;[ ];
                                 Keyword;[null];
                                 RightParenthesis;[)];

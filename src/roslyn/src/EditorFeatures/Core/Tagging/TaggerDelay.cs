@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 namespace Microsoft.CodeAnalysis.Editor.Tagging;
 
 /// <summary>
@@ -37,6 +35,14 @@ internal enum TaggerDelay
     /// Indicates that the tagger should run when the user appears to be idle.  
     /// </summary>
     OnIdle,
+
+    /// <summary>
+    /// Indicates that the tagger should run when the user appears to be idle,
+    /// with an additional long delay after idle (10s of seconds).
+    /// This delay is useful for taggers which are computationally very expensive
+    /// and do not need to be up-to-date all the time.
+    /// </summary>
+    OnIdleWithLongDelay,
 
     /// <summary>
     /// Indicates that the tagger is not view, and should be on a very delayed update cadence.

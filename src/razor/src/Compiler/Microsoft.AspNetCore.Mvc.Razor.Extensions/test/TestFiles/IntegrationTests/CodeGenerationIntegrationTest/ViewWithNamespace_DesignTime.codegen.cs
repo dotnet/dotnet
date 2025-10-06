@@ -16,7 +16,7 @@ namespace Test.Namespace
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewWithNamespace.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewWithNamespace : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
+    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewWithNamespace : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     #nullable disable
     {
         #pragma warning disable 219

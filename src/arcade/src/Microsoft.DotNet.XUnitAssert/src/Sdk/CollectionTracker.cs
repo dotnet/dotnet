@@ -1,3 +1,20 @@
+#pragma warning disable CA1063 // Implement IDisposable Correctly
+#pragma warning disable CA1000 // Do not declare static members on generic types
+#pragma warning disable IDE0016 // Use 'throw' expression
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0028 // Simplify collection initialization
+#pragma warning disable IDE0034 // Simplify 'default' expression
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0063 // Use simple 'using' statement
+#pragma warning disable IDE0074 // Use compound assignment
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0290 // Use primary constructor
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -50,7 +67,7 @@ namespace Xunit.Sdk
 			InnerEnumerable = innerEnumerable;
 		}
 
-		static MethodInfo openGenericCompareTypedSetsMethod =
+		static readonly MethodInfo openGenericCompareTypedSetsMethod =
 			typeof(CollectionTracker)
 				.GetRuntimeMethods()
 				.Single(m => m.Name == nameof(CompareTypedSets));
@@ -273,7 +290,7 @@ namespace Xunit.Sdk
 					{
 						int? _;
 						var innerCompare = AreCollectionsEqual(xCurrentTracker, yCurrentTracker, AssertEqualityComparer<object>.DefaultInnerComparer, true, out _);
-						if (innerCompare == false)
+						if (!innerCompare)
 							return false;
 					}
 					else if (!itemComparer.Equals(xCurrent, yCurrent))
@@ -520,7 +537,7 @@ namespace Xunit.Sdk
 #else
 				enumerator.CurrentItems,
 #endif
-				() => enumerator.MoveNext(),
+				enumerator.MoveNext,
 				startIndex,
 				endIndex,
 				mismatchedIndex,
@@ -542,7 +559,7 @@ namespace Xunit.Sdk
 
 			return FormatIndexedMismatch(
 				enumerator.CurrentItems,
-				() => enumerator.MoveNext(),
+				enumerator.MoveNext,
 				startIndex,
 				endIndex,
 				mismatchedIndex,
@@ -800,7 +817,7 @@ namespace Xunit.Sdk
 		sealed class Enumerator : IEnumerator<T>
 		{
 			int currentItemsLastInsertionIndex = -1;
-			T[] currentItemsRingBuffer = new T[ArgumentFormatter.MAX_ENUMERABLE_LENGTH];
+			readonly T[] currentItemsRingBuffer = new T[ArgumentFormatter.MAX_ENUMERABLE_LENGTH];
 			readonly IEnumerator<T> innerEnumerator;
 
 			public Enumerator(IEnumerator<T> innerEnumerator)
@@ -852,10 +869,8 @@ namespace Xunit.Sdk
 			public void Dispose()
 			{ }
 
-			public void DisposeInternal()
-			{
+			public void DisposeInternal() =>
 				innerEnumerator.Dispose();
-			}
 
 			public bool MoveNext()
 			{

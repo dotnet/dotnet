@@ -1,34 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using System.Collections.Generic;
+using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
-public sealed class ViewComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, ITagHelperDescriptorProvider
+public sealed class ViewComponentTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public int Order { get; set; }
-
-    public void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgHelper.ThrowIfNull(context);
 
-        var compilation = context.GetCompilation();
-        if (compilation == null)
-        {
-            // No compilation, nothing to do.
-            return;
-        }
+        var compilation = context.Compilation;
 
         var vcAttribute = compilation.GetTypeByMetadataName(ViewComponentTypes.ViewComponentAttribute);
         var nonVCAttribute = compilation.GetTypeByMetadataName(ViewComponentTypes.NonViewComponentAttribute);
@@ -41,35 +28,35 @@ public sealed class ViewComponentTagHelperDescriptorProvider : RazorEngineFeatur
         var factory = new ViewComponentTagHelperDescriptorFactory(compilation);
         var collector = new Collector(compilation, factory, vcAttribute, nonVCAttribute);
 
-        collector.Collect(context);
+        collector.Collect(context, cancellationToken);
     }
 
     private class Collector(
         Compilation compilation,
         ViewComponentTagHelperDescriptorFactory factory,
         INamedTypeSymbol vcAttribute,
-        INamedTypeSymbol nonVCAttribute)
-        : TagHelperCollector<Collector>(compilation, targetSymbol: null)
+        INamedTypeSymbol? nonVCAttribute)
+        : TagHelperCollector<Collector>(compilation, targetAssembly: null)
     {
         private readonly ViewComponentTagHelperDescriptorFactory _factory = factory;
         private readonly INamedTypeSymbol _vcAttribute = vcAttribute;
-        private readonly INamedTypeSymbol _nonVCAttribute = nonVCAttribute;
+        private readonly INamedTypeSymbol? _nonVCAttribute = nonVCAttribute;
 
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IncludeNestedTypes => true;
+
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => type.IsViewComponent(_vcAttribute, _nonVCAttribute);
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new ViewComponentTypeVisitor(_vcAttribute, _nonVCAttribute, types);
+            var descriptor = _factory.CreateDescriptor(type);
 
-            visitor.Visit(symbol);
-
-            foreach (var type in types)
+            if (descriptor != null)
             {
-                var descriptor = _factory.CreateDescriptor(type);
-
-                if (descriptor != null)
-                {
-                    results.Add(descriptor);
-                }
+                results.Add(descriptor);
             }
         }
     }

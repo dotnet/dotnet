@@ -1,13 +1,18 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using NuGet.CommandLine.XPlat;
+using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
@@ -25,7 +30,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void GetDirectoryBuildPropsRootElementWhenItExists_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
 
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
@@ -44,11 +49,17 @@ namespace NuGet.CommandLine.Xplat.Tests
                 ProjectCollection = projectCollection
             };
 
-            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), @$"<Project />");
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 </Project>";
@@ -66,7 +77,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void AddPackageReferenceIntoProjectFileWhenItemGroupDoesNotExist_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -87,7 +98,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange project file
             string projectContent =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 <TargetFramework>net6.0</TargetFramework>
 </PropertyGroup>
 </Project>";
@@ -120,7 +131,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void AddPackageReferenceIntoProjectFileWhenItemGroupDoesExist_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -141,7 +152,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange project file
             string projectContent =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
+<PropertyGroup>
 <TargetFramework>net6.0</TargetFramework>
 </PropertyGroup>
 <ItemGroup>
@@ -150,8 +161,8 @@ namespace NuGet.CommandLine.Xplat.Tests
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
-
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var logger = new TestLogger();
+            var msObject = new MSBuildAPIUtility(logger: logger);
             // Getting all the item groups in a given project
             var itemGroups = msObject.GetItemGroups(project);
             // Getting an existing item group that has package reference(s)
@@ -173,13 +184,14 @@ namespace NuGet.CommandLine.Xplat.Tests
             string updatedProjectFile = File.ReadAllText(Path.Combine(testDirectory, "projectA.csproj"));
             Assert.Contains(@$"<PackageReference Include=""X"" />", updatedProjectFile);
             Assert.DoesNotContain(@$"<Version = ""1.0.0"" />", updatedProjectFile);
+            Assert.Contains(string.Format(Strings.Info_AddPkgCPM, "X", project.FullPath, project.GetPropertyValue("DirectoryPackagesPropsPath")), logger.InformationMessages);
         }
 
         [PlatformFact(Platform.Windows)]
         public void AddPackageVersionIntoPropsFileWhenItemGroupDoesNotExist_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -198,12 +210,18 @@ namespace NuGet.CommandLine.Xplat.Tests
             };
 
             // Arrange Directory.Packages.props file
-            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), "<Project />");
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 </Project>";
@@ -238,7 +256,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void AddPackageVersionIntoPropsFileWhenItemGroupExists_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -259,16 +277,19 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -304,7 +325,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void UpdatePackageVersionInPropsFileWhenItExists_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -325,16 +346,19 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             // Arrange project file
             string projectContent =
-@$"<Project Sdk=""Microsoft.NET.Sdk"">    
-	<PropertyGroup>                   
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
@@ -370,7 +394,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void UpdateVersionOverrideInPropsFileWhenItExists_Success()
         {
             // Arrange
-            var testDirectory = TestDirectory.Create();
+            using var testDirectory = TestDirectory.Create();
             var projectCollection = new ProjectCollection(
                             globalProperties: null,
                             remoteLoggers: null,
@@ -391,8 +415,11 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
@@ -430,6 +457,332 @@ namespace NuGet.CommandLine.Xplat.Tests
             string updatedPropsFile = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
             Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", updatedPropsFile);
             Assert.DoesNotContain(@$"<PackageVersion Include=""X"" VersionOverride=""3.0.0"" />", updatedPropsFile);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+
+            projectA.Save();
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
+
+            // Assert
+            Assert.Equal(projectList.Count(), 1);
+            Assert.Contains(projectA.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+
+            projectA.Save();
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
+
+            // Assert
+            Assert.Equal(projectList.Count(), 1);
+            Assert.Contains(projectA.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
+
+            // Assert
+            Assert.Equal(projectList.Count(), 2);
+            Assert.Contains(projectA.ProjectPath, projectList);
+            Assert.Contains(projectB.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
+
+            // Assert
+            Assert.Equal(projectList.Count(), 2);
+            Assert.Contains(projectA.ProjectPath, projectList);
+            Assert.Contains(projectB.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetProjectsFromSolution_WithSolutionFile_ReturnsCorrectAbsolutePaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetProjectsFromSolution(solution.SolutionPath);
+
+            // Assert
+            projectList.Count().Should().Be(2);
+            projectList.Should().Contain(projectA.ProjectPath);
+            projectList.Should().Contain(projectB.ProjectPath);
+            Path.IsPathRooted(projectList.First()).Should().BeTrue();
+            Path.IsPathRooted(projectList.Last()).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetProjectsFromSolution_WithSolutionFilter_ReturnsFilteredProjects(bool useSlnx)
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx);
+            var tfm = FrameworkConstants.CommonFrameworks.NetStandard20;
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, tfm);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, tfm);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            var slnfContents = $$"""
+                {
+                    "solution": {
+                        "path": "solution.{{(useSlnx ? "slnx" : "sln")}}",
+                        "projects": [
+                            "a\\a.csproj"
+                        ]
+                    }
+                }
+                """;
+            var slnfPath = Path.Combine(pathContext.SolutionRoot, "filter.slnf");
+            File.WriteAllText(slnfPath, slnfContents);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetProjectsFromSolution(slnfPath);
+
+            // Assert
+            projectList.Should().BeEquivalentTo([projectA.ProjectPath]);
+        }
+
+        [Theory]
+        [InlineData("X.sln", "Y.sln")]
+        [InlineData("A.csproj", "B.csproj")]
+        [InlineData("X.sln", "A.csproj")]
+        [InlineData()]
+        [InlineData("random.txt")]
+        public void GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+            foreach (var filename in directoryFiles)
+            {
+                var filePath = Path.Combine(pathContext.SolutionRoot, filename);
+                File.Create(filePath);
+            }
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
+        }
+
+        [Fact]
+        public void GetResolvedVersions_WithAPackageInDirectoryBuildProps_GetsVersion()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var projectOptions = new ProjectOptions();
+
+            var BuildPropsFile =
+@$"<Project>
+    <ItemGroup>
+    <GlobalPackageReference Include=""myPackage"" Version=""1.1.1"" />
+  </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"), BuildPropsFile);
+
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"),
+                @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>");
+
+            var project = Project.FromFile(projectA.ProjectPath, projectOptions);
+            var lockFile = new LockFile
+            {
+                Version = 3,
+                Targets = new List<LockFileTarget>
+                {
+                    new LockFileTarget()
+                    {
+                        TargetFramework = net8,
+                        Libraries = new List<LockFileTargetLibrary>
+                        {
+                            new LockFileTargetLibrary()
+                            {
+                                Name = "myPackage",
+                                Version = new NuGetVersion("1.2.3")
+                            }
+                        }
+                    }
+                },
+
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = net8,
+                        Dependencies =
+                        [
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange("myPackage")
+                            }
+                        ]
+                    }
+                })
+                {
+                    Version = new NuGetVersion("1.0.0"),
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        CentralPackageVersionsEnabled = true
+                    }
+                }
+            };
+
+            // Act
+            var result = MSBuildAPIUtility.GetResolvedVersions(project: project, new List<string>(), lockFile, false);
+
+            // Assert
+            var version = result.First().TopLevelPackages.First().OriginalRequestedVersion;
+            Assert.Equal("1.1.1", version);
+        }
+
+        [Fact]
+        public void GetResolvedVersions_WithAPackageInDirectoryPackageProps_GetsVersion()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var projectOptions = new ProjectOptions();
+
+            var PackagePropsFile =
+@$"<Project>
+    <PropertyGroup>
+      <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+    <GlobalPackageReference Include=""myPackage"" Version=""1.1.1"" />
+  </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), PackagePropsFile);
+
+            var project = Project.FromFile(projectA.ProjectPath, projectOptions);
+            var lockFile = new LockFile
+            {
+                Version = 3,
+                Targets = new List<LockFileTarget>
+                {
+                    new LockFileTarget()
+                    {
+                        TargetFramework = net8,
+                        Libraries = new List<LockFileTargetLibrary>
+                        {
+                            new LockFileTargetLibrary()
+                            {
+                                Name = "myPackage",
+                                Version = new NuGetVersion("1.2.3")
+                            }
+                        }
+                    }
+                },
+
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = net8,
+                        Dependencies =
+                        [
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange("myPackage")
+                            }
+                        ]
+                    }
+                })
+                {
+                    Version = new NuGetVersion("1.0.0"),
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        CentralPackageVersionsEnabled = true
+                    }
+                }
+            };
+
+            // Act
+            var result = MSBuildAPIUtility.GetResolvedVersions(project: project, new List<string>(), lockFile, false);
+
+            // Assert
+            var version = result.First().TopLevelPackages.First().OriginalRequestedVersion;
+            Assert.Equal("1.1.1", version);
         }
     }
 }

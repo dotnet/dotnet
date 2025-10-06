@@ -8,16 +8,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    internal static class EmptyArray<T>
-    {
-        public static readonly T[] Instance = new T[0];
-    }
-
     internal class InteropUtilities
     {
         private static readonly IntPtr s_ignoreIErrorInfo = new IntPtr(-1);
 
-        internal static T[] NullToEmpty<T>(T[] items) => (items == null) ? EmptyArray<T>.Instance : items;
+        internal static T[] NullToEmpty<T>(T[] items) => items == null ? [] : items;
 
         internal static void ThrowExceptionForHR(int hr)
         {

@@ -104,13 +104,8 @@ let debugStaticLinking = isEnvVarSet "FSHARP_DEBUG_STATIC_LINKING"
 #endif
 
 let StaticLinkILModules
-    (
-        tcConfig: TcConfig,
-        ilGlobals,
-        tcImports,
-        ilxMainModule,
-        dependentILModules: (CcuThunk option * ILModuleDef) list
-    ) =
+    (tcConfig: TcConfig, ilGlobals, tcImports, ilxMainModule, dependentILModules: (CcuThunk option * ILModuleDef) list)
+    =
     if isNil dependentILModules then
         ilxMainModule, id
     else
@@ -158,7 +153,7 @@ let StaticLinkILModules
                     match depILModule.Manifest with
                     | Some m ->
                         for ca in m.CustomAttrs.AsArray() do
-                            if ca.Method.MethodRef.DeclaringTypeRef.FullName = typeof<CompilationMappingAttribute>.FullName then
+                            if ca.Method.MethodRef.DeclaringTypeRef.FullName = !!typeof<CompilationMappingAttribute>.FullName then
                                 ca
                     | _ -> ()
             ]
@@ -184,7 +179,8 @@ let StaticLinkILModules
 
             // Save only the interface/optimization attributes of generated data
             let intfDataResources, others =
-                allResources |> List.partition (snd >> IsSignatureDataResource)
+                allResources
+                |> List.partition (fun (_, r) -> IsSignatureDataResource r || IsSignatureDataResourceB r)
 
             let intfDataResources =
                 [
@@ -194,7 +190,8 @@ let StaticLinkILModules
                 ]
 
             let optDataResources, others =
-                others |> List.partition (snd >> IsOptimizationDataResource)
+                others
+                |> List.partition (fun (_, r) -> IsOptimizationDataResource r || IsOptimizationDataResourceB r)
 
             let optDataResources =
                 [

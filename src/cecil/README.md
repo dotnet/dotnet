@@ -1,5 +1,4 @@
 Cecil
 =====
 
-This is a fork of [Cecil](https://github.com/jbevain/cecil) library. Please do any pull requests in the original repository before they are merged into Mono fork.
-
+This is a fork of [Cecil](https://github.com/jbevain/cecil) library. Please submit all pull requests to the original repository before merging them into this fork.

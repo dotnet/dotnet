@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../Resources.resx">
+    <body>
+      <trans-unit id="XMLTRANSFORMATION_AmbiguousTypeMatch">
+        <source>Type '{0}' was found in more than one assembly</source>
+        <target state="translated">Тип «{0}» был найден больше чем в одной сборке</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_BadAttributeValue">
+        <source>Transform and Locator attributes must contain only a type name, or a type name followed by a list of attributes in parentheses.</source>
+        <target state="translated">Атрибуты Transform и Locator должны содержать только имя типа или имя типа и список атрибутов в круглых скобках.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_FatalTransformSyntaxError">
+        <source>Fatal syntax error</source>
+        <target state="translated">Неустранимая синтаксическая ошибка.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportAttributeConflict">
+        <source>Import tag cannot have both a 'path' and an 'assembly'</source>
+        <target state="translated">Тег Import не может содержать атрибут path и атрибут assembly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportMissingAssembly">
+        <source>Import tag must have a 'path' or an 'assembly'</source>
+        <target state="translated">Тег Import должен содержать атрибут path или атрибут assembly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportMissingNamespace">
+        <source>Import tag must have a 'namespace'</source>
+        <target state="translated">Тег Import должен содержать атрибут namespace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportUnknownAttribute">
+        <source>Import tag does not support '{0}' attribute</source>
+        <target state="translated">Тег Import не поддерживает атрибут «{0}»</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_IncorrectBaseType">
+        <source>'{0}' is not a type of {1}</source>
+        <target state="translated">Тип «{0}» отличается от {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertBadXPath">
+        <source>No element in the source document matches '{0}'</source>
+        <target state="translated">Ни один элемент в исходном документе не соответствует «{0}»</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertBadXPathResult">
+        <source>'{0}' does not evaluate to an element</source>
+        <target state="translated">«{0}» не вычисляется как элемент</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertMissingArgument">
+        <source>{0} requires an XPath argument</source>
+        <target state="translated">Для {0} требуется аргумент XPath</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertTooManyArguments">
+        <source>Too many arguments to {0}</source>
+        <target state="translated">Слишком много аргументов для {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InvalidCommentOutTarget">
+        <source>Cannot comment out the whole XML document</source>
+        <target state="new">Cannot comment out the whole XML document</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_MatchAttributeDoesNotExist">
+        <source>No attribute '{0}' exists for the Match Locator</source>
+        <target state="translated">Отсутствует атрибут «{0}» для Match Locator</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_NoValidConstructor">
+        <source>Type '{0}' must have a no-argument constructor to be instantiated by the transformation engine</source>
+        <target state="translated">Чтобы подсистема преобразования смогла создать экземпляр типа «{0}», у него должен быть конструктор без аргументов</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_RequiresExactArguments">
+        <source>{0} requires exactly {1} arguments</source>
+        <target state="translated">Для {0} требуется следующее количество аргументов: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_RequiresMinimumArguments">
+        <source>{0} requires at least {1} arguments</source>
+        <target state="translated">Для {0} требуется не менее следующего числа аргументов: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TooManyArguments">
+        <source>Too many arguments for {0}</source>
+        <target state="translated">Слишком много аргументов для {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformArgumentFoundNoAttributes">
+        <source>Argument '{0}' did not match any attributes</source>
+        <target state="translated">Аргумент «{0}» не соответствует ни одному атрибуту</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformBeginExecutingMessage">
+        <source>Executing {0}</source>
+        <target state="translated">Идет выполнение {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformDoesNotExpectArguments">
+        <source>{0} does not expect arguments; ignoring</source>
+        <target state="translated">{0} не ожидает аргументов; пропускается</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformEndExecutingMessage">
+        <source>Done executing {0}</source>
+        <target state="translated">Выполнение {0} завершено.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformErrorExecutingMessage">
+        <source>Error during {0}</source>
+        <target state="translated">Ошибка при {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageCommentOut">
+        <source>Commented out '{0}' element</source>
+        <target state="new">Commented out '{0}' element</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageInsert">
+        <source>Inserted '{0}' element</source>
+        <target state="translated">Вставлен элемент "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageNoRemoveAttributes">
+        <source>No attributes found to remove</source>
+        <target state="translated">Не найдены атрибуты для удаления</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageNoSetAttributes">
+        <source>No attributes found to set</source>
+        <target state="translated">Не найдены атрибуты для настройки</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemove">
+        <source>Removed '{0}' element</source>
+        <target state="translated">Удален элемент "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemoveAttribute">
+        <source>Removed '{0}' attribute</source>
+        <target state="translated">Удален атрибут "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemoveAttributes">
+        <source>Removed {0} attributes</source>
+        <target state="translated">Удалено атрибутов: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageReplace">
+        <source>Replaced '{0}' element</source>
+        <target state="translated">Заменен элемент "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageSetAttribute">
+        <source>Set '{0}' attribute</source>
+        <target state="translated">Задан {0} атрибут.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageSetAttributes">
+        <source>Set {0} attributes</source>
+        <target state="translated">Задано атрибутов: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNameFormatLong">
+        <source>{0} (transform line {1}, {2})</source>
+        <target state="translated">{0} (строка преобразования {1}, {2})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNameFormatShort">
+        <source>{0}</source>
+        <target state="translated">{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNoMatchingTargetNodes">
+        <source>No element in the source document matches '{0}'</source>
+        <target state="translated">Ни один элемент в исходном документе не соответствует «{0}»</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNotExecutingMessage">
+        <source>Not executing {0}</source>
+        <target state="translated">{0} не выполняется.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformOnlyAppliesOnce">
+        <source>Found multiple target elements, but the '{0}' Transform only applies to the first match</source>
+        <target state="translated">Обнаружено несколько целевых элементов, но «{0}» Transform относится только к первому совпадению</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformSourceMatchWasRemoved">
+        <source>'{0}' did not find a match, because matching nodes in the source document were modified or removed by a previous transform</source>
+        <target state="translated">"{0}" не удалось найти совпадения, так как совпадающие узлы в исходном документе изменены или удалены предыдущим преобразованием</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusApplyTarget">
+        <source>Applying to '{0}' element (source line {1}, {2})</source>
+        <target state="translated">Применение к элементу «{0}» (исходная строка {1}, {2})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusApplyTargetNoLineInfo">
+        <source>Applying to '{0}' element (no source line info)</source>
+        <target state="translated">Применение к элементу «{0}» (информация об исходной строке отсутствует)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusXPath">
+        <source>on {0}</source>
+        <target state="translated">в {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_UnknownTypeName">
+        <source>Could not resolve '{0}' as a type of {1}</source>
+        <target state="translated">Не удалось разрешить «{0}» как тип {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_UnknownXdtTag">
+        <source>Unknown tag '{0}'</source>
+        <target state="translated">Неизвестный тег "{0}"</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

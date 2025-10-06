@@ -12,10 +12,19 @@ namespace NuGet.Credentials
     /// </summary>
     public class PluginCredentialResponse
     {
+        /// <summary>
+        /// Gets or sets the username.
+        /// </summary>
         public string Username { get; set; }
 
+        /// <summary>
+        /// Gets or sets the password.
+        /// </summary>
         public string Password { get; set; }
 
+        /// <summary>
+        /// Gets or sets the message.
+        /// </summary>
         public string Message { get; set; }
 
         /// <summary>
@@ -35,10 +44,13 @@ namespace NuGet.Credentials
                                && (AuthTypes == null || AuthTypes.Any());
     }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public enum PluginCredentialResponseExitCode
     {
         Success = 0,
         ProviderNotApplicable = 1,
         Failure = 2
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
 }

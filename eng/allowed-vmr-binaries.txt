@@ -35,6 +35,14 @@ src/cecil/symbols/**/Test/Resources/assemblies/*.pdb
 src/cecil/symbols/**/Test/Resources/assemblies/*.dll
 src/cecil/symbols/**/Test/Resources/assemblies/*.mdb
 
+# diagnostics
+src/diagnostics/src/tests/Microsoft.FileFormats.UnitTests/TestBinaries/**/*
+src/diagnostics/src/tests/Microsoft.SymbolStore.UnitTests/TestBinaries/**/*
+
+# efcore
+src/efcore/test/EFCore.Sqlite.FunctionalTests/northwind.db # https://github.com/dotnet/source-build/issues/4326
+src/efcore/benchmark/EFCore.Sqlite.Benchmarks/AdventureWorks2014.db # https://github.com/dotnet/source-build/issues/4326
+
 # fsharp
 src/fsharp/tests/**/*.resources
 src/fsharp/tests/**/*.dll
@@ -56,13 +64,14 @@ src/nuget-client/test/NuGet.Core.Tests/NuGet.Protocol.Tests/compiler/resources/*
 src/nuget-client/test/NuGet.Core.FuncTests/NuGet.Packaging.FuncTest/compiler/resources/*.nupkg
 src/nuget-client/test/NuGet.Core.FuncTests/NuGet.Packaging.FuncTest/compiler/resources/*.zip
 src/nuget-client/test/NuGet.Core.FuncTests/Dotnet.Integration.Test/compiler/resources/*.nupkg
-src/nuget-client/test/TestUtilities/Test.Utility/compiler/resources/*.crt
-src/nuget-client/test/TestUtilities/Test.Utility/compiler/resources/.signature.p7s
-src/nuget-client/test/TestUtilities/Test.Utility/compiler/resources/*.nupkg
-src/nuget-client/test/TestUtilities/Test.Utility/compiler/resources/*.zip
+src/nuget-client/test/TestUtilities/**/compiler/resources/*.crt
+src/nuget-client/test/TestUtilities/**/compiler/resources/.signature.p7s
+src/nuget-client/test/TestUtilities/**/compiler/resources/*.nupkg
+src/nuget-client/test/TestUtilities/**/compiler/resources/*.zip
 
 # razor
-src/razor/src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/TestFiles/BlazorProject.zip
+src/razor/src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/TestFiles/*.zip
+src/razor/src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/Resources/project.razor.bin
 
 # roslyn
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.metadata
@@ -73,50 +82,52 @@ src/roslyn/src/Compilers/Test/Resources/Core/**/*.obj
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.dll
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.exe
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.Dll
-src/roslyn/src/Workspaces/MSBuildTest/Resources/Dlls/*.dll
+src/roslyn/src/ExpressionEvaluator/Core/Source/ExpressionCompiler/Resources/WindowsProxy.winmd
+src/roslyn/src/Workspaces/CoreTest/Resources/*
+src/roslyn/src/Workspaces/MSBuild/Test/Resources/Dlls/*.dll
 src/roslyn/**/CodeAnalysisTest/**/*.res
 src/roslyn/**/CodeAnalysisTest/**/*.blah
 src/roslyn/**/CodeAnalysisTest/**/*.RES
 
 # runtime
-src/runtime/src/mono/mono/eglib/test/*.txt
-src/runtime/src/mono/mono/tests/exiting/*.out
-src/runtime/src/**/tests/**/*.res
-src/runtime/src/**/tests/**/*.resources
-src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/gRPC/grpc-dotnet/testassets/Certs/InteropTests/server1.pfx
-src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.mibc
-src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.nettrace
-src/runtime/src/libraries/System.Runtime.Serialization.Xml/tests/Canonicalization/baselines/ReaderWriter_C14N_BaselineXML_Binary.xml
-src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/NetModule/*.mod
-src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/WinRT/Lib.winmd
-src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/Misc/CPPClassLibrary2.obj
-src/runtime/src/libraries/System.Console/tests/TestData/ncursesFormats/s/screen-256color
-src/runtime/src/libraries/System.Console/tests/TestData/ncursesFormats/x/xterm
-src/runtime/src/mono/wasm/testassets/**/*.dat
-src/runtime/src/mono/wasm/testassets/**/*.o
 src/runtime/src/libraries/**/tests/**/*.dll
 src/runtime/src/libraries/**/tests/**/*.exe
 src/runtime/src/libraries/**/tests/**/*.pdb
+src/runtime/src/libraries/System.Console/tests/TestData/ncursesFormats/s/screen-256color
+src/runtime/src/libraries/System.Console/tests/TestData/ncursesFormats/x/xterm
+src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/Misc/CPPClassLibrary2.obj
+src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/NetModule/*.mod
+src/runtime/src/libraries/System.Reflection.Metadata/tests/Resources/WinRT/Lib.winmd
+src/runtime/src/libraries/System.Runtime.Serialization.Xml/tests/Canonicalization/baselines/ReaderWriter_C14N_BaselineXML_Binary.xml
+src/runtime/src/mono/mono/eglib/test/*.txt
+src/runtime/src/mono/mono/tests/exiting/*.out
+src/runtime/src/mono/wasm/testassets/**/*.dat
+src/runtime/src/mono/wasm/testassets/**/*.o
+src/runtime/src/native/external/LinuxTracepoints/TestOutput/EventHeaderInterceptorLE64.dat
+src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.mibc
+src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.nettrace
+src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/gRPC/grpc-dotnet/testassets/Certs/InteropTests/server1.pfx
+src/runtime/src/**/tests/**/*.res
+src/runtime/src/**/tests/**/*.resources
 
 # sdk
-src/sdk/src/Assets/TestProjects/**/*.dat
-src/sdk/src/Assets/TestProjects/**/*.cache
-src/sdk/src/Assets/TestProjects/**/*.tlb
-src/sdk/src/Assets/TestPackages/dotnet-new/nupkg_templates/*
-src/sdk/test/Microsoft.DotNet.ShellShim.Tests/WpfBinaryTestAsssets/*.dll
+src/sdk/test/TestAssets/TestProjects/**/*.dat
+src/sdk/test/TestAssets/TestProjects/**/*.cache
+src/sdk/test/TestAssets/TestProjects/**/*.tlb
+src/sdk/test/TestAssets/TestPackages/dotnet-new/nupkg_templates/*
+src/sdk/test/dotnet.Tests/ShellShimTests/WpfBinaryTestAssets/*.dll
 src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 
-# source-build-externals
-src/source-build-externals/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
+# source-build-reference-packages
+src/source-build-reference-packages/src/externalPackages/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/docs/**/*.woff*
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/docs/input/assets/images/*
 
 # symreader
 src/symreader/src/PdbTestResources/Resources/*
 
 # templating
 src/templating/test/Microsoft.TemplateEngine.TestTemplates/nupkg_templates/*.nupkg
-
-# test-templates
-src/test-templates/Templates/**/*.nupkg
 
 # vstest
 src/vstest/samples/Microsoft.TestPlatform.*/Adapter/Microsoft.VisualStudio.TestPlatform.*.dll
@@ -127,11 +138,11 @@ src/vstest/test/Microsoft.TestPlatform.Utilities.UnitTests/TestFiles/fullcovered
 src/vstest/test/TestAssets/LegacySettingsUnitTestProject/DependencyAssembly/DependencyAssemblyForTest.dll
 
 # winforms
-src/winforms/src/System.Windows.Forms/tests/IntegrationTests/MauiTests/lib/*.dll
-src/winforms/src/System.Windows.Forms/tests/IntegrationTests/WinformsControlsTest/Resources/media.mpg
-src/winforms/src/System.Windows.Forms/tests/UnitTests/bitmaps/milkmateya01.emf
-src/winforms/src/System.Windows.Forms/tests/UnitTests/TestResources/VB6/SimpleControl.vb6
-src/winforms/src/System.Windows.Forms*/**/*.wmf
+src/winforms/src/test/integration/MauiTests/lib/*.dll
+src/winforms/src/test/integration/WinformsControlsTest/Resources/media.mpg
+src/winforms/src/test/unit/System.Windows.Forms/bitmaps/milkmateya01.emf
+src/winforms/src/test/unit/System.Windows.Forms/TestResources/VB6/SimpleControl.vb6
+src/winforms/src/**/System.Windows.Forms*/**/*.wmf
 src/winforms/src/System.Windows.Forms.Design/src/Resources/colordlg.data
 
 # wpf
@@ -140,3 +151,4 @@ src/wpf/src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation
 src/wpf/src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation/Hyphen_en.hdict
 src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.BIN
 src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.bin
+src/wpf/src/Microsoft.DotNet.Wpf/tests/UnitTests/WindowsBase.Tests/Resources/Invalid_1.xps

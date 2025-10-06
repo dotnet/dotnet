@@ -1,11 +1,24 @@
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*.0
+    exclude:
+    - .github/*
+    - Documentation/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
 pr:
   branches:
     include:
     - main
-    - release/6.0
-    - release/7.0
-    - release/8.0
+    - release/*.0 
     - templates
   paths:
     include:
@@ -29,7 +42,7 @@ variables:
 resources:
   containers:
   - container: LinuxContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-fpm-amd64
 
 stages:
 - stage: build
@@ -43,7 +56,6 @@ stages:
           logs: true
           manifests: true
       enableMicrobuild: true
-      enablePublishUsingPipelines: true
       enableSourceIndex: true
       enableSourceBuild: true
       workspace:
@@ -82,7 +94,7 @@ stages:
             }
 
             # Detects if Version.Details.xml or Versions.props changed (a version bump)
-            $fullDiff=$(git diff HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
+            $fullDiff=$(git diff --unified=0 HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
             if ($fullDiff -match 'Microsoft.DotNet.XHarness.CLI')
             {
               Write-Host "Detected a version bump of Microsoft.DotNet.XHarness.CLI, will run XHarness E2E tests"
@@ -148,7 +160,7 @@ stages:
               /p:DotNetSymbolServerTokenSymWeb=DryRunPTA
               /p:PDBArtifactsDirectory='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
               /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
-              /p:SymbolPublishingExclusionsFile='$(Build.SourcesDirectory)/eng/SymbolPublishingExclusionsFile.txt'
+              /p:SymbolPublishingExclusionsFile='$(System.DefaultWorkingDirectory)/eng/SymbolPublishingExclusionsFile.txt'
               /p:Configuration=Release
               /p:PublishToMSDL=false
         - powershell: eng\common\build.ps1
@@ -158,8 +170,8 @@ stages:
             -restore
             -test
             -warnAsError $false
-            -projects $(Build.SourcesDirectory)\tests\UnitTests.proj
-            /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
+            -projects $(System.DefaultWorkingDirectory)\tests\UnitTests.proj
+            /bl:$(System.DefaultWorkingDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: Run Helix Tests
           env:
@@ -188,8 +200,8 @@ stages:
             --restore
             --test
             --warnAsError false
-            --projects $(Build.SourcesDirectory)/tests/UnitTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
+            --projects $(System.DefaultWorkingDirectory)/tests/UnitTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: Run Helix Tests
           env:
@@ -233,8 +245,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.SimulatorTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Apple.SimulatorTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Apple Simulator Helix Testing
           env:
@@ -263,8 +275,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.DeviceTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Apple.DeviceTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Apple Device Helix Testing
           env:
@@ -293,8 +305,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Android.SimulatorTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Android.Simulator.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Android.SimulatorTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Android.Simulator.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Android Helix Testing (Linux)
           env:
@@ -322,8 +334,8 @@ stages:
             -restore
             -test
             -warnAsError $false
-            -projects $(Build.SourcesDirectory)\tests\XHarness.Android.DeviceTests.proj
-            /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.XHarness.Android.Device.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)\tests\XHarness.Android.DeviceTests.proj
+            /bl:$(System.DefaultWorkingDirectory)\artifacts\log\$(_BuildConfig)\Helix.XHarness.Android.Device.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Android Helix Testing (Windows)
           env:

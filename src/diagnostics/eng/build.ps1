@@ -4,16 +4,19 @@ Param(
     [ValidateSet("Debug","Release")][string][Alias('c')] $configuration = "Debug",
     [string][Alias('v')] $verbosity = "minimal",
     [switch][Alias('t')] $test,
+    [switch] $installruntimes,
+    [switch] $privatebuild,
     [switch] $ci,
+    [switch][Alias('bl')]$binaryLog,
     [switch] $skipmanaged,
     [switch] $skipnative,
     [switch] $bundletools,
-    [string] $privatebuildpath = "",
-    [switch] $cleanupprivatebuild,
+    [switch] $useCdac,
     [ValidatePattern("(default|\d+\.\d+.\d+(-[a-z0-9\.]+)?)")][string] $dotnetruntimeversion = 'default',
     [ValidatePattern("(default|\d+\.\d+.\d+(-[a-z0-9\.]+)?)")][string] $dotnetruntimedownloadversion= 'default',
     [string] $runtimesourcefeed = '',
     [string] $runtimesourcefeedkey = '',
+    [string] $liveRuntimeDir = '',
     [Parameter(ValueFromRemainingArguments=$true)][String[]] $remainingargs
 )
 
@@ -36,8 +39,11 @@ switch ($configuration.ToLower()) {
 $reporoot = Join-Path $PSScriptRoot ".."
 $engroot = Join-Path $reporoot "eng"
 $artifactsdir = Join-Path $reporoot "artifacts"
+$os = "Windows_NT"
 $logdir = Join-Path $artifactsdir "log"
 $logdir = Join-Path $logdir Windows_NT.$architecture.$configuration
+
+$bl = if ($binaryLog) { '-binaryLog' } else { '' }
 
 if ($ci) {
     $remainingargs = "-ci " + $remainingargs
@@ -51,20 +57,6 @@ if ($bundletools) {
     $test = $False
 }
 
-# Remove the private build registry keys
-if ($cleanupprivatebuild) {
-    Invoke-Expression "& `"$engroot\common\msbuild.ps1`" $engroot\CleanupPrivateBuild.proj /v:$verbosity /t:CleanupPrivateBuild /p:BuildArch=$architecture /p:TestArchitectures=$architecture"
-    exit $lastExitCode
-}
-
-# Install sdk for building, restore and build managed components.
-if (-not $skipmanaged) {
-    Invoke-Expression "& `"$engroot\common\build.ps1`" -configuration $configuration -verbosity $verbosity /p:BuildArch=$architecture /p:TestArchitectures=$architecture $remainingargs"
-    if ($lastExitCode -ne 0) {
-        exit $lastExitCode
-    }
-}
-
 # Build native components
 if (-not $skipnative) {
     Invoke-Expression "& `"$engroot\Build-Native.cmd`" -architecture $architecture -configuration $configuration -verbosity $verbosity $remainingargs"
@@ -73,22 +65,53 @@ if (-not $skipnative) {
     }
 }
 
+# Install sdk for building, restore and build managed components.
+if (-not $skipmanaged) {
+    Invoke-Expression "& `"$engroot\common\build.ps1`" -configuration $configuration -verbosity $verbosity $bl /p:TargetOS=$os /p:TargetArch=$architecture /p:TestArchitectures=$architecture $remainingargs"
+
+    if ($lastExitCode -ne 0) {
+        exit $lastExitCode
+    }
+}
+
+if ($installruntimes -or $privatebuild) {
+    $privatebuildtesting = "false"
+    if ($privatebuild) {
+        $privatebuildtesting = "true"
+    }
+    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue "$reporoot\.dotnet-test"
+    & "$engroot\common\msbuild.ps1" `
+      $engroot\InstallRuntimes.proj `
+      -verbosity $verbosity `
+      /t:InstallTestRuntimes `
+      /bl:$logdir\InstallRuntimes.binlog `
+      /p:PrivateBuildTesting=$privatebuildtesting `
+      /p:TargetOS=$os `
+      /p:TargetArch=$architecture `
+      /p:TestArchitectures=$architecture `
+      /p:LiveRuntimeDir="$liveRuntimeDir"
+}
+
 # Run the xunit tests
 if ($test) {
     if (-not $crossbuild) {
+        if ($useCdac) {
+            $env:SOS_TEST_CDAC="true"
+        }
         & "$engroot\common\build.ps1" `
           -test `
           -configuration $configuration `
           -verbosity $verbosity `
           -ci:$ci `
           /bl:$logdir\Test.binlog `
-          /p:BuildArch=$architecture `
+          /p:TargetOS=$os `
+          /p:TargetArch=$architecture `
           /p:TestArchitectures=$architecture `
-          /p:PrivateBuildPath="$privatebuildpath" `
           /p:DotnetRuntimeVersion="$dotnetruntimeversion" `
           /p:DotnetRuntimeDownloadVersion="$dotnetruntimedownloadversion" `
           /p:RuntimeSourceFeed="$runtimesourcefeed" `
-          /p:RuntimeSourceFeedKey="$runtimesourcefeedkey"
+          /p:RuntimeSourceFeedKey="$runtimesourcefeedkey" `
+          /p:LiveRuntimeDir="$liveRuntimeDir" 
 
         if ($lastExitCode -ne 0) {
             exit $lastExitCode

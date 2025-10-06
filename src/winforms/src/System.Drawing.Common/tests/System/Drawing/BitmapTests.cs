@@ -1,7 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-//
-// (C) 2004 Ximian, Inc.  http://www.ximian.com
+
+// (C) 2004 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -25,7 +25,6 @@
 
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using Microsoft.DotNet.XUnitExtensions;
 
 namespace System.Drawing.Tests;
 
@@ -434,11 +433,11 @@ public class BitmapTests : FileCleanupTestBase
     [InlineData(0, 1, 1, 3)]
     [InlineData(4, 1, 1, 1)]
     [InlineData(1, 4, 1, 1)]
-    public void Clone_InvalidRect_ThrowsOutOfMemoryException(int x, int y, int width, int height)
+    public void Clone_InvalidRect_ThrowsExternalException(int x, int y, int width, int height)
     {
         using Bitmap bitmap = new(3, 3);
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new Rectangle(x, y, width, height), bitmap.PixelFormat));
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new RectangleF(x, y, width, height), bitmap.PixelFormat));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new Rectangle(x, y, width, height), bitmap.PixelFormat));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new RectangleF(x, y, width, height), bitmap.PixelFormat));
     }
 
     [Theory]
@@ -450,19 +449,19 @@ public class BitmapTests : FileCleanupTestBase
     [InlineData(PixelFormat.Extended)]
     [InlineData(PixelFormat.Format16bppGrayScale)]
     [InlineData(PixelFormat.Canonical)]
-    public void Clone_InvalidPixelFormat_ThrowsOutOfMemoryException(PixelFormat format)
+    public void Clone_InvalidPixelFormat_ThrowsExternalException(PixelFormat format)
     {
         using Bitmap bitmap = new(1, 1);
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new Rectangle(0, 0, 1, 1), format));
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new RectangleF(0, 0, 1, 1), format));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new Rectangle(0, 0, 1, 1), format));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new RectangleF(0, 0, 1, 1), format));
     }
 
     [Fact]
-    public void Clone_GrayscaleFormat_ThrowsOutOfMemoryException()
+    public void Clone_GrayscaleFormat_ThrowsExternalException()
     {
         using Bitmap bitmap = new(1, 1, PixelFormat.Format16bppGrayScale);
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new Rectangle(0, 0, 1, 1), PixelFormat.Format32bppArgb));
-        Assert.Throws<OutOfMemoryException>(() => bitmap.Clone(new RectangleF(0, 0, 1, 1), PixelFormat.Format32bppArgb));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new Rectangle(0, 0, 1, 1), PixelFormat.Format32bppArgb));
+        Assert.Throws<ExternalException>(() => bitmap.Clone(new RectangleF(0, 0, 1, 1), PixelFormat.Format32bppArgb));
     }
 
     [Fact]
@@ -481,7 +480,7 @@ public class BitmapTests : FileCleanupTestBase
         Bitmap bitmap = new(1, 1);
         bitmap.Dispose();
 
-        AssertExtensions.Throws<ArgumentException>(null, () => bitmap.Clone());
+        AssertExtensions.Throws<ArgumentException>(null, bitmap.Clone);
         AssertExtensions.Throws<ArgumentException>(null, () => bitmap.Clone(new Rectangle(0, 0, 1, 1), PixelFormat.Format32bppArgb));
         AssertExtensions.Throws<ArgumentException>(null, () => bitmap.Clone(new RectangleF(0, 0, 1, 1), PixelFormat.Format32bppArgb));
     }
@@ -723,17 +722,17 @@ public class BitmapTests : FileCleanupTestBase
     }
 
     [Fact]
-    public void SaveWmfAsPngDoesntChangeImageBoundaries()
+    public void SaveWmfAsPngDoesNotChangeImageBoundaries()
     {
         if (PlatformDetection.IsWindows7)
         {
-            throw new SkipTestException("GDI+ 1.1 is not supported");
+            Assert.Skip("GDI+ 1.1 is not supported");
         }
 
         if (PlatformDetection.IsArmOrArm64Process)
         {
             // https://github.com/dotnet/winforms/issues/8817
-            throw new SkipTestException("Arm precision");
+            Assert.Skip("Arm precision");
         }
 
         string output = $"{GetTestFilePath()}.png";
@@ -855,7 +854,7 @@ public class BitmapTests : FileCleanupTestBase
     }
 
     [Fact]
-    public void MakeTransparent_CustomColorDoesntExist_DoesNothing()
+    public void MakeTransparent_CustomColorDoesNotExist_DoesNothing()
     {
         using Bitmap bitmap = new(10, 10);
         for (int x = 0; x < bitmap.Width; x++)
@@ -882,7 +881,7 @@ public class BitmapTests : FileCleanupTestBase
         Bitmap bitmap = new(1, 1);
         bitmap.Dispose();
 
-        AssertExtensions.Throws<ArgumentException>(null, () => bitmap.MakeTransparent());
+        AssertExtensions.Throws<ArgumentException>(null, bitmap.MakeTransparent);
         AssertExtensions.Throws<ArgumentException>(null, () => bitmap.MakeTransparent(Color.Red));
     }
 
@@ -890,7 +889,7 @@ public class BitmapTests : FileCleanupTestBase
     public void MakeTransparent_GrayscalePixelFormat_ThrowsArgumentException()
     {
         using Bitmap bitmap = new(1, 1, PixelFormat.Format16bppGrayScale);
-        AssertExtensions.Throws<ArgumentException>(null, () => bitmap.MakeTransparent());
+        AssertExtensions.Throws<ArgumentException>(null, bitmap.MakeTransparent);
 
         try
         {
@@ -1010,7 +1009,7 @@ public class BitmapTests : FileCleanupTestBase
 
     public static IEnumerable<object[]> LockBits_TestData()
     {
-        Bitmap bitmap() => new(2, 2, PixelFormat.Format32bppArgb);
+        static Bitmap bitmap() => new(2, 2, PixelFormat.Format32bppArgb);
         yield return new object[] { bitmap(), new Rectangle(0, 0, 2, 2), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb, 8, 1 };
         yield return new object[] { bitmap(), new Rectangle(0, 0, 2, 2), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb, 8, 3 };
         yield return new object[] { bitmap(), new Rectangle(0, 0, 2, 2), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb, 8, 2 };
@@ -1057,7 +1056,7 @@ public class BitmapTests : FileCleanupTestBase
         yield return new object[] { new Bitmap(100, 100, PixelFormat.Format8bppIndexed), new Rectangle(0, 0, 100, 100), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb, 300, 65538 };
     }
 
-    [ConditionalTheory(typeof(PlatformDetection), nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
+    [Theory(Skip = "Condition not met", SkipType = typeof(PlatformDetection), SkipUnless = nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
     [MemberData(nameof(LockBits_TestData))]
     public void LockBits_Invoke_Success(Bitmap bitmap, Rectangle rectangle, ImageLockMode lockMode, PixelFormat pixelFormat, int expectedStride, int expectedReserved)
     {
@@ -1459,7 +1458,7 @@ public class BitmapTests : FileCleanupTestBase
         AssertExtensions.Throws<ArgumentException>(null, () => bitmap.Size);
     }
 
-    [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
+    [Fact(Skip = "Condition not met", SkipType = typeof(PlatformDetection), SkipUnless = nameof(PlatformDetection.IsNotArm64Process))] // [ActiveIssue("https://github.com/dotnet/winforms/issues/8817")]
     public void LockBits_Marshalling_Success()
     {
         Color red = Color.FromArgb(Color.Red.ToArgb());
@@ -1638,8 +1637,8 @@ public class BitmapTests : FileCleanupTestBase
         // Format16bppGrayScale is not supported for conversion
         { PixelFormat.Format16bppGrayScale, DitherType.None, PaletteType.FixedHalftone256 },
         { PixelFormat.Format16bppGrayScale, DitherType.ErrorDiffusion, PaletteType.FixedHalftone8 },
-        { PixelFormat.Format16bppGrayScale, DitherType.None, PaletteType.FixedBW },
-        { PixelFormat.Format16bppGrayScale, DitherType.Solid, PaletteType.FixedBW },
+        { PixelFormat.Format16bppGrayScale, DitherType.None, PaletteType.FixedBlackAndWhite },
+        { PixelFormat.Format16bppGrayScale, DitherType.Solid, PaletteType.FixedBlackAndWhite },
         { PixelFormat.Format16bppRgb565, (DitherType)(-1), PaletteType.FixedHalftone256 },
         { PixelFormat.Format16bppRgb565, (DitherType)(-1), (PaletteType)(-1) },
     };
@@ -1712,7 +1711,7 @@ public class BitmapTests : FileCleanupTestBase
         }
 
         public override void Flush() => _stream.Flush();
-        public override int Read(byte[] buffer, int offset, int count) => _canRead ?  _stream.Read(buffer, offset, count) : throw new NotSupportedException();
+        public override int Read(byte[] buffer, int offset, int count) => _canRead ? _stream.Read(buffer, offset, count) : throw new NotSupportedException();
         public override long Seek(long offset, SeekOrigin origin) => _stream.Seek(offset, origin);
         public override void SetLength(long value) => _stream.SetLength(value);
         public override void Write(byte[] buffer, int offset, int count) => _stream.Write(buffer, offset, count);

@@ -1,13 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,40 +13,15 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
 {
-    private readonly IRazorDocumentMappingService _mappingService;
+    private readonly IDocumentMappingService _mappingService;
 
     public RazorProximityExpressionsEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new RazorDocumentMappingService(
+        _mappingService = new LspDocumentMappingService(
             FilePathService,
             new TestDocumentContextFactory(),
             LoggerFactory);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedDocument_ReturnsNull()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocument(@"
-<p>@DateTime.Now</p>");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-
-        var diagnosticsEndpoint = new RazorProximityExpressionsEndpoint(_mappingService, LoggerFactory);
-        var request = new RazorProximityExpressionsParams()
-        {
-            Uri = documentPath,
-            Position = new Position(1, 0),
-        };
-        codeDocument.SetUnsupported();
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
-
-        // Assert
-        Assert.Null(response);
     }
 
     [Fact]
@@ -64,12 +37,13 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 8),
+            Position = LspFactory.CreatePosition(1, 8),
+            HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await endpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Contains("abc", response!.Expressions);
@@ -89,12 +63,13 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await endpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Contains("abc", response!.Expressions);
@@ -114,12 +89,13 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0),
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -141,12 +117,13 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 0),
+            Position = LspFactory.DefaultPosition,
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);

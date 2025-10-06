@@ -29,16 +29,17 @@ namespace System
             return type ?? GetTypeFromMethodTableSlow(pMT);
         }
 
-        private static class AllocationLockHolder
+        private static class AllocationLock
         {
-            public static Lock AllocationLock = new Lock(useTrivialWaits: true);
+            public static Lock Instance =>
+                field ?? Interlocked.CompareExchange(ref field, new Lock(useTrivialWaits: true), null) ?? field;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static unsafe RuntimeType GetTypeFromMethodTableSlow(MethodTable* pMT)
         {
             // Allocate and set the RuntimeType under a lock - there's no way to free it if there is a race.
-            using (AllocationLockHolder.AllocationLock.EnterScope())
+            lock (AllocationLock.Instance)
             {
                 ref RuntimeType? runtimeTypeCache = ref Unsafe.AsRef<RuntimeType?>(pMT->WritableData);
                 if (runtimeTypeCache != null)
@@ -56,35 +57,6 @@ namespace System
             }
         }
 
-        //
-        // This is a port of the desktop CLR's RuntimeType.FormatTypeName() routine. This routine is used by various Reflection ToString() methods
-        // to display the name of a type. Do not use for any other purpose as it inherits some pretty quirky desktop behavior.
-        //
-        internal string FormatTypeNameForReflection()
-        {
-            // Legacy: this doesn't make sense, why use only Name for nested types but otherwise
-            // ToString() which contains namespace.
-            Type rootElementType = this;
-            while (rootElementType.HasElementType)
-                rootElementType = rootElementType.GetElementType()!;
-            if (rootElementType.IsNested)
-            {
-                return Name!;
-            }
-
-            // Legacy: why removing "System"? Is it just because C# has keywords for these types?
-            // If so why don't we change it to lower case to match the C# keyword casing?
-            string typeName = ToString();
-            if (typeName.StartsWith("System."))
-            {
-                if (rootElementType.IsPrimitive || rootElementType == typeof(void))
-                {
-                    typeName = typeName.Substring("System.".Length);
-                }
-            }
-            return typeName;
-        }
-
         [Intrinsic]
         [RequiresUnreferencedCode("The type might be removed")]
         public static Type GetType(string typeName) => GetType(typeName, throwOnError: false, ignoreCase: false);
@@ -95,7 +67,7 @@ namespace System
         [RequiresUnreferencedCode("The type might be removed")]
         public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
         {
-            return TypeNameParser.GetType(typeName, throwOnError: throwOnError, ignoreCase: ignoreCase);
+            return TypeNameResolver.GetType(typeName, throwOnError: throwOnError, ignoreCase: ignoreCase);
         }
 
         [Intrinsic]
@@ -108,7 +80,7 @@ namespace System
         [RequiresUnreferencedCode("The type might be removed")]
         public static Type GetType(string typeName, Func<AssemblyName, Assembly?>? assemblyResolver, Func<Assembly?, string, bool, Type?>? typeResolver, bool throwOnError, bool ignoreCase)
         {
-            return TypeNameParser.GetType(typeName, assemblyResolver, typeResolver, throwOnError: throwOnError, ignoreCase: ignoreCase);
+            return TypeNameResolver.GetType(typeName, assemblyResolver, typeResolver, throwOnError: throwOnError, ignoreCase: ignoreCase);
         }
     }
 }

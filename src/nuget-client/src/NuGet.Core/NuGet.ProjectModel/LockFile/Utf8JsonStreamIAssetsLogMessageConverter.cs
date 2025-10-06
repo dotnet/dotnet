@@ -15,7 +15,7 @@ namespace NuGet.ProjectModel
     /// <example>
     /// {
     ///     "code": "<see cref="NuGetLogCode"/>",
-    ///     "level": "<see cref="LogLevel"/>",
+    ///     "level": "<see cref="Common.LogLevel"/>",
     ///     "message": "test log message",
     ///     "warningLevel": <see cref="WarningLevel"/>,
     ///     "filePath": "C:\a\file\path.txt",

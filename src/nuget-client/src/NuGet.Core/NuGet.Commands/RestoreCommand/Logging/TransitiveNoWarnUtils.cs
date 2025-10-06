@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using NuGet.Common;
 using NuGet.DependencyResolver;
@@ -222,7 +223,7 @@ namespace NuGet.Commands
             // At the end of the graph traversal add the remaining package no warn lists into the result
             foreach ((var packageId, var codes) in packageNoWarn)
             {
-                resultWarningProperties.AddRangeOfCodes(codes, packageId, parentTargetFramework);
+                resultWarningProperties.AddRangeOfCodes(codes.ToImmutableArray(), packageId, parentTargetFramework);
             }
 
             return resultWarningProperties;

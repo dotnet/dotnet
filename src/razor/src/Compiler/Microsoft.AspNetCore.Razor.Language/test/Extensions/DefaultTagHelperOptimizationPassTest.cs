@@ -1,129 +1,82 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-public class DefaultTagHelperOptimizationPassTest
+public class DefaultTagHelperOptimizationPassTest : RazorProjectEngineTestBase
 {
+    protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
+
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorDirectiveClassifierPhase>();
+    }
+
     [Fact]
     public void DefaultTagHelperOptimizationPass_Execute_ReplacesChildren()
     {
         // Arrange
-        var codeDocument = CreateDocument(@"
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestTagHelper")
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("Foo")
+                .TypeName("System.Int32")
+                .PropertyName("FooProp"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+            .Build();
+
+        var codeDocument = ProjectEngine.CreateCodeDocument(@"
 @addTagHelper TestTagHelper, TestAssembly
-<p foo=""17"" attr=""value"">");
+<p foo=""17"" attr=""value"">",
+            [tagHelper]);
 
-        var tagHelpers = new[]
-        {
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                .Metadata(TypeName("TestTagHelper"))
-                .BoundAttributeDescriptor(attribute => attribute
-                    .Name("Foo")
-                    .TypeName("System.Int32")
-                    .Metadata(PropertyName("FooProp")))
-                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
-                .Build()
-        };
-
-        var engine = CreateEngine(tagHelpers);
-        var pass = new DefaultTagHelperOptimizationPass()
-        {
-            Engine = engine
-        };
-
-        var irDocument = CreateIRDocument(engine, codeDocument);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<DefaultTagHelperOptimizationPass>();
 
         // Assert
-        var @class = irDocument.FindPrimaryClass();
+        var documentNode = processor.GetDocumentNode();
+
+        var @class = documentNode.FindPrimaryClass();
+        Assert.NotNull(@class);
+
         Assert.IsType<DefaultTagHelperRuntimeIntermediateNode>(@class.Children[0]);
 
         var fieldDeclaration = Assert.IsType<FieldDeclarationIntermediateNode>(@class.Children[1]);
-        Assert.Equal(bool.TrueString, fieldDeclaration.Annotations[CommonAnnotations.DefaultTagHelperExtension.TagHelperField]);
-        Assert.Equal("__TestTagHelper", fieldDeclaration.FieldName);
-        Assert.Equal("global::TestTagHelper", fieldDeclaration.FieldType);
-        Assert.Equal("private", fieldDeclaration.Modifiers.First());
+        Assert.True(fieldDeclaration.IsTagHelperField);
+        Assert.Equal("__TestTagHelper", fieldDeclaration.Name);
+        Assert.Equal("global::TestTagHelper", fieldDeclaration.Type);
+        Assert.Equal("private", fieldDeclaration.Modifiers[0]);
 
-        var tagHelper = FindTagHelperNode(irDocument);
-        Assert.Equal(5, tagHelper.Children.Count);
+        var tagHelperNode = documentNode.GetTagHelperNode();
+        Assert.Equal(5, tagHelperNode.Children.Count);
 
-        var body = Assert.IsType<DefaultTagHelperBodyIntermediateNode>(tagHelper.Children[0]);
+        var body = Assert.IsType<DefaultTagHelperBodyIntermediateNode>(tagHelperNode.Children[0]);
         Assert.Equal("p", body.TagName);
         Assert.Equal(TagMode.StartTagAndEndTag, body.TagMode);
 
-        var create = Assert.IsType<DefaultTagHelperCreateIntermediateNode>(tagHelper.Children[1]);
+        var create = Assert.IsType<DefaultTagHelperCreateIntermediateNode>(tagHelperNode.Children[1]);
         Assert.Equal("__TestTagHelper", create.FieldName);
         Assert.Equal("TestTagHelper", create.TypeName);
-        Assert.Equal(tagHelpers[0], create.TagHelper);
+        Assert.Equal(tagHelper, create.TagHelper);
 
-        var property = Assert.IsType<DefaultTagHelperPropertyIntermediateNode>(tagHelper.Children[2]);
+        var property = Assert.IsType<DefaultTagHelperPropertyIntermediateNode>(tagHelperNode.Children[2]);
         Assert.Equal("foo", property.AttributeName);
         Assert.Equal(AttributeStructure.DoubleQuotes, property.AttributeStructure);
-        Assert.Equal(tagHelpers[0].BoundAttributes[0], property.BoundAttribute);
+        Assert.Equal(tagHelper.BoundAttributes[0], property.BoundAttribute);
         Assert.Equal("__TestTagHelper", property.FieldName);
         Assert.False(property.IsIndexerNameMatch);
         Assert.Equal("FooProp", property.PropertyName);
-        Assert.Equal(tagHelpers[0], property.TagHelper);
+        Assert.Equal(tagHelper, property.TagHelper);
 
-        var htmlAttribute = Assert.IsType<DefaultTagHelperHtmlAttributeIntermediateNode>(tagHelper.Children[3]);
+        var htmlAttribute = Assert.IsType<DefaultTagHelperHtmlAttributeIntermediateNode>(tagHelperNode.Children[3]);
         Assert.Equal("attr", htmlAttribute.AttributeName);
         Assert.Equal(AttributeStructure.DoubleQuotes, htmlAttribute.AttributeStructure);
 
-        Assert.IsType<DefaultTagHelperExecuteIntermediateNode>(tagHelper.Children[4]);
-    }
-
-    private RazorCodeDocument CreateDocument(string content)
-    {
-        var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return RazorCodeDocument.Create(source);
-    }
-
-    private RazorEngine CreateEngine(params TagHelperDescriptor[] tagHelpers)
-    {
-        return RazorProjectEngine.Create(b =>
-        {
-            b.Features.Add(new TestTagHelperFeature(tagHelpers));
-        }).Engine;
-    }
-
-    private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
-    {
-        foreach (var phase in engine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorDirectiveClassifierPhase)
-            {
-                break;
-            }
-        }
-
-        return codeDocument.GetDocumentIntermediateNode();
-    }
-
-    private TagHelperIntermediateNode FindTagHelperNode(IntermediateNode node)
-    {
-        var visitor = new TagHelperNodeVisitor();
-        visitor.Visit(node);
-        return visitor.Node;
-    }
-
-    private class TagHelperNodeVisitor : IntermediateNodeWalker
-    {
-        public TagHelperIntermediateNode Node { get; set; }
-
-        public override void VisitTagHelper(TagHelperIntermediateNode node)
-        {
-            Node = node;
-        }
+        Assert.IsType<DefaultTagHelperExecuteIntermediateNode>(tagHelperNode.Children[4]);
     }
 }

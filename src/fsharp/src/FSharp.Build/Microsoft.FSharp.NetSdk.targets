@@ -11,7 +11,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 ***********************************************************************************************
 -->
 
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project TreatAsLocalProperty="RestoreAdditionalProjectSources" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask TaskName="MapSourceRoots" AssemblyFile="$(FSharpBuildAssemblyFile)" />
   
   <PropertyGroup>
@@ -153,6 +153,18 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <PropertyGroup>
     <SourceRootMappedPathsFeatureSupported>true</SourceRootMappedPathsFeatureSupported>
   </PropertyGroup>
+
+  <!-- Register the GenerateILLinkSubstitutions task -->
+  <UsingTask TaskName="GenerateILLinkSubstitutions" AssemblyFile="$(FSharpBuildAssemblyFile)" />
+  
+  <!-- Generate ILLink.Substitutions.xml to remove F# metadata resources during trimming. F# Core already has the resource defined -->
+  <Target Name="GenerateFSharpILLinkSubstitutions" BeforeTargets="CoreCompile" Condition="$(DisableILLinkSubstitutions) != 'true' and $(AssemblyName) != 'FSharp.Core'">
+    <GenerateILLinkSubstitutions
+      AssemblyName="$(AssemblyName)"
+      IntermediateOutputPath="$(IntermediateOutputPath)">
+      <Output TaskParameter="GeneratedItems" ItemName="Embed" />
+    </GenerateILLinkSubstitutions>
+  </Target>
 
   <!-- 
     If InitializeSourceControlInformation target isn't supported, we just continue without invoking that synchronization target. 

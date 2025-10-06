@@ -1,0 +1,167 @@
+<UserControl
+  x:Name="PackageDetailsTab"
+  x:Class="NuGet.PackageManagement.UI.PackageDetailsTabControl"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:vm="clr-namespace:NuGet.PackageManagement.UI.ViewModels"
+  xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+  xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
+  Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
+  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+  mc:Ignorable="d"
+  d:DesignHeight="300"
+  d:DesignWidth="300">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+      <nuget:StringFormatConverter
+        x:Key="StringFormatConverter" />
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <TabControl
+    Grid.Row="0"
+    ItemsSource="{Binding Tabs}"
+    SelectedItem="{Binding SelectedTab}"
+    x:Name="tabsPackageDetails">
+    <TabControl.Resources>
+      <Style TargetType="TabItem">
+        <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}" />
+        <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Font122PercentSizeConverter}}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
+        <Setter Property="Padding" Value="12,0,12,0" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type TabItem}">
+              <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="auto" />
+                  <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="0" Margin="0">
+                </Border>
+                <ContentPresenter Grid.Row="0" x:Name="contentPresenter" ContentSource="Header" Focusable="False" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                <!--the line under the text to indicate that this label is selected-->
+                <Rectangle
+                      x:Name="_underline"
+                      Grid.Row="1"
+                      Height="3"
+                      Visibility="Collapsed"
+                      Width="{Binding ActualWidth, ElementName=contentPresenter}"
+                      HorizontalAlignment="Center"
+                      Fill="{DynamicResource {x:Static nuget:Brushes.TabSelectedIndicatorBrushKey}}"/>
+              </Grid>
+              <ControlTemplate.Triggers>
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="Visibility" TargetName="_underline" Value="Visible" />
+                  <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabSelectedTextBrushKey}}" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="true" />
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabTextFocusedBrushKey}}" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabTextHoverBrushKey}}" />
+                </MultiDataTrigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+      <Style TargetType="{x:Type TabControl}">
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template" >
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type TabControl}">
+              <Grid x:Name="templateRoot" ClipToBounds="True" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition x:Name="ColumnDefinition0"/>
+                  <ColumnDefinition x:Name="ColumnDefinition1" Width="0"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
+                  <RowDefinition x:Name="RowDefinition1" Height="Auto"/>
+                  <RowDefinition x:Name="RowDefinition2"/>
+                </Grid.RowDefinitions>
+                <TabPanel x:Name="headerPanel" Margin="12,0,0,0" Background="Transparent" Grid.Column="0" IsItemsHost="true" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                <ContentPresenter
+                    Grid.Row="2"
+                    ClipToBounds="True"
+                    x:Name="PART_SelectedContentHost"
+                    ContentSource="SelectedContent"
+                    HorizontalAlignment="Stretch"
+                    Margin="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                    VerticalAlignment="Stretch"/>
+              </Grid>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+    </TabControl.Resources>
+    <TabControl.ItemTemplate>
+      <DataTemplate>
+        <StackPanel Orientation="Horizontal" >
+          <TextBlock Text="{Binding Title}" />
+          <imaging:CrispImage
+            Margin="3,0"
+            Visibility="{Binding Path=IsPackageVulnerableOrDeprecated, FallbackValue=Collapsed, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
+            <imaging:CrispImage.ToolTip>
+              <StackPanel>
+                <TextBlock
+                  Visibility="{Binding IsPackageVulnerable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                  <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                      <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
+                      <Binding Path="PackageVulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+                <TextBlock
+                  Text="{x:Static nuget:Resources.Label_PackageDeprecatedToolTip}"
+                  Visibility="{Binding IsPackageDeprecated, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+              </StackPanel>
+            </imaging:CrispImage.ToolTip>
+          </imaging:CrispImage>
+        </StackPanel>
+      </DataTemplate>
+    </TabControl.ItemTemplate>
+    <TabControl.ContentTemplate>
+      <DataTemplate>
+        <!-- Customize the content of the tabs here -->
+        <ContentControl Content="{Binding}" Focusable="False">
+          <ContentControl.Resources>
+            <DataTemplate DataType="{x:Type nuget:DetailControlModel}">
+              <nuget:PackageMetadataControl
+                Focusable="True"
+                Margin="0,5,0,0"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ReadmePreviewViewModel}">
+              <ContentControl
+                Margin="22,0,0,0"
+                Content="{Binding ElementName=PackageDetailsTab, Path=PackageReadmeControl}"
+                />
+            </DataTemplate>
+          </ContentControl.Resources>
+        </ContentControl>
+      </DataTemplate>
+    </TabControl.ContentTemplate>
+  </TabControl>
+</UserControl>

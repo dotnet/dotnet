@@ -93,7 +93,7 @@ namespace NuGet.Commands
                 else
                 {
                     sb.Append(Environment.NewLine);
-                    sb.Append($"  - {line}");
+                    sb.Append("  - " + line);
                 }
             }
 

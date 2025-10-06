@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -100,8 +102,8 @@ public class DesignerActionServiceTests
     public void Add_NullComponent_ThrowsArgumentNullException()
     {
         DesignerActionService service = new(null);
-        Assert.Throws<ArgumentNullException>("comp", () => service.Add((IComponent)null, (DesignerActionListCollection)null));
-        Assert.Throws<ArgumentNullException>("comp", () => service.Add((IComponent)null, (DesignerActionList)null));
+        Assert.Throws<ArgumentNullException>("comp", () => service.Add(null, (DesignerActionListCollection)null));
+        Assert.Throws<ArgumentNullException>("comp", () => service.Add(null, (DesignerActionList)null));
     }
 
     [Theory]
@@ -135,7 +137,7 @@ public class DesignerActionServiceTests
         CustomDesignerActionList actionList2 = new(null);
         service.Add(component, new DesignerActionListCollection { actionList1 });
         service.Add(component, new DesignerActionListCollection { actionList2 });
-        service.Add(component, new DesignerActionListCollection { (DesignerActionList)null });
+        service.Add(component, new DesignerActionListCollection { null });
 
         Assert.True(service.Contains(component));
         Assert.Equal(new DesignerActionListCollection { actionList1, actionList2 }, service.GetComponentActions(component));
@@ -1027,7 +1029,7 @@ public class DesignerActionServiceTests
     {
         DesignerActionService service = new(null);
         Assert.Throws<ArgumentNullException>("comp", () => service.Remove((IComponent)null));
-        Assert.Throws<ArgumentNullException>("comp", () => service.Remove((IComponent)null, null));
+        Assert.Throws<ArgumentNullException>("comp", () => service.Remove(null, null));
     }
 
     [Fact]
@@ -1035,7 +1037,7 @@ public class DesignerActionServiceTests
     {
         DesignerActionService service = new(null);
         Assert.Throws<ArgumentNullException>("actionList", () => service.Remove((DesignerActionList)null));
-        Assert.Throws<ArgumentNullException>("actionList", () => service.Remove(new Component(), (DesignerActionList)null));
+        Assert.Throws<ArgumentNullException>("actionList", () => service.Remove(new Component(), null));
     }
 
     private class SubDesignerActionService : DesignerActionService

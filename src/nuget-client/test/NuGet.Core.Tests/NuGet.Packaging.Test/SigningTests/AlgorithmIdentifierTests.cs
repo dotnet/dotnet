@@ -1,12 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
 using Xunit;
 using AlgorithmIdentifier = NuGet.Packaging.Signing.AlgorithmIdentifier;
-using BcAlgorithmIdentifier = Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier;
+using TestAlgorithmIdentifier = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.AlgorithmIdentifier;
 
 namespace NuGet.Packaging.Test
 {
@@ -26,9 +27,13 @@ namespace NuGet.Packaging.Test
         [InlineData(Oids.Sha512)]
         public void Read_WithValidInput_ReturnsAlgorithmIdentifier(string oid)
         {
-            var bytes = new BcAlgorithmIdentifier(new DerObjectIdentifier(oid)).GetDerEncoded();
+            TestAlgorithmIdentifier algorithmIdentifier = new(new Oid(oid));
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var algorithmId = AlgorithmIdentifier.Read(bytes);
+            algorithmIdentifier.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+            AlgorithmIdentifier algorithmId = AlgorithmIdentifier.Read(bytes);
 
             Assert.Equal(oid, algorithmId.Algorithm.Value);
         }
@@ -36,9 +41,16 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithExplicitNullParameters_ReturnsAlgorithmIdentifier()
         {
-            var bytes = new BcAlgorithmIdentifier(new DerObjectIdentifier(Oids.Sha256), DerNull.Instance).GetDerEncoded();
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var algorithmId = AlgorithmIdentifier.Read(bytes);
+            using (writer.PushSequence())
+            {
+                writer.WriteObjectIdentifier(TestOids.Sha256.Value!);
+                writer.WriteNull();
+            }
+
+            byte[] bytes = writer.Encode();
+            AlgorithmIdentifier algorithmId = AlgorithmIdentifier.Read(bytes);
 
             Assert.Equal(Oids.Sha256, algorithmId.Algorithm.Value);
         }

@@ -26,15 +26,15 @@
                             LeftBrace;[{];
                             NewLine;[LF];
                             Whitespace;[        ];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Comma;[,];
                             NewLine;[LF];
                             Whitespace;[        ];
-                            IntegerLiteral;[2];
+                            NumericLiteral;[2];
                             Comma;[,];
                             NewLine;[LF];
                             Whitespace;[        ];
-                            IntegerLiteral;[3];
+                            NumericLiteral;[3];
                             NewLine;[LF];
                             Whitespace;[    ];
                             RightBrace;[}];

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
@@ -21,7 +20,9 @@ namespace NuGet.Packaging.FuncTest.SigningTests
     public class SignatureUtilityTests
     {
         private readonly SigningTestFixture _fixture;
+#if IS_DESKTOP
         private const int SHA1HashLength = 20;
+#endif
 
         public SignatureUtilityTests(SigningTestFixture fixture)
         {
@@ -148,17 +149,17 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                         {
                             Assert.NotEmpty(actualChain);
 
-                            IReadOnlyList<Org.BouncyCastle.X509.X509Certificate> expectedChain = GetExpectedCertificateChain(timestampService);
+                            IReadOnlyList<X509Certificate2> expectedChain = GetExpectedCertificateChain(timestampService);
 
                             Assert.Equal(expectedChain.Count, actualChain.Count);
 
                             for (var i = 0; i < expectedChain.Count; ++i)
                             {
-                                Org.BouncyCastle.X509.X509Certificate expectedCertificate = expectedChain[i];
+                                X509Certificate2 expectedCertificate = expectedChain[i];
                                 X509Certificate2 actualCertificate = actualChain[i];
 
                                 Assert.True(
-                                    expectedCertificate.GetEncoded().SequenceEqual(actualCertificate.RawData),
+                                    expectedCertificate.RawData.SequenceEqual(actualCertificate.RawData),
                                     $"The certificate at index {i} in the chain is unexpected.");
                             }
                         }
@@ -205,17 +206,17 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                         {
                             Assert.NotEmpty(actualChain);
 
-                            IReadOnlyList<Org.BouncyCastle.X509.X509Certificate> expectedChain = GetExpectedCertificateChain(timestampService);
+                            IReadOnlyList<X509Certificate2> expectedChain = GetExpectedCertificateChain(timestampService);
 
                             Assert.Equal(expectedChain.Count, actualChain.Count);
 
                             for (var i = 0; i < expectedChain.Count; ++i)
                             {
-                                Org.BouncyCastle.X509.X509Certificate expectedCertificate = expectedChain[i];
+                                X509Certificate2 expectedCertificate = expectedChain[i];
                                 X509Certificate2 actualCertificate = actualChain[i];
 
                                 Assert.True(
-                                    expectedCertificate.GetEncoded().SequenceEqual(actualCertificate.RawData),
+                                    expectedCertificate.RawData.SequenceEqual(actualCertificate.RawData),
                                     $"The certificate at index {i} in the chain is unexpected.");
                             }
                         }
@@ -224,9 +225,9 @@ namespace NuGet.Packaging.FuncTest.SigningTests
             }
         }
 
-        private static IReadOnlyList<Org.BouncyCastle.X509.X509Certificate> GetExpectedCertificateChain(TimestampService timestampService)
+        private static IReadOnlyList<X509Certificate2> GetExpectedCertificateChain(TimestampService timestampService)
         {
-            var expectedChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+            var expectedChain = new List<X509Certificate2>();
 
             expectedChain.Add(timestampService.Certificate);
 
@@ -243,4 +244,3 @@ namespace NuGet.Packaging.FuncTest.SigningTests
         }
     }
 }
-#endif

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 namespace System.Windows.Forms.Design;
 
 public partial class ControlDesigner
@@ -30,7 +28,7 @@ public partial class ControlDesigner
             if (_designer is not null)
             {
                 _designer.Control.WindowTarget = _oldTarget;
-                _designer = null;
+                _designer = null!;
             }
         }
 
@@ -46,12 +44,12 @@ public partial class ControlDesigner
         public void OnMessage(ref Message m)
         {
             // We want these messages to go through the designer's WndProc method, and we want people to be able
-            // to do default processing with the designer's DefWndProc.  So, we stuff ourselves into the designers
+            // to do default processing with the designer's DefWndProc. So, we stuff ourselves into the designers
             // window target and call their WndProc.
             ControlDesigner currentDesigner = _designer;
             if (currentDesigner is not null)
             {
-                IDesignerTarget designerTarget = currentDesigner.DesignerTarget;
+                IDesignerTarget? designerTarget = currentDesigner.DesignerTarget;
                 currentDesigner.DesignerTarget = this;
                 try
                 {

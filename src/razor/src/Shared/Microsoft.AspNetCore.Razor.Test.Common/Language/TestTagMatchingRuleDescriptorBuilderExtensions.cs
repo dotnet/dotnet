@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -67,6 +68,67 @@ public static class TestTagMatchingRuleDescriptorBuilderExtensions
         }
 
         builder.Attribute(configure);
+
+        return builder;
+    }
+
+#nullable enable
+
+    public static TagMatchingRuleDescriptorBuilder RequiredAttribute(
+        this TagMatchingRuleDescriptorBuilder builder,
+        Action<RequiredAttributeDescriptorBuilder> configure)
+        => builder.RequiredAttribute(
+            name: default,
+            nameComparison: default,
+            value: default,
+            valueComparison: default,
+            configure: configure);
+
+    public static TagMatchingRuleDescriptorBuilder RequiredAttribute(
+        this TagMatchingRuleDescriptorBuilder builder,
+        string name,
+        Action<RequiredAttributeDescriptorBuilder>? configure = null)
+        => builder.RequiredAttribute(name, nameComparison: default, value: default, valueComparison: default, configure: configure);
+
+    public static TagMatchingRuleDescriptorBuilder RequiredAttribute(
+        this TagMatchingRuleDescriptorBuilder builder,
+        string name,
+        RequiredAttributeNameComparison nameComparison,
+        Action<RequiredAttributeDescriptorBuilder>? configure = null)
+        => builder.RequiredAttribute(name, nameComparison, value: default, valueComparison: default, configure: configure);
+
+    public static TagMatchingRuleDescriptorBuilder RequiredAttribute(
+        this TagMatchingRuleDescriptorBuilder builder,
+        Optional<string> name = default,
+        Optional<RequiredAttributeNameComparison> nameComparison = default,
+        Optional<string?> value = default,
+        Optional<RequiredAttributeValueComparison> valueComparison = default,
+        Action<RequiredAttributeDescriptorBuilder>? configure = null)
+    {
+        builder.Attribute(attribute =>
+        {
+            if (name.HasValue)
+            {
+                attribute.Name = name.Value;
+            }
+
+            if (nameComparison.HasValue)
+            {
+                attribute.NameComparison = nameComparison.Value;
+            }
+
+            if (value.HasValue)
+            {
+                attribute.Value = value.Value;
+            }
+
+            if (valueComparison.HasValue)
+            {
+                attribute.ValueComparison = valueComparison.Value;
+            }
+
+            configure?.Invoke(attribute);
+        });
 
         return builder;
     }

@@ -94,7 +94,7 @@ namespace NuGet.Configuration.Test
 
 
         [Fact]
-        void ValidAuthenticationTypes_ParsesSingle()
+        public void ValidAuthenticationTypes_ParsesSingle()
         {
             var credentials = new PackageSourceCredential(
                 "source",
@@ -107,7 +107,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void ValidAuthenticationTypes_ParsesMultiple()
+        public void ValidAuthenticationTypes_ParsesMultiple()
         {
             var credentials = new PackageSourceCredential(
                 "source",
@@ -120,7 +120,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void ValidAuthenticationTypes_ReturnsEmptyIfTextEmpty()
+        public void ValidAuthenticationTypes_ReturnsEmptyIfTextEmpty()
         {
             var credentials = new PackageSourceCredential(
                 "source",
@@ -133,7 +133,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        void ValidAuthenticationTypes_ReturnsEmptyIfTextNull()
+        public void ValidAuthenticationTypes_ReturnsEmptyIfTextNull()
         {
             var credentials = new PackageSourceCredential(
                 "source",

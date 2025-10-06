@@ -51,6 +51,7 @@ namespace NuGet.SolutionRestoreManager
         private readonly ISolutionRestoreChecker _solutionUpToDateChecker;
         private readonly IVsNuGetProgressReporter _nuGetProgressReporter;
         private readonly IAuditCheckResultCachingService _auditResultCachingService;
+        private readonly INuGetTelemetryProvider _nuGetTelemetryProvider;
 
         private RestoreOperationLogger _logger;
         private INuGetProjectContext _nuGetProjectContext;
@@ -66,8 +67,8 @@ namespace NuGet.SolutionRestoreManager
         // relevant to packages.config restore only
         private int _missingPackagesCount = 0;
         private int _currentCount;
-        private AuditCheckResult _auditCheckResult;
         private bool _solutionHasVulnerabilities;
+        private bool _didNewAuditCheckRun;
 
         /// <summary>
         /// Restore end status. For testing purposes
@@ -83,7 +84,8 @@ namespace NuGet.SolutionRestoreManager
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
             IVsNuGetProgressReporter nuGetProgressReporter,
-            IAuditCheckResultCachingService auditResultCachingService)
+            IAuditCheckResultCachingService auditResultCachingService,
+            INuGetTelemetryProvider nuGetTelemetryProvider)
             : this(AsyncServiceProvider.GlobalProvider,
                   packageRestoreManager,
                   solutionManager,
@@ -92,9 +94,11 @@ namespace NuGet.SolutionRestoreManager
                   settings,
                   solutionRestoreChecker,
                   nuGetProgressReporter,
-                  auditResultCachingService
+                  auditResultCachingService,
+                  nuGetTelemetryProvider
                 )
-        { }
+        {
+        }
 
         public SolutionRestoreJob(
             IAsyncServiceProvider asyncServiceProvider,
@@ -105,7 +109,8 @@ namespace NuGet.SolutionRestoreManager
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
             IVsNuGetProgressReporter nuGetProgressReporter,
-            IAuditCheckResultCachingService auditResultCachingService)
+            IAuditCheckResultCachingService auditResultCachingService,
+            INuGetTelemetryProvider nuGetTelemetryProvider)
         {
             Assumes.Present(asyncServiceProvider);
             Assumes.Present(packageRestoreManager);
@@ -116,6 +121,7 @@ namespace NuGet.SolutionRestoreManager
             Assumes.Present(solutionRestoreChecker);
             Assumes.Present(nuGetProgressReporter);
             Assumes.Present(auditResultCachingService);
+            Assumes.Present(nuGetTelemetryProvider);
 
             _asyncServiceProvider = asyncServiceProvider;
             _packageRestoreManager = packageRestoreManager;
@@ -127,6 +133,8 @@ namespace NuGet.SolutionRestoreManager
             _solutionUpToDateChecker = solutionRestoreChecker;
             _nuGetProgressReporter = nuGetProgressReporter;
             _auditResultCachingService = auditResultCachingService;
+            _nuGetTelemetryProvider = nuGetTelemetryProvider;
+
         }
 
 
@@ -267,7 +275,10 @@ namespace NuGet.SolutionRestoreManager
                     }
 
                     // Display info bar in SolutionExplorer if there is a vulnerability during restore.
-                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(_solutionHasVulnerabilities, token);
+                    if (_didNewAuditCheckRun)
+                    {
+                        await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(_solutionHasVulnerabilities, token);
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -370,8 +381,8 @@ namespace NuGet.SolutionRestoreManager
                 unknownProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.Unknown, 0), // appears in DependencyGraphRestoreUtility
                 projectJsonProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.ProjectJson, 0),
                 packageReferenceProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.PackageReference, 0),
-                legacyPackageReferenceProjectsCount: sortedProjects.Where(x => x.ProjectStyle == ProjectStyle.PackageReference && x is LegacyPackageReferenceProject).Count(),
-                cpsPackageReferenceProjectsCount: sortedProjects.Where(x => x.ProjectStyle == ProjectStyle.PackageReference && x is CpsPackageReferenceProject).Count(),
+                legacyPackageReferenceProjectsCount: sortedProjects.Count(x => x.ProjectStyle == ProjectStyle.PackageReference && x is LegacyPackageReferenceProject),
+                cpsPackageReferenceProjectsCount: sortedProjects.Count(x => x.ProjectStyle == ProjectStyle.PackageReference && x is CpsPackageReferenceProject),
                 dotnetCliToolProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.DotnetCliTool, 0), // appears in DependencyGraphRestoreUtility
                 packagesConfigProjectsCount: projectDictionary.GetValueOrDefault(ProjectStyle.PackagesConfig, 0),
                 DateTimeOffset.Now,
@@ -383,13 +394,13 @@ namespace NuGet.SolutionRestoreManager
                 NumLocalFeeds,
                 hasNuGetOrg,
                 hasVSOfflineFeed);
-            _auditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
+            _auditResultCachingService.LastAuditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
 
-            TelemetryActivity.EmitTelemetryEvent(restoreTelemetryEvent);
+            _nuGetTelemetryProvider.EmitEvent(restoreTelemetryEvent);
 
             var sourceEvent = SourceTelemetry.GetRestoreSourceSummaryEvent(_nuGetProjectContext.OperationId, packageSources, protocolDiagnosticTotals);
 
-            TelemetryActivity.EmitTelemetryEvent(sourceEvent);
+            _nuGetTelemetryProvider.EmitEvent(sourceEvent);
         }
 
         private async Task RestorePackageSpecProjectsAsync(
@@ -446,8 +457,7 @@ namespace NuGet.SolutionRestoreManager
                     // Run solution based up to date check.
                     var projectsNeedingRestore = _solutionUpToDateChecker.PerformUpToDateCheck(originalDgSpec, _logger).AsList();
                     var specialReferencesCount = originalDgSpec.Projects
-                        .Where(x => x.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference && x.RestoreMetadata.ProjectStyle != ProjectStyle.PackagesConfig && x.RestoreMetadata.ProjectStyle != ProjectStyle.ProjectJson)
-                        .Count();
+                        .Count(x => x.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference && x.RestoreMetadata.ProjectStyle != ProjectStyle.PackagesConfig && x.RestoreMetadata.ProjectStyle != ProjectStyle.ProjectJson);
                     dgSpec = originalDgSpec;
                     // Only use the optimization results if the restore is not `force`.
                     // Still run the optimization check anyways to prep the cache.
@@ -471,10 +481,10 @@ namespace NuGet.SolutionRestoreManager
                     if (DependencyGraphRestoreUtility.IsRestoreRequired(dgSpec))
                     {
                         await _logger.RunWithProgressAsync(
-                            async (l, _, t) =>
+                            async (logger, _, token) =>
                             {
                                 // Display the restore opt out message if it has not been shown yet
-                                await l.WriteHeaderAsync();
+                                await logger.WriteHeaderAsync();
 
                                 var sources = _sourceRepositoryProvider
                                     .GetRepositories()
@@ -502,13 +512,14 @@ namespace NuGet.SolutionRestoreManager
                                        isRestoreOriginalAction,
                                        additionalMessages,
                                        _nuGetProgressReporter,
-                                       l,
-                                       t);
+                                       logger,
+                                       token);
 
-                                    _packageCount += restoreSummaries.Select(summary => summary.InstallCount).Sum();
+                                    _packageCount += restoreSummaries.Sum(summary => summary.InstallCount);
                                     isRestoreSucceeded = restoreSummaries.All(summary => summary.Success == true);
-                                    _noOpProjectsCount += restoreSummaries.Where(summary => summary.NoOpRestore == true).Count();
+                                    _noOpProjectsCount += restoreSummaries.Count(summary => summary.NoOpRestore == true);
                                     _solutionUpToDateChecker.SaveRestoreStatus(restoreSummaries);
+                                    _didNewAuditCheckRun = true;
                                     _solutionHasVulnerabilities |= AnyProjectHasVulnerablePackageWarning(restoreSummaries);
                                 }
                                 catch
@@ -693,13 +704,13 @@ namespace NuGet.SolutionRestoreManager
                 {
                     // Only show the wait dialog, when there are some packages to restore
                     await _logger.RunWithProgressAsync(
-                        async (l, _, t) =>
+                        async (logger, _, token) =>
                         {
                             // Display the restore opt out message if it has not been shown yet
-                            await l.WriteHeaderAsync();
+                            await logger.WriteHeaderAsync();
 
-                            PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, l, t);
-                            _auditCheckResult = packageRestoreResult?.AuditCheckResult;
+                            PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, logger, token);
+                            _auditResultCachingService.LastAuditCheckResult = packageRestoreResult?.AuditCheckResult;
                         },
                         token);
 
@@ -708,7 +719,7 @@ namespace NuGet.SolutionRestoreManager
                     {
                         _status = NuGetOperationStatus.Succeeded;
                     }
-                    _auditResultCachingService.LastAuditCheckResult = _auditCheckResult;
+                    _didNewAuditCheckRun = true;
                 }
                 else
                 {
@@ -716,25 +727,26 @@ namespace NuGet.SolutionRestoreManager
                     {
                         using SourceCacheContext sourceCacheContext = new();
                         List<SourceRepository> sourceRepositories = _sourceRepositoryProvider.GetRepositories().AsList();
-                        Dictionary<string, RestoreAuditProperties> auditProperties = GetRestoreAuditProperties(allProjects);
+
+                        Dictionary<string, RestoreAuditProperties> auditProperties = await GetRestoreAuditProperties(allProjects, token);
 
                         AuditChecker auditChecker = new(sourceRepositories, sourceCacheContext, _logger);
                         AuditCheckResult result = await auditChecker.CheckPackageVulnerabilitiesAsync(packages, auditProperties, token);
                         _auditResultCachingService.LastAuditCheckResult = result;
+                        _didNewAuditCheckRun = true;
                     }
                     else
                     {
-                        _auditCheckResult = _auditResultCachingService.LastAuditCheckResult;
-                        if (_auditCheckResult != null)
+                        if (_auditResultCachingService.LastAuditCheckResult != null)
                         {
-                            foreach (var warning in _auditCheckResult.Warnings)
+                            foreach (var warning in _auditResultCachingService.LastAuditCheckResult.Warnings)
                             {
                                 _logger.Log(warning);
                             }
                         }
                     }
                 }
-                _solutionHasVulnerabilities |= _auditCheckResult?.Warnings.Count > 0;
+                _solutionHasVulnerabilities |= _auditResultCachingService.LastAuditCheckResult?.Warnings.Count > 0;
 
                 ValidatePackagesConfigLockFiles(allProjects, token);
             }
@@ -752,28 +764,50 @@ namespace NuGet.SolutionRestoreManager
                 token);
         }
 
-        private static Dictionary<string, RestoreAuditProperties> GetRestoreAuditProperties(IEnumerable<NuGetProject> projects)
+        private static async Task<Dictionary<string, RestoreAuditProperties>> GetRestoreAuditProperties(IEnumerable<NuGetProject> projects, CancellationToken cancellationToken)
         {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>(PathUtility.GetStringComparerBasedOnOS());
 
             foreach (var nuGetProject in projects.NoAllocEnumerate())
             {
                 if (nuGetProject.ProjectStyle == ProjectStyle.PackagesConfig)
                 {
-                    var msbuildProject = (MSBuildNuGetProject)nuGetProject;
+                    var msbuildProject = (VsMSBuildNuGetProject)nuGetProject;
                     var nuGetProjectName = (string)msbuildProject.GetMetadataOrNull(NuGetProjectMetadataKeys.Name);
                     var nugetAudit = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAudit);
                     var auditLevel = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAuditLevel);
+                    var suppressions = GetSuppressions(msbuildProject);
+
                     var auditProperties = new RestoreAuditProperties()
                     {
                         EnableAudit = nugetAudit,
                         AuditLevel = auditLevel,
+                        SuppressedAdvisories = suppressions,
                     };
                     restoreAuditProperties.Add(nuGetProjectName, auditProperties);
                 }
             }
 
             return restoreAuditProperties;
+
+            static HashSet<string> GetSuppressions(VsMSBuildNuGetProject msbuildProject)
+            {
+                var items = msbuildProject.GetItems(ProjectItems.NuGetAuditSuppress);
+                if (items?.Count > 0)
+                {
+                    var suppressions = new HashSet<string>(items.Count, StringComparer.Ordinal);
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        suppressions.Add(items[0].id);
+                    }
+                    return suppressions;
+                }
+
+                return null;
+            }
         }
 
         private void ValidatePackagesConfigLockFiles(IEnumerable<NuGetProject> allProjects, CancellationToken token)

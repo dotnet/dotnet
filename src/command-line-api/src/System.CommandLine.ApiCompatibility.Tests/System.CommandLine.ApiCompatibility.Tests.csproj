@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
-    <IsPackable>false</IsPackable>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\System.CommandLine.Hosting\System.CommandLine.Hosting.csproj" />
-    <ProjectReference Include="..\System.CommandLine.NamingConventionBinder\System.CommandLine.NamingConventionBinder.csproj" />
     <ProjectReference Include="..\System.CommandLine\System.CommandLine.csproj" />
   </ItemGroup>
 

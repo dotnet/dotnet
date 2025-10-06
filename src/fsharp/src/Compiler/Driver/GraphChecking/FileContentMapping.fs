@@ -9,6 +9,13 @@ type Continuations = ((FileContentEntry list -> FileContentEntry list) -> FileCo
 let collectFromOption (mapping: 'T -> 'U list) (t: 'T option) : 'U list = List.collect mapping (Option.toList t)
 
 let longIdentToPath (skipLast: bool) (longId: LongIdent) : LongIdentifier =
+
+    // We always skip the "special" `global` identifier.
+    let longId =
+        match longId with
+        | h :: t when h.idText = "`global`" -> t
+        | _ -> longId
+
     match skipLast, longId with
     | true, _ :: _ -> List.take (longId.Length - 1) longId
     | _ -> longId
@@ -205,7 +212,7 @@ let visitSynMemberDefn (md: SynMemberDefn) : FileContentEntry list =
             yield! collectFromOption visitBinding memberDefnForGet
             yield! collectFromOption visitBinding memberDefnForSet
         | SynMemberDefn.ImplicitCtor(ctorArgs = pat) -> yield! visitPat pat
-        | SynMemberDefn.ImplicitInherit(inheritType, inheritArgs, _, _) ->
+        | SynMemberDefn.ImplicitInherit(inheritType, inheritArgs, _, _, _) ->
             yield! visitSynType inheritType
             yield! visitSynExpr inheritArgs
         | SynMemberDefn.LetBindings(bindings = bindings) -> yield! List.collect visitBinding bindings
@@ -213,7 +220,8 @@ let visitSynMemberDefn (md: SynMemberDefn) : FileContentEntry list =
         | SynMemberDefn.Interface(interfaceType, _, members, _) ->
             yield! visitSynType interfaceType
             yield! collectFromOption (List.collect visitSynMemberDefn) members
-        | SynMemberDefn.Inherit(baseType, _, _) -> yield! visitSynType baseType
+        | SynMemberDefn.Inherit(baseType = Some baseType) -> yield! visitSynType baseType
+        | SynMemberDefn.Inherit(baseType = None) -> ()
         | SynMemberDefn.ValField(fieldInfo, _) -> yield! visitSynField fieldInfo
         | SynMemberDefn.NestedType _ -> ()
         | SynMemberDefn.AutoProperty(attributes = attributes; typeOpt = typeOpt; synExpr = synExpr) ->
@@ -250,6 +258,7 @@ let visitSynType (t: SynType) : FileContentEntry list =
             let continuations = List.map (snd >> visit) fields
             Continuation.concatenate continuations continuation
         | SynType.Array(elementType = elementType) -> visit elementType continuation
+        | SynType.WithNull(innerType = innerType) -> visit innerType continuation
         | SynType.Fun(argType, returnType, _, _) ->
             let continuations = List.map visit [ argType; returnType ]
             Continuation.concatenate continuations continuation
@@ -260,6 +269,7 @@ let visitSynType (t: SynType) : FileContentEntry list =
         | SynType.HashConstraint(innerType, _) -> visit innerType continuation
         | SynType.MeasurePower(baseMeasure = baseMeasure) -> visit baseMeasure continuation
         | SynType.StaticConstant _ -> continuation []
+        | SynType.StaticConstantNull _ -> continuation []
         | SynType.StaticConstantExpr(expr, _) -> continuation (visitSynExpr expr)
         | SynType.StaticConstantNamed(ident, value, _) ->
             let continuations = List.map visit [ ident; value ]
@@ -298,6 +308,7 @@ let visitSynTypeConstraint (tc: SynTypeConstraint) : FileContentEntry list =
     | SynTypeConstraint.WhereTyparIsReferenceType _
     | SynTypeConstraint.WhereTyparIsUnmanaged _
     | SynTypeConstraint.WhereTyparSupportsNull _
+    | SynTypeConstraint.WhereTyparNotSupportsNull _
     | SynTypeConstraint.WhereTyparIsComparable _
     | SynTypeConstraint.WhereTyparIsEquatable _ -> []
     | SynTypeConstraint.WhereTyparDefaultsToType(typeName = typeName) -> visitSynType typeName
@@ -330,7 +341,8 @@ let visitNameofResult (nameofResult: NameofResult) : FileContentEntry =
         FileContentEntry.PrefixedIdentifier(longIdentToPath false longIdent)
 
 /// Special case of `nameof Module` type of expression
-let (|NameofExpr|_|) (e: SynExpr) : NameofResult option =
+[<return: Struct>]
+let (|NameofExpr|_|) (e: SynExpr) : NameofResult voption =
     let rec stripParen (e: SynExpr) =
         match e with
         | SynExpr.Paren(expr = expr) -> stripParen expr
@@ -339,15 +351,15 @@ let (|NameofExpr|_|) (e: SynExpr) : NameofResult option =
     match e with
     | SynExpr.App(flag = ExprAtomicFlag.NonAtomic; isInfix = false; funcExpr = SynExpr.Ident NameofIdent; argExpr = moduleNameExpr) ->
         match stripParen moduleNameExpr with
-        | SynExpr.Ident moduleNameIdent -> Some(NameofResult.SingleIdent moduleNameIdent)
+        | SynExpr.Ident moduleNameIdent -> ValueSome(NameofResult.SingleIdent moduleNameIdent)
         | SynExpr.LongIdent(longDotId = longIdent) ->
             match longIdent.LongIdent with
-            | [] -> None
+            | [] -> ValueNone
             // This is highly unlikely to be produced by the parser
-            | [ moduleNameIdent ] -> Some(NameofResult.SingleIdent moduleNameIdent)
-            | lid -> Some(NameofResult.LongIdent(lid))
-        | _ -> None
-    | _ -> None
+            | [ moduleNameIdent ] -> ValueSome(NameofResult.SingleIdent moduleNameIdent)
+            | lid -> ValueSome(NameofResult.LongIdent(lid))
+        | _ -> ValueNone
+    | _ -> ValueNone
 
 let visitSynExpr (e: SynExpr) : FileContentEntry list =
     let rec visit (e: SynExpr) (continuation: FileContentEntry list -> FileContentEntry list) : FileContentEntry list =
@@ -493,26 +505,11 @@ let visitSynExpr (e: SynExpr) : FileContentEntry list =
             Continuation.concatenate continuations continuation
         | SynExpr.YieldOrReturn(expr = expr) -> visit expr continuation
         | SynExpr.YieldOrReturnFrom(expr = expr) -> visit expr continuation
-        | SynExpr.LetOrUseBang(pat = pat; rhs = rhs; andBangs = andBangs; body = body) ->
-            let continuations =
-                let andBangExprs = List.map (fun (SynExprAndBang(body = body)) -> body) andBangs
-                List.map visit (body :: rhs :: andBangExprs)
-
-            let finalContinuation nodes =
-                [
-                    yield! List.concat nodes
-                    yield! visitPat pat
-                    for SynExprAndBang(pat = pat) in andBangs do
-                        yield! visitPat pat
-                ]
-                |> continuation
-
-            Continuation.sequence continuations finalContinuation
         | SynExpr.MatchBang(expr = expr; clauses = clauses) ->
             visit expr (fun exprNodes ->
                 [ yield! exprNodes; yield! List.collect visitSynMatchClause clauses ]
                 |> continuation)
-        | SynExpr.DoBang(expr, _) -> visit expr continuation
+        | SynExpr.DoBang(expr = expr) -> visit expr continuation
         | SynExpr.WhileBang(whileExpr = whileExpr; doExpr = doExpr) ->
             visit whileExpr (fun whileNodes -> visit doExpr (fun doNodes -> whileNodes @ doNodes |> continuation))
         | SynExpr.LibraryOnlyILAssembly(typeArgs = typeArgs; args = args; retTy = retTy) ->
@@ -566,6 +563,7 @@ let visitSynExpr (e: SynExpr) : FileContentEntry list =
     visit e id
 
 /// Special case of `| nameof Module ->` type of pattern
+[<return: Struct>]
 let (|NameofPat|_|) (pat: SynPat) =
     let rec stripPats p =
         match p with
@@ -582,18 +580,18 @@ let (|NameofPat|_|) (pat: SynPat) =
             argPats = SynArgPats.Pats []
             accessibility = None) ->
             match longIdent with
-            | [] -> None
-            | [ moduleNameIdent ] -> Some(NameofResult.SingleIdent moduleNameIdent)
-            | lid -> Some(NameofResult.LongIdent lid)
-        | _ -> None
-    | _ -> None
+            | [] -> ValueNone
+            | [ moduleNameIdent ] -> ValueSome(NameofResult.SingleIdent moduleNameIdent)
+            | lid -> ValueSome(NameofResult.LongIdent lid)
+        | _ -> ValueNone
+    | _ -> ValueNone
 
 let visitPat (p: SynPat) : FileContentEntry list =
     let rec visit (p: SynPat) (continuation: FileContentEntry list -> FileContentEntry list) : FileContentEntry list =
         match p with
         | NameofPat moduleNameIdent -> continuation [ visitNameofResult moduleNameIdent ]
         | SynPat.Paren(pat = pat) -> visit pat continuation
-        | SynPat.Typed(pat = pat; targetType = t) -> visit pat (fun nodes -> nodes @ visitSynType t)
+        | SynPat.Typed(pat = pat; targetType = t) -> visit pat (fun nodes -> nodes @ visitSynType t |> continuation)
         | SynPat.Const _ -> continuation []
         | SynPat.Wild _ -> continuation []
         | SynPat.Named _ -> continuation []
@@ -624,20 +622,9 @@ let visitPat (p: SynPat) : FileContentEntry list =
             let continuations = List.map visit elementPats
             Continuation.concatenate continuations continuation
         | SynPat.Record(fieldPats, _) ->
-            let pats = List.map (fun (_, _, p) -> p) fieldPats
-
-            let lids =
-                [
-                    for (l, _), _, _ in fieldPats do
-                        yield! visitLongIdent l
-                ]
-
+            let pats = fieldPats |> List.map (fun f -> f.Pattern)
             let continuations = List.map visit pats
-
-            let finalContinuation nodes =
-                [ yield! List.concat nodes; yield! lids ] |> continuation
-
-            Continuation.sequence continuations finalContinuation
+            Continuation.concatenate continuations continuation
         | SynPat.Null _ -> continuation []
         | SynPat.OptionalVal _ -> continuation []
         | SynPat.IsInst(t, _) -> continuation (visitSynType t)
@@ -652,8 +639,8 @@ let visitSynArgPats (argPat: SynArgPats) =
     | SynArgPats.Pats args -> List.collect visitPat args
     | SynArgPats.NamePatPairs(pats = pats) ->
         [
-            for _, _, p in pats do
-                yield! visitPat p
+            for p in pats do
+                yield! visitPat p.Pattern
         ]
 
 let visitSynSimplePat (pat: SynSimplePat) =

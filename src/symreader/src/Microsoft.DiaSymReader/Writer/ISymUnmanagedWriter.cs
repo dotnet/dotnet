@@ -2,16 +2,20 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the License.txt file in the project root for more information.
 
-#pragma warning disable 436 // SuppressUnmanagedCodeSecurityAttribute defined in source and mscorlib 
+#pragma warning disable 436 // SuppressUnmanagedCodeSecurityAttribute defined in source and mscorlib
 
 using System;
 using System.Runtime.InteropServices;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 using System.Security;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("98ECEE1E-752D-11d3-8D56-00C04F680B2B"), SuppressUnmanagedCodeSecurity]
-    internal interface IPdbWriter
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("98ECEE1E-752D-11d3-8D56-00C04F680B2B"), SuppressUnmanagedCodeSecurity]
+    [GeneratedWhenPossibleComInterface]
+    internal partial interface IPdbWriter
     {
         int __SetPath(/*[in] const WCHAR* szFullPathName, [in] IStream* pIStream, [in] BOOL fFullBuild*/);
         int __OpenMod(/*[in] const WCHAR* szModuleName, [in] const WCHAR* szFileName*/);
@@ -24,8 +28,13 @@ namespace Microsoft.DiaSymReader
     /// <summary>
     /// The highest version of the interface available on Desktop FX 4.0+.
     /// </summary>
-    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("DCF7780D-BDE9-45DF-ACFE-21731A32000C"), SuppressUnmanagedCodeSecurity]
-    internal unsafe interface ISymUnmanagedWriter5
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("DCF7780D-BDE9-45DF-ACFE-21731A32000C"), SuppressUnmanagedCodeSecurity]
+#if NET9_0_OR_GREATER
+    [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+#else
+    [ComImport]
+#endif
+    internal unsafe partial interface ISymUnmanagedWriter5
     {
         #region ISymUnmanagedWriter
 
@@ -45,8 +54,8 @@ namespace Microsoft.DiaSymReader
         void OpenNamespace(string name);
         void CloseNamespace();
         void UsingNamespace(string fullName);
-        void SetMethodSourceRange(ISymUnmanagedDocumentWriter startDoc, uint startLine, uint startColumn, object endDoc, uint endLine, uint endColumn);
-        void Initialize([MarshalAs(UnmanagedType.IUnknown)] object emitter, string filename, [MarshalAs(UnmanagedType.IUnknown)] object ptrIStream, bool fullBuild);
+        void SetMethodSourceRange(ISymUnmanagedDocumentWriter startDoc, uint startLine, uint startColumn, ISymUnmanagedDocumentWriter endDoc, uint endLine, uint endColumn);
+        void Initialize([MarshalAs(UnmanagedType.Interface)] object emitter, string filename, [MarshalAs(UnmanagedType.Interface)] object ptrIStream, [MarshalAs(UnmanagedType.Bool)] bool fullBuild);
         void GetDebugInfo(ref ImageDebugDirectory debugDirectory, uint dataCount, out uint dataCountPtr, byte* data);
         void DefineSequencePoints(ISymUnmanagedDocumentWriter document, int count,
           [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] int[] offsets,
@@ -55,8 +64,8 @@ namespace Microsoft.DiaSymReader
           [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] int[] endLines,
           [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] int[] endColumns);
         void RemapToken(uint oldToken, uint newToken);
-        void Initialize2([MarshalAs(UnmanagedType.IUnknown)] object emitter, string tempfilename, [MarshalAs(UnmanagedType.IUnknown)] object ptrIStream, bool fullBuild, string finalfilename);
-        void DefineConstant(string name, object value, uint sig, byte* signature);
+        void Initialize2([MarshalAs(UnmanagedType.Interface)] object emitter, string tempfilename, [MarshalAs(UnmanagedType.Interface)] object ptrIStream, [MarshalAs(UnmanagedType.Bool)] bool fullBuild, string finalfilename);
+        void DefineConstant(string name, [MarshalAs(UnmanagedType.Struct)] object value, uint sig, byte* signature);
         void Abort();
 
         #endregion
@@ -92,7 +101,7 @@ namespace Microsoft.DiaSymReader
         #region ISymUnmanagedWriter5
 
         /// <summary>
-        /// Open a special custom data section to emit token to source span mapping information into. 
+        /// Open a special custom data section to emit token to source span mapping information into.
         /// Opening this section while a method is already open or vice versa is an error.
         /// </summary>
         void OpenMapTokensToSourceSpans();
@@ -104,7 +113,7 @@ namespace Microsoft.DiaSymReader
         void CloseMapTokensToSourceSpans();
 
         /// <summary>
-        /// Maps the given metadata token to the given source line span in the specified source file. 
+        /// Maps the given metadata token to the given source line span in the specified source file.
         /// Must be called between calls to <see cref="OpenMapTokensToSourceSpans"/> and <see cref="CloseMapTokensToSourceSpans"/>.
         /// </summary>
         void MapTokenToSourceSpan(int token, ISymUnmanagedDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn);
@@ -115,22 +124,31 @@ namespace Microsoft.DiaSymReader
     /// <summary>
     /// The highest version of the interface available in Microsoft.DiaSymReader.Native.
     /// </summary>
-    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("5ba52f3b-6bf8-40fc-b476-d39c529b331e"), SuppressUnmanagedCodeSecurity]
-    internal interface ISymUnmanagedWriter8 : ISymUnmanagedWriter5
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("5ba52f3b-6bf8-40fc-b476-d39c529b331e"), SuppressUnmanagedCodeSecurity]
+#if NET9_0_OR_GREATER
+    [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+#else
+    [ComImport]
+#endif
+    internal unsafe partial interface ISymUnmanagedWriter8 : ISymUnmanagedWriter5
     {
+        // .NET 8+ COM source generators respect COM interface inheritance
+        // so re-declaration of inherited method is not needed.
+#if NETSTANDARD2_0
         //  ISymUnmanagedWriter, ISymUnmanagedWriter2, ISymUnmanagedWriter3, ISymUnmanagedWriter4, ISymUnmanagedWriter5
         void _VtblGap1_33();
+#endif
 
         // ISymUnmanagedWriter6
-        void InitializeDeterministic([MarshalAs(UnmanagedType.IUnknown)] object emitter, [MarshalAs(UnmanagedType.IUnknown)] object stream);
+        void InitializeDeterministic([MarshalAs(UnmanagedType.Interface)] object emitter, [MarshalAs(UnmanagedType.Interface)] object stream);
 
         // ISymUnmanagedWriter7
-        unsafe void UpdateSignatureByHashingContent([In]byte* buffer, int size);
+        unsafe void UpdateSignatureByHashingContent(byte* buffer, int size);
 
         // ISymUnmanagedWriter8
         void UpdateSignature(Guid pdbId, uint stamp, int age);
-        unsafe void SetSourceServerData([In]byte* data, int size);
-        unsafe void SetSourceLinkData([In]byte* data, int size);
+        unsafe void SetSourceServerData(byte* data, int size);
+        unsafe void SetSourceLinkData(byte* data, int size);
     }
 
     /// <summary>
@@ -157,7 +175,7 @@ namespace Microsoft.DiaSymReader
         private readonly long _longValue;
 
         /// <summary>
-        /// This field determines the size of the struct 
+        /// This field determines the size of the struct
         /// (16 bytes on 32-bit platforms, 24 bytes on 64-bit platforms).
         /// </summary>
         [FieldOffset(8)]
@@ -188,7 +206,7 @@ namespace Microsoft.DiaSymReader
         public readonly byte* Data3;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct ImageDebugDirectory
     {
         internal int Characteristics;

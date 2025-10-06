@@ -4,11 +4,11 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using Test.Utility;
-using Test.Utility.Signing;
 using Xunit;
 
 namespace NuGet.Packaging.Test

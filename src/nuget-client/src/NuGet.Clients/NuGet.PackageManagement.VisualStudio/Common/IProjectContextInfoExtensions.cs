@@ -12,8 +12,6 @@ using Microsoft.ServiceHub.Framework;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.VisualStudio.Internal.Contracts;
-using NuGet.ProjectManagement.Projects;
-using System.Linq;
 
 namespace NuGet.PackageManagement.VisualStudio
 {

@@ -200,7 +200,7 @@ public class TestRequestHandlerTests
     [TestMethod]
     public void DiscoveryCompleteShouldSendDiscoveryCompletePayloadOnChannel()
     {
-        var discoveryComplete = new DiscoveryCompletePayload { TotalTests = 1, LastDiscoveredTests = Enumerable.Empty<TestCase>(), IsAborted = false };
+        var discoveryComplete = new DiscoveryCompletePayload { TotalTests = 1, LastDiscoveredTests = [], IsAborted = false };
         var message = _dataSerializer.SerializePayload(MessageType.DiscoveryComplete, discoveryComplete);
 
         ProcessRequestsAsync(_mockTestHostManagerFactory.Object);

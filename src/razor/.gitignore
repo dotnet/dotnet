@@ -24,11 +24,15 @@ x86/ !eng/common/cross/x86/
 msbuild.log
 msbuild.err
 msbuild.wrn
-msbuild.binlog
 msbuild.ProjectImports.zip
+*.binlog
+*.complog
 
 # Visual Studio 2015
 .vs/
+
+# If MSBUILDDEBUGENGINE=1 and no directory is specified then MSBuild_Logs/ will be the default
+MSBuild_Logs/
 
 # Visual Studio 2015 Pre-CTP6
 *.sln.ide
@@ -149,4 +153,4 @@ src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/BenchmarkDotNet.
 *.vsix
 
 # testapp modifications
-src/Razor/test/testapps/ComponentApp/Components/Pages/Generated.razor
+src/Razor/benchmarks/testapps/ComponentApp/Components/Pages/Generated.razor

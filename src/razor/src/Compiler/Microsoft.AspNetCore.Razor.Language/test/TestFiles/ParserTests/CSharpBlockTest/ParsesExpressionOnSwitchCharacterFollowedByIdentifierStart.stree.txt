@@ -22,7 +22,7 @@
                             CSharpExpressionLiteral - [12..24)::12 - [foo[4].bar()] - Gen<Expr>
                                 Identifier;[foo];
                                 LeftBracket;[[];
-                                IntegerLiteral;[4];
+                                NumericLiteral;[4];
                                 RightBracket;[]];
                                 Dot;[.];
                                 Identifier;[bar];

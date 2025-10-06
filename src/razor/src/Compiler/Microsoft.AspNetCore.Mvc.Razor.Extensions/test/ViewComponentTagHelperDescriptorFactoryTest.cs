@@ -1,53 +1,42 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
 public class ViewComponentTagHelperDescriptorFactoryTest
 {
-    private static readonly Assembly _assembly = typeof(ViewComponentTagHelperDescriptorFactoryTest).GetTypeInfo().Assembly;
+    private static readonly Compilation _compilation = TestCompilation.Create(syntaxTrees: [CSharpSyntaxTree.ParseText(AdditionalCode)], references: []);
 
     [Fact]
     public void CreateDescriptor_UnderstandsStringParameters()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(StringParameterViewComponent).FullName);
+        var testCompilation = _compilation;
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.StringParameterViewComponent");
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__StringParameterViewComponentTagHelper",
-            typeof(StringParameterViewComponent).GetTypeInfo().Assembly.GetName().Name)
-            .Metadata(
-                TypeName("__Generated__StringParameterViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "StringParameter"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__StringParameterViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__StringParameterViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("StringParameter", TypeNameObject.From("StringParameter")))
             .DisplayName("StringParameterViewComponentTagHelper")
-            .TagMatchingRuleDescriptor(rule =>
-                rule
+            .TagMatchingRuleDescriptor(rule => rule
                 .RequireTagName("vc:string-parameter")
                 .RequireAttributeDescriptor(attribute => attribute.Name("foo"))
                 .RequireAttributeDescriptor(attribute => attribute.Name("bar")))
-            .BoundAttributeDescriptor(attribute =>
-                attribute
+            .BoundAttributeDescriptor(attribute => attribute
                 .Name("foo")
-                .Metadata(PropertyName("foo"))
+                .PropertyName("foo")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.foo"))
-            .BoundAttributeDescriptor(attribute =>
-                attribute
+            .BoundAttributeDescriptor(attribute => attribute
                 .Name("bar")
-                .Metadata(PropertyName("bar"))
+                .PropertyName("bar")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.bar"))
             .Build();
@@ -63,17 +52,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_UnderstandsVariousParameterTypes()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(VariousParameterViewComponent).FullName);
+        var testCompilation = _compilation;
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.VariousParameterViewComponent");
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__VariousParameterViewComponentTagHelper",
-            typeof(VariousParameterViewComponent).GetTypeInfo().Assembly.GetName().Name)
-            .Metadata(
-                TypeName("__Generated__VariousParameterViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "VariousParameter"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__VariousParameterViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__VariousParameterViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("VariousParameter", TypeNameObject.From("VariousParameter")))
             .DisplayName("VariousParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -83,20 +68,20 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("test-enum")
-                .Metadata(PropertyName("testEnum"))
-                .TypeName(typeof(VariousParameterViewComponent).FullName + "." + nameof(VariousParameterViewComponent.TestEnum))
+                .PropertyName("testEnum")
+                .TypeName("TestNamespace.VariousParameterViewComponent.TestEnum")
                 .AsEnum()
-                .DisplayName(typeof(VariousParameterViewComponent).FullName + "." + nameof(VariousParameterViewComponent.TestEnum) + " VariousParameterViewComponentTagHelper.testEnum"))
+                .DisplayName("TestNamespace.VariousParameterViewComponent.TestEnum VariousParameterViewComponentTagHelper.testEnum"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("test-string")
-                .Metadata(PropertyName("testString"))
+                .PropertyName("testString")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string VariousParameterViewComponentTagHelper.testString"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("baz")
-                .Metadata(PropertyName("baz"))
+                .PropertyName("baz")
                 .TypeName(typeof(int).FullName)
                 .DisplayName("int VariousParameterViewComponentTagHelper.baz"))
             .Build();
@@ -112,17 +97,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_UnderstandsGenericParameters()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(GenericParameterViewComponent).FullName);
+        var testCompilation = _compilation;
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.GenericParameterViewComponent");
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__GenericParameterViewComponentTagHelper",
-            typeof(GenericParameterViewComponent).GetTypeInfo().Assembly.GetName().Name)
-            .Metadata(
-                TypeName("__Generated__GenericParameterViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "GenericParameter"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__GenericParameterViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__GenericParameterViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("GenericParameter", TypeNameObject.From("GenericParameter")))
             .DisplayName("GenericParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -131,13 +112,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("Foo"))
+                .PropertyName("Foo")
                 .TypeName("System.Collections.Generic.List<System.String>")
                 .DisplayName("System.Collections.Generic.List<System.String> GenericParameterViewComponentTagHelper.Foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("Bar"))
+                .PropertyName("Bar")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
                 .AsDictionaryAttribute("bar-", typeof(int).FullName)
                 .DisplayName("System.Collections.Generic.Dictionary<System.String, System.Int32> GenericParameterViewComponentTagHelper.Bar"))
@@ -154,16 +135,12 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForSyncViewComponentWithInvokeInBaseType_Works()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__SyncDerivedViewComponentTagHelper",
-            typeof(SyncDerivedViewComponent).GetTypeInfo().Assembly.GetName().Name)
-            .Metadata(
-                TypeName("__Generated__SyncDerivedViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "SyncDerived"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__SyncDerivedViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__SyncDerivedViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("SyncDerived", TypeNameObject.From("SyncDerived")))
             .DisplayName("SyncDerivedViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -173,18 +150,18 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("foo"))
+                .PropertyName("foo")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string SyncDerivedViewComponentTagHelper.foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("bar"))
+                .PropertyName("bar")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string SyncDerivedViewComponentTagHelper.bar"))
             .Build();
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(SyncDerivedViewComponent).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.SyncDerivedViewComponent");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -197,21 +174,17 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForAsyncViewComponentWithInvokeInBaseType_Works()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__AsyncDerivedViewComponentTagHelper",
-            typeof(AsyncDerivedViewComponent).Assembly.GetName().Name)
-            .Metadata(
-                TypeName("__Generated__AsyncDerivedViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "AsyncDerived"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__AsyncDerivedViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__AsyncDerivedViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("AsyncDerived", TypeNameObject.From("AsyncDerived")))
             .DisplayName("AsyncDerivedViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("vc:async-derived"))
             .Build();
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(AsyncDerivedViewComponent).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.AsyncDerivedViewComponent");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -224,10 +197,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_AddsDiagnostic_ForViewComponentWithNoInvokeMethod()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(ViewComponentWithoutInvokeMethod).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.ViewComponentWithoutInvokeMethod");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -241,10 +214,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_AddsDiagnostic_ForViewComponentWithNoInstanceInvokeMethod()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(StaticInvokeAsyncViewComponent).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.StaticInvokeAsyncViewComponent");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -258,10 +231,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_AddsDiagnostic_ForViewComponentWithNoPublicInvokeMethod()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(NonPublicInvokeAsyncViewComponent).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.NonPublicInvokeAsyncViewComponent");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -275,10 +248,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvokeAsync_UnderstandsGenericTask()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(AsyncViewComponentWithGenericTask).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.AsyncViewComponentWithGenericTask");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -291,10 +264,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvokeAsync_UnderstandsNonGenericTask()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(AsyncViewComponentWithNonGenericTask).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.AsyncViewComponentWithNonGenericTask");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -307,10 +280,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvokeAsync_DoesNotUnderstandVoid()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(AsyncViewComponentWithString).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.AsyncViewComponentWithString");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -324,10 +297,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvokeAsync_DoesNotUnderstandString()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(AsyncViewComponentWithString).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.AsyncViewComponentWithString");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -341,10 +314,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvoke_DoesNotUnderstandVoid()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(SyncViewComponentWithVoid).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.SyncViewComponentWithVoid");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -358,10 +331,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvoke_DoesNotUnderstandNonGenericTask()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(SyncViewComponentWithNonGenericTask).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.SyncViewComponentWithNonGenericTask");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -375,10 +348,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponentWithInvoke_DoesNotUnderstandGenericTask()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(SyncViewComponentWithGenericTask).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.SyncViewComponentWithGenericTask");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -392,10 +365,10 @@ public class ViewComponentTagHelperDescriptorFactoryTest
     public void CreateDescriptor_ForViewComponent_WithAmbiguousMethods()
     {
         // Arrange
-        var testCompilation = TestCompilation.Create(_assembly);
+        var testCompilation = _compilation;
         var factory = new ViewComponentTagHelperDescriptorFactory(testCompilation);
 
-        var viewComponent = testCompilation.GetTypeByMetadataName(typeof(DerivedViewComponentWithAmbiguity).FullName);
+        var viewComponent = testCompilation.GetTypeByMetadataName("TestNamespace.DerivedViewComponentWithAmbiguity");
 
         // Act
         var descriptor = factory.CreateDescriptor(viewComponent);
@@ -404,88 +377,96 @@ public class ViewComponentTagHelperDescriptorFactoryTest
         var diagnostic = Assert.Single(descriptor.GetAllDiagnostics());
         Assert.Equal(RazorExtensionsDiagnosticFactory.ViewComponent_AmbiguousMethods.Id, diagnostic.Id);
     }
-}
 
-public class StringParameterViewComponent
-{
-    public string Invoke(string foo, string bar) => null;
-}
+    public const string AdditionalCode = """
+        using System.Collections.Generic;
+        using System.Threading.Tasks;
 
-public class VariousParameterViewComponent
-{
-    public string Invoke(TestEnum testEnum, string testString, int baz = 5) => null;
+        namespace TestNamespace
+        {
+            public class StringParameterViewComponent
+            {
+                public string Invoke(string foo, string bar) => null;
+            }
 
-    public enum TestEnum
-    {
-        A = 1,
-        B = 2,
-        C = 3
-    }
-}
+            public class VariousParameterViewComponent
+            {
+                public string Invoke(TestEnum testEnum, string testString, int baz = 5) => null;
 
-public class GenericParameterViewComponent
-{
-    public string Invoke(List<string> Foo, Dictionary<string, int> Bar) => null;
-}
+                public enum TestEnum
+                {
+                    A = 1,
+                    B = 2,
+                    C = 3
+                }
+            }
 
-public class ViewComponentWithoutInvokeMethod
-{
-}
+            public class GenericParameterViewComponent
+            {
+                public string Invoke(List<string> Foo, Dictionary<string, int> Bar) => null;
+            }
 
-public class AsyncViewComponentWithGenericTask
-{
-    public Task<string> InvokeAsync() => null;
-}
+            public class ViewComponentWithoutInvokeMethod
+            {
+            }
 
-public class AsyncViewComponentWithNonGenericTask
-{
-    public Task InvokeAsync() => null;
-}
+            public class AsyncViewComponentWithGenericTask
+            {
+                public Task<string> InvokeAsync() => null;
+            }
 
-public class AsyncViewComponentWithVoid
-{
-    public void InvokeAsync() { }
-}
+            public class AsyncViewComponentWithNonGenericTask
+            {
+                public Task InvokeAsync() => null;
+            }
 
-public class AsyncViewComponentWithString
-{
-    public string InvokeAsync() => null;
-}
+            public class AsyncViewComponentWithVoid
+            {
+                public void InvokeAsync() { }
+            }
 
-public class SyncViewComponentWithVoid
-{
-    public void Invoke() { }
-}
+            public class AsyncViewComponentWithString
+            {
+                public string InvokeAsync() => null;
+            }
 
-public class SyncViewComponentWithNonGenericTask
-{
-    public Task Invoke() => null;
-}
+            public class SyncViewComponentWithVoid
+            {
+                public void Invoke() { }
+            }
 
-public class SyncViewComponentWithGenericTask
-{
-    public Task<string> Invoke() => null;
-}
+            public class SyncViewComponentWithNonGenericTask
+            {
+                public Task Invoke() => null;
+            }
 
-public class SyncDerivedViewComponent : StringParameterViewComponent
-{
-}
+            public class SyncViewComponentWithGenericTask
+            {
+                public Task<string> Invoke() => null;
+            }
 
-public class AsyncDerivedViewComponent : AsyncViewComponentWithNonGenericTask
-{
-}
+            public class SyncDerivedViewComponent : StringParameterViewComponent
+            {
+            }
 
-public class DerivedViewComponentWithAmbiguity : AsyncViewComponentWithNonGenericTask
-{
-    public string Invoke() => null;
-}
+            public class AsyncDerivedViewComponent : AsyncViewComponentWithNonGenericTask
+            {
+            }
 
-public class StaticInvokeAsyncViewComponent
-{
-    public static Task<string> InvokeAsync() => null;
-}
+            public class DerivedViewComponentWithAmbiguity : AsyncViewComponentWithNonGenericTask
+            {
+                public string Invoke() => null;
+            }
 
-public class NonPublicInvokeAsyncViewComponent
-{
-    protected Task<string> InvokeAsync() => null;
+            public class StaticInvokeAsyncViewComponent
+            {
+                public static Task<string> InvokeAsync() => null;
+            }
+
+            public class NonPublicInvokeAsyncViewComponent
+            {
+                protected Task<string> InvokeAsync() => null;
+            }
+        }
+        """;
 }

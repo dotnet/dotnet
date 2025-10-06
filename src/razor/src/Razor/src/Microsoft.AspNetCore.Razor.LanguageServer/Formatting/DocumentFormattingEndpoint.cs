@@ -1,29 +1,26 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentFormattingName)]
-internal class DocumentFormattingEndpoint : IRazorRequestHandler<DocumentFormattingParams, TextEdit[]?>, ICapabilitiesProvider
+internal class DocumentFormattingEndpoint(
+    IRazorFormattingService razorFormattingService,
+    IHtmlFormatter htmlFormatter,
+    RazorLSPOptionsMonitor optionsMonitor) : IRazorRequestHandler<DocumentFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
-    private readonly IRazorFormattingService _razorFormattingService;
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
-
-    public DocumentFormattingEndpoint(
-        IRazorFormattingService razorFormattingService,
-        IOptionsMonitor<RazorLSPOptions> optionsMonitor)
-    {
-        _razorFormattingService = razorFormattingService ?? throw new ArgumentNullException(nameof(razorFormattingService));
-        _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
-    }
+    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly IHtmlFormatter _htmlFormatter = htmlFormatter;
 
     public bool MutatesSolutionState => false;
 
@@ -39,7 +36,7 @@ internal class DocumentFormattingEndpoint : IRazorRequestHandler<DocumentFormatt
 
     public async Task<TextEdit[]?> HandleRequestAsync(DocumentFormattingParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (!_optionsMonitor.CurrentValue.EnableFormatting)
+        if (!_optionsMonitor.CurrentValue.Formatting.IsEnabled())
         {
             return null;
         }
@@ -51,12 +48,20 @@ internal class DocumentFormattingEndpoint : IRazorRequestHandler<DocumentFormatt
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
+
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+
+        if (await _htmlFormatter.GetDocumentFormattingEditsAsync(
+            documentContext.Snapshot,
+            documentContext.Uri,
+            request.Options,
+            cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
         {
             return null;
         }
 
-        var edits = await _razorFormattingService.FormatAsync(documentContext, range: null, request.Options, cancellationToken).ConfigureAwait(false);
-        return edits;
+        var changes = await _razorFormattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges, span: null, options, cancellationToken).ConfigureAwait(false);
+
+        return [.. changes.Select(codeDocument.Source.Text.GetTextEdit)];
     }
 }

@@ -6,12 +6,12 @@
       We rely on launch settings to run devenv with the appropriate hive that the vsixes have been deployed to.
     -->
 
-    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetFxVS)</TargetFramework>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Copilot" Version="$(MicrosoftVisualStudioCopilotVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Copilot" />
     <!-- References the main RazorExtension vsix to ensure all the actual code is deployed to the hive. -->
     <ProjectReference Include="..\Microsoft.VisualStudio.RazorExtension.Dependencies\Microsoft.VisualStudio.RazorExtension.Dependencies.csproj" />
     <!-- References the dependencies vsix to ensure that we also deploy any dependencies needed by the RazorExtension that might not be included in public VS instances. -->

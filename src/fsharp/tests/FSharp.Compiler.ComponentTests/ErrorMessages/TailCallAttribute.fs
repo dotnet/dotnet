@@ -245,7 +245,7 @@ namespace N
 
     [<FSharp.Test.FactForNETCOREAPP>]
     let ``Warn successfully for invalid tailcalls in type methods`` () =
-        """
+        FSharp """
 namespace N
 
     module M =
@@ -261,29 +261,12 @@ namespace N
                 printfn "M2 called"
                 this.M1() + 2    // should warn
         """
-        |> FSharp
         |> withLangVersion80
         |> compile
         |> shouldFail
-        |> withResults [
-            { Error = Warning 3569
-              Range = { StartLine = 10
-                        StartColumn = 17
-                        EndLine = 10
-                        EndColumn = 26 }
-              Message =
-               "The member or function 'M2' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
-            { Error = Warning 3569
-              Range = { StartLine = 15
-                        StartColumn = 17
-                        EndLine = 15
-                        EndColumn = 26 }
-              Message =
-#if Debug               
-               "The member or function 'M2' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
-#else
-               "The member or function 'M1' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
-#endif
+        |> withDiagnostics [
+            (Warning 3569, Line 10, Col 17, Line 10, Col 26, "The member or function 'M2' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way.")
+            (Warning 3569, Line 15, Col 17, Line 15, Col 26, "The member or function 'M1' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way.")
         ]
 
     [<FSharp.Test.FactForNETCOREAPP>]
@@ -469,6 +452,34 @@ namespace N
                         StartColumn = 13
                         EndLine = 9
                         EndColumn = 17 }
+              Message =
+                "The member or function 'f' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+        ]
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Warn for rec call in Sequential in use scope`` () =
+        """
+namespace N
+
+    module M =
+
+        [<TailCall>]
+        let rec f () =
+            let path = System.IO.Path.GetTempFileName()
+            use file = System.IO.File.Open(path, System.IO.FileMode.Open)
+            printfn "Hi!"
+            f ()
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldFail
+        |> withResults [
+            { Error = Warning 3569
+              Range = { StartLine = 11
+                        StartColumn = 13
+                        EndLine = 11
+                        EndColumn = 14 }
               Message =
                 "The member or function 'f' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
         ]
@@ -746,17 +757,17 @@ namespace N
         |> shouldFail
         |> withResults [
             { Error = Warning 3569
-              Range = { StartLine = 21
-                        StartColumn = 27
-                        EndLine = 21
-                        EndColumn = 35 }
-              Message =
-                "The member or function 'instType' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
-            { Error = Warning 3569
               Range = { StartLine = 17
                         StartColumn = 32
                         EndLine = 17
                         EndColumn = 77 }
+              Message =
+                "The member or function 'instType' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+            { Error = Warning 3569
+              Range = { StartLine = 21
+                        StartColumn = 27
+                        EndLine = 21
+                        EndColumn = 35 }
               Message =
                 "The member or function 'instType' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
         ]
@@ -964,7 +975,7 @@ namespace N
             | Node branches -> branches |> List.collect loop
         """
         |> FSharp
-        |> withLangVersionPreview
+        |> withLangVersion10
         |> compile
         |> shouldFail
         |> withResults [
@@ -1426,7 +1437,7 @@ namespace N
         let someNonRecFun x = x + x
         """
         |> FSharp
-        |> withLangVersionPreview
+        |> withLangVersion10
         |> compile
         |> shouldFail
         |> withResults [
@@ -1450,10 +1461,13 @@ namespace N
         let someX = 23
         """
         |> FSharp
-        |> withLangVersionPreview
+        |> withLangVersion10
         |> compile
         |> shouldFail
-        |> withSingleDiagnostic (Error 842, Line 6, Col 11, Line 6, Col 19, "This attribute is not valid for use on this language element")
+        |> withDiagnostics [
+            (Warning 842, Line 6, Col 11, Line 6, Col 19, "This attribute cannot be applied to property, field, return value. Valid targets are: method")
+            (Warning 3861, Line 7, Col 13, Line 7, Col 18, "The TailCall attribute should only be applied to recursive functions.")
+        ] 
 
     [<FSharp.Test.FactForNETCOREAPP>]
     let ``Error about attribute on recursive let-bound value`` () =
@@ -1466,10 +1480,10 @@ namespace N
         let rec someRecLetBoundValue = nameof(someRecLetBoundValue)
         """
         |> FSharp
-        |> withLangVersionPreview
+        |> withLangVersion10
         |> compile
         |> shouldFail
-        |> withSingleDiagnostic (Error 842, Line 6, Col 11, Line 6, Col 19, "This attribute is not valid for use on this language element")
+        |> withSingleDiagnostic (Warning 842, Line 6, Col 11, Line 6, Col 19, "This attribute cannot be applied to property, field, return value. Valid targets are: method")
 
     [<FSharp.Test.FactForNETCOREAPP>]
     let ``Warn about self-defined attribute`` () = // is the analysis available for users of older FSharp.Core versions
@@ -1521,4 +1535,292 @@ namespace N
                         EndColumn = 52 }
               Message =
                 "The member or function 'reverse' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+        ]
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Don't warn for yield! call of rec func in seq`` () =
+        """
+namespace N
+
+module M =
+
+    type SynExpr =
+        | Sequential of expr1 : SynExpr * expr2 : SynExpr
+        | NotSequential
+        member _.Range = 99
+
+    type SyntaxNode = SynExpr of SynExpr
+
+    type SyntaxVisitor () = member _.VisitExpr _ = None
+
+    let visitor = SyntaxVisitor ()
+    let dive expr range f = range, fun () -> Some expr
+    let traverseSynExpr _ expr = Some expr
+
+    [<TailCall>]
+    let rec traverseSequentials path expr =
+        seq {
+            match expr with
+            | SynExpr.Sequential(expr1 = expr1; expr2 = SynExpr.Sequential _ as expr2) ->
+                yield dive expr expr.Range (fun expr -> visitor.VisitExpr(path, traverseSynExpr path, (fun _ -> None), expr))
+                let path = SyntaxNode.SynExpr expr :: path
+                yield dive expr1 expr1.Range (traverseSynExpr path)
+                yield! traverseSequentials path expr2   // should not warn
+
+            | _ ->
+                yield dive expr expr.Range (traverseSynExpr path)
+        }
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldSucceed
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Warn for yield! call of rec func in list comprehension`` () =
+        """
+namespace N
+
+module M =
+
+    type SynExpr =
+        | Sequential of expr1 : SynExpr * expr2 : SynExpr
+        | NotSequential
+        member _.Range = 99
+
+    type SyntaxNode = SynExpr of SynExpr
+
+    type SyntaxVisitor () = member _.VisitExpr _ = None
+
+    let visitor = SyntaxVisitor ()
+    let dive expr range f = range, fun () -> Some expr
+    let traverseSynExpr _ expr = Some expr
+
+    [<TailCall>]
+    let rec traverseSequentials path expr =
+        [
+            match expr with
+            | SynExpr.Sequential(expr1 = expr1; expr2 = SynExpr.Sequential _ as expr2) ->
+                // It's a nested sequential expression.
+                // Visit it, but make defaultTraverse do nothing,
+                // since we're going to traverse its descendants ourselves.
+                yield dive expr expr.Range (fun expr -> visitor.VisitExpr(path, traverseSynExpr path, (fun _ -> None), expr))
+
+                // Now traverse its descendants.
+                let path = SyntaxNode.SynExpr expr :: path
+                yield dive expr1 expr1.Range (traverseSynExpr path)
+                yield! traverseSequentials path expr2   // should warn
+
+            | _ ->
+                // It's not a nested sequential expression.
+                // Traverse it normally.
+                yield dive expr expr.Range (traverseSynExpr path)
+        ]
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldFail
+        |> withResults [
+            { Error = Warning 3569
+              Range = { StartLine = 32
+                        StartColumn = 24
+                        EndLine = 32
+                        EndColumn = 54 }
+              Message =
+                "The member or function 'traverseSequentials' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+        ]
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Warn for yield! call of rec func in custom CE`` () =
+        """
+namespace N
+
+module M =
+
+    type SynExpr =
+        | Sequential of expr1 : SynExpr * expr2 : SynExpr
+        | NotSequential
+        member _.Range = 99
+
+    type SyntaxNode = SynExpr of SynExpr
+
+    type SyntaxVisitor () = member _.VisitExpr _ = None
+
+    let visitor = SyntaxVisitor ()
+    let dive expr range f = range, fun () -> Some expr
+    let traverseSynExpr _ expr = Some expr
+
+    type ThingsBuilder() =
+
+        member _.Yield(x) = [ x ]
+
+        member _.Combine(currentThings, newThings) = currentThings @ newThings
+
+        member _.Delay(f) = f ()
+
+        member _.YieldFrom(x) = x
+
+    let things = ThingsBuilder()
+
+    [<TailCall>]
+    let rec traverseSequentials path expr =
+        things {
+            match expr with
+            | SynExpr.Sequential(expr1 = expr1; expr2 = SynExpr.Sequential _ as expr2) ->
+                // It's a nested sequential expression.
+                // Visit it, but make defaultTraverse do nothing,
+                // since we're going to traverse its descendants ourselves.
+                yield dive expr expr.Range (fun expr -> visitor.VisitExpr(path, traverseSynExpr path, (fun _ -> None), expr))
+
+                // Now traverse its descendants.
+                let path = SyntaxNode.SynExpr expr :: path
+                yield dive expr1 expr1.Range (traverseSynExpr path)
+                yield! traverseSequentials path expr2   // should warn
+
+            | _ ->
+                // It's not a nested sequential expression.
+                // Traverse it normally.
+                yield dive expr expr.Range (traverseSynExpr path)
+        }
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldFail
+        |> withResults [
+            { Error = Warning 3569
+              Range = { StartLine = 43
+                        StartColumn = 17
+                        EndLine = 43
+                        EndColumn = 68 }
+              Message =
+                "The member or function 'traverseSequentials' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+        ]
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Don't warn for rec call of async func that evaluates an async parameter in a match!`` () =
+        """
+namespace N
+
+module M =
+
+    [<TailCall>]
+    let rec f (g: bool Async) = async {
+        match! g with
+        | false -> ()
+        | true -> return! f g
+        }
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldSucceed
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Don't warn for rec call of async func that evaluates an async parameter in a let!`` () =
+        """
+namespace N
+
+module M =
+
+    [<TailCall>]
+    let rec f (g: bool Async) = async {
+        let! x = g
+        match x with
+        | false -> ()
+        | true -> return! f g
+        }
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldSucceed
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Don't warn for tail rec call returning unit`` () =
+        """
+namespace N
+
+module M =
+
+    [<TailCall>]
+    let rec go (args: string list) =
+        match args with
+        | [] -> ()
+        | "--" :: _ -> ()
+        | arg :: args -> go args
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldSucceed
+
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Warn successfully in Array-mapped recursive call`` () =
+        """
+namespace N
+
+module M =
+
+    type Value =
+        { Code: string }
+
+    [<TailCall>]
+    let rec fooArray (values: Value[], code: string) =
+        match values with
+        | [||] -> seq { code }
+        | values ->
+            let replicatedValues =
+                values
+                |> Array.map (fun value -> fooArray (values, value.Code))
+            replicatedValues |> Seq.concat
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldFail
+        |> withResults [
+            { Error = Warning 3569
+              Range = { StartLine = 16
+                        StartColumn = 20
+                        EndLine = 16
+                        EndColumn = 74 }
+              Message =
+               "The member or function 'fooArray' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
+        ]
+        
+    [<FSharp.Test.FactForNETCOREAPP>]
+    let ``Warn successfully in Seq-mapped recursive call`` () =
+        """
+namespace N
+
+module M =
+
+    type Value =
+        { Code: string }
+
+    [<TailCall>]
+    let rec fooSeq (values: Value[], code: string) =
+        match values with
+        | [||] -> seq { code }
+        | values ->
+            let replicatedValues =
+                values
+                |> Seq.map (fun value -> fooSeq (values, value.Code))
+                |> Seq.toArray
+            replicatedValues |> Seq.concat
+        """
+        |> FSharp
+        |> withLangVersion80
+        |> compile
+        |> shouldFail
+        |> withResults [
+            { Error = Warning 3569
+              Range = { StartLine = 16
+                        StartColumn = 42
+                        EndLine = 16
+                        EndColumn = 48 }
+              Message =
+               "The member or function 'fooSeq' has the 'TailCallAttribute' attribute, but is not being used in a tail recursive way." }
         ]

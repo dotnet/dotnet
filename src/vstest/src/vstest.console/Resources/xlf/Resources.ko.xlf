@@ -84,14 +84,9 @@
       이 사용법 메시지를 표시합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CopyrightCommandLineTitle">
-        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="translated">Copyright (c) Microsoft Corporation. All rights reserved.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
-        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="translated">Microsoft (R) Test Execution Command Line Tool Version {0}</target>
+        <source>VSTest version {0}</source>
+        <target state="translated">VSTest 버전 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">

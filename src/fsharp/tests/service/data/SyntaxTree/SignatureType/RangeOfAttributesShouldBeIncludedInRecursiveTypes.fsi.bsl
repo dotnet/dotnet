@@ -2,7 +2,6 @@ SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/RangeOfAttributesShouldBeIncludedInRecursiveTypes.fsi",
       QualifiedNameOfFile RangeOfAttributesShouldBeIncludedInRecursiveTypes, [],
-      [],
       [SynModuleOrNamespaceSig
          ([SomeNamespace], false, DeclaredNamespace,
           [Types
@@ -56,7 +55,7 @@ SigFile
                            ([[SynArgInfo ([], false, None)]],
                             SynArgInfo ([], false, None)), false, false,
                          PreXmlDoc ((12,8), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, None, (12,8--12,42),
+                         Single None, None, (12,8--12,42),
                          { LeadingKeyword = Override (12,8--12,16)
                            InlineKeyword = None
                            WithKeyword = None
@@ -73,4 +72,5 @@ SigFile
                     WithKeyword = None })], (4,0--12,42))], PreXmlDocEmpty, [],
           None, (2,0--12,42), { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
+    <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
 
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
+    <RepositoryReference Include="runtime" Condition="'$(BuildOS)' == 'windows'" />
   </ItemGroup>
 
 </Project>

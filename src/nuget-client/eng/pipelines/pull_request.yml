@@ -1,117 +1,98 @@
 parameters:
-- name: DartLabEnvironment
-  displayName: DartLab Environment
-  type: string
-  default: Production
-  values:
-  - Production
-  - Staging
-- name: E2EPart1AgentCleanup
-  displayName: Delete or keep E2E Part 1 machine for debugging
-  type: string
-  default: delete
-  values:
-  - delete
-  - stop
-- name: E2EPart2AgentCleanup
-  displayName: Delete or keep E2E Part 2 machine for debugging
-  type: string
-  default: delete
-  values:
-  - delete
-  - stop
-- name: ApexAgentCleanup
-  displayName: Delete or keep VS Apex test machine for debugging
-  type: string
-  default: delete
-  values:
-  - delete
-  - stop
-- name: NuGetLocalizationType
-  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
-  type: string
-  default: Full
-  values:
-  - Full
-  - Pseudo
-- name: RunApexTests
-  displayName: Run Apex tests
-  type: boolean
-  default: true
 - name: RunBuildForPublishing
   displayName: Build bits for publishing
   type: boolean
   default: true
 - name: RunCrossFrameworkTestsOnWindows
-  displayName: Run cross framweork tests on Windows
+  displayName: Run cross framework tests on Windows
   type: boolean
-  default: true
-- name: RunEndToEndTests
-  displayName: Run end-to-end tests
+  default: false
+- name: RunUnitTestsOnWindows
+  displayName: Run unit tests on Windows
   type: boolean
-  default: true
+  default: false
 - name: RunFunctionalTestsOnWindows
   displayName: Run functional tests on Windows
   type: boolean
-  default: true
+  default: false
 - name: RunSourceBuild
   displayName: Run source build
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnLinux
   displayName: Run tests on Linux
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnMac
   displayName: Run tests on Mac
   type: boolean
-  default: true
+  default: false
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
   default: true
+- name: RunStaticAnalysis
+  displayName: Run static analysis
+  type: boolean
+  default: false
+- name: SigningType
+  displayName: Type of signing to use
+  type: string
+  default: Test
 
 resources:
-  pipelines:
-  - pipeline: DartLab
-    source: DartLab
-    branch: main
   repositories:
-  - repository: DartLabTemplates
+  - repository: MicroBuildTemplate
     type: git
-    name: DartLab.Templates
-    ref: refs/heads/main
-
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
 variables:
   BINLOG_DIRECTORY: $(Build.StagingDirectory)/binlog
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
   Codeql.Enabled: false
   Codeql.TSAEnabled: false
-  RunApexTests: ${{ parameters.RunApexTests }}
   RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
   RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
-  RunEndToEndTests: ${{ parameters.RunEndToEndTests }}
+  RunUnitTestsOnWindows: ${{ parameters.RunUnitTestsOnWindows }}
   RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}
   RunSourceBuild: ${{ parameters.RunSourceBuild }}
   RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
   RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
   RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
-
-stages:
-- template: templates/pipeline.yml
+  RunStaticAnalysis: ${{ parameters.RunStaticAnalysis }}
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
   parameters:
-    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    E2EPart1AgentCleanup: ${{parameters.E2EPart1AgentCleanup}}
-    E2EPart2AgentCleanup: ${{parameters.E2EPart2AgentCleanup}}
-    ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
-    NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
-    RunApexTests: ${{parameters.RunApexTests}}
-    RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
-    RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
-    RunEndToEndTests: ${{parameters.RunEndToEndTests}}
-    RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
-    RunSourceBuild: ${{parameters.RunSourceBuild}}
-    RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
-    RunTestsOnMac: ${{parameters.RunTestsOnMac}}
-    RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}
+    sdl:
+      sourceAnalysisPool: VSEngSS-MicroBuild2022-1ES
+      binskim:
+        enabled: true
+        scanOutputDirectoryOnly: true
+      sbom:
+        enabled: true
+      credscan:
+        enabled: false
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
+    pool:
+      name: AzurePipelines-EO
+      image: 1ESPT-Windows2022
+      os: windows
+    featureFlags:
+      enablePrepareFilesForSbom: true
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - template: /eng/pipelines/templates/pipeline.yml@self
+      parameters:
+        RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
+        RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
+        RunUnitTestsOnWindows: ${{parameters.RunUnitTestsOnWindows}}
+        RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
+        RunSourceBuild: ${{parameters.RunSourceBuild}}
+        RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
+        RunTestsOnMac: ${{parameters.RunTestsOnMac}}
+        RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}
+        RunStaticAnalysis: ${{parameters.RunStaticAnalysis}}
+        SigningType: ${{ parameters.SigningType }}

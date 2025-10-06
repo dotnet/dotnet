@@ -13,4 +13,5 @@ internal static class WellKnownDebugEnvironmentVariables
     public const string VSTEST_HOST_DEBUG_ATTACHVS = nameof(VSTEST_HOST_DEBUG_ATTACHVS);
     public const string VSTEST_RUNNER_DEBUG_ATTACHVS = nameof(VSTEST_RUNNER_DEBUG_ATTACHVS);
     public const string VSTEST_HOST_NATIVE_DEBUG = nameof(VSTEST_HOST_NATIVE_DEBUG);
+    public const string VSTEST_RUNNER_NATIVE_DEBUG = nameof(VSTEST_RUNNER_NATIVE_DEBUG);
 }

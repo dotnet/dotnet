@@ -51,7 +51,7 @@ namespace NuGet.Build.Tasks.Test
             Assert.Equal("2.0.0", graphItems[1].GetMetadata("VersionRange"));
             Assert.Equal("netstandard2.0", graphItems[1].GetMetadata("TargetFrameworks"));
             Assert.Equal(task.ProjectUniqueName, task.RestoreGraphItems[1].GetMetadata("ProjectUniqueName"));
-            Assert.Equal(0, graphItems[1].MetadataNames.Cast<string>().Where(n => string.Equals(n, "Dummy")).Count());
+            Assert.Equal(0, graphItems[1].MetadataNames.Cast<string>().Count(n => string.Equals(n, "Dummy")));
         }
 
         [Fact]

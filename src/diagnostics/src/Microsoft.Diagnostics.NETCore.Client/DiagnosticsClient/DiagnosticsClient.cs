@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,6 +87,18 @@ namespace Microsoft.Diagnostics.NETCore.Client
         public EventPipeSession StartEventPipeSession(EventPipeProvider provider, bool requestRundown = true, int circularBufferMB = DefaultCircularBufferMB)
         {
             EventPipeSessionConfiguration config = new(new[] {provider}, circularBufferMB, requestRundown: requestRundown, requestStackwalk: true);
+            return EventPipeSession.Start(_endpoint, config);
+        }
+
+        /// <summary>
+        /// Start tracing the application and return an EventPipeSession object
+        /// </summary>
+        /// <param name="config">The configuration for start tracing.</param>
+        /// <returns>
+        /// An EventPipeSession object representing the EventPipe session that just started.
+        /// </returns>
+        public EventPipeSession StartEventPipeSession(EventPipeSessionConfiguration config)
+        {
             return EventPipeSession.Start(_endpoint, config);
         }
 
@@ -319,15 +332,36 @@ namespace Microsoft.Diagnostics.NETCore.Client
             return await helper.ReadEnvironmentAsync(response.Continuation, token).ConfigureAwait(false);
         }
 
-        internal void ApplyStartupHook(string startupHookPath)
+        /// <summary>
+        /// Loads the specified assembly with a StartupHook in the target process.
+        /// </summary>
+        /// <param name="startupHookPath">The path to the assembly containing the StartupHook.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="startupHookPath"/> is null or empty.</exception>
+        public void ApplyStartupHook(string startupHookPath)
         {
+            if (string.IsNullOrEmpty(startupHookPath))
+            {
+                throw new ArgumentNullException(nameof(startupHookPath));
+            }
+
             IpcMessage message = CreateApplyStartupHookMessage(startupHookPath);
             IpcMessage response = IpcClient.SendMessage(_endpoint, message);
             ValidateResponseMessage(response, nameof(ApplyStartupHook));
         }
 
-        internal async Task ApplyStartupHookAsync(string startupHookPath, CancellationToken token)
+        /// <summary>
+        /// Loads the specified assembly with a StartupHook in the target process.
+        /// </summary>
+        /// <param name="startupHookPath">The path to the assembly containing the StartupHook.</param>
+        /// <param name="token">The token to monitor for cancellation requests.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="startupHookPath"/> is null or empty.</exception>
+        public async Task ApplyStartupHookAsync(string startupHookPath, CancellationToken token)
         {
+            if (string.IsNullOrEmpty(startupHookPath))
+            {
+                throw new ArgumentNullException(nameof(startupHookPath));
+            }
+
             IpcMessage message = CreateApplyStartupHookMessage(startupHookPath);
             IpcMessage response = await IpcClient.SendMessageAsync(_endpoint, message, token).ConfigureAwait(false);
             ValidateResponseMessage(response, nameof(ApplyStartupHookAsync));

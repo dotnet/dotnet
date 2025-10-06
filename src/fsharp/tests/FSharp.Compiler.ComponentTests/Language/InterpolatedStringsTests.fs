@@ -130,6 +130,17 @@ type Foo () =
         |> compile
         |> shouldSucceed
 
+    [<Fact>]
+    let ``Percent signs and format specifiers with string expression`` () =
+        Fsx """
+let x = "abc"
+let s = $"%%%s{x}%%"
+printfn "%s" s
+        """
+        |> compileExeAndRun
+        |> shouldSucceed
+        |> withStdOutContains "%abc%"
+
     [<Theory>]
     // Test different number of interpolated string parts
     [<InlineData("$\"\"\"abc{\"d\"}e\"\"\"")>]
@@ -140,7 +151,6 @@ type Foo () =
 let x = {strToPrint}
 printfn "%%s" x
         """
-        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains "abcde"
@@ -151,7 +161,6 @@ printfn "%%s" x
 let x = {strToPrint}
 printfn "%%s" x
         """
-        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains """a
@@ -170,7 +179,6 @@ let x = {formattableStr} : System.FormattableString
 assert(x.ArgumentCount = {argCount})
 printfn "%%s" (System.Globalization.CultureInfo "en-US" |> x.ToString)
         """
-        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains "abcde"

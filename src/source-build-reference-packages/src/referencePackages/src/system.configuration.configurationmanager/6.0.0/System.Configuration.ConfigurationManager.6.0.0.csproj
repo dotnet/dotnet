@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>6.0.0</PackageVersion>
     <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/6.0.0/System.Security.Cryptography.ProtectedData.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/6.0.0/System.Security.Permissions.6.0.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/6.0.0/System.Security.Cryptography.ProtectedData.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.permissions/6.0.0/System.Security.Permissions.6.0.0.csproj" />
   </ItemGroup>
 
 </Project>

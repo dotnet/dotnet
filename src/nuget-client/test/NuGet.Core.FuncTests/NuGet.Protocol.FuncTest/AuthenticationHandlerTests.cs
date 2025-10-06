@@ -12,11 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.TestServer;
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
-using NuGet.Test.Server;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -132,7 +132,7 @@ namespace NuGet.Protocol.FuncTest
                     Mock<ILogger> logger = new();
                     HttpSourceCacheContext httpSourceCacheContext = HttpSourceCacheContext.Create(sourceCacheContext, isFirstAttempt: true);
 
-                    // Act                    
+                    // Act
                     var request = new HttpSourceCachedRequest(serviceIndexUrl, "1", httpSourceCacheContext);
                     _ = await source.GetAsync(request, ProcessResponse, logger.Object, cancellationToken);
 
@@ -149,11 +149,11 @@ namespace NuGet.Protocol.FuncTest
                 // Each attempt to access a private feed initially receives a 401 Unauthorized response.
                 // Following the 401 response, NuGet attempts to acquire the necessary credentials.
                 // These credentials are then used for subsequent requests to the feed.
-                // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as 
+                // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as
                 // credentials would be sent preemptively after the initial request.
 
                 // In this test, 2 requests are sent from the test's perspective, and the previous paragraph's explanation will
-                // make you believe the server should see 4, but it turns out to be 5. This discrepancy occurs because 
+                // make you believe the server should see 4, but it turns out to be 5. This discrepancy occurs because
                 // HttpSourceCredentials is only initialized with credentials if the PackageSource object has credentials set.
                 // In other words, if there are creds in NuGet.Config or the appropriate environment variable. However, if the
                 // package source uses a credential provider, the provider is not asked for credentials until after the first 401

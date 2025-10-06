@@ -138,6 +138,9 @@ namespace Microsoft.Deployment.MageCLI
         [CommandLineArgument(LongName = "Install", ShortName = "i")]
         public string installString = null;
 
+        [CommandLineArgument(LongName = "MapFileExtensions", ShortName = "mfe")]
+        public string mapFileExtensionsString = null;
+
         [CommandLineArgument(LongName = "IncludeProviderURL", ShortName = "ip")]
         public string includeDeploymentProviderUrlString = null;
 
@@ -200,6 +203,11 @@ namespace Microsoft.Deployment.MageCLI
         /// Install, in boolean form, parsed from the installString member
         /// </summary>
         private TriStateBool install = TriStateBool.Undefined;
+
+        /// <summary>
+        /// MapFileExtensions, in boolean form, parsed from the mapFileExtensionsString member
+        /// </summary>
+        private TriStateBool mapFileExtensions = TriStateBool.Undefined;
 
         /// <summary>
         /// IncludeProviderURL, in boolean form, parsed from the includeDeploymentProviderUrlString member
@@ -654,30 +662,8 @@ namespace Microsoft.Deployment.MageCLI
             // Validate the trust level, if given
             if (trustLevelString != null)
             {
-#if RUNTIME_TYPE_NETCORE
                 result = false;
                 Application.PrintErrorMessage(ErrorMessages.TrustLevelsNotSupportedOnNETCore);
-#else
-                trustLevelString = trustLevelString.ToLower(CultureInfo.InvariantCulture);
-
-                if (trustLevelString == TrustLevels.Internet.ToString().ToLower(CultureInfo.InvariantCulture))
-                {
-                    trustLevel = TrustLevels.Internet;
-                }
-                else if (trustLevelString == TrustLevels.LocalIntranet.ToString().ToLower(CultureInfo.InvariantCulture))
-                {
-                    trustLevel = TrustLevels.LocalIntranet;
-                }
-                else if (trustLevelString == TrustLevels.FullTrust.ToString().ToLower(CultureInfo.InvariantCulture))
-                {
-                    trustLevel = TrustLevels.FullTrust;
-                }
-                else
-                {
-                    result = false;
-                    Application.PrintErrorMessage(ErrorMessages.InvalidTrustLevel, trustLevelString);
-                }
-#endif
             }
 
             // Validate the application code base, if given
@@ -746,6 +732,28 @@ namespace Microsoft.Deployment.MageCLI
                     default:
                         result = false;
                         Application.PrintErrorMessage(ErrorMessages.InvalidInstall, installString);
+                        break;
+                }
+            }
+
+            // Validate the MapFileExtensions option, if given
+            if (mapFileExtensionsString != null)
+            {
+                switch (mapFileExtensionsString.ToLower(CultureInfo.InvariantCulture))
+                {
+                    case "true":
+                    case "t":
+                        mapFileExtensions = TriStateBool.True;
+                        break;
+
+                    case "false":
+                    case "f":
+                        mapFileExtensions = TriStateBool.False;
+                        break;
+
+                    default:
+                        result = false;
+                        Application.PrintErrorMessage(ErrorMessages.InvalidMapFileExtensions, mapFileExtensionsString);
                         break;
                 }
             }
@@ -890,6 +898,7 @@ namespace Microsoft.Deployment.MageCLI
                 errors += CheckForFileTypeSpecificOption("Deployment", "AppProviderUrl", applicationProviderUrl);
                 errors += CheckForFileTypeSpecificOption("Deployment", "RequiredUpdate", isRequiredUpdateString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "Install", installString);
+                errors += CheckForFileTypeSpecificOption("Deployment", "MapFileExtensions", mapFileExtensionsString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "IncludeProviderUrl", includeDeploymentProviderUrlString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "TrustUrlParameters", trustUrlParametersString);
             }
@@ -1165,12 +1174,8 @@ namespace Microsoft.Deployment.MageCLI
                             {
                                 Application.PrintErrorMessage(ErrorMessages.InvalidCertUsage, certPath);
                             }
-#if RUNTIME_TYPE_NETCORE
                             // SetPrivateKeyIfNeeded API is only available on Windows
                             else if (OperatingSystem.IsWindows())
-#else
-                            else
-#endif
                             {
                                 result = Utilities.Certificate.SetPrivateKeyIfNeeded(cert, cryptoProviderName, keyContainer);
                                 if (!result)
@@ -1299,9 +1304,6 @@ namespace Microsoft.Deployment.MageCLI
             return result;
         }
 
-#if !RUNTIME_TYPE_NETCORE
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.Demand, Name="FullTrust")]
-#endif
         public void ExecuteManifestRelated()
         {
             Manifest manifest = null;
@@ -1353,7 +1355,7 @@ namespace Microsoft.Deployment.MageCLI
             else if (Requested(Operations.GenerateDeploymentManifest))
             {
                 applicationName += ".app";
-                manifest = Mage.GenerateDeploymentManifest(outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                manifest = Mage.GenerateDeploymentManifest(outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
             }
 
             // Update operations
@@ -1364,7 +1366,7 @@ namespace Microsoft.Deployment.MageCLI
             }
             else if (Requested(Operations.UpdateDeploymentManifest))
             {
-                Mage.UpdateDeploymentManifest(cachedDepManifest, outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                Mage.UpdateDeploymentManifest(cachedDepManifest, outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
                 manifest = cachedDepManifest;
             }
 
@@ -1432,8 +1434,9 @@ namespace Microsoft.Deployment.MageCLI
                     catch (UriFormatException) { }
                 }
                 Debug.Assert(storedCert != null);
-
+#pragma warning disable CA1416 // This call site is reachable on all platforms. 'SecurityUtilities.SignFile(X509Certificate2, Uri, string)' is only supported on: 'windows'.
                 SecurityUtilities.SignFile(storedCert, stamp, outputPath);
+#pragma warning restore CA1416
             }
 
             Validate(manifest);
@@ -1507,15 +1510,10 @@ namespace Microsoft.Deployment.MageCLI
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
                 Sha256SignatureMethodUri);
 
-#if RUNTIME_TYPE_NETCORE
 #pragma warning disable SYSLIB0021
             CryptoConfig.AddAlgorithm(typeof(SHA256Managed),
                 Sha256DigestMethod);
 #pragma warning restore SYSLIB0021
-#else
-            CryptoConfig.AddAlgorithm(typeof(SHA256Cng),
-                Sha256DigestMethod);
-#endif
 
             try
             {

@@ -40,12 +40,12 @@ namespace NuGet.CommandLine.XPlat.Tests
                         FrameworkName = NuGetFramework.Parse("net462")
                     }
                 };
-
-                var spec = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "net46");
-                spec.Dependencies.Add(new LibraryDependency()
+                LibraryDependency dependency = new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange("a", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
-                });
+                };
+
+                var spec = NETCoreRestoreTestUtility.GetProject(projectName: "projectA", framework: "net46", dependency);
 
                 var project = NETCoreRestoreTestUtility.CreateProjectsFromSpecs(pathContext, spec).Single();
 

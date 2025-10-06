@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 namespace System.Windows.Forms.Design.Tests;
 
@@ -26,15 +28,19 @@ public sealed class ComboBoxDesignerTests
     }
 
     [Fact]
-    public void SelectionRules_WithDefaultComboBox_ShouldThrowNullReferenceException()
+    public void SelectionRules_WithDefaultComboBox_ShouldReturnExpectedValue()
     {
         using ComboBoxDesigner comboBoxDesigner = new();
         using ComboBox comboBox = new();
         comboBoxDesigner.Initialize(comboBox);
 
-        Action action = () => _ = comboBoxDesigner.SelectionRules;
+        SelectionRules selectionRules;
+        using (new NoAssertContext())
+        {
+            selectionRules = comboBoxDesigner.SelectionRules;
+        }
 
-        action.Should().ThrowExactly<NullReferenceException>();
+        selectionRules.Should().Be(SelectionRules.LeftSizeable | SelectionRules.RightSizeable | SelectionRules.Moveable | SelectionRules.Visible);
     }
 
     [Fact]

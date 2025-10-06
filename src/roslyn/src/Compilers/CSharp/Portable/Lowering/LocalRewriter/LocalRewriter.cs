@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(!nameofOperator.WasCompilerGenerated);
                 var nameofIdentiferSyntax = (IdentifierNameSyntax)((InvocationExpressionSyntax)nameofOperator.Syntax).Expression;
-                if (this._compilation.TryGetInterceptor(nameofIdentiferSyntax.Location) is not null)
+                if (this._compilation.TryGetInterceptor(nameofIdentiferSyntax) is not null)
                 {
                     this._diagnostics.Add(ErrorCode.ERR_InterceptorCannotInterceptNameof, nameofIdentiferSyntax.Location);
                 }
@@ -270,7 +270,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var visited = VisitExpressionWithStackGuard(node);
+            var visited = (BoundExpression)VisitExpressionOrPatternWithStackGuard(node);
 
             // If you *really* need to change the type, consider using an indirect method
             // like compound assignment does (extra flag only passed when it is an expression
@@ -404,7 +404,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (_factory.CompilationState.Compilation.ShouldEmitNullableAttributes(localFunction))
                 {
                     bool constraintsNeedNullableAttribute = typeParameters.Any(
-                       static typeParameter => ((SourceTypeParameterSymbolBase)typeParameter).ConstraintsNeedNullableAttribute());
+                       static typeParameter => ((SourceTypeParameterSymbol)typeParameter).ConstraintsNeedNullableAttribute());
 
                     if (constraintsNeedNullableAttribute || hasReturnTypeOrParameter(localFunction, static t => t.NeedsNullableAttribute()))
                     {
@@ -412,7 +412,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
 
-                static bool hasReturnTypeOrParameter(LocalFunctionSymbol localFunction, Func<TypeWithAnnotations, bool> predicate) =>
+                static bool hasReturnTypeOrParameter(MethodSymbol localFunction, Func<TypeWithAnnotations, bool> predicate) =>
                     predicate(localFunction.ReturnTypeWithAnnotations) || localFunction.ParameterTypesWithAnnotations.Any(predicate);
             }
 
@@ -593,11 +593,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             return new BoundBadExpression(syntax, LookupResultKind.NotReferencable, ImmutableArray<Symbol?>.Empty, children, resultType);
         }
 
-        private bool TryGetWellKnownTypeMember<TSymbol>(SyntaxNode? syntax, WellKnownMember member, out TSymbol symbol, bool isOptional = false, Location? location = null) where TSymbol : Symbol
+        private bool TryGetWellKnownTypeMember<TSymbol>(SyntaxNode? syntax, WellKnownMember member, [NotNullWhen(true)] out TSymbol? symbol, bool isOptional = false, Location? location = null) where TSymbol : Symbol
         {
             Debug.Assert((syntax != null) ^ (location != null));
 
-            symbol = (TSymbol)Binder.GetWellKnownTypeMember(_compilation, member, _diagnostics, syntax: syntax, isOptional: isOptional, location: location);
+            symbol = (TSymbol?)Binder.GetWellKnownTypeMember(_compilation, member, _diagnostics, syntax: syntax, isOptional: isOptional, location: location);
             return symbol is { };
         }
 
@@ -626,7 +626,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 MemberDescriptor descriptor = SpecialMembers.GetDescriptor(specialMember);
-                SpecialType type = (SpecialType)descriptor.DeclaringTypeId;
+                ExtendedSpecialType type = descriptor.DeclaringSpecialType;
                 TypeSymbol container = compilation.Assembly.GetSpecialType(type);
                 TypeSymbol returnType = new ExtendedErrorTypeSymbol(compilation: compilation, name: descriptor.Name, errorInfo: null, arity: descriptor.Arity);
                 return new ErrorMethodSymbol(container, returnType, "Missing");
@@ -645,6 +645,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitTypeOfOperator(BoundTypeOfOperator node)
         {
+            Debug.Assert(node.Type.ExtendedSpecialType == InternalSpecialType.System_Type ||
+                         TypeSymbol.Equals(node.Type, _compilation.GetWellKnownType(WellKnownType.System_Type), TypeCompareKind.AllIgnoreOptions));
             Debug.Assert(node.GetTypeFromHandle is null);
 
             var sourceType = (BoundTypeExpression?)this.Visit(node.SourceType);
@@ -652,12 +654,25 @@ namespace Microsoft.CodeAnalysis.CSharp
             var type = this.VisitType(node.Type);
 
             // Emit needs this helper
-            MethodSymbol getTypeFromHandle;
-            if (!TryGetWellKnownTypeMember(node.Syntax, WellKnownMember.System_Type__GetTypeFromHandle, out getTypeFromHandle))
+            MethodSymbol? getTypeFromHandle;
+            bool tryGetResult;
+
+            if (node.Type.ExtendedSpecialType == InternalSpecialType.System_Type)
+            {
+                tryGetResult = TryGetSpecialTypeMethod(node.Syntax, SpecialMember.System_Type__GetTypeFromHandle, out getTypeFromHandle);
+            }
+            else
+            {
+                tryGetResult = TryGetWellKnownTypeMember(node.Syntax, WellKnownMember.System_Type__GetTypeFromHandle, out getTypeFromHandle);
+            }
+
+            if (!tryGetResult)
             {
                 return new BoundTypeOfOperator(node.Syntax, sourceType, null, type, hasErrors: true);
             }
 
+            Debug.Assert(getTypeFromHandle is not null);
+            Debug.Assert(TypeSymbol.Equals(type, getTypeFromHandle.ReturnType, TypeCompareKind.AllIgnoreOptions));
             return node.Update(sourceType, getTypeFromHandle, type);
         }
 
@@ -669,7 +684,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var type = this.VisitType(node.Type);
 
             // Emit needs this helper
-            MethodSymbol getTypeFromHandle;
+            MethodSymbol? getTypeFromHandle;
             if (!TryGetWellKnownTypeMember(node.Syntax, WellKnownMember.System_Type__GetTypeFromHandle, out getTypeFromHandle))
             {
                 return new BoundRefTypeOperator(node.Syntax, operand, null, type, hasErrors: true);
@@ -1034,6 +1049,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // Used for Length or Count properties only which are effectively readonly.
                     return true;
 
+                case BoundKind.AwaitableValuePlaceholder:
+                    // AwaitableValuePlaceholder that makes it here is always a parameter to a runtime async AsyncHelper method,
+                    // and are always passed by value.
+                    return false;
+
                 case BoundKind.EventAccess:
                     var eventAccess = (BoundEventAccess)expr;
                     if (eventAccess.IsUsableAsField)
@@ -1102,7 +1122,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return expr is BoundConversion { Conversion: { IsInterpolatedStringHandler: true }, Type: { IsValueType: true } };
             }
 
-            Debug.Assert(expr is not BoundValuePlaceholderBase, $"Placeholder kind {expr.Kind} must be handled explicitly");
+            RoslynDebug.Assert(expr is not BoundValuePlaceholderBase, $"Placeholder kind {expr.Kind} must be handled explicitly");
 
             return false;
         }
@@ -1121,6 +1141,25 @@ namespace Microsoft.CodeAnalysis.CSharp
             return new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
         }
 
+        private BoundExpression ConvertReceiverForExtensionMemberIfNeeded(Symbol member, BoundExpression receiver, bool markAsChecked)
+        {
+            if (member.GetIsNewExtensionMember())
+            {
+                Debug.Assert(!member.IsStatic);
+                ParameterSymbol? extensionParameter = member.ContainingType.ExtensionParameter;
+                Debug.Assert(extensionParameter is not null);
+#if DEBUG
+                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                Debug.Assert(Conversions.IsValidExtensionMethodThisArgConversion(this._compilation.Conversions.ClassifyConversionFromType(receiver.Type, extensionParameter.Type, isChecked: false, ref discardedUseSiteInfo)));
+#endif
+
+                // We don't need to worry about checked context because only implicit conversions are allowed on the receiver of an extension member
+                return MakeConversionNode(receiver, extensionParameter.Type, @checked: false, acceptFailingConversion: false, markAsChecked: markAsChecked);
+            }
+
+            return receiver;
+        }
+
 #if DEBUG
         /// <summary>
         /// Note: do not use a static/singleton instance of this type, as it holds state.
@@ -1128,6 +1167,17 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private sealed class LocalRewritingValidator : BoundTreeWalkerWithStackGuardWithoutRecursionOnTheLeftOfBinaryOperator
         {
+            public override BoundNode? Visit(BoundNode? node)
+            {
+                if (node is BoundIfStatement)
+                {
+                    Fail(node);
+                    return null;
+                }
+
+                return base.Visit(node);
+            }
+
             /// <summary>
             /// Asserts that no unexpected nodes survived local rewriting.
             /// </summary>
@@ -1150,12 +1200,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             public override BoundNode? VisitUsingStatement(BoundUsingStatement node)
-            {
-                Fail(node);
-                return null;
-            }
-
-            public override BoundNode? VisitIfStatement(BoundIfStatement node)
             {
                 Fail(node);
                 return null;
@@ -1235,7 +1279,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private void Fail(BoundNode node)
             {
-                Debug.Assert(false, $"Bound nodes of kind {node.Kind} should not survive past local rewriting");
+                RoslynDebug.Assert(false, $"Bound nodes of kind {node.Kind} should not survive past local rewriting");
             }
         }
 #endif

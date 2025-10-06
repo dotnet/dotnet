@@ -615,24 +615,24 @@ public class ConsoleLoggerTests
         loggerEvents.WaitForEventCompletion();
 
         _mockOutput.Verify(o => o.Write(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary,
-            (CommandLineResources.PassedTestIndicator + "!").PadRight(8),
+            new[] { (CommandLineResources.PassedTestIndicator + "!").PadRight(8),
             0.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             1.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             1.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             2.ToString(CultureInfo.InvariantCulture).PadLeft(5),
-            "1 m 2 s"), OutputLevel.Information), Times.Once);
+            "1 m 2 s"}), OutputLevel.Information), Times.Once);
 
         _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryAssemblyAndFramework,
             "TestSourcePassed",
             expectedFramework), OutputLevel.Information), Times.Once);
 
         _mockOutput.Verify(o => o.Write(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary,
-            (CommandLineResources.FailedTestIndicator + "!").PadRight(8),
+            new[] { (CommandLineResources.FailedTestIndicator + "!").PadRight(8),
             1.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             1.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             1.ToString(CultureInfo.InvariantCulture).PadLeft(5),
             3.ToString(CultureInfo.InvariantCulture).PadLeft(5),
-            "1 h 2 m"), OutputLevel.Information), Times.Once);
+            "1 h 2 m" }), OutputLevel.Information), Times.Once);
 
         _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryAssemblyAndFramework,
             "TestSource",
@@ -666,8 +666,8 @@ public class ConsoleLoggerTests
         loggerEvents.RaiseTestRunComplete(new TestRunCompleteEventArgs(new Mock<ITestRunStatistics>().Object, false, false, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), TimeSpan.FromSeconds(1)));
         loggerEvents.WaitForEventCompletion();
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary, CommandLineResources.PassedTestIndicator, 2, 1, 0, 1, "1 m 2 s", "TestSourcePassed", "(net462)"), OutputLevel.Information), Times.Never);
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary, CommandLineResources.FailedTestIndicator, 5, 1, 1, 1, "1 h 6 m", "TestSource", "(net462)"), OutputLevel.Information), Times.Never);
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary, new object[] { CommandLineResources.PassedTestIndicator, 2, 1, 0, 1, "1 m 2 s", "TestSourcePassed", "(net462)" }), OutputLevel.Information), Times.Never);
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary, new object[] { CommandLineResources.FailedTestIndicator, 5, 1, 1, 1, "1 h 6 m", "TestSource", "(net462)" }), OutputLevel.Information), Times.Never);
     }
 
     [TestMethod]
@@ -940,7 +940,7 @@ public class ConsoleLoggerTests
         }
         loggerEvents.CompleteTestRun(null, true, false, null, null, null, new TimeSpan(1, 0, 0, 0));
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryForCanceledOrAbortedRun), OutputLevel.Information), Times.Once());
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryForCanceledOrAbortedRun, Array.Empty<string>()), OutputLevel.Information), Times.Once());
         _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryFailedTests, 1), OutputLevel.Information), Times.Once());
         _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryPassedTests, 0), OutputLevel.Information), Times.Never());
         _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummarySkippedTests, 0), OutputLevel.Information), Times.Never());
@@ -972,6 +972,7 @@ public class ConsoleLoggerTests
         {
             { "verbosity", "normal" }
         };
+
         _consoleLogger.Initialize(loggerEvents, parameters);
 
         foreach (var testResult in GetTestResultObject(TestOutcome.Failed))
@@ -980,7 +981,7 @@ public class ConsoleLoggerTests
         }
         loggerEvents.CompleteTestRun(null, false, true, null, null, null, new TimeSpan(1, 0, 0, 0));
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryForCanceledOrAbortedRun), OutputLevel.Information), Times.Once());
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummaryForCanceledOrAbortedRun, Array.Empty<string>()), OutputLevel.Information), Times.Once());
         _mockOutput.Verify(o => o.WriteLine(CommandLineResources.TestRunAborted, OutputLevel.Error), Times.Once());
     }
 

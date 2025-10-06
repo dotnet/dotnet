@@ -101,7 +101,7 @@ public class InProcDataCollectionExtensionManagerTests
                                     </InProcDataCollectionRunSettings>
                                 </RunSettings>";
 
-        _mockFileHelper.Setup(fh => fh.Exists(Path.Combine(Temp, "repos", "MSTest", "src", "managed", "TestPlatform", "TestImpactListener.Tests", "bin", "Debug", "TestImpactListener.Tests.dll"))).Returns(true);
+        _mockFileHelper.Setup(fh => fh.Exists(Path.Combine(new[] { Temp, "repos", "MSTest", "src", "managed", "TestPlatform", "TestImpactListener.Tests", "bin", "Debug", "TestImpactListener.Tests.dll" }))).Returns(true);
         _inProcDataCollectionManager = new TestableInProcDataCollectionExtensionManager(settingsXml, _mockTestEventsPublisher.Object, _defaultCodebase, _testPluginCache, _mockFileHelper.Object);
 
         var codebase = ((MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First()).CodeBase;

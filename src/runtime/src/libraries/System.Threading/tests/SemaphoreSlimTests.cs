@@ -60,6 +60,7 @@ namespace System.Threading.Tests
             RunSemaphoreSlimTest1_Wait_Helper(10, 10, 10, true, null);
             RunSemaphoreSlimTest1_Wait_Helper(1, 10, 10, true, null);
             RunSemaphoreSlimTest1_Wait_Helper(0, 10, 10, false, null);
+            RunSemaphoreSlimTest1_Wait_Helper(1, 10, TimeSpan.FromMilliseconds(uint.MaxValue), true, null);
         }
 
         [Fact]
@@ -67,8 +68,6 @@ namespace System.Threading.Tests
         {
             // Invalid timeout
             RunSemaphoreSlimTest1_Wait_Helper(10, 10, -10, true, typeof(ArgumentOutOfRangeException));
-            RunSemaphoreSlimTest1_Wait_Helper
-               (10, 10, new TimeSpan(0, 0, int.MaxValue), true, typeof(ArgumentOutOfRangeException));
         }
 
         [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsThreadingSupported))]
@@ -87,16 +86,16 @@ namespace System.Threading.Tests
             RunSemaphoreSlimTest1_WaitAsync_Helper(10, 10, 10, true, null);
             RunSemaphoreSlimTest1_WaitAsync_Helper(1, 10, 10, true, null);
             RunSemaphoreSlimTest1_WaitAsync_Helper(0, 10, 10, false, null);
+            RunSemaphoreSlimTest1_WaitAsync_Helper(1, 10, TimeSpan.FromMilliseconds(uint.MaxValue), true, null);
+            RunSemaphoreSlimTest1_WaitAsync_Helper(1, 10, TimeSpan.MaxValue, true, null);
         }
 
         [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsThreadingSupported))]
-        [ActiveIssue("https://github.com/dotnet/runtime/issues/99501", typeof(PlatformDetection), nameof(PlatformDetection.IsWasmThreadingSupported))]
+        [ActiveIssue("https://github.com/dotnet/runtime/issues/99519", TestPlatforms.Browser)]
         public static void RunSemaphoreSlimTest1_WaitAsync_NegativeCases()
         {
             // Invalid timeout
             RunSemaphoreSlimTest1_WaitAsync_Helper(10, 10, -10, true, typeof(ArgumentOutOfRangeException));
-            RunSemaphoreSlimTest1_WaitAsync_Helper
-               (10, 10, new TimeSpan(0, 0, int.MaxValue), true, typeof(ArgumentOutOfRangeException));
             RunSemaphoreSlimTest1_WaitAsync2();
         }
 

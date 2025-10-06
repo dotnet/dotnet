@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -85,8 +84,7 @@ namespace NuGet.CommandLine
                 {
                     // If we were able to look up a parent of type ICollection<>, perform a Add operation on it.
                     // Note that we expect the value is a string.
-                    var stringValue = value as string;
-                    Debug.Assert(stringValue != null);
+                    var stringValue = (string)value;
 
                     dynamic list = property.GetValue(command, null);
                     // The parameter value is one or more semi-colon separated items that might support values also

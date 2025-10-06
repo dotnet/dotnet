@@ -14,7 +14,6 @@ internal class EnvironmentVariables
         ["VSTEST_RUNNER_DEBUG_ATTACHVS"] = "0",
         ["VSTEST_HOST_DEBUG_ATTACHVS"] = "0",
         ["VSTEST_DATACOLLECTOR_DEBUG_ATTACHVS"] = "0",
-        ["VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE"] = "0"
     };
 
 }

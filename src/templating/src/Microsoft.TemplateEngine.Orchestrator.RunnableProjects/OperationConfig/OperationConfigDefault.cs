@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
-
 namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.OperationConfig
 {
     internal class OperationConfigDefault
@@ -112,6 +110,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.OperationConfig
                         new OperationConfigDefault("**/*.xaml", "<!--", EvaluatorType.CPP, ConditionalType.Xml),
                         new OperationConfigDefault("**/*.axaml", "<!--", EvaluatorType.CPP, ConditionalType.Xml),
                         new OperationConfigDefault("**/*.sln", "#-", EvaluatorType.CPP, ConditionalType.HashSignLineComment),
+                        new OperationConfigDefault("**/*.slnx", "#-", EvaluatorType.CPP, ConditionalType.Xml),
                         new OperationConfigDefault("**/*.yaml", "#-", EvaluatorType.CPP, ConditionalType.HashSignLineComment),
                         new OperationConfigDefault("**/*.yml", "#-", EvaluatorType.CPP, ConditionalType.HashSignLineComment),
                         new OperationConfigDefault("**/Dockerfile", "#-", EvaluatorType.CPP, ConditionalType.HashSignLineComment),

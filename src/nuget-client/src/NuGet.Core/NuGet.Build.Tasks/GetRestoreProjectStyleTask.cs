@@ -1,9 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Globalization;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using NuGet.ProjectModel;
 
 namespace NuGet.Build.Tasks
@@ -55,7 +53,7 @@ namespace NuGet.Build.Tasks
 
             var result = BuildTasksUtility.GetProjectRestoreStyle(RestoreProjectStyle, HasPackageReferenceItems, ProjectJsonPath, MSBuildProjectDirectory, MSBuildProjectName, log);
 
-            IsPackageReferenceCompatibleProjectStyle = result.IsPackageReferenceCompatibleProjectStyle;
+            IsPackageReferenceCompatibleProjectStyle = result.ProjectStyle == ProjectStyle.PackageReference;
             ProjectStyle = result.ProjectStyle;
 
             return !Log.HasLoggedErrors;

@@ -202,7 +202,7 @@ namespace NuGet.Commands.FuncTest
                 result.Success.Should().BeFalse();
                 logger.ErrorMessages.Count.Should().Be(1);
                 logger.ErrorMessages.Single().Should().Contain("NU1004");
-                logger.ErrorMessages.Single().Should().Contain("The package references have changed for net46. Lock file's package references: a:[1.0.0, ), project's package references: a:[1.0.0, ), b:[1.0.0, )");
+                logger.ErrorMessages.Single().Should().Contain("The package references have changed for net46. Lock file's package references: a:[1.0.0, ), project's package references: a >= 1.0.0, b >= 1.0.0");
             }
         }
 
@@ -661,7 +661,8 @@ namespace NuGet.Commands.FuncTest
                     LibraryRange = new LibraryRange(packageA.Id, VersionRange.Parse("1.0.*"), LibraryDependencyTarget.Package)
                 };
 
-                childProject.TargetFrameworks.FirstOrDefault().Dependencies.Add(dependency);
+                var newDependencies = childProject.TargetFrameworks.FirstOrDefault().Dependencies.Add(dependency);
+                childProject.TargetFrameworks[0] = new TargetFrameworkInformation(childProject.TargetFrameworks[0]) { Dependencies = newDependencies };
 
                 // Enable lock file
                 childProject.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(

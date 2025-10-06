@@ -5,9 +5,7 @@ using System;
 using System.IO;
 using System.Xml;
 using Microsoft.Win32;
-#if RUNTIME_TYPE_NETCORE
 using System.Runtime.Versioning;
-#endif
 
 namespace Microsoft.Deployment.Utilities
 {
@@ -151,9 +149,7 @@ namespace Microsoft.Deployment.Utilities
         /// Get the default publisher name 
         /// </summary>
         /// <returns>Publisher name</returns>
-#if RUNTIME_TYPE_NETCORE
         [SupportedOSPlatform("windows")]
-#endif
         internal static string GetRegisteredOrganization()
         {
             string result = string.Empty;

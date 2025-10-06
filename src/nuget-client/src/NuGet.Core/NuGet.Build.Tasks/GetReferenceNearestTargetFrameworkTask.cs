@@ -4,11 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Common;
 using NuGet.Frameworks;
+
+#if NETFRAMEWORK || NETSTANDARD
+using System.Linq;
+#endif
 
 namespace NuGet.Build.Tasks
 {

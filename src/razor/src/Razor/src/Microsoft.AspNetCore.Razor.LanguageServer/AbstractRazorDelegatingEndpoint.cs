@@ -1,42 +1,33 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : IRazorRequestHandler<TRequest, TResponse?>
-   where TRequest : ITextDocumentPositionParams
+internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    ILogger logger)
+    : IRazorRequestHandler<TRequest, TResponse?> where TRequest : ITextDocumentPositionParams
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    protected readonly ILogger Logger;
-
-    protected AbstractRazorDelegatingEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        ILogger logger)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    protected readonly IDocumentMappingService DocumentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    protected readonly ILogger Logger = logger;
 
     /// <summary>
     /// The strategy to use to project the incoming caret position onto the generated C#/Html document
@@ -82,7 +73,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
     /// will be used in <see cref="HandleRequestAsync(TRequest, RazorRequestContext, CancellationToken)"/>
     /// </summary>
     protected virtual Task<TResponse?> TryHandleAsync(TRequest request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
-        => Task.FromResult<TResponse?>(default);
+        => SpecializedTasks.Default<TResponse>();
 
     /// <summary>
     /// Returns true if the configuration supports this operation being handled, otherwise returns false. Use to
@@ -112,11 +103,13 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, Logger, cancellationToken).ConfigureAwait(false);
-        if (positionInfo is null)
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (!codeDocument.Source.Text.TryGetAbsoluteIndex(request.Position, out var absoluteIndex))
         {
             return default;
         }
+
+        var positionInfo = DocumentPositionInfoStrategy.GetPositionInfo(DocumentMappingService, codeDocument, absoluteIndex);
 
         var response = await TryHandleAsync(request, requestContext, positionInfo, cancellationToken).ConfigureAwait(false);
         if (response is not null && response is not ISumType { Value: null })
@@ -140,8 +133,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             // Sometimes Html can actually be mapped to C#, like for example component attributes, which map to
             // C# properties, even though they appear entirely in a Html context. Since remapping is pretty cheap
             // it's easier to just try mapping, and see what happens, rather than checking for specific syntax nodes.
-            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out Position? csharpPosition, out _))
+            if (DocumentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out Position? csharpPosition, out _))
             {
                 // We're just gonna pretend this mapped perfectly normally onto C#. Moving this logic to the actual position info
                 // calculating code is possible, but could have untold effects, so opt-in is better (for now?)
@@ -168,7 +160,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
         }
         catch (RemoteInvocationException e)
         {
-            Logger.LogError(e, "Error calling delegate server for {method}", CustomMessageTarget);
+            Logger.LogError(e, $"Error calling delegate server for {CustomMessageTarget}");
             requestContext.GetRequiredService<ITelemetryReporter>().ReportFault(e, "Error calling delegate server for {method}", CustomMessageTarget);
             throw;
         }

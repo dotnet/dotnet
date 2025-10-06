@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Buffers;
@@ -9,9 +9,9 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using MessagePack;
 using MessagePack.Resolvers;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -44,15 +44,10 @@ public class RazorProjectInfoSerializationBenchmark
         };
 
     private static RazorProjectInfo DeserializeProjectInfo_Json(TextReader reader)
-    {
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadNonNullObject(ObjectReaders.ReadProjectInfoFromProperties));
-    }
+        => JsonDataConvert.DeserializeProjectInfo(reader);
 
     private static void SerializeProjectInfo_Json(TextWriter writer, RazorProjectInfo projectInfo)
-    {
-        JsonDataConvert.SerializeObject(writer, projectInfo, ObjectWriters.WriteProperties);
-    }
+        => JsonDataConvert.Serialize(projectInfo, writer);
 
     [Benchmark(Description = "Serialize RazorProjectInfo (JSON)")]
     public void Serialize_Json()
@@ -100,7 +95,7 @@ public class RazorProjectInfoSerializationBenchmark
         }
     }
 
-    [GlobalSetup(Targets = new[] { nameof(Serialize_MessagePack), nameof(Deserialize_MessagePack), nameof(RoundTrip_MessagePack) })]
+    [GlobalSetup(Targets = [nameof(Serialize_MessagePack), nameof(Deserialize_MessagePack), nameof(RoundTrip_MessagePack)])]
     public void GlobalSetup_MessagePack()
     {
         _buffer = new ArrayBufferWriter<byte>(initialCapacity: 1024 * 1024);

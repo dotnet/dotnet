@@ -4,15 +4,15 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Test.Utility;
-using Test.Utility.Signing;
 
 namespace NuGet.Tests.Apex
 {
     public class SignedPackagesTestsApexFixture : VisualStudioHostFixtureFactory
     {
-        private const string _testPackageName = "TestPackage";
-        private const string _packageVersion = "1.0.0";
+        private const string TestPackageName = "TestPackage";
+        private const string TestPackageVersion = "1.0.0";
 
         private TrustedTestCert<TestCertificate> _trustedAuthorTestCert;
         private TrustedTestCert<TestCertificate> _trustedRepositoryTestCert;
@@ -22,9 +22,9 @@ namespace NuGet.Tests.Apex
         private SimpleTestPackageContext _repoSignedTestPackageV1;
         private SimpleTestPackageContext _repoCountersignedTestPackageV1;
 
-        private Lazy<Task<SigningTestServer>> _testServer;
-        private Lazy<Task<CertificateAuthority>> _defaultTrustedTimestampRootCertificateAuthority;
-        private Lazy<Task<TimestampService>> _defaultTrustedTimestampService;
+        private readonly Lazy<Task<SigningTestServer>> _testServer;
+        private readonly Lazy<Task<CertificateAuthority>> _defaultTrustedTimestampRootCertificateAuthority;
+        private readonly Lazy<Task<TimestampService>> _defaultTrustedTimestampService;
         private readonly DisposableList<IDisposable> _responders;
 
         public SignedPackagesTestsApexFixture()
@@ -68,8 +68,8 @@ namespace NuGet.Tests.Apex
                 if (_authorSignedTestPackageV1 == null)
                 {
                     _authorSignedTestPackageV1 = CommonUtility.CreateAuthorSignedPackage(
-                        _testPackageName,
-                        _packageVersion,
+                        TestPackageName,
+                        TestPackageVersion,
                         TrustedAuthorTestCertificate.Source.Cert);
                 }
 
@@ -84,8 +84,8 @@ namespace NuGet.Tests.Apex
                 if (_repoSignedTestPackageV1 == null)
                 {
                     _repoSignedTestPackageV1 = CommonUtility.CreateRepositorySignedPackage(
-                        _testPackageName,
-                        _packageVersion,
+                        TestPackageName,
+                        TestPackageVersion,
                         TrustedRepositoryTestCertificate.Source.Cert,
                         new Uri("https://v3serviceIndex.test/api/index.json"));
                 }
@@ -101,8 +101,8 @@ namespace NuGet.Tests.Apex
                 if (_repoCountersignedTestPackageV1 == null)
                 {
                     _repoCountersignedTestPackageV1 = CommonUtility.CreateRepositoryCountersignedPackage(
-                        _testPackageName,
-                        _packageVersion,
+                        TestPackageName,
+                        TestPackageVersion,
                         TrustedAuthorTestCertificate.Source.Cert,
                         TrustedRepositoryTestCertificate.Source.Cert,
                         new Uri("https://v3serviceIndex.test/api/index.json"));
@@ -133,7 +133,7 @@ namespace NuGet.Tests.Apex
             var testServer = await _testServer.Value;
             var rootCa = CertificateAuthority.Create(testServer.Url);
             var intermediateCa = rootCa.CreateIntermediateCertificateAuthority();
-            var rootCertificate = new X509Certificate2(rootCa.Certificate.GetEncoded());
+            var rootCertificate = new X509Certificate2(rootCa.Certificate);
 
             _trustedServerRoot = TrustedTestCert.Create(
                 rootCertificate,

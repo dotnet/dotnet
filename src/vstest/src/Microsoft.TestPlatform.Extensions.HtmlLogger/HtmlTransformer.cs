@@ -20,7 +20,8 @@ internal class HtmlTransformer : IHtmlTransformer
     public HtmlTransformer()
     {
         _xslTransform = new XslCompiledTransform();
-        _xslTransform.Load(XmlReader.Create(GetType().Assembly.GetManifestResourceStream("Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Html.xslt") ?? throw new InvalidOperationException(), new XmlReaderSettings { CheckCharacters = false }));
+        using var reader = XmlReader.Create(GetType().Assembly.GetManifestResourceStream("Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Html.xslt") ?? throw new InvalidOperationException(), new XmlReaderSettings { CheckCharacters = false, CloseInput = true });
+        _xslTransform.Load(reader);
     }
 
     /// <summary>

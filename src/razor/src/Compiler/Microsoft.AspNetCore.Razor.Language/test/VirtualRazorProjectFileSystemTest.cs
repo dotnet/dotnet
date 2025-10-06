@@ -189,9 +189,9 @@ public class VirtualRazorProjectFileSystemTest
         // Assert
         Assert.Collection(
             items,
-            item => Assert.Same(viewImport2, item),
+            item => Assert.Same(viewImport1, item),
             item => Assert.False(item.Exists),
-            item => Assert.Same(viewImport1, item));
+            item => Assert.Same(viewImport2, item));
     }
 
     [Fact]

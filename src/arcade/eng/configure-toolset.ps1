@@ -1,9 +1,12 @@
 . $PSScriptRoot\common\pipeline-logging-functions.ps1
 function Test-FilesUseTelemetryOutput {
     $requireTelemetryExcludeFiles = @(
+        "dotnet.ps1",
         "enable-cross-org-publishing.ps1",
         "performance-setup.ps1",
-        "retain-build.ps1" )
+        "retain-build.ps1",
+        "nuget-verification.ps1",
+        "vmr-sync.ps1")
 
     $filesMissingTelemetry = Get-ChildItem -File -Recurse -Path "$PSScriptRoot\common" -Include "*.ps1" -Exclude $requireTelemetryExcludeFiles |
         Where-Object { -Not( $_ | Select-String -Pattern "Write-PipelineTelemetryError" )}

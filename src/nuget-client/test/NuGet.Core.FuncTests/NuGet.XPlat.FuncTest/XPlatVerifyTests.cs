@@ -10,12 +10,20 @@ using NuGet.CommandLine.XPlat;
 using NuGet.Commands;
 using NuGet.Common;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
     [Collection("NuGet XPlat Test Collection")]
     public class XPlatVerifyTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatVerifyTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void VerifyCommandArgsParsing_MissingPackagePath_Throws()
         {
@@ -85,7 +93,7 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             var logLevel = LogLevel.Information;
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
             var testApp = new CommandLineApplication();
             var mockCommandRunner = new Mock<IVerifyCommandRunner>();
             mockCommandRunner

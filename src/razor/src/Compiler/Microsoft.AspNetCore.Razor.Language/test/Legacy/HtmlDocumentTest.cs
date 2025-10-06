@@ -5,6 +5,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -264,5 +265,109 @@ public class HtmlDocumentTest() : ParserTestBase(layer: TestProject.Layer.Compil
     public void WithUnexpectedTransitionsInAttributeValue_Throws()
     {
         ParseDocumentTest("<span foo='@ @' />");
+    }
+
+    [Fact]
+    public void OpenAngle_01()
+    {
+        ParseDocumentTest("""
+            < @("a").@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_02()
+    {
+        ParseDocumentTest("""
+            < @("a").@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_03()
+    {
+        ParseDocumentTest("""
+            < @("a")x@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_04()
+    {
+        ParseDocumentTest("""
+            < @("a")x@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_05()
+    {
+        ParseDocumentTest("""
+            < @("a").@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_06()
+    {
+        ParseDocumentTest("""
+            < @("a").@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_07()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_08()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_09()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@@("b")
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_10()
+    {
+        ParseDocumentTest("""
+            < @("a")x@@@b
+            """);
+    }
+
+    [Fact]
+    public void OpenAngle_11()
+    {
+        ParseDocumentTest("""
+            < @@
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public void QuoteInAttributeName_01()
+    {
+        ParseDocumentTest("""
+            <div class="test""></div>
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11327")]
+    public void QuoteInAttributeName_02()
+    {
+        ParseDocumentTest("""
+            <div class="test"'></div>
+            """);
     }
 }

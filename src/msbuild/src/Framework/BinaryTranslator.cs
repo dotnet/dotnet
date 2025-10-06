@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Framework.BuildException;
 
@@ -22,6 +21,14 @@ namespace Microsoft.Build.BackEnd
     /// </summary>
     internal static class BinaryTranslator
     {
+        /// <summary>
+        /// Presence of this key in the dictionary indicates that it was null.
+        /// </summary>
+        /// <remarks>
+        /// This constant is needed for a workaround concerning serializing BuildResult with a version.
+        /// </remarks>
+        private const string SpecialKeyForDictionaryBeingNull = "=MSBUILDDICTIONARYWASNULL=";
+
 #nullable enable
         /// <summary>
         /// Returns a read-only serializer.
@@ -49,14 +56,19 @@ namespace Microsoft.Build.BackEnd
         private class BinaryReadTranslator : ITranslator
         {
             /// <summary>
-            /// The stream used as a source or destination for data.
+            /// The intern reader used in an intern scope.
             /// </summary>
-            private Stream _packetStream;
+            private InterningReadTranslator _interner;
 
             /// <summary>
             /// The binary reader used in read mode.
             /// </summary>
             private BinaryReader _reader;
+
+            /// <summary>
+            /// Whether the caller has entered an intern scope.
+            /// </summary>
+            private bool _isInterning;
 
 #nullable enable
             /// <summary>
@@ -64,7 +76,6 @@ namespace Microsoft.Build.BackEnd
             /// </summary>
             public BinaryReadTranslator(Stream packetStream, BinaryReaderFactory buffer)
             {
-                _packetStream = packetStream;
                 _reader = buffer.Create(packetStream);
             }
 #nullable disable
@@ -106,6 +117,12 @@ namespace Microsoft.Build.BackEnd
                 get
                 { return TranslationDirection.ReadFromStream; }
             }
+
+            /// <summary>
+            /// Gets or sets the packet version associated with the stream.
+            /// This can be used to exclude various fields from translation for backwards compatibility.
+            /// </summary>
+            public byte PacketVersion { get; set; }
 
             /// <summary>
             /// Translates a boolean.
@@ -291,7 +308,11 @@ namespace Microsoft.Build.BackEnd
                 }
 
                 int count = _reader.ReadInt32();
+#if NET472_OR_GREATER || NET9_0_OR_GREATER
+                set = new HashSet<string>(count);
+#else
                 set = new HashSet<string>();
+#endif
 
                 for (int i = 0; i < count; i++)
                 {
@@ -332,6 +353,14 @@ namespace Microsoft.Build.BackEnd
                 list = (List<T>)listAsInterface;
             }
 
+            /// <inheritdoc/>
+            public void Translate<T>(ref List<T> list, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
+            {
+                IList<T> listAsInterface = list;
+                Translate(ref listAsInterface, objectTranslator, valueFactory, count => new List<T>(count));
+                list = (List<T>)listAsInterface;
+            }
+
             public void Translate<T, L>(ref IList<T> list, ObjectTranslator<T> objectTranslator, NodePacketCollectionCreator<L> collectionFactory) where L : IList<T>
             {
                 if (!TranslateNullable(list))
@@ -347,6 +376,25 @@ namespace Microsoft.Build.BackEnd
                     T value = default(T);
 
                     objectTranslator(this, ref value);
+                    list.Add(value);
+                }
+            }
+
+            public void Translate<T, L>(ref IList<T> list, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory, NodePacketCollectionCreator<L> collectionFactory) where L : IList<T>
+            {
+                if (!TranslateNullable(list))
+                {
+                    return;
+                }
+
+                int count = _reader.ReadInt32();
+                list = collectionFactory(count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    T value = default(T);
+
+                    objectTranslator(this, valueFactory, ref value);
                     list.Add(value);
                 }
             }
@@ -485,22 +533,6 @@ namespace Microsoft.Build.BackEnd
                 value = (T)Enum.ToObject(enumType, numericValue);
             }
 
-            /// <summary>
-            /// Translates a value using the .Net binary formatter.
-            /// </summary>
-            /// <typeparam name="T">The reference type.</typeparam>
-            /// <param name="value">The value to be translated.</param>
-            public void TranslateDotNet<T>(ref T value)
-            {
-                if (!TranslateNullable(value))
-                {
-                    return;
-                }
-
-                BinaryFormatter formatter = new BinaryFormatter();
-                value = (T)formatter.Deserialize(_packetStream);
-            }
-
             public void TranslateException(ref Exception value)
             {
                 if (!TranslateNullable(value))
@@ -552,13 +584,8 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
-            /// <summary>
-            /// Translates an array of objects using an <see cref="ObjectTranslator{T}"/>
-            /// </summary>
-            /// <typeparam name="T">The reference type.</typeparam>
-            /// <param name="array">The array to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the elements in the array</param>
-            public void TranslateArray<T>(ref T[] array, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateArray<T>(ref T[] array, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
             {
                 if (!TranslateNullable(array))
                 {
@@ -570,7 +597,7 @@ namespace Microsoft.Build.BackEnd
 
                 for (int i = 0; i < count; i++)
                 {
-                    objectTranslator(this, ref array[i]);
+                    objectTranslator(this, valueFactory, ref array[i]);
                 }
             }
 
@@ -588,6 +615,53 @@ namespace Microsoft.Build.BackEnd
                     count => new Dictionary<string, string>(count, comparer));
 
                 dictionary = (Dictionary<string, string>)copy;
+            }
+
+            /// <summary>
+            /// Translates a dictionary of { string, string } with additional entries. The dictionary might be null despite being populated.
+            /// </summary>
+            /// <param name="dictionary">The dictionary to be translated.</param>
+            /// <param name="comparer">The comparer used to instantiate the dictionary.</param>
+            /// <param name="additionalEntries">Additional entries to be translated</param>
+            /// <param name="additionalEntriesKeys">Additional entries keys</param>
+            /// <remarks>
+            /// This overload is needed for a workaround concerning serializing BuildResult with a version.
+            /// It deserializes additional entries together with the main dictionary.
+            /// </remarks>
+            public void TranslateDictionary(ref IDictionary<string, string> dictionary, IEqualityComparer<string> comparer, ref Dictionary<string, string> additionalEntries, HashSet<string> additionalEntriesKeys)
+            {
+                if (!TranslateNullable(dictionary))
+                {
+                    return;
+                }
+
+                int count = _reader.ReadInt32();
+                dictionary = new Dictionary<string, string>(count, comparer);
+                additionalEntries = new();
+
+                for (int i = 0; i < count; i++)
+                {
+                    string key = null;
+                    Translate(ref key);
+                    string value = null;
+                    Translate(ref value);
+                    if (additionalEntriesKeys.Contains(key))
+                    {
+                        additionalEntries[key] = value;
+                    }
+                    else if (comparer.Equals(key, SpecialKeyForDictionaryBeingNull))
+                    {
+                        // Presence of special key SpecialKeyForDictionaryBeingNull indicates that the dictionary was null.
+                        dictionary = null;
+
+                        // If the dictionary is null, we should have only two keys: SpecialKeyForDictionaryBeingNull, SpecialKeyForVersion
+                        Debug.Assert(count == 2);
+                    }
+                    else if (dictionary is not null)
+                    {
+                        dictionary[key] = value;
+                    }
+                }
             }
 
             public void TranslateDictionary(ref IDictionary<string, string> dictionary, NodePacketCollectionCreator<IDictionary<string, string>> dictionaryCreator)
@@ -634,14 +708,34 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T }.
-            /// </summary>
-            /// <typeparam name="T">The reference type for the values</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="comparer">The comparer used to instantiate the dictionary.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            public void TranslateDictionary<T>(ref Dictionary<string, T> dictionary, IEqualityComparer<string> comparer, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<K, V>(
+                ref IDictionary<K, V> dictionary,
+                ObjectTranslator<K> keyTranslator,
+                ObjectTranslatorWithValueFactory<V> valueTranslator,
+                NodePacketValueFactory<V> valueFactory,
+                NodePacketCollectionCreator<IDictionary<K, V>> dictionaryCreator)
+            {
+                if (!TranslateNullable(dictionary))
+                {
+                    return;
+                }
+
+                int count = _reader.ReadInt32();
+                dictionary = dictionaryCreator(count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    K key = default(K);
+                    keyTranslator(this, ref key);
+                    V value = default(V);
+                    valueTranslator(this, valueFactory, ref value);
+                    dictionary[key] = value;
+                }
+            }
+
+            /// <inheritdoc/>
+            public void TranslateDictionary<T>(ref Dictionary<string, T> dictionary, IEqualityComparer<string> comparer, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
                 where T : class
             {
                 if (!TranslateNullable(dictionary))
@@ -657,19 +751,13 @@ namespace Microsoft.Build.BackEnd
                     string key = null;
                     Translate(ref key);
                     T value = null;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                     dictionary[key] = value;
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T } for dictionaries with public parameterless constructors.
-            /// </summary>
-            /// <typeparam name="D">The reference type for the dictionary.</typeparam>
-            /// <typeparam name="T">The reference type for values in the dictionary.</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
                 where D : IDictionary<string, T>, new()
                 where T : class
             {
@@ -686,20 +774,13 @@ namespace Microsoft.Build.BackEnd
                     string key = null;
                     Translate(ref key);
                     T value = null;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                     dictionary[key] = value;
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T } for dictionaries with public parameterless constructors.
-            /// </summary>
-            /// <typeparam name="D">The reference type for the dictionary.</typeparam>
-            /// <typeparam name="T">The reference type for values in the dictionary.</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            /// <param name="dictionaryCreator">The delegate used to instantiate the dictionary.</param>
-            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslator<T> objectTranslator, NodePacketCollectionCreator<D> dictionaryCreator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory, NodePacketCollectionCreator<D> dictionaryCreator)
                 where D : IDictionary<string, T>
                 where T : class
             {
@@ -716,7 +797,7 @@ namespace Microsoft.Build.BackEnd
                     string key = null;
                     Translate(ref key);
                     T value = null;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                     dictionary[key] = value;
                 }
             }
@@ -750,6 +831,81 @@ namespace Microsoft.Build.BackEnd
                 bool haveRef = _reader.ReadBoolean();
                 return haveRef;
             }
+
+            public void WithInterning(IEqualityComparer<string> comparer, int initialCapacity, Action<ITranslator> internBlock)
+            {
+                if (_isInterning)
+                {
+                    throw new InvalidOperationException("Cannot enter recursive intern block.");
+                }
+
+                _isInterning = true;
+
+                // Deserialize the intern header before entering the intern scope.
+                _interner ??= new InterningReadTranslator(this);
+                _interner.Translate(this);
+
+                // No other setup is needed since we can parse the packet directly from the stream.
+                internBlock(this);
+
+                _isInterning = false;
+            }
+
+            public void Intern(ref string str, bool nullable = true)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref str);
+                    return;
+                }
+
+                if (nullable && !TranslateNullable(string.Empty))
+                {
+                    str = null;
+                    return;
+                }
+
+                str = _interner.Read();
+            }
+
+            public void Intern(ref string[] array)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref array);
+                    return;
+                }
+
+                if (!TranslateNullable(array))
+                {
+                    return;
+                }
+
+                int count = _reader.ReadInt32();
+                array = new string[count];
+
+                for (int i = 0; i < count; i++)
+                {
+                    array[i] = _interner.Read();
+                }
+            }
+
+            public void InternPath(ref string str, bool nullable = true)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref str);
+                    return;
+                }
+
+                if (nullable && !TranslateNullable(string.Empty))
+                {
+                    str = null;
+                    return;
+                }
+
+                str = _interner.ReadPath();
+            }
         }
 
         /// <summary>
@@ -758,14 +914,21 @@ namespace Microsoft.Build.BackEnd
         private class BinaryWriteTranslator : ITranslator
         {
             /// <summary>
-            /// The stream used as a source or destination for data.
-            /// </summary>
-            private Stream _packetStream;
-
-            /// <summary>
             /// The binary writer used in write mode.
             /// </summary>
             private BinaryWriter _writer;
+
+            /// <summary>
+            /// The intern writer used in an intern scope.
+            /// This must be lazily instantiated since the interner has its own internal write translator, and
+            /// would otherwise go into a recursive loop on initalization.
+            /// </summary>
+            private InterningWriteTranslator _interner;
+
+            /// <summary>
+            /// Whether the caller has entered an intern scope.
+            /// </summary>
+            private bool _isInterning;
 
             /// <summary>
             /// Constructs a serializer from the specified stream, operating in the designated mode.
@@ -773,7 +936,6 @@ namespace Microsoft.Build.BackEnd
             /// <param name="packetStream">The stream serving as the source or destination of data.</param>
             public BinaryWriteTranslator(Stream packetStream)
             {
-                _packetStream = packetStream;
                 _writer = new BinaryWriter(packetStream);
             }
 
@@ -814,6 +976,12 @@ namespace Microsoft.Build.BackEnd
                 get
                 { return TranslationDirection.WriteToStream; }
             }
+
+            /// <summary>
+            /// Gets or sets the packet version associated with the stream.
+            /// This can be used to exclude various fields from translation for backwards compatibility.
+            /// </summary>
+            public byte PacketVersion { get; set; }
 
             /// <summary>
             /// Translates a boolean.
@@ -1015,6 +1183,24 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
+            /// <inheritdoc/>
+            public void Translate<T>(ref List<T> list, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
+            {
+                if (!TranslateNullable(list))
+                {
+                    return;
+                }
+
+                int count = list.Count;
+                _writer.Write(count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    T value = list[i];
+                    objectTranslator(this, valueFactory, ref value);
+                }
+            }
+
             /// <summary>
             /// Translates a list of T using an <see cref="ObjectTranslator{T}"/>
             /// </summary>
@@ -1037,6 +1223,24 @@ namespace Microsoft.Build.BackEnd
                 {
                     T value = list[i];
                     objectTranslator(this, ref value);
+                }
+            }
+
+            /// <inheritdoc/>
+            public void Translate<T, L>(ref IList<T> list, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory, NodePacketCollectionCreator<L> collectionFactory) where L : IList<T>
+            {
+                if (!TranslateNullable(list))
+                {
+                    return;
+                }
+
+                int count = list.Count;
+                _writer.Write(count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    T value = list[i];
+                    objectTranslator(this, valueFactory, ref value);
                 }
             }
 
@@ -1135,22 +1339,6 @@ namespace Microsoft.Build.BackEnd
                 _writer.Write(numericValue);
             }
 
-            /// <summary>
-            /// Translates a value using the .Net binary formatter.
-            /// </summary>
-            /// <typeparam name="T">The reference type.</typeparam>
-            /// <param name="value">The value to be translated.</param>
-            public void TranslateDotNet<T>(ref T value)
-            {
-                if (!TranslateNullable(value))
-                {
-                    return;
-                }
-
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(_packetStream, value);
-            }
-
             public void TranslateException(ref Exception value)
             {
                 if (!TranslateNullable(value))
@@ -1228,13 +1416,8 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
-            /// <summary>
-            /// Translates an array of objects using an <see cref="ObjectTranslator{T}"/>
-            /// </summary>
-            /// <typeparam name="T">The reference type.</typeparam>
-            /// <param name="array">The array to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the elements in the array</param>
-            public void TranslateArray<T>(ref T[] array, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateArray<T>(ref T[] array, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
             {
                 if (!TranslateNullable(array))
                 {
@@ -1246,7 +1429,7 @@ namespace Microsoft.Build.BackEnd
 
                 for (int i = 0; i < count; i++)
                 {
-                    objectTranslator(this, ref array[i]);
+                    objectTranslator(this, valueFactory, ref array[i]);
                 }
             }
 
@@ -1259,6 +1442,72 @@ namespace Microsoft.Build.BackEnd
             {
                 IDictionary<string, string> copy = dictionary;
                 TranslateDictionary(ref copy, (NodePacketCollectionCreator<IDictionary<string, string>>)null);
+            }
+
+            /// <summary>
+            /// Translates a dictionary of { string, string } adding additional entries.
+            /// </summary>
+            /// <param name="dictionary">The dictionary to be translated.</param>
+            /// <param name="comparer">The comparer used to instantiate the dictionary.</param>
+            /// <param name="additionalEntries">Additional entries to be translated.</param>
+            /// <param name="additionalEntriesKeys">Additional entries keys.</param>
+            /// <remarks>
+            /// This overload is needed for a workaround concerning serializing BuildResult with a version.
+            /// It serializes additional entries together with the main dictionary.
+            /// </remarks>
+            public void TranslateDictionary(ref IDictionary<string, string> dictionary, IEqualityComparer<string> comparer, ref Dictionary<string, string> additionalEntries, HashSet<string> additionalEntriesKeys)
+            {
+                // Translate whether object is null
+                if ((dictionary is null) && ((additionalEntries is null) || (additionalEntries.Count == 0)))
+                {
+                    _writer.Write(false);
+                    return;
+                }
+                else
+                {
+                    // Translate that object is not null
+                    _writer.Write(true);
+                }
+
+                // Writing a dictionary, additional entries and special key if dictionary was null. We need the special key for distinguishing whether the initial dictionary was null or empty.
+                int count = (dictionary is null ? 1 : 0) +
+                            (additionalEntries is null ? 0 : additionalEntries.Count) +
+                            (dictionary is null ? 0 : dictionary.Count);
+
+                _writer.Write(count);
+
+                // If the dictionary was null, serialize a special key SpecialKeyForDictionaryBeingNull.
+                if (dictionary is null)
+                {
+                    string key = SpecialKeyForDictionaryBeingNull;
+                    Translate(ref key);
+                    string value = string.Empty;
+                    Translate(ref value);
+                }
+
+                // Serialize additional entries
+                if (additionalEntries is not null)
+                {
+                    foreach (KeyValuePair<string, string> pair in additionalEntries)
+                    {
+                        string key = pair.Key;
+                        Translate(ref key);
+                        string value = pair.Value;
+                        Translate(ref value);
+                    }
+                }
+
+                // Serialize dictionary
+                if (dictionary is not null)
+                {
+                    foreach (KeyValuePair<string, string> pair in dictionary)
+                    {
+                        string key = pair.Key;
+                        Translate(ref key);
+                        string value = pair.Value;
+                        Translate(ref value);
+                    }
+                }
             }
 
             public void TranslateDictionary(ref IDictionary<string, string> dictionary, NodePacketCollectionCreator<IDictionary<string, string>> dictionaryCreator)
@@ -1303,14 +1552,33 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T }.
-            /// </summary>
-            /// <typeparam name="T">The reference type for the values, which implements INodePacketTranslatable.</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="comparer">The comparer used to instantiate the dictionary.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            public void TranslateDictionary<T>(ref Dictionary<string, T> dictionary, IEqualityComparer<string> comparer, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<K, V>(
+                ref IDictionary<K, V> dictionary,
+                ObjectTranslator<K> keyTranslator,
+                ObjectTranslatorWithValueFactory<V> valueTranslator,
+                NodePacketValueFactory<V> valueFactory,
+                NodePacketCollectionCreator<IDictionary<K, V>> collectionCreator)
+            {
+                if (!TranslateNullable(dictionary))
+                {
+                    return;
+                }
+
+                int count = dictionary.Count;
+                _writer.Write(count);
+
+                foreach (KeyValuePair<K, V> pair in dictionary)
+                {
+                    K key = pair.Key;
+                    keyTranslator(this, ref key);
+                    V value = pair.Value;
+                    valueTranslator(this, valueFactory, ref value);
+                }
+            }
+
+            /// <inheritdoc/>
+            public void TranslateDictionary<T>(ref Dictionary<string, T> dictionary, IEqualityComparer<string> comparer, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
                 where T : class
             {
                 if (!TranslateNullable(dictionary))
@@ -1326,18 +1594,12 @@ namespace Microsoft.Build.BackEnd
                     string key = pair.Key;
                     Translate(ref key);
                     T value = pair.Value;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T } for dictionaries with public parameterless constructors.
-            /// </summary>
-            /// <typeparam name="D">The reference type for the dictionary.</typeparam>
-            /// <typeparam name="T">The reference type for values in the dictionary.</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslator<T> objectTranslator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory)
                 where D : IDictionary<string, T>, new()
                 where T : class
             {
@@ -1354,19 +1616,12 @@ namespace Microsoft.Build.BackEnd
                     string key = pair.Key;
                     Translate(ref key);
                     T value = pair.Value;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                 }
             }
 
-            /// <summary>
-            /// Translates a dictionary of { string, T } for dictionaries with public parameterless constructors.
-            /// </summary>
-            /// <typeparam name="D">The reference type for the dictionary.</typeparam>
-            /// <typeparam name="T">The reference type for values in the dictionary.</typeparam>
-            /// <param name="dictionary">The dictionary to be translated.</param>
-            /// <param name="objectTranslator">The translator to use for the values in the dictionary</param>
-            /// <param name="dictionaryCreator">The delegate used to instantiate the dictionary.</param>
-            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslator<T> objectTranslator, NodePacketCollectionCreator<D> dictionaryCreator)
+            /// <inheritdoc/>
+            public void TranslateDictionary<D, T>(ref D dictionary, ObjectTranslatorWithValueFactory<T> objectTranslator, NodePacketValueFactory<T> valueFactory, NodePacketCollectionCreator<D> dictionaryCreator)
                 where D : IDictionary<string, T>
                 where T : class
             {
@@ -1383,7 +1638,7 @@ namespace Microsoft.Build.BackEnd
                     string key = pair.Key;
                     Translate(ref key);
                     T value = pair.Value;
-                    objectTranslator(this, ref value);
+                    objectTranslator(this, valueFactory, ref value);
                 }
             }
 
@@ -1421,6 +1676,92 @@ namespace Microsoft.Build.BackEnd
                 bool haveRef = (value != null);
                 _writer.Write(haveRef);
                 return haveRef;
+            }
+
+            public void WithInterning(IEqualityComparer<string> comparer, int initialCapacity, Action<ITranslator> internBlock)
+            {
+                if (_isInterning)
+                {
+                    throw new InvalidOperationException("Cannot enter recursive intern block.");
+                }
+
+                // Every new scope requires the interner's state to be reset.
+                _interner ??= new InterningWriteTranslator();
+                _interner.Setup(comparer, initialCapacity);
+
+                // Temporaily swap our writer with the interner.
+                // This forwards all writes to this translator into the interning buffer, so that any non-interned
+                // writes which are interleaved will be in the correct order.
+                BinaryWriter streamWriter = _writer;
+                _writer = _interner.Writer;
+                _isInterning = true;
+
+                try
+                {
+                    internBlock(this);
+                }
+                finally
+                {
+                    _writer = streamWriter;
+                    _isInterning = false;
+                }
+
+                // Write the interned buffer into the real output stream.
+                _interner.Translate(this);
+            }
+
+            public void Intern(ref string str, bool nullable = true)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref str);
+                    return;
+                }
+
+                if (nullable && !TranslateNullable(str))
+                {
+                    return;
+                }
+
+                _interner.Intern(str);
+            }
+
+            public void Intern(ref string[] array)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref array);
+                    return;
+                }
+
+                if (!TranslateNullable(array))
+                {
+                    return;
+                }
+
+                int count = array.Length;
+                Translate(ref count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    _interner.Intern(array[i]);
+                }
+            }
+
+            public void InternPath(ref string str, bool nullable = true)
+            {
+                if (!_isInterning)
+                {
+                    Translate(ref str);
+                    return;
+                }
+
+                if (nullable && !TranslateNullable(str))
+                {
+                    return;
+                }
+
+                _interner.InternPath(str);
             }
         }
     }

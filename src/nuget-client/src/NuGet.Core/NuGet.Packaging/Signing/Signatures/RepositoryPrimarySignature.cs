@@ -5,17 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
-#endif
 using NuGet.Common;
 
 namespace NuGet.Packaging.Signing
 {
     public sealed class RepositoryPrimarySignature : PrimarySignature, IRepositorySignature
     {
-#if IS_SIGNING_SUPPORTED
         public Uri V3ServiceIndexUrl { get; }
         public IReadOnlyList<string> PackageOwners { get; }
 
@@ -56,6 +53,5 @@ namespace NuGet.Packaging.Signing
                 summary.ExpirationTime,
                 issues.Concat(summary.Issues));
         }
-#endif
     }
 }

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.CommandLine.Completions;
 
 namespace System.CommandLine.Suggest
 {
@@ -21,88 +20,90 @@ namespace System.CommandLine.Suggest
 
             _suggestionStore = suggestionStore ?? new SuggestionStore();
 
-            var shellTypeArgument = new CliArgument<ShellType>(nameof(ShellType));
+            var shellTypeArgument = new Argument<ShellType>(nameof(ShellType));
 
-            CompleteScriptCommand = new CliCommand("script", "Print complete script for specific shell")
+            CompleteScriptCommand = new Command("script", "Print complete script for specific shell")
             {
                 shellTypeArgument
             };
             CompleteScriptCommand.SetAction(context =>
             {
-                SuggestionShellScriptHandler.Handle(context.Configuration.Output, context.GetValue(shellTypeArgument));
+                SuggestionShellScriptHandler.Handle(context.InvocationConfiguration.Output, context.GetValue(shellTypeArgument));
             });
 
-            ListCommand = new CliCommand("list")
+            ListCommand = new Command("list")
             {
                 Description = "Lists apps registered for suggestions",
             };
             ListCommand.SetAction((ctx, cancellationToken) =>
             {
-                ctx.Configuration.Output.WriteLine(ShellPrefixesToMatch(_suggestionRegistration));
+                ctx.InvocationConfiguration.Output.WriteLine(ShellPrefixesToMatch(_suggestionRegistration));
                 return Task.CompletedTask;
             });
 
-            GetCommand = new CliCommand("get", "Gets suggestions from the specified executable")
+            GetCommand = new Command("get", "Gets suggestions from the specified executable")
             {
                 ExecutableOption,
                 PositionOption
             };
             GetCommand.SetAction(Get);
 
-            var commandPathOption = new CliOption<string>("--command-path") { Description = "The path to the command for which to register suggestions" };
+            var commandPathOption = new Option<string>("--command-path") { Description = "The path to the command for which to register suggestions" };
 
-            RegisterCommand = new CliCommand("register", "Registers an app for suggestions")
+            RegisterCommand = new Command("register", "Registers an app for suggestions")
             {
                 commandPathOption,
-                new CliOption<string>("--suggestion-command") { Description = "The command to invoke to retrieve suggestions" }
+                new Option<string>("--suggestion-command") { Description = "The command to invoke to retrieve suggestions" }
             };
 
             RegisterCommand.SetAction((context, cancellationToken) =>
             {
-                Register(context.GetValue(commandPathOption), context.Configuration.Output);
+                Register(context.GetValue(commandPathOption), context.InvocationConfiguration.Output);
                 return Task.CompletedTask;
             });
 
-            var root = new CliRootCommand
+            RootCommand = new RootCommand
             {
                 ListCommand,
                 GetCommand,
                 RegisterCommand,
                 CompleteScriptCommand,
             };
-            root.TreatUnmatchedTokensAsErrors = false;
-            Configuration = new CliConfiguration(root);
+            RootCommand.TreatUnmatchedTokensAsErrors = false;
+            Configuration = new InvocationConfiguration();
         }
 
-        private CliCommand CompleteScriptCommand { get; }
+        private Command CompleteScriptCommand { get; }
 
-        private CliCommand GetCommand { get; }
+        private Command GetCommand { get; }
 
-        private CliOption<FileInfo> ExecutableOption { get; } = GetExecutableOption();
+        public RootCommand RootCommand { get; }
 
-        private static CliOption<FileInfo> GetExecutableOption()
+        private Option<FileInfo> ExecutableOption { get; } = GetExecutableOption();
+
+        private static Option<FileInfo> GetExecutableOption()
         {
-            var option = new CliOption<FileInfo>("--executable", "-e") { Description = "The executable to call for suggestions" };
+            var option = new Option<FileInfo>("--executable", "-e") { Description = "The executable to call for suggestions" };
             option.AcceptLegalFilePathsOnly();
 
             return option;
         }
 
-        private CliCommand ListCommand { get; }
+        private Command ListCommand { get; }
 
-        private CliOption<int> PositionOption { get; } = new("--position", "-p")
+        private Option<int> PositionOption { get; } = new("--position", "-p")
         {
             Description = "The current character position on the command line",
             DefaultValueFactory = (_) => short.MaxValue
         };
 
-        private CliCommand RegisterCommand { get; }
+        private Command RegisterCommand { get; }
 
-        public CliConfiguration Configuration { get; }
+        public InvocationConfiguration Configuration { get; }
 
         public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(5000);
 
-        public Task<int> InvokeAsync(string[] args) => Configuration.InvokeAsync(args);
+        public Task<int> InvokeAsync(string[] args) => RootCommand.Parse(args).InvokeAsync(Configuration);
 
         private void Register(
             string commandPath,
@@ -168,7 +169,7 @@ namespace System.CommandLine.Suggest
             Program.LogDebug($"dotnet-suggest returning: \"{completions.Replace("\r", "\\r").Replace("\n", "\\n")}\"");
 #endif
 
-            parseResult.Configuration.Output.Write(completions);
+            parseResult.InvocationConfiguration.Output.Write(completions);
 
             return Task.FromResult(0);
         }

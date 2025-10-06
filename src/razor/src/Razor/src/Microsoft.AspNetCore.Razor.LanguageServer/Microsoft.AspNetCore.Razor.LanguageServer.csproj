@@ -1,15 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the language server library assets.</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
+
+    <!-- CLaSP is a source package, and has a more lenient approach to using statements than us-->
+    <NoWarn>$(NoWarn);IDE0005</NoWarn>
+
+    <!-- We are compiling CLaSP as a source package and referencing Microsoft.CodeAnalysis.LanguageServer.Protocol,
+         which includes the same CLaSP types. This results in C# compiler warnings when it prefers types from source
+         over types from metadata to avoid ambiguities. These warnings can be surpressed. -->
+    <NoWarn>$(NoWarn);0436</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Using Alias="Range" Include="Microsoft.VisualStudio.LanguageServer.Protocol.Range" />
-    <Using Alias="LanguageServerConstants" Include="Microsoft.AspNetCore.Razor.LanguageServer.Common.LanguageServerConstants"/>
+    <Using Alias="LanguageServerConstants" Include="Microsoft.CodeAnalysis.Razor.Protocol.LanguageServerConstants" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,24 +31,23 @@
 
   <ItemGroup>
     <!-- Need this reference to avoid 'The C# language is not supported' error during formatting. -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
-    <PackageReference Include="Microsoft.CommonLanguageServerProtocol.Framework" Version="$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CommonLanguageServerProtocol.Framework" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(NetFxVS)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.
       CI builds here: https://github.com/dotnet/razor-tooling/issues/4327
       Now we aren't sure why this exposes a "flaky" issue; however, to workaround the break we pin the following packages to workaround the issue.
     -->
-    <PackageReference Include="Microsoft.VisualStudio.RpcContracts" Version="$(MicrosoftVisualStudioRpcContractsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.RpcContracts" />
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Protocol\Microsoft.AspNetCore.Razor.LanguageServer.Protocol.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
   </ItemGroup>
 
@@ -53,6 +63,29 @@
   <ItemGroup>
     <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <!-- Display files included by the Microsoft.CommonLanguageServerProtocol.Framework source package in a separate folder -->
+  <ItemGroup>
+    <Content Update="@(Content)">
+      <Link Condition="'%(NuGetPackageId)' == 'Microsoft.CommonLanguageServerProtocol.Framework'">CLaSP\%(Link)</Link>
+    </Content>
+    <Compile Update="@(Compile)">
+      <Link Condition="'%(NuGetPackageId)' == 'Microsoft.CommonLanguageServerProtocol.Framework'">CLaSP\%(Link)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer.Test" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Microbenchmarks" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Tooling" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="rzls" Key="$(RazorKey)" />
+
+    <RestrictedInternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Namespace="Microsoft.AspNetCore.Razor.LanguageServer.Hosting" Key="$(RazorKey)" />
+    <RestrictedInternalsVisibleTo Include="rzls" Namespace="Microsoft.AspNetCore.Razor.LanguageServer.Hosting" Key="$(RazorKey)" />
   </ItemGroup>
 
 </Project>

@@ -1,64 +1,78 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using System.Text.Json;
 using Microsoft.AspNetCore.StaticWebAssets.Tasks;
 using Microsoft.NET.Sdk.WebAssembly;
 
 namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 {
-    public class WasmBuildIntegrationTest : BlazorWasmBaselineTests
+    public class WasmBuildIntegrationTest(ITestOutputHelper log) : BlazorWasmBaselineTests(log, GenerateBaselines)
     {
-        public WasmBuildIntegrationTest(ITestOutputHelper log) : base(log, GenerateBaselines) { }
-
         private static string customIcuFilename = "icudt_custom.dat";
         private static string fullIcuFilename = "icudt.dat";
-        private static string hybridIcuFilename = "icudt_hybrid.dat";
         private static string[] icuShardFilenames = new string[] {
             "icudt_EFIGS.dat",
             "icudt_CJK.dat",
             "icudt_no_CJK.dat"
         };
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void BuildMinimal_Works()
         {
             // Arrange
             // Minimal has no project references, service worker etc. This is pretty close to the project template.
             var testAsset = "BlazorWasmMinimal";
-            var testInstance = CreateAspNetSdkTestAsset(testAsset);
+            var testInstance = CreateAspNetSdkTestAsset(testAsset)
+                .WithProjectChanges((p, doc) =>
+                {
+                        var itemGroup = new XElement("PropertyGroup");
+                        var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                        itemGroup.Add(fingerprintAssets);
+                        doc.Root.Add(itemGroup);
+                });
+
             File.WriteAllText(Path.Combine(testInstance.TestRoot, "App.razor.css"), "h1 { font-size: 16px; }");
 
-            var build = new BuildCommand(testInstance);
-            build.Execute()
+            var build = CreateBuildCommand(testInstance);
+            ExecuteCommand(build)
                 .Should()
                 .Pass();
 
             var buildOutputDirectory = build.GetOutputDirectory(DefaultTfm).ToString();
 
-            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json")).Should().Exist();
+            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName)).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.webassembly.js")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm.gz")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazorwasm-minimal.wasm")).Should().Exist();
         }
 
-        [Theory]
+        [RequiresMSBuildVersionTheory("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         [InlineData("blazor")]
         [InlineData("blazor spaces")]
         public void Build_Works(string identifier)
         {
             // Arrange
             var testAppName = "BlazorWasmWithLibrary";
-            var testInstance = CreateAspNetSdkTestAsset(testAppName, identifier: identifier);
+            var testInstance = CreateAspNetSdkTestAsset(testAppName, identifier: identifier)
+                .WithProjectChanges((path, doc) =>
+                {
+                    var itemGroup = new XElement("PropertyGroup");
+                    var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                    itemGroup.Add(fingerprintAssets);
+                    doc.Root.Add(itemGroup);
+                });
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json")).Should().Exist();
+            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName)).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.webassembly.js")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm.gz")).Should().Exist();
@@ -73,7 +87,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "RazorClassLibrary.wasm")).Should().Exist();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_Works_WithLibraryUsingHintPath()
         {
             // Arrange
@@ -84,6 +98,9 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             {
                 if (Path.GetFileNameWithoutExtension(project) == "blazorwasm")
                 {
+                    document.Root.Add(new XElement("PropertyGroup",
+                        new XElement("WasmFingerprintAssets", false)));
+
                     var reference = document
                         .Descendants()
                         .Single(e =>
@@ -97,19 +114,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 }
             });
 
-            var buildLibraryCommand = new BuildCommand(testInstance, "razorclasslibrary");
-            buildLibraryCommand.WithWorkingDirectory(testInstance.TestRoot);
-            buildLibraryCommand.Execute()
+            var buildLibraryCommand = CreateBuildCommand(testInstance, "razorclasslibrary");
+            ExecuteCommand(buildLibraryCommand)
                 .Should().Pass();
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.WithWorkingDirectory(testInstance.TestRoot);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json")).Should().Exist();
+            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName)).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.webassembly.js")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm.gz")).Should().Exist();
@@ -124,20 +139,30 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "RazorClassLibrary.wasm")).Should().Exist();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_InRelease_Works()
         {
             // Arrange
             var testAppName = "BlazorWasmWithLibrary";
-            var testInstance = CreateAspNetSdkTestAsset(testAppName);
+            var testInstance = CreateAspNetSdkTestAsset(testAppName)
+                .WithProjectChanges((p, doc) =>
+                {
+                    if (Path.GetFileName(p) == "blazorwasm.csproj")
+                    {
+                        var itemGroup = new XElement("PropertyGroup");
+                        var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                        itemGroup.Add(fingerprintAssets);
+                        doc.Root.Add(itemGroup);
+                    }
+                });
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute("/p:Configuration=Release")
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand, "/p:Configuration=Release")
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm, "Release").ToString();
 
-            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json")).Should().Exist();
+            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName)).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.webassembly.js")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm.gz")).Should().Exist();
@@ -152,25 +177,34 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "RazorClassLibrary.wasm")).Should().Exist();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_ProducesBootJsonDataWithExpectedContent()
         {
             // Arrange
             var testAppName = "BlazorWasmWithLibrary";
-            var testInstance = CreateAspNetSdkTestAsset(testAppName);
+            var testInstance = CreateAspNetSdkTestAsset(testAppName)
+                .WithProjectChanges((p, doc) =>
+                {
+                    if (Path.GetFileName(p) == "blazorwasm.csproj")
+                    {
+                        var itemGroup = new XElement("PropertyGroup");
+                        var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                        itemGroup.Add(fingerprintAssets);
+                        doc.Root.Add(itemGroup);
+                    }
+                });
 
             var wwwroot = Path.Combine(testInstance.TestRoot, "blazorwasm", "wwwroot");
             File.WriteAllText(Path.Combine(wwwroot, "appsettings.json"), "Default settings");
             File.WriteAllText(Path.Combine(wwwroot, "appsettings.development.json"), "Development settings");
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.WithWorkingDirectory(testInstance.TestRoot);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.resources.wasmNative.Should().ContainKey("dotnet.native.wasm");
@@ -190,25 +224,34 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             bootJsonData.config.Should().Contain("../appsettings.development.json");
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_InRelease_ProducesBootJsonDataWithExpectedContent()
         {
             // Arrange
             var testAppName = "BlazorWasmWithLibrary";
-            var testInstance = CreateAspNetSdkTestAsset(testAppName);
+            var testInstance = CreateAspNetSdkTestAsset(testAppName)
+                .WithProjectChanges((p, doc) =>
+                {
+                    if (Path.GetFileName(p) == "blazorwasm.csproj")
+                    {
+                        var itemGroup = new XElement("PropertyGroup");
+                        var fingerprintAssets = new XElement("WasmFingerprintAssets", false);
+                        itemGroup.Add(fingerprintAssets);
+                        doc.Root.Add(itemGroup);
+                    }
+                });
 
             var wwwroot = Path.Combine(testInstance.TestRoot, "blazorwasm", "wwwroot");
             File.WriteAllText(Path.Combine(wwwroot, "appsettings.json"), "Default settings");
             File.WriteAllText(Path.Combine(wwwroot, "appsettings.development.json"), "Development settings");
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.WithWorkingDirectory(testInstance.TestRoot);
-            buildCommand.Execute("/p:Configuration=Release")
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand, "/p:Configuration=Release")
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm, "Release").ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.resources.wasmNative.Should().ContainKey("dotnet.native.wasm");
@@ -225,7 +268,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             bootJsonData.resources.satelliteResources.Should().BeNull();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithBlazorEnableTimeZoneSupportDisabled_DoesNotCopyTimeZoneInfo()
         {
             // Arrange
@@ -237,17 +280,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("BlazorEnableTimeZoneSupport", false));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.resources.wasmNative.Should().ContainKey("dotnet.native.wasm");
@@ -257,7 +300,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.timezones.blat")).Should().NotExist();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithInvariantGlobalizationEnabled_DoesNotCopyGlobalizationData()
         {
             // Arrange
@@ -269,16 +312,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("InvariantGlobalization", true));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var buildCommand = new BuildCommand(testInstance);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance);
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("invariant");
@@ -294,7 +338,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Publish_WithInvariantGlobalizationEnabled_DoesNotCopyGlobalizationData()
         {
             // Arrange
@@ -306,17 +350,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("InvariantGlobalization", true));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var publishCommand = new PublishCommand(testInstance, "blazorhosted");
-            publishCommand.WithWorkingDirectory(testInstance.TestRoot);
-            publishCommand.Execute()
+            var publishCommand = CreatePublishCommand(testInstance, "blazorhosted");
+            ExecuteCommand(publishCommand)
                 .Should().Pass();
 
             var publishOutputDirectory = publishCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(publishOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(publishOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("invariant");
@@ -332,7 +376,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithBlazorWebAssemblyLoadCustomGlobalizationData_SetsGlobalizationMode()
         {
             // Arrange
@@ -344,16 +388,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("BlazorIcuDataFileName", customIcuFilename));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var buildCommand = new BuildCommand(testInstance);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance);
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("custom");
@@ -375,7 +420,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Publish_WithBlazorWebAssemblyLoadCustomGlobalizationData_SetsGlobalizationMode()
         {
             var testAppName = "BlazorHosted";
@@ -386,17 +431,17 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("BlazorIcuDataFileName", customIcuFilename));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var publishCommand = new PublishCommand(testInstance, "blazorhosted");
-            publishCommand.WithWorkingDirectory(testInstance.TestRoot);
-            publishCommand.Execute()
+            var publishCommand = CreatePublishCommand(testInstance, "blazorhosted");
+            ExecuteCommand(publishCommand)
                 .Should().Pass();
 
             var publishDirectory = publishCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(publishDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(publishDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("custom");
@@ -418,7 +463,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithBlazorWebAssemblyLoadAllGlobalizationData_SetsICUDataMode()
         {
             // Arrange
@@ -430,23 +475,23 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("BlazorWebAssemblyLoadAllGlobalizationData", true));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var buildCommand = new BuildCommand(testInstance);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance);
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("all");
 
             bootJsonData.resources.wasmNative.Should().ContainKey("dotnet.native.wasm");
             bootJsonData.resources.icu.Should().ContainKey(fullIcuFilename);
-            bootJsonData.resources.icu.Should().NotContainKey(hybridIcuFilename);
             foreach (var shardFilename in icuShardFilenames)
             {
                 bootJsonData.resources.icu.Should().NotContainKey(shardFilename);
@@ -454,14 +499,13 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", fullIcuFilename)).Should().Exist();
-            new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", hybridIcuFilename)).Should().NotExist();
             foreach (var shardFilename in icuShardFilenames)
             {
                 new FileInfo(Path.Combine(buildOutputDirectory, "wwwroot", "_framework", shardFilename)).Should().NotExist();
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Publish_WithBlazorWebAssemblyLoadAllGlobalizationData_SetsGlobalizationMode()
         {
             // Arrange
@@ -473,24 +517,23 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 var ns = project.Root.Name.Namespace;
                 var itemGroup = new XElement(ns + "PropertyGroup");
                 itemGroup.Add(new XElement("BlazorWebAssemblyLoadAllGlobalizationData", true));
+                itemGroup.Add(new XElement("WasmFingerprintAssets", false));
                 project.Root.Add(itemGroup);
             });
 
-            var publishCommand = new PublishCommand(testInstance, "blazorhosted");
-            publishCommand.WithWorkingDirectory(testInstance.TestRoot);
-            publishCommand.Execute()
+            var publishCommand = CreatePublishCommand(testInstance, "blazorhosted");
+            ExecuteCommand(publishCommand)
                 .Should().Pass();
 
             var publishDirectory = publishCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(publishDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(publishDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             bootJsonData.globalizationMode.Should().Be("all");
 
             bootJsonData.resources.wasmNative.Should().ContainKey("dotnet.native.wasm");
             bootJsonData.resources.icu.Should().ContainKey(fullIcuFilename);
-            bootJsonData.resources.icu.Should().NotContainKey(hybridIcuFilename);
             foreach (var shardFilename in icuShardFilenames)
             {
                 bootJsonData.resources.icu.Should().NotContainKey(shardFilename);
@@ -498,23 +541,21 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 
             new FileInfo(Path.Combine(publishDirectory, "wwwroot", "_framework", "dotnet.native.wasm")).Should().Exist();
             new FileInfo(Path.Combine(publishDirectory, "wwwroot", "_framework", fullIcuFilename)).Should().Exist();
-            new FileInfo(Path.Combine(publishDirectory, "wwwroot", "_framework", hybridIcuFilename)).Should().NotExist();
             foreach (var shardFilename in icuShardFilenames)
             {
                 new FileInfo(Path.Combine(publishDirectory, "wwwroot", "_framework", shardFilename)).Should().NotExist();
             }
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_Hosted_Works()
         {
             // Arrange
             var testAppName = "BlazorHosted";
             var testInstance = CreateAspNetSdkTestAsset(testAppName);
 
-            var buildCommand = new BuildCommand(testInstance, "blazorhosted");
-            buildCommand.WithWorkingDirectory(testInstance.TestRoot);
-            buildCommand.Execute().Should().Pass();
+            var buildCommand = CreateBuildCommand(testInstance, "blazorhosted");
+            ExecuteCommand(buildCommand).Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
@@ -535,6 +576,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                     var ns = project.Root.Name.Namespace;
                     var propertyGroup = new XElement(ns + "PropertyGroup");
                     propertyGroup.Add(new XElement("DefineConstants", @"$(DefineConstants);REFERENCE_classlibrarywithsatelliteassemblies"));
+                    propertyGroup.Add(new XElement("WasmFingerprintAssets", false));
                     var itemGroup = new XElement(ns + "ItemGroup");
                     itemGroup.Add(new XElement("ProjectReference", new XAttribute("Include", @"..\classlibrarywithsatelliteassemblies\classlibrarywithsatelliteassemblies.csproj")));
                     project.Root.Add(propertyGroup);
@@ -545,9 +587,8 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
             var resxfileInProject = Path.Combine(ProjectDirectory.TestRoot, "blazorwasm", "Resources.ja.resx.txt");
             File.Move(resxfileInProject, Path.Combine(ProjectDirectory.TestRoot, "blazorwasm", "Resource.ja.resx"));
 
-            var buildCommand = new BuildCommand(ProjectDirectory, "blazorwasm");
-            buildCommand.WithWorkingDirectory(ProjectDirectory.TestRoot);
-            buildCommand.Execute().Should().Pass();
+            var buildCommand = CreateBuildCommand(ProjectDirectory, "blazorwasm");
+            ExecuteCommand(buildCommand).Should().Pass();
 
             var outputPath = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
             var intermediateOutputPath = buildCommand.GetIntermediateDirectory(DefaultTfm).ToString();
@@ -567,19 +608,18 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 outputPath,
                 intermediateOutputPath);
 
-
             new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", "blazorwasm.wasm")).Should().Exist();
             new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", "classlibrarywithsatelliteassemblies.wasm")).Should().Exist();
             new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", "Microsoft.CodeAnalysis.CSharp.wasm")).Should().Exist();
             new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", "fr", "Microsoft.CodeAnalysis.CSharp.resources.wasm")).Should().Exist();
 
-            var bootJsonPath = new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", "blazor.boot.json"));
+            var bootJsonPath = new FileInfo(Path.Combine(outputPath, "wwwroot", "_framework", WasmBootConfigFileName));
             bootJsonPath.Should().Contain("\"Microsoft.CodeAnalysis.CSharp.wasm\"");
             bootJsonPath.Should().Contain("\"fr\"");
             bootJsonPath.Should().Contain("\"Microsoft.CodeAnalysis.CSharp.resources.wasm\"");
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithCustomOutputPath_Works()
         {
             var testAppName = "BlazorWasmWithLibrary";
@@ -597,18 +637,18 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 }
             });
 
-            var buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute().Should().Pass();
+            var buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand).Should().Pass();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithTransitiveReference_Works()
         {
             // Regression test for https://github.com/dotnet/aspnetcore/issues/37574.
             var testInstance = CreateAspNetSdkTestAsset("BlazorWasmWithLibrary");
 
-            var buildCommand = new BuildCommand(testInstance, "classlibrarywithsatelliteassemblies");
-            buildCommand.Execute().Should().Pass();
+            var buildCommand = CreateBuildCommand(testInstance, "classlibrarywithsatelliteassemblies");
+            ExecuteCommand(buildCommand).Should().Pass();
             var referenceAssemblyPath = new FileInfo(Path.Combine(
                 buildCommand.GetOutputDirectory(DefaultTfm).ToString(),
                 "classlibrarywithsatelliteassemblies.dll"));
@@ -617,6 +657,13 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 
             testInstance.WithProjectChanges((path, project) =>
             {
+                if (path.Contains("blazorwasm.csproj"))
+                {
+                    var propertyGroup = new XElement(project.Root.Name.Namespace + "PropertyGroup");
+                    propertyGroup.Add(new XElement("WasmFingerprintAssets", false));
+                    project.Root.Add(propertyGroup);
+                }
+
                 if (path.Contains("razorclasslibrary"))
                 {
                     var ns = project.Root.Name.Namespace;
@@ -641,8 +688,8 @@ public class TestReference
     public void Method() => System.GC.KeepAlive(typeof(classlibrarywithsatelliteassemblies.Class1));
 }");
 
-            buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute().Should().Pass();
+            buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand).Should().Pass();
 
             // Assert
             var outputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
@@ -650,14 +697,41 @@ public class TestReference
             fileInWwwroot.Should().Exist();
         }
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
+        public void Restore_WithRuntime_Works()
+        {
+            var testInstance = CreateAspNetSdkTestAsset("BlazorHosted");
+
+            var nugetRestorePath = Path.Combine(testInstance.TestRoot, ".nuget");
+
+            new DotnetRestoreCommand(Log, "-bl:msbuild-restore.binlog", "-r", "linux-x64")
+                .WithWorkingDirectory(Path.Combine(testInstance.TestRoot, "blazorhosted"))
+                .WithEnvironmentVariable("NUGET_PACKAGES", nugetRestorePath)
+                .Execute()
+                .Should().Pass();
+
+            new DirectoryInfo(Path.Combine(nugetRestorePath, "microsoft.netcore.app.runtime.mono.linux-x64"))
+                .Should().NotExist();
+        }
+
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithReference_Works()
         {
             // Regression test for https://github.com/dotnet/aspnetcore/issues/37574.
-            var testInstance = CreateAspNetSdkTestAsset("BlazorWasmWithLibrary");
+            var testInstance = CreateAspNetSdkTestAsset("BlazorWasmWithLibrary")
+                .WithProjectChanges((path, project) =>
+                {
+                    if (path.Contains("blazorwasm.csproj"))
+                    {
+                        var ns = project.Root.Name.Namespace;
+                        var propertyGroup = new XElement(ns + "PropertyGroup");
+                        propertyGroup.Add(new XElement("WasmFingerprintAssets", false));
+                        project.Root.Add(propertyGroup);
+                    }
+                });
 
-            var buildCommand = new BuildCommand(testInstance, "classlibrarywithsatelliteassemblies");
-            buildCommand.Execute().Should().Pass();
+            var buildCommand = CreateBuildCommand(testInstance, "classlibrarywithsatelliteassemblies");
+            ExecuteCommand(buildCommand).Should().Pass();
             var referenceAssemblyPath = new FileInfo(Path.Combine(
                 buildCommand.GetOutputDirectory(DefaultTfm).ToString(),
                 "classlibrarywithsatelliteassemblies.dll"));
@@ -678,6 +752,10 @@ public class TestReference
                             new XAttribute("HintPath", referenceAssemblyPath)));
 
                     project.Root.Add(itemGroup);
+
+                    var propertyGroup = new XElement(ns + "PropertyGroup");
+                    propertyGroup.Add(new XElement("WasmFingerprintAssets", false));
+                    project.Root.Add(propertyGroup);
                 }
             });
 
@@ -690,8 +768,8 @@ public class TestReference
     public void Method() => System.GC.KeepAlive(typeof(classlibrarywithsatelliteassemblies.Class1));
 }");
 
-            buildCommand = new BuildCommand(testInstance, "blazorwasm");
-            buildCommand.Execute().Should().Pass();
+            buildCommand = CreateBuildCommand(testInstance, "blazorwasm");
+            ExecuteCommand(buildCommand).Should().Pass();
 
             // Assert
             var outputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
@@ -699,14 +777,7 @@ public class TestReference
             fileInWwwroot.Should().Exist();
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        [InlineData(null)]
-        public void Build_WithStartupMemoryCache(bool? value)
-            => BuildWasmMinimalAndValidateBootConfig(new[] { ("BlazorWebAssemblyStartupMemoryCache", value?.ToString()) }, b => b.startupMemoryCache.Should().Be(value));
-
-        [Theory]
+        [RequiresMSBuildVersionTheory("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         [InlineData(true)]
         [InlineData(false)]
         [InlineData(null)]
@@ -724,7 +795,7 @@ public class TestReference
                 }
             });
 
-        [Fact]
+        [RequiresMSBuildVersionFact("17.12", Reason = "Needs System.Text.Json 8.0.5")]
         public void Build_WithJiterpreter_Advanced()
             => BuildWasmMinimalAndValidateBootConfig(new[] { ("BlazorWebAssemblyJiterpreter", "true"), ("BlazorWebAssemblyRuntimeOptions", "--no-jiterpreter-interp-entry-enabled") }, b =>
             {
@@ -755,13 +826,13 @@ public class TestReference
                 }
             }
 
-            var buildCommand = new BuildCommand(testInstance);
-            buildCommand.Execute()
+            var buildCommand = CreateBuildCommand(testInstance);
+            ExecuteCommand(buildCommand)
                 .Should().Pass();
 
             var buildOutputDirectory = buildCommand.GetOutputDirectory(DefaultTfm).ToString();
 
-            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", "blazor.boot.json");
+            var bootJsonPath = Path.Combine(buildOutputDirectory, "wwwroot", "_framework", WasmBootConfigFileName);
             var bootJsonData = ReadBootJsonData(bootJsonPath);
 
             validateBootConfig(bootJsonData);
@@ -769,9 +840,7 @@ public class TestReference
 
         private static BootJsonData ReadBootJsonData(string path)
         {
-            return JsonSerializer.Deserialize<BootJsonData>(
-                File.ReadAllText(path),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return BootJsonDataLoader.ParseBootData(path);
         }
     }
 }

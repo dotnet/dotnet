@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using Microsoft.Extensions.FileProviders;
 
 namespace NuGet.Commands

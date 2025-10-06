@@ -5,5 +5,4 @@ using ApprovalTests.Reporters.TestFrameworks;
 // https://github.com/approvals/ApprovalTests.Net/blob/master/docs/ApprovalTests/Reporters.md
 
 [assembly: UseReporter(typeof(FrameworkAssertReporter))]
-
 [assembly: ApprovalTests.Namers.UseApprovalSubdirectory("Approvals")]

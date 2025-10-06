@@ -1,12 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.Build.Framework;
-using Microsoft.DotNet.Deployment.Tasks.Links.src;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Build.Framework;
+using Newtonsoft.Json;
 
 namespace Microsoft.DotNet.Deployment.Tasks.Links
 {
@@ -76,12 +75,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
                     return false;
                 }
 
-                linksToCreate.Add(new AkaMSLink
-                {
-                    ShortUrl = shortUrl,
-                    TargetUrl = targetUrl,
-                    Description = description
-                });
+                linksToCreate.Add(new AkaMSLink(shortUrl, targetUrl, description));
             }
 
             try
@@ -91,7 +85,8 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
                     string descriptionString = !string.IsNullOrEmpty(link.Description) ? $" ({link.Description})" : "";
                     Log.LogMessage(MessageImportance.High, $"Creating link aka.ms/{link.ShortUrl} -> {link.TargetUrl}{descriptionString}");
                 }
-                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log);
+                AkaMSLinkManager manager = CreateAkaMSLinksManager();
+
                 await manager.CreateOrUpdateLinksAsync(linksToCreate, Owners, CreatedBy, GroupOwner, Overwrite);
             }
             catch (Exception e)

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,21 +9,19 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
 using Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
 using Xunit.Abstractions;
-using BcX509Certificate = Org.BouncyCastle.X509.X509Certificate;
 using HashAlgorithmName = NuGet.Common.HashAlgorithmName;
 
 namespace NuGet.Packaging.FuncTest
 {
-    using X509StorePurpose = global::Test.Utility.Signing.X509StorePurpose;
+    using X509StorePurpose = Microsoft.Internal.NuGet.Testing.SignedPackages.X509StorePurpose;
 
     [Collection(SigningTestCollection.Name)]
     public class SignatureTrustAndValidityVerificationProviderTests
@@ -733,20 +729,19 @@ namespace NuGet.Packaging.FuncTest
                     revocationMode: RevocationMode.Online);
                 CertificateAuthority certificateAuthority = await _fixture.GetDefaultTrustedCertificateAuthorityAsync();
                 IssueCertificateOptions issueCertificateOptions = IssueCertificateOptions.CreateDefaultForEndCertificate();
-                BcX509Certificate bcCertificate = certificateAuthority.IssueCertificate(issueCertificateOptions);
                 TimestampService timestampService = await _fixture.GetDefaultTrustedTimestampServiceAsync();
 
-                using (X509Certificate2 certificate = CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, issueCertificateOptions.KeyPair))
+                using (X509Certificate2 certificate = certificateAuthority.IssueCertificate(issueCertificateOptions))
                 using (Test test = await Test.CreateAuthorSignedPackageAsync(
                     certificate,
                     timestampService.Url))
                 using (var packageReader = new PackageArchiveReader(test.PackageFile.FullName))
                 {
-                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(bcCertificate);
+                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(certificate);
 
                     certificateAuthority.Revoke(
-                        bcCertificate,
-                        RevocationReason.KeyCompromise,
+                        certificate,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -790,7 +785,7 @@ namespace NuGet.Packaging.FuncTest
 
                     certificateAuthority.Revoke(
                         timestampService.Certificate,
-                        RevocationReason.KeyCompromise,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -1002,20 +997,19 @@ namespace NuGet.Packaging.FuncTest
                     revocationMode: RevocationMode.Online);
                 CertificateAuthority certificateAuthority = await _fixture.GetDefaultTrustedCertificateAuthorityAsync();
                 IssueCertificateOptions issueCertificateOptions = IssueCertificateOptions.CreateDefaultForEndCertificate();
-                BcX509Certificate bcCertificate = certificateAuthority.IssueCertificate(issueCertificateOptions);
                 TimestampService timestampService = await _fixture.GetDefaultTrustedTimestampServiceAsync();
 
-                using (X509Certificate2 certificate = CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, issueCertificateOptions.KeyPair))
+                using (X509Certificate2 certificate = certificateAuthority.IssueCertificate(issueCertificateOptions))
                 using (Test test = await Test.CreateRepositoryPrimarySignedPackageAsync(
                     certificate,
                     timestampService.Url))
                 using (var packageReader = new PackageArchiveReader(test.PackageFile.FullName))
                 {
-                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(bcCertificate);
+                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(certificate);
 
                     certificateAuthority.Revoke(
-                        bcCertificate,
-                        RevocationReason.KeyCompromise,
+                        certificate,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -1059,7 +1053,7 @@ namespace NuGet.Packaging.FuncTest
 
                     certificateAuthority.Revoke(
                         timestampService.Certificate,
-                        RevocationReason.KeyCompromise,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -1370,10 +1364,9 @@ namespace NuGet.Packaging.FuncTest
                     revocationMode: RevocationMode.Online);
                 CertificateAuthority certificateAuthority = await _fixture.GetDefaultTrustedCertificateAuthorityAsync();
                 IssueCertificateOptions issueCertificateOptions = IssueCertificateOptions.CreateDefaultForEndCertificate();
-                BcX509Certificate bcCertificate = certificateAuthority.IssueCertificate(issueCertificateOptions);
                 TimestampService timestampService = await _fixture.GetDefaultTrustedTimestampServiceAsync();
 
-                using (X509Certificate2 certificate = CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, issueCertificateOptions.KeyPair))
+                using (X509Certificate2 certificate = certificateAuthority.IssueCertificate(issueCertificateOptions))
                 using (Test test = await Test.CreateAuthorSignedRepositoryCountersignedPackageAsync(
                     _fixture.TrustedTestCertificate.Source.Cert,
                     certificate,
@@ -1381,11 +1374,11 @@ namespace NuGet.Packaging.FuncTest
                     timestampService.Url))
                 using (var packageReader = new PackageArchiveReader(test.PackageFile.FullName))
                 {
-                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(bcCertificate);
+                    await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(certificate);
 
                     certificateAuthority.Revoke(
-                        bcCertificate,
-                        RevocationReason.KeyCompromise,
+                        certificate,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -1432,7 +1425,7 @@ namespace NuGet.Packaging.FuncTest
 
                     certificateAuthority.Revoke(
                         revokedTimestampService.Certificate,
-                        RevocationReason.KeyCompromise,
+                        X509RevocationReason.KeyCompromise,
                         DateTimeOffset.UtcNow.AddHours(-1));
 
                     PrimarySignature primarySignature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
@@ -1930,18 +1923,19 @@ namespace NuGet.Packaging.FuncTest
         {
             CertificateAuthority ca = await fixture.GetDefaultTrustedCertificateAuthorityAsync();
 
-            AsymmetricCipherKeyPair keyPair = SigningTestUtility.GenerateKeyPair(publicKeyLength: 2048);
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var issueOptions = new IssueCertificateOptions()
+            using (System.Security.Cryptography.RSA keyPair = SigningTestUtility.GenerateKeyPair(publicKeyLength: 2048))
             {
-                KeyPair = keyPair,
-                NotAfter = now.AddSeconds(10),
-                NotBefore = now.AddSeconds(-2),
-                SubjectName = new X509Name("CN=NuGet Test Expired Certificate")
-            };
-            BcX509Certificate bcCertificate = ca.IssueCertificate(issueOptions);
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+                var issueOptions = new IssueCertificateOptions()
+                {
+                    KeyPair = keyPair,
+                    NotAfter = now.AddSeconds(10),
+                    NotBefore = now.AddSeconds(-2),
+                    SubjectName = new X500DistinguishedName("CN=NuGet Test Expired Certificate")
+                };
 
-            return CertificateUtilities.GetCertificateWithPrivateKey(bcCertificate, keyPair);
+                return ca.IssueCertificate(issueOptions);
+            }
         }
 
         private static byte[] GetResource(string name)
@@ -1988,4 +1982,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

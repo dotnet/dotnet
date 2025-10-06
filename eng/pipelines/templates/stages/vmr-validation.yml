@@ -1,0 +1,118 @@
+parameters:
+- name: desiredSigning
+  type: string
+  default: ''
+
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
+- name: desiredIbc
+  type: string
+  default: ''
+
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+  
+# These are not expected to be passed it but rather just object variables reused below
+- name: pool_Linux
+  type: object
+  default:
+    name: $(defaultPoolName)
+    image: $(poolImage_Linux)
+    demands: ImageOverride -equals $(poolImage_Linux)
+    os: linux
+
+- name: pool_LinuxArm64
+  type: object
+  default:
+    name: $(poolName_LinuxArm64)
+    image: $(poolImage_LinuxArm64)
+    demands: ImageOverride -equals $(poolImage_LinuxArm64)
+    hostArchitecture: Arm64
+    os: linux
+
+- name: pool_Windows
+  type: object
+  default:
+    name: $(defaultPoolName)
+    image: $(poolImage_Windows)
+    demands: ImageOverride -equals $(poolImage_Windows)
+    os: windows
+
+- name: pool_Mac
+  type: object
+  default:
+    name: Azure Pipelines
+    vmImage: $(poolImage_Mac)
+    os: macOS
+
+stages:
+- stage: VMR_Validation
+  displayName: VMR Validation
+  dependsOn:
+  - VMR_Vertical_Build
+  - VMR_SourceOnly_Build
+  variables:
+  - template: ../variables/vmr-build.yml
+    parameters:
+      desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      desiredIbc: ${{ parameters.desiredIbc }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+  - group: Release-Pipeline
+  - group: DotNetBot-GitHub-AllBranches
+  jobs:
+  - job: ValidateInstallers_Linux_x64
+    pool: ${{ parameters.pool_Linux }}
+    timeoutInMinutes: 60
+    steps:
+    - template: ../steps/vmr-validate-installers.yml
+      parameters:
+        targetArchitecture: x64
+        OS: Linux
+        reuseBuildArtifactsFrom:
+        - Windows_x64
+        - AzureLinux_x64_Cross_x64
+  - job: ValidateInstallers_Linux_arm64
+    pool: ${{ parameters.pool_LinuxArm64 }}
+    timeoutInMinutes: 60
+    steps:
+    - template: ../steps/vmr-validate-installers.yml
+      parameters:
+        targetArchitecture: arm64
+        OS: Linux
+        reuseBuildArtifactsFrom:
+        - Windows_x64
+        - AzureLinux_x64_Cross_arm64
+  - ${{ if eq(variables.signType, 'real') }}:
+    - job: ValidateSigning_Windows
+      displayName: Validate Signing - Windows
+      pool: ${{ parameters.pool_Windows }}
+      timeoutInMinutes: 240
+      steps:
+      - template: ../steps/vmr-validate-signing.yml
+        parameters:
+          continueOnError: true
+          OS: Windows_NT
+
+    - job: ValidateSigning_Mac
+      displayName: Validate Signing - Mac
+      pool: ${{ parameters.pool_Mac }}
+      timeoutInMinutes: 240
+      steps:
+      - template: ../steps/vmr-validate-signing.yml
+        parameters:
+          continueOnError: true
+          OS: Darwin
+
+    - job: ValidateSigning_Linux
+      displayName: Validate Signing - Linux
+      pool: ${{ parameters.pool_Linux }}
+      timeoutInMinutes: 240
+      steps:
+      - template: ../steps/vmr-validate-signing.yml
+        parameters:
+          continueOnError: true
+          OS: Linux

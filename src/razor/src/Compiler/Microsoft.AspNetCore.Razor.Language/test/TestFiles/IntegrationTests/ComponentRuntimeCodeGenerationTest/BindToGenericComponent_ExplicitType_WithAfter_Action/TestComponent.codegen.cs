@@ -17,8 +17,24 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.MyComponent<int>>(0);
-            __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<int>(
+            __builder.OpenComponent<global::Test.MyComponent<
+#nullable restore
+#line (1,22)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+int
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent<int>.
+#nullable restore
+#line (1,33)-(1,38) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<int>(
 #nullable restore
 #line (1,44)-(1,55) "x:\dir\subdir\Test\TestComponent.cshtml"
 ParentValue
@@ -27,7 +43,7 @@ ParentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<int>)( __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent<int>.ValueChanged), (global::System.Action<int>)( __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
 #nullable restore
 #line (1,76)-(1,82) "x:\dir\subdir\Test\TestComponent.cshtml"
 Update
@@ -36,6 +52,15 @@ Update
 #line hidden
 #nullable disable
             ); }));
+             _ = nameof(global::Test.MyComponent<int>.
+#nullable restore
+#line (1,63)-(1,68) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

@@ -16,10 +16,10 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree
-                HtmlContent - (70:1,0 [2] x:\dir\subdir\Test\TestComponent.cshtml)
-                    LazyIntermediateToken - (70:1,0 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
-            CSharpCode - (80:3,1 [55] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (80:3,1 [55] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter]\n    public int Count { get; set; }\n
+                HtmlContent - (81:1,0 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (81:1,0 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+            CSharpCode - (91:3,1 [55] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (91:3,1 [55] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter]\n    public int Count { get; set; }\n
             ClassDeclaration -  - private sealed - __PrivateComponentRenderModeAttribute - global::Microsoft.AspNetCore.Components.RenderModeAttribute - 
                 DesignTimeDirective - 
                 CSharpCode - 
@@ -30,8 +30,8 @@
                     IntermediateToken -  - CSharp - #pragma warning restore 0414
                 CSharpCode - 
                     IntermediateToken -  - CSharp - private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
-                    CSharpCode - (14:0,14 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (14:0,14 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                    CSharpCode - (14:0,14 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (14:0,14 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     IntermediateToken -  - CSharp - ;
                 CSharpCode - 
                     IntermediateToken -  - CSharp - public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;

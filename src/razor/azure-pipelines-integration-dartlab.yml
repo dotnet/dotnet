@@ -35,6 +35,8 @@ variables:
   value: false
 - name: Codeql.SkipTaskAutoInjection
   value: true
+- name: _IntegrationTestsRunningInCI
+  value: true
 
 stages:
 - template: \stages\visual-studio\agent.yml@DartLabTemplates

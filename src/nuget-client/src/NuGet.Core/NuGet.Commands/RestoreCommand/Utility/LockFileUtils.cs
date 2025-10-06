@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -68,7 +69,7 @@ namespace NuGet.Commands
             var runtimeIdentifier = targetGraph.RuntimeIdentifier;
             var framework = targetFrameworkOverride ?? targetGraph.Framework;
 
-            return cache.GetLockFileTargetLibrary(targetGraph, framework, package, aliases, dependencyType,
+            return cache.GetLockFileTargetLibrary(targetGraph, framework, package, aliases, dependencyType, dependencies,
                 () =>
                 {
                     LockFileTargetLibrary lockFileLib = null;
@@ -83,40 +84,17 @@ namespace NuGet.Commands
 
                     for (var i = 0; i < orderedCriteriaSets.Count; i++)
                     {
-                        // Create a new library each time to avoid
-                        // assets being added from other criteria.
-                        lockFileLib = new LockFileTargetLibrary()
+                        lockFileLib = CreateLockFileTargetLibrary(aliases, library, package, targetGraph.Conventions, dependencyType,
+                             framework, runtimeIdentifier, contentItems, nuspec, packageTypes, orderedCriteriaSets[i].orderedCriteria);
+                        // Check if compatible assets were found.
+                        // If no compatible assets were found and this is the last check
+                        // continue on with what was given, this will fail in the normal
+                        // compat verification.
+                        if (CompatibilityChecker.HasCompatibleAssets(lockFileLib))
                         {
-                            Name = package.Id,
-                            Version = package.Version,
-                            Type = LibraryType.Package,
-                            PackageType = packageTypes
-                        };
-
-                        // Populate assets
-
-                        if (lockFileLib.PackageType.Contains(PackageType.DotnetTool))
-                        {
-                            AddToolsAssets(targetGraph.Conventions, lockFileLib, contentItems, orderedCriteriaSets[i].orderedCriteria);
-                            if (CompatibilityChecker.HasCompatibleToolsAssets(lockFileLib))
-                            {
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            AddAssets(aliases, library, package, targetGraph.Conventions, dependencyType, lockFileLib,
-                                framework, runtimeIdentifier, contentItems, nuspec, orderedCriteriaSets[i].orderedCriteria);
-                            // Check if compatible assets were found.
-                            // If no compatible assets were found and this is the last check
-                            // continue on with what was given, this will fail in the normal
-                            // compat verification.
-                            if (CompatibilityChecker.HasCompatibleAssets(lockFileLib))
-                            {
-                                fallbackUsed = orderedCriteriaSets[i].fallbackUsed;
-                                // Stop when compatible assets are found.
-                                break;
-                            }
+                            fallbackUsed = orderedCriteriaSets[i].fallbackUsed;
+                            // Stop when compatible assets are found.
+                            break;
                         }
                     }
 
@@ -185,19 +163,27 @@ namespace NuGet.Commands
         /// <summary>
         /// Populate assets for a <see cref="LockFileLibrary"/>.
         /// </summary>
-        private static void AddAssets(
+        internal static LockFileTargetLibrary CreateLockFileTargetLibrary(
             string aliases,
             LockFileLibrary library,
             LocalPackageInfo package,
             ManagedCodeConventions managedCodeConventions,
             LibraryIncludeFlags dependencyType,
-            LockFileTargetLibrary lockFileLib,
             NuGetFramework framework,
             string runtimeIdentifier,
             ContentItemCollection contentItems,
             NuspecReader nuspec,
+            IList<PackageType> packageTypes,
             List<SelectionCriteria> orderedCriteria)
         {
+            LockFileTargetLibrary lockFileLib = new LockFileTargetLibrary()
+            {
+                Name = library.Name,
+                Version = library.Version,
+                Type = LibraryType.Package,
+                PackageType = packageTypes
+            };
+
             // Add framework references for desktop projects.
             AddFrameworkReferences(lockFileLib, framework, nuspec);
 
@@ -206,46 +192,36 @@ namespace NuGet.Commands
             Action<LockFileItem> applyAliases = (item) => ApplyAliases(aliases, item);
 
             // ref takes precedence over lib
-            var compileGroup = GetLockFileItems(
+            lockFileLib.CompileTimeAssemblies = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
                 applyAliases,
                 managedCodeConventions.Patterns.CompileRefAssemblies,
                 managedCodeConventions.Patterns.CompileLibAssemblies);
 
-            lockFileLib.CompileTimeAssemblies.AddRange(compileGroup);
-
             // Runtime
-            var runtimeGroup = GetLockFileItems(
+            lockFileLib.RuntimeAssemblies = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
                 managedCodeConventions.Patterns.RuntimeAssemblies);
 
-            lockFileLib.RuntimeAssemblies.AddRange(runtimeGroup);
-
             // Embed
-            var embedGroup = GetLockFileItems(
+            lockFileLib.EmbedAssemblies = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
                 managedCodeConventions.Patterns.EmbedAssemblies);
 
-            lockFileLib.EmbedAssemblies.AddRange(embedGroup);
-
             // Resources
-            var resourceGroup = GetLockFileItems(
+            lockFileLib.ResourceAssemblies = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
                 managedCodeConventions.Patterns.ResourceAssemblies);
 
-            lockFileLib.ResourceAssemblies.AddRange(resourceGroup);
-
             // Native
-            var nativeGroup = GetLockFileItems(
+            lockFileLib.NativeLibraries = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
                 managedCodeConventions.Patterns.NativeLibraries);
-
-            lockFileLib.NativeLibraries.AddRange(nativeGroup);
 
             // Add MSBuild files
             AddMSBuildAssets(library.Name, managedCodeConventions, lockFileLib, orderedCriteria, contentItems);
@@ -263,6 +239,8 @@ namespace NuGet.Commands
 
             // Apply filters from the <references> node in the nuspec
             ApplyReferenceFilter(lockFileLib, framework, nuspec);
+
+            return lockFileLib;
         }
 
         private static void AddMSBuildAssets(
@@ -314,20 +292,6 @@ namespace NuGet.Commands
                 managedCodeConventions.Patterns.MSBuildMultiTargetingFiles);
 
             lockFileLib.BuildMultiTargeting.AddRange(GetBuildItemsForPackageId(buildMultiTargetingGroup, libraryName));
-        }
-
-        private static void AddToolsAssets(
-            ManagedCodeConventions managedCodeConventions,
-            LockFileTargetLibrary lockFileLib,
-            ContentItemCollection contentItems,
-            List<SelectionCriteria> orderedCriteria)
-        {
-            var toolsGroup = GetLockFileItems(
-                orderedCriteria,
-                contentItems,
-                managedCodeConventions.Patterns.ToolsAssemblies);
-
-            lockFileLib.ToolsAssemblies.AddRange(toolsGroup);
         }
 
         private static void AddContentFiles(ManagedCodeConventions managedCodeConventions, LockFileTargetLibrary lockFileLib, NuGetFramework framework, ContentItemCollection contentItems, NuspecReader nuspec)
@@ -561,82 +525,85 @@ namespace NuGet.Commands
 
             if (rootProjectStyle == ProjectStyle.PackageReference)
             {
-                // Add files under asset groups
-                object filesObject;
-                object msbuildPath;
-                if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.MSBuildProjectPath, out msbuildPath))
+                if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.MSBuildProjectPath, out object msbuildPath))
                 {
-                    var files = new List<ProjectRestoreMetadataFile>();
-                    var fileLookup = new Dictionary<string, ProjectRestoreMetadataFile>(StringComparer.OrdinalIgnoreCase);
-
                     // Find the project path, this is provided by the resolver
                     var msbuildFilePathInfo = new FileInfo((string)msbuildPath);
 
                     // Ensure a trailing slash for the relative path helper.
                     var projectDir = PathUtility.EnsureTrailingSlash(msbuildFilePathInfo.Directory.FullName);
 
-                    // Read files from the project if they were provided.
-                    if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.ProjectRestoreMetadataFiles, out filesObject))
-                    {
-                        files.AddRange((List<ProjectRestoreMetadataFile>)filesObject);
-                    }
-
-                    var targetFrameworkShortName = targetGraph.Framework.GetShortFolderName();
-                    var libAnyPath = $"lib/{targetFrameworkShortName}/any.dll";
-
-                    if (files.Count == 0)
-                    {
-                        // If the project did not provide a list of assets, add in default ones.
-                        // These are used to detect transitive vs non-transitive project references.
-                        var absolutePath = Path.Combine(projectDir, "bin", "placeholder", $"{localMatch.Library.Name}.dll");
-
-                        files.Add(new ProjectRestoreMetadataFile(libAnyPath, absolutePath));
-                    }
-
-                    // Process and de-dupe files
-                    for (var i = 0; i < files.Count; i++)
-                    {
-                        var path = files[i].PackagePath;
-
-                        // LIBANY avoid compatibility checks and will always be used.
-                        if (LIBANY.Equals(path, StringComparison.Ordinal))
-                        {
-                            path = libAnyPath;
-                        }
-
-                        if (!fileLookup.ContainsKey(path))
-                        {
-                            fileLookup.Add(path, files[i]);
-                        }
-                    }
-
-                    var contentItems = new ContentItemCollection();
-                    contentItems.Load(fileLookup.Keys);
-
                     // Create an ordered list of selection criteria. Each will be applied, if the result is empty
                     // fallback frameworks from "imports" will be tried.
                     // These are only used for framework/RID combinations where content model handles everything.
                     var orderedCriteria = CreateCriteria(targetGraph.Conventions, targetGraph.Framework, targetGraph.RuntimeIdentifier);
 
-                    // Compile
-                    // ref takes precedence over lib
-                    var compileGroup = GetLockFileItems(
-                        orderedCriteria,
-                        contentItems,
-                        targetGraph.Conventions.Patterns.CompileRefAssemblies,
-                        targetGraph.Conventions.Patterns.CompileLibAssemblies);
+                    string libAnyPath = $"lib/{targetGraph.Framework.GetShortFolderName()}/any.dll";
+                    var contentItems = new ContentItemCollection();
 
-                    projectLib.CompileTimeAssemblies.AddRange(
-                        ConvertToProjectPaths(fileLookup, projectDir, compileGroup));
+                    if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.ProjectRestoreMetadataFiles, out object filesObject))
+                    {
+                        List<ProjectRestoreMetadataFile> files = (List<ProjectRestoreMetadataFile>)filesObject;
+                        if (files.Count > 0)
+                        {
+                            var fileLookup = new Dictionary<string, ProjectRestoreMetadataFile>(StringComparer.OrdinalIgnoreCase);
+                            // Process and de-dupe files
+                            for (var i = 0; i < files.Count; i++)
+                            {
+                                var path = files[i].PackagePath;
 
-                    // Runtime
-                    var runtimeGroup = GetLockFileItems(
-                        orderedCriteria,
-                        contentItems,
-                        targetGraph.Conventions.Patterns.RuntimeAssemblies);
+                                // LIBANY avoid compatibility checks and will always be used.
+                                if (LIBANY.Equals(path, StringComparison.Ordinal))
+                                {
+                                    path = libAnyPath;
+                                }
 
-                    projectLib.RuntimeAssemblies.AddRange(
-                        ConvertToProjectPaths(fileLookup, projectDir, runtimeGroup));
+                                if (!fileLookup.ContainsKey(path))
+                                {
+                                    fileLookup.Add(path, files[i]);
+                                }
+                            }
+
+                            contentItems.Load(fileLookup.Keys);
+
+                            // Compile
+                            // ref takes precedence over lib
+                            var compileGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.CompileRefAssemblies,
+                                targetGraph.Conventions.Patterns.CompileLibAssemblies);
+
+                            projectLib.CompileTimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, compileGroup);
+
+                            // Runtime
+                            var runtimeGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.RuntimeAssemblies);
+
+                            projectLib.RuntimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, runtimeGroup);
+                        }
+                        else
+                        {
+                            // If the project did not provide a list of assets, add in default ones.
+                            contentItems.Load([libAnyPath]);
+
+                            // When there's only lib assets, compile and runtime groups are always equivalent.
+                            var compileGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.CompileLibAssemblies);
+
+                            if (compileGroup.Count > 0)
+                            {
+                                string relativePath = PathUtility.GetPathWithForwardSlashes(Path.Combine("bin", "placeholder", $"{localMatch.Library.Name}.dll"));
+                                var lockFileItem = new LockFileItem(relativePath);
+                                projectLib.CompileTimeAssemblies = new List<LockFileItem>() { lockFileItem };
+                                projectLib.RuntimeAssemblies = new List<LockFileItem>() { lockFileItem };
+                            }
+                        }
+                    }
                 }
             }
 
@@ -656,7 +623,7 @@ namespace NuGet.Commands
                 out frameworkReferencesObject))
             {
                 projectLib.FrameworkReferences.AddRange(
-                    ((ISet<FrameworkDependency>)frameworkReferencesObject)
+                    ((IReadOnlyCollection<FrameworkDependency>)frameworkReferencesObject)
                         .Where(e => e.PrivateAssets != FrameworkDependencyFlags.All)
                         .Select(f => f.Name));
             }
@@ -672,31 +639,34 @@ namespace NuGet.Commands
         /// <summary>
         /// Convert from the expected nupkg path to the on disk path.
         /// </summary>
-        private static IEnumerable<LockFileItem> ConvertToProjectPaths(
+        private static List<LockFileItem> ConvertToProjectPaths(
             Dictionary<string, ProjectRestoreMetadataFile> fileLookup,
             string projectDir,
-            IEnumerable<LockFileItem> items)
+            IList<LockFileItem> items)
         {
-            foreach (var item in items)
+            var results = new List<LockFileItem>(items.Count);
+            foreach (var item in items.NoAllocEnumerate())
             {
                 var diskPath = fileLookup[item.Path].AbsolutePath;
                 var fixedPath = PathUtility.GetPathWithForwardSlashes(
                     PathUtility.GetRelativePath(projectDir, diskPath));
 
-                yield return new LockFileItem(fixedPath);
+                results.Add(new LockFileItem(fixedPath));
             }
+            return results;
         }
 
         /// <summary>
         /// Create lock file items for the best matching group.
         /// </summary>
         /// <remarks>Enumerate this once after calling.</remarks>
-        private static IEnumerable<LockFileItem> GetLockFileItems(
+        private static IList<LockFileItem> GetLockFileItems(
             List<SelectionCriteria> criteria,
             ContentItemCollection items,
             Action<LockFileItem> additionalAction,
             params PatternSet[] patterns)
         {
+            List<LockFileItem> result = null;
             // Loop through each criteria taking the first one that matches one or more items.
             foreach (var managedCriteria in criteria)
             {
@@ -706,13 +676,14 @@ namespace NuGet.Commands
 
                 if (group != null)
                 {
+                    result = new(group.Items.Count);
                     foreach (var item in group.Items.NoAllocEnumerate())
                     {
                         var newItem = new LockFileItem(item.Path);
                         object locale;
-                        if (item.Properties.TryGetValue("locale", out locale))
+                        if (item.Properties.TryGetValue(ManagedCodeConventions.PropertyNames.Locale, out locale))
                         {
-                            newItem.Properties["locale"] = (string)locale;
+                            newItem.Properties[ManagedCodeConventions.PropertyNames.Locale] = (string)locale;
                         }
                         object related;
                         if (item.Properties.TryGetValue("related", out related))
@@ -720,21 +691,20 @@ namespace NuGet.Commands
                             newItem.Properties["related"] = (string)related;
                         }
                         additionalAction?.Invoke(newItem);
-                        yield return newItem;
+                        result.Add(newItem);
                     }
                     // Take only the first group that has items
                     break;
                 }
             }
-
-            yield break;
+            return result ?? new();
         }
 
         /// <summary>
         /// Create lock file items for the best matching group.
         /// </summary>
         /// <remarks>Enumerate this once after calling.</remarks>
-        private static IEnumerable<LockFileItem> GetLockFileItems(
+        private static IList<LockFileItem> GetLockFileItems(
             List<SelectionCriteria> criteria,
             ContentItemCollection items,
             params PatternSet[] patterns)
@@ -746,10 +716,10 @@ namespace NuGet.Commands
         /// Get packageId.targets and packageId.props
         /// </summary>
         private static IEnumerable<LockFileItem> GetBuildItemsForPackageId(
-            IEnumerable<LockFileItem> items,
+            IList<LockFileItem> items,
             string packageId)
         {
-            if (items.Any())
+            if (items.Count > 0)
             {
                 var skipEmptyCheck = false;
 

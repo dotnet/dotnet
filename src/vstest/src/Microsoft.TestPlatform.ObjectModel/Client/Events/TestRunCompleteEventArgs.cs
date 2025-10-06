@@ -58,7 +58,7 @@ public class TestRunCompleteEventArgs : EventArgs
     /// <param name="isAborted">Specifies whether the test run is aborted.</param>
     /// <param name="error">Specifies the error encountered during the execution of the test run.</param>
     /// <param name="attachmentSets">Attachment sets associated with the run.</param>
-    /// <param name="InvokedDataCollectors">Invoked data collectors</param>
+    /// <param name="invokedDataCollectors">Invoked data collectors</param>
     /// <param name="elapsedTime">Time elapsed in just running tests</param>
     public TestRunCompleteEventArgs(
         ITestRunStatistics? stats,

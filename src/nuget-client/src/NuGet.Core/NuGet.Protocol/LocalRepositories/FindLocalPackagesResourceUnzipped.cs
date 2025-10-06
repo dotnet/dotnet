@@ -134,12 +134,6 @@ namespace NuGet.Protocol
             return result;
         }
 
-        private static PackageReaderBase GetPackage(DirectoryInfo root, string name)
-        {
-            var packageRoot = Path.Combine(root.FullName, name);
-            return new PackageFolderReader(packageRoot);
-        }
-
         private static NuspecReader GetNuspec(DirectoryInfo root, string name)
         {
             // nuspecs are stored as id.version.nuspec

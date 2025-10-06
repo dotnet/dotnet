@@ -1,13 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FluentAssertions;
-using Microsoft.Arcade.Common;
-using Microsoft.Arcade.Test.Common;
-using Microsoft.DotNet.Build.Tasks.Feed.Model;
-using Microsoft.DotNet.Internal.DependencyInjection.Testing;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,9 +9,18 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Arcade.Common;
+using Microsoft.Arcade.Test.Common;
+using Microsoft.DotNet.Build.Manifest;
+using Microsoft.DotNet.Build.Manifest.Tests;
+using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Microsoft.DotNet.Internal.DependencyInjection.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
-using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
+using static Microsoft.DotNet.Build.Tasks.Feed.PublishArtifactsInManifestBase;
 using MsBuildUtils = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
@@ -29,6 +31,88 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         private const string RandomToken = "abcd";
         private const string AzDOFeedUrl = "https://pkgs.dev.azure.com/dnceng/public/_packaging/a-dotnet-feed/nuget/v3/index.json";
         private const string StorageUrl = "https://dotnetstorageaccount.blob.core.windows.net/placewherethingsarepublished/index.json";
+
+        /// <summary>
+        /// Mock implementation of ITargetChannelValidator for testing negative scenarios.
+        /// </summary>
+        private class MockTargetChannelValidator : ITargetChannelValidator
+        {
+            private readonly TargetChannelValidationResult _validationResult;
+            private readonly bool _shouldValidate;
+
+            public MockTargetChannelValidator(TargetChannelValidationResult validationResult, bool shouldValidate = true)
+            {
+                _validationResult = validationResult;
+                _shouldValidate = shouldValidate;
+            }
+
+            public int ValidateCallCount { get; private set; }
+            public ProductConstructionService.Client.Models.Build LastBuild { get; private set; }
+            public TargetChannelConfig LastTargetChannel { get; private set; }
+
+            public Task<TargetChannelValidationResult> ValidateAsync(ProductConstructionService.Client.Models.Build build, TargetChannelConfig targetChannel)
+            {
+                if (_shouldValidate)
+                {
+                    ValidateCallCount++;
+                    LastBuild = build;
+                    LastTargetChannel = targetChannel;
+                }
+                return Task.FromResult(_validationResult);
+            }
+        }
+
+        /// <summary>
+        /// Test publishing task that exposes the ValidateTargetChannelAsync method for testing.
+        /// </summary>
+        private class TestablePublishArtifactsTask : PublishArtifactsInManifestBase
+        {
+            public TestablePublishArtifactsTask(ITargetChannelValidator validator = null) 
+                : base(null, validator)
+            {
+            }
+
+            public override Task<bool> ExecuteAsync()
+            {
+                throw new NotImplementedException();
+            }
+
+            public new async Task<bool> ValidateTargetChannelAsync(
+                ProductConstructionService.Client.Models.Build build, 
+                TargetChannelConfig targetChannel)
+            {
+                return await base.ValidateTargetChannelAsync(build, targetChannel);
+            }
+        }
+
+        /// <summary>
+        /// Creates a test Build object with the required constructor parameters.
+        /// </summary>
+        private static ProductConstructionService.Client.Models.Build CreateTestBuild(
+            int id = 12345, 
+            DateTimeOffset? dateProduced = null,
+            int staleness = 0,
+            bool released = false,
+            bool stable = false,
+            string commit = "abc123",
+            List<ProductConstructionService.Client.Models.Channel> channels = null,
+            List<ProductConstructionService.Client.Models.Asset> assets = null,
+            List<ProductConstructionService.Client.Models.BuildRef> dependencies = null,
+            List<ProductConstructionService.Client.Models.BuildIncoherence> incoherencies = null)
+        {
+            return new ProductConstructionService.Client.Models.Build(
+                id: id,
+                dateProduced: dateProduced ?? DateTimeOffset.UtcNow,
+                staleness: staleness,
+                released: released,
+                stable: stable,
+                commit: commit,
+                channels: channels ?? new List<ProductConstructionService.Client.Models.Channel>(),
+                assets: assets ?? new List<ProductConstructionService.Client.Models.Asset>(),
+                dependencies: dependencies ?? new List<ProductConstructionService.Client.Models.BuildRef>(),
+                incoherencies: incoherencies ?? new List<ProductConstructionService.Client.Models.BuildIncoherence>()
+            );
+        }
 
         // This test should be refactored: https://github.com/dotnet/arcade/issues/6715
         [Fact]
@@ -55,6 +139,112 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var which = task.WhichPublishingTask(manifestFullPath);
             which.Should().BeOfType<PublishArtifactsInManifestV3>();
+        }
+
+        [Fact]
+        public void ConstructV4PublishingTask()
+        {
+            var manifestFullPath = TestInputs.GetFullPath(Path.Combine("Manifests", "SampleV4.xml"));
+
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifest()
+            {
+                BuildEngine = buildEngine,
+                TargetChannels = GeneralTestingChannelId,
+                AzdoApiToken = "test-token" // Add test token for DI
+            };
+
+            // Dependency Injection setup
+            var collection = new ServiceCollection()
+                .AddSingleton<IFileSystem, FileSystem>()
+                .AddSingleton<IBuildModelFactory, BuildModelFactory>()
+                .AddSingleton<ITargetChannelValidator, ProductionChannelValidator>()
+                .AddSingleton<IProductionChannelValidatorBuildInfoService>(provider =>
+                {
+                    var httpClient = provider.GetRequiredService<HttpClient>();
+                    var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger<AzureDevOpsService>();
+                    return new AzureDevOpsService(httpClient, logger, "test-token");
+                })
+                .AddSingleton<IBranchClassificationService>(provider =>
+                {
+                    var httpClient = provider.GetRequiredService<HttpClient>();
+                    var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger<BranchClassificationService>();
+                    return new BranchClassificationService(httpClient, logger, "test-token");
+                })
+                .AddSingleton<HttpClient>()
+                .AddLogging(); // Add logging services
+            task.ConfigureServices(collection);
+            using var provider = collection.BuildServiceProvider();
+
+            // Act and Assert
+            task.InvokeExecute(provider);
+
+            var which = task.WhichPublishingTask(manifestFullPath);
+            which.Should().BeOfType<PublishArtifactsInManifestV4>();
+        }
+
+        [Theory]
+        [InlineData(TargetChannelValidationResult.Success)]
+        [InlineData(TargetChannelValidationResult.Fail)]
+        public async Task ValidateTargetChannelAsync_ProductionChannelValidation_Works(TargetChannelValidationResult validationResult)
+        {
+            // Arrange
+            var mockValidator = new MockTargetChannelValidator(validationResult: validationResult);
+            var task = new TestablePublishArtifactsTask(mockValidator);
+            var buildEngine = new MockBuildEngine();
+            task.BuildEngine = buildEngine;
+
+            var build = CreateTestBuild(id: 12345, commit: "abc123");
+
+            var productionChannel = new TargetChannelConfig(
+                id: 1,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: null,
+                akaMSCreateLinkPatterns: null,
+                akaMSDoNotCreateLinkPatterns: null,
+                targetFeeds: new TargetFeedSpecification[0],
+                symbolTargetType: SymbolPublishVisibility.None,
+                flatten: true,
+                isProduction: true);
+
+            // Act
+            var result = await task.ValidateTargetChannelAsync(build, productionChannel);
+
+            // Assert
+            // For both Success and AuditOnlyFailure, the method returns true (allows publishing)
+            // Only Fail should return false
+            bool expectedResult = validationResult != TargetChannelValidationResult.Fail;
+            result.Should().Be(expectedResult);
+            
+            mockValidator.ValidateCallCount.Should().Be(1);
+            mockValidator.LastBuild.Should().Be(build);
+            mockValidator.LastTargetChannel.Should().Be(productionChannel);
+            
+            // Check that validation log message was written
+            buildEngine.BuildMessageEvents.Should().Contain(m => 
+                m.Importance == Microsoft.Build.Framework.MessageImportance.Normal &&
+                m.Message.Contains("Validating production channel 1"));
+
+            if (validationResult == TargetChannelValidationResult.Fail)
+            {
+                // Check that error was logged
+                buildEngine.BuildErrorEvents.Should().Contain(error =>
+                    error.Message.Contains("Build validation failed for production channel 1"));
+            }
+            else if (validationResult == TargetChannelValidationResult.AuditOnlyFailure)
+            {
+                // Check that warning was logged for audit-only failure
+                buildEngine.BuildWarningEvents.Should().Contain(warning =>
+                    warning.Message.Contains("Build validation audit failure for production channel 1"));
+            }
+            else
+            {
+                // Check that no error was logged for success
+                buildEngine.BuildErrorEvents.Should().BeEmpty();
+            }
         }
 
         [Theory]
@@ -88,16 +278,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             // Setup
             var buildEngine = new MockBuildEngine();
-            // May as well check that the exe is plumbed through from the task.
-            string fakeNugetExeName = $"{Path.GetRandomFileName()}.exe";
-            int timesNugetExeCalled = 0;
+            int timesCalled = 0;
+            var testPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
 
             // Functionality is the same as this is in the base class, create a v2 object to test. 
             var task = new PublishArtifactsInManifestV3
             {
                 InternalBuild = true,
                 BuildEngine = buildEngine,
-                NugetPath = fakeNugetExeName,
                 MaxRetryCount = 5, // In case the default changes, lock to 5 so the test data works
                 RetryDelayMilliseconds = 10 // retry faster in test
             };
@@ -117,38 +305,35 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 }
             };
 
-            Func<string, string, Task<ProcessExecutionResult>> testRunAndLogProcess = (string fakeExePath, string fakeExeArgs) =>
+            Func<HttpClient, string, string, Stream, Task<NuGetFeedUploadPackageResult>> testPush = (_, feedName, feedUri, _) =>
             {
-                Debug.WriteLine($"Called mocked RunProcessAndGetOutputs() :  ExePath = {fakeExePath}, ExeArgs = {fakeExeArgs}");
-                fakeNugetExeName.Should().Be(fakeExePath);
-                ProcessExecutionResult result = new ProcessExecutionResult() { StandardError = "fake stderr", StandardOut = "fake stdout" };
-                timesNugetExeCalled++;
-                if (timesNugetExeCalled >= pushAttemptsBeforeSuccess)
+                Debug.WriteLine($"Called test push for {feedName}");
+                timesCalled++;
+                if (timesCalled >= pushAttemptsBeforeSuccess)
                 {
-                    result.ExitCode = 0;
+                    return Task.FromResult(NuGetFeedUploadPackageResult.Success);
                 }
                 else
                 {
-                    result.ExitCode = 1;
+                    return Task.FromResult(NuGetFeedUploadPackageResult.AlreadyExists);
                 }
-                return Task.FromResult(result);
             };
 
             await task.PushNugetPackageAsync(
                 config, 
-                null, 
-                "localPackageLocation", 
+                null,
+                testPackagePath, 
                 "1234", 
                 "version", 
                 "feedaccount", 
                 "feedvisibility", 
                 "feedname",
                 testCompareLocalPackage,
-                testRunAndLogProcess);
+                testPush);
             if (!expectedFailure && localPackageMatchesFeed)
             {
                 // Successful retry scenario; make sure we ran the # of retries we thought.
-                timesNugetExeCalled.Should().BeLessOrEqualTo(task.MaxRetryCount);
+                timesCalled.Should().BeLessOrEqualTo(task.MaxRetryCount);
             }
             expectedFailure.Should().Be(task.Log.HasLoggedErrors);
         }

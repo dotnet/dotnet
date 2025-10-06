@@ -17,6 +17,7 @@
   <Target Name="PerformanceTest" />
 
   <Import Project="BuildReleasePackages.targets" Condition="'$(UsingToolNuGetRepack)' == 'true'" />
+  <Import Project="TrackPrebuiltUsage.targets" Condition="'$(TrackPrebuiltUsage)' == 'true'" />
 
   <!-- Repository extension point -->
   <Import Project="$(RepositoryEngineeringDir)AfterSolutionBuild.targets" Condition="Exists('$(RepositoryEngineeringDir)AfterSolutionBuild.targets')"/>

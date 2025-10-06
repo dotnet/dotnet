@@ -25,7 +25,7 @@
                         CSharpStatementLiteral - [25..26)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
                         CSharpStatementLiteral - [26..47)::21 - [global::System.Int32?] - Gen<DirectiveToken {;Type;Opt:False}>
-                            Identifier;[global];
+                            Keyword;[global];
                             DoubleColon;[::];
                             Identifier;[System];
                             Dot;[.];
@@ -58,7 +58,7 @@
                         CSharpStatementLiteral - [109..110)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
                         CSharpStatementLiteral - [110..176)::66 - [global::System.Collections.Generic.KeyValuePair<string, string>?[]] - Gen<DirectiveToken {;Type;Opt:False}>
-                            Identifier;[global];
+                            Keyword;[global];
                             DoubleColon;[::];
                             Identifier;[System];
                             Dot;[.];

@@ -64,6 +64,12 @@ typedef struct SeqPointInfo SeqPointInfo;
 #include "mono/metadata/callspec.h"
 #include "mono/metadata/icall-signatures.h"
 
+/* we use runtime checks to fallback to scalar ops for/
+ * older z/Architectures
+ */
+#ifdef TARGET_S390X
+#include <mono/utils/mono-hwcap.h>
+#endif
 /*
  * The mini code should not have any compile time dependencies on the GC being used, so the same object file from mini/
  * can be linked into both mono and mono-sgen.
@@ -138,6 +144,9 @@ typedef struct SeqPointInfo SeqPointInfo;
 #define MONO_TYPE_IS_VECTOR_PRIMITIVE(t) ((!m_type_is_byref ((t)) && ((((t)->type >= MONO_TYPE_I1 && (t)->type <= MONO_TYPE_R8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
 //XXX this ignores if t is byref
 #define MONO_TYPE_IS_PRIMITIVE_SCALAR(t) ((((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_U8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
+
+// Used by MonoImage:aot_module to indicate aot_module was not found
+#define AOT_MODULE_NOT_FOUND GINT_TO_POINTER (-1)
 
 typedef struct
 {
@@ -1303,6 +1312,12 @@ typedef enum {
 #define vreg_is_ref(cfg, vreg) (GINT_TO_UINT32(vreg) < (cfg)->vreg_is_ref_len ? (cfg)->vreg_is_ref [(vreg)] : 0)
 #define vreg_is_mp(cfg, vreg) (GINT_TO_UINT32(vreg) < (cfg)->vreg_is_mp_len ? (cfg)->vreg_is_mp [(vreg)] : 0)
 
+typedef struct {
+	MonoInst* addr_var;
+	int alloc_size;
+	GSList* localloc_ins;
+} MonoCachedLocallocInfo;
+
 /*
  * Control Flow Graph and compilation unit information
  */
@@ -1658,6 +1673,8 @@ typedef struct {
 
 	gboolean *clause_is_dead;
 
+	MonoCachedLocallocInfo localloc_cache [2];
+
 	/* Stats */
 	int stat_allocate_var;
 	int stat_locals_stack_size;
@@ -1737,6 +1754,7 @@ typedef struct {
 	gint64 jit_compile_dominator_info;
 	gint64 jit_compute_natural_loops;
 	gint64 jit_insert_safepoints;
+	gint64 jit_insert_samplepoints;
 	gint64 jit_ssa_compute;
 	gint64 jit_ssa_cprop;
 	gint64 jit_ssa_deadce;
@@ -2122,6 +2140,7 @@ mono_bb_last_inst (MonoBasicBlock *bb, int filter)
 /* profiler support */
 void        mini_add_profiler_argument (const char *desc);
 void        mini_profiler_emit_enter (MonoCompile *cfg);
+void        mini_profiler_emit_samplepoint (MonoCompile *cfg);
 void        mini_profiler_emit_leave (MonoCompile *cfg, MonoInst *ret);
 void        mini_profiler_emit_tail_call (MonoCompile *cfg, MonoMethod *target);
 void        mini_profiler_emit_call_finally (MonoCompile *cfg, MonoMethodHeader *header, unsigned char *ip, guint32 index, MonoExceptionClause *clause);
@@ -2183,7 +2202,17 @@ GString  *mono_print_ins_index_strbuf       (int i, MonoInst *ins);
 void      mono_print_ins                    (MonoInst *ins);
 void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg);
 void      mono_print_code                   (MonoCompile *cfg, const char *msg);
-const char* mono_inst_name (int op);
+#ifndef DISABLE_LOGGING
+#define M_PRI_INST "%s"
+const char * mono_inst_name(int opcode);
+#else
+#define M_PRI_INST "%d"
+static inline int
+mono_inst_name(int opcode)
+{
+        return opcode;
+}
+#endif
 int       mono_op_to_op_imm                 (int opcode);
 int       mono_op_imm_to_op                 (int opcode);
 int       mono_load_membase_to_load_mem     (int opcode);
@@ -2992,6 +3021,11 @@ mini_safepoints_enabled (void)
 static inline gboolean
 mini_class_is_simd (MonoCompile *cfg, MonoClass *klass)
 {
+#ifdef TARGET_S390X
+        /* vector facility was introduced in z13 */
+	if (!mono_hwcap_s390x_has_vec)
+		return FALSE;
+#endif
 #ifdef MONO_ARCH_SIMD_INTRINSICS
 	if (!(((cfg)->opt & MONO_OPT_SIMD) && m_class_is_simd_type (klass)))
 		return FALSE;
@@ -3022,5 +3056,11 @@ MonoMemoryManager* mini_get_default_mem_manager (void);
 
 MONO_COMPONENT_API int
 mono_wasm_get_debug_level (void);
+
+MonoMethod*
+mini_inflate_unsafe_accessor_wrapper (MonoMethod *extern_decl, MonoGenericContext *ctx, MonoUnsafeAccessorKind accessor_kind, const char *member_name, MonoError *error);
+
+MonoMethod *
+mini_replace_generated_method (MonoMethod *method, MonoError *error);
 
 #endif /* __MONO_MINI_H__ */

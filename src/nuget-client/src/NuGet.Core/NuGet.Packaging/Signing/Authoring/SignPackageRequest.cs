@@ -41,12 +41,10 @@ namespace NuGet.Packaging.Signing
 
         internal IX509CertificateChain Chain { get; private set; }
 
-#if IS_SIGNING_SUPPORTED
         /// <summary>
         /// PrivateKey is only used in mssign command.
         /// </summary>
         public System.Security.Cryptography.CngKey PrivateKey { get; set; }
-#endif
 
         protected SignPackageRequest(
             X509Certificate2 certificate,
@@ -96,10 +94,7 @@ namespace NuGet.Packaging.Signing
             {
                 Certificate?.Dispose();
                 Chain?.Dispose();
-
-#if IS_SIGNING_SUPPORTED
                 PrivateKey?.Dispose();
-#endif
             }
 
             _isDisposed = true;

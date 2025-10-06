@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <!-- Upgraded TFM from netcoreapp2.1 to net6.0 to minimize dependencies and avoid a dependency on netcoreapp2.1. -->
-    <TargetFrameworks>net6.0</TargetFrameworks>
-    <AssemblyName>System.Data.SqlClient</AssemblyName>
-  </PropertyGroup>
-
-</Project>

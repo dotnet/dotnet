@@ -1,23 +1,61 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 
-[Export(typeof(IRazorDocumentMappingService)), Shared]
+[Export(typeof(IDocumentMappingService)), Shared]
 [method: ImportingConstructor]
 internal sealed class RemoteDocumentMappingService(
     IFilePathService filePathService,
-    IDocumentContextFactory documentContextFactory,
-    IRazorLoggerFactory loggerFactory)
-    : AbstractRazorDocumentMappingService(
-        filePathService,
-        documentContextFactory,
-        loggerFactory.CreateLogger<RemoteDocumentMappingService>())
+    RemoteSnapshotManager snapshotManager,
+    ILoggerFactory loggerFactory)
+    : AbstractDocumentMappingService(loggerFactory.GetOrCreateLogger<RemoteDocumentMappingService>())
 {
+    private readonly IFilePathService _filePathService = filePathService;
+    private readonly RemoteSnapshotManager _snapshotManager = snapshotManager;
+
+    public async Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(
+        RemoteDocumentSnapshot originSnapshot,
+        Uri generatedDocumentUri,
+        LinePositionSpan generatedDocumentRange,
+        CancellationToken cancellationToken)
+    {
+        // For Html we just map the Uri, the range will be the same
+        if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
+        {
+            var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
+            return (razorDocumentUri, generatedDocumentRange);
+        }
+
+        // We only map from C# files
+        if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))
+        {
+            return (generatedDocumentUri, generatedDocumentRange);
+        }
+
+        var project = originSnapshot.TextDocument.Project;
+        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        if (razorCodeDocument is null)
+        {
+            return (generatedDocumentUri, generatedDocumentRange);
+        }
+
+        if (TryMapToRazorDocumentRange(razorCodeDocument.GetRequiredCSharpDocument(), generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
+        {
+            var razorDocumentUri = project.Solution.GetRazorDocumentUri(razorCodeDocument);
+            return (razorDocumentUri, mappedRange);
+        }
+
+        return (generatedDocumentUri, generatedDocumentRange);
+    }
 }

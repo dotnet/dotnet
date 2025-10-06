@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
@@ -15,7 +15,7 @@ public class RazorSemanticTokensLegendServiceTest(ITestOutputHelper testOutput) 
     [Fact]
     public void RazorModifiers_MustStartAfterRoslyn()
     {
-        var clientCapabilitiesService = new TestClientCapabilitiesService(new VisualStudio.LanguageServer.Protocol.VSInternalClientCapabilities());
+        var clientCapabilitiesService = new TestClientCapabilitiesService(new VSInternalClientCapabilities());
         var service = new RazorSemanticTokensLegendService(clientCapabilitiesService);
 
         var expected = Math.Pow(2, RazorSemanticTokensAccessor.GetTokenModifiers().Length);

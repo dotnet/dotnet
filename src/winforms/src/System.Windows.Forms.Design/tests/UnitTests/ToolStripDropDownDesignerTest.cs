@@ -1,10 +1,12 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel.Design;
+#nullable disable
+
 using System.ComponentModel;
-using Moq;
+using System.ComponentModel.Design;
 using System.Windows.Forms.Design.Tests.Mocks;
+using Moq;
 
 namespace System.Windows.Forms.Design.Tests;
 

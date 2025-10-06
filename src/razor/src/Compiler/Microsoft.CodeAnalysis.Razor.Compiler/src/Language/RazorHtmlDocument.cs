@@ -1,35 +1,18 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal abstract class RazorHtmlDocument : IRazorGeneratedDocument
+internal sealed class RazorHtmlDocument
 {
-    public abstract string GeneratedCode { get; }
+    public SourceText Text { get; }
 
-    public abstract RazorCodeGenerationOptions Options { get; }
-
-    public abstract ImmutableArray<SourceMapping> SourceMappings { get; }
-
-    public abstract RazorCodeDocument CodeDocument { get; }
-
-    public static RazorHtmlDocument Create(RazorCodeDocument codeDocument, string generatedHtml, RazorCodeGenerationOptions options, ImmutableArray<SourceMapping> sourceMappings)
+    public RazorHtmlDocument(SourceText text)
     {
-        if (generatedHtml == null)
-        {
-            throw new ArgumentNullException(nameof(generatedHtml));
-        }
+        ArgHelper.ThrowIfNull(text);
 
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        return new DefaultRazorHtmlDocument(codeDocument, generatedHtml, options, sourceMappings);
+        Text = text;
     }
 }

@@ -100,14 +100,14 @@ type NavigationItems(declarations: NavigationTopLevelDeclaration[]) =
 
 module NavigationImpl =
     let unionRangesChecked r1 r2 =
-        if equals r1 range.Zero then r2
-        elif equals r2 range.Zero then r1
+        if equals r1 range0 then r2
+        elif equals r2 range0 then r1
         else unionRanges r1 r2
 
     let rangeOfDecls2 f decls =
         match decls |> List.map (f >> (fun (d: NavigationItem) -> d.bodyRange)) with
         | hd :: tl -> tl |> List.fold unionRangesChecked hd
-        | [] -> range.Zero
+        | [] -> range0
 
     let rangeOfDecls = rangeOfDecls2 fst
 
@@ -118,7 +118,7 @@ module NavigationImpl =
         match fldspec with
         | SynUnionCaseKind.Fields(flds) ->
             flds
-            |> List.fold (fun st (SynField(range = m)) -> unionRangesChecked m st) range.Zero
+            |> List.fold (fun st (SynField(range = m)) -> unionRangesChecked m st) range0
         | SynUnionCaseKind.FullType(ty, _) -> ty.Range
 
     let bodyRange mBody decls =
@@ -332,13 +332,21 @@ module NavigationImpl =
                          [
                              createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, range, enclosingEntityKind, false, access)
                          ]
-                     | SynMemberDefn.AutoProperty(ident = id; accessibility = access) ->
+                     | SynMemberDefn.AutoProperty(ident = id; accessibility = access; propKind = propKind) ->
+                         let getterAccessibility, setterAccessibility = access.GetSetAccessNoCheck()
+
                          [
-                             createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, access)
+                             match propKind with
+                             | SynMemberKind.PropertyGetSet ->
+                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, getterAccessibility)
+                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, setterAccessibility)
+                             | SynMemberKind.PropertySet ->
+                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, setterAccessibility)
+                             | _ -> yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, getterAccessibility)
                          ]
                      | SynMemberDefn.AbstractSlot(slotSig = SynValSig(ident = SynIdent(id, _); synType = ty; accessibility = access)) ->
                          [
-                             createMember (id, NavigationItemKind.Method, FSharpGlyph.OverridenMethod, ty.Range, enclosingEntityKind, true, access)
+                             createMember (id, NavigationItemKind.Method, FSharpGlyph.OverridenMethod, ty.Range, enclosingEntityKind, true, access.SingleAccess())
                          ]
                      | SynMemberDefn.NestedType _ -> failwith "tycon as member????" //processTycon tycon
                      | SynMemberDefn.Interface(members = Some(membs)) -> processMembers membs enclosingEntityKind |> snd
@@ -349,7 +357,7 @@ module NavigationImpl =
                          ]
                      | _ -> []))
 
-            let m2 = members |> Seq.map fst |> Seq.fold unionRangesChecked range.Zero
+            let m2 = members |> Seq.map fst |> Seq.fold unionRangesChecked range0
             let items = members |> List.collect snd
             m2, items
 
@@ -564,10 +572,18 @@ module NavigationImpl =
             [
                 for memb in members do
                     match memb with
-                    | SynMemberSig.Member(memberSig = SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m)) ->
-                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, access)
+                    | SynMemberSig.Member(memberSig = SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m); flags = { MemberKind = propKind }) ->
+                        let getterAccessibility, setterAccessibility = access.GetSetAccessNoCheck()
+
+                        match propKind with
+                        | SynMemberKind.PropertyGetSet ->
+                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, getterAccessibility)
+                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, setterAccessibility)
+                        | SynMemberKind.PropertySet ->
+                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, setterAccessibility)
+                        | _ -> yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, getterAccessibility)
                     | SynMemberSig.ValField(SynField(idOpt = Some rcid; fieldType = ty; accessibility = access), _) ->
-                        createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, ty.Range, NavigationEntityKind.Class, false, access)
+                        yield createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, ty.Range, NavigationEntityKind.Class, false, access)
                     | _ -> ()
             ]
 
@@ -577,7 +593,7 @@ module NavigationImpl =
                 for decl in decls do
                     match decl with
                     | SynModuleSigDecl.Val(SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m), _) ->
-                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Module, false, access)
+                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Module, false, access.SingleAccess())
                     | _ -> ()
             ]
 

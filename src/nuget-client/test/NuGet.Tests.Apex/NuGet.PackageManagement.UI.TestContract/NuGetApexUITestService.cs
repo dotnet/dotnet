@@ -7,11 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.ServiceHub.Framework;
-using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.PackageManagement.VisualStudio;
-using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 

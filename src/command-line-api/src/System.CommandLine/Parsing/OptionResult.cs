@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CommandLine.Binding;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace System.CommandLine.Parsing
@@ -15,9 +14,9 @@ namespace System.CommandLine.Parsing
         private ArgumentConversionResult? _argumentConversionResult;
 
         internal OptionResult(
-            CliOption option,
+            Option option,
             SymbolResultTree symbolResultTree,
-            CliToken? token = null,
+            Token? token = null,
             CommandResult? parent = null) :
             base(symbolResultTree, parent)
         {
@@ -28,7 +27,7 @@ namespace System.CommandLine.Parsing
         /// <summary>
         /// The option to which the result applies.
         /// </summary>
-        public CliOption Option { get; }
+        public Option Option { get; }
 
         /// <summary>
         /// Indicates whether the result was created implicitly and not due to the option being specified on the command line.
@@ -40,7 +39,7 @@ namespace System.CommandLine.Parsing
         /// The token that was parsed to specify the option.
         /// </summary>
         /// <remarks>An identifier token is a token that matches either the option's name or one of its aliases.</remarks>
-        public CliToken? IdentifierToken { get; }
+        public Token? IdentifierToken { get; }
 
         /// <summary>
         /// The number of occurrences of an identifier token matching the option.
@@ -65,6 +64,16 @@ namespace System.CommandLine.Parsing
         internal ArgumentConversionResult ArgumentConversionResult
             => _argumentConversionResult ??= GetResult(Option.Argument)!.GetArgumentConversionResult();
 
-        internal override bool UseDefaultValueFor(ArgumentResult argument) => Implicit;
+        internal override bool UseDefaultValueFor(ArgumentResult argumentResult)
+        {
+            if (Implicit)
+            {
+                return true;
+            }
+
+            return Tokens.Count is 0 &&
+                   Option.Arity is { MinimumNumberOfValues: 0, MaximumNumberOfValues: > 0 } &&
+                   !argumentResult.Argument.IsBoolean();
+        }
     }
 }

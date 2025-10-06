@@ -6,8 +6,9 @@
   </PropertyGroup>
 
   <Import Project="../Directory.Build.props" />
-  <Import Project="../RepoDefaults.props"/>
-  <Import Project="../RepoLayout.props"/>
-  <Import Project="Versions.props"/>
+  <Import Project="../RepoDefaults.props" />
+  <Import Project="../RepoLayout.props" />
+  <Import Project="../TargetFrameworkDefaults.props" />
+  <Import Project="Versions.props" />
 
 </Project>

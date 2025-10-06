@@ -203,7 +203,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        public async Task SearchAsync_WhenMultitargetingAndEmptySearch_ReturnsOnePackagePerPackageIdAsync()
+        public async Task SearchAsync_WhenMultitargetingAndEmptySearch_ReturnsAllPackagesAsync()
         {
             // Arrange
             IEnumerable<PackageCollectionItem> installedPackages = new List<PackageCollectionItem>()
@@ -226,14 +226,20 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             SearchResult<IPackageSearchMetadata> result = await feed.SearchAsync(string.Empty, new SearchFilter(includePrerelease: true), CancellationToken.None);
 
             // Assert
+            // Packages are sorted, first sorted by PackageLevel (top-level packages first), then by version (latest version first)
             // PM UI does not support multi-targeting. Return latest version found
             Assert.Collection(result,
                 // Returns all Installed packages, latest version
                 e => Assert.Equal(new PackageIdentity("packageA", new NuGetVersion("1.0.0")), e.Identity),
                 e => Assert.Equal(new PackageIdentity("packageB", new NuGetVersion("2.0.0")), e.Identity),
                 e => Assert.Equal(new PackageIdentity("packageC", new NuGetVersion("3.0.0")), e.Identity),
+                // Returns all the installed packages that are not the latest version
+                e => Assert.Equal(new PackageIdentity("packageB", new NuGetVersion("1.0.0")), e.Identity),
+                e => Assert.Equal(new PackageIdentity("packageC", new NuGetVersion("2.0.0")), e.Identity),
                 // Returns latest transitive package version
-                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.2")), e.Identity));
+                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.2")), e.Identity),
+                // Returns all the transitive packages that are not the latest version
+                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.1")), e.Identity));
 
             IEnumerable<IPackageSearchMetadata> transitivePackagesResult = result.Where(r => r is TransitivePackageSearchMetadata).ToArray();
             IEnumerable<string> installedPackagesResult = result.Where(r => r is not TransitivePackageSearchMetadata).Select(pkg => pkg.Identity.Id).ToArray();

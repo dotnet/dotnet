@@ -1,20 +1,18 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentInlayHintName)]
-internal sealed class InlayHintEndpoint(LanguageServerFeatureOptions featureOptions, IInlayHintService inlayHintService, IClientConnection clientConnection)
+internal sealed class InlayHintEndpoint(IInlayHintService inlayHintService, IClientConnection clientConnection)
     : IRazorRequestHandler<InlayHintParams, InlayHint[]?>, ICapabilitiesProvider
 {
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly IInlayHintService _inlayHintService = inlayHintService;
     private readonly IClientConnection _clientConnection = clientConnection;
 
@@ -30,7 +28,12 @@ internal sealed class InlayHintEndpoint(LanguageServerFeatureOptions featureOpti
 
     public Task<InlayHint[]?> HandleRequestAsync(InlayHintParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
-        var documentContext = context.GetRequiredDocumentContext();
+        var documentContext = context.DocumentContext;
+        if (documentContext is null)
+        {
+            return SpecializedTasks.Null<InlayHint[]>();
+        }
+
         return _inlayHintService.GetInlayHintsAsync(_clientConnection, documentContext, request.Range, cancellationToken);
     }
 }

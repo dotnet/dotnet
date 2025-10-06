@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Xunit;
@@ -21,7 +22,7 @@ public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOut
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer([]);
+                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
                 b.AddExport(startupInitializer);
             }));
 
@@ -49,7 +50,7 @@ public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOut
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
             {
-                var startupInitializer = new RazorStartupInitializer([]);
+                var startupInitializer = new RazorStartupInitializer(TestLanguageServerFeatureOptions.Instance, []);
                 b.AddExport(startupInitializer);
             }));
 

@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-
+#pragma warning disable RS0030 // Do not used banned APIs.  This class sets MSBuild feature flags which are environment variables, but they only apply to the NuGet.Build.Tasks.Console process.
 namespace NuGet.Build.Tasks.Console
 {
     /// <summary>

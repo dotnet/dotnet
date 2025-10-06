@@ -46,7 +46,12 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
         public override int Priority => AttachedItemPriority.Project;
 
-        public override ImageMoniker IconMoniker => KnownMonikers.Application;
+        public override ImageMoniker IconMoniker => Library.LogLevel switch
+        {
+            NuGet.Common.LogLevel.Warning => KnownMonikers.ApplicationWarning,
+            NuGet.Common.LogLevel.Error => KnownMonikers.ApplicationError,
+            _ => KnownMonikers.Application
+        };
 
         protected override IContextMenuController? ContextMenuController => MenuController.TransitiveProject;
 

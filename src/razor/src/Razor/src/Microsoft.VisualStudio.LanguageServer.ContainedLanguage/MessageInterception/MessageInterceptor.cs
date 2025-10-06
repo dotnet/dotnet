@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -10,6 +11,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterce
 /// <summary>
 /// Intercepts an LSP message and applies changes to the payload.
 /// </summary>
+[Obsolete("Please move to GenericInterceptionMiddleLayer and generic interceptors.")]
 public abstract class MessageInterceptor
 {
     /// <summary>

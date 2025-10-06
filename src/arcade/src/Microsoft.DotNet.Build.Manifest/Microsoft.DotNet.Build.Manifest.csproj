@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\Internal\EnumerableExtensions.cs" Link="EnumerableExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+  </ItemGroup>
+
+  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
+</Project>

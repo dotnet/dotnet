@@ -1,106 +1,33 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
+public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly IDocumentContextFactory _emptyDocumentContextFactory;
-    private readonly TestLanguageServer _languageServer;
-
-    public ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput)
-        : base(testOutput)
+    private readonly IClientConnection _clientConnection = TestClientConnection.Create(builder =>
     {
-        _emptyDocumentContextFactory = new TestDocumentContextFactory();
-        _languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
-        {
-            [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>(null!),
-        });
-    }
-
-    [Fact]
-    public async Task Handle_MissingFile()
-    {
-        // Arrange
-        var resolver = new ExtractToCodeBehindCodeActionResolver(_emptyDocumentContextFactory, TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(new ExtractToCodeBehindCodeActionParams()
-        {
-            Uri = new Uri("c:/Test.razor"),
-            RemoveStart = 14,
-            ExtractStart = 19,
-            ExtractEnd = 41,
-            RemoveEnd = 41,
-            Namespace = "Test"
-        });
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
-    public async Task Handle_Unsupported()
-    {
-        // Arrange
-        var documentPath = new Uri("c:\\Test.razor");
-        var contents = $$"""
-            @page "/test"
-            @code { private int x = 1; }
-            """;
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetUnsupported();
-
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
-    public async Task Handle_InvalidFileKind()
-    {
-        // Arrange
-        var documentPath = new Uri("c:\\Test.razor");
-        var contents = $$"""
-            @page "/test"
-            @code { private int x = 1; }
-            """;
-        var codeDocument = CreateCodeDocument(contents);
-        codeDocument.SetFileKind(FileKinds.Legacy);
-
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
+        builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, (string?)null);
+    });
 
     [Fact]
     public async Task Handle_ExtractCodeBlock()
@@ -115,35 +42,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -160,7 +90,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -177,35 +107,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -222,7 +155,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -247,35 +180,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -301,7 +237,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -327,35 +263,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -381,7 +320,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -409,35 +348,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             </div>
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -463,7 +405,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -479,35 +421,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@functions", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@functions", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
-        var editCodeDocumentEdit = editCodeDocument!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = editCodeDocument.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var editCodeBehind));
-        var editCodeBehindEdit = editCodeBehind!.Edits.First();
+        var editCodeBehindEdit = editCodeBehind.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -524,7 +469,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -541,19 +486,21 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
@@ -561,15 +508,16 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
-        var editCodeDocumentEdit = editCodeDocument!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = editCodeDocument.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var editCodeBehind));
-        var editCodeBehindEdit = editCodeBehind!.Edits.First();
+        var editCodeBehindEdit = editCodeBehind.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -587,7 +535,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -605,35 +553,38 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             using System;
@@ -652,7 +603,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
                 }
             }
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
     [Fact]
@@ -668,65 +619,75 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
-        var languageServer = new TestLanguageServer(new Dictionary<string, Func<object?, Task<object>>>()
+        var clientConnection = TestClientConnection.Create(builder =>
         {
-            [CustomMessageNames.RazorFormatNewFileEndpointName] = c => Task.FromResult<object>("Hi there! I'm from Roslyn"),
+            builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, "Hi there! I'm from Roslyn");
         });
 
-        var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, languageServer);
-        var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(clientConnection);
+        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
+        var actionParams = CreateExtractToCodeBehindCodeActionParams(contents, "@code", @namespace);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
-        Assert.NotNull(workspaceEdit!.DocumentChanges);
-        Assert.Equal(3, workspaceEdit.DocumentChanges!.Value.Count());
+        Assert.NotNull(workspaceEdit.DocumentChanges);
+        Assert.Equal(3, workspaceEdit.DocumentChanges.Value.Count());
 
-        var documentChanges = workspaceEdit.DocumentChanges!.Value.ToArray();
+        var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
         Assert.True(createFileChange.TryGetSecond(out var _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
-        var editCodeDocumentEdit = textDocumentEdit1!.Edits.First();
-        Assert.True(editCodeDocumentEdit.Range.Start.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeStart));
+        var editCodeDocumentEdit = textDocumentEdit1.Edits.First();
+        var sourceText = codeDocument.Source.Text;
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.Start, out var removeStart));
         Assert.Equal(actionParams.RemoveStart, removeStart);
-        Assert.True(editCodeDocumentEdit.Range.End.TryGetAbsoluteIndex(codeDocument.GetSourceText(), Logger, out var removeEnd));
+        Assert.True(sourceText.TryGetAbsoluteIndex(((TextEdit)editCodeDocumentEdit).Range.End, out var removeEnd));
         Assert.Equal(actionParams.RemoveEnd, removeEnd);
 
         var editCodeBehindChange = documentChanges[2];
         Assert.True(editCodeBehindChange.TryGetFirst(out var textDocumentEdit2));
-        var editCodeBehindEdit = textDocumentEdit2!.Edits.First();
+        var editCodeBehindEdit = textDocumentEdit2.Edits.First();
 
         AssertEx.EqualOrDiff("""
             Hi there! I'm from Roslyn
             """,
-            editCodeBehindEdit.NewText);
+            ((TextEdit)editCodeBehindEdit).NewText);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text)
+    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
     {
-        var projectItem = new TestRazorProjectItem("c:/Test.razor", "c:/Test.razor", "Test.razor") { Content = text };
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) => builder.SetRootNamespace("test.Pages"));
+        var projectItem = new TestRazorProjectItem(
+            filePath: "c:/Test.razor",
+            physicalPath: "c:/Test.razor",
+            relativePhysicalPath: "Test.razor",
+            fileKind: fileKind ?? RazorFileKind.Component)
+        {
+            Content = text
+        };
 
-        var codeDocument = projectEngine.Process(projectItem);
-        codeDocument.SetFileKind(FileKinds.Component);
+        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder =>
+        {
+            builder.SetRootNamespace("test.Pages");
+        });
 
-        return codeDocument;
+        return projectEngine.Process(projectItem);
     }
 
-    private static ExtractToCodeBehindCodeActionParams CreateExtractToCodeBehindCodeActionParams(Uri uri, string contents, string removeStart, string @namespace)
+    private static ExtractToCodeBehindCodeActionParams CreateExtractToCodeBehindCodeActionParams(string contents, string removeStart, string @namespace)
     {
         // + 1 to ensure we do not cut off the '}'.
         var endIndex = contents.LastIndexOf("}", StringComparison.Ordinal) + 1;
         return new ExtractToCodeBehindCodeActionParams
         {
-            Uri = uri,
             RemoveStart = contents.IndexOf(removeStart, StringComparison.Ordinal),
             ExtractStart = contents.IndexOf("{", StringComparison.Ordinal),
             ExtractEnd = endIndex,

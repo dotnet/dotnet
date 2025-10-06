@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
 
@@ -43,9 +43,8 @@ public class DesignModeClient : IDesignModeClient
     private readonly ProtocolConfig _protocolConfig = Constants.DefaultProtocolConfig;
     private readonly IEnvironment _platformEnvironment;
     private readonly TestSessionMessageLogger _testSessionMessageLogger;
+    private readonly bool _forwardOutput;
     private readonly object _lockObject = new();
-    private readonly bool _isForwardingOutput;
-
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Part of the public API.")]
     [SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Part of the public API")]
     protected Action<Message>? onCustomTestHostLaunchAckReceived;
@@ -57,7 +56,7 @@ public class DesignModeClient : IDesignModeClient
     /// Initializes a new instance of the <see cref="DesignModeClient"/> class.
     /// </summary>
     public DesignModeClient()
-        : this(new SocketCommunicationManager(), JsonDataSerializer.Instance, new PlatformEnvironment(), new EnvironmentVariableHelper())
+        : this(new SocketCommunicationManager(), JsonDataSerializer.Instance, new PlatformEnvironment())
     {
     }
 
@@ -73,14 +72,14 @@ public class DesignModeClient : IDesignModeClient
     /// <param name="platformEnvironment">
     /// The platform Environment
     /// </param>
-    internal DesignModeClient(ICommunicationManager communicationManager, IDataSerializer dataSerializer, IEnvironment platformEnvironment, IEnvironmentVariableHelper environmentVariableHelper)
+    internal DesignModeClient(ICommunicationManager communicationManager, IDataSerializer dataSerializer, IEnvironment platformEnvironment)
     {
         _communicationManager = communicationManager;
         _dataSerializer = dataSerializer;
         _platformEnvironment = platformEnvironment;
         _testSessionMessageLogger = TestSessionMessageLogger.Instance;
+        _forwardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
         _testSessionMessageLogger.TestRunMessage += TestRunMessageHandler;
-        _isForwardingOutput = environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1";
     }
 
     /// <summary>
@@ -335,7 +334,7 @@ public class DesignModeClient : IDesignModeClient
             // Even if TP has a timeout here, there is no way TP can abort or stop the thread/task that is hung in IDE or LUT
             // Even if TP can abort the API somehow, TP is essentially putting IDEs or Clients in inconsistent state without having info on
             // Since the IDEs own user-UI-experience here, TP will let the custom host launch as much time as IDEs define it for their users
-            WaitHandle.WaitAny(new WaitHandle[] { waitHandle, cancellationToken.WaitHandle });
+            WaitHandle.WaitAny([waitHandle, cancellationToken.WaitHandle]);
 
             cancellationToken.ThrowTestPlatformExceptionIfCancellationRequested();
 
@@ -388,7 +387,7 @@ public class DesignModeClient : IDesignModeClient
                 _communicationManager.SendMessage(MessageType.EditorAttachDebugger2, payload);
             }
 
-            WaitHandle.WaitAny(new WaitHandle[] { waitHandle, cancellationToken.WaitHandle });
+            WaitHandle.WaitAny([waitHandle, cancellationToken.WaitHandle]);
 
             cancellationToken.ThrowTestPlatformExceptionIfCancellationRequested();
             onAttachDebuggerAckRecieved = null;
@@ -449,8 +448,15 @@ public class DesignModeClient : IDesignModeClient
             case TestMessageLevel.Informational:
                 EqtTrace.Info(e.Message);
 
-                if (_isForwardingOutput || EqtTrace.IsInfoEnabled)
+                // When forwarding output we need to allow Info messages that originate from this process (or more precisely from the IMessageLogger that we
+                // are observing, but we don't have an easy way to tell apart "output" and non-output info messages. So when output forwarding is enabled
+                // we forward any informational message. This is okay, because in worst case we will send few more messages forward that are not output.
+                // And that is fine, because any adapter has access to SendMessage(MessageLevel.Informational,...) which we don't filter anywhere (it is passed
+                // as a raw message and forwarded to VS), so any adapter can spam the Tests output in VS as it wants.
+                if (_forwardOutput || EqtTrace.IsInfoEnabled)
+                {
                     SendTestMessage(e.Level, e.Message);
+                }
                 break;
 
 

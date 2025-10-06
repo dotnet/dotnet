@@ -4,16 +4,22 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+
+#if NETSTANDARD2_0
+using IStream = System.Runtime.InteropServices.ComTypes.IStream;
+#endif
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("A09E53B2-2A57-4cca-8F63-B84F7C35D4AA")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedReader2 : ISymUnmanagedReader
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedReader2 : ISymUnmanagedReader
     {
+        // .NET 8+ COM source generators respect COM interface inheritance
+        // so re-declaration of inherited method is not needed.
+#if NETSTANDARD2_0
         #region ISymUnmanagedReader methods
 
         [PreserveSig]
@@ -111,6 +117,7 @@ namespace Microsoft.DiaSymReader
         new int GetMethodVersion(ISymUnmanagedMethod method, out int version);
 
         #endregion
+#endif
 
         #region ISymUnmanagedReader2 methods
 

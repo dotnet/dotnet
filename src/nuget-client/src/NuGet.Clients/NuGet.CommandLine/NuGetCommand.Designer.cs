@@ -296,7 +296,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable using the Http cache and contact all configured package sources for live information..
+        ///   Looks up a localized string similar to Disable the use of the HTTP cache and contact all configured package sources for live information..
         /// </summary>
         internal static string CommandNoHttpCache {
             get {
@@ -439,6 +439,15 @@ namespace NuGet.CommandLine {
         internal static string DeleteCommandUsageSummary {
             get {
                 return ResourceManager.GetString("DeleteCommandUsageSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display NuGet.exe&apos;s End User Liscence Agreement (EULA).
+        /// </summary>
+        internal static string EulaDescription {
+            get {
+                return ResourceManager.GetString("EulaDescription", resourceCulture);
             }
         }
         
@@ -886,7 +895,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NoCache is deprecated in favor of the appropriately named NoHttpCache..
+        ///   Looks up a localized string similar to NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead..
         /// </summary>
         internal static string Log_RestoreNoCacheInformation {
             get {
@@ -1178,6 +1187,15 @@ namespace NuGet.CommandLine {
         internal static string PackCommandUsageExamples {
             get {
                 return ResourceManager.GetString("PackCommandUsageExamples", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows pushing to HTTP sources (insecure)..
+        /// </summary>
+        internal static string PushCommandAllowInsecureConnectionsDescription {
+            get {
+                return ResourceManager.GetString("PushCommandAllowInsecureConnectionsDescription", resourceCulture);
             }
         }
         
@@ -1511,7 +1529,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate.
+        ///   Looks up a localized string similar to SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
         ///The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options..
         /// </summary>
         internal static string SignCommandCertificateFingerprintDescription {
@@ -1596,6 +1614,15 @@ namespace NuGet.CommandLine {
         internal static string SignCommandHashAlgorithmDescription {
             get {
                 return ResourceManager.GetString("SignCommandHashAlgorithmDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: Invalid value for &apos;CertificateFingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
+        /// </summary>
+        internal static string SignCommandInvalidCertificateFingerprint {
+            get {
+                return ResourceManager.GetString("SignCommandInvalidCertificateFingerprint", resourceCulture);
             }
         }
         
@@ -1725,6 +1752,15 @@ namespace NuGet.CommandLine {
         internal static string SignCommandUsageSummary {
             get {
                 return ResourceManager.GetString("SignCommandUsageSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string SourcesCommandAllowInsecureConnectionsDescription {
+            get {
+                return ResourceManager.GetString("SourcesCommandAllowInsecureConnectionsDescription", resourceCulture);
             }
         }
         

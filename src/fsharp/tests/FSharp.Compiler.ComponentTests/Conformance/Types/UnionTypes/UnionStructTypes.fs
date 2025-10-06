@@ -68,7 +68,6 @@ let main _args =
     printf "BasicThreeLongs=%i;GenericOfInt=%i;GenericOfString=%i;MixWithBool=%i;MixWithString=%i;Erasure=%i" structUnionSize genericSizeForInt genericSizeForString sizeForMixingWithBool sizeForMixingWithString sizeForSharingAfterErasure
     0
         """   
-        |> withLangVersionPreview
         |> asExe
         |> compile
         |> shouldSucceed
@@ -215,7 +214,6 @@ type StructUnion =
     | B of string
     | C of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
         
@@ -288,7 +286,6 @@ type StructUnion =
     | A of Item: int
     | B of Item: string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
@@ -305,7 +302,6 @@ type StructUnion =
     | A of Item: int
     | B of item : string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
         
@@ -352,7 +348,6 @@ type StructUnion =
     | A of Item: int * item: string
     | B of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldFail
         |> withDiagnostics  [
@@ -368,7 +363,6 @@ type StructUnion =
     | A of Item: int * item: string
     | B of item: string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
             
@@ -408,7 +402,9 @@ type StructUnion =
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
-            (Error 3176, Line 5, Col 27, Line 5, Col 31, "Named field 'item' is used more than once.")
+            (Error 3176, Line 5, Col 12, Line 5, Col 16, "Named field 'item' is used more than once.");
+            (Error 3585, Line 5, Col 12, Line 5, Col 16, "If a multicase union type is a struct, then all fields with the same name must be of the same type. This rule applies also to the generated 'Item' name in case of unnamed fields.");
+            (Error 3585, Line 5, Col 27, Line 5, Col 31, "If a multicase union type is a struct, then all fields with the same name must be of the same type. This rule applies also to the generated 'Item' name in case of unnamed fields.")
         ]
         
     [<Fact>]
@@ -423,7 +419,10 @@ type StructUnion =
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
-            (Error 3176, Line 5, Col 27, Line 5, Col 31, "Named field 'Item' is used more than once.")
+            (Error 3176, Line 5, Col 12, Line 5, Col 16, "Named field 'Item' is used more than once.");
+            (Error 3585, Line 5, Col 12, Line 5, Col 16, "If a multicase union type is a struct, then all fields with the same name must be of the same type. This rule applies also to the generated 'Item' name in case of unnamed fields.");
+            (Error 3585, Line 5, Col 27, Line 5, Col 31, "If a multicase union type is a struct, then all fields with the same name must be of the same type. This rule applies also to the generated 'Item' name in case of unnamed fields.");
+            (Error 3585, Line 6, Col 12, Line 6, Col 18, "If a multicase union type is a struct, then all fields with the same name must be of the same type. This rule applies also to the generated 'Item' name in case of unnamed fields.")
         ]
 
     [<Fact>]
@@ -527,7 +526,6 @@ namespace Foo
 [<Struct>]
 type StructUnion = A of int | B of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
@@ -556,7 +554,6 @@ type StructUnion =
     | B of string
     | C of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
 
@@ -571,7 +568,6 @@ type StructUnion =
     | B of string
     | C of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
         
@@ -585,7 +581,6 @@ type StructUnion =
     | B of string
     | C of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
         
@@ -599,7 +594,6 @@ type StructUnion =
     | B of string
     | C of string
         """
-        |> withLangVersionPreview
         |> typecheck
         |> shouldSucceed
 
@@ -652,7 +646,6 @@ type StructUnion =
     | B of string * b: string
     | C of c: string * string * c3: int
         """
-        |> withLangVersionPreview
         |> typecheck        
         |> shouldSucceed
         
@@ -713,7 +706,7 @@ let main _argv =
     [<InlineData(15)>]
     [<InlineData(65)>]
     [<Theory>]
-    let ``Struct DU compilation does not embarassingly fail when having many data-less cases`` (countOfCases:int) =
+    let ``Struct DU compilation does not embarrassingly fail when having many data-less cases`` (countOfCases:int) =
         createMassiveStructDuProgram countOfCases
         |> asExe
         |> compile
@@ -752,6 +745,18 @@ type GenericStructDu<'T> = EmptyFirst | SingleVal of f:'T | DoubleVal of f2:'T *
         """
         |> compile
         |> shouldSucceed
+        
+    [<Fact>]
+    let ``Error when declaring an abstract member in union struct type`` () =
+        Fsx """
+[<Struct>]
+type U = 
+  | A | B
+  abstract M : unit -> unit
+       """
+        |> typecheck 
+        |> shouldFail
+        |> withSingleDiagnostic (Error 912, Line 5, Col 3, Line 5, Col 28, "This declaration element is not permitted in an augmentation")
 
     [<Fact>]
     let ``Regression 16282 DefaultAugment false on a struct union with fields`` ()  =
@@ -798,6 +803,77 @@ printf $"{result1};{result2}"
         |> shouldSucceed
         |> run
         |> verifyOutput "333;666"
+
+    [<Fact>]
+    let ``Struct DU with field overlap can be reflected`` ()  =
+        Fsx """module Test
+open Microsoft.FSharp.Reflection
+
+[<Struct>]
+type MySharedStructDu =
+    | A of a:int64
+    | B of a:int64
+    | C of a:int64 * s:char
+    | D of s:char * a:int64
+
+printf "Size=%i;" (sizeof<MySharedStructDu>)
+for value in [A 1L; B 2L;D('x',3L)] do
+    let caseInfo, inner = FSharpValue.GetUnionFields(value, typeof<MySharedStructDu>)
+    printf $"%s{caseInfo.Name}=%A{inner};"
+
+        """
+        |> asExe
+        |> compile
+        |> shouldSucceed
+        |> run
+        |> verifyOutput """Size=16;A=[|1L|];B=[|2L|];D=[|'x'; 3L|];"""
+
+    [<Fact>]
+    let ``Field overlap does carry attributes for all cases`` ()  =
+        Fsx """module Test
+
+[<Struct;NoComparison;NoEquality>]
+type MySharedStructDu =
+    | A of a:int64
+    | B of a:int64
+    | C of a:int64 * s:char
+    | D of s:char * a:int64
+
+        """
+        |> asLibrary
+        |> compile
+        |> verifyIL [ // Prop "a" is mapped 4x, for cases 0,1,2,3. For case 3/D, it comes at position one. Prop "s" is mapped to two cases.
+     """
+        .property instance int64 a()
+    {
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 00 00 00 00 00 00 00 00 00 00 ) 
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 01 00 00 00 00 00 00 00 00 00 ) 
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 02 00 00 00 00 00 00 00 00 00 ) 
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 03 00 00 00 01 00 00 00 00 00 ) 
+      .custom instance void [runtime]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+      .custom instance void [runtime]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 ) 
+      .get instance int64 Test/MySharedStructDu::get_a()
+    } 
+    .property instance char s()
+    {
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 02 00 00 00 01 00 00 00 00 00 ) 
+      .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
+                                                                                                  int32,
+                                                                                                  int32) = ( 01 00 04 00 00 00 03 00 00 00 00 00 00 00 00 00 ) 
+      .custom instance void [runtime]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+      .custom instance void [runtime]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 ) 
+      .get instance char Test/MySharedStructDu::get_s()
+    }   """ ]
 
     [<Fact>]
     let ``Custom ValueOption keeps working`` () = 
@@ -859,18 +935,21 @@ let main args =
     {
       .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
                                                                                                   int32) = ( 01 00 08 00 00 00 0A 00 00 00 00 00 ) 
+      .custom instance void [runtime]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+      .custom instance void [runtime]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 ) 
       
       .maxstack  8
       IL_0000:  ldc.i4.s   10
       IL_0002:  newobj     instance void Foo/StructUnion::.ctor(int32)
       IL_0007:  ret
     }""";(*This is a 'maker method' New{CaseName} used for cases which do have fields associated with them, + the _tag gets initialized*)"""
-            NewCase3(string _field1_3,
-                     string _field2_3) cil managed
+            NewCase3(string _field1_3, string _field2_3) cil managed
     {
       .custom instance void [FSharp.Core]Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype [FSharp.Core]Microsoft.FSharp.Core.SourceConstructFlags,
                                                                                                   int32) = ( 01 00 08 00 00 00 02 00 00 00 00 00 ) 
-      
+      .custom instance void [runtime]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+      .custom instance void [runtime]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
+
       .maxstack  3
       .locals init (valuetype Foo/StructUnion V_0)
       IL_0000:  ldloca.s   V_0

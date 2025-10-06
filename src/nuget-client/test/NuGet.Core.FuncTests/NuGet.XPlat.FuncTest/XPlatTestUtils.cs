@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,71 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NuGet.CommandLine.XPlat;
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 
 namespace NuGet.XPlat.FuncTest
 {
     public static class XPlatTestUtils
     {
-        /// <summary>
-        /// Add a dependency to project.json.
-        /// </summary>
-        public static void AddDependency(JObject json, string id, string version)
-        {
-            var deps = (JObject)json["dependencies"];
-
-            deps.Add(new JProperty(id, version));
-        }
-
-        /// <summary>
-        /// Basic netcoreapp1.0 config
-        /// </summary>
-        public static JObject BasicConfigNetCoreApp
-        {
-            get
-            {
-                var json = new JObject();
-
-                var frameworks = new JObject
-                {
-                    ["netcoreapp1.0"] = new JObject()
-                };
-
-                json["dependencies"] = new JObject();
-
-                json["frameworks"] = frameworks;
-
-                return json;
-            }
-        }
-
-        /// <summary>
-        /// Write a json file to disk.
-        /// </summary>
-        public static void WriteJson(JObject json, string outputPath)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-
-            using (var fs = File.Open(outputPath, FileMode.CreateNew))
-            using (var sw = new StreamWriter(fs))
-            using (var writer = new JsonTextWriter(sw))
-            {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-
-                var serializer = new JsonSerializer();
-                serializer.Serialize(writer, json);
-            }
-        }
-
         /// <summary>
         /// Copies test sources configuration to a test folder
         /// </summary>
@@ -88,7 +36,7 @@ namespace NuGet.XPlat.FuncTest
 
         private const string ProtocolConfigFileName = "NuGet.Protocol.FuncTest.config";
 
-        public static string ReadApiKey(string feedName)
+        public static string? ReadApiKey(string feedName)
         {
             var testSettingsFolder = TestSources.GetConfigFileRoot();
             var protocolConfigPath = Path.Combine(testSettingsFolder, ProtocolConfigFileName);
@@ -97,7 +45,7 @@ namespace NuGet.XPlat.FuncTest
             using (Stream configStream = File.OpenRead(protocolConfigPath))
             {
                 var doc = XDocument.Load(XmlReader.Create(configStream));
-                var element = doc.Root.Element(feedName);
+                var element = doc.Root?.Element(feedName);
 
                 return element?.Element("ApiKey")?.Value;
             }
@@ -142,7 +90,7 @@ namespace NuGet.XPlat.FuncTest
             SimpleTestPathContext pathContext,
             SimpleTestPackageContext package,
             string projectFrameworks,
-            string packageFramework = null)
+            string? packageFramework = null)
         {
             var project = SimpleTestProjectContext.CreateNETCoreWithSDK(
                     projectName: projectName,
@@ -182,8 +130,8 @@ namespace NuGet.XPlat.FuncTest
 
         public static SimpleTestPackageContext CreatePackage(string packageId = "packageX",
             string packageVersion = "1.0.0",
-            string frameworkString = null,
-            PackageType packageType = null,
+            string? frameworkString = null,
+            PackageType? packageType = null,
             bool developmentDependency = false)
         {
             var package = new SimpleTestPackageContext()
@@ -209,23 +157,20 @@ namespace NuGet.XPlat.FuncTest
             return package;
         }
 
-        internal static PackageReferenceArgs GetPackageReferenceArgs(string packageId, SimpleTestProjectContext project)
+        internal static PackageReferenceArgs GetPackageReferenceArgs(TestCommandOutputLogger logger, string packageId, SimpleTestProjectContext project)
         {
-            var logger = new TestCommandOutputLogger();
             return new PackageReferenceArgs(project.ProjectPath, logger)
             {
                 PackageId = packageId
             };
         }
 
-        internal static PackageReferenceArgs GetPackageReferenceArgs(string packageId, string packageVersion, SimpleTestProjectContext project,
-            string frameworks = "", string packageDirectory = "", string sources = "", bool noRestore = false, bool noVersion = false, bool prerelease = false)
+        internal static PackageReferenceArgs GetPackageReferenceArgs(TestCommandOutputLogger logger, string packageId, string packageVersion, SimpleTestProjectContext project, string frameworks = "", string packageDirectory = "", string sources = "", bool noRestore = false, bool noVersion = false, bool prerelease = false, params SimpleTestProjectContext[] dependentProjects)
         {
-            var logger = new TestCommandOutputLogger();
             var dgFilePath = string.Empty;
             if (!noRestore)
             {
-                dgFilePath = CreateDGFileForProject(project);
+                dgFilePath = CreateDGFileForProject(project, dependentProjects);
             }
             return new PackageReferenceArgs(project.ProjectPath, logger)
             {
@@ -268,12 +213,12 @@ namespace NuGet.XPlat.FuncTest
 
         // Assert Helper Methods
 
-        public static bool ValidateReference(XElement root, string packageId, string version, PackageType packageType = null, bool developmentDependency = false)
+        public static bool ValidateReference(XElement root, string packageId, string version, PackageType? packageType = null, bool developmentDependency = false, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
 
             var packageReferences = root
                     .Descendants(GetReferenceType(packageType))
-                    .Where(d => d.FirstAttribute.Value.Equals(packageId, StringComparison.OrdinalIgnoreCase));
+                    .Where(d => StringComparer.FromComparison(stringComparison).Equals(d.FirstAttribute?.Value, packageId));
 
             if (packageReferences.Count() != 1)
             {
@@ -285,7 +230,7 @@ namespace NuGet.XPlat.FuncTest
                 .Attribute("Version");
 
             if (versionAttribute == null ||
-                !versionAttribute.Value.Equals(version, StringComparison.OrdinalIgnoreCase))
+                !versionAttribute.Value.Equals(version, stringComparison))
             {
                 return false;
             }
@@ -303,7 +248,7 @@ namespace NuGet.XPlat.FuncTest
                 var includeAssets = packageReferences.First().Element("IncludeAssets");
 
                 if (includeAssets == null ||
-                    !includeAssets.Value.Equals("runtime; build; native; contentfiles; analyzers; buildtransitive", StringComparison.OrdinalIgnoreCase))
+                    !includeAssets.Value.Equals("runtime; build; native; contentfiles; analyzers; buildtransitive", stringComparison))
                 {
                     return false;
                 }
@@ -322,27 +267,26 @@ namespace NuGet.XPlat.FuncTest
             return project.AssetsFile.Targets.Any(t => t.Libraries.Any(library => string.Equals(library.Name, packageId, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public static bool ValidateNoReference(XElement root, string packageId, PackageType packageType = null)
+        public static bool ValidateNoReference(XElement root, string packageId, PackageType? packageType = null)
         {
             var packageReferences = root
                     .Descendants(GetReferenceType(packageType))
-                    .Where(d => d.FirstAttribute.Value.Equals(packageId, StringComparison.OrdinalIgnoreCase));
+                    .Where(d => StringComparer.OrdinalIgnoreCase.Equals(d.FirstAttribute?.Value, packageId));
 
             return !(packageReferences.Any());
         }
 
-        public static XElement GetItemGroupForFramework(XElement root, string framework, PackageType packageType = null)
+        public static XElement GetItemGroupForFramework(XElement root, string framework, PackageType? packageType = null)
         {
             var itemGroups = root.Descendants("ItemGroup");
             return itemGroups
-                    .Where(i => i.Descendants(GetReferenceType(packageType)).Any() &&
-                                i.FirstAttribute != null &&
-                                i.FirstAttribute.Name.LocalName.Equals("Condition", StringComparison.OrdinalIgnoreCase) &&
-                                i.FirstAttribute.Value.Trim().Equals(GetTargetFrameworkCondition(framework), StringComparison.OrdinalIgnoreCase))
-                     .First();
+                .First(i => i.Descendants(GetReferenceType(packageType)).Any() &&
+                            i.FirstAttribute != null &&
+                            i.FirstAttribute.Name.LocalName.Equals("Condition", StringComparison.OrdinalIgnoreCase) &&
+                            i.FirstAttribute.Value.Trim().Equals(GetTargetFrameworkCondition(framework), StringComparison.OrdinalIgnoreCase));
         }
 
-        public static XElement GetItemGroupForAllFrameworks(XElement root, PackageType packageType = null)
+        public static XElement? GetItemGroupForAllFrameworks(XElement root, PackageType? packageType = null)
         {
             var itemGroups = root.Descendants("ItemGroup");
             var referenceType = GetReferenceType(packageType);
@@ -350,10 +294,10 @@ namespace NuGet.XPlat.FuncTest
             {
                 var x = i.Descendants(referenceType);
             }
+
             return itemGroups
-                    .Where(i => i.Descendants(referenceType).Any() &&
-                                i.FirstAttribute == null)
-                     .First();
+                .FirstOrDefault(i => i.Descendants(referenceType).Any() &&
+                            i.FirstAttribute == null);
         }
 
         public static bool ValidateTwoReferences(XElement root, SimpleTestPackageContext packageX, SimpleTestPackageContext packageY)
@@ -370,12 +314,16 @@ namespace NuGet.XPlat.FuncTest
                 Directory.EnumerateFiles(Path.Combine(packageDirectoryPath, package.Id.ToLower(), package.Version.ToLower())).Any();
         }
 
-        public static string CreateDGFileForProject(SimpleTestProjectContext project)
+        public static string CreateDGFileForProject(SimpleTestProjectContext project, params SimpleTestProjectContext[] projectRefs)
         {
             var dgSpec = new DependencyGraphSpec();
-            var dgFilePath = Path.Combine(Directory.GetParent(project.ProjectPath).FullName, "temp.dg");
+            var dgFilePath = Path.Combine(Directory.GetParent(project.ProjectPath)!.FullName, "temp.dg");
             dgSpec.AddRestore(project.ProjectName);
             dgSpec.AddProject(project.PackageSpec);
+            foreach (var projectRef in projectRefs)
+            {
+                dgSpec.AddProject(projectRef.PackageSpec);
+            }
             dgSpec.Save(dgFilePath);
             return dgFilePath;
         }
@@ -418,7 +366,7 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
-        public static string GetReferenceType(PackageType packageType)
+        public static string GetReferenceType(PackageType? packageType)
         {
             var referenceType = "PackageReference";
 

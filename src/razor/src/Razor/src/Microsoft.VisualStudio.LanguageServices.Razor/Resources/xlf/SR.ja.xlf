@@ -7,6 +7,11 @@
         <target state="translated">値を null または空の文字列にすることはできません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="LanguageServer_Initialization_Failed">
+        <source>{0} failed to initialize.  Please report a problem via Help -&gt; Send Feedback -&gt; Report a Problem.  Status = {1}.  Exception = {2}</source>
+        <target state="translated">{0} を初期化できませんでした。[ヘルプ] -&gt; [フィードバックの送信] -&gt; [問題の報告] で問題を報告してください。状態 = {1}。例外 = {2}</target>
+        <note>{0} is the language server name. Status is the status of the initialization. Exception is the exception encountered during initialization.</note>
+      </trans-unit>
       <trans-unit id="ProximityExpression_Dialog_Description">
         <source>Razor Debugger</source>
         <target state="translated">Razor デバッガー</target>
@@ -15,6 +20,11 @@
       <trans-unit id="ProximityExpression_Dialog_Title">
         <source>Determining proximity expressions...</source>
         <target state="translated">近接式を判別しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="View Code">
+        <source>View Code</source>
+        <target state="translated">コードの表示</target>
         <note />
       </trans-unit>
     </body>

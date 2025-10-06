@@ -23,7 +23,30 @@ internal readonly partial record struct Checksum
     private static readonly ObjectPool<XxHash128> s_incrementalHashPool =
         new(() => new(), size: 20);
 
+    // Pool of ObjectWriters to reduce allocations. The pool size is intentionally small as the writers are used for such
+    // a short period that concurrent usage of different items from the pool is infrequent.
+    private static readonly ObjectPool<ObjectWriter> s_objectWriterPool =
+        new(() => new(SerializableBytes.CreateWritableStream(), leaveOpen: true, writeValidationBytes: true), size: 4);
+
     public static Checksum Create(IEnumerable<string?> values)
+    {
+        using var pooledHash = s_incrementalHashPool.GetPooledObject();
+
+        foreach (var value in values)
+        {
+            pooledHash.Object.Append(MemoryMarshal.AsBytes(value.AsSpan()));
+            pooledHash.Object.Append(MemoryMarshal.AsBytes("\0".AsSpan()));
+        }
+
+        Span<byte> hash = stackalloc byte[XXHash128SizeBytes];
+        pooledHash.Object.GetHashAndReset(hash);
+        return From(hash);
+    }
+
+    public static Checksum Create(ImmutableArray<string> values)
+        => Create(ImmutableCollectionsMarshal.AsArray(values).AsSpan());
+
+    public static Checksum Create(ReadOnlySpan<string> values)
     {
         using var pooledHash = s_incrementalHashPool.GetPooledObject();
 
@@ -57,15 +80,25 @@ internal readonly partial record struct Checksum
 
     public static Checksum Create<T>(T @object, Action<T, ObjectWriter> writeObject)
     {
-        using var stream = SerializableBytes.CreateWritableStream();
+        // Obtain a writer from the pool
+        var objectWriter = s_objectWriterPool.Allocate();
 
-        using (var objectWriter = new ObjectWriter(stream, leaveOpen: true))
-        {
-            writeObject(@object, objectWriter);
-        }
+        // Invoke the callback to Write object into objectWriter
+        writeObject(@object, objectWriter);
 
+        // Include validation bytes in the new checksum from the stream
+        var stream = objectWriter.BaseStream;
         stream.Position = 0;
-        return Create(stream);
+        var newChecksum = Create(stream);
+
+        // Reset object writer back to it's initial state, including the validation bytes
+        objectWriter.Reset();
+        objectWriter.WriteValidationBytes();
+
+        // Release the writer back to the pool
+        s_objectWriterPool.Free(objectWriter);
+
+        return newChecksum;
     }
 
     public static Checksum Create(Checksum checksum1, Checksum checksum2)
@@ -73,6 +106,9 @@ internal readonly partial record struct Checksum
 
     public static Checksum Create(Checksum checksum1, Checksum checksum2, Checksum checksum3)
         => Create(stackalloc[] { checksum1, checksum2, checksum3 });
+
+    public static Checksum Create(Checksum checksum1, Checksum checksum2, Checksum checksum3, Checksum checksum4)
+        => Create(stackalloc[] { checksum1, checksum2, checksum3, checksum4 });
 
     public static Checksum Create(ReadOnlySpan<Checksum> hashes)
     {
@@ -83,70 +119,64 @@ internal readonly partial record struct Checksum
 
     public static Checksum Create(ArrayBuilder<Checksum> checksums)
     {
-        using var stream = SerializableBytes.CreateWritableStream();
+        // Max alloc 1 KB on stack
+        const int maxStackAllocCount = 1024 / Checksum.HashSize;
 
-        using (var writer = new ObjectWriter(stream, leaveOpen: true))
+        var checksumsCount = checksums.Count;
+        if (checksumsCount <= maxStackAllocCount)
         {
-            foreach (var checksum in checksums)
-                checksum.WriteTo(writer);
-        }
+            Span<Checksum> hashes = stackalloc Checksum[checksumsCount];
+            for (var i = 0; i < checksumsCount; i++)
+                hashes[i] = checksums[i];
 
-        stream.Position = 0;
-        return Create(stream);
+            return Create(hashes);
+        }
+        else
+        {
+            using var pooledHash = s_incrementalHashPool.GetPooledObject();
+            Span<Checksum> checksumsSpan = stackalloc Checksum[maxStackAllocCount];
+            var checksumsIndex = 0;
+
+            while (checksumsIndex < checksumsCount)
+            {
+                var count = Math.Min(maxStackAllocCount, checksumsCount - checksumsIndex);
+
+                for (var checksumsSpanIndex = 0; checksumsSpanIndex < count; checksumsSpanIndex++, checksumsIndex++)
+                    checksumsSpan[checksumsSpanIndex] = checksums[checksumsIndex];
+
+                var hashSpan = checksumsSpan.Slice(0, count);
+                pooledHash.Object.Append(MemoryMarshal.AsBytes(hashSpan));
+            }
+
+            Span<byte> hash = stackalloc byte[XXHash128SizeBytes];
+            pooledHash.Object.GetHashAndReset(hash);
+            return From(hash);
+        }
     }
 
     public static Checksum Create(ImmutableArray<Checksum> checksums)
     {
-        using var stream = SerializableBytes.CreateWritableStream();
+        var hashes = ImmutableCollectionsMarshal.AsArray(checksums).AsSpan();
 
-        using (var writer = new ObjectWriter(stream, leaveOpen: true))
-        {
-            foreach (var checksum in checksums)
-                checksum.WriteTo(writer);
-        }
-
-        stream.Position = 0;
-        return Create(stream);
+        return Create(hashes);
     }
 
     public static Checksum Create(ImmutableArray<byte> bytes)
+        => Create(ImmutableCollectionsMarshal.AsArray(bytes).AsSpan());
+
+    public static Checksum Create(ReadOnlySpan<byte> bytes)
     {
-        using var stream = SerializableBytes.CreateWritableStream();
-
-        using (var writer = new ObjectWriter(stream, leaveOpen: true))
-        {
-            for (var i = 0; i < bytes.Length; i++)
-                writer.WriteByte(bytes[i]);
-        }
-
-        stream.Position = 0;
-        return Create(stream);
+        Span<byte> destination = stackalloc byte[XXHash128SizeBytes];
+        XxHash128.Hash(bytes, destination);
+        return From(destination);
     }
 
-    public static Checksum Create<T>(T value, ISerializerService serializer)
-    {
-        using var stream = SerializableBytes.CreateWritableStream();
-        using var context = new SolutionReplicationContext();
-
-        using (var objectWriter = new ObjectWriter(stream, leaveOpen: true))
-        {
-            serializer.Serialize(value!, objectWriter, context, CancellationToken.None);
-        }
-
-        stream.Position = 0;
-        return Create(stream);
-    }
-
-    public static Checksum Create(ParseOptions value, ISerializerService serializer)
-    {
-        using var stream = SerializableBytes.CreateWritableStream();
-
-        using (var objectWriter = new ObjectWriter(stream, leaveOpen: true))
-        {
-            serializer.SerializeParseOptions(value, objectWriter);
-        }
-
-        stream.Position = 0;
-        return Create(stream);
-    }
+    public static Checksum Create<T>(T value, ISerializerService serializer, CancellationToken cancellationToken)
+        => Create(
+            (value, serializer, cancellationToken),
+            static (tuple, writer) =>
+            {
+                var (value, serializer, cancellationToken) = tuple;
+                serializer.Serialize(value!, writer, cancellationToken);
+            });
 }

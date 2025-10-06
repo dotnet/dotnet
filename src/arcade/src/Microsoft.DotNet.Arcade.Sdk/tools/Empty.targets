@@ -22,5 +22,6 @@
   <Target Name="Test"/>
   <Target Name="Pack"/>
   <Target Name="Publish"/>
+  <Target Name="ProcessFrameworkReferences" />
 
 </Project>

@@ -24,7 +24,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.UniqueName, actualResult.UniqueName);
         }
 
-        public static TheoryData IProjectMetadataContextInfos => new TheoryData<IProjectMetadataContextInfo>
+        public static TheoryData<IProjectMetadataContextInfo> IProjectMetadataContextInfos => new()
             {
                 {
                     new ProjectMetadataContextInfo(

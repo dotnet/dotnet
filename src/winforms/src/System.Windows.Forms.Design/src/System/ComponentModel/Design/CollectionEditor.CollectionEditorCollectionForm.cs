@@ -807,7 +807,7 @@ public partial class CollectionEditor
                 {
                     if (_listBox.SelectedItems.Count > 1)
                     {
-                        List<ListItem> toBeDeleted = _listBox.SelectedItems.Cast<ListItem>().ToList();
+                        List<ListItem> toBeDeleted = [.._listBox.SelectedItems.Cast<ListItem>()];
                         foreach (ListItem item in toBeDeleted)
                         {
                             RemoveInternal(item);
@@ -894,7 +894,7 @@ public partial class CollectionEditor
                         }
                         else
                         {
-                            throw new Exception(string.Format(SR.CollectionEditorCantRemoveItem, GetDisplayText(item)));
+                            throw new InvalidOperationException(string.Format(SR.CollectionEditorCantRemoveItem, GetDisplayText(item)));
                         }
                     }
                     catch (Exception ex)
@@ -1024,7 +1024,7 @@ public partial class CollectionEditor
         {
             if (_suspendEnabledCount > 0)
             {
-                // We're in the midst of a suspend/resume block  Resume should call us back.
+                // We're in the midst of a suspend/resume block Resume should call us back.
                 return;
             }
 
@@ -1244,6 +1244,7 @@ public partial class CollectionEditor
             /// <summary>
             ///  Retrieves the type converter for this object.
             /// </summary>
+            [RequiresUnreferencedCode("Generic TypeConverters may require the generic types to be annotated. For example, NullableConverter requires the underlying type to be DynamicallyAccessedMembers All.")]
             TypeConverter? ICustomTypeDescriptor.GetConverter() => null;
 
             /// <summary>
@@ -1259,6 +1260,7 @@ public partial class CollectionEditor
             /// <summary>
             ///  Retrieves the an editor for this object.
             /// </summary>
+            [RequiresUnreferencedCode("Design-time attributes are not preserved when trimming. Types referenced by attributes like EditorAttribute and DesignerAttribute may not be available after trimming.")]
             object? ICustomTypeDescriptor.GetEditor(Type editorBaseType) => null;
 
             /// <summary>
@@ -1284,6 +1286,7 @@ public partial class CollectionEditor
             ///  This may differ from the set of properties the class provides.
             ///  If the component is sited, the site may add or remove additional properties.
             /// </summary>
+            [RequiresUnreferencedCode("PropertyDescriptor's PropertyType cannot be statically discovered.")]
             PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() => _properties;
 
             /// <summary>
@@ -1292,13 +1295,14 @@ public partial class CollectionEditor
             ///  If the component is sited, the site may add or remove additional properties.
             ///  The returned array of properties will be filtered by the given set of attributes.
             /// </summary>
+            [RequiresUnreferencedCode("PropertyDescriptor's PropertyType cannot be statically discovered. The public parameterless constructor or the 'Default' static field may be trimmed from the Attribute's Type.")]
             PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[]? attributes) => _properties;
 
             /// <summary>
             ///  Retrieves the object that directly depends on this value being edited.
-            ///  This is generally the object that is required for the PropertyDescriptor's GetValue and SetValue  methods.
-            ///  If 'null' is passed for the PropertyDescriptor, the ICustomComponent descriptor implementation should return the default object,
-            ///  that is the main object that exposes the properties and attributes
+            ///  This is generally the object that is required for the PropertyDescriptor's GetValue and SetValue methods.
+            ///  If 'null' is passed for the PropertyDescriptor, the ICustomComponent descriptor implementation should
+            ///  return the default object, that is the main object that exposes the properties and attributes.
             /// </summary>
             object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor? pd) => this;
         }

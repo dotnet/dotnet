@@ -1,13 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 
-namespace Microsoft.VisualStudio.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal class TestProjectChangeDescription : IProjectChangeDescription
 {
@@ -64,7 +65,7 @@ internal class TestProjectChangeDescription : IProjectChangeDescription
             {
                 var x = before.Properties[key];
                 var y = after.Properties[key];
-                return object.Equals(x, y);
+                return Equals(x, y);
             });
 
             return new Diff()

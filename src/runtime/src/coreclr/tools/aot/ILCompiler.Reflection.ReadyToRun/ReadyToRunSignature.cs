@@ -1672,6 +1672,10 @@ namespace ILCompiler.Reflection.ReadyToRun
                     builder.Append("BYREF_WRITE_BARRIER");
                     break;
 
+                case ReadyToRunHelper.BulkWriteBarrier:
+                    builder.Append("BULK_WRITE_BARRIER");
+                    break;
+
                 // Array helpers
                 case ReadyToRunHelper.Stelem_Ref:
                     builder.Append("STELEM_REF");
@@ -1759,6 +1763,10 @@ namespace ILCompiler.Reflection.ReadyToRun
 
                 case ReadyToRunHelper.Unbox_Nullable:
                     builder.Append("UNBOX_NULLABLE");
+                    break;
+
+                case ReadyToRunHelper.Unbox_TypeTest:
+                    builder.Append("UNBOX_TYPETEST");
                     break;
 
                 case ReadyToRunHelper.NewMultiDimArr:
@@ -1889,10 +1897,6 @@ namespace ILCompiler.Reflection.ReadyToRun
                     break;
 
                 // Floating point conversions
-                case ReadyToRunHelper.Dbl2Int:
-                    builder.Append("DBL2INT");
-                    break;
-
                 case ReadyToRunHelper.Dbl2IntOvf:
                     builder.Append("DBL2INTOVF");
                     break;
@@ -1905,10 +1909,6 @@ namespace ILCompiler.Reflection.ReadyToRun
                     builder.Append("DBL2LNGOVF");
                     break;
 
-                case ReadyToRunHelper.Dbl2UInt:
-                    builder.Append("DBL2UINT");
-                    break;
-
                 case ReadyToRunHelper.Dbl2UIntOvf:
                     builder.Append("DBL2UINTOVF");
                     break;
@@ -1919,6 +1919,14 @@ namespace ILCompiler.Reflection.ReadyToRun
 
                 case ReadyToRunHelper.Dbl2ULngOvf:
                     builder.Append("DBL2ULNGOVF");
+                    break;
+
+                case ReadyToRunHelper.Lng2Flt:
+                    builder.Append("LNG2FLT");
+                    break;
+
+                case ReadyToRunHelper.ULng2Flt:
+                    builder.Append("ULNG2FLT");
                     break;
 
                 // Floating point ops

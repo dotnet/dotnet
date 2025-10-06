@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">全部</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引數不能為 Null 或空白</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">值必須大於或等於 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigErrorDialogBoxTitle">
+        <source>NuGet operation failed</source>
+        <target state="translated">NuGet 作業失敗</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
+        <source>The default credentials credential provider failed to load.</source>
+        <target state="translated">無法載入預設認證的認證提供者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_ImportedProvider">
+        <source>Failed to load credential provider from assembly {0}.</source>
+        <target state="translated">無法從組件 {0} 載入認證提供者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_PluginCredentialProvider">
+        <source>The plugin credential providers could not be loaded.</source>
+        <target state="translated">無法載入外掛程式認證提供者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioAccountProvider">
+        <source>The Visual Studio or VSTS account provider failed to load.</source>
+        <target state="translated">無法載入 Visual Studio 或 VSTS 帳戶提供者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioCredentialProvider">
+        <source>The Visual Studio credential provider failed to load.</source>
+        <target state="translated">無法載入 Visual Studio 認證提供者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DTE_ProjectUnsupported">
+        <source>The project '{0}' is unsupported</source>
+        <target state="translated">不支援專案 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddGacReference">
+        <source>Added reference '{0}' in the Global Assembly Cache to project '{1}'</source>
+        <target state="translated">已將全域組件快取中的參考 '{0}' 新增至專案 '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToProject">
+        <source>Added file '{0}' to project '{1}'.</source>
+        <target state="translated">已將檔案 '{0}' 加入專案 '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedReferenceToProject">
+        <source>Added reference '{0}' to project:'{1}'. The Reference was Resolved To Package (resolvedToPackage):'{2}', where Reference Path from DTE(dteOriginalPath):'{3}' and Reference Path from package reference(assemblyFullPath):'{4}'.</source>
+        <target state="translated">已將參考 '{0}' 新增至專案: '{1}'。參考已解析到套件 (resolvedToPackage): '{2}'，其中來自 DTE(dteOriginalPath) 的參考路徑為: '{3}'，來自套件參考(assemblyFullPath) 的參考路徑為: '{4}'。</target>
+        <note>{0} is the reference name
+{1} is the project name
+{2} is boolean flag (true or false)
+{3} is the project full path
+{4} is the reference assembly full path</note>
+      </trans-unit>
+      <trans-unit id="Debug_RemoveReference">
+        <source>Removed reference '{0}' from project '{1}'</source>
+        <target state="translated">已從專案 '{1}' 移除參考 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'</source>
+        <target state="translated">已移除檔案 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'</source>
+        <target state="translated">已從資料夾 '{1}' 移除檔案 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">已移除資料夾 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateParentFolder">
+        <source>Failed to create parent folder for file '{0}' in project {1}.</source>
+        <target state="translated">無法為專案 '{1}' 中的檔案 {0} 建立上層資料夾。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>File '{0}' does not exist on disk. </source>
+        <target state="translated">磁碟上沒有檔案 '{0}'。 </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidJson">
+        <source>'{0}' is an invalid json file.</source>
+        <target state="translated">'{0}' 是無效的 json 檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleFrameworks">
+        <source>Failed to migrate project '{0}'. The project may only contain one target framework.</source>
+        <target state="translated">無法遷移專案 '{0}'。該專案只可包含一個目標架構。</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Error_NuGetConfig_InvalidState">
+        <source>One or more NuGet.Config files contain an error.</source>
+        <target state="translated">一或多個 NuGet.Config 檔案包含錯誤。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_InvalidSource">
+        <source>The source specified is invalid.</source>
+        <target state="translated">指定的來源無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueName">
+        <source>The name specified has already been added to the list of available package sources.</source>
+        <target state="translated">指定的名稱已新增至可用套件來源清單中。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources.</source>
+        <target state="translated">指定的來源已新增至可用套件來源清單中。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">取得套件弱點資料時發生錯誤: {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WhileLoadingConfigForBindingRedirects">
+        <source>Failed to load '{0}', while updating binding redirects. {1}</source>
+        <target state="translated">更新繫結重新導向時無法載入 '{0}'。{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_InvalidContinuationToken">
+        <source>Invalid token</source>
+        <target state="translated">語彙基元無效</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddFacadeReference">
+        <source>Failed to add reference to '{0}'. The package '{1}' tried to add a framework reference to '{0}'. This reference is not required to be explicitly added by a package.</source>
+        <target state="translated">無法將參考新增到 '{0}'。套件 '{1}' 已嘗試將 Framework 參考新增到 '{0}'。此參考不需要由套件明確新增。</target>
+        <note>{0} is the framework facade reference name
+{1} is the package name</note>
+      </trans-unit>
+      <trans-unit id="FailedToAddGacReference">
+        <source>Failed to add reference. The package '{0}' tried to add a framework reference to '{1}' which was not found in the GAC. This is possibly a bug in the package. Please contact the package owners for assistance.</source>
+        <target state="translated">無法加入參考。封裝 '{0}' 嘗試將 Framework 參考加入 '{1}' 中，但其無法在 GAC 中找到。可能是因為封裝中存在錯誤。請連絡封裝擁有者尋求協助。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddReference">
+        <source>Failed to add reference to '{0}'.</source>
+        <target state="translated">無法將參考加入到 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToRemoveReference">
+        <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
+        <target state="translated">以不區分大小寫的方式搜尋要移除的參考 '{0}' 時，傳回了不止一筆相符項目。無法執行要求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateBindingRedirects">
+        <source>Failed to update binding redirects for {0} : {1}</source>
+        <target state="translated">無法更新 {0} 的繫結重新導向: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallingPackage">
+        <source>Installing NuGet package {0}.</source>
+        <target state="translated">正在安裝 NuGet 套件 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildPropertyNotFound">
+        <source>The {0} MSBuild property could not be found for project '{1}'.</source>
+        <target state="translated">找不到專案 '{1}' 的 {0} MSBuild 屬性。</target>
+        <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="PathToExistingFileNotPresent">
+        <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
+        <target state="translated">在磁碟上找不到現有檔案的路徑 '{0}'。無法加入專案 '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">作業因為無法載入專案 {0} 的詳細資料而失敗。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectUpgradeAndRetargetErrorMessage">
+        <source>Some NuGet packages were installed using a target framework different from the current target framework and may need to be reinstalled. Visit https://docs.nuget.org/docs/workflows/reinstalling-packages for more information.  Packages affected: {0}</source>
+        <target state="translated">己使用不同於目前的目標架構來安裝部分 NuGet 套件，且可能需要重新安裝。如需詳細資訊，請瀏覽 https://docs.nuget.org/docs/workflows/reinstalling-packages。受影響的套件: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectWithIdNotFound">
+        <source>A project with ID '{0}' was not found.</source>
+        <target state="translated">找不到識別碼為 '{0}' 的專案。</target>
+        <note>{0} is the project's unique ID (ProjectGuid)</note>
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}' 不能是空值。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">未儲存解決方案。請先儲存解決方案，再管理 NuGet 套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink">
+        <source>migration document</source>
+        <target state="translated">移轉文件</target>
+        <note>The text has the document hyperlink applied to it.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
+        <source>.</source>
+        <target state="translated">。</target>
+        <note>This test goes immediately after the document link.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
+        <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</source>
+        <target state="translated">因為有一或多個套件與您的專案不相容，所以 NuGet 作業失敗。'{0}' ('{1}') 專案架構已淘汰。如需如何將專案移轉至支援架構的相關詳細資訊，請參閱</target>
+        <note>This text goes immediately before the document link.
+{0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
+{1} is the short folder representation of the framework (e.g. "net45").</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_ProjectList">
+        <source>The following project(s) target the deprecated framework:</source>
+        <target state="translated">下列專案將已取代的架構作為目標:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGetCPSPackageInstallationService">
+        <source>Unable to get the project's package installation service for project '{0}'.</source>
+        <target state="translated">無法為專案 '{0}' 取得專案的套件安裝服務。</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="UnresolvedItemDuringProjectClosureWalk">
+        <source>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</source>
+        <target state="translated">無法解析 '{0}' 所參考的所有項目。通常可以略過此訊息。完整還原及建置解決方案即可解決此問題。如果無法解析的項目是專案參考，可能會造成 NuGet 還原結果不完整，而且遺漏套件參考。若要確保還原能夠找到所有專案，請驗證所有專案都已正確參考，並存在於磁碟上。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFeedType">
+        <source>The feed type '{0}' is unsupported.</source>
+        <target state="translated">不支援摘要類型 '{0}'。</target>
+        <note>{0} is the ItemFilter type which correlates to the selected tab</note>
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Open">
+        <source>_Open</source>
+        <target state="translated">開啟(_O)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">目錄 '{0}' 不是空的。正在略過...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
+        <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
+        <target state="translated">無法移除已標記成在 Visual Studio 重新啟動時刪除的套件目錄: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
+        <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
+        <target state="translated">無法移除已標記成在 Visual Studio 重新啟動時刪除的套件目錄 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
+        <source>Failed to find match for removing reference '{0}'.</source>
+        <target state="translated">找不到相符項目來移除參考 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
+        <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
+        <target state="translated">無法將套件目錄 '{0}' 標記成在 Visual Studio 重新啟動時刪除: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">'{0}' 已存在。略過中...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoExactMatchForReference">
+        <source>No exact match found for removing reference '{0}'. Trying No No exact match found for removing reference '{0}'. Trying case-insensitive search...-</source>
+        <target state="translated">找不到移除參考 '{0}' 的完全相符項。嘗試尋找移除參考 '{0}' 的完全相符項。嘗試不區分大小寫搜尋...-</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

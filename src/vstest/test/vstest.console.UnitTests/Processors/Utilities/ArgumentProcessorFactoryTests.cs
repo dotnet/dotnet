@@ -84,7 +84,7 @@ public class ArgumentProcessorFactoryTests
 
         ArgumentProcessorFactory factory = ArgumentProcessorFactory.Create();
 
-        IArgumentProcessor result = factory.CreateArgumentProcessor(command, new string[] { "" })!;
+        IArgumentProcessor result = factory.CreateArgumentProcessor(command, [""])!;
 
         Assert.IsNull(result);
     }
@@ -96,7 +96,7 @@ public class ArgumentProcessorFactoryTests
 
         ArgumentProcessorFactory factory = ArgumentProcessorFactory.Create();
 
-        IArgumentProcessor result = factory.CreateArgumentProcessor(command, new string[] { "" })!;
+        IArgumentProcessor result = factory.CreateArgumentProcessor(command, [""])!;
 
         Assert.AreEqual(typeof(CliRunSettingsArgumentProcessor), result.GetType());
     }

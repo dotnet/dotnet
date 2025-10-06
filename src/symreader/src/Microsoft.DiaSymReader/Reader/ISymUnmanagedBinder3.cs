@@ -7,12 +7,15 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("28AD3D43-B601-4d26-8A1B-25F9165AF9D7")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedBinder3 : ISymUnmanagedBinder2
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedBinder3 : ISymUnmanagedBinder2
     {
+        // .NET 8+ COM source generators respect COM interface inheritance
+        // so re-declaration of inherited method is not needed.
+#if NETSTANDARD2_0
         #region ISymUnmanagedBinder methods
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace Microsoft.DiaSymReader
         #region ISymUnmanagedBinder2 methods
 
         /// <summary>
-        /// Given a metadata interface and a file name, returns the 
+        /// Given a metadata interface and a file name, returns the
         /// <see cref="ISymUnmanagedReader"/> interface that will read the debugging symbols associated
         /// with the module.
         /// </summary>
@@ -74,14 +77,15 @@ namespace Microsoft.DiaSymReader
             [MarshalAs(UnmanagedType.Interface)]out ISymUnmanagedReader reader);
 
         #endregion
+#endif
 
         [PreserveSig]
         int GetReaderFromCallback(
-            [In, MarshalAs(UnmanagedType.Interface)] object metadataImporter,
+            [MarshalAs(UnmanagedType.Interface)] object metadataImporter,
             [MarshalAs(UnmanagedType.LPWStr)]string fileName,
             [MarshalAs(UnmanagedType.LPWStr)]string searchPath,
             SymUnmanagedSearchPolicy searchPolicy,
-            [In, MarshalAs(UnmanagedType.Interface)] object callback,
+            [MarshalAs(UnmanagedType.Interface)] object callback,
             [MarshalAs(UnmanagedType.Interface)]out ISymUnmanagedReader reader);
     }
 }

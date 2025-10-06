@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>1.0.4-bundled-0100</PackageVersion>
+    <AssemblyName>FSharp.NET.Sdk</AssemblyName>
+  </PropertyGroup>
+
+</Project>

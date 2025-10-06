@@ -3,7 +3,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using NuGet.Common;
 
 namespace NuGet.Protocol.Core.Types
 {

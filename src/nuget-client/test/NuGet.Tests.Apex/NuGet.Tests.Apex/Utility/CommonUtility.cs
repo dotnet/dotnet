@@ -15,7 +15,6 @@ using FluentAssertions;
 using Microsoft.Test.Apex.Services;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using NuGet.Common;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
@@ -227,7 +226,7 @@ namespace NuGet.Tests.Apex
                     LibraryRange = new LibraryRange(e.Attribute(XName.Get("Include")).Value, VersionRange.Parse(e.Attribute(XName.Get("Version")).Value), LibraryDependencyTarget.Package),
                     IncludeType = LibraryIncludeFlags.All,
                     SuppressParent = LibraryIncludeFlags.None,
-                    NoWarn = new List<NuGetLogCode>(),
+                    NoWarn = [],
                     AutoReferenced = false,
                     GeneratePathProperty = false
                 })
@@ -332,11 +331,20 @@ namespace NuGet.Tests.Apex
             visualStudio.Dte.ExecuteCommand("Project.ManageNuGetPackages");
         }
 
-        internal static void RestoreNuGetPackages(VisualStudioHost visualStudio, ITestLogger logger)
+        public static void RestoreNuGetPackages(VisualStudioHost visualStudio, ITestLogger logger)
         {
             visualStudio.ObjectModel.Solution.WaitForOperationsInProgress(TimeSpan.FromMinutes(3));
             WaitForCommandAvailable(visualStudio, "ProjectAndSolutionContextMenus.Solution.RestoreNuGetPackages", TimeSpan.FromMinutes(1), logger);
             visualStudio.Dte.ExecuteCommand("ProjectAndSolutionContextMenus.Solution.RestoreNuGetPackages");
+        }
+
+        public static void AutoRestorePackageByReloadingProject(VisualStudioHost visualStudio, ProjectTestExtension project)
+        {
+            var testService = visualStudio.Get<NuGetApexTestService>();
+
+            project.Unload();
+            project.Reload();
+            testService.WaitForAutoRestore();
         }
 
         private static void WaitForCommandAvailable(VisualStudioHost visualStudio, string commandName, TimeSpan timeout, ITestLogger logger)
@@ -426,7 +434,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        private static string GetAssetsFilePath(string projectPath)
+        public static string GetAssetsFilePath(string projectPath)
         {
             var projectDirectory = Path.GetDirectoryName(projectPath);
             return Path.Combine(projectDirectory, "obj", "project.assets.json");

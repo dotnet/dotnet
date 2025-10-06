@@ -13,4 +13,5 @@ while [[ -h $source ]]; do
 done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
+. "$scriptroot/nuget-workaround.sh" --ci $@
 . "$scriptroot/common/build.sh" --ci $@

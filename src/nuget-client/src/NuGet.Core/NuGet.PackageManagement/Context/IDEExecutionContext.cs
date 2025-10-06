@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using NuGet.Packaging.Core;
-using NuGet.ProjectManagement;
 
 namespace NuGet.PackageManagement
 {

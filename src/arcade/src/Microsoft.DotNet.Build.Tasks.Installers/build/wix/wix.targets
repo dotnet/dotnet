@@ -11,37 +11,26 @@
   <!--
     Acquire WiX tools, if not present.
   -->
-  <Target Name="AcquireWix"
-          DependsOnTargets="GetAcquireWixProperties">
+  <Target Name="_AcquireWix">
     <MSBuild
-      Projects="$(AcquireWixProjectFile)"
+      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-wix\acquire-wix.proj"
       Targets="AcquireWixCore"
       Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)" />
-  </Target>
-
-  <Target Name="GetAcquireWixProperties"> 
+                  RepoRoot=$(RepoRoot)">
+      <Output TaskParameter="TargetOutputs" PropertyName="WixToolsDir" />
+    </MSBuild>
   
     <PropertyGroup>
       <_WixIntermediateOutputPath>$(BaseIntermediateOutputPath)wix</_WixIntermediateOutputPath>
     </PropertyGroup>
 
     <PropertyGroup>
-      <WixVersion>3.14.0.8606</WixVersion>
-      <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
-      <!-- Used in WiX targets to locate files. -->
       <WixInstallPath>$(WixToolsDir)</WixInstallPath>
       <WixTargetsPath>$(WixToolsDir)wix.targets</WixTargetsPath>
       <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
       <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
       <LightCommandObjDir>$(IntermediateOutputPath)/lightcommand/</LightCommandObjDir>
       <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
-
-      <AcquireWixProjectFile>$(MSBuildThisFileDirectory)..\acquisition\acquire-wix\acquire-wix.proj</AcquireWixProjectFile>
-      <WixDownloadFilename>Microsoft.Signed.Wix-$(WixVersion).zip</WixDownloadFilename>
-      <WixDownloadUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/wix/$(WixDownloadFilename)</WixDownloadUrl>
-      <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
-      <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
     </PropertyGroup>
   </Target>
 
@@ -120,19 +109,34 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="UseBundleWixProject">
+  <Target Name="UseBundleWixProject" DependsOnTargets="GenerateBundleThemeVariables">
     <ItemGroup>
       <WixExtensions Include="WixBalExtension.dll" />
       <WixExtensions Include="WixTagExtension.dll" />
       <WixExtensions Include="WixUtilExtension.dll" />
 
       <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/bundle.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/upgradePolicies.wxs" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateBundleThemeVariables" Condition="'@(WixThemeVariable)' != ''">
+    <ItemGroup>
+      <_WixThemeIncludeLine Include="&lt;?xml version=&quot;1.0&quot;?&gt;" />
+      <_WixThemeIncludeLine Include="&lt;Include&gt;" />
+      <_WixThemeIncludeLine Include="@(WixThemeVariable->'&lt;Variable Name=&quot;%(Identity)&quot; Value=&quot;%(Value)&quot; /&gt;')"/>
+      <_WixThemeIncludeLine Include="&lt;/Include&gt;" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_WixThemeFile>$(IntermediateOutputPath)wix/wixtheme.wxi</_WixThemeFile>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="@(_WixThemeIncludeLine)" File="$(_WixThemeFile)" Overwrite="true" Encoding="UTF-8" />
   </Target>
 
   <Target Name="PublishFilesForWixInstaller">
     <PropertyGroup>
-      <FilesOutputPathRoot>$(IntermediateOutputPath)output/</FilesOutputPathRoot>
+      <FilesOutputPathRoot>$(IntermediateOutputPath)o/</FilesOutputPathRoot>
       </PropertyGroup>
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
@@ -181,18 +185,25 @@
       
     <PropertyGroup>
       <WixInstallerBackgroundFile Condition="'$(WixInstallerBackgroundFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnetbackground.png</WixInstallerBackgroundFile>
+      <WixInstallerLogoFile Condition="'$(WixInstallerLogoFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnetlogo.bmp</WixInstallerLogoFile>
+      <WixBootstrapperFlavor Condition="'$(WixBootstrapperFlavor)' == ''">Foundation</WixBootstrapperFlavor>
     </PropertyGroup>
 
     <ItemGroup>
       <LocFile Include="$(BundleThemeDirectory)\theme\**\bundle.wxl" />
       <LocDirName Include="$([System.String]::new('%(LocFile.RecursiveDir)').TrimEnd('\'))" />
 
+      <CandleVariables Include="MajorVersion" Value="$(MajorVersion)" />
+      <CandleVariables Include="MinorVersion" Value="$(MinorVersion)" />
       <CandleVariables Include="DisplayVersion" Value="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumberMajor)" />
       <CandleVariables Include="LcidList" Value="@(LocDirName)" />
       <CandleVariables Include="BundleThmDir" Value="$(BundleThemeDirectory)" />
 
       <CandleVariables Include="DotNetBackgroundPngFile" Value="$(WixInstallerBackgroundFile)" />
       <CandleVariables Include="DotNetDummyEulaFile" Value="$(MSBuildThisFileDirectory)bundle\dummyEula.rtf" />
+      <CandleVariables Include="DotNetLogoBmpFile" Value="$(WixInstallerLogoFile)" />
+      <CandleVariables Include="BootstrapperApplicationFlavor" Value="$(WixBootstrapperFlavor)" />
+      <CandleVariables Include="WixThemeFile" Value="$(_WixThemeFile)" Condition="'$(_WixThemeFile)' != ''" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -203,7 +214,7 @@
   <!-- Set up information to pass to WiX, depending on the type of installer being created. -->
   <Target Name="GetWixBuildConfiguration"
           DependsOnTargets="
-            AcquireWix;
+            _AcquireWix;
             _GetInstallerProperties;
             _GenerateMsiVersionString;
             GetInstallerWixConfiguration;
@@ -444,29 +455,20 @@
   <!--
     Acquire NuGet.exe, if not present.
   -->
-  <Target Name="_AcquireNuGetExe"
-          DependsOnTargets="_GetAcquireNuGetExeProperties">
+  <Target Name="_AcquireNuGetExe">
     <MSBuild
-      Projects="$(AcquireNuGetExeProjectFile)"
+      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj"
       Targets="AcquireNuGetExeCore"
       Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)" />
-  </Target>
-
-  <Target Name="_GetAcquireNuGetExeProperties">
-    <PropertyGroup>
-      <AcquireNuGetExeProjectFile>$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj</AcquireNuGetExeProjectFile>
-      <!-- Using 3.5.0 to workaround https://github.com/NuGet/Home/issues/5016 -->
-      <NuGetExeDownloadUrl>https://dist.nuget.org/win-x86-commandline/v3.5.0/nuget.exe</NuGetExeDownloadUrl>
-      <NuGetExeToolDir>$(BaseIntermediateOutputPath)nuget\</NuGetExeToolDir>
-      <NuGetExeFile>$(NuGetExeToolDir)NuGet.exe</NuGetExeFile>
-    </PropertyGroup>
+                  RepoRoot=$(RepoRoot)">
+      <Output TaskParameter="TargetOutputs" PropertyName="NuGetExeFile" />
+    </MSBuild>
   </Target>
   
   <Target Name="GenerateVSInsertionNupkgCore"
           DependsOnTargets="
             _GetTargetOSArchInfo;
-            GetAcquireWixProperties;
+            _AcquireWix;
             _AcquireNuGetExe;
             _GetInstallerProperties;
             GetWixBuildConfiguration">

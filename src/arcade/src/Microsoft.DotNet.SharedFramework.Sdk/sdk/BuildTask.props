@@ -1,0 +1,16 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- This file exists so that consumers can import only this part of the Shared Framework SDK infrastructure
+       without importing all the props and targets definitions. This is useful when a task should be invoked.
+       Example: <Import Project="BuildTask.props" Sdk="Microsoft.DotNet.SharedFramework.Sdk" />  -->
+  <PropertyGroup Condition="'$(DotNetSharedFrameworkTaskDir)' == ''">
+    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net/</DotNetSharedFrameworkTaskDir>
+    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)../tools/netframework/</DotNetSharedFrameworkTaskDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DotNetSharedFrameworkTaskFile>$(DotNetSharedFrameworkTaskDir)Microsoft.DotNet.SharedFramework.Sdk.dll</DotNetSharedFrameworkTaskFile>
+  </PropertyGroup>
+
+</Project>

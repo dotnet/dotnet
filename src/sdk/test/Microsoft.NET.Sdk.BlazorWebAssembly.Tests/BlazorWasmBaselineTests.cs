@@ -1,16 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.NET.Sdk.Razor.Tests;
+using Microsoft.NET.Sdk.StaticWebAssets.Tests;
 
 namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
 {
-    public class BlazorWasmBaselineTests : AspNetSdkBaselineTest
+    public class BlazorWasmBaselineTests(ITestOutputHelper log, bool generateBaselines) : AspNetSdkBaselineTest(log, generateBaselines)
     {
-        public BlazorWasmBaselineTests(ITestOutputHelper log, bool generateBaselines) : base(log, generateBaselines)
-        {
-        }
-
         protected override string EmbeddedResourcePrefix => string.Join('.', "Microsoft.NET.Sdk.BlazorWebAssembly.Tests", "StaticWebAssetsBaselines");
 
         protected override string ComputeBaselineFolder() =>

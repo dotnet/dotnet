@@ -27,9 +27,8 @@ internal class StandardMenuStripVerb
     /// </summary>
     internal StandardMenuStripVerb(ToolStripDesigner designer)
     {
-        Debug.Assert(designer is not null, "Can't have a StandardMenuStripVerb without an associated designer");
-        _designer = designer;
-        _provider = designer.Component.Site;
+        _designer = designer.OrThrowIfNull();
+        _provider = designer.Component.Site.OrThrowIfNull();
         _host = (IDesignerHost)_provider.GetService(typeof(IDesignerHost));
         _changeService = (IComponentChangeService)_provider.GetService(typeof(IComponentChangeService));
     }
@@ -62,7 +61,7 @@ internal class StandardMenuStripVerb
     }
 
     /// <summary>
-    ///  Here is where all the fun stuff starts.  We create the structure and apply the naming here.
+    ///  Here is where all the fun stuff starts. We create the structure and apply the naming here.
     /// </summary>
     private void CreateStandardMenuStrip(IDesignerHost host, MenuStrip tool)
     {
@@ -75,7 +74,8 @@ internal class StandardMenuStripVerb
             [SR.StandardMenuHelp, SR.StandardMenuContents, SR.StandardMenuIndex, SR.StandardMenuSearch, "-", SR.StandardMenuAbout]
         ];
 
-        // build the static menu items image list that maps one-one with above menuItems structure. this is required so that the in LOCALIZED build we don't use the Localized item string.
+        // build the static menu items image list that maps one-one with above menuItems structure.
+        // This is required so that the in LOCALIZED build we don't use the Localized item string.
         string[][] menuItemImageNames =
         [
             ["", "new", "open", "-", "save", "", "-", "print", "printPreview", "-", ""],
@@ -125,7 +125,8 @@ internal class StandardMenuStripVerb
                 for (int i = 0; i < menuArray.Length; i++)
                 {
                     name = null;
-                    // for separators, just use the default name.  Otherwise, remove any non-characters and  get the name from the text.
+                    // for separators, just use the default name. Otherwise,
+                    // remove any non-characters and get the name from the text.
                     string itemText = menuArray[i];
                     name = NameFromText(itemText, typeof(ToolStripMenuItem), nameCreationService, true);
                     ToolStripItem item = null;
@@ -223,20 +224,13 @@ internal class StandardMenuStripVerb
                 uiService.ShowError(e.Message);
             }
 
-            if (createMenu is not null)
-            {
-                createMenu.Cancel();
-                createMenu = null;
-            }
+            createMenu?.Cancel();
+            createMenu = null;
         }
         finally
         {
             ToolStripDesigner.s_autoAddNewItems = true;
-            if (createMenu is not null)
-            {
-                createMenu.Commit();
-                createMenu = null;
-            }
+            createMenu?.Commit();
 
             tool.ResumeLayout();
             // Select the Main Menu...
@@ -254,7 +248,7 @@ internal class StandardMenuStripVerb
     }
 
     /// <summary>
-    ///  Here is where all the fun stuff starts.  We create the structure and apply the naming here.
+    ///  Here is where all the fun stuff starts. We create the structure and apply the naming here.
     /// </summary>
     private void CreateStandardToolStrip(IDesignerHost host, ToolStrip tool)
     {
@@ -262,7 +256,8 @@ internal class StandardMenuStripVerb
         //
         string[] menuItemNames = [SR.StandardMenuNew, SR.StandardMenuOpen, SR.StandardMenuSave, SR.StandardMenuPrint, "-", SR.StandardToolCut, SR.StandardMenuCopy, SR.StandardMenuPaste, "-", SR.StandardToolHelp];
 
-        // build a image list mapping one-one the above menuItems list... this is required so that the in LOCALIZED build we don't use the Localized item string.
+        // build a image list mapping one-one the above menuItems list...
+        // this is required so that the in LOCALIZED build we don't use the Localized item string.
         string[] menuItemImageNames = ["new", "open", "save", "print", "-", "cut", "copy", "paste", "-", "help"];
         Debug.Assert(host is not null, "can't create standard menu without designer _host.");
 
@@ -295,7 +290,7 @@ internal class StandardMenuStripVerb
             foreach (string itemText in menuItemNames)
             {
                 name = null;
-                // for separators, just use the default name.  Otherwise, remove any non-characters and get the name from the text.
+                // for separators, just use the default name. Otherwise, remove any non-characters and get the name from the text.
                 defaultName = "ToolStripButton";
                 name = NameFromText(itemText, typeof(ToolStripButton), nameCreationService, true);
                 ToolStripItem item = null;
@@ -365,21 +360,14 @@ internal class StandardMenuStripVerb
                 uiService.ShowError(e.Message);
             }
 
-            if (createMenu is not null)
-            {
-                createMenu.Cancel();
-                createMenu = null;
-            }
+            createMenu?.Cancel();
+            createMenu = null;
         }
         finally
         {
             // Reset the AutoAdd state
             ToolStripDesigner.s_autoAddNewItems = true;
-            if (createMenu is not null)
-            {
-                createMenu.Commit();
-                createMenu = null;
-            }
+            createMenu?.Commit();
 
             tool.ResumeLayout();
             // Select the Main Menu...
@@ -456,7 +444,7 @@ internal class StandardMenuStripVerb
         else
         {
             string nameSuffix = itemType.Name;
-            // remove all the non letter and number characters.   Append length of "MenuItem"
+            // remove all the non letter and number characters. Append length of "MenuItem"
             Text.StringBuilder name = new(text.Length + nameSuffix.Length);
             bool firstCharSeen = false;
             for (int i = 0; i < text.Length; i++)
@@ -493,7 +481,8 @@ internal class StandardMenuStripVerb
         {
             if (!nameCreationService.IsValidName(baseName))
             {
-                // we don't have a name collision but this still isn't a valid name...something is wrong and we can't make a valid identifier out of this so bail.
+                // we don't have a name collision but this still isn't a valid name...
+                // something is wrong and we can't make a valid identifier out of this so bail.
                 return nameCreationService.CreateName(_host.Container, itemType);
             }
             else

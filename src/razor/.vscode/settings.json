@@ -1,5 +1,6 @@
 {
   "files.trimTrailingWhitespace": true,
+  "files.trimTrailingWhitespaceInRegexAndStrings": false,
   "files.associations": {
     "*.*proj": "xml",
     "*.props": "xml",
@@ -14,5 +15,6 @@
   },
   "dotnet.defaultSolution": "Razor.sln",
   "omnisharp.defaultLaunchSolution": "Razor.sln",
-  "files.encoding": "utf8bom"
+  "files.encoding": "utf8bom",
+  "dotnet.testWindow.disableBuildOnRefresh": true
 }

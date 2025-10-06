@@ -12,6 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Shipping>true</Shipping>
     <OutputType>Exe</OutputType>
+    <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
     <ComVisible>false</ComVisible>
     <!-- Pack properties-->
     <PackProject>true</PackProject>
@@ -21,9 +22,8 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
-    <GetSigningInputsDependsOn>GetSigningInputsCustom</GetSigningInputsDependsOn>
     <GetSymbolsToIndexDependsOn>GetSymbolsToIndexCustom</GetSymbolsToIndexDependsOn>
-  </PropertyGroup>
+</PropertyGroup>
 
   <Target Name="CreateCommandlineNupkg">
     <ItemGroup>
@@ -35,6 +35,14 @@
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
@@ -61,10 +69,12 @@
 
   <ItemGroup>
     <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="System.Memory" />
     <None Include="$(BuildCommonDirectory)\NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\..\LICENSE.txt" />
     <EmbeddedResource Update="NuGetCommand.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>NuGetCommand.Designer.cs</LastGenOutput>
@@ -101,6 +111,11 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.CommandLine.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.CommandLine.Test" />
+  </ItemGroup>
+
   <Target Name="DetermineILMergeNuGetExeInputsOutputs">
     <PropertyGroup>
       <PathToBuiltNuGetExe>$(OutputPath)NuGet.exe</PathToBuiltNuGetExe>
@@ -124,7 +139,7 @@
           Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(SkipILMergeOfNuGetExe)' != 'true'" >
     <PropertyGroup>
       <IlmergeCommand>$(ILMergeConsolePath) /lib:$(OutputPath) /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt</IlmergeCommand>
-      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) /delaysign /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+      <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) /delaysign /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) $(PathToBuiltNuGetExe) @(BuildArtifacts->'%(fullpath)', ' ')</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) @(LocResource->'%(fullpath)', ' ')</IlmergeCommand>
     </PropertyGroup>
@@ -136,15 +151,6 @@
   <Target Name="ClearFrameworkAssemblyReferences" BeforeTargets="GenerateNuspec" DependsOnTargets="$(GenerateNuspecDependsOn)">
     <ItemGroup>
       <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetSigningInputsCustom" Returns="@(DllsToSign)">
-    <ItemGroup>
-      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe">
-        <StrongName>MsSharedLib72</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </DllsToSign>
     </ItemGroup>
   </Target>
 

@@ -11,6 +11,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Data;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using NuGet.Packaging;
+using Microsoft.DotNet.Build.Tasks.Installers;
 
 #if NET472
 using System.IO.Packaging;
@@ -51,7 +54,7 @@ namespace Microsoft.DotNet.SignTool
             return null;
         }
 
-        public static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent = false)
+        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, bool ignoreContent = false)
         {
             if (FileSignInfo.IsTarGZip(archivePath))
             {
@@ -60,17 +63,44 @@ namespace Microsoft.DotNet.SignTool
                 return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
                 return ReadTarGZipEntries(archivePath)
-                    .Select(entry => (entry.Name, entry.DataStream, entry.Length));
+                    .Select(entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length));
 #endif
             }
+            else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
+            {
+                return ReadPkgOrAppBundleEntries(archivePath, tempDir, pkgToolPath, ignoreContent);
+            }
+            else if (FileSignInfo.IsDeb(archivePath))
+            {
+#if NET472
+                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
+#else
+                return ReadDebContainerEntries(archivePath, "data.tar");
+#endif
+            }
+            else if (FileSignInfo.IsRpm(archivePath))
+            {
+#if NET472
+                throw new NotImplementedException("RPM signing is not supported on .NET Framework");
+#else
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    throw new NotImplementedException("RPM signing is only supported on Linux platform");
+                }
 
-            return ReadZipEntries(archivePath);
+                return ReadRpmContainerEntries(archivePath);
+#endif
+            }
+            else
+            {
+                return ReadZipEntries(archivePath);
+            }
         }
 
         /// <summary>
         /// Repack the zip container with the signed files.
         /// </summary>
-        public void Repack(TaskLoggingHelper log, string tempDir, string wixToolsPath, string tarToolPath)
+        public void Repack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath, string tarToolPath, string pkgToolPath)
         {
 #if NET472
             if (FileSignInfo.IsVsix())
@@ -83,9 +113,34 @@ namespace Microsoft.DotNet.SignTool
             {
                 RepackTarGZip(log, tempDir, tarToolPath);
             }
-            else if (FileSignInfo.IsWixContainer())
+            else if (FileSignInfo.IsUnpackableWixContainer())
             {
-                RepackWixPack(log, tempDir, wixToolsPath);
+                RepackWixPack(log, tempDir, wix3ToolsPath, wixToolsPath);
+            }
+            else if (FileSignInfo.IsPkg() || FileSignInfo.IsAppBundle())
+            {
+                RepackPkgOrAppBundles(log, tempDir, pkgToolPath);
+            }
+            else if (FileSignInfo.IsDeb())
+            {
+#if NET472
+                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
+#else
+                RepackDebContainer(log, tempDir);
+#endif
+            }
+            else if (FileSignInfo.IsRpm())
+            {
+#if NET472
+                throw new NotImplementedException("RPM signing is not supported on .NET Framework");
+#else
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    throw new NotImplementedException("RPM signing is only supported on Linux platform");
+                }
+
+                RepackRpmContainer(log, tempDir);
+#endif
             }
             else 
             {
@@ -135,24 +190,13 @@ namespace Microsoft.DotNet.SignTool
         }
 #endif
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadZipEntries(string archivePath)
+        private static IEnumerable<ZipDataEntry> ReadZipEntries(string archivePath)
         {
-            using var archive = new ZipArchive(File.OpenRead(archivePath), ZipArchiveMode.Read, leaveOpen: false);
-
-            foreach (var entry in archive.Entries)
+            using (var archive = new ZipArchive(File.OpenRead(archivePath), ZipArchiveMode.Read, leaveOpen: false))
             {
-                string relativePath = entry.FullName; // lgtm [cs/zipslip] Archive from trusted source
-
-                // `entry` might be just a pointer to a folder. We skip those.
-                if (relativePath.EndsWith("/") && entry.Name == "")
+                foreach (var entry in archive.Entries)
                 {
-                    yield return (relativePath, null, 0);
-                }
-                else
-                {
-                    var contentStream = entry.Open();
-                    yield return (relativePath, contentStream, entry.Length);
-                    contentStream.Close();
+                    yield return new ZipDataEntry(entry);
                 }
             }
         }
@@ -187,7 +231,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void RepackWixPack(TaskLoggingHelper log, string tempDir, string wixToolsPath)
+        private void RepackWixPack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath)
         {
             // The wixpacks can have rather long paths when fully extracted.
             // To avoid issues, use the first element of the GUID (up to first -).
@@ -222,7 +266,11 @@ namespace Microsoft.DotNet.SignTool
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, file, true);
                 }
 
-                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, log))
+                string wixPath = File.ReadAllText(createFileName).Contains("light.exe")
+                                 ? wix3ToolsPath
+                                 : wixToolsPath;
+
+                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixPath, log))
                 {
                     log.LogError($"Packaging of wix file '{FileSignInfo.FullPath}' failed");
                     return;
@@ -245,7 +293,98 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-#if NET472
+        internal static bool RunPkgProcess(string srcPath, string dstPath, string action, string pkgToolPath)
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                throw new Exception($"Pkg tooling is only supported on MacOS.");
+            }
+
+            string args = $@"{action} ""{srcPath}""";
+            
+            if (action != "verify")
+            {
+                args += $@" ""{dstPath}""";
+            }
+
+            var process = Process.Start(new ProcessStartInfo()
+            {
+                FileName = "dotnet",
+                Arguments = $@"exec ""{pkgToolPath}"" {args}",
+                UseShellExecute = false,
+                RedirectStandardError = true
+            });
+
+            process.WaitForExit();
+            return process.ExitCode == 0;
+        }
+
+        private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
+        {
+            string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
+            try
+            {
+                if (!RunPkgProcess(archivePath, extractDir, "unpack", pkgToolPath))
+                {
+                    throw new Exception($"Failed to unpack pkg {archivePath}");
+                }
+
+                foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
+                {
+                    var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+                    using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
+                    yield return new ZipDataEntry(relativePath, stream);
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, recursive: true);
+                }
+            }
+        }
+
+        private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string pkgToolPath)
+        {
+            string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
+            try
+            {
+                if (!RunPkgProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, "unpack", pkgToolPath))
+                {
+                    return;
+                }
+
+                foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
+                {
+                    var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+
+                    var signedPart = FindNestedPart(relativePath);
+                    if (!signedPart.HasValue)
+                    {
+                        log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativePath}");
+                        continue;
+                    }
+
+                    log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}.");
+                    File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
+                }
+
+                if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", pkgToolPath))
+                {
+                    return;
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, recursive: true);
+                }
+            }
+        }
+
+#if NETFRAMEWORK
         private static bool RunTarProcess(string srcPath, string dstPath, string tarToolPath)
         {
             var process = Process.Start(new ProcessStartInfo()
@@ -259,7 +398,7 @@ namespace Microsoft.DotNet.SignTool
             return process.ExitCode == 0;
         }
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
+        private static IEnumerable<ZipDataEntry> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
         {
             var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
@@ -268,14 +407,14 @@ namespace Microsoft.DotNet.SignTool
 
                 if (!RunTarProcess(archivePath, extractDir, tarToolPath))
                 {
-                    yield break;
+                    throw new Exception($"Failed to unpack tar archive: {archivePath}");
                 }
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent  ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return (relativePath, stream, stream?.Length ?? 0);
+                    yield return new ZipDataEntry(relativePath, stream);
                 }
             }
             finally
@@ -326,58 +465,317 @@ namespace Microsoft.DotNet.SignTool
 #else
         private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
-            using var outputStream = new MemoryStream();
-
+            using MemoryStream streamToCompress = new();
+            using (TarWriter writer = new(streamToCompress, leaveOpen: true))
             {
-                using var gzipStream = new GZipStream(outputStream, CompressionMode.Compress, leaveOpen: true);
-                using var writer = new TarWriter(gzipStream);
-
-                foreach (var entry in ReadTarGZipEntries(FileSignInfo.FullPath))
+                foreach (TarEntry entry in ReadTarGZipEntries(FileSignInfo.FullPath))
                 {
                     if (entry.DataStream != null)
                     {
-                        var relativeName = entry.Name;
-                        var signedPart = FindNestedPart(relativeName);
-                        if (!signedPart.HasValue)
+                        string relativeName = entry.Name;
+                        ZipPart? signedPart = FindNestedPart(relativeName);
+
+                        if (signedPart.HasValue)
                         {
-                            log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativeName}");
+                            using FileStream signedStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
+                            entry.DataStream = signedStream;
+                            entry.DataStream.Position = 0;
+                            writer.WriteEntry(entry);
+
+                            log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName}.");
                             continue;
                         }
 
-                        using var signedStream = File.OpenRead(signedPart.Value.FileSignInfo.FullPath);
-                        log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName}.");
-                        entry.DataStream = signedStream;
-                        writer.WriteEntry(entry);
+                        log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativeName}");
                     }
-                    else
-                    {
-                        writer.WriteEntry(entry);
-                    }
+
+                    writer.WriteEntry(entry);
                 }
             }
 
-            outputStream.Position = 0;
-
-            using var outputFile = File.Open(FileSignInfo.FullPath, FileMode.Truncate, FileAccess.Write);
-            outputStream.CopyTo(outputFile);
+            streamToCompress.Position = 0;
+            using (FileStream outputStream = File.Open(FileSignInfo.FullPath, FileMode.Truncate, FileAccess.Write))
+            {
+                using GZipStream compressor = new(outputStream, CompressionMode.Compress);
+                streamToCompress.CopyTo(compressor);
+            }
         }
 
-        internal static IEnumerable<TarEntry> ReadTarGZipEntries(string path)
+        private static IEnumerable<TarEntry> ReadTarGZipEntries(string path)
         {
-            using var gzipStream = File.Open(path, FileMode.Open);
-            using var tar = new GZipStream(gzipStream, CompressionMode.Decompress);
-            using var reader = new TarReader(tar);
-
-            while (true)
+            using FileStream streamToDecompress = File.OpenRead(path);
+            using GZipStream decompressor = new(streamToDecompress, CompressionMode.Decompress);
+            using TarReader tarReader = new(decompressor);
+            while (tarReader.GetNextEntry() is TarEntry entry)
             {
-                var entry = reader.GetNextEntry();
-                if (entry == null)
-                {
-                    break;
-                }
-
                 yield return entry;
             }
+        }
+
+        /// <summary>
+        /// Repack Deb container.
+        /// </summary>
+        private void RepackDebContainer(TaskLoggingHelper log, string tempDir)
+        {
+            // Data archive is the only expected nested part
+            string dataArchive = NestedParts.Values.Single().FileSignInfo.FullPath;
+
+            string controlArchive;
+            try
+            {
+                controlArchive = GetUpdatedControlArchive(FileSignInfo.FullPath, dataArchive, tempDir);
+            }
+            catch(Exception e)
+            {
+                log.LogError(e.Message);
+                return;
+            }
+
+            CreateDebPackage createDebPackageTask = new()
+            {
+                OutputDebPackagePath = FileSignInfo.FullPath,
+                ControlFile = new TaskItem(controlArchive),
+                DataFile = new TaskItem(dataArchive)
+            };
+
+            if (!createDebPackageTask.Execute())
+            {
+                log.LogError($"Failed to create new DEB package: {FileSignInfo.FileName}");
+            }
+        }
+
+        /// <summary>
+        /// Updates checksums of updated data file contents and updates the
+        /// control file with the new checksums and new install size.
+        /// </summary>
+        /// <param name="debianPackage"></param>
+        /// <param name="dataArchive"></param>
+        /// <param name="tempDir"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private string GetUpdatedControlArchive(string debianPackage, string dataArchive, string tempDir)
+        {
+            var workingDirGuidSegment = Guid.NewGuid().ToString().Split('-')[0];
+
+            string workingDir = Path.Combine(tempDir, "work", workingDirGuidSegment);
+            string controlLayout = Path.Combine(workingDir, "control");
+            string dataLayout = Path.Combine(workingDir, "data");
+
+            Directory.CreateDirectory(controlLayout);
+            Directory.CreateDirectory(dataLayout);
+
+            // Get the original control archive - to reuse package metadata and scripts
+            var entry = ReadDebContainerEntries(debianPackage, "control.tar").Single();
+            string controlArchive = Path.Combine(workingDir, entry.RelativePath);
+            entry.WriteToFile(controlArchive);
+
+            ExtractTarballContents(dataArchive, dataLayout);
+            ExtractTarballContents(controlArchive, controlLayout);
+
+            string sumsFile = Path.Combine(workingDir, "md5sums");
+            CreateMD5SumsFile createMD5SumsFileTask = new()
+            {
+                OutputFile = sumsFile,
+                RootDirectory = dataLayout,
+                Files = Directory.GetFiles(dataLayout, "*", SearchOption.AllDirectories)
+                            .Select(f => new TaskItem(f)).ToArray()
+            };
+
+            if (!createMD5SumsFileTask.Execute())
+            {
+                throw new Exception($"Failed to create MD5 checksums file for: {FileSignInfo.FileName}");
+            }
+
+            File.Copy(sumsFile, Path.Combine(controlLayout, "md5sums"), overwrite: true);
+
+            // Update the optional Installed-Size field in control file
+            string controlFile = Path.Combine(controlLayout, "control");
+            string fileContents = File.ReadAllText(controlFile);
+            string stringToFind = "Installed-Size: ";
+            int index = fileContents.IndexOf(stringToFind);
+            if (index != -1)
+            {
+                int end = fileContents.IndexOf('\n', index);
+                fileContents = fileContents.Replace(fileContents.Substring(index, end - index), stringToFind + createMD5SumsFileTask.InstalledSize);
+                File.WriteAllText(controlFile, fileContents);
+            }
+
+            // Repack the control tarball
+            using (var dstStream = File.Open(controlArchive, FileMode.Create))
+            {
+                using var gzip = new GZipStream(dstStream, CompressionMode.Compress);
+                TarFile.CreateFromDirectory(controlLayout, gzip, includeBaseDirectory: false);
+            }
+
+            return controlArchive;
+        }
+
+        internal static void ExtractTarballContents(string file, string destination, bool skipSymlinks = true)
+        {
+            foreach (TarEntry tar in ReadTarGZipEntries(file))
+            {
+                if (tar.EntryType == TarEntryType.Directory ||
+                    (skipSymlinks && tar.EntryType == TarEntryType.SymbolicLink))
+                {
+                    continue;
+                }
+
+                string outputPath = Path.Join(destination, tar.Name);
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+
+                using FileStream outputFileStream = File.Create(outputPath);
+                tar.DataStream?.CopyTo(outputFileStream);
+            }
+        }
+
+        internal static IEnumerable<ZipDataEntry> ReadDebContainerEntries(string archivePath, string match = null)
+        {
+            using var archive = new ArReader(File.OpenRead(archivePath), leaveOpen: false);
+
+            while (archive.GetNextEntry() is ArEntry entry)
+            {
+                string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
+
+                // The relative path ocassionally ends with a '/', which is not a valid path given that the path is a file.
+                // Remove the following workaround once https://github.com/dotnet/arcade/issues/15384 is resolved.
+                if (relativePath.EndsWith("/"))
+                {
+                    relativePath = relativePath.TrimEnd('/');
+                }
+
+                if (match == null || relativePath.StartsWith(match))
+                {
+                    yield return new ZipDataEntry(relativePath, entry.DataStream);
+                }
+            }
+        }
+
+        private static IEnumerable<ZipDataEntry> ReadRpmContainerEntries(string archivePath)
+        {
+            using var stream = File.Open(archivePath, FileMode.Open);
+            using RpmPackage rpmPackage = RpmPackage.Read(stream);
+            using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
+
+            while (archive.GetNextEntry() is CpioEntry entry)
+            {
+                yield return new ZipDataEntry(entry.Name, entry.DataStream);
+            }
+        }
+
+        private void RepackRpmContainer(TaskLoggingHelper log, string tempDir)
+        {
+            // Unpack original package - create the layout
+            string workingDir = Path.Combine(tempDir, Guid.NewGuid().ToString().Split('-')[0]);
+            Directory.CreateDirectory(workingDir);
+            string layout = Path.Combine(workingDir, "layout");
+            Directory.CreateDirectory(layout);
+            ExtractRpmPayloadContents(FileSignInfo.FullPath, layout);
+
+            // Update signed files in layout
+            foreach (var signedPart in NestedParts.Values)
+            {
+                File.Copy(signedPart.FileSignInfo.FullPath, Path.Combine(layout, signedPart.RelativeName), overwrite: true);
+            }
+
+            // Create payload.cpio
+            string payload = Path.Combine(workingDir, "payload.cpio");
+
+            RunExternalProcess("bash", $"-c \"find . -depth ! -wholename '.' -print  | cpio -H newc -o --quiet > '{payload}'\"", out string _, layout);
+
+            // Collect file types for all files in layout
+            RunExternalProcess("bash", $"-c \"find . -depth ! -wholename '.'  -exec file {{}} \\;\"", out string output, layout);
+            ITaskItem[] rawPayloadFileKinds =
+                output.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(t => new TaskItem(t))
+                      .ToArray();
+
+            IReadOnlyList<RpmHeader<RpmHeaderTag>.Entry> headerEntries = GetRpmHeaderEntries(FileSignInfo.FullPath);
+            string[] requireNames = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
+            string[] requireVersions = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireVersion).Value;
+            string[] changelogLines = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.ChangelogText).Value;
+            string[] conflictNames = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.ConflictName).Value;
+
+            List<ITaskItem> scripts = [];
+            foreach (var scriptTag in new[] { RpmHeaderTag.Prein, RpmHeaderTag.Preun, RpmHeaderTag.Postin, RpmHeaderTag.Postun })
+            {
+                string contents = (string)headerEntries.FirstOrDefault(e => e.Tag == scriptTag).Value;
+                if (contents != null)
+                {
+                    string kind = Enum.GetName(scriptTag);
+                    string file = Path.Combine(workingDir, kind);
+                    File.WriteAllText(file, contents);
+                    scripts.Add(new TaskItem(file, new Dictionary<string, string> { { "Kind", kind } }));
+                }
+            }
+
+            // Create RPM package
+            CreateRpmPackage createRpmPackageTask = new()
+            {
+                OutputRpmPackagePath = FileSignInfo.FullPath,
+                Vendor = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Vendor).Value.ToString(),
+                Packager = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Packager).Value.ToString(),
+                PackageName = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.PackageName).Value.ToString(),
+                PackageVersion = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.PackageVersion).Value.ToString(),
+                PackageRelease = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.PackageRelease).Value.ToString(),
+                PackageOS = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.OperatingSystem).Value.ToString(),
+                PackageArchitecture = RpmBuilder.GetDotNetArchitectureFromRpmHeaderArchitecture(headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Architecture).Value.ToString()),
+                Payload = payload,
+                RawPayloadFileKinds = rawPayloadFileKinds,
+                Requires = requireNames != null ? requireNames.Zip(requireVersions, (name, version) => new TaskItem($"{name}", new Dictionary<string, string> { { "Version", version } })).Where(t => !t.ItemSpec.StartsWith("rpmlib")).ToArray() : [],
+                Conflicts = conflictNames != null ? conflictNames.Select(c => new TaskItem(c)).ToArray() : [],
+                OwnedDirectories = ((string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.DirectoryNames).Value).Select(d => new TaskItem(d)).ToArray(),
+                ChangelogLines = changelogLines != null ? changelogLines.Select(c => new TaskItem(c)).ToArray() : [],
+                License = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.License).Value.ToString(),
+                Summary = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Summary).Value.ToString(),
+                Description = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Description).Value.ToString(),
+                PackageUrl = headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.Url).Value.ToString(),
+                Scripts = scripts.ToArray(),
+            };
+
+            if (!createRpmPackageTask.Execute())
+            {
+                throw new Exception($"Failed to create RPM package: {FileSignInfo.FileName}");
+            }
+        }
+
+        internal static IReadOnlyList<RpmHeader<RpmHeaderTag>.Entry> GetRpmHeaderEntries(string rpmPackage)
+        {
+            using var stream = File.Open(rpmPackage, FileMode.Open);
+            return RpmPackage.Read(stream).Header.Entries;
+        }
+
+        internal static void ExtractRpmPayloadContents(string rpmPackage, string layout)
+        {
+            foreach (var entry in ReadRpmContainerEntries(rpmPackage))
+            {
+                string outputPath = Path.Combine(layout, entry.RelativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+
+                if (entry != null)
+                {
+                    entry.WriteToFile(outputPath);
+                }
+            }
+        }
+
+        private static bool RunExternalProcess(string cmd, string args, out string output, string workingDir = null)
+        {
+            ProcessStartInfo psi = new()
+            {
+                FileName = cmd,
+                Arguments = args,
+                RedirectStandardOutput = true,
+                RedirectStandardError = false,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = workingDir
+            };
+
+            using Process process = Process.Start(psi);
+            output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return process.ExitCode == 0;
         }
 #endif
     }

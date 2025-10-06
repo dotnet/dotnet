@@ -1,0 +1,1423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="Accessibility_ColumnNotSortedHelpText">
+        <source>Not sorted, press space to sort ascending</source>
+        <target state="translated">並べ替えられていません。昇順で並べ替えるには Space キーを押してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedAscendingHelpText">
+        <source>Sorted ascending, press space to sort descending</source>
+        <target state="translated">昇順に並べ替えられています。降順で並べ替えるには Space キーを押してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedDescendingHelpText">
+        <source>Sorted descending, press space to sort ascending</source>
+        <target state="translated">降順に並べ替えられています。昇順で並べ替えるには Space キーを押してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDeprecation">
+        <source>Package deprecation</source>
+        <target state="translated">パッケージの廃止</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDetailsUrlIcon">
+        <source>Package details URL icon</source>
+        <target state="translated">パッケージの詳細 URL アイコン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIcon">
+        <source>Package icon</source>
+        <target state="translated">パッケージのアイコン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIdentity">
+        <source>{0} version {1}</source>
+        <target state="translated">{0} バージョン {1}</target>
+        <note>{1} = Package ID, {2} = Package version</note>
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageManager">
+        <source>Package manager</source>
+        <target state="translated">パッケージ マネージャー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageMetadata">
+        <source>Package metadata</source>
+        <target state="translated">パッケージのメタデータ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageVulnerabilities">
+        <source>Package vulnerabilities</source>
+        <target state="translated">パッケージの脆弱性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_Packages">
+        <source>Packages</source>
+        <target state="translated">パッケージ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesDetails">
+        <source>Package details</source>
+        <target state="translated">パッケージの詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesList">
+        <source>Packages list</source>
+        <target state="translated">パッケージの一覧</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PrefixReserved">
+        <source>Prefix reserved</source>
+        <target state="translated">予約済みプレフィックス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteAllToTopLevel">
+        <source>Promote all to top level dependencies</source>
+        <target state="translated">最上位レベルの依存関係にすべてを上位変換する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteToTopLevel">
+        <source>Promote to a top level dependency</source>
+        <target state="translated">最上位レベルの依存関係に上位変換する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbHelp">
+        <source>Use arrow keys to change the size of the sections</source>
+        <target state="translated">方向キーを使用して、セクションのサイズを変更</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbName">
+        <source>splitter for Packages list</source>
+        <target state="translated">パッケージ リストのスプリッター</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_VulnerabilitiesDescriptionName">
+        <source>Package vulnerability description</source>
+        <target state="translated">パッケージの脆弱性の説明</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Action_Consolidate">
+        <source>Consolidate</source>
+        <target state="translated">統合</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">すべて</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">引数を null または空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForPRMigrator">
+        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
+        <target state="translated">このプロジェクトの NuGet パッケージ管理形式を 'packages.config' から 'PackageReference' に移行することをご検討ください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForRestoreMessage">
+        <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
+        <target state="translated">このソリューションには一部の NuGet パッケージがありません。クリックしてオンライン パッケージ ソースから復元してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForUpdateMessage">
+        <source>A new version of NuGet Package Manager is available.</source>
+        <target state="translated">NuGet Package Manager の新しいバージョンを使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AutoReferenced">
+        <source>Implicitly referenced by an SDK. To update the package, update the SDK to which it belongs.</source>
+        <target state="translated">SDK によって暗黙的に参照されています。パッケージを更新するには、参照元になっている SDK を更新します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Billion">
+        <source>{0:G3}B</source>
+        <target state="translated">{0:G3}B</target>
+        <note>American billions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="Button_Apply">
+        <source>_Apply</source>
+        <target state="translated">_適用</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Cancel">
+        <source>_Cancel</source>
+        <target state="translated">キャンセル(_C)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Copy">
+        <source>Co_py</source>
+        <target state="translated">コピー(_P)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Dismiss">
+        <source>Dismiss</source>
+        <target state="translated">無視</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_IAccept">
+        <source>I _Accept</source>
+        <target state="translated">同意する(_A)</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_IDecline">
+        <source>I _Decline</source>
+        <target state="translated">同意しない(_D)</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Install">
+        <source>Install</source>
+        <target state="translated">インストール</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_No">
+        <source>_No</source>
+        <target state="translated">いいえ(_N)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_NoToAll">
+        <source>No to A_ll</source>
+        <target state="translated">すべてにいいえ(_L)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_OK">
+        <source>_OK</source>
+        <target state="translated">OK(_O)</target>
+        <note>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Preview">
+        <source>Preview</source>
+        <target state="translated">プレビュー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_RestartSearch">
+        <source>Restart search</source>
+        <target state="translated">検索の再開</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowErrors">
+        <source>Show errors in output</source>
+        <target state="translated">出力にエラーを表示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowMoreResults">
+        <source>Show {0} more results</source>
+        <target state="translated">さらに {0} 件の結果を表示</target>
+        <note>The string format has a single parameter "{0}", which is an integer number of how many more results will be displayed to the user when they click a button.</note>
+      </trans-unit>
+      <trans-unit id="Button_Uninstall">
+        <source>Uninstall</source>
+        <target state="translated">アンインストール</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Update">
+        <source>Update</source>
+        <target state="translated">更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Yes">
+        <source>_Yes</source>
+        <target state="translated">はい(_Y)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_YesToAll">
+        <source>Yes to _All</source>
+        <target state="translated">すべてにはい(_A)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_DefaultPackageFormat">
+        <source>Allow format selection on first package install</source>
+        <target state="translated">パッケージの初回インストール時に形式の選択を許可する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects">
+        <source>Select All Projects</source>
+        <target state="translated">プロジェクトをすべて選択</target>
+        <note>Name for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects_HelpText">
+        <source>Select this checkbox to install the NuGet Package to all projects in the solution</source>
+        <target state="translated">このチェックボックスをオンにすると、NuGet パッケージをソリューション内のすべてのプロジェクトにインストールします</target>
+        <note>Help text for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectProject_HelpText">
+        <source>Select this checkbox to install the NuGet Package to the project '{0}'</source>
+        <target state="translated">このチェックボックスをオンにすると、NuGet パッケージをプロジェクト '{0}' にインストールします</target>
+        <note>Help text for the checkbox to install a NuGet package to a specific project.</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_Selected">
+        <source>Selected</source>
+        <target state="translated">選択しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ForceRemove">
+        <source>Force uninstall, even if there are dependencies on it</source>
+        <target state="translated">依存関係が存在する場合でも強制的にアンインストールする</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_IncludePrerelease">
+        <source>Include prerelease</source>
+        <target state="translated">プレリリースを含める</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ProjectSelection">
+        <source>{0} project(s)</source>
+        <target state="translated">{0} プロジェクト</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_RemoveDependencies">
+        <source>Remove dependencies</source>
+        <target state="translated">依存関係の削除</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_SelectAllPackages">
+        <source>Select all packages</source>
+        <target state="translated">すべてのパッケージを選択</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ShowPreviewWindow">
+        <source>Show preview window</source>
+        <target state="translated">プレビュー ウィンドウの表示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_Show_Vulnerable_Only">
+        <source>Show only vulnerable</source>
+        <target state="translated">脆弱性のみを表示する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_InstalledVersion">
+        <source>Installed</source>
+        <target state="translated">インストール済み</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_PackageLevel">
+        <source>Package Level</source>
+        <target state="translated">パッケージ レベル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Project">
+        <source>Project</source>
+        <target state="translated">プロジェクト</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Requested">
+        <source>Version</source>
+        <target state="translated">バージョン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Selected">
+        <source>Selected</source>
+        <target state="translated">選択しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CopyMenuCommandLabel">
+        <source>_Copy</source>
+        <target state="translated">コピー(_C)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Highest">
+        <source>Highest</source>
+        <target state="translated">最高</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestMinor">
+        <source>Highest Minor</source>
+        <target state="translated">最高 - マイナー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestPatch">
+        <source>Highest Patch</source>
+        <target state="translated">最高 - パッチ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_IgnoreDependencies">
+        <source>Ignore Dependencies</source>
+        <target state="translated">依存関係を無視する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Lowest">
+        <source>Lowest</source>
+        <target state="translated">最低</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_LinkTooltip">
+        <source>Select to view the alternative package.</source>
+        <target state="translated">代替パッケージを表示する場合に選択します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_MoreInfo">
+        <source>More info</source>
+        <target state="translated">詳細情報</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessage">
+        <source>This package version is deprecated.</source>
+        <target state="translated">このパッケージ バージョンは非推奨です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessageAlternative">
+        <source>This package version is deprecated. Use {0} instead.</source>
+        <target state="translated">このパッケージ バージョンは非推奨です。代わりに {0} をお使いください。</target>
+        <note>{0} is a NuGet package id (string)</note>
+      </trans-unit>
+      <trans-unit id="Description_LearnMore">
+        <source>Learn more</source>
+        <target state="translated">詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DialogTitle_HttpSource">
+        <source>HTTP Source</source>
+        <target state="translated">HTTP ソース</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotShowThisAgain">
+        <source>_Don't show this again</source>
+        <target state="translated">_今後、このメッセージを表示しない</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
+        <target state="translated">NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MetadataNotFound">
+        <source>Unable to find metadata of {0}</source>
+        <target state="translated">{0} のメタデータが見つかりません</target>
+        <note>{0} is the package ID</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectNotInCache">
+        <source>Project {0} does not exist in the project system cache.</source>
+        <target state="translated">プロジェクト {0} はプロジェクト システム キャッシュに存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
+        <source>The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of the configured sources.</source>
+        <target state="translated">パッケージ '{0}' はグローバル パッケージ フォルダーにありますが、'{1}' にあるこのソースは、構成済みソースの 1 つではありません。</target>
+        <note>{0} is the package ID. {1} is the URI of the package source found in the Global packages folder.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLoadReadme">
+        <source>An error occurred while trying to load the README.</source>
+        <target state="translated">README を読み込もうとしているときにエラーが発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_IgnoreAll">
+        <source>Ignore All</source>
+        <target state="translated">すべて無視</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_OverwriteAll">
+        <source>Overwrite All</source>
+        <target state="translated">すべてを上書き</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_Prompt">
+        <source>Prompt</source>
+        <target state="translated">プロンプト</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_InstallOptions">
+        <source>Install and Update Options</source>
+        <target state="translated">インストールと更新のオプション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_UninstallOptions">
+        <source>Uninstall Options</source>
+        <target state="translated">アンインストール オプション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_AdvisoryUrl">
+        <source>Advisory URL</source>
+        <target state="translated">アドバイザリ URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_License">
+        <source>License</source>
+        <target state="translated">ライセンス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Owner">
+        <source>Owner</source>
+        <target state="translated">所有者</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_PackageSourceMappingSettings">
+        <source>Configure</source>
+        <target state="translated">構成する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ProjectUrl">
+        <source>Project URL</source>
+        <target state="translated">プロジェクトの URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Readme">
+        <source>Readme</source>
+        <target state="translated">お読みください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ReportAbuse">
+        <source>Report Abuse</source>
+        <target state="translated">不正使用を報告</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoreUpgrade">
+        <source>Ignore for now</source>
+        <target state="translated">今は無視する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImageCaption_HelpIcon">
+        <source>Help icon</source>
+        <target state="translated">ヘルプ アイコン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Action">
+        <source>Action:</source>
+        <target state="translated">アクション:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Authors">
+        <source>Author(s): </source>
+        <target state="translated">作成者: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Browse">
+        <source>Browse</source>
+        <target state="translated">参照</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_CreatingSourceMappings">
+        <source>Creating source mappings to '{0}':</source>
+        <target state="translated">'{0}' へソース マッピングを作成しています:</target>
+        <note>{0} - The Name of a user-configured NuGet Package Source</note>
+      </trans-unit>
+      <trans-unit id="Label_DatePublished">
+        <source>Date published:</source>
+        <target state="translated">公開日:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Dependencies">
+        <source>Dependencies</source>
+        <target state="translated">依存関係</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DependencyBehavior">
+        <source>Dependency behavior:</source>
+        <target state="translated">依存関係の動作:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Deprecated">
+        <source>Deprecated</source>
+        <target state="translated">非推奨</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationAlternatePackage">
+        <source>Alternate package</source>
+        <target state="translated">代替パッケージ</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons">
+        <source>Deprecation reason</source>
+        <target state="translated">非推奨の理由</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_CriticalBugs">
+        <source>This package has been deprecated as it has critical bugs.</source>
+        <target state="translated">このパッケージは、重大なバグがあるため非推奨になりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Legacy">
+        <source>This package has been deprecated as it is legacy and no longer maintained.</source>
+        <target state="translated">このパッケージは、従来型で、もう維持されなくなっているため、非推奨になりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_LegacyAndCriticalBugs">
+        <source>This package has been deprecated as it has critical bugs and is no longer maintained.</source>
+        <target state="translated">このパッケージは、重大なバグがあり、もう維持されなくなっているため、非推奨になりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Unknown">
+        <source>The package has been deprecated.</source>
+        <target state="translated">パッケージは非推奨になりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Description">
+        <source>Description</source>
+        <target state="translated">説明</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Details">
+        <source>Details</source>
+        <target state="translated">詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Downloads">
+        <source>Downloads:</source>
+        <target state="translated">ダウンロード:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_FileConflictAction">
+        <source>File conflict action:</source>
+        <target state="translated">ファイルの競合時のアクション:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed">
+        <source>Installed</source>
+        <target state="translated">インストール済み</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledColon">
+        <source>Installed:</source>
+        <target state="translated">インストール済み:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledPackages">
+        <source>Installing:</source>
+        <target state="translated">インストール中:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledVersionsCount">
+        <source>Versions: {0}</source>
+        <target state="translated">バージョン: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed_DeprecatedWarning">
+        <source>You have {0} deprecated package versions installed.</source>
+        <target state="translated">非推奨のパッケージが {0} 個インストールされています。</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableAndDeprecatedWarning">
+        <source>You have {0} vulnerable package versions and {1} deprecated package versions installed.</source>
+        <target state="translated">脆弱性のあるパッケージ バージョン {0} 個と、非推奨のパッケージ バージョン {1} 個がインストールされています。</target>
+        <note>{0} and {1} are numbers of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning">
+        <source>You have {0} vulnerable package versions installed.</source>
+        <target state="translated">脆弱性のあるパッケージが {0} 個インストールされています。</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_License">
+        <source>License:</source>
+        <target state="translated">ライセンス:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
+        <source>These installed package versions contain vulnerabilities: {0}</source>
+        <target state="translated">これらのインストール済みパッケージ のバージョンには、次の脆弱性が含まれています: {0}</target>
+        <note>{0} are package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_NetworkError">
+        <source>An error occurred while fetching additional information about the package. Refresh to try again.</source>
+        <target state="translated">パッケージに関する追加情報をフェッチ中にエラーが発生しました。最新の情報に更新して、もう一度お試しください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_NuGetWindowCaption">
+        <source>NuGet: {0}</source>
+        <target state="translated">NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Options">
+        <source>Options</source>
+        <target state="translated">オプション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Owners">
+        <source>Owner(s):</source>
+        <target state="translated">所有者:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDeprecatedToolTip">
+        <source>This package version is deprecated.</source>
+        <target state="translated">このパッケージ バージョンは非推奨です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDetails">
+        <source>Package Details</source>
+        <target state="translated">パッケージの詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageManager">
+        <source>NuGet Package Manager: {0}</source>
+        <target state="translated">NuGet パッケージ マネージャー: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackagePrerelease">
+        <source>Prerelease</source>
+        <target state="translated">プレリリース</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageSelectForInfoToolTip">
+        <source>Select to view package details for more information.</source>
+        <target state="translated">詳細については、パッケージ詳細の表示を選択してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageVulnerableToolTip">
+        <source>This package version has a vulnerability with {0} severity.</source>
+        <target state="translated">このパッケージのバージョンには、{0} 重大度の脆弱性があります。</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_ProjectUrl">
+        <source>Project URL:</source>
+        <target state="translated">プロジェクト URL:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme">
+        <source>Readme:</source>
+        <target state="translated">お読みください:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme_Tab">
+        <source>README</source>
+        <target state="translated">README</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_ReportAbuse">
+        <source>Report Abuse:</source>
+        <target state="translated">不正使用を報告:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Repository">
+        <source>Package source:</source>
+        <target state="translated">パッケージ ソース:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Solution">
+        <source>Solution</source>
+        <target state="translated">ソリューション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionNuGetWindowCaption">
+        <source>NuGet - Solution</source>
+        <target state="translated">NuGet - ソリューション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionPackageManager">
+        <source>Manage Packages for Solution</source>
+        <target state="translated">ソリューションのパッケージの管理</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Tags">
+        <source>Tags:</source>
+        <target state="translated">タグ:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UninstalledPackages">
+        <source>Uninstalling:</source>
+        <target state="translated">アンインストール中:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UpdatedPackages">
+        <source>Updates:</source>
+        <target state="translated">更新:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Updates">
+        <source>Updates</source>
+        <target state="translated">更新プログラム</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Version">
+        <source>Version:</source>
+        <target state="translated">バージョン:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Vulnerabilities">
+        <source>Vulnerabilities detected ({0})</source>
+        <target state="translated">脆弱性が検出されました ({0})</target>
+        <note>{0} is the number of vulnerabilities</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilitiesDescription">
+        <source>This package version has at least one vulnerability with {0} severity. It may lead to specific problems in your project. Try updating the package version.</source>
+        <target state="translated">このパッケージのバージョンには、少なくとも 1 つの重要度 - {0} の脆弱性が含まれています。プロジェクトで特定の問題が発生する可能性があります。パッケージのバージョンを更新してみてください。</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilityAdvisory">
+        <source>Advisory ({0} severity):</source>
+        <target state="translated">アドバイザリ (重要度 - {0}):</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_Vulnerable">
+        <source>Vulnerable</source>
+        <target state="translated">脆弱性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseFile_Loading">
+        <source>Loading license file...</source>
+        <target state="translated">ライセンス ファイルを読み込んでいます...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseTerm_LinkName">
+        <source>{0} license</source>
+        <target state="translated">{0} 個のライセンス</target>
+        <note>{0} = license name. Examples: MIT, Apache</note>
+      </trans-unit>
+      <trans-unit id="Link_DoNotShowAgain">
+        <source>Don't show again</source>
+        <target state="translated">今後は表示しない</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutInstallOptions">
+        <source>Learn about Install Options</source>
+        <target state="translated">インストール オプションの詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutUninstallOptions">
+        <source>Learn about Uninstall Options</source>
+        <target state="translated">アンインストール オプションの詳細</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_MigratorHelp">
+        <source>Why should I migrate?</source>
+        <target state="translated">移行するべき理由は?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_UpgradeOption">
+        <source>Migrate Now</source>
+        <target state="translated">今すぐ移行する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_configuration">
+        <source>Common NuGet configurations; How settings are applied.</source>
+        <target state="translated">一般的な NuGet 構成: 設定の適用方法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageIdColumnHeader">
+        <source>Package Id</source>
+        <target state="translated">パッケージ ID</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageNotFound">
+        <source>Migration failed as packages {0} could not be uninstalled. These packages were not found in the solution packages folder. No changes were made to the project.</source>
+        <target state="translated">パッケージ {0} をアンインストールできなかったため、移行できませんでした。これらのパッケージがソリューション パッケージ フォルダーに見つかりませんでした。プロジェクトには何も変更を加えていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_TopLevelColumnHeader">
+        <source>Top-Level</source>
+        <target state="translated">最上位</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_VersionColumnHeader">
+        <source>Version</source>
+        <target state="translated">バージョン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Million">
+        <source>{0:G3}M</source>
+        <target state="translated">{0:G3}M</target>
+        <note>Millions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_PackageDependencyOf">
+        <source>(dependency of {0})</source>
+        <target state="translated">({0} の依存関係)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Installing">
+        <source>Installing required packages</source>
+        <target state="translated">必須パッケージをインストールしています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Uninstalling">
+        <source>Uninstalling packages from packages.config</source>
+        <target state="translated">Packages.config からパッケージをアンインストールしています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_WaitMessage">
+        <source>Upgrading Project to PackageReference</source>
+        <target state="translated">プロジェクトを PackageReference にアップグレードしています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">経過した時間: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageLevel_TopLevelPackageHeaderText">
+        <source>Top-level packages ({0})</source>
+        <target state="translated">最上位のパッケージ ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageLevel_TransitivePackageHeaderText">
+        <source>Transitive packages ({0})</source>
+        <target state="translated">推移的なパッケージ ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageRestoreErrorTryAgain">
+        <source>An error occurred while trying to restore packages:</source>
+        <target state="translated">パッケージの復元中にエラーが発生しました: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreProgressMessage">
+        <source>Downloading missing packages...</source>
+        <target state="translated">足りないパッケージをダウンロードしています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageVersionWithTransitiveOrigins">
+        <source>{0} by {1}</source>
+        <target state="translated">{0} ({1})</target>
+        <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
+      </trans-unit>
+      <trans-unit id="Preview_PackageUpdate">
+        <source>{0} version {1} to {2} version {3}</source>
+        <target state="translated">{0} バージョン {1} から {2} バージョン {3}</target>
+        <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
+      </trans-unit>
+      <trans-unit id="Preview_UnknownProject">
+        <source>Unknown project</source>
+        <target state="translated">不明なプロジェクト</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackageRef">
+        <source>PackageReference in project file</source>
+        <target state="translated">プロジェクト ファイルの PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackagesConfig">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallMultiplePackages">
+        <source>Multiple packages failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">複数のパッケージをアンインストールできませんでした。Visual Studio を再起動して処理を完了してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallSinglePackage">
+        <source>The package at '{0}' failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">'{0}' にあるパッケージをアンインストールできませんでした。Visual Studio を再起動して処理を完了してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestartButtonLabel">
+        <source>Rest_art</source>
+        <target state="translated">再起動(_A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreButtonLabel">
+        <source>_Restore</source>
+        <target state="translated">再起動(_R)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowDetails">
+        <source>Show Details</source>
+        <target state="translated">詳細を表示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandFailure">
+        <source>NuGet storage clear failed at {0}. 
+Error: {1}
+Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+        <target state="translated">NuGet ストレージをクリアできませんでした ({0})。
+エラー: {1}
+詳しいヘルプについては、https://aka.ms/troubleshoot_nuget_cache をご覧ください。</target>
+        <note>{0} :error message;
+{1}: date and time
+</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandSuccess">
+        <source>NuGet storage cleared at {0}</source>
+        <target state="translated">NuGet ストレージが {0} でクリアされました</target>
+        <note>{0} for date and time string</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandWorking">
+        <source>Clearing all NuGet storage...</source>
+        <target state="translated">すべての NuGet ストレージをクリアしています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_Title">
+        <source>Package Manager Options</source>
+        <target state="translated">パッケージ マネージャーのオプション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueName">
+        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <target state="translated">指定された名前は利用可能なパッケージ ソースの一覧に既に追加されています。一意な名前を指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <target state="translated">指定されたソースは利用可能なパッケージ ソースの一覧に既に追加されています。一意なソースを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Canceled">
+        <source>Canceled loading packages</source>
+        <target state="translated">パッケージの読み込みが取り消されました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_ErrorOccurred">
+        <source>An error occurred while loading packages</source>
+        <target state="translated">パッケージの読み込み中にエラーが発生しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_NoMoreItems">
+        <source>End of package list loaded</source>
+        <target state="translated">パッケージ リストの終わりが読み込まれました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Ready">
+        <source>Package list loaded</source>
+        <target state="translated">パッケージ リストが読み込まれました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_By">
+        <source>by</source>
+        <target state="translated">作成者</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByAuthor">
+        <source>by {0}</source>
+        <target state="translated">作成者: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByOwner">
+        <source>by {0}</source>
+        <target state="translated">作成者: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Changes">
+        <source>Visual Studio is about to make changes to this solution:</source>
+        <target state="translated">Visual Studioはこのソリューションに変更を加えようとしています:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DirectDependencies">
+        <source>Top-level dependencies:</source>
+        <target state="translated">最上位レベルの依存関係:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Downloads">
+        <source>{0} downloads</source>
+        <target state="translated">{0} 件のダウンロード</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ErrorOccurred">
+        <source>Error occurred</source>
+        <target state="translated">エラーが発生しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_HelpMeMigrate">
+        <source>Help me migrate to NuGet PackageReference</source>
+        <target state="translated">NuGet PackageReference への移行を支援してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LegalDisclaimer">
+        <source>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages.</source>
+        <target state="translated">各パッケージのライセンスは、パッケージの所有者からパッケージのユーザーに付与されます。NuGet は、サードパーティのパッケージに対して一切責任を負わず、いかなるライセンスも付与しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseHeaderText">
+        <source>The following package(s) require that you accept their license terms before installing.</source>
+        <target state="translated">以下のパッケージをインストールするには、ライセンス条項に同意する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseText">
+        <source>By clicking "I Accept," you agree to the license terms for the package(s) listed above. If you do not agree to the license terms, click "I Decline."</source>
+        <target state="translated">[同意する] をクリックすると、上記のパッケージのライセンス条項に同意したことになります。ライセンス条項に同意できない場合は、[同意しない] をクリックしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Loading">
+        <source>Loading...</source>
+        <target state="translated">読み込み中...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LoadingReadme">
+        <source>Loading README...</source>
+        <target state="translated">README を読み込んでいます...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ManageSettings">
+        <source>You can manage these settings in </source>
+        <target state="translated">次の場所でこれらの設定を管理できます: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MultipleVersionsInstalled">
+        <source>multiple versions installed</source>
+        <target state="translated">複数のバージョンがインストールされています</target>
+        <note>In the solution package manager, if the select package has multiple versions installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NoDependencies">
+        <source>No dependencies</source>
+        <target state="translated">依存関係なし</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoPackagesFound">
+        <source>No packages found</source>
+        <target state="translated">パッケージが見つかりませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoReadme">
+        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="translated">選択したパッケージ バージョンに使用できる README がありません。詳細については、[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme). を参照してください</target>
+        <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="Text_NotAvailableInSource">
+        <source>Not available in this source</source>
+        <target state="translated">このソースでは利用できません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NotInstalled">
+        <source>not installed</source>
+        <target state="translated">インストールされていません</target>
+        <note>In the solution package manager, if the select package is not installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NuGetSettings">
+        <source>NuGet Settings</source>
+        <target state="translated">NuGet 設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeIssues">
+        <source>Package compatibility issues:</source>
+        <target state="translated">パッケージの互換性の問題:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeNoIssuesFound">
+        <source>No issues were found.</source>
+        <target state="translated">問題は見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatApply">
+        <source>The package manager format will apply to the following projects in this Solution</source>
+        <target state="translated">パッケージ マネージャーの形式は、この Solution の次のプロジェクトに適用されます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTopLevel">
+        <source>Top-level</source>
+        <target state="translated">最上位レベル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTransitive">
+        <source>Transitive</source>
+        <target state="translated">推移的</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsAutoCreate">
+        <source>A package source mapping will be created.</source>
+        <target state="translated">パッケージ ソース マッピングが作成されます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsDisabled">
+        <source>Package source mapping is off.</source>
+        <target state="translated">パッケージ ソースのマッピングがオフです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsFound">
+        <source>Package source mapping found.</source>
+        <target state="translated">パッケージ ソースのマッピング見つかりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsNotFound">
+        <source>Requires a package source mapping.</source>
+        <target state="translated">パッケージ ソースのマッピングが必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport">
+        <source>Projects with PackageReference are not supported in Visual Studio 2015 and earlier.</source>
+        <target state="translated">PackageReference が含まれるプロジェクトは、Visual Studio 2015 以前ではサポートされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport_DocumentLink">
+        <source>Learn more about package reference</source>
+        <target state="translated">パッケージ参照の詳細情報</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources">
+        <source>Package sources:</source>
+        <target state="translated">パッケージ ソース:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackagesFound">
+        <source>Packages found</source>
+        <target state="translated">パッケージが見つかりました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ReadmeLoaded">
+        <source>README loaded</source>
+        <target state="translated">README が読み込まれました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchBoxText">
+        <source>Search ({0})</source>
+        <target state="translated">検索 ({0})</target>
+        <note>The text to be displayed in the search box</note>
+      </trans-unit>
+      <trans-unit id="Text_SearchIncomplete">
+        <source>Retrieving results from one or more sources</source>
+        <target state="translated">1 つ以上のソースから結果を取得しています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchStopped">
+        <source>Unable to retrieve results from one or more sources</source>
+        <target state="translated">1 つ以上のソースから結果を取得できません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Searching">
+        <source>Searching '{0}'</source>
+        <target state="translated">'{0}' を検索しています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_TransitiveDependencies">
+        <source>Transitive dependencies:</source>
+        <target state="translated">推移的な依存関係:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UpgradeNuGetProjectDescription">
+        <source>Migrate this project from packages.config to PackageReference format.</source>
+        <target state="translated">このプロジェクトを packages.config から PackageReference の形式に移行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UserCanceled">
+        <source>Operation canceled by user</source>
+        <target state="translated">ユーザーによって操作がキャンセルされました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewLicense">
+        <source>View License</source>
+        <target state="translated">ライセンスの表示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewReadme">
+        <source>View Readme</source>
+        <target state="translated">「お読みください」を表示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Thousand">
+        <source>{0:G3}K</source>
+        <target state="translated">{0:G3}K</target>
+        <note>Thousands in short format notation</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_BlockedVersion">
+        <source>Following versions are unavailable due to additional constraints in the project or packages.config</source>
+        <target state="translated">次のバージョンはプロジェクトまたは packages.config の追加の制約により使用できません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstallButton">
+        <source>Install {0} version {1}.</source>
+        <target state="translated">{0} のバージョン {1} をインストールします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstalledVersion">
+        <source>Installed version: {0}</source>
+        <target state="translated">インストールされているバージョン: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_LatestVersion">
+        <source>Latest version: {0}</source>
+        <target state="translated">最新バージョン: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageInstalled">
+        <source>Latest stable version is installed</source>
+        <target state="translated">最新の安定バージョンがインストールされました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageRecommended">
+        <source>IntelliCode package suggestion based on this project context</source>
+        <target state="translated">このプロジェクト コンテキストに基づく IntelliCode パッケージの提案事項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Refresh">
+        <source>Refresh</source>
+        <target state="translated">最新の情報に更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Settings">
+        <source>Settings</source>
+        <target state="translated">設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependency">
+        <source>Transitively referenced version</source>
+        <target state="translated">推移的に参照されているバージョン</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependencyVersion">
+        <source>Transitively referenced version: {0}</source>
+        <target state="translated">推移的に参照されているバージョン: {0}</target>
+        <note>{0} is a version number</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitivePathHelp">
+        <source>To learn more about transitive paths, see</source>
+        <target state="translated">推移的なパスの詳細については、次を参照してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UninstallButton">
+        <source>Uninstall this package.</source>
+        <target state="translated">このパッケージをアンインストールします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateAvailable">
+        <source>Update available</source>
+        <target state="translated">利用可能な更新プログラムがあります</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateButton">
+        <source>Update {0} to version {1}.</source>
+        <target state="translated">{0} をバージョン {1} に更新します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Tooltip_PrefixReserved">
+        <source>The ID prefix of this package has been reserved for the owner of the package by the currently selected feed</source>
+        <target state="translated">このパッケージの ID のプレフィックスは、現在選択されているフィードによってパッケージの所有者用に予約されています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Trillion">
+        <source>{0:G3}T</source>
+        <target state="translated">{0:G3}T</target>
+        <note>American trillions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="UpdateButton_VersionOverride_Tooltip">
+        <source>Dependency version defined by VersionOverride, modify project file to change package version.</source>
+        <target state="translated">VersionOverride で定義されている依存関係バージョン。パッケージ バージョンを変更するには、プロジェクト ファイルを変更します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpgradeLogger_BackupPathMustBeValid">
+        <source>Must be a valid path.</source>
+        <target state="translated">有効なパスを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_InstallFailed">
+        <source>NuGet migrate failed to install packages as PackageReference. Changed files are backed up at {0}</source>
+        <target state="translated">NuGet の移行でパッケージを PackageReference としてインストールできませんでした。変更を加えたファイルのバックアップは {0} にあります</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_RevertSteps">
+        <source>Please follow simple instructions from {0} to go back to previous state.</source>
+        <target state="translated">{0} の簡単な手順に従い、以前の状態に戻してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_UninstallFailed">
+        <source>NuGet upgrade failed to uninstall packages from packages.config so rolled back to previous state.</source>
+        <target state="translated">NuGet アップグレードで、パッケージを packages.config からアンインストールできなかったため、以前の状態にロールバックされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_BackupFailed">
+        <source>The project cannot be upgraded as backing up the project file and packages.config ran into an issue.</source>
+        <target state="translated">プロジェクト ファイルと packages.config のバックアップで問題が発生したため、このプロジェクトをアップグレードできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_PackageNotFound">
+        <source>Unable to determine compatibility of package as {0}.nupkg was not found on disk. The project cannot be migrated.</source>
+        <target state="translated">{0}.nupkg がディスク上に見つからなかったため、パッケージの互換性を確認できません。プロジェクトを移行できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Close">
+        <source>Close</source>
+        <target state="translated">閉じる</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
+        <source>NuGet Package Manager</source>
+        <target state="translated">NuGet パッケージ マネージャー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
+        <source>Once started, this action cannot be cancelled.</source>
+        <target state="translated">いったん開始すると、この操作を取り消すことはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
+        <source>Clear all local NuGet resources?</source>
+        <target state="translated">すべてのローカル NuGet リソースをクリアしますか?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked">
+        <source>Blocked by package.config</source>
+        <target state="translated">package.config によりブロックされました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked_Generic">
+        <source>Blocked by project</source>
+        <target state="translated">プロジェクトによってブロック</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Installed">
+        <source>Installed</source>
+        <target state="translated">インストール済み</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestPrerelease">
+        <source>Latest prerelease</source>
+        <target state="translated">最新のプレリリース版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestStable">
+        <source>Latest stable</source>
+        <target state="translated">最新の安定版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Vulnerabilities_Loading">
+        <source>Loading vulnerable packages...</source>
+        <target state="translated">脆弱なパッケージを読み込んでいます...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Critical">
+        <source>critical</source>
+        <target state="translated">クリティカル</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_High">
+        <source>high</source>
+        <target state="translated">高</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Low">
+        <source>low</source>
+        <target state="translated">低</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Moderate">
+        <source>moderate</source>
+        <target state="translated">中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warn_Adding_HttpSource">
+        <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
+        <target state="translated">セキュリティで保護されていない HTTP ソースを追加しようとしています。この安全でない HTTP ソースの追加に進みますか?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HTTPSource">
+        <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">AllowInsecureConnections は有効になっており、http アクセスを許可します。注: このメソッドはセキュリティで保護されていません。セキュリティで保護されたオプションについては、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectJson">
+        <source>These options are not applicable to projects managing their dependencies through project.json or PackageReference</source>
+        <target state="translated">これらのオプションは、project.json または PackageReference を通して依存関係を管理しているプロジェクトには適用されません</target>
+        <note>To be displayed for the VS UI opened through a solution. bug #2665</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_DeprecatedFramework">
+        <source>Deprecated Framework</source>
+        <target state="translated">非推奨のフレームワーク</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_FileConflict">
+        <source>File Conflict</source>
+        <target state="translated">ファイルの競合</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseAcceptance">
+        <source>License Acceptance</source>
+        <target state="translated">ライセンスへの同意</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseFileWindow">
+        <source>{0} License</source>
+        <target state="translated">{0} ライセンス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_NuGetMigrator">
+        <source>Migrate NuGet format to PackageReference - {0}</source>
+        <target state="translated">NuGet の形式を PackageReference に移行します - {0}</target>
+        <note>{0} is the project name</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_PackageFormatSelector">
+        <source>Choose NuGet Package Manager Format</source>
+        <target state="translated">NuGet パッケージ マネージャーの形式の選択</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_PreviewChanges">
+        <source>Preview Changes</source>
+        <target state="translated">変更のプレビュー</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -4,8 +4,10 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Xml;
+using System.Linq;
 
+using Microsoft.CodeCoverage.Core;
+using Microsoft.CodeCoverage.Core.Reports.Coverage;
 using Microsoft.TestPlatform.TestUtilities;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -235,13 +237,13 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
             Assert.IsTrue(actualCoverageFile.EndsWith(".coverage", StringComparison.InvariantCultureIgnoreCase));
         }
 
-        var coverageDocument = GetXmlCoverage(actualCoverageFile, TempDirectory);
+        var coverageReport = GetCoverageReport(actualCoverageFile);
         if (testParameters.CheckSkipped)
         {
-            AssertSkippedMethod(coverageDocument);
+            AssertSkippedMethod(coverageReport);
         }
 
-        ValidateCoverageData(coverageDocument, testParameters.AssemblyName, testParameters.RunSettingsType != TestParameters.SettingsType.CoberturaOutput);
+        ValidateCoverageData(coverageReport, testParameters.AssemblyName, testParameters.RunSettingsType != TestParameters.SettingsType.CoberturaOutput);
     }
 
     private string CreateArguments(
@@ -302,31 +304,29 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         return arguments;
     }
 
-    private static void AssertSkippedMethod(XmlDocument document)
+    private static void AssertSkippedMethod(CoverageReport coverageReport)
     {
-        var module = GetModuleNode(document.DocumentElement!, "codecoveragetest.dll");
+        var module = GetModule(coverageReport, "codecoveragetest.dll");
         Assert.IsNotNull(module);
 
-        var coverage = double.Parse(module.Attributes!["block_coverage"]!.Value, CultureInfo.InvariantCulture);
+        var coverage = double.Parse(module.BlockCoverage, CultureInfo.InvariantCulture);
         Assert.IsTrue(coverage > ExpectedMinimalModuleCoverage);
 
-        var testSignFunction = GetNode(module, "skipped_function", "TestSign()");
+        var testSignFunction = module.SkippedFunctions.FirstOrDefault(f => f.Name.Equals("TestSign()"));
         Assert.IsNotNull(testSignFunction);
-        Assert.AreEqual("name_excluded", testSignFunction.Attributes!["reason"]!.Value);
+        Assert.AreEqual(FunctionSkipReason.name_excluded, testSignFunction.FunctionSkipReason);
 
-        var skippedTestMethod = GetNode(module, "skipped_function", "__CxxPureMSILEntry_Test()");
+        var skippedTestMethod = module.SkippedFunctions.FirstOrDefault(f => f.Name.Equals("__CxxPureMSILEntry_Test()"));
         Assert.IsNotNull(skippedTestMethod);
-        Assert.AreEqual("name_excluded", skippedTestMethod.Attributes!["reason"]!.Value);
+        Assert.AreEqual(FunctionSkipReason.name_excluded, skippedTestMethod.FunctionSkipReason);
 
-        var testAbsFunction = GetNode(module, "function", "TestAbs()");
+        var testAbsFunction = module.Functions.FirstOrDefault(f => f.Name.Equals("TestAbs()"));
         Assert.IsNotNull(testAbsFunction);
     }
 
-    private static void ValidateCoverageData(XmlDocument document, string moduleName, bool validateSourceFileNames)
+    private static void ValidateCoverageData(CoverageReport coverageReport, string moduleName, bool validateSourceFileNames)
     {
-        var module = GetModuleNode(document.DocumentElement!, moduleName.ToLowerInvariant());
-
-        module ??= GetModuleNode(document.DocumentElement!, moduleName);
+        var module = GetModule(coverageReport, moduleName.ToLowerInvariant());
         Assert.IsNotNull(module);
 
         AssertCoverage(module, ExpectedMinimalModuleCoverage);
@@ -338,15 +338,15 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         }
     }
 
-    private static void AssertSourceFileName(XmlNode module)
+    private static void AssertSourceFileName(ModuleData module)
     {
         const string expectedFileName = "UnitTest1.cs";
 
         var found = false;
-        var sourcesNode = module.SelectSingleNode("./source_files");
-        foreach (XmlNode node in sourcesNode!.ChildNodes)
+
+        foreach (var sourceFile in module.SourceFiles)
         {
-            if (node.Attributes!["path"]!.Value.Contains(expectedFileName))
+            if (sourceFile.Path.Contains(expectedFileName))
             {
                 found = true;
                 break;

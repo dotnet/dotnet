@@ -72,11 +72,8 @@ internal sealed class ToolStripPanelSelectionGlyph : ControlBodyGlyph
             _baseParent = parent.Parent;
         }
 
-        if (_image is not null)
-        {
-            _image.Dispose();
-            _image = null;
-        }
+        _image?.Dispose();
+        _image = null;
 
         if (!_isExpanded)
         {
@@ -98,8 +95,8 @@ internal sealed class ToolStripPanelSelectionGlyph : ControlBodyGlyph
     private void CollapseGlyph(Rectangle bounds)
     {
         DockStyle? dock = _relatedPanel?.Dock;
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
 
         switch (dock)
         {
@@ -147,8 +144,8 @@ internal sealed class ToolStripPanelSelectionGlyph : ControlBodyGlyph
     private void ExpandGlyph(Rectangle bounds)
     {
         DockStyle? dock = _relatedPanel?.Dock;
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
 
         switch (dock)
         {
@@ -189,7 +186,7 @@ internal sealed class ToolStripPanelSelectionGlyph : ControlBodyGlyph
 
                 break;
             default:
-                throw new Exception(SR.ToolStripPanelGlyphUnsupportedDock);
+                throw new InvalidOperationException(SR.ToolStripPanelGlyphUnsupportedDock);
         }
     }
 

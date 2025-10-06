@@ -12,8 +12,6 @@ using NuGet.Frameworks;
 using NuGet.PackageManagement;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.Packaging.PackageExtraction;
-using NuGet.Packaging.Signing;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 
@@ -29,7 +27,7 @@ namespace NuGet.ProjectManagement
         /// </summary>
         public string Root { get; set; }
 
-        private PackagePathResolver PackagePathResolver { get; set; }
+        private readonly PackagePathResolver _packagePathResolver;
 
         private readonly NuGetFramework _framework;
 
@@ -73,7 +71,7 @@ namespace NuGet.ProjectManagement
             }
 
             Root = root ?? throw new ArgumentNullException(nameof(root));
-            PackagePathResolver = packagePathResolver ?? throw new ArgumentNullException(nameof(packagePathResolver));
+            _packagePathResolver = packagePathResolver ?? throw new ArgumentNullException(nameof(packagePathResolver));
 
             InternalMetadata.Add(NuGetProjectMetadataKeys.Name, root);
             InternalMetadata.Add(NuGetProjectMetadataKeys.TargetFramework, targetFramework);
@@ -137,7 +135,7 @@ namespace NuGet.ProjectManagement
                 throw new ArgumentException(Strings.PackageStreamShouldBeSeekable, nameof(downloadResourceResult));
             }
 
-            var packageDirectory = PackagePathResolver.GetInstallPath(packageIdentity);
+            var packageDirectory = _packagePathResolver.GetInstallPath(packageIdentity);
 
             return ConcurrencyUtilities.ExecuteWithFileLockedAsync(
                 packageDirectory,
@@ -169,7 +167,7 @@ namespace NuGet.ProjectManagement
                                 await PackageExtractor.ExtractPackageAsync(
                                     downloadResourceResult.PackageSource,
                                     downloadResourceResult.PackageReader,
-                                    PackagePathResolver,
+                                    _packagePathResolver,
                                     packageExtractionContext,
                                     cancellationToken,
                                     nuGetProjectContext.OperationId));
@@ -181,7 +179,7 @@ namespace NuGet.ProjectManagement
                                     downloadResourceResult.PackageSource,
                                     downloadResourceResult.PackageReader,
                                     downloadResourceResult.PackageStream,
-                                    PackagePathResolver,
+                                    _packagePathResolver,
                                     packageExtractionContext,
                                     cancellationToken,
                                     nuGetProjectContext.OperationId));
@@ -193,7 +191,7 @@ namespace NuGet.ProjectManagement
                             await PackageExtractor.ExtractPackageAsync(
                                 downloadResourceResult.PackageSource,
                                 downloadResourceResult.PackageStream,
-                                PackagePathResolver,
+                                _packagePathResolver,
                                 packageExtractionContext,
                                 cancellationToken,
                                 nuGetProjectContext.OperationId));
@@ -283,7 +281,7 @@ namespace NuGet.ProjectManagement
             var manifestExists = !string.IsNullOrEmpty(nuspecPath);
 
             // When using -ExcludeVersion check that the actual package version matches.
-            if (!PackagePathResolver.UseSideBySidePaths)
+            if (!_packagePathResolver.UseSideBySidePaths)
             {
                 if (packageExists)
                 {
@@ -341,7 +339,7 @@ namespace NuGet.ProjectManagement
 
             var exists = !string.IsNullOrEmpty(path);
 
-            if (exists && !PackagePathResolver.UseSideBySidePaths)
+            if (exists && !_packagePathResolver.UseSideBySidePaths)
             {
                 var reader = new NuspecReader(path);
                 exists = packageIdentity.Equals(reader.GetIdentity());
@@ -401,7 +399,7 @@ namespace NuGet.ProjectManagement
 
             var copiedSatelliteFiles = await PackageExtractor.CopySatelliteFilesAsync(
                 packageIdentity,
-                PackagePathResolver,
+                _packagePathResolver,
                 GetPackageSaveMode(nuGetProjectContext),
                 nuGetProjectContext.PackageExtractionContext,
                 token);
@@ -426,8 +424,8 @@ namespace NuGet.ProjectManagement
             }
 
             // Check the expected location before searching all directories
-            var packageDirectory = PackagePathResolver.GetInstallPath(packageIdentity);
-            var packageName = PackagePathResolver.GetPackageFileName(packageIdentity);
+            var packageDirectory = _packagePathResolver.GetInstallPath(packageIdentity);
+            var packageName = _packagePathResolver.GetPackageFileName(packageIdentity);
 
             var installPath = Path.GetFullPath(Path.Combine(packageDirectory, packageName));
 
@@ -440,7 +438,7 @@ namespace NuGet.ProjectManagement
             // If the file was not found check for non-normalized paths and verify the id/version
             LocalPackageInfo package = null;
 
-            if (PackagePathResolver.UseSideBySidePaths)
+            if (_packagePathResolver.UseSideBySidePaths)
             {
                 // Search for a folder with the id and version
                 package = LocalFolderUtility.GetPackagesConfigFolderPackage(
@@ -482,8 +480,8 @@ namespace NuGet.ProjectManagement
             }
 
             // Check the expected location before searching all directories
-            var packageDirectory = PackagePathResolver.GetInstallPath(packageIdentity);
-            var manifestName = PackagePathResolver.GetManifestFileName(packageIdentity);
+            var packageDirectory = _packagePathResolver.GetInstallPath(packageIdentity);
+            var manifestName = _packagePathResolver.GetManifestFileName(packageIdentity);
 
             var installPath = Path.GetFullPath(Path.Combine(packageDirectory, manifestName));
 
@@ -511,8 +509,8 @@ namespace NuGet.ProjectManagement
                 throw new ArgumentNullException(nameof(packageIdentity));
             }
 
-            var packageDirectory = PackagePathResolver.GetInstallPath(packageIdentity);
-            var fileName = PackagePathResolver.GetPackageDownloadMarkerFileName(packageIdentity);
+            var packageDirectory = _packagePathResolver.GetInstallPath(packageIdentity);
+            var fileName = _packagePathResolver.GetPackageDownloadMarkerFileName(packageIdentity);
 
             var filePath = Path.GetFullPath(Path.Combine(packageDirectory, fileName));
 
@@ -585,7 +583,7 @@ namespace NuGet.ProjectManagement
                 {
                     var installedSatelliteFilesPair = await PackageHelper.GetInstalledSatelliteFilesAsync(
                         packageReader,
-                        PackagePathResolver,
+                        _packagePathResolver,
                         GetPackageSaveMode(nuGetProjectContext),
                         token);
                     var runtimePackageDirectory = installedSatelliteFilesPair.Item1;
@@ -608,7 +606,7 @@ namespace NuGet.ProjectManagement
                     var installedPackageFiles = await PackageHelper.GetInstalledPackageFilesAsync(
                         packageReader,
                         packageIdentity,
-                        PackagePathResolver,
+                        _packagePathResolver,
                         GetPackageSaveMode(nuGetProjectContext),
                         token);
 

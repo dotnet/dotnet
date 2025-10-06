@@ -320,7 +320,7 @@ public static class TestResultProperties
         public static readonly TestProperty ErrorStackTrace = TestProperty.Register("TestResult.ErrorStackTrace", Resources.Resources.TestResultPropertyErrorStackTraceLabel, typeof(string), typeof(TestResult));
 #endif
     internal static TestProperty[] Properties { get; } =
-    {
+    [
         ComputerName,
         DisplayName,
         Duration,
@@ -329,7 +329,7 @@ public static class TestResultProperties
         ErrorStackTrace,
         Outcome,
         StartTime
-    };
+    ];
 
     private static bool ValidateOutcome(object? value)
     {

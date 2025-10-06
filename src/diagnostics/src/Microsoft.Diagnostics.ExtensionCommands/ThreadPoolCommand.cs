@@ -23,7 +23,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         public override void Invoke()
         {
             // Runtime.ThreadPool shouldn't be null unless there was a problem with the dump.
-            ClrThreadPool threadPool = Runtime.ThreadPool;
+            ClrThreadPool threadPool = Runtime?.ThreadPool;
             if (threadPool is null)
             {
                 Console.WriteLineError("Failed to obtain ThreadPool data.");
@@ -133,6 +133,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
         }
 
+        [HelpInvoke]
+        public static string GetDetailedHelp() =>
+@"This command lists basic information about the ThreadPool, including the number
+of work requests in the queue, number of completion port threads, and number of
+timers.
+";
         private void DumpWorkItems()
         {
             Table output = null;

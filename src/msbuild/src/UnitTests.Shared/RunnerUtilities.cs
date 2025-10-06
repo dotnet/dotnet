@@ -3,6 +3,10 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Xunit.Abstractions;
 
@@ -13,6 +17,19 @@ namespace Microsoft.Build.UnitTests.Shared
     public static class RunnerUtilities
     {
         public static string PathToCurrentlyRunningMsBuildExe => BuildEnvironmentHelper.Instance.CurrentMSBuildExePath;
+
+        public static ArtifactsLocationAttribute ArtifactsLocationAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<ArtifactsLocationAttribute>()
+                                                   ?? throw new InvalidOperationException("This test assembly does not have the ArtifactsLocationAttribute");
+
+        public static string BootstrapMsBuildBinaryLocation => BootstrapLocationAttribute.BootstrapMsBuildBinaryLocation;
+
+        public static string BootstrapSdkVersion => BootstrapLocationAttribute.BootstrapSdkVersion;
+
+        public static string BootstrapRootPath => BootstrapLocationAttribute.BootstrapRoot;
+
+        internal static BootstrapLocationAttribute BootstrapLocationAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<BootstrapLocationAttribute>()
+                                           ?? throw new InvalidOperationException("This test assembly does not have the BootstrapLocationAttribute");
+
 #if !FEATURE_RUN_EXE_IN_TESTS
         private static readonly string s_dotnetExePath = EnvironmentProvider.GetDotnetExePath();
 
@@ -48,6 +65,23 @@ namespace Microsoft.Build.UnitTests.Shared
             return RunProcessAndGetOutput(pathToExecutable, msbuildParameters, out successfulExit, shellExecute, outputHelper);
         }
 
+        public static string ExecBootstrapedMSBuild(
+            string msbuildParameters,
+            out bool successfulExit,
+            bool shellExecute = false,
+            ITestOutputHelper outputHelper = null,
+            bool attachProcessId = true,
+            int timeoutMilliseconds = 30_000)
+        {
+#if NET
+            string pathToExecutable = EnvironmentProvider.GetDotnetExePathFromFolder(BootstrapMsBuildBinaryLocation);
+            msbuildParameters = Path.Combine(BootstrapMsBuildBinaryLocation, "sdk", BootstrapLocationAttribute.BootstrapSdkVersion, Constants.MSBuildAssemblyName) + " " + msbuildParameters;
+#else
+            string pathToExecutable = Path.Combine(BootstrapMsBuildBinaryLocation, Constants.MSBuildExecutableName);
+#endif
+            return RunProcessAndGetOutput(pathToExecutable, msbuildParameters, out successfulExit, shellExecute, outputHelper, attachProcessId, timeoutMilliseconds);
+        }
+
         private static void AdjustForShellExecution(ref string pathToExecutable, ref string arguments)
         {
             if (NativeMethodsShared.IsWindows)
@@ -65,9 +99,16 @@ namespace Microsoft.Build.UnitTests.Shared
         }
 
         /// <summary>
-        /// Run the process and get stdout and stderr
+        /// Run the process and get stdout and stderr.
         /// </summary>
-        public static string RunProcessAndGetOutput(string process, string parameters, out bool successfulExit, bool shellExecute = false, ITestOutputHelper outputHelper = null)
+        public static string RunProcessAndGetOutput(
+            string process,
+            string parameters,
+            out bool successfulExit,
+            bool shellExecute = false,
+            ITestOutputHelper outputHelper = null,
+            bool attachProcessId = true,
+            int timeoutMilliseconds = 30_000)
         {
             if (shellExecute)
             {
@@ -91,8 +132,9 @@ namespace Microsoft.Build.UnitTests.Shared
             {
                 DataReceivedEventHandler handler = delegate (object sender, DataReceivedEventArgs args)
                 {
-                    if (args != null)
+                    if (args != null && args.Data != null)
                     {
+                        WriteOutput(args.Data);
                         output += args.Data + "\r\n";
                     }
                 };
@@ -100,20 +142,24 @@ namespace Microsoft.Build.UnitTests.Shared
                 p.OutputDataReceived += handler;
                 p.ErrorDataReceived += handler;
 
-                outputHelper?.WriteLine("Executing [{0} {1}]", process, parameters);
-                Console.WriteLine("Executing [{0} {1}]", process, parameters);
-
+                WriteOutput($"Executing [{process} {parameters}]");
+                WriteOutput("==== OUTPUT ====");
                 p.Start();
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
                 p.StandardInput.Dispose();
 
-                if (!p.WaitForExit(30_000))
+                TimeSpan timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds);
+                if (Traits.Instance.DebugUnitTests)
                 {
-                    // Let's not create a unit test for which we need more than 30 sec to execute.
+                    p.WaitForExit();
+                }
+                else if (!p.WaitForExit(timeoutMilliseconds))
+                {
+                    // Let's not create a unit test for which we need more than requested timeout to execute.
                     // Please consider carefully if you would like to increase the timeout.
                     p.KillTree(1000);
-                    throw new TimeoutException($"Test failed due to timeout: process {p.Id} is active for more than 30 sec.");
+                    throw new TimeoutException($"Test failed due to timeout: process {p.Id} is active for more than {timeout.TotalSeconds} sec.");
                 }
 
                 // We need the WaitForExit call without parameters because our processing of output/error streams is not synchronous.
@@ -125,18 +171,20 @@ namespace Microsoft.Build.UnitTests.Shared
                 successfulExit = p.ExitCode == 0;
             }
 
-            outputHelper?.WriteLine("==== OUTPUT ====");
-            outputHelper?.WriteLine(output);
-            outputHelper?.WriteLine("Process ID is " + pid + "\r\n");
-            outputHelper?.WriteLine("==============");
+            if (attachProcessId)
+            {
+                output += "Process ID is " + pid + "\r\n";
+                WriteOutput("Process ID is " + pid + "\r\n");
+                WriteOutput("==============");
+            }
 
-            Console.WriteLine("==== OUTPUT ====");
-            Console.WriteLine(output);
-            Console.WriteLine("Process ID is " + pid + "\r\n");
-            Console.WriteLine("==============");
-
-            output += "Process ID is " + pid + "\r\n";
             return output;
+
+            void WriteOutput(string data)
+            {
+                outputHelper?.WriteLine(data);
+                Console.WriteLine(data);
+            }
         }
     }
 }

@@ -1,0 +1,30 @@
+id: 
+name: GitOps.PullRequestIssueManagement.Community
+description: Community PR labeling and management
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Reopened
+      - activitySenderHasPermission:
+          permission: Read
+      - not:
+          isActivitySender:
+            user: 'nuget-client '
+            issueAuthor: False
+      - not:
+          hasLabel:
+            label: Community
+      then:
+      - addLabel:
+          label: Community
+      description: '[Label community PRs] [1-1] Label the community PRs'

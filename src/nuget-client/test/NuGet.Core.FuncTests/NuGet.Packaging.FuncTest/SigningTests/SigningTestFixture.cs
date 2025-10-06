@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
-using Test.Utility.Signing;
 
 namespace NuGet.Packaging.FuncTest
 {
-    using X509StorePurpose = global::Test.Utility.Signing.X509StorePurpose;
+    using X509StorePurpose = Microsoft.Internal.NuGet.Testing.SignedPackages.X509StorePurpose;
 
     /// <summary>
     /// Used to bootstrap functional tests for signing.
@@ -202,7 +202,7 @@ namespace NuGet.Packaging.FuncTest
             var testServer = await _testServer.Value;
             var rootCa = CertificateAuthority.Create(testServer.Url);
             var intermediateCa = rootCa.CreateIntermediateCertificateAuthority();
-            var rootCertificate = new X509Certificate2(rootCa.Certificate.GetEncoded());
+            var rootCertificate = new X509Certificate2(rootCa.Certificate);
             StoreLocation storeLocation = CertificateStoreUtilities.GetTrustedCertificateStoreLocation();
 
             _trustedServerRoot = TrustedTestCert.Create(

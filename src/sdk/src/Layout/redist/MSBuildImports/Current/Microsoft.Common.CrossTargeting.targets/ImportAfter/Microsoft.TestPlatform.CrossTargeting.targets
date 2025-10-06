@@ -86,8 +86,22 @@ Copyright (c) .NET Foundation. All rights reserved.
   </Target>
 
   <Target Name="SetVSTestInnerTarget" Returns="@(InnerOutput)">
-    <PropertyGroup  Condition="'$(InnerVSTestTargets)' == ''">
+    <PropertyGroup Condition="'$(InnerVSTestTargets)' == ''">
       <InnerVSTestTargets>VSTest</InnerVSTestTargets>
     </PropertyGroup>
   </Target>
+
+  <!--
+  ==================================================================================
+                                   _MTPBuild
+
+   Cross-targeting version of MTP.
+
+  =================================================================================
+  -->
+
+  <Target Name="_MTPBuild">
+    <MSBuild Projects="$(MSBuildProjectFullPath)" />
+  </Target>
+
 </Project>

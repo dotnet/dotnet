@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.Drawing;
 using System.Reflection;
@@ -79,11 +81,11 @@ public class EmbeddedResourceTests
             System.Windows.Forms.Design.Behavior.TopOpen
             """;
 
-    public static TheoryData ExpectedIconNames()
-        => ExpectedIconNamesString.Split(Environment.NewLine).Where(item => !item.EndsWith(".bmp", StringComparison.Ordinal)).ToTheoryData();
+    public static TheoryData<string> ExpectedIconNames() =>
+        new(ExpectedIconNamesString.Split(Environment.NewLine).Where(item => !item.EndsWith(".bmp", StringComparison.Ordinal)));
 
-    public static TheoryData ExpectedBitmapNames()
-        => ExpectedBitmapNamesString.Split(Environment.NewLine).ToTheoryData();
+    public static TheoryData<string> ExpectedBitmapNames() =>
+        new(ExpectedBitmapNamesString.Split(Environment.NewLine));
 
     [Theory]
     [MemberData(nameof(ExpectedIconNames))]
@@ -119,9 +121,12 @@ public class EmbeddedResourceTests
             System.Windows.Forms.Design.FormatControl.resources
             System.Windows.Forms.Design.LinkAreaEditor.resources
             System.Windows.Forms.Design.MaskDesignerDialog.resources
+            System.Windows.Forms.Design.TreeNodeCollectionEditor.resources
             System.Windows.Forms.Design.ShortcutKeysEditor.resources
             System.Windows.Forms.Design.StringCollectionEditor.resources
             System.Windows.Forms.Design.StyleCollectionEditor.resources
+            System.Windows.Forms.Design.ToolStripItemEditorForm.resources
+            System.Windows.Forms.Design.BlankToolstrip.bmp
             """;
 
     [Fact]

@@ -6,9 +6,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
@@ -20,21 +23,10 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
-    protected RazorBaselineIntegrationTestBase(TestProject.Layer layer, bool? generateBaselines = null)
+    protected RazorBaselineIntegrationTestBase(TestProject.Layer layer)
     {
         TestProjectRoot = TestProject.GetProjectDirectory(GetType(), layer);
-
-        if (generateBaselines.HasValue)
-        {
-            GenerateBaselines = generateBaselines.Value;
-        }
     }
-
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; } = true;
-#else
-    protected bool GenerateBaselines { get; } = false;
-#endif
 
     protected string TestProjectRoot { get; }
 
@@ -50,18 +42,12 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     protected abstract string GetDirectoryPath(string testName);
 
-    [Fact]
-    public void GenerateBaselinesMustBeFalse()
-    {
-        Assert.False(GenerateBaselines, "GenerateBaselines should be set back to false before you check in!");
-    }
-
     protected void AssertDocumentNodeMatchesBaseline(RazorCodeDocument codeDocument, [CallerMemberName]string testName = "")
     {
-        var document = codeDocument.GetDocumentIntermediateNode();
+        var document = codeDocument.GetRequiredDocumentNode();
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".ir.txt", testName);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
@@ -85,10 +71,10 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument, bool verifyLinePragmas = true, [CallerMemberName] string testName = "")
     {
-        var document = codeDocument.GetCSharpDocument();
+        var document = codeDocument.GetRequiredCSharpDocument();
 
         // Normalize newlines to match those in the baseline.
-        var actualCode = document.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
+        var actualCode = document.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
 
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".codegen.cs", testName);
         var baselineDiagnosticsFilePath = GetBaselineFilePath(codeDocument, ".diagnostics.txt", testName);
@@ -96,7 +82,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
         var serializedMappings = SourceMappingsSerializer.Serialize(document, codeDocument.Source);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
@@ -173,6 +159,12 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
             var sourceMappings = csharpDocument.SourceMappings;
             foreach (var sourceMapping in sourceMappings)
             {
+                var content = codeDocument.Source.Text.GetSubText(new TextSpan(sourceMapping.OriginalSpan.AbsoluteIndex, sourceMapping.OriginalSpan.Length)).ToString();
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    continue;
+                }
+
                 var foundMatchingPragma = false;
                 foreach (var linePragma in linePragmas)
                 {
@@ -190,7 +182,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         }
         else
         {
-            var syntaxTree = codeDocument.GetSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
             var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)
@@ -221,9 +213,61 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
             foreach(var pragma in pragmasInDocument)
             {
-               Assert.NotNull(pragma.EndCharacterIndex);
+                Assert.True(pragma.IsEnhanced);
             }
+
             Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
+        }
+    }
+
+    protected void AssertSequencePointsMatchBaseline(CompileToAssemblyResult result, RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
+    {
+        using var peReader = new PEReader(result.ExecutableStream);
+        var metadataReader = peReader.GetMetadataReader();
+
+        var debugDirectory = peReader.ReadDebugDirectory().First(d => d.Type == DebugDirectoryEntryType.EmbeddedPortablePdb);
+        var debugReader = peReader.ReadEmbeddedPortablePdbDebugDirectoryData(debugDirectory).GetMetadataReader();
+
+        var builder = new StringBuilder();
+        foreach (var methodHandle in debugReader.MethodDebugInformation)
+        {
+            var methodDebugInfo = debugReader.GetMethodDebugInformation(methodHandle);
+            var sequencePoints = methodDebugInfo.GetSequencePoints();
+            if (!sequencePoints.Any())
+                continue;
+
+            var methodDefinition = metadataReader.GetMethodDefinition(methodHandle.ToDefinitionHandle());
+            builder.AppendLine($"{metadataReader.GetString(methodDefinition.Name)}: ");
+
+            foreach (var sequencePoint in sequencePoints)
+            {
+                if (!sequencePoint.IsHidden)
+                {
+                    var documentName = debugReader.GetString(debugReader.GetDocument(sequencePoint.Document).Name);
+                    builder.AppendLine($"\tIL_{sequencePoint.Offset:x4}: ({sequencePoint.StartLine},{sequencePoint.StartColumn})-({sequencePoint.EndLine},{sequencePoint.EndColumn}) \"{documentName}\"");
+                }
+            }
+        }
+
+        var actualSequencePoints = builder.ToString().ReplaceLineEndings();
+
+        var baselineFilePath = GetBaselineFilePath(codeDocument, ".sp.txt", testName);
+        if (GenerateBaselines.ShouldGenerate)
+        {
+            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
+            WriteBaseline(actualSequencePoints, baselineFullPath);
+        }
+        else
+        {
+            var baselineSequencePoints = string.Empty;
+            var spFile = TestFile.Create(baselineFilePath, GetType().Assembly);
+            if (spFile.Exists())
+            {
+                baselineSequencePoints = spFile.ReadAllText().ReplaceLineEndings();
+            }
+
+            AssertEx.Equal(baselineSequencePoints, actualSequencePoints);
         }
     }
 
@@ -252,7 +296,6 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     private static void WriteBaseline(string text, string filePath)
     {
-        var lines = text.Replace("\r", "").Replace("\n", "\r\n");
         File.WriteAllText(filePath, text, _baselineEncoding);
     }
 

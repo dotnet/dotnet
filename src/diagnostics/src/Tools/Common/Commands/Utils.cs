@@ -39,6 +39,19 @@ namespace Microsoft.Internal.Common.Utils
             return commonId;
         }
 
+        // <summary>
+        // Returns processId that matches the given dsrouter.
+        // </summary>
+        // <param name="dsrouter">dsrouterCommand</param>
+        // <returns>processId</returns>
+        public static int LaunchDSRouterProcess(string dsrouterCommand)
+        {
+            Console.WriteLine("For finer control over the dotnet-dsrouter options, run it separately and connect to it using -p" + Environment.NewLine);
+
+            return DsRouterProcessLauncher.Launcher.Start(dsrouterCommand, default);
+        }
+
+
         /// <summary>
         /// A helper method for validating --process-id, --name, --diagnostic-port options for collect with child process commands.
         /// None of these options can be specified, so it checks for them and prints the appropriate error message.
@@ -49,7 +62,7 @@ namespace Microsoft.Internal.Common.Utils
         /// <returns></returns>
         public static bool ValidateArgumentsForChildProcess(int processId, string name, string port)
         {
-            if (processId != 0 && name != null && !string.IsNullOrEmpty(port))
+            if (processId != 0 || name != null || !string.IsNullOrEmpty(port))
             {
                 Console.WriteLine("None of the --name, --process-id, or --diagnostic-port options may be specified when launching a child process.");
                 return false;
@@ -59,21 +72,22 @@ namespace Microsoft.Internal.Common.Utils
         }
 
         /// <summary>
-        /// A helper method for validating --process-id, --name, --diagnostic-port options for collect commands.
+        /// A helper method for validating --process-id, --name, --diagnostic-port, --dsrouter options for collect commands and resolving the process ID.
         /// Only one of these options can be specified, so it checks for duplicate options specified and if there is
         /// such duplication, it prints the appropriate error message.
         /// </summary>
         /// <param name="processId">process ID</param>
         /// <param name="name">name</param>
         /// <param name="port">port</param>
+        /// <param name="dsrouter">dsrouter</param>
         /// <param name="resolvedProcessId">resolvedProcessId</param>
         /// <returns></returns>
-        public static bool ValidateArgumentsForAttach(int processId, string name, string port, out int resolvedProcessId)
+        public static bool ResolveProcessForAttach(int processId, string name, string port, string dsrouter, out int resolvedProcessId)
         {
             resolvedProcessId = -1;
-            if (processId == 0 && string.IsNullOrEmpty(name) && string.IsNullOrEmpty(port))
+            if (processId == 0 && string.IsNullOrEmpty(name) && string.IsNullOrEmpty(port) && string.IsNullOrEmpty(dsrouter))
             {
-                Console.WriteLine("Must specify either --process-id, --name, or --diagnostic-port.");
+                Console.WriteLine("Must specify either --process-id, --name, --diagnostic-port, or --dsrouter.");
                 return false;
             }
             else if (processId < 0)
@@ -81,27 +95,16 @@ namespace Microsoft.Internal.Common.Utils
                 Console.WriteLine($"{processId} is not a valid process ID");
                 return false;
             }
-            else if (processId != 0 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(port))
+            else if ((processId != 0 ? 1 : 0) +
+                     (!string.IsNullOrEmpty(name) ? 1 : 0) +
+                     (!string.IsNullOrEmpty(port) ? 1 : 0) +
+                     (!string.IsNullOrEmpty(dsrouter) ? 1 : 0)
+                     != 1)
             {
-                Console.WriteLine("Only one of the --name, --process-id, or --diagnostic-port options may be specified.");
+                Console.WriteLine("Only one of the --name, --process-id, --diagnostic-port, or --dsrouter options may be specified.");
                 return false;
             }
-            else if (processId != 0 && !string.IsNullOrEmpty(name))
-            {
-                Console.WriteLine("Only one of the --name or --process-id options may be specified.");
-                return false;
-            }
-            else if (processId != 0 && !string.IsNullOrEmpty(port))
-            {
-                Console.WriteLine("Only one of the --process-id or --diagnostic-port options may be specified.");
-                return false;
-            }
-            else if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(port))
-            {
-                Console.WriteLine("Only one of the --name or --diagnostic-port options may be specified.");
-                return false;
-            }
-            // If we got this far it means only one of --name/--diagnostic-port/--process-id was specified
+            // If we got this far it means only one of --name/--diagnostic-port/--process-id/--dsrouter was specified
             else if (!string.IsNullOrEmpty(port))
             {
                 return true;
@@ -109,16 +112,31 @@ namespace Microsoft.Internal.Common.Utils
             // Resolve name option
             else if (!string.IsNullOrEmpty(name))
             {
-                processId = CommandUtils.FindProcessIdWithName(name);
-                if (processId < 0)
+                if ((processId = FindProcessIdWithName(name)) < 0)
                 {
                     return false;
                 }
             }
-            else if (processId == 0)
+            else if (!string.IsNullOrEmpty(dsrouter))
             {
-                Console.WriteLine("One of the --name, --process-id, or --diagnostic-port options must be specified when attaching to a process.");
-                return false;
+                if (dsrouter != "ios" && dsrouter != "android" && dsrouter != "ios-sim" && dsrouter != "android-emu")
+                {
+                    Console.WriteLine("Invalid value for --dsrouter. Valid values are 'ios', 'ios-sim', 'android' and 'android-emu'.");
+                    return false;
+                }
+                if ((processId = LaunchDSRouterProcess(dsrouter)) < 0)
+                {
+                    if (processId == -2)
+                    {
+                        Console.WriteLine($"Failed to launch dsrouter: {dsrouter}. Make sure that dotnet-dsrouter is not already running. You can connect to an already running dsrouter with -p.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to launch dsrouter: {dsrouter}. Please make sure that dotnet-dsrouter is installed and available in the same directory as dotnet-trace.");
+                        Console.WriteLine("You can install dotnet-dsrouter by running 'dotnet tool install --global dotnet-dsrouter'. More info at https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-dsrouter");
+                    }
+                    return false;
+                }
             }
             resolvedProcessId = processId;
             return true;

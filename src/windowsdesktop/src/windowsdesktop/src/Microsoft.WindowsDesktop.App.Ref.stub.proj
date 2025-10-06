@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <!-- This is a stub project to generate the shipping targeting pack package. This is necessary so that inside the VMR
+       on non-Windows, the sdk has access to the shipping version which is then used in the BundledSdkVersions.props
+       to download windowsdesktop packs on Unix. This package will never ship to internal / external feeds. -->
+  <PropertyGroup>
+    <PackageId>Microsoft.WindowsDesktop.App.Ref</PackageId>
+    <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+</Project>

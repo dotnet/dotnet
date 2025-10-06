@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -134,14 +136,20 @@ namespace NuGet.CommandLine.Xplat.Tests
                         resolvedPackageVersionString: "2.0.0", latestPackageVersionString: "3.0.0"));
                 }
 
+                var output = new StringBuilder();
+                var error = new StringBuilder();
+                using TextWriter consoleOut = new StringWriter(output);
+                using TextWriter consoleError = new StringWriter(error);
+
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
                 var allPackages = new List<FrameworkPackages> { packages };
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
                     ReportType.Outdated,
-                    new ListPackageConsoleRenderer(),
+                    new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false,
+                    auditSources: null,
                     logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
@@ -176,14 +184,20 @@ namespace NuGet.CommandLine.Xplat.Tests
                             latestPackageVersionString: "3.0.0")
                     };
 
+                var output = new StringBuilder();
+                var error = new StringBuilder();
+                using TextWriter consoleOut = new StringWriter(output);
+                using TextWriter consoleError = new StringWriter(error);
+
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
                 List<FrameworkPackages> allPackages = new List<FrameworkPackages> { packages };
                 ListPackageArgs listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
                     ReportType.Outdated,
-                    new ListPackageConsoleRenderer(),
+                    new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: true, highestMinor: true,
+                    auditSources: null,
                     logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
@@ -244,11 +258,16 @@ namespace NuGet.CommandLine.Xplat.Tests
                 if (includeTopLevelPositives)
                 {
                     topLevelPackages.Add(ListPackageTestHelper.CreateInstalledPackageReference(isDeprecated: true));
-                };
+                }
                 if (includeTransitivePositives)
                 {
                     transitivePackages.Add(ListPackageTestHelper.CreateInstalledPackageReference(isDeprecated: true));
                 }
+
+                var output = new StringBuilder();
+                var error = new StringBuilder();
+                using TextWriter consoleOut = new StringWriter(output);
+                using TextWriter consoleError = new StringWriter(error);
 
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
@@ -256,8 +275,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
                     ReportType.Deprecated,
-                    new ListPackageConsoleRenderer(),
-                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
+                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
                 // Act
@@ -318,11 +337,16 @@ namespace NuGet.CommandLine.Xplat.Tests
                 if (includeTopLevelPositives)
                 {
                     topLevelPackages.Add(ListPackageTestHelper.CreateInstalledPackageReference(vulnerabilityCount: 1));
-                };
+                }
                 if (includeTransitivePositives)
                 {
                     transitivePackages.Add(ListPackageTestHelper.CreateInstalledPackageReference(vulnerabilityCount: 1));
                 }
+
+                var output = new StringBuilder();
+                var error = new StringBuilder();
+                using TextWriter consoleOut = new StringWriter(output);
+                using TextWriter consoleError = new StringWriter(error);
 
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
@@ -330,8 +354,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
                     ReportType.Vulnerable,
-                    new ListPackageConsoleRenderer(),
-                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
+                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
                     CancellationToken.None);
 
                 // Act

@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/LeadingKeyword/OverrideValKeyword.fs", false,
-      QualifiedNameOfFile OverrideValKeyword, [], [],
+      QualifiedNameOfFile OverrideValKeyword, [],
       [SynModuleOrNamespace
          ([OverrideValKeyword], false, AnonModule,
           [Types
@@ -28,7 +28,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 1, (3,27--3,28)), (3,4--3,28),
+                         GetSet (None, None, None),
+                         Const (Int32 1, (3,27--3,28)), (3,4--3,28),
                          { LeadingKeyword =
                             OverrideVal ((3,4--3,12), (3,13--3,16))
                            WithKeyword = None
@@ -39,4 +40,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--3,28))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

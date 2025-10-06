@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,8 @@ namespace Microsoft.CodeAnalysis.Snippets.SnippetProviders;
 /// Base class for snippets, that can be both executed as normal statement snippets
 /// or constructed from a member access expression when accessing members of a specific type
 /// </summary>
-internal abstract class AbstractInlineStatementSnippetProvider : AbstractStatementSnippetProvider
+internal abstract class AbstractInlineStatementSnippetProvider<TStatementSyntax> : AbstractStatementSnippetProvider<TStatementSyntax>
+    where TStatementSyntax : SyntaxNode
 {
     /// <summary>
     /// Tells if accessing type of a member access expression is valid for that snippet
@@ -27,11 +27,13 @@ internal abstract class AbstractInlineStatementSnippetProvider : AbstractStateme
     /// <param name="compilation">Current compilation instance</param>
     protected abstract bool IsValidAccessingType(ITypeSymbol type, Compilation compilation);
 
+    protected abstract bool CanInsertStatementAfterToken(SyntaxToken token);
+
     /// <summary>
     /// Generate statement node
     /// </summary>
     /// <param name="inlineExpressionInfo">Information about inline expression or <see langword="null"/> if snippet is executed in normal statement context</param>
-    protected abstract SyntaxNode GenerateStatement(SyntaxGenerator generator, SyntaxContext syntaxContext, InlineExpressionInfo? inlineExpressionInfo);
+    protected abstract TStatementSyntax GenerateStatement(SyntaxGenerator generator, SyntaxContext syntaxContext, InlineExpressionInfo? inlineExpressionInfo);
 
     /// <summary>
     /// Tells whether the original snippet was constructed from member access expression.
@@ -39,10 +41,10 @@ internal abstract class AbstractInlineStatementSnippetProvider : AbstractStateme
     /// </summary>
     protected bool ConstructedFromInlineExpression { get; private set; }
 
-    protected override bool IsValidSnippetLocation(in SnippetContext context, CancellationToken cancellationToken)
+    protected override bool IsValidSnippetLocationCore(SnippetContext context, CancellationToken cancellationToken)
     {
         var syntaxContext = context.SyntaxContext;
-        var semanticModel = syntaxContext.SemanticModel;
+        var semanticModel = context.SemanticModel;
         var targetToken = syntaxContext.TargetToken;
 
         var syntaxFacts = context.Document.GetRequiredLanguageService<ISyntaxFactsService>();
@@ -51,7 +53,7 @@ internal abstract class AbstractInlineStatementSnippetProvider : AbstractStateme
             return IsValidAccessingType(type, semanticModel.Compilation);
         }
 
-        return base.IsValidSnippetLocation(in context, cancellationToken);
+        return base.IsValidSnippetLocationCore(context, cancellationToken);
     }
 
     protected sealed override async Task<TextChange> GenerateSnippetTextChangeAsync(Document document, int position, CancellationToken cancellationToken)
@@ -69,20 +71,55 @@ internal abstract class AbstractInlineStatementSnippetProvider : AbstractStateme
         return new TextChange(TextSpan.FromBounds(inlineExpressionInfo?.Node.SpanStart ?? position, position), statement.ToFullString());
     }
 
-    protected sealed override SyntaxNode? FindAddedSnippetSyntaxNode(SyntaxNode root, int position, Func<SyntaxNode?, bool> isCorrectContainer)
+    protected sealed override TStatementSyntax? FindAddedSnippetSyntaxNode(SyntaxNode root, int position)
     {
         var closestNode = root.FindNode(TextSpan.FromBounds(position, position), getInnermostNodeForTie: true);
-        return closestNode.FirstAncestorOrSelf<SyntaxNode>(isCorrectContainer);
+        return closestNode.FirstAncestorOrSelf<TStatementSyntax>();
     }
 
-    private static bool TryGetInlineExpressionInfo(SyntaxToken targetToken, ISyntaxFactsService syntaxFacts, SemanticModel semanticModel, [NotNullWhen(true)] out InlineExpressionInfo? expressionInfo, CancellationToken cancellationToken)
+    private bool CanInsertStatementBeforeToken(SyntaxToken token)
+    {
+        var previousToken = token.GetPreviousToken();
+        if (previousToken == default)
+        {
+            // Token is the first token in the file
+            return true;
+        }
+
+        return CanInsertStatementAfterToken(previousToken);
+    }
+
+    private bool TryGetInlineExpressionInfo(
+        SyntaxToken targetToken,
+        ISyntaxFactsService syntaxFacts,
+        SemanticModel semanticModel,
+        [NotNullWhen(true)] out InlineExpressionInfo? expressionInfo,
+        CancellationToken cancellationToken)
     {
         var parentNode = targetToken.Parent;
 
         if (syntaxFacts.IsMemberAccessExpression(parentNode) &&
-            syntaxFacts.IsExpressionStatement(parentNode?.Parent))
+            CanInsertStatementBeforeToken(parentNode.GetFirstToken()))
         {
-            var expression = syntaxFacts.GetExpressionOfMemberAccessExpression(parentNode)!;
+            syntaxFacts.GetPartsOfMemberAccessExpression(parentNode, out var expression, out var dotToken, out var name);
+            var sourceText = parentNode.SyntaxTree.GetText(cancellationToken);
+
+            if (sourceText.AreOnSameLine(dotToken, name.GetFirstToken()))
+            {
+                expressionInfo = null;
+                return false;
+            }
+
+            var symbolInfo = semanticModel.GetSymbolInfo(expression, cancellationToken);
+
+            // Forbid a case when we are dotting of a type, e.g. `string.$$`.
+            // Inline statement snippets are not valid in this context
+            if (symbolInfo.Symbol is ITypeSymbol)
+            {
+                expressionInfo = null;
+                return false;
+            }
+
             var typeInfo = semanticModel.GetTypeInfo(expression, cancellationToken);
             expressionInfo = new(expression, typeInfo);
             return true;
@@ -95,9 +132,27 @@ internal abstract class AbstractInlineStatementSnippetProvider : AbstractStateme
         // var a = 0;
         // ...
         // Here `flag.var` is parsed as a qualified name, so this case requires its own handling
-        if (syntaxFacts.IsQualifiedName(parentNode))
+        if (syntaxFacts.IsQualifiedName(parentNode) && CanInsertStatementBeforeToken(parentNode.GetFirstToken()))
         {
-            syntaxFacts.GetPartsOfQualifiedName(parentNode, out var expression, out _, out _);
+            syntaxFacts.GetPartsOfQualifiedName(parentNode, out var expression, out var dotToken, out var right);
+            var sourceText = parentNode.SyntaxTree.GetText(cancellationToken);
+
+            if (sourceText.AreOnSameLine(dotToken, right.GetFirstToken()))
+            {
+                expressionInfo = null;
+                return false;
+            }
+
+            var symbolInfo = semanticModel.GetSymbolInfo(expression, cancellationToken);
+
+            // Forbid a case when we are dotting of a type, e.g. `string.$$`.
+            // Inline statement snippets are not valid in this context
+            if (symbolInfo.Symbol is ITypeSymbol)
+            {
+                expressionInfo = null;
+                return false;
+            }
+
             var typeInfo = semanticModel.GetSpeculativeTypeInfo(expression.SpanStart, expression, SpeculativeBindingOption.BindAsExpression);
             expressionInfo = new(expression, typeInfo);
             return true;

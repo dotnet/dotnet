@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -12,36 +13,29 @@ internal class TestDocumentContextFactory : IDocumentContextFactory
 {
     private protected readonly string? FilePath;
     private protected readonly RazorCodeDocument? CodeDocument;
-    private readonly int? _version;
 
     public TestDocumentContextFactory()
     {
     }
 
-    public TestDocumentContextFactory(string filePath, RazorCodeDocument codeDocument, int? version = null)
+    public TestDocumentContextFactory(string filePath, RazorCodeDocument codeDocument)
     {
         FilePath = filePath;
         CodeDocument = codeDocument;
-        _version = version;
     }
 
-    public virtual DocumentContext? TryCreate(Uri documentUri, VSProjectContext? projectContext, bool versioned)
+    public virtual bool TryCreate(
+        Uri documentUri,
+        VSProjectContext? projectContext,
+        [NotNullWhen(true)] out DocumentContext? context)
     {
         if (FilePath is null || CodeDocument is null)
         {
-            return null;
+            context = null;
+            return false;
         }
 
-        if (versioned)
-        {
-            if (_version is null)
-            {
-                return null;
-            }
-
-            return TestDocumentContext.From(FilePath, CodeDocument, _version.Value);
-        }
-
-        return TestDocumentContext.From(FilePath, CodeDocument);
+        context = TestDocumentContext.Create(FilePath, CodeDocument);
+        return true;
     }
 }

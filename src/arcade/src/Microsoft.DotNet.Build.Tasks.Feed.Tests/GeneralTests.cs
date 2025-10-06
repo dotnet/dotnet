@@ -8,11 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.DotNet.Arcade.Test.Common;
+using Microsoft.Arcade.Test.Common;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
+using Microsoft.DotNet.Build.Manifest.Tests;
 using Xunit;
-using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
@@ -204,12 +204,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly)  
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             TargetChannelConfig right = new(
@@ -217,12 +218,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly) 
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             bool actualResult = left.Equals(right);
@@ -238,12 +240,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: new TargetFeedSpecification[]
                 {
                     new (new[] { TargetFeedContentType.Deb }, dummyFeedUrl, AssetSelection.ShippingOnly)
                 },
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             TargetChannelConfig right = new(
@@ -251,9 +254,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isInternal: default,
                 publishingInfraVersion: default,
                 akaMSChannelNames: default,
+                akaMSCreateLinkPatterns: default,
+                akaMSDoNotCreateLinkPatterns: default,
                 targetFeeds: Enumerable.Empty<TargetFeedSpecification>(),
                 symbolTargetType: default,
-                filenamesToExclude: default,
                 flatten: default);
 
             bool actualResult = left.Equals(right);

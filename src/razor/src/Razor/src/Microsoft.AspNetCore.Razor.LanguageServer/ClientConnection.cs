@@ -1,10 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -46,7 +46,7 @@ internal sealed class ClientConnection(JsonRpc jsonRpc) : IClientConnection, IOn
     /// <summary>
     /// Fires when the language server is set to "Started".
     /// </summary>
-    public Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+    public Task OnInitializedAsync(CancellationToken cancellationToken)
     {
         _initializedCompletionSource.TrySetResult(true);
         return Task.CompletedTask;

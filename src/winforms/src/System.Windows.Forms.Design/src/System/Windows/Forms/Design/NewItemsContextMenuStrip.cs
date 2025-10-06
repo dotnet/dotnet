@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace System.Windows.Forms.Design;
@@ -15,16 +13,21 @@ internal class NewItemsContextMenuStrip : GroupedContextMenuStrip
     private readonly IServiceProvider _serviceProvider;
     private readonly ToolStripItem _currentItem;
 
-    public NewItemsContextMenuStrip(IComponent component, ToolStripItem currentItem, EventHandler onClick, bool convertTo, IServiceProvider serviceProvider)
+    public NewItemsContextMenuStrip(
+        IComponent component,
+        ToolStripItem currentItem,
+        EventHandler onClick,
+        bool convertTo,
+        IServiceProvider serviceProvider)
     {
         _component = component;
         _onClick = onClick;
         _convertTo = convertTo;
         _serviceProvider = serviceProvider;
         _currentItem = currentItem;
-        if (serviceProvider.GetService(typeof(IUIService)) is IUIService uis)
+        if (serviceProvider.TryGetService(out IUIService? uis))
         {
-            Renderer = (ToolStripProfessionalRenderer)uis.Styles["VsRenderer"];
+            Renderer = (ToolStripProfessionalRenderer)uis.Styles["VsRenderer"]!;
         }
     }
 
@@ -62,7 +65,9 @@ internal class NewItemsContextMenuStrip : GroupedContextMenuStrip
         base.OnOpening(e);
     }
 
-    // We don't want the runtime behavior for this Design Time only DropDown and hence we override the ProcessDialogKey and just close the DropDown instead of running through the runtime implementation for RIGHT/LEFT Keys which ends up setting ModalMenuFilter.
+    // We don't want the runtime behavior for this Design Time only DropDown and hence we override
+    // the ProcessDialogKey and just close the DropDown instead of running through the runtime implementation
+    // for RIGHT/LEFT Keys which ends up setting ModalMenuFilter.
     protected override bool ProcessDialogKey(Keys keyData)
     {
         Keys keyCode = keyData & Keys.KeyCode;

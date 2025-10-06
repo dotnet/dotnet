@@ -18,10 +18,9 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenElement(0, "strong");
-            __builder.AddContent(1, 
 #nullable restore
-#line (1,10)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestBool
+#line (1,10)-(1,18) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(1, TestBool
 
 #line default
 #line hidden
@@ -30,7 +29,15 @@ TestBool
             __builder.CloseElement();
             __builder.AddMarkupContent(2, "\r\n\r\n");
             __builder.OpenComponent<global::Test.TestComponent>(3);
-            __builder.AddComponentParameter(4, "TestBool", true);
+            __builder.AddComponentParameter(4, nameof(global::Test.TestComponent.
+#nullable restore
+#line (3,16)-(3,24) "x:\dir\subdir\Test\TestComponent.cshtml"
+TestBool
+
+#line default
+#line hidden
+#nullable disable
+            ), true);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

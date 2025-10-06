@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.IO;
 using System.CommandLine.Rendering;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,16 +16,17 @@ using Microsoft.Diagnostics.Monitoring.EventPipe;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tools.Counters.Exporters;
 using Microsoft.Internal.Common.Utils;
-using IConsole = System.CommandLine.IConsole;
 
 namespace Microsoft.Diagnostics.Tools.Counters
 {
     internal class CounterMonitor : ICountersLogger
     {
         private const int BufferDelaySecs = 1;
+        private const string EventCountersProviderPrefix = "EventCounters\\";
         private int _processId;
-        private CounterSet _counterList;
-        private IConsole _console;
+        private TextWriter _stdOutput;
+        private TextWriter _stdError;
+        private List<EventPipeCounterGroup> _counterList;
         private ICounterRenderer _renderer;
         private string _output;
         private bool _pauseCmdSet;
@@ -41,10 +42,12 @@ namespace Microsoft.Diagnostics.Tools.Counters
         private readonly Dictionary<string, ProviderEventState> _providerEventStates = new();
         private readonly Queue<CounterPayload> _bufferedEvents = new();
 
-        public CounterMonitor()
+        public CounterMonitor(TextWriter stdOutput, TextWriter stdError)
         {
             _pauseCmdSet = false;
             _shouldExit = new TaskCompletionSource<ReturnCode>();
+            _stdOutput = stdOutput;
+            _stdError = stdError;
         }
 
         private void MeterInstrumentEventObserved(string meterName, DateTime timestamp)
@@ -66,6 +69,13 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
         private void HandleDiagnosticCounter(ICounterPayload payload)
         {
+            // if EventCounters were explicitly requested on the command-line then show them always
+            if (_counterList.Where(group => group.ProviderName == payload.CounterMetadata.ProviderName && group.Type == CounterGroupType.EventCounter).Any())
+            {
+                CounterPayloadReceived((CounterPayload)payload);
+                return;
+            }
+
             // init providerEventState if this is the first time we've seen an event from this provider
             if (!_providerEventStates.TryGetValue(payload.CounterMetadata.ProviderName, out ProviderEventState providerState))
             {
@@ -108,7 +118,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 foreach (Quantile quantile in aggregatePayload.Quantiles)
                 {
                     (double key, double val) = quantile;
-                    PercentilePayload percentilePayload = new(payload.CounterMetadata, payload.DisplayName, payload.Unit, AppendQuantile(payload.ValueTags, $"Percentile={key * 100}"), val, payload.Timestamp);
+                    PercentilePayload percentilePayload = new(payload.CounterMetadata, payload.DisplayName, payload.DisplayUnits, AppendQuantile(payload.ValueTags, $"Percentile={key * 100}"), val, payload.Timestamp);
                     _renderer.CounterPayloadReceived(percentilePayload, _pauseCmdSet);
                 }
 
@@ -156,9 +166,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
         public async Task<ReturnCode> Monitor(
             CancellationToken ct,
-            List<string> counter_list,
             string counters,
-            IConsole console,
             int processId,
             int refreshInterval,
             string name,
@@ -167,7 +175,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
             int maxHistograms,
             int maxTimeSeries,
             TimeSpan duration,
-            bool showDeltas)
+            bool showDeltas,
+            string dsrouter)
         {
             try
             {
@@ -177,7 +186,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // to it.
                 ValidateNonNegative(maxHistograms, nameof(maxHistograms));
                 ValidateNonNegative(maxTimeSeries, nameof(maxTimeSeries));
-                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ValidateArgumentsForAttach(processId, name, diagnosticPort, out _processId))
+                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ResolveProcessForAttach(processId, name, diagnosticPort, dsrouter, out _processId))
                 {
                     return ReturnCode.ArgumentError;
                 }
@@ -194,10 +203,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     }
                     try
                     {
-                        _console = console;
                         // the launch command may misinterpret app arguments as the old space separated
                         // provider list so we need to ignore it in that case
-                        _counterList = ConfigureCounters(counters, _processId != 0 ? counter_list : null);
+                        _counterList = ConfigureCounters(counters);
                         _renderer = new ConsoleWriter(new DefaultConsole(useAnsi), showDeltaColumn:showDeltas);
                         _diagnosticsClient = holder.Client;
                         _settings = new MetricsPipelineSettings();
@@ -206,7 +214,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                         _settings.MaxTimeSeries = maxTimeSeries;
                         _settings.CounterIntervalSeconds = refreshInterval;
                         _settings.ResumeRuntime = resumeRuntime;
-                        _settings.CounterGroups = GetEventPipeProviders();
+                        _settings.CounterGroups = _counterList.ToArray();
                         _settings.UseCounterRateAndValuePayloads = true;
 
                         bool useSharedSession = false;
@@ -229,22 +237,24 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     {
                         //Cancellation token should automatically stop the session
 
-                        console.Out.WriteLine($"Complete");
+                        _stdOutput.WriteLine($"Complete");
                         return ReturnCode.Ok;
                     }
                 }
             }
             catch (CommandLineErrorException e)
             {
-                console.Error.WriteLine(e.Message);
+                _stdError.WriteLine(e.Message);
                 return ReturnCode.ArgumentError;
+            }
+            finally
+            {
+                DsRouterProcessLauncher.Launcher.Cleanup();
             }
         }
         public async Task<ReturnCode> Collect(
             CancellationToken ct,
-            List<string> counter_list,
             string counters,
-            IConsole console,
             int processId,
             int refreshInterval,
             CountersExportFormat format,
@@ -254,7 +264,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
             bool resumeRuntime,
             int maxHistograms,
             int maxTimeSeries,
-            TimeSpan duration)
+            TimeSpan duration,
+            string dsrouter)
         {
             try
             {
@@ -264,7 +275,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // to it.
                 ValidateNonNegative(maxHistograms, nameof(maxHistograms));
                 ValidateNonNegative(maxTimeSeries, nameof(maxTimeSeries));
-                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ValidateArgumentsForAttach(processId, name, diagnosticPort, out _processId))
+                if (!ProcessLauncher.Launcher.HasChildProc && !CommandUtils.ResolveProcessForAttach(processId, name, diagnosticPort, dsrouter, out _processId))
                 {
                     return ReturnCode.ArgumentError;
                 }
@@ -280,22 +291,21 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
                     try
                     {
-                        _console = console;
                         // the launch command may misinterpret app arguments as the old space separated
                         // provider list so we need to ignore it in that case
-                        _counterList = ConfigureCounters(counters, _processId != 0 ? counter_list : null);
+                        _counterList = ConfigureCounters(counters);
                         _settings = new MetricsPipelineSettings();
                         _settings.Duration = duration == TimeSpan.Zero ? Timeout.InfiniteTimeSpan : duration;
                         _settings.MaxHistograms = maxHistograms;
                         _settings.MaxTimeSeries = maxTimeSeries;
                         _settings.CounterIntervalSeconds = refreshInterval;
                         _settings.ResumeRuntime = resumeRuntime;
-                        _settings.CounterGroups = GetEventPipeProviders();
+                        _settings.CounterGroups = _counterList.ToArray();
                         _output = output;
                         _diagnosticsClient = holder.Client;
                         if (_output.Length == 0)
                         {
-                            _console.Error.WriteLine("Output cannot be an empty string");
+                            _stdError.WriteLine("Output cannot be an empty string");
                             return ReturnCode.ArgumentError;
                         }
                         if (format == CountersExportFormat.csv)
@@ -319,7 +329,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                         }
                         else
                         {
-                            _console.Error.WriteLine($"The output format {format} is not a valid output format.");
+                            _stdError.WriteLine($"The output format {format} is not a valid output format.");
                             return ReturnCode.ArgumentError;
                         }
 
@@ -341,8 +351,12 @@ namespace Microsoft.Diagnostics.Tools.Counters
             }
             catch (CommandLineErrorException e)
             {
-                console.Error.WriteLine(e.Message);
+                _stdError.WriteLine(e.Message);
                 return ReturnCode.ArgumentError;
+            }
+            finally
+            {
+                DsRouterProcessLauncher.Launcher.Cleanup();
             }
         }
 
@@ -354,9 +368,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
             }
         }
 
-        internal CounterSet ConfigureCounters(string commaSeparatedProviderListText, List<string> providerList)
+        internal List<EventPipeCounterGroup> ConfigureCounters(string commaSeparatedProviderListText)
         {
-            CounterSet counters = new();
+            List<EventPipeCounterGroup> counters = new();
             try
             {
                 if (commaSeparatedProviderListText != null)
@@ -371,41 +385,24 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 throw new CommandLineErrorException("Error parsing --counters argument: " + e.Message);
             }
 
-            if (providerList != null)
+            if (counters.Count == 0)
             {
-                try
-                {
-                    foreach (string providerText in providerList)
-                    {
-                        ParseCounterProvider(providerText, counters);
-                    }
-                }
-                catch (FormatException e)
-                {
-                    // the FormatException message strings thrown by ParseCounterProvider are controlled
-                    // by us and anticipate being integrated into the command-line error text.
-                    throw new CommandLineErrorException("Error parsing counter_list: " + e.Message);
-                }
-            }
-
-            if (counters.IsEmpty)
-            {
-                _console.Out.WriteLine($"--counters is unspecified. Monitoring System.Runtime counters by default.");
-                counters.AddAllProviderCounters("System.Runtime");
+                _stdOutput.WriteLine($"--counters is unspecified. Monitoring System.Runtime counters by default.");
+                ParseCounterProvider("System.Runtime", counters);
             }
             return counters;
         }
 
         // parses a comma separated list of providers
-        internal static CounterSet ParseProviderList(string providerListText)
+        internal static List<EventPipeCounterGroup> ParseProviderList(string providerListText)
         {
-            CounterSet set = new();
+            List<EventPipeCounterGroup> set = new();
             ParseProviderList(providerListText, set);
             return set;
         }
 
         // parses a comma separated list of providers
-        internal static void ParseProviderList(string providerListText, CounterSet counters)
+        internal static void ParseProviderList(string providerListText, List<EventPipeCounterGroup> counters)
         {
             bool inParen = false;
             int startIdx = -1;
@@ -457,7 +454,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
         //   System.Runtime
         //   System.Runtime[exception-count]
         //   System.Runtime[exception-count,cpu-usage]
-        private static void ParseCounterProvider(string providerText, CounterSet counters)
+        private static void ParseCounterProvider(string providerText, List<EventPipeCounterGroup> counters)
         {
             string[] tokens = providerText.Split('[');
             if (tokens.Length == 0)
@@ -468,12 +465,24 @@ namespace Microsoft.Diagnostics.Tools.Counters
             {
                 throw new FormatException("Expected at most one '[' in counter_provider");
             }
+
             string providerName = tokens[0];
-            if (tokens.Length == 1)
+            CounterGroupType groupType = CounterGroupType.All;
+            // EventCounters\ is a special prefix for a provider that marks it as an EventCounter provider.
+            if (providerName.StartsWith(EventCountersProviderPrefix))
             {
-                counters.AddAllProviderCounters(providerName); // Only a provider name was specified
+                providerName = providerName.Substring(EventCountersProviderPrefix.Length);
+                groupType = CounterGroupType.EventCounter;
             }
-            else
+
+            // An empty set of counters means all counters are enabled.
+            string[] enabledCounters = Array.Empty<string>();
+            EventPipeCounterGroup preExistingGroup = counters.FirstOrDefault(group => group.ProviderName == providerName);
+            if (preExistingGroup != null && preExistingGroup.Type != groupType)
+            {
+                throw new FormatException("Using the same provider name with and without the EventCounters\\ prefix in the counter list is not supported.");
+            }
+            if (tokens.Length == 2)
             {
                 string counterNames = tokens[1];
                 if (!counterNames.EndsWith(']'))
@@ -487,17 +496,34 @@ namespace Microsoft.Diagnostics.Tools.Counters
                         throw new FormatException("Unexpected characters after closing ']' in counter_provider");
                     }
                 }
-                string[] enabledCounters = counterNames.Substring(0, counterNames.Length - 1).Split(',', StringSplitOptions.RemoveEmptyEntries);
-                counters.AddProviderCounters(providerName, enabledCounters);
+                enabledCounters = counterNames.Substring(0, counterNames.Length - 1).Split(',', StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            // haven't seen this provider yet so add it
+            if (preExistingGroup == null)
+            {
+                counters.Add(new EventPipeCounterGroup
+                {
+                    ProviderName = providerName,
+                    CounterNames = enabledCounters,
+                    Type = groupType
+                });
+            }
+            // we've already seen the provider so merge the configurations
+            else
+            {
+                // If the previous config had some specific counters and the new one also has specific counters then merge them.
+                // Otherwise one of the two requested all counters so the union is also all counters.
+                if (preExistingGroup.CounterNames.Length == 0 || enabledCounters.Length == 0)
+                {
+                    preExistingGroup.CounterNames = Array.Empty<string>();
+                }
+                else
+                {
+                    preExistingGroup.CounterNames = preExistingGroup.CounterNames.Union(enabledCounters).ToArray();
+                }
             }
         }
-
-        private EventPipeCounterGroup[] GetEventPipeProviders() =>
-            _counterList.Providers.Select(provider => new EventPipeCounterGroup
-            {
-                ProviderName = provider,
-                CounterNames = _counterList.GetCounters(provider).ToArray()
-            }).ToArray();
 
         private async Task<ReturnCode> Start(MetricsPipeline pipeline, CancellationToken token)
         {

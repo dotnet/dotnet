@@ -160,7 +160,7 @@ namespace NuGet.Frameworks.Test
             NuGetFramework input = new NuGetFramework("Windows", new Version(8, 0));
             provider.TryGetEquivalentFrameworks(input, out IEnumerable<NuGetFramework>? frameworks);
 
-            var results = frameworks
+            var results = frameworks!
                 .OrderBy(f => f, NuGetFrameworkSorter.Instance)
                 .Select(f => f.GetShortFolderName())
                 .ToArray();

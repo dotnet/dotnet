@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true)
+public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true, useLegacyTokenizer: true)
 {
     [Fact]
     public void Moves_Whitespace_Preceeding_ExpressionBlock_To_Parent_Block()
@@ -32,7 +32,7 @@ public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.
         var rewritten = rewriter.Visit(parsed.Root);
 
         // Assert
-        var rewrittenTree = RazorSyntaxTree.Create(rewritten, parsed.Source, parsed.Diagnostics, parsed.Options);
+        var rewrittenTree = new RazorSyntaxTree(rewritten, parsed.Source, parsed.Diagnostics, parsed.Options);
         BaselineTest(rewrittenTree);
     }
 }

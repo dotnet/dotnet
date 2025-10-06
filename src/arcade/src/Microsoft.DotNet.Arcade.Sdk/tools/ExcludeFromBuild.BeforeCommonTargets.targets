@@ -3,7 +3,7 @@
 
   <!--  This file sets properties that enable skipping of a project build if desired.
         Cases where we might skip include:
-        - Source-build mode and "ExcludeFromSourceBuild" is set.
+        - Source-build mode and "ExcludeFromSourceOnlyBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
         - .NET product build (DotNetBuild) and "ExcludeFromDotNetBuild" is set.
@@ -30,9 +30,9 @@
   <!-- Exclude test and test utility projects from source-only and .NET non-source only product builds by default. -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
     <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceOnlyBuild>
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceBuild>
 
-    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromDotNetBuild>
+    <!-- Avoid excluding packable projects. They often need to flow downstream to dependent repos. -->
+    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true' and '$(IsPackable)' != 'true'">true</ExcludeFromDotNetBuild>
   </PropertyGroup>
 
   <!--
@@ -47,8 +47,6 @@
   -->
   <PropertyGroup>
     <_SuppressAllTargets>false</_SuppressAllTargets>
-    <!-- Legacy switches-->
-    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
     <!-- New .NET build switches -->
     <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>

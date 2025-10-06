@@ -22,4 +22,5 @@ public enum DotNetSdkTemplate
     Angular,
     Wpf,
     Winforms,
+    Aspire,
 }

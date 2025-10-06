@@ -419,7 +419,7 @@ BOOL ZapSig::GetSignatureForTypeHandle(TypeHandle      handle,
                 EX_CATCH
                 {
                 }
-                EX_END_CATCH(SwallowAllExceptions);
+                EX_END_CATCH
                 if (!resolved)
                     RETURN(FALSE);
             }
@@ -482,7 +482,7 @@ BOOL ZapSig::GetSignatureForTypeHandle(TypeHandle      handle,
                 EX_CATCH
                 {
                 }
-                EX_END_CATCH(SwallowAllExceptions);
+                EX_END_CATCH
                 if (!resolved)
                     RETURN(FALSE);
             }
@@ -579,7 +579,7 @@ ModuleBase *ZapSig::DecodeModuleFromIndex(Module *fromModule,
         }
         else
         {
-            pAssembly = fromModule->LoadAssembly(RidToToken(index, mdtAssemblyRef))->GetAssembly();
+            pAssembly = fromModule->LoadAssembly(RidToToken(index, mdtAssemblyRef));
         }
     }
     else
@@ -599,7 +599,7 @@ ModuleBase *ZapSig::DecodeModuleFromIndex(Module *fromModule,
 
         if(pAssembly == NULL)
         {
-            DomainAssembly *pParentAssembly = fromModule->GetDomainAssembly();
+            Assembly *pParentAssembly = fromModule->GetAssembly();
             if (nativeImage != NULL)
             {
                 pAssembly = nativeImage->LoadManifestAssembly(index, pParentAssembly);
@@ -921,12 +921,15 @@ MethodDesc *ZapSig::DecodeMethod(ModuleBase *pInfoModule,
     // in non-generic structs.
     BOOL isInstantiatingStub = (methodFlags & ENCODE_METHOD_SIG_InstantiatingStub);
     BOOL isUnboxingStub = (methodFlags & ENCODE_METHOD_SIG_UnboxingStub);
+    bool isAsyncVariant = (methodFlags & ENCODE_METHOD_SIG_AsyncVariant) != 0;
 
     pMethod = MethodDesc::FindOrCreateAssociatedMethodDesc(pMethod, thOwner.GetMethodTable(),
                                                             isUnboxingStub,
                                                             inst,
                                                             !(isInstantiatingStub || isUnboxingStub) && !actualOwnerRequired,
-                                                            actualOwnerRequired);
+                                                            actualOwnerRequired,
+                                                            TRUE,
+                                                            isAsyncVariant == pMethod->IsAsyncVariantMethod() ? AsyncVariantLookup::MatchingAsyncVariant : AsyncVariantLookup::AsyncOtherVariant);
 
     if (methodFlags & ENCODE_METHOD_SIG_Constrained)
     {
@@ -948,6 +951,11 @@ MethodDesc *ZapSig::DecodeMethod(ModuleBase *pInfoModule,
             _ASSERTE(!"Constrained method resolution failed");
 
             MemberLoader::ThrowMissingMethodException(constrainedType.GetMethodTable(), NULL, NULL, NULL, 0, NULL);
+        }
+
+        if (directMethod->IsStatic() && (ppTH != NULL))
+        {
+            *ppTH = directMethod->GetMethodTable();
         }
 
         // Strip the instantiating stub if the signature did not ask for one
@@ -1024,45 +1032,31 @@ FieldDesc * ZapSig::DecodeField(Module *pReferencingModule,
         IfFailThrow(sig.SkipExactlyOne());
     }
 
-    if (fieldFlags & ENCODE_FIELD_SIG_IndexInsteadOfToken)
+    RID rid;
+    IfFailThrow(sig.GetData(&rid));
+
+    if (fieldFlags & ENCODE_FIELD_SIG_MemberRefToken)
     {
-        // get the field desc using index
-        uint32_t fieldIndex;
-        IfFailThrow(sig.GetData(&fieldIndex));
-
-        _ASSERTE(pOwnerMT != NULL);
-
-        pField = pOwnerMT->GetFieldDescByIndex(fieldIndex);
-        _ASSERTE(pOwnerMT == pField->GetApproxEnclosingMethodTable());
-    }
-    else
-    {
-        RID rid;
-        IfFailThrow(sig.GetData(&rid));
-
-        if (fieldFlags & ENCODE_FIELD_SIG_MemberRefToken)
+        if (pOwnerMT == NULL)
         {
-            if (pOwnerMT == NULL)
-            {
-                TypeHandle th;
-                MethodDesc * pMD = NULL;
-                FieldDesc * pFD = NULL;
+            TypeHandle th;
+            MethodDesc * pMD = NULL;
+            FieldDesc * pFD = NULL;
 
-                MemberLoader::GetDescFromMemberRef(pInfoModule, TokenFromRid(rid, mdtMemberRef), &pMD, &pFD, NULL, FALSE, &th);
-                _ASSERTE(pFD != NULL);
+            MemberLoader::GetDescFromMemberRef(pInfoModule, TokenFromRid(rid, mdtMemberRef), &pMD, &pFD, NULL, FALSE, &th);
+            _ASSERTE(pFD != NULL);
 
-                pField = pFD;
-            }
-            else
-            {
-                pField = MemberLoader::GetFieldDescFromMemberRefAndType(pInfoModule, TokenFromRid(rid, mdtMemberRef), pOwnerMT);
-            }
+            pField = pFD;
         }
         else
         {
-            _ASSERTE(pInfoModule->IsFullModule());
-            pField = MemberLoader::GetFieldDescFromFieldDef(static_cast<Module*>(pInfoModule), TokenFromRid(rid, mdtFieldDef), FALSE);
+            pField = MemberLoader::GetFieldDescFromMemberRefAndType(pInfoModule, TokenFromRid(rid, mdtMemberRef), pOwnerMT);
         }
+    }
+    else
+    {
+        _ASSERTE(pInfoModule->IsFullModule());
+        pField = MemberLoader::GetFieldDescFromFieldDef(static_cast<Module*>(pInfoModule), TokenFromRid(rid, mdtFieldDef), FALSE);
     }
 
     if (ppTH != NULL)
@@ -1230,6 +1224,8 @@ BOOL ZapSig::EncodeMethod(
         methodFlags |= ENCODE_METHOD_SIG_InstantiatingStub;
     if (fMethodNeedsInstantiation)
         methodFlags |= ENCODE_METHOD_SIG_MethodInstantiation;
+    if (pMethod->IsAsyncVariantMethod())
+        methodFlags |= ENCODE_METHOD_SIG_AsyncVariant;
 
     // Assume that the owner type is going to be needed
     methodFlags |= ENCODE_METHOD_SIG_OwnerType;

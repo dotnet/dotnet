@@ -25,6 +25,6 @@ internal class DummyAttributeTypeProvider : ICustomAttributeTypeProvider<Type?>
     public Type? GetTypeFromSerializedName(string name) => default(Type);
 
     public PrimitiveTypeCode GetUnderlyingEnumType(Type? type) => default(PrimitiveTypeCode);
-    
+
     public bool IsSystemType(Type? type) => default(bool);
 }

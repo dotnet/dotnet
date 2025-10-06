@@ -446,7 +446,7 @@ public class ImplicitExpressionEditHandlerTest
     private static Syntax.MarkupTextLiteralSyntax GetSyntaxNode(SourceLocation start, string content)
     {
         var builder = SyntaxListBuilder<SyntaxToken>.Create();
-        var tokens = CSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
+        var tokens = NativeCSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
         foreach (var token in tokens)
         {
             builder.Add(token);
@@ -456,7 +456,7 @@ public class ImplicitExpressionEditHandlerTest
         return (Syntax.MarkupTextLiteralSyntax)node;
     }
 
-    private static IReadOnlyList<Syntax.SyntaxToken> GetTokens(SourceLocation start, string content)
+    private static Syntax.SyntaxTokenList GetTokens(SourceLocation start, string content)
     {
         var parent = GetSyntaxNode(start, content);
         return parent.LiteralTokens;

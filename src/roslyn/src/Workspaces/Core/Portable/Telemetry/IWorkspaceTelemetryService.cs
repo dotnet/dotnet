@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Host;
 
@@ -19,6 +17,11 @@ internal interface IWorkspaceTelemetryService : IWorkspaceService
     /// True if a telemetry session has started.
     /// </summary>
     bool HasActiveSession { get; }
+
+    /// <summary>
+    /// True if the active session belongs to a Microsoft internal user.
+    /// </summary>
+    bool IsUserMicrosoftInternal { get; }
 
     /// <summary>
     /// Serialized the current telemetry settings. Returns <see langword="null"/> if session hasn't started.

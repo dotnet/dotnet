@@ -66,7 +66,7 @@ namespace Microsoft.CSharp.RuntimeBinder.ComInterop
                 case TypeCode.Int32: variant = ComVariant.Create(value.ToInt32(ci)); break;
                 case TypeCode.UInt32: variant = ComVariant.Create(value.ToUInt32(ci)); break;
                 case TypeCode.Int64: variant = ComVariant.Create(value.ToInt64(ci)); break;
-                case TypeCode.UInt64: variant = ComVariant.Create(value.ToInt64(ci)); break;
+                case TypeCode.UInt64: variant = ComVariant.Create(value.ToUInt64(ci)); break;
                 case TypeCode.Single: variant = ComVariant.Create(value.ToSingle(ci)); break;
                 case TypeCode.Double: variant = ComVariant.Create(value.ToDouble(ci)); break;
                 case TypeCode.Decimal: variant = ComVariant.Create(value.ToDecimal(ci)); break;
@@ -249,8 +249,6 @@ namespace Microsoft.CSharp.RuntimeBinder.ComInterop
                     variant.SetAsByrefVariant(ref value);
                     return;
                 case VarEnum.VT_RECORD:
-                    // VT_RECORD's are weird in that regardless of is the VT_BYREF flag is set or not
-                    // they have the same internal representation.
                     variant = ComVariant.CreateRaw(value.VarType | VarEnum.VT_BYREF, value.GetRawDataRef<Record>());
                     break;
                 case VarEnum.VT_DECIMAL:

@@ -30,7 +30,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.IsDevelopmentDependency, actualResult.IsDevelopmentDependency);
         }
 
-        public static TheoryData IPackageReferenceContextInfos => new TheoryData<IPackageReferenceContextInfo>
+        public static TheoryData<IPackageReferenceContextInfo> IPackageReferenceContextInfos => new()
             {
                 { PackageReferenceContextInfo.Create(PackageIdentity, Framework) },
                 { PackageReferenceContextInfo.Create(PackageIdentity, framework: null) },

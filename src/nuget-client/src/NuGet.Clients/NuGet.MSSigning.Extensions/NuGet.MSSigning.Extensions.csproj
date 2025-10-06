@@ -8,15 +8,15 @@
     <PackProject>false</PackProject>
     <IncludeInVsix>false</IncludeInVsix>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <GetSigningInputsDependsOn>GetSigningInputsCustom</GetSigningInputsDependsOn>
     <GetSymbolsToIndexDependsOn>GetSymbolsToIndexCustom</GetSymbolsToIndexDependsOn>
+    <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ILMerge" PrivateAssets="All" />
     <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\NuGet.CommandLine\NuGet.CommandLine.csproj" />
   </ItemGroup>
@@ -56,19 +56,10 @@
     <Error Text="Build dependencies are inconsistent with mergeinclude specified in ilmerge.props" Condition="'@(BuildArtifacts-&gt;Count())' != '@(MergeInclude-&gt;Count())'" />
     <PropertyGroup>
       <IlmergeCommand>$(ILMergeConsolePath) $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(filename)%(extension)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ')</IlmergeCommand>
-      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) /delaysign /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+      <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) /delaysign /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
     </PropertyGroup>
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
-  </Target>
-
-  <Target Name="GetSigningInputsCustom" Returns="@(DllsToSign)">
-    <ItemGroup>
-      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe">
-        <StrongName>MsSharedLib72</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </DllsToSign>
-    </ItemGroup>
   </Target>
 
   <Target Name="GetSymbolsToIndexCustom" Returns="@(SymbolsToIndex)">

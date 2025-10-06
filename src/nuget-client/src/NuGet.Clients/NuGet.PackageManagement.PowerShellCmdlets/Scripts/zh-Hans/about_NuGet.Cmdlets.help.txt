@@ -1,0 +1,48 @@
+﻿主题
+    about_NuGet
+    
+简短说明
+提供有关 NuGet 程序包管理器命令的信息。
+           
+详细说明
+本主题介绍 NuGet 程序包管理器命令。NuGet 是一种集成的程序包
+管理工具，用于将库和工具添加到 .NET 项目。
+
+                 
+包括以下 NuGet cmdlets。
+
+        Cmdlet					说明
+        ------------------		----------------------------------------------
+        Get-Package				获取已安装的程序包。使用 -ListAvailable，
+获取可从程序包源获得的程序包。
+
+        Install-Package			将程序包及其依赖项安装到项目中。
+
+        Uninstall-Package		卸载程序包。如果其他程序包依赖此程序包，
+除非指定 –Force 选项，否则此命令将失效。
+
+        Update-Package			将程序包及其依赖项更新到更新的版本。
+
+        Add-BindingRedirect		检查项目输出路径中的所有程序集
+并视需要将绑定重定向添加到应用程序（或 web）
+配置文件。
+                            
+        Get-Project				为指定的项目返回对 DTE（开发工具环境）的引用
+如果未指定，则返回
+在程序包管理器控制台中选定的默认项目。
+
+Open-PackagePage        打开指向指定程序包的 ProjectUrl、LicenseUrl 或 
+ReportAbuseUrl 的浏览器。
+
+        Register-TabExpansion	为命令参数注册选项卡扩展。
+
+另请参阅
+在线文档：http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

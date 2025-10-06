@@ -20,6 +20,7 @@ supported by popular unit test frameworks.
 | -------------- | -------------------- |
 | MSTest         | <ul><li>FullyQualifiedName</li><li>Name</li><li>ClassName</li><li>Priority</li><li>TestCategory</li></ul> |
 | Xunit          | <ul><li>FullyQualifiedName</li><li>DisplayName</li><li>Traits</li></ul> |
+| NUnit          | <ul><li>FullyQualifiedName</li><li>Name</li><li>Priority</li><li>TestCategory</li><li>Category</li><li>Property</li></ul>|
 
 Allowed **operators**:
 
@@ -145,3 +146,49 @@ In above code we defined traits with keys `Category` and `Priority` which can be
 | `dotnet test --filter "FullyQualifiedName~TestClass1\|Category=Nightly"` | Runs tests which have `TestClass1` in FullyQualifiedName **or** Category is Nightly. |
 | `dotnet test --filter "FullyQualifiedName~TestClass1&Category=Nightly"` | Runs tests which have `TestClass1` in FullyQualifiedName **and** Category is Nightly. |
 | `dotnet test --filter "(FullyQualifiedName~TestClass1&Category=Nightly)\|Priority=1"` | Runs tests which have either FullyQualifiedName contains `TestClass1` and Category is CategoryA or Priority is 1. |
+
+### NUnit
+
+```csharp
+namespace NUnitTestNamespace;
+
+public class TestClass
+{
+    [Property("Priority","1")]
+    [Test]
+    public void Test1()
+    {
+        Assert.Pass();
+    }
+
+    [Property("Whatever", "SomeValue")]
+    [Test]
+    public void Test2()
+    {
+        Assert.Pass();
+    }
+
+    [Category("SomeCategory")]
+    [Test]
+    public void Test3()
+    {
+        Assert.Pass();
+    }
+}
+```
+
+#### Usage of the filters
+
+| Expression | What it does? |
+| ---------- | ------------- |
+| `dotnet test --filter FullyQualifiedName=NUnitTestNamespace.TestClass.Test1` | Runs only the given test |
+| `dotnet test --filter Name=Test1` | Runs all tests whose test name (method) equals `Test1`. |
+| `dotnet test --filter Name=TestClass` | Runs tests within all classes named `TestClass`. |
+| `dotnet test --filter Name=NUnitTestNamespace` | Runs all tests within the namespace `NUnitTestNamespace`. |
+| `dotnet test --filter Priority=1` | Runs tests with property named Priority and value = 1`. |
+| `dotnet test --filter Whatever=TestClass` | Runs tests with property named `Whatever` and value = `SomeValue`. |
+| `dotnet test --filter Category=SomeCategory` | Runs tests with category set to `SomeCategory`.  Note: You can also use TestCategory in the filter. |
+
+Logical operators works the same as for the other frameworks.
+
+

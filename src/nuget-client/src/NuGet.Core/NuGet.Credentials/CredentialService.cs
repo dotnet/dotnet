@@ -34,6 +34,9 @@ namespace NuGet.Credentials
         /// </summary>
         private static readonly Semaphore ProviderSemaphore = new Semaphore(1, 1);
 
+        /// <summary>
+        /// Gets a value indicating whether this credential service handles default credentials.
+        /// </summary>
         public bool HandlesDefaultCredentials { get; }
 
         /// <summary>

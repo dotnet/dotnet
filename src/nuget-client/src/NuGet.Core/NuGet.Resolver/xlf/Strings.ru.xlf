@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../Strings.resx">
+    <body>
+      <trans-unit id="CircularDependencyDetected">
+        <source>Circular dependency detected '{0}'.</source>
+        <target state="translated">Обнаружена циклическая зависимость "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyConstraint">
+        <source>constraint</source>
+        <target state="translated">ограничение</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependencyIdsError">
+        <source>The package '{0}' version '{1}' declared a duplicate dependency '{2}'. This might mean the package is corrupt or the server metadata for the package is corrupt.</source>
+        <target state="translated">В пакете "{0}" версии "{1}" объявлена повторяющаяся зависимость "{2}". Это может означать, что повреждены сам пакет или серверные метаданные пакета.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FatalError">
+        <source>A fatal error occured while resolving dependencies.</source>
+        <target state="translated">При разрешении зависимостей произошла неустранимая ошибка.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageConfig">
+        <source>One or more unresolved package dependency constraints detected in the existing packages.config file. All dependency constraints must be resolved to add or update packages. If these packages are being updated this message may be ignored, if not the following error(s) may be blocking the current package operation: {0}</source>
+        <target state="translated">Обнаружено одно неразрешенное ограничение зависимостей пакетов (или несколько) в существующем файле packages.config. Все ограничения зависимостей должны быть разрешены, чтобы добавить или обновить пакеты. Если эти пакеты обновляются, это сообщение можно пропустить, если же нет, следующие ошибки могут блокировать текущую операцию с пакетами: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDependencyInfo">
+        <source>Unable to find package '{0}'. Existing packages must be restored before performing an install or update.</source>
+        <target state="translated">Не удалось найти пакет «{0}». Прежде чем выполнять установку или обновление, необходимо восстановить существующие пакеты.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSolution">
+        <source>Unable to resolve dependencies.</source>
+        <target state="translated">Не удалось разрешить зависимости.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigConstraint">
+        <source>'{0}' has an additional constraint {1} defined in {2}.</source>
+        <target state="translated">Для «{0}» в {2} определено дополнительное ограничение {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverTotalTime">
+        <source>Resolving dependency information took {0}</source>
+        <target state="translated">Разрешение данных о зависимостях заняло {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleVersion">
+        <source>Unable to find a version of '{0}' that is compatible with {1}.</source>
+        <target state="translated">Не удалось найти версию «{0}», совместимую с {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForEmptySource">
+        <source>Unable to resolve dependency '{0}'.</source>
+        <target state="translated">Не удается разрешить зависимость "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForMultipleSources">
+        <source>Unable to resolve dependency '{0}'. Source(s) used: {1}.</source>
+        <target state="translated">Не удается разрешить зависимость "{0}". Использованные источники: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionIsNotCompatible">
+        <source>Unable to resolve dependencies. '{0}' is not compatible with {1}.</source>
+        <target state="translated">Не удается разрешить зависимости. «{0}» не совместима с {1}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,1423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Resources.resx">
+    <body>
+      <trans-unit id="Accessibility_ColumnNotSortedHelpText">
+        <source>Not sorted, press space to sort ascending</source>
+        <target state="translated">未排序，按空格鍵以遞增排序</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedAscendingHelpText">
+        <source>Sorted ascending, press space to sort descending</source>
+        <target state="translated">已遞增排序，按空格鍵以遞減排序</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ColumnSortedDescendingHelpText">
+        <source>Sorted descending, press space to sort ascending</source>
+        <target state="translated">已遞減排序，按空格鍵以遞增排序</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDeprecation">
+        <source>Package deprecation</source>
+        <target state="translated">套件淘汰</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageDetailsUrlIcon">
+        <source>Package details URL icon</source>
+        <target state="translated">套件詳細資料 URL 圖示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIcon">
+        <source>Package icon</source>
+        <target state="translated">套件圖示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageIdentity">
+        <source>{0} version {1}</source>
+        <target state="translated">{0} 版 {1} </target>
+        <note>{1} = Package ID, {2} = Package version</note>
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageManager">
+        <source>Package manager</source>
+        <target state="translated">套件管理器</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageMetadata">
+        <source>Package metadata</source>
+        <target state="translated">套件中繼資料</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackageVulnerabilities">
+        <source>Package vulnerabilities</source>
+        <target state="translated">套件弱點</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_Packages">
+        <source>Packages</source>
+        <target state="translated">Package</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesDetails">
+        <source>Package details</source>
+        <target state="translated">套件詳細資料</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PackagesList">
+        <source>Packages list</source>
+        <target state="translated">套件清單</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PrefixReserved">
+        <source>Prefix reserved</source>
+        <target state="translated">保留的前置詞</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteAllToTopLevel">
+        <source>Promote all to top level dependencies</source>
+        <target state="translated">將所有項目升階到最高層級相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_PromoteToTopLevel">
+        <source>Promote to a top level dependency</source>
+        <target state="translated">升階到最高層級相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbHelp">
+        <source>Use arrow keys to change the size of the sections</source>
+        <target state="translated">使用方向鍵來變更區段大小</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_ThumbName">
+        <source>splitter for Packages list</source>
+        <target state="translated">套件清單的分隔器</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Accessibility_VulnerabilitiesDescriptionName">
+        <source>Package vulnerability description</source>
+        <target state="translated">套件弱點描述</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Action_Consolidate">
+        <source>Consolidate</source>
+        <target state="translated">合併</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">全部</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">引數不能為 Null 或空白。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForPRMigrator">
+        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
+        <target state="translated">請考慮將此專案的 NuGet 套件管理格式從 'packages.config' 移轉為 'PackageReference'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForRestoreMessage">
+        <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
+        <target state="translated">這個方案中遺漏某些 NuGet 套件。請按一下以從您的線上套件來源還原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AskForUpdateMessage">
+        <source>A new version of NuGet Package Manager is available.</source>
+        <target state="translated">NuGet Package Manager 有新版本可用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AutoReferenced">
+        <source>Implicitly referenced by an SDK. To update the package, update the SDK to which it belongs.</source>
+        <target state="translated">由 SDK 隱含參考。若要更新該套件，請更新其所屬的 SDK。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Billion">
+        <source>{0:G3}B</source>
+        <target state="translated">{0:G3}B</target>
+        <note>American billions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="Button_Apply">
+        <source>_Apply</source>
+        <target state="translated">套用(_A)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Cancel">
+        <source>_Cancel</source>
+        <target state="translated">取消(_C)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Copy">
+        <source>Co_py</source>
+        <target state="translated">複製(_P)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Dismiss">
+        <source>Dismiss</source>
+        <target state="translated">關閉</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_IAccept">
+        <source>I _Accept</source>
+        <target state="translated">我接受(_A)</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_IDecline">
+        <source>I _Decline</source>
+        <target state="translated">我拒絕(_D)</target>
+        <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Install">
+        <source>Install</source>
+        <target state="translated">安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_No">
+        <source>_No</source>
+        <target state="translated">否(_N)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_NoToAll">
+        <source>No to A_ll</source>
+        <target state="translated">全部皆否(_L)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_OK">
+        <source>_OK</source>
+        <target state="translated">確定(_O)</target>
+        <note>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_Preview">
+        <source>Preview</source>
+        <target state="translated">預覽</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_RestartSearch">
+        <source>Restart search</source>
+        <target state="translated">重新開始搜尋</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowErrors">
+        <source>Show errors in output</source>
+        <target state="translated">在輸出中顯示錯誤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_ShowMoreResults">
+        <source>Show {0} more results</source>
+        <target state="translated">顯示其他 {0} 項結果</target>
+        <note>The string format has a single parameter "{0}", which is an integer number of how many more results will be displayed to the user when they click a button.</note>
+      </trans-unit>
+      <trans-unit id="Button_Uninstall">
+        <source>Uninstall</source>
+        <target state="translated">解除安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Update">
+        <source>Update</source>
+        <target state="translated">更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Button_Yes">
+        <source>_Yes</source>
+        <target state="translated">是(_Y)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Button_YesToAll">
+        <source>Yes to _All</source>
+        <target state="translated">全部皆是(_A)</target>
+        <note>Button_Yes, Button_No, Button_YesToAll, Button_NoToAll must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_DefaultPackageFormat">
+        <source>Allow format selection on first package install</source>
+        <target state="translated">允許在安裝第一個套件時選取格式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects">
+        <source>Select All Projects</source>
+        <target state="translated">選取所有專案</target>
+        <note>Name for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectAllProjects_HelpText">
+        <source>Select this checkbox to install the NuGet Package to all projects in the solution</source>
+        <target state="translated">選取此核取方塊以將 NuGet 套件安裝到解決方案中的所有專案</target>
+        <note>Help text for the checkbox to be narrated by UI Automation Tree</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_SelectProject_HelpText">
+        <source>Select this checkbox to install the NuGet Package to the project '{0}'</source>
+        <target state="translated">選取此核取方塊以將 NuGet 套件安裝到專案 '{0}'</target>
+        <note>Help text for the checkbox to install a NuGet package to a specific project.</note>
+      </trans-unit>
+      <trans-unit id="CheckBox_Selected">
+        <source>Selected</source>
+        <target state="translated">已選取</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ForceRemove">
+        <source>Force uninstall, even if there are dependencies on it</source>
+        <target state="translated">強制解除安裝，即使相依於它也是一樣</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_IncludePrerelease">
+        <source>Include prerelease</source>
+        <target state="translated">包括搶鮮版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ProjectSelection">
+        <source>{0} project(s)</source>
+        <target state="translated">{0} 個專案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_RemoveDependencies">
+        <source>Remove dependencies</source>
+        <target state="translated">移除相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_SelectAllPackages">
+        <source>Select all packages</source>
+        <target state="translated">選取所有套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_ShowPreviewWindow">
+        <source>Show preview window</source>
+        <target state="translated">顯示預覽視窗</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Checkbox_Show_Vulnerable_Only">
+        <source>Show only vulnerable</source>
+        <target state="translated">只顯示易受攻擊</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_InstalledVersion">
+        <source>Installed</source>
+        <target state="translated">已安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_PackageLevel">
+        <source>Package Level</source>
+        <target state="translated">套件層級</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Project">
+        <source>Project</source>
+        <target state="translated">專案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Requested">
+        <source>Version</source>
+        <target state="translated">版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ColumnHeader_Selected">
+        <source>Selected</source>
+        <target state="translated">已選取</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CopyMenuCommandLabel">
+        <source>_Copy</source>
+        <target state="translated">複製(_C)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Highest">
+        <source>Highest</source>
+        <target state="translated">最高</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestMinor">
+        <source>Highest Minor</source>
+        <target state="translated">最高次要</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_HighestPatch">
+        <source>Highest Patch</source>
+        <target state="translated">最高修補程式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_IgnoreDependencies">
+        <source>Ignore Dependencies</source>
+        <target state="translated">忽略相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyBehavior_Lowest">
+        <source>Lowest</source>
+        <target state="translated">最低</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_LinkTooltip">
+        <source>Select to view the alternative package.</source>
+        <target state="translated">選取來檢視替代套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_MoreInfo">
+        <source>More info</source>
+        <target state="translated">其他資訊</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessage">
+        <source>This package version is deprecated.</source>
+        <target state="translated">此套件版本已被取代。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Deprecation_PackageItemMessageAlternative">
+        <source>This package version is deprecated. Use {0} instead.</source>
+        <target state="translated">此套件版本已淘汰。請改用 {0}。</target>
+        <note>{0} is a NuGet package id (string)</note>
+      </trans-unit>
+      <trans-unit id="Description_LearnMore">
+        <source>Learn more</source>
+        <target state="translated">深入了解</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DialogTitle_HttpSource">
+        <source>HTTP Source</source>
+        <target state="translated">HTTP 來源</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotShowThisAgain">
+        <source>_Don't show this again</source>
+        <target state="translated">請不要再顯示(_D)</target>
+        <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
+        <target state="translated">NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 [true]。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MetadataNotFound">
+        <source>Unable to find metadata of {0}</source>
+        <target state="translated">找不到 {0} 的中繼資料</target>
+        <note>{0} is the package ID</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectNotInCache">
+        <source>Project {0} does not exist in the project system cache.</source>
+        <target state="translated">專案系統快取中不存在專案 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
+        <source>The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of the configured sources.</source>
+        <target state="translated">套件 '{0}' 可在全域套件資料夾中使用，但其來源 '{1}' 不是此解決方案的設定來源之一。</target>
+        <note>{0} is the package ID. {1} is the URI of the package source found in the Global packages folder.</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLoadReadme">
+        <source>An error occurred while trying to load the README.</source>
+        <target state="translated">嘗試載入 README 時發生錯誤。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_IgnoreAll">
+        <source>Ignore All</source>
+        <target state="translated">全部忽略</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_OverwriteAll">
+        <source>Overwrite All</source>
+        <target state="translated">全部覆寫</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictAction_Prompt">
+        <source>Prompt</source>
+        <target state="translated">提示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_InstallOptions">
+        <source>Install and Update Options</source>
+        <target state="translated">安裝及更新選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GroupBoxHeader_UninstallOptions">
+        <source>Uninstall Options</source>
+        <target state="translated">解除安裝選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_AdvisoryUrl">
+        <source>Advisory URL</source>
+        <target state="translated">諮詢 URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_License">
+        <source>License</source>
+        <target state="translated">授權</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Owner">
+        <source>Owner</source>
+        <target state="translated">擁有者</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_PackageSourceMappingSettings">
+        <source>Configure</source>
+        <target state="translated">設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ProjectUrl">
+        <source>Project URL</source>
+        <target state="translated">專案 URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_Readme">
+        <source>Readme</source>
+        <target state="translated">讀我檔案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Hyperlink_ReportAbuse">
+        <source>Report Abuse</source>
+        <target state="translated">檢舉濫用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoreUpgrade">
+        <source>Ignore for now</source>
+        <target state="translated">暫時忽略</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImageCaption_HelpIcon">
+        <source>Help icon</source>
+        <target state="translated">說明圖示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Action">
+        <source>Action:</source>
+        <target state="translated">動作:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Authors">
+        <source>Author(s): </source>
+        <target state="translated">作者:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Browse">
+        <source>Browse</source>
+        <target state="translated">瀏覽</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_CreatingSourceMappings">
+        <source>Creating source mappings to '{0}':</source>
+        <target state="translated">建立 '{0}' 的來源對應:</target>
+        <note>{0} - The Name of a user-configured NuGet Package Source</note>
+      </trans-unit>
+      <trans-unit id="Label_DatePublished">
+        <source>Date published:</source>
+        <target state="translated">發行日期:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Dependencies">
+        <source>Dependencies</source>
+        <target state="translated">相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DependencyBehavior">
+        <source>Dependency behavior:</source>
+        <target state="translated">相依性行為:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Deprecated">
+        <source>Deprecated</source>
+        <target state="translated">已淘汰</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationAlternatePackage">
+        <source>Alternate package</source>
+        <target state="translated">替代套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons">
+        <source>Deprecation reason</source>
+        <target state="translated">取代原因</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_CriticalBugs">
+        <source>This package has been deprecated as it has critical bugs.</source>
+        <target state="translated">因為套件有嚴重 Bug，所以已受到淘汰。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Legacy">
+        <source>This package has been deprecated as it is legacy and no longer maintained.</source>
+        <target state="translated">因為套件已過時且已停止維護，所以已受到淘汰。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_LegacyAndCriticalBugs">
+        <source>This package has been deprecated as it has critical bugs and is no longer maintained.</source>
+        <target state="translated">因為套件有嚴重 Bug 且已停止維護，所以已受到淘汰。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_DeprecationReasons_Unknown">
+        <source>The package has been deprecated.</source>
+        <target state="translated">套件已淘汰。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Description">
+        <source>Description</source>
+        <target state="translated">描述</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Details">
+        <source>Details</source>
+        <target state="translated">詳細資料</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Downloads">
+        <source>Downloads:</source>
+        <target state="translated">下載:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_FileConflictAction">
+        <source>File conflict action:</source>
+        <target state="translated">檔案衝突動作:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed">
+        <source>Installed</source>
+        <target state="translated">已安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledColon">
+        <source>Installed:</source>
+        <target state="translated">已安裝:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledPackages">
+        <source>Installing:</source>
+        <target state="translated">正在安裝:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_InstalledVersionsCount">
+        <source>Versions: {0}</source>
+        <target state="translated">版本：{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Installed_DeprecatedWarning">
+        <source>You have {0} deprecated package versions installed.</source>
+        <target state="translated">您安裝了 {0} 個已被取代的套件。</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableAndDeprecatedWarning">
+        <source>You have {0} vulnerable package versions and {1} deprecated package versions installed.</source>
+        <target state="translated">您已安裝 {0} 易受攻擊的套件版本及 {1} 已被取代的套件版本。</target>
+        <note>{0} and {1} are numbers of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning">
+        <source>You have {0} vulnerable package versions installed.</source>
+        <target state="translated">您安裝了 {0} 個有弱點的套件。</target>
+        <note>{0} is the number of installed package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_License">
+        <source>License:</source>
+        <target state="translated">授權:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
+        <source>These installed package versions contain vulnerabilities: {0}</source>
+        <target state="translated">這些已安裝的套件版本包含弱點: {0}</target>
+        <note>{0} are package versions</note>
+      </trans-unit>
+      <trans-unit id="Label_NetworkError">
+        <source>An error occurred while fetching additional information about the package. Refresh to try again.</source>
+        <target state="translated">擷取封裝的其他資訊時發生錯誤。重新整理以再試一次。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_NuGetWindowCaption">
+        <source>NuGet: {0}</source>
+        <target state="translated">NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Options">
+        <source>Options</source>
+        <target state="translated">選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Owners">
+        <source>Owner(s):</source>
+        <target state="translated">擁有者:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDeprecatedToolTip">
+        <source>This package version is deprecated.</source>
+        <target state="translated">此套件版本已被取代。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageDetails">
+        <source>Package Details</source>
+        <target state="translated">套件詳細資料</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageManager">
+        <source>NuGet Package Manager: {0}</source>
+        <target state="translated">NuGet 套件管理員: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackagePrerelease">
+        <source>Prerelease</source>
+        <target state="translated">搶鮮版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageSelectForInfoToolTip">
+        <source>Select to view package details for more information.</source>
+        <target state="translated">如需詳細資訊，請選取以檢視套件詳細資料。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_PackageVulnerableToolTip">
+        <source>This package version has a vulnerability with {0} severity.</source>
+        <target state="translated">此套件版本的弱點嚴重性為 {0}。</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_ProjectUrl">
+        <source>Project URL:</source>
+        <target state="translated">專案 URL:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme">
+        <source>Readme:</source>
+        <target state="translated">讀我檔案:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Readme_Tab">
+        <source>README</source>
+        <target state="translated">README</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_ReportAbuse">
+        <source>Report Abuse:</source>
+        <target state="translated">檢舉不當使用:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Repository">
+        <source>Package source:</source>
+        <target state="translated">套件來源:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Solution">
+        <source>Solution</source>
+        <target state="translated">解決方案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionNuGetWindowCaption">
+        <source>NuGet - Solution</source>
+        <target state="translated">NuGet - 解決方案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_SolutionPackageManager">
+        <source>Manage Packages for Solution</source>
+        <target state="translated">管理解決方案的套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Tags">
+        <source>Tags:</source>
+        <target state="translated">標記:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UninstalledPackages">
+        <source>Uninstalling:</source>
+        <target state="translated">正在解除安裝:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_UpdatedPackages">
+        <source>Updates:</source>
+        <target state="translated">更新:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Updates">
+        <source>Updates</source>
+        <target state="translated">更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Version">
+        <source>Version:</source>
+        <target state="translated">版本:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Label_Vulnerabilities">
+        <source>Vulnerabilities detected ({0})</source>
+        <target state="translated">偵測到弱點 ({0})</target>
+        <note>{0} is the number of vulnerabilities</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilitiesDescription">
+        <source>This package version has at least one vulnerability with {0} severity. It may lead to specific problems in your project. Try updating the package version.</source>
+        <target state="translated">此套件版本至少有一個具有 {0} 嚴重性的漏洞。可能會在專案中造成特定問題。請嘗試更新套件版本。</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_VulnerabilityAdvisory">
+        <source>Advisory ({0} severity):</source>
+        <target state="translated">諮詢 ({0} 嚴重性):</target>
+        <note>{0} is the severity of the vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Label_Vulnerable">
+        <source>Vulnerable</source>
+        <target state="translated">易受攻擊</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseFile_Loading">
+        <source>Loading license file...</source>
+        <target state="translated">正在載入授權檔案...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseTerm_LinkName">
+        <source>{0} license</source>
+        <target state="translated">{0} 授權</target>
+        <note>{0} = license name. Examples: MIT, Apache</note>
+      </trans-unit>
+      <trans-unit id="Link_DoNotShowAgain">
+        <source>Don't show again</source>
+        <target state="translated">不要再顯示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutInstallOptions">
+        <source>Learn about Install Options</source>
+        <target state="translated">了解安裝選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_LearnAboutUninstallOptions">
+        <source>Learn about Uninstall Options</source>
+        <target state="translated">了解解除安裝選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_MigratorHelp">
+        <source>Why should I migrate?</source>
+        <target state="translated">我為什麼應該移轉?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_UpgradeOption">
+        <source>Migrate Now</source>
+        <target state="translated">立即移轉</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Link_configuration">
+        <source>Common NuGet configurations; How settings are applied.</source>
+        <target state="translated">一般 NuGet 設定: 如何套用設定。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageIdColumnHeader">
+        <source>Package Id</source>
+        <target state="translated">套件識別碼</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageNotFound">
+        <source>Migration failed as packages {0} could not be uninstalled. These packages were not found in the solution packages folder. No changes were made to the project.</source>
+        <target state="translated">因為無法將套件 {0} 解除安裝，所以移轉失敗。無法在解決方案套件資料夾中找到這些套件。未對專案進行任何變更。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_TopLevelColumnHeader">
+        <source>Top-Level</source>
+        <target state="translated">頂層</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_VersionColumnHeader">
+        <source>Version</source>
+        <target state="translated">版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Million">
+        <source>{0:G3}M</source>
+        <target state="translated">{0:G3}M</target>
+        <note>Millions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_PackageDependencyOf">
+        <source>(dependency of {0})</source>
+        <target state="translated">({0} 的相依性)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Installing">
+        <source>Installing required packages</source>
+        <target state="translated">正在安裝必要套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_Progress_Uninstalling">
+        <source>Uninstalling packages from packages.config</source>
+        <target state="translated">正在將 packages.config 中的套件解除安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetUpgrade_WaitMessage">
+        <source>Upgrading Project to PackageReference</source>
+        <target state="translated">正在將專案升級為 PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">經過時間: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageLevel_TopLevelPackageHeaderText">
+        <source>Top-level packages ({0})</source>
+        <target state="translated">最上層套件 ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageLevel_TransitivePackageHeaderText">
+        <source>Transitive packages ({0})</source>
+        <target state="translated">轉移套件 ({0})</target>
+        <note>{0} = number of packages</note>
+      </trans-unit>
+      <trans-unit id="PackageRestoreErrorTryAgain">
+        <source>An error occurred while trying to restore packages:</source>
+        <target state="translated">嘗試還原套件時發生錯誤:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreProgressMessage">
+        <source>Downloading missing packages...</source>
+        <target state="translated">正在下載遺漏的套件...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageVersionWithTransitiveOrigins">
+        <source>{0} by {1}</source>
+        <target state="translated">{0} 來自於 {1}</target>
+        <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
+      </trans-unit>
+      <trans-unit id="Preview_PackageUpdate">
+        <source>{0} version {1} to {2} version {3}</source>
+        <target state="translated">從 {0} 版本 {1} 到 {2} 版本 {3}</target>
+        <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
+      </trans-unit>
+      <trans-unit id="Preview_UnknownProject">
+        <source>Unknown project</source>
+        <target state="translated">未知的專案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackageRef">
+        <source>PackageReference in project file</source>
+        <target state="translated">專案檔中的 PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RadioBtn_PackagesConfig">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallMultiplePackages">
+        <source>Multiple packages failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">有多個套件無法解除安裝。重新啟動 Visual Studio 以完成此程序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RequestRestartToCompleteUninstallSinglePackage">
+        <source>The package at '{0}' failed to uninstall. Restart Visual Studio to finish the process.</source>
+        <target state="translated">'{0}' 的套件無法解除安裝。重新啟動 Visual Studio 以完成此程序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestartButtonLabel">
+        <source>Rest_art</source>
+        <target state="translated">重新啟動(_A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreButtonLabel">
+        <source>_Restore</source>
+        <target state="translated">還原(_R)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowDetails">
+        <source>Show Details</source>
+        <target state="translated">顯示詳細資料</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandFailure">
+        <source>NuGet storage clear failed at {0}. 
+Error: {1}
+Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+        <target state="translated">清除位於 {0} 的 NuGet 儲存體失敗。
+錯誤: {1}
+如需詳細說明，請參閱 https://aka.ms/troubleshoot_nuget_cache。</target>
+        <note>{0} :error message;
+{1}: date and time
+</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandSuccess">
+        <source>NuGet storage cleared at {0}</source>
+        <target state="translated">已清除位於 {0} 的 NuGet 儲存體</target>
+        <note>{0} for date and time string</note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandWorking">
+        <source>Clearing all NuGet storage...</source>
+        <target state="translated">正在清除所有 NuGet 儲存體...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_Title">
+        <source>Package Manager Options</source>
+        <target state="translated">套件管理員選項</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueName">
+        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <target state="translated">指定的名稱已加入至可用套件來源清單中。請提供唯一名稱。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowWarning_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <target state="translated">指定的來源已加入至可用套件來源清單中。請提供唯一來源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Canceled">
+        <source>Canceled loading packages</source>
+        <target state="translated">已取消載入套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_ErrorOccurred">
+        <source>An error occurred while loading packages</source>
+        <target state="translated">載入套件時發生錯誤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_NoMoreItems">
+        <source>End of package list loaded</source>
+        <target state="translated">已載入套件清單的結尾</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Status_Ready">
+        <source>Package list loaded</source>
+        <target state="translated">已載入套件清單</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_By">
+        <source>by</source>
+        <target state="translated">作者</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByAuthor">
+        <source>by {0}</source>
+        <target state="translated">作者 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ByOwner">
+        <source>by {0}</source>
+        <target state="translated">作者 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Changes">
+        <source>Visual Studio is about to make changes to this solution:</source>
+        <target state="translated">Visual Studio 即將變更此解決方案:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DirectDependencies">
+        <source>Top-level dependencies:</source>
+        <target state="translated">頂層的相依性:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Downloads">
+        <source>{0} downloads</source>
+        <target state="translated">{0} 項下載</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ErrorOccurred">
+        <source>Error occurred</source>
+        <target state="translated">發生錯誤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_HelpMeMigrate">
+        <source>Help me migrate to NuGet PackageReference</source>
+        <target state="translated">協助我移轉到 NuGet PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LegalDisclaimer">
+        <source>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages.</source>
+        <target state="translated">每個套件均由其擁有者提供授權給您。NuGet 對於協力廠商套件不負任何責任，也不提供相關的任何授權。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseHeaderText">
+        <source>The following package(s) require that you accept their license terms before installing.</source>
+        <target state="translated">下列套件需要您在安裝之前接受其授權條款。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LicenseText">
+        <source>By clicking "I Accept," you agree to the license terms for the package(s) listed above. If you do not agree to the license terms, click "I Decline."</source>
+        <target state="translated">按一下 [我接受]，表示您同意上面所列套件的授權條款。如果您不同意授權條款，請按一下 [我拒絕]。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Loading">
+        <source>Loading...</source>
+        <target state="translated">正在載入...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_LoadingReadme">
+        <source>Loading README...</source>
+        <target state="translated">載入自述檔案...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ManageSettings">
+        <source>You can manage these settings in </source>
+        <target state="translated">您可以在下列位置管理這些設定: </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MultipleVersionsInstalled">
+        <source>multiple versions installed</source>
+        <target state="translated">安裝了多個版本</target>
+        <note>In the solution package manager, if the select package has multiple versions installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NoDependencies">
+        <source>No dependencies</source>
+        <target state="translated">無相依性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoPackagesFound">
+        <source>No packages found</source>
+        <target state="translated">找不到任何套件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NoReadme">
+        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="translated">選取的套件版本沒有可用的自述檔。如需詳細資訊，請流覽 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="Text_NotAvailableInSource">
+        <source>Not available in this source</source>
+        <target state="translated">在此來源中找不到</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NotInstalled">
+        <source>not installed</source>
+        <target state="translated">未安裝</target>
+        <note>In the solution package manager, if the select package is not installed, then this message is shown.</note>
+      </trans-unit>
+      <trans-unit id="Text_NuGetSettings">
+        <source>NuGet Settings</source>
+        <target state="translated">NuGet 設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeIssues">
+        <source>Package compatibility issues:</source>
+        <target state="translated">套件相容性問題:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_NuGetUpgradeNoIssuesFound">
+        <source>No issues were found.</source>
+        <target state="translated">找不到任何問題。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatApply">
+        <source>The package manager format will apply to the following projects in this Solution</source>
+        <target state="translated">套件管理員格式會套用到此 Solution 中的下列專案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTopLevel">
+        <source>Top-level</source>
+        <target state="translated">最上層</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageLevelTransitive">
+        <source>Transitive</source>
+        <target state="translated">轉移</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsAutoCreate">
+        <source>A package source mapping will be created.</source>
+        <target state="translated">將建立套件來源對應。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsDisabled">
+        <source>Package source mapping is off.</source>
+        <target state="translated">套件來源對應已關閉。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsFound">
+        <source>Package source mapping found.</source>
+        <target state="translated">找到套件來源對應。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageMappingsNotFound">
+        <source>Requires a package source mapping.</source>
+        <target state="translated">需要封裝來源對應。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport">
+        <source>Projects with PackageReference are not supported in Visual Studio 2015 and earlier.</source>
+        <target state="translated">Visual Studio 2015 及更早版本不支援具有 PackageReference 的專案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageRefSupport_DocumentLink">
+        <source>Learn more about package reference</source>
+        <target state="translated">深入了解套件參考</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources">
+        <source>Package sources:</source>
+        <target state="translated">套件來源:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackagesFound">
+        <source>Packages found</source>
+        <target state="translated">找到封裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ReadmeLoaded">
+        <source>README loaded</source>
+        <target state="translated">已載入自述檔</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchBoxText">
+        <source>Search ({0})</source>
+        <target state="translated">搜尋 ({0})</target>
+        <note>The text to be displayed in the search box</note>
+      </trans-unit>
+      <trans-unit id="Text_SearchIncomplete">
+        <source>Retrieving results from one or more sources</source>
+        <target state="translated">正在擷取一或多個來源的結果</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_SearchStopped">
+        <source>Unable to retrieve results from one or more sources</source>
+        <target state="translated">無法擷取一或多個來源的結果</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Searching">
+        <source>Searching '{0}'</source>
+        <target state="translated">正在搜尋 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_TransitiveDependencies">
+        <source>Transitive dependencies:</source>
+        <target state="translated">可轉移的相依性:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UpgradeNuGetProjectDescription">
+        <source>Migrate this project from packages.config to PackageReference format.</source>
+        <target state="translated">將此專案從 packages.config 移轉到 PackageReference 格式。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_UserCanceled">
+        <source>Operation canceled by user</source>
+        <target state="translated">使用者已取消作業</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewLicense">
+        <source>View License</source>
+        <target state="translated">檢視授權</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ViewReadme">
+        <source>View Readme</source>
+        <target state="translated">檢視讀我檔案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Thousand">
+        <source>{0:G3}K</source>
+        <target state="translated">{0:G3}K</target>
+        <note>Thousands in short format notation</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_BlockedVersion">
+        <source>Following versions are unavailable due to additional constraints in the project or packages.config</source>
+        <target state="translated">因為專案或 packages.config 中的其他條件約束，所以無法使用下列版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstallButton">
+        <source>Install {0} version {1}.</source>
+        <target state="translated">安裝 {0} {1} 版。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_InstalledVersion">
+        <source>Installed version: {0}</source>
+        <target state="translated">安裝的版本: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_LatestVersion">
+        <source>Latest version: {0}</source>
+        <target state="translated">最新版本: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageInstalled">
+        <source>Latest stable version is installed</source>
+        <target state="translated">已安裝最新穩定版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_PackageRecommended">
+        <source>IntelliCode package suggestion based on this project context</source>
+        <target state="translated">IntelliCode 套件建議取決於此專案內容</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Refresh">
+        <source>Refresh</source>
+        <target state="translated">重新整理</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_Settings">
+        <source>Settings</source>
+        <target state="translated">設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependency">
+        <source>Transitively referenced version</source>
+        <target state="translated">可轉用參照的版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitiveDependencyVersion">
+        <source>Transitively referenced version: {0}</source>
+        <target state="translated">可轉移參考的版本: {0}</target>
+        <note>{0} is a version number</note>
+      </trans-unit>
+      <trans-unit id="ToolTip_TransitivePathHelp">
+        <source>To learn more about transitive paths, see</source>
+        <target state="translated">若要深入了解可轉移的路徑，請參閱</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UninstallButton">
+        <source>Uninstall this package.</source>
+        <target state="translated">解除安裝此套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateAvailable">
+        <source>Update available</source>
+        <target state="translated">可供使用的更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolTip_UpdateButton">
+        <source>Update {0} to version {1}.</source>
+        <target state="translated">將 {0} 更新為 {1} 版。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Tooltip_PrefixReserved">
+        <source>The ID prefix of this package has been reserved for the owner of the package by the currently selected feed</source>
+        <target state="translated">受制於目前所選摘要，此套件的識別碼前置詞已保留給套件擁有者使用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Trillion">
+        <source>{0:G3}T</source>
+        <target state="translated">{0:G3}T</target>
+        <note>American trillions in short format notation</note>
+      </trans-unit>
+      <trans-unit id="UpdateButton_VersionOverride_Tooltip">
+        <source>Dependency version defined by VersionOverride, modify project file to change package version.</source>
+        <target state="translated">相依性版本是由 VersionOverride 所定義，請修改專案檔案以變更封裝版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpgradeLogger_BackupPathMustBeValid">
+        <source>Must be a valid path.</source>
+        <target state="translated">必須是有效的路徑。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_InstallFailed">
+        <source>NuGet migrate failed to install packages as PackageReference. Changed files are backed up at {0}</source>
+        <target state="translated">NuGet 移轉無法將套件安裝為 PackageReference。變更的檔案已備份到 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_RevertSteps">
+        <source>Please follow simple instructions from {0} to go back to previous state.</source>
+        <target state="translated">請遵循簡單的指示，從 {0} 回復到先前的狀態。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrade_UninstallFailed">
+        <source>NuGet upgrade failed to uninstall packages from packages.config so rolled back to previous state.</source>
+        <target state="translated">NuGet 升級無法解除安裝 packages.config 格式的套件，以復原成先前的狀態。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_BackupFailed">
+        <source>The project cannot be upgraded as backing up the project file and packages.config ran into an issue.</source>
+        <target state="translated">因為備份專案檔及 packages.config 發生問題，所以無法升級此專案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Upgrader_PackageNotFound">
+        <source>Unable to determine compatibility of package as {0}.nupkg was not found on disk. The project cannot be migrated.</source>
+        <target state="translated">因為未在磁碟上找到 {0}.nupkg，所以無法判斷套件相容性。專案無法移轉。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Close">
+        <source>Close</source>
+        <target state="translated">關閉</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
+        <source>NuGet Package Manager</source>
+        <target state="translated">NuGet 套件管理員</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
+        <source>Once started, this action cannot be cancelled.</source>
+        <target state="translated">此動作一旦開始即無法取消。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
+        <source>Clear all local NuGet resources?</source>
+        <target state="translated">要清除所有本機 NuGet 資源嗎？</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked">
+        <source>Blocked by package.config</source>
+        <target state="translated">由 package.config 封鎖</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Blocked_Generic">
+        <source>Blocked by project</source>
+        <target state="translated">被專案封鎖</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Installed">
+        <source>Installed</source>
+        <target state="translated">已安裝</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestPrerelease">
+        <source>Latest prerelease</source>
+        <target state="translated">最新搶鮮版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_LatestStable">
+        <source>Latest stable</source>
+        <target state="translated">最新穩定版</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Vulnerabilities_Loading">
+        <source>Loading vulnerable packages...</source>
+        <target state="translated">正在載入易受攻擊的套件...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Critical">
+        <source>critical</source>
+        <target state="translated">危急</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_High">
+        <source>high</source>
+        <target state="translated">高</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Low">
+        <source>low</source>
+        <target state="translated">低</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilitySeverity_Moderate">
+        <source>moderate</source>
+        <target state="translated">中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warn_Adding_HttpSource">
+        <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
+        <target state="translated">您正在嘗試新增不安全的 HTTP 來源。您是否要繼續新增此不安全的 HTTP 來源?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HTTPSource">
+        <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">AllowInsecureConnections 已啟用並允許 HTTP 存取。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectJson">
+        <source>These options are not applicable to projects managing their dependencies through project.json or PackageReference</source>
+        <target state="translated">這些選項不適用於透過 project.json 或 PackageReference 管理其相依性的專案</target>
+        <note>To be displayed for the VS UI opened through a solution. bug #2665</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_DeprecatedFramework">
+        <source>Deprecated Framework</source>
+        <target state="translated">已取代的架構</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_FileConflict">
+        <source>File Conflict</source>
+        <target state="translated">檔案衝突</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseAcceptance">
+        <source>License Acceptance</source>
+        <target state="translated">接受授權</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_LicenseFileWindow">
+        <source>{0} License</source>
+        <target state="translated">{0} 授權</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_NuGetMigrator">
+        <source>Migrate NuGet format to PackageReference - {0}</source>
+        <target state="translated">將 NuGet 格式移轉到 PackageReference - {0}</target>
+        <note>{0} is the project name</note>
+      </trans-unit>
+      <trans-unit id="WindowTitle_PackageFormatSelector">
+        <source>Choose NuGet Package Manager Format</source>
+        <target state="translated">選擇 NuGet 套件管理員格式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowTitle_PreviewChanges">
+        <source>Preview Changes</source>
+        <target state="translated">預覽變更</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

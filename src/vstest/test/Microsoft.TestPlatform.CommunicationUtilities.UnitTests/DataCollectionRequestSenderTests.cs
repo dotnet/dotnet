@@ -44,7 +44,7 @@ public class DataCollectionRequestSenderTests
         attachment.Attachments.Add(new UriDataAttachment(attachmentUri, "filename.txt"));
         var invokedDataCollector = new InvokedDataCollector(datacollectorUri, displayName, typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false);
         _mockDataSerializer.Setup(x => x.DeserializePayload<AfterTestRunEndResult>(It.IsAny<Message>())).Returns(
-            new AfterTestRunEndResult(new Collection<AttachmentSet>() { attachment }, new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
+            new AfterTestRunEndResult([attachment], new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult, Payload = null });
@@ -80,7 +80,7 @@ public class DataCollectionRequestSenderTests
         attachment.Attachments.Add(new UriDataAttachment(attachmentUri, "filename.txt"));
         var invokedDataCollector = new InvokedDataCollector(datacollectorUri, displayName, typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false);
         _mockDataSerializer.Setup(x => x.DeserializePayload<AfterTestRunEndResult>(It.IsAny<Message>())).Returns(
-            new AfterTestRunEndResult(new Collection<AttachmentSet>() { attachment }, new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
+            new AfterTestRunEndResult([attachment], new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult, Payload = null });

@@ -55,7 +55,11 @@ public class InferRunSettingsHelper
     private const string LegacyElementsString = "Elements";
     private const string DeploymentAttributesString = "DeploymentAttributes";
     private const string ExecutionAttributesString = "ExecutionAttributes";
-    private static readonly List<string> ExecutionNodesPaths = new() { @"/RunSettings/LegacySettings/Execution/TestTypeSpecific/UnitTestRunConfig/AssemblyResolution", @"/RunSettings/LegacySettings/Execution/Timeouts", @"/RunSettings/LegacySettings/Execution/Hosts" };
+    private static readonly List<string> ExecutionNodesPaths =
+    [
+        @"/RunSettings/LegacySettings/Execution/TestTypeSpecific/UnitTestRunConfig/AssemblyResolution",
+        @"/RunSettings/LegacySettings/Execution/Timeouts", @"/RunSettings/LegacySettings/Execution/Hosts"
+    ];
 
     /// <summary>
     /// Make runsettings compatible with testhost of version 15.0.0-preview
@@ -398,7 +402,7 @@ public class InferRunSettingsHelper
     /// <summary>
     /// Returns a dictionary of environment variables given in run settings
     /// </summary>
-    /// <param name="runsettingsXml">The run settings xml string</param>
+    /// <param name="runSettings">The run settings xml string</param>
     /// <returns>Environment Variables Dictionary</returns>
     public static Dictionary<string, string?>? GetEnvironmentVariables(string? runSettings)
     {
@@ -657,7 +661,7 @@ public class InferRunSettingsHelper
         List<string> compatibleSources = new();
         StringBuilder warnings = new();
         warnings.AppendLine();
-        bool incompatiblityFound = false;
+        bool incompatibilityFound = false;
         foreach (var source in sourcePlatforms.Keys)
         {
             Architecture actualPlatform = sourcePlatforms[source];
@@ -667,10 +671,10 @@ public class InferRunSettingsHelper
             {
                 var onlyFileName = Path.GetFileName(source);
                 // Add message for incompatible sources.
-                var incompatiblityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
+                var incompatibilityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
 
-                warnings.AppendLine(incompatiblityMessage);
-                incompatiblityFound = true;
+                warnings.AppendLine(incompatibilityMessage);
+                incompatibilityFound = true;
             }
             else
             {
@@ -678,7 +682,7 @@ public class InferRunSettingsHelper
             }
         }
 
-        if (incompatiblityFound)
+        if (incompatibilityFound)
         {
             incompatibleSettingWarning = string.Format(CultureInfo.CurrentCulture, OMResources.DisplayChosenSettings, chosenFramework, chosenPlatform, warnings.ToString(), MultiTargetingForwardLink);
         }
@@ -703,12 +707,7 @@ public class InferRunSettingsHelper
     private static bool IsPlatformIncompatible(Architecture sourcePlatform, Architecture targetPlatform)
     {
         return sourcePlatform is not Architecture.Default and not Architecture.AnyCPU
-            && (targetPlatform == Architecture.X64 && !Is64BitOperatingSystem() || sourcePlatform != targetPlatform);
-
-        static bool Is64BitOperatingSystem()
-        {
-            return Environment.Is64BitOperatingSystem;
-        }
+            && (targetPlatform == Architecture.X64 && !Environment.Is64BitOperatingSystem || sourcePlatform != targetPlatform);
     }
 
     /// <summary>

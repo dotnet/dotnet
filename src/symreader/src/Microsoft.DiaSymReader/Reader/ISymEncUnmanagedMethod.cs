@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("85E891DA-A631-4c76-ACA2-A44A39C46B8C")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymEncUnmanagedMethod
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymEncUnmanagedMethod
     {
         /// <summary>
         /// Get the file name for the line associated with offset dwOffset.

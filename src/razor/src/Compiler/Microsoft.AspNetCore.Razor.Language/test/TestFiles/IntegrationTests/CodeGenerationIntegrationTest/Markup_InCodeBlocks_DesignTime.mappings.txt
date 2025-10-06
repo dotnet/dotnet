@@ -8,7 +8,7 @@
     void PrintName(Person person)
     {
         |
-Generated Location: (751:19,2 [153] )
+Generated Location: (1494:33,2 [153] )
 |
     var people = new Person[]
     {
@@ -21,26 +21,26 @@ Generated Location: (751:19,2 [153] )
 
 Source Location: (163:9,14 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |person.Name|
-Generated Location: (1085:34,14 [11] )
+Generated Location: (1828:48,14 [11] )
 |person.Name|
 
 Source Location: (180:9,31 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |
     }
 |
-Generated Location: (1295:41,31 [9] )
+Generated Location: (2038:55,31 [9] )
 |
     }
 |
 
 Source Location: (196:13,2 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 | PrintName(people[0]) |
-Generated Location: (1471:49,2 [22] )
+Generated Location: (2214:63,2 [22] )
 | PrintName(people[0]) |
 
 Source Location: (223:14,2 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 | AnnounceBirthday(people[0]); |
-Generated Location: (1662:56,2 [30] )
+Generated Location: (2405:70,2 [30] )
 | AnnounceBirthday(people[0]); |
 
 Source Location: (270:16,12 [106] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
@@ -49,7 +49,7 @@ Source Location: (270:16,12 [106] TestFiles/IntegrationTests/CodeGenerationInteg
     {
         var formatted = $"Mr. {person.Name}";
         |
-Generated Location: (1920:65,12 [106] )
+Generated Location: (2663:79,12 [106] )
 |
     void AnnounceBirthday(Person person)
     {
@@ -58,14 +58,14 @@ Generated Location: (1920:65,12 [106] )
 
 Source Location: (416:21,33 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |formatted|
-Generated Location: (2226:76,33 [9] )
+Generated Location: (2969:90,33 [9] )
 |formatted|
 
 Source Location: (448:22,14 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |
 
         |
-Generated Location: (2417:83,14 [12] )
+Generated Location: (3160:97,14 [12] )
 |
 
         |
@@ -74,20 +74,20 @@ Source Location: (475:25,9 [66] TestFiles/IntegrationTests/CodeGenerationIntegra
 |for (var i = 0; i < person.Age / 10; i++)
         {
             |
-Generated Location: (2605:92,9 [66] )
+Generated Location: (3348:106,9 [66] )
 |for (var i = 0; i < person.Age / 10; i++)
         {
             |
 
 Source Location: (547:27,18 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |i|
-Generated Location: (2856:101,18 [1] )
+Generated Location: (3599:115,18 [1] )
 |i|
 
 Source Location: (570:27,41 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |
         }|
-Generated Location: (3066:108,41 [11] )
+Generated Location: (3809:122,41 [11] )
 |
         }|
 
@@ -100,7 +100,7 @@ Source Location: (596:29,13 [87] TestFiles/IntegrationTests/CodeGenerationIntegr
         }
 
         |
-Generated Location: (3257:116,13 [87] )
+Generated Location: (4000:130,13 [87] )
 |
 
         if (person.Age < 20)
@@ -120,7 +120,7 @@ Source Location: (706:36,31 [123] TestFiles/IntegrationTests/CodeGenerationInteg
         public int Age { get; set; }
     }
 |
-Generated Location: (3542:130,31 [123] )
+Generated Location: (4285:144,31 [123] )
 |
     }
 

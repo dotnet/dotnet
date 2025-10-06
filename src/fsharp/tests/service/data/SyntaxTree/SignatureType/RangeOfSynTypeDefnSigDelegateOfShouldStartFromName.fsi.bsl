@@ -2,7 +2,6 @@ SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/RangeOfSynTypeDefnSigDelegateOfShouldStartFromName.fsi",
       QualifiedNameOfFile RangeOfSynTypeDefnSigDelegateOfShouldStartFromName, [],
-      [],
       [SynModuleOrNamespaceSig
          ([Y], false, DeclaredNamespace,
           [Types
@@ -31,7 +30,7 @@ SigFile
                             SynValInfo
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, None, None, (4,4--4,29),
+                            PreXmlDocEmpty, Single None, None, (4,4--4,29),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None
@@ -49,4 +48,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--4,29),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

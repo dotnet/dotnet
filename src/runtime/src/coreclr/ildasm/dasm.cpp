@@ -56,7 +56,7 @@ PELoader *              g_pPELoader;
 void *                  g_pMetaData;
 unsigned                g_cbMetaData;
 IMAGE_COR20_HEADER *    g_CORHeader;
-DynamicArray<__int32>  *g_pPtrTags = NULL;      //to keep track of all "ldptr"
+DynamicArray<int32_t>  *g_pPtrTags = NULL;      //to keep track of all "ldptr"
 DynamicArray<DWORD>    *g_pPtrSize= NULL;      //to keep track of all "ldptr"
 int                     g_iPtrCount = 0;
 mdToken *               g_cl_list = NULL;
@@ -249,7 +249,7 @@ WCHAR* RstrW(unsigned id)
     LoadNativeStringResource(NATIVE_STRING_RESOURCE_TABLE(NATIVE_STRING_RESOURCE_NAME),id, buff, cchBuff, NULL);
 #else
     _ASSERTE(g_hResources != NULL);
-    WszLoadString(g_hResources,id,buff,cchBuff);
+    LoadString(g_hResources,id,buff,cchBuff);
 #endif
     if(id == IDS_E_NORVA)
         wcscat_s(buff,cchBuff,W(" */"));
@@ -262,7 +262,7 @@ char* RstrA(unsigned n, unsigned codepage)
     WCHAR* wz = RstrW(n);
     // Unicode -> UTF-8
     memset(buff,0,sizeof(buff));
-    if(!WszWideCharToMultiByte(codepage,0,(LPCWSTR)wz,-1,buff,sizeof(buff),NULL,NULL))
+    if(!WideCharToMultiByte(codepage,0,(LPCWSTR)wz,-1,buff,sizeof(buff),NULL,NULL))
         buff[0] = 0;
     return buff;
 }
@@ -477,10 +477,6 @@ HRESULT IsClassRefInScope(mdTypeRef classref)
     return hr;
 }
 
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 BOOL EnumClasses()
 {
     HRESULT         hr;
@@ -869,9 +865,6 @@ BOOL EnumClasses()
     } // end for(i = 0; i <= g_NumClasses; i++)
     return TRUE;
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
 
 void DumpMscorlib(void* GUICookie)
 {
@@ -899,7 +892,7 @@ void DumpMscorlib(void* GUICookie)
             // Retrieve the type def properties as well, so that we can check a few more things about
             // the System.Object type
             //
-            if (SUCCEEDED(g_pPubImport->GetTypeDefProps(tkObjectTypeDef, NULL, NULL, 0, &dwClassAttrs, &tkExtends)))
+            if (SUCCEEDED(g_pPubImport->GetTypeDefProps(tkObjectTypeDef, NULL, 0, NULL, &dwClassAttrs, &tkExtends)))
             {
                 bool bExtends = g_pPubImport->IsValidToken(tkExtends);
                 bool isClass = ((dwClassAttrs & tdClassSemanticsMask) == tdClass);
@@ -1140,6 +1133,7 @@ BOOL PrintClassList()
             if (IsTdAbstract(dwClassAttrs))         szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(abstract) ");
             if (IsTdAutoLayout(dwClassAttrs))       szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(auto) ");
             if (IsTdSequentialLayout(dwClassAttrs)) szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(sequential) ");
+            if (IsTdExtendedLayout(dwClassAttrs))   szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(extended) ");
             if (IsTdExplicitLayout(dwClassAttrs))   szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(explicit) ");
             if (IsTdAnsiClass(dwClassAttrs))        szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(ansi) ");
             if (IsTdUnicodeClass(dwClassAttrs))     szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"(unicode) ");
@@ -1414,7 +1408,7 @@ mdToken ResolveReflectionNotation(BYTE* dataPtr,
             if(mAsmRefs)
             {
                 mdToken tkResScope = 0;
-                mdToken tk=TokenFromRid(mdtAssemblyRef,1), tkmax=TokenFromRid(mdtAssemblyRef,mAsmRefs);
+                mdToken tk=TokenFromRid(1, mdtAssemblyRef), tkmax=TokenFromRid(mAsmRefs, mdtAssemblyRef);
                 LPCSTR szAsmRefName;
                 // these are dummies
                 const void* pPKT, *pHash;
@@ -1576,7 +1570,7 @@ mdToken TypeRefToTypeDef(mdToken tk, IMDInternalImport *pIMDI, IMDInternalImport
             IUnknown *pUnk;
             if(FAILED(pIAMDI[0]->QueryInterface(IID_IUnknown, (void**)&pUnk))) goto AssignAndReturn;
 
-            if (FAILED(GetMetaDataInternalInterfaceFromPublic(
+            if (FAILED(GetMDInternalInterfaceFromPublic(
                 pUnk,
                 IID_IMDInternalImport,
                 (LPVOID *)ppIMDInew)))
@@ -1754,11 +1748,6 @@ AGAIN:
     return(ptr);
 }
 
-
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 BYTE* PrettyPrintCABlobValue(PCCOR_SIGNATURE &typePtr,
                              BYTE* dataPtr,
                              BYTE* dataEnd,
@@ -1914,7 +1903,7 @@ BYTE* PrettyPrintCABlobValue(PCCOR_SIGNATURE &typePtr,
                 for(n=0; n < numElements; n++)
                 {
                     if(n) appendStr(out," ");
-                    _gcvt_s(str,64,*((float*)dataPtr), 8);
+                    sprintf_s(str, 64, "%#.8g", (double)(*((float*)dataPtr)));
                     float df = (float)atof(str);
                     // Must compare as underlying bytes, not floating point otherwise optimizer will
                     // try to enregister and compare 80-bit precision number with 32-bit precision number!!!!
@@ -1933,7 +1922,7 @@ BYTE* PrettyPrintCABlobValue(PCCOR_SIGNATURE &typePtr,
                 {
                     if(n) appendStr(out," ");
                     char *pch;
-                    _gcvt_s(str,64,*((double*)dataPtr), 17);
+                    sprintf_s(str, 64, "%#.17g", *((double*)dataPtr));
                     double df = strtod(str, &pch);
                     // Must compare as underlying bytes, not floating point otherwise optimizer will
                     // try to enregister and compare 80-bit precision number with 64-bit precision number!!!!
@@ -2088,6 +2077,9 @@ BYTE* PrettyPrintCABlobValue(PCCOR_SIGNATURE &typePtr,
 
 #ifdef LOGGING
             case ELEMENT_TYPE_INTERNAL :
+            case ELEMENT_TYPE_CMOD_INTERNAL :
+                typePtr += 1;
+                Reiterate = TRUE;
 #endif // LOGGING
                 return NULL;
 
@@ -2113,9 +2105,6 @@ BYTE* PrettyPrintCABlobValue(PCCOR_SIGNATURE &typePtr,
     if(CloseParenthesis) appendStr(out,")");
     return dataPtr;
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
 
 BOOL PrettyPrintCustomAttributeNVPairs(unsigned nPairs, BYTE* dataPtr, BYTE* dataEnd, CQuickBytes* out, void* GUICookie)
 {
@@ -2605,7 +2594,7 @@ void DumpDefaultValue(mdToken tok, __inout __nullterminated char* szString, void
         case ELEMENT_TYPE_R4:
             {
                 char szf[32];
-                _gcvt_s(szf,32,MDDV.m_fltValue, 8);
+                sprintf_s(szf, 32, "%#.8g", (double)MDDV.m_fltValue);
                 float df = (float)atof(szf);
                 // Must compare as underlying bytes, not floating point otherwise optimizer will
                 // try to enregister and compare 80-bit precision number with 32-bit precision number!!!!
@@ -2619,7 +2608,7 @@ void DumpDefaultValue(mdToken tok, __inout __nullterminated char* szString, void
         case ELEMENT_TYPE_R8:
             {
                 char szf[32], *pch;
-                _gcvt_s(szf,32,MDDV.m_dblValue, 17);
+                sprintf_s(szf, 32, "%#.17g", MDDV.m_dblValue);
                 double df = strtod(szf, &pch); //atof(szf);
                 szf[31]=0;
                 // Must compare as underlying bytes, not floating point otherwise optimizer will
@@ -3119,7 +3108,7 @@ char *DumpGenericPars(_Inout_updates_(SZSTRING_SIZE) char* szString, mdToken tok
         if (chName)
         {
             char* sz = (char*)(&wzUniBuf[UNIBUF_SIZE/2]);
-            WszWideCharToMultiByte(CP_UTF8,0,wzArgName,-1,sz,UNIBUF_SIZE,NULL,NULL);
+            WideCharToMultiByte(CP_UTF8,0,wzArgName,-1,sz,UNIBUF_SIZE,NULL,NULL);
             szptr += sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"%s",ProperName(sz));
         }
         CHECK_REMAINING_SIZE;
@@ -3187,7 +3176,7 @@ void DumpGenericParsCA(mdToken tok, void* GUICookie/*=NULL*/)
                     //if(u16_strlen(wzArgName) >= MAX_CLASSNAME_LENGTH)
                     //    wzArgName[MAX_CLASSNAME_LENGTH-1] = 0;
                     char* sz = (char*)(&wzUniBuf[UNIBUF_SIZE/2]);
-                    WszWideCharToMultiByte(CP_UTF8,0,wzArgName,-1,sz,UNIBUF_SIZE,NULL,NULL);
+                    WideCharToMultiByte(CP_UTF8,0,wzArgName,-1,sz,UNIBUF_SIZE,NULL,NULL);
                     szptr += sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"%s ",ProperName(sz));
                 }
                 else
@@ -3255,7 +3244,7 @@ void DumpGenericParsCA(mdToken tok, void* GUICookie/*=NULL*/)
                         if (chName > 0)
                         {
                             char* sz = (char*)(&wzUniBuf[UNIBUF_SIZE / 2]);
-                            WszWideCharToMultiByte(CP_UTF8, 0, wzArgName, -1, sz, UNIBUF_SIZE, NULL, NULL);
+                            WideCharToMultiByte(CP_UTF8, 0, wzArgName, -1, sz, UNIBUF_SIZE, NULL, NULL);
                             szptr += sprintf_s(szptr, SZSTRING_REMAINING_SIZE(szptr), "  %s", ProperName(sz));
                         }
                         else
@@ -3480,10 +3469,6 @@ void PrettyPrintOverrideDecl(ULONG i, __inout __nullterminated char* szString, v
     if(g_fDumpTokens) szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),COMMENT(" /*%08X::%08X*/ "),tkDeclParent,(*g_pmi_list)[i].tkDecl);
 }
 
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 BOOL DumpMethod(mdToken FuncToken, const char *pszClassName, DWORD dwEntryPointToken,void *GUICookie,BOOL DumpBody)
 {
     const char      *pszMemberName = NULL;//[MAX_MEMBER_LENGTH];
@@ -3538,7 +3523,7 @@ BOOL DumpMethod(mdToken FuncToken, const char *pszClassName, DWORD dwEntryPointT
         pComSig = NULL;
     }
 
-    if (cComSig == NULL)
+    if (cComSig == 0)
     {
         sprintf_s(szString, SZSTRING_SIZE, "%sERROR: method '%s' has no signature", g_szAsmCodeIndent, pszMemberName);
         printError(GUICookie, ERRORMSG(szString));
@@ -3767,6 +3752,7 @@ BOOL DumpMethod(mdToken FuncToken, const char *pszClassName, DWORD dwEntryPointT
     if(IsMiAggressiveInlining(dwImplAttrs)) szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," aggressiveinlining");
     if(IsMiNoOptimization(dwImplAttrs))     szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," nooptimization");
     if(IsMiAggressiveOptimization(dwImplAttrs)) szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," aggressiveoptimization");
+    if(IsMiAsync(dwImplAttrs))              szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," async");
     szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),KEYWORD((char*)-1));
     printLine(GUICookie, szString);
     VDELETE(buff);
@@ -3947,9 +3933,6 @@ ItsMiNative:
     g_tkMVarOwner = tkMVarOwner;
     return TRUE;
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
 
 BOOL DumpField(mdToken FuncToken, const char *pszClassName,void *GUICookie, BOOL DumpBody)
 {
@@ -4010,7 +3993,7 @@ BOOL DumpField(mdToken FuncToken, const char *pszClassName,void *GUICookie, BOOL
     {
         pComSig = NULL;
     }
-    if (cComSig == NULL)
+    if (cComSig == 0)
     {
         char sz[2048];
         sprintf_s(sz,2048,"%sERROR: field '%s' has no signature",g_szAsmCodeIndent,pszMemberName);
@@ -4702,6 +4685,7 @@ BOOL DumpClass(mdTypeDef cl, DWORD dwEntryPointToken, void* GUICookie, ULONG Wha
     if (IsTdAutoLayout(dwClassAttrs))               szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"auto ");
     if (IsTdSequentialLayout(dwClassAttrs))         szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"sequential ");
     if (IsTdExplicitLayout(dwClassAttrs))           szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"explicit ");
+    if (IsTdExtendedLayout(dwClassAttrs))           szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"extended ");
     if (IsTdAnsiClass(dwClassAttrs))                szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"ansi ");
     if (IsTdUnicodeClass(dwClassAttrs))             szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"unicode ");
     if (IsTdAutoClass(dwClassAttrs))                szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr),"autochar ");
@@ -5053,8 +5037,8 @@ void DumpVTables(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
             }
             else
             {
-                sprintf_s(szString,SZSTRING_SIZE,"//         [0x%04x]            (0x%16llx)", iSlot, VAL64(*(unsigned __int64 *) pSlot));
-                pSlot += sizeof(unsigned __int64);
+                sprintf_s(szString,SZSTRING_SIZE,"//         [0x%04x]            (0x%16llx)", iSlot, VAL64(*(uint64_t *) pSlot));
+                pSlot += sizeof(uint64_t);
             }
             printLine(GUICookie,szStr);
 
@@ -5154,10 +5138,10 @@ void DumpCodeManager(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
     ULONG iCount = VAL32(CORHeader->CodeManagerTable.Size) / sizeof(GUID);
     for (ULONG i=0;  i<iCount;  i++)
     {
-        CHAR         rcguid[GUID_STR_BUFFER_LEN];
+        CHAR         rcguid[MINIPAL_GUID_BUFFER_LEN];
         GUID         Guid = *pcm;
         SwapGuid(&Guid);
-        GuidToLPSTR(Guid, rcguid);
+        minipal_guid_as_string(Guid, rcguid, MINIPAL_GUID_BUFFER_LEN);
         sprintf_s(szString,SZSTRING_SIZE,"//   [0x%08x]    %s", i, rcguid);
         printLine(GUICookie,szStr);
         pcm++;
@@ -5511,10 +5495,6 @@ void DumpEntryPoint(DWORD dwAddrOfEntryPoint,DWORD dwEntryPointSize,void* GUICoo
             VAL32(Directory.VirtualAddress), VAL32(Directory.Size)); \
     printLine(GUICookie,szStr)
 
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 void DumpHeader(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
 {
     char* szStr = &szString[0];
@@ -5697,7 +5677,7 @@ void DumpHeader(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
         sprintf_s(szString,SZSTRING_SIZE,"// Addr. of entry point:           0x%08x", VAL32(pOptHeader->AddressOfEntryPoint));
         printLine(GUICookie,szStr);
         dwAddrOfEntryPoint = VAL32(pOptHeader->AddressOfEntryPoint);
-        dwEntryPointSize = (VAL16(pCOFF->Machine)==IMAGE_FILE_MACHINE_IA64) ? 48 : 12;
+        dwEntryPointSize = 12;
         sprintf_s(szString,SZSTRING_SIZE,"// Base of code:                   0x%08x", VAL32(pOptHeader->BaseOfCode));
         printLine(GUICookie,szStr);
         sprintf_s(szString,SZSTRING_SIZE,"// Image base:                     0x%016I64x", VAL64(pOptHeader->ImageBase));
@@ -5801,10 +5781,6 @@ void DumpHeader(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
 
     DumpMetadataHeader("Metadata Header",&(CORHeader->MetaData),GUICookie);
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
-
 
 void DumpHeaderDetails(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
 {
@@ -5880,7 +5856,7 @@ IMetaDataTables *pITables = NULL;
 //ULONG sizeRec, count;
 //int   size, size2;
 int   metaSize = 0;
-__int64 fTableSeen;
+int64_t fTableSeen;
 inline void TableSeen(unsigned long n) { fTableSeen |= (I64(1) << n); }
 inline int IsTableSeen(unsigned long n) { return (fTableSeen & (I64(1) << n)) ? 1 : 0;}
 inline void TableSeenReset() { fTableSeen = 0;}
@@ -5910,12 +5886,6 @@ void DumpTable(unsigned long Table, const char *TableName, void* GUICookie)
     }
 }
 
-
-
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 void DumpStatistics(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
 {
     int     fileSize, miscPESize, miscCOMPlusSize, methodHeaderSize, methodBodySize;
@@ -6489,9 +6459,6 @@ void DumpStatistics(IMAGE_COR20_HEADER *CORHeader, void* GUICookie)
     if(g_fDumpToPerfWriter)
         CloseHandle((char*) g_PerfDataFilePtr);
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
 
 void DumpHexbytes(__inout __nullterminated char* szptr,BYTE *pb, DWORD fromPtr, DWORD toPtr, DWORD limPtr)
 {
@@ -6686,11 +6653,7 @@ void DumpEATEntries(void* GUICookie,
                             }
                             else
                             {
-                                ULONGLONG ullTokRVA;
-                                if(pNTHeader64->FileHeader.Machine == IMAGE_FILE_MACHINE_IA64)
-                                    ullTokRVA = VAL64(*((ULONGLONG*)(pCont+8)));
-                                else
-                                    ullTokRVA = VAL64(*((ULONGLONG*)(pCont+2)));
+                                ULONGLONG ullTokRVA = VAL64(*((ULONGLONG*)(pCont+2)));
 
                                 dwTokRVA =(DWORD)(ullTokRVA - VAL64((DWORD)pOptHeader64->ImageBase));
                             }
@@ -6904,8 +6867,8 @@ void DumpVtable(void* GUICookie)
                                 }
                                 else
                                 {
-                                    szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," %016I64X", VAL64(*(unsigned __int64 *)pSlot));
-                                    pSlot += sizeof(unsigned __int64);
+                                    szptr+=sprintf_s(szptr,SZSTRING_REMAINING_SIZE(szptr)," %016I64X", VAL64(*(uint64_t *)pSlot));
+                                    pSlot += sizeof(uint64_t);
                                 }
                                 if (g_prVTableRef == NULL)
                                 {
@@ -6972,8 +6935,7 @@ void DumpMetaInfo(_In_ __nullterminated const WCHAR* pwzFileName, _In_opt_z_ con
     if(pch && (!_wcsicmp(pch+1,W("lib")) || !_wcsicmp(pch+1,W("obj"))))
     {   // This works only when all the rest does not
         // Init and run.
-        if (SUCCEEDED(MetaDataGetDispenser(CLSID_CorMetaDataDispenser,
-            IID_IMetaDataDispenserEx, (void **)&g_pDisp)))
+        if (SUCCEEDED(CreateMetaDataDispenser(IID_IMetaDataDispenserEx, (void **)&g_pDisp)))
         {
             WCHAR *pwzObjFileName=NULL;
             if (pszObjFileName)
@@ -6981,7 +6943,7 @@ void DumpMetaInfo(_In_ __nullterminated const WCHAR* pwzFileName, _In_opt_z_ con
                 int nLength = (int) strlen(pszObjFileName)+1;
                 pwzObjFileName = new WCHAR[nLength];
                 memset(pwzObjFileName,0,sizeof(WCHAR)*nLength);
-                WszMultiByteToWideChar(CP_UTF8,0,pszObjFileName,-1,pwzObjFileName,nLength);
+                MultiByteToWideChar(CP_UTF8,0,pszObjFileName,-1,pwzObjFileName,nLength);
             }
             DisplayFile((WCHAR*)pwzFileName, true, g_ulMetaInfoFilter, pwzObjFileName, DumpMI);
             g_pDisp->Release();
@@ -6994,8 +6956,7 @@ void DumpMetaInfo(_In_ __nullterminated const WCHAR* pwzFileName, _In_opt_z_ con
         HRESULT hr = S_OK;
         if(g_pDisp == NULL)
         {
-            hr = MetaDataGetDispenser(CLSID_CorMetaDataDispenser,
-                IID_IMetaDataDispenserEx, (void **)&g_pDisp);
+            hr = CreateMetaDataDispenser(IID_IMetaDataDispenserEx, (void **)&g_pDisp);
         }
         if(SUCCEEDED(hr))
         {
@@ -7087,7 +7048,7 @@ void DumpSummary()
             }
             qbMemberSig.Shrink(0);
             pcSig = cComSig ? PrettyPrintSig(pComSig, cComSig, "", &qbMemberSig, g_pImport,NULL) : "NO SIGNATURE";
-            PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+            _ASSERTE(ProperName((char*)pcMember) != 0);
             sprintf_s(szString,SZSTRING_SIZE,"// %08X [GLM] %s : %s", tkMember,ProperName((char*)pcMember),pcSig);
             printLine(g_pFile,szString);
         }
@@ -7106,7 +7067,7 @@ void DumpSummary()
             }
             qbMemberSig.Shrink(0);
             pcSig = cComSig ? PrettyPrintSig(pComSig, cComSig, "", &qbMemberSig, g_pImport,NULL) : "NO SIGNATURE";
-            PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+            _ASSERTE(ProperName((char*)pcMember) != 0);
             sprintf_s(szString,SZSTRING_SIZE,"// %08X [GLF] %s : %s", tkMember,ProperName((char*)pcMember),pcSig);
             printLine(g_pFile,szString);
         }
@@ -7121,7 +7082,7 @@ void DumpSummary()
             printLine(g_pFile, szString);
             continue;
         }
-        PREFIX_ASSUME(ProperName((char*)pcClass) != 0);
+        _ASSERTE(ProperName((char*)pcClass) != 0);
         if(*pcNS) sprintf_s(szFQN,4096,"%s.%s", ProperName((char*)pcNS),ProperName((char*)pcClass));
         else strcpy_s(szFQN,4096,ProperName((char*)pcClass));
         sprintf_s(szString,SZSTRING_SIZE,"// %08X [CLS] %s", g_cl_list[i],szFQN);
@@ -7139,7 +7100,7 @@ void DumpSummary()
                 }
                 qbMemberSig.Shrink(0);
                 pcSig = cComSig ? PrettyPrintSig(pComSig, cComSig, "", &qbMemberSig, g_pImport,NULL) : "NO SIGNATURE";
-                PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+                _ASSERTE(ProperName((char*)pcMember) != 0);
                 sprintf_s(szString,SZSTRING_SIZE,"// %08X [MET] %s::%s : %s", tkMember,szFQN,ProperName((char*)pcMember),pcSig);
                 printLine(g_pFile,szString);
             }
@@ -7158,7 +7119,7 @@ void DumpSummary()
                 }
                 qbMemberSig.Shrink(0);
                 pcSig = cComSig ? PrettyPrintSig(pComSig, cComSig, "", &qbMemberSig, g_pImport,NULL) : "NO SIGNATURE";
-                PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+                _ASSERTE(ProperName((char*)pcMember) != 0);
                 sprintf_s(szString,SZSTRING_SIZE,"// %08X [FLD] %s::%s : %s", tkMember,szFQN,ProperName((char*)pcMember),pcSig);
                 printLine(g_pFile,szString);
             }
@@ -7189,7 +7150,7 @@ void DumpSummary()
                                     break;
                         }
                 }
-                PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+                _ASSERTE(ProperName((char*)pcMember) != 0);
                 sprintf_s(szString,SZSTRING_SIZE,"// %08X [EVT] %s::%s : %s", tkMember,szFQN,ProperName((char*)pcMember),pcSig);
                 printLine(g_pFile,szString);
             }
@@ -7207,7 +7168,7 @@ void DumpSummary()
                 }
                 qbMemberSig.Shrink(0);
                 pcSig = cComSig ? PrettyPrintSig(pComSig, cComSig, "", &qbMemberSig, g_pImport,NULL) : "NO SIGNATURE";
-                PREFIX_ASSUME(ProperName((char*)pcMember) != 0);
+                _ASSERTE(ProperName((char*)pcMember) != 0);
                 sprintf_s(szString,SZSTRING_SIZE,"// %08X [PRO] %s::%s : %s", tkMember,szFQN,ProperName((char*)pcMember),pcSig);
                 printLine(g_pFile,szString);
             }
@@ -7377,10 +7338,6 @@ FILE* OpenOutput(_In_ __nullterminated const char* szFileName)
 //
 // Init PELoader, dump file header info
 //
-#ifdef _PREFAST_
-#pragma warning(push)
-#pragma warning(disable:21000) // Suppress PREFast warning about overly large function
-#endif
 BOOL DumpFile()
 {
     BOOL        fSuccess = FALSE;
@@ -7427,9 +7384,9 @@ BOOL DumpFile()
     }
 
     memset(wzInputFileName,0,sizeof(WCHAR)*MAX_FILENAME_LENGTH);
-    WszMultiByteToWideChar(CP_UTF8,0,pszFilename,-1,wzInputFileName,MAX_FILENAME_LENGTH);
+    MultiByteToWideChar(CP_UTF8,0,pszFilename,-1,wzInputFileName,MAX_FILENAME_LENGTH);
     memset(szFilenameANSI,0,MAX_FILENAME_LENGTH*3);
-    WszWideCharToMultiByte(g_uConsoleCP,0,wzInputFileName,-1,szFilenameANSI,MAX_FILENAME_LENGTH*3,NULL,NULL);
+    WideCharToMultiByte(g_uConsoleCP,0,wzInputFileName,-1,szFilenameANSI,MAX_FILENAME_LENGTH*3,NULL,NULL);
         fSuccess = g_pPELoader->open(wzInputFileName);
 
     if (fSuccess == FALSE)
@@ -7507,7 +7464,7 @@ BOOL DumpFile()
         g_cbMetaData = VAL32(g_CORHeader->MetaData.Size);
     }
 
-    if (FAILED(GetMetaDataInternalInterface(
+    if (FAILED(GetMDInternalInterface(
         (BYTE *)g_pMetaData,
         g_cbMetaData,
         openFlags,
@@ -7521,7 +7478,7 @@ BOOL DumpFile()
     }
 
     TokenSigInit(g_pImport);
-    if (FAILED(MetaDataGetDispenser(CLSID_CorMetaDataDispenser, IID_IMetaDataDispenser, (LPVOID*)&pMetaDataDispenser)))
+    if (FAILED(CreateMetaDataDispenser(IID_IMetaDataDispenser, (LPVOID*)&pMetaDataDispenser)))
     {
         if (g_fDumpHeader)
             DumpHeader(g_CORHeader, g_pFile);
@@ -7779,7 +7736,7 @@ ReportAndExit:
         {
             WCHAR wzResFileName[2048], *pwc;
             memset(wzResFileName,0,sizeof(wzResFileName));
-            WszMultiByteToWideChar(CP_UTF8,0,g_szOutputFile,-1,wzResFileName,2048);
+            MultiByteToWideChar(CP_UTF8,0,g_szOutputFile,-1,wzResFileName,2048);
             pwc = (WCHAR*)u16_strrchr(wzResFileName,L'.');
             if(pwc == NULL) pwc = &wzResFileName[u16_strlen(wzResFileName)];
             wcscpy_s(pwc, 2048 - (pwc - wzResFileName), L".res");
@@ -7825,9 +7782,6 @@ exit:
         pMetaDataDispenser->Release();
     return fSuccess;
 }
-#ifdef _PREFAST_
-#pragma warning(pop)
-#endif
 
 #ifdef _MSC_VER
 #pragma warning(default : 4640)

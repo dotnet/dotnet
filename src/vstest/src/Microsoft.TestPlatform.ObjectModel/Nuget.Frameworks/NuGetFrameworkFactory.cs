@@ -136,7 +136,7 @@ namespace NuGetClone.Frameworks
             return result;
         }
 
-        private static readonly char[] CommaSeparator = new char[] { ',' };
+        private static readonly char[] CommaSeparator = [','];
 
         private static string[] GetParts(string targetPlatformMoniker)
         {

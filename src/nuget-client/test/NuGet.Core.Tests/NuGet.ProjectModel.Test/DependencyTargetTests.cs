@@ -12,132 +12,131 @@ namespace NuGet.ProjectModel.Test
 {
     public class DependencyTargetTests
     {
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_ExternalProjectValue(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_ExternalProjectValue()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": {
-                                    ""version"": ""1.0.0"",
-                                    ""target"": ""externalProject""
-                                }
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": {
+                                            ""version"": ""1.0.0"",
+                                            ""target"": ""externalProject""
+                                        }
+                                    }
+                                }
                             }
                         }";
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-            var dependency = spec.Dependencies.Single();
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
             Assert.Equal(LibraryDependencyTarget.ExternalProject, dependency.LibraryRange.TypeConstraint);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_ProjectValue(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_ProjectValue()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": {
-                                    ""version"": ""1.0.0"",
-                                    ""target"": ""project""
-                                }
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": {
+                                            ""version"": ""1.0.0"",
+                                            ""target"": ""project""
+                                        }
+                                    }
+                                }
                             }
                         }";
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-            var dependency = spec.Dependencies.Single();
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
             Assert.Equal(LibraryDependencyTarget.Project, dependency.LibraryRange.TypeConstraint);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_PackageValue(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_PackageValue()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": {
-                                    ""version"": ""1.0.0"",
-                                    ""target"": ""package""
-                                }
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": {
+                                            ""version"": ""1.0.0"",
+                                            ""target"": ""package""
+                                        }
+                                    }
+                                }
                             }
                         }";
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-            var dependency = spec.Dependencies.Single();
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
             Assert.Equal(LibraryDependencyTarget.Package, dependency.LibraryRange.TypeConstraint);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_CaseInsensitive(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_CaseInsensitive()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": {
-                                    ""version"": ""1.0.0"",
-                                    ""target"": ""PACKage""
-                                }
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": {
+                                            ""version"": ""1.0.0"",
+                                            ""target"": ""PACKage""
+                                        }
+                                    }
+                                }
                             }
                         }";
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-            var dependency = spec.Dependencies.Single();
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
             Assert.Equal(LibraryDependencyTarget.Package, dependency.LibraryRange.TypeConstraint);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_DefaultValueDefault(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_DefaultValueDefault()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": ""1.0.0""
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": ""1.0.0""
+                                    }
+                                }
                             }
                         }";
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-            var dependency = spec.Dependencies.Single();
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
 
             // Assert
             var expected = LibraryDependencyTarget.All & ~LibraryDependencyTarget.Reference;
             Assert.Equal(expected, dependency.LibraryRange.TypeConstraint);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_UnknownValueFails(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_UnknownValueFails()
         {
             // Arrange
             var json = @"{
@@ -158,8 +157,8 @@ namespace NuGet.ProjectModel.Test
 
             try
             {
-                var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-                var dependency = spec.Dependencies.Single();
+                var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+                var dependency = spec.TargetFrameworks[0].Dependencies.Single();
             }
             catch (FileFormatException ex)
             {
@@ -170,16 +169,10 @@ namespace NuGet.ProjectModel.Test
             Assert.NotNull(exception);
             Assert.Equal("Invalid dependency target value 'blah'.", exception.Message);
             Assert.EndsWith("project.json", exception.Path);
-
-            if (string.Equals(bool.TrueString, environmentVariableReader.GetEnvironmentVariable(JsonUtility.NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING)))
-            {
-                Assert.Equal(5, exception.Line);
-            }
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_NonWhiteListValueFails(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_NonWhiteListValueFails()
         {
             // Arrange
             var json = @"{
@@ -200,8 +193,8 @@ namespace NuGet.ProjectModel.Test
 
             try
             {
-                var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-                var dependency = spec.Dependencies.Single();
+                var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+                var dependency = spec.TargetFrameworks[0].Dependencies.Single();
             }
             catch (FileFormatException ex)
             {
@@ -212,16 +205,10 @@ namespace NuGet.ProjectModel.Test
             Assert.NotNull(exception);
             Assert.Equal("Invalid dependency target value 'winmd'.", exception.Message);
             Assert.EndsWith("project.json", exception.Path);
-
-            if (string.Equals(bool.TrueString, environmentVariableReader.GetEnvironmentVariable(JsonUtility.NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING)))
-            {
-                Assert.Equal(5, exception.Line);
-            }
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_MultipleValuesFail(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_MultipleValuesFail()
         {
             // Arrange
             var json = @"{
@@ -242,8 +229,8 @@ namespace NuGet.ProjectModel.Test
 
             try
             {
-                var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
-                var dependency = spec.Dependencies.Single();
+                var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
+                var dependency = spec.TargetFrameworks[0].Dependencies.Single();
             }
             catch (FileFormatException ex)
             {
@@ -254,44 +241,38 @@ namespace NuGet.ProjectModel.Test
             Assert.NotNull(exception);
             Assert.Equal("Invalid dependency target value 'package,project'.", exception.Message);
             Assert.EndsWith("project.json", exception.Path);
-
-            if (string.Equals(bool.TrueString, environmentVariableReader.GetEnvironmentVariable(JsonUtility.NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING)))
-            {
-                Assert.Equal(5, exception.Line);
-            }
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void DependencyTarget_AcceptsWhitespace(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void DependencyTarget_AcceptsWhitespace()
         {
             // Arrange
             var json = @"{
-                          ""dependencies"": {
-                                ""packageA"": {
-                                    ""version"": ""1.0.0"",
-                                    ""target"": "" package ""
-                                }
-                            },
                             ""frameworks"": {
-                                ""net46"": {}
+                                ""net46"": {
+                                    ""dependencies"": {
+                                        ""packageA"": {
+                                            ""version"": ""1.0.0"",
+                                            ""target"": "" package ""
+                                        }
+                                    }
+                                }
                             }
                         }";
 
 
             // Act
-            var spec = GetPackageSpec(json, "TestProject", "project.json", environmentVariableReader);
+            var spec = GetPackageSpec(json, "TestProject", "project.json", EnvironmentVariableWrapper.Instance);
 
             // Assert
-            var dependency = spec.Dependencies.Single();
+            var dependency = spec.TargetFrameworks[0].Dependencies.Single();
             Assert.Equal(LibraryDependencyTarget.Package, dependency.LibraryRange.TypeConstraint);
         }
 
         private static PackageSpec GetPackageSpec(string json, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader)
         {
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            return JsonPackageSpecReader.GetPackageSpec(stream, name, packageSpecPath, null, environmentVariableReader, true);
+            return JsonPackageSpecReader.GetPackageSpec(stream, name, packageSpecPath, null, environmentVariableReader);
         }
-
     }
 }

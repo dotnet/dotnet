@@ -1,38 +1,45 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.FindAllReferences;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Text.Adornments;
+using Roslyn.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentReferencesName)]
-internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]>, ICapabilitiesProvider
+internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]?>, ICapabilitiesProvider
 {
     private readonly IFilePathService _filePathService;
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly ProjectSnapshotManager _projectSnapshotManager;
+    private readonly IDocumentMappingService _documentMappingService;
 
     public FindAllReferencesEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
-        IRazorLoggerFactory loggerFactory,
-        IFilePathService filePathService)
-        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<FindAllReferencesEndpoint>())
+        ILoggerFactory loggerFactory,
+        IFilePathService filePathService,
+        ProjectSnapshotManager projectSnapshotManager)
+        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<FindAllReferencesEndpoint>())
     {
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
+        _projectSnapshotManager = projectSnapshotManager;
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
@@ -56,19 +63,34 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
         // HTML doesn't need to do FAR
         if (positionInfo.LanguageKind != RazorLanguageKind.CSharp)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return SpecializedTasks.Null<IDelegatedParams>();
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
-                documentContext.Identifier,
-                positionInfo.Position,
-                positionInfo.LanguageKind));
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            positionInfo.Position,
+            positionInfo.LanguageKind));
     }
 
-    protected override async Task<VSInternalReferenceItem[]> HandleDelegatedResponseAsync(VSInternalReferenceItem[] delegatedResponse, ReferenceParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    protected override async Task<VSInternalReferenceItem[]?> HandleDelegatedResponseAsync(
+        VSInternalReferenceItem[]? delegatedResponse,
+        ReferenceParams originalRequest,
+        RazorRequestContext requestContext,
+        DocumentPositionInfo positionInfo,
+        CancellationToken cancellationToken)
     {
-        var remappedLocations = new List<VSInternalReferenceItem>();
+        if (delegatedResponse is null)
+        {
+            return null;
+        }
+
+        using var remappedLocations = new PooledArrayBuilder<VSInternalReferenceItem>();
 
         foreach (var referenceItem in delegatedResponse)
         {
@@ -77,83 +99,33 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
                 continue;
             }
 
-            // Temporary fix for codebehind leaking through
-            // Revert when https://github.com/dotnet/aspnetcore/issues/22512 is resolved
-            referenceItem.DefinitionText = FilterReferenceDisplayText(referenceItem.DefinitionText);
-            referenceItem.Text = FilterReferenceDisplayText(referenceItem.Text);
-
             // Indicates the reference item is directly available in the code
             referenceItem.Origin = VSInternalItemOrigin.Exact;
-            
-            if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.Uri) &&
-                !_filePathService.IsVirtualHtmlFile(referenceItem.Location.Uri))
+
+            if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.DocumentUri.GetRequiredParsedUri()) &&
+                !_filePathService.IsVirtualHtmlFile(referenceItem.Location.DocumentUri.GetRequiredParsedUri()))
             {
-                // This location doesn't point to a virtual file. No need to remap.
+                // This location doesn't point to a virtual file. No need to remap, but we might still want to fix the text,
+                // because Roslyn may have done the remapping for us
+                var resultText = await FindAllReferencesHelper.GetResultTextAsync(_documentMappingService, _projectSnapshotManager.GetQueryOperations(), referenceItem.Location.Range.Start.Line, referenceItem.Location.DocumentUri.GetAbsoluteOrUNCPath(), cancellationToken).ConfigureAwait(false);
+                referenceItem.Text = resultText ?? referenceItem.Text;
+
                 remappedLocations.Add(referenceItem);
                 continue;
             }
 
-            var (itemUri, mappedRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(referenceItem.Location.Uri, referenceItem.Location.Range, cancellationToken).ConfigureAwait(false);
+            var (itemUri, mappedRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(referenceItem.Location.DocumentUri.GetRequiredParsedUri(), referenceItem.Location.Range, cancellationToken).ConfigureAwait(false);
 
-            referenceItem.Location.Uri = itemUri;
+            referenceItem.Location.DocumentUri = new(itemUri);
             referenceItem.DisplayPath = itemUri.AbsolutePath;
             referenceItem.Location.Range = mappedRange;
+
+            var fixedResultText = await FindAllReferencesHelper.GetResultTextAsync(_documentMappingService, _projectSnapshotManager.GetQueryOperations(), mappedRange.Start.Line, itemUri.GetAbsoluteOrUNCPath(), cancellationToken).ConfigureAwait(false);
+            referenceItem.Text = fixedResultText ?? referenceItem.Text;
 
             remappedLocations.Add(referenceItem);
         }
 
         return remappedLocations.ToArray();
-    }
-
-    /// <summary>
-    /// If the reference text is showing a generated identifier (such as "__o =") this
-    /// fixes it to be what the actual reference display would look like to a user.
-    /// See https://github.com/dotnet/razor/issues/4611 for more details on what this fixes
-    /// </summary>
-    private static object? FilterReferenceDisplayText(object? referenceText)
-    {
-        const string CodeBehindObjectPrefix = "__o = ";
-        const string CodeBehindBackingFieldSuffix = "k__BackingField";
-
-        if (referenceText is string text)
-        {
-            if (text.StartsWith(CodeBehindObjectPrefix, StringComparison.Ordinal))
-            {
-                return text
-                    .Substring(CodeBehindObjectPrefix.Length, text.Length - CodeBehindObjectPrefix.Length - 1); // -1 for trailing `;`
-            }
-
-            return text.Replace(CodeBehindBackingFieldSuffix, string.Empty);
-        }
-
-        if (referenceText is ClassifiedTextElement textElement &&
-            FilterReferenceClassifiedRuns(textElement.Runs.ToArray()))
-        {
-            var filteredRuns = textElement.Runs.Skip(4); // `__o`, ` `, `=`, ` `
-            filteredRuns = filteredRuns.Take(filteredRuns.Count() - 1); // Trailing `;`
-            return new ClassifiedTextElement(filteredRuns);
-        }
-
-        return referenceText;
-    }
-
-    private static bool FilterReferenceClassifiedRuns(IReadOnlyList<ClassifiedTextRun> runs)
-    {
-        if (runs.Count < 5)
-        {
-            return false;
-        }
-
-        return VerifyRunMatches(runs[0], "field name", "__o") &&
-            VerifyRunMatches(runs[1], "text", " ") &&
-            VerifyRunMatches(runs[2], "operator", "=") &&
-            VerifyRunMatches(runs[3], "text", " ") &&
-            VerifyRunMatches(runs[runs.Count - 1], "punctuation", ";");
-
-        static bool VerifyRunMatches(ClassifiedTextRun run, string expectedClassificationType, string expectedText)
-        {
-            return run.ClassificationTypeName == expectedClassificationType &&
-                run.Text == expectedText;
-        }
     }
 }

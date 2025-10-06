@@ -15,7 +15,6 @@ Jobs.yml is a wrapper around one or more Azure DevOps [jobs](https://docs.micros
 parameters:
   continueOnError: boolean # 'true' if future jobs should run even if this job fails; defaults to 'false'
   enablePublishBuildArtifacts: boolean # Enables publishing build logs as an Azure DevOps artifact.
-  enablePublishUsingPipelines: boolean # Enable publishing using release pipelines
   jobs: [ jobSchema ] # see "Job schema" below
   publishBuildAssetsDependsOn: [ string ] # Override automatically derived dependsOn value for "publish build assets" job
   runAsPublic: boolean # Specify if job should run as a public build even in the internal project
@@ -38,9 +37,9 @@ parameters:
   #             _TeamName - the name of your team
   #             _SignType - 'test' or 'real'  
   enableMicrobuild: boolean
+  enableMicrobuildForMacAndLinux: boolean # true if build is running on a Mac or Linux agent
   enablePublishBuildArtifacts: boolean # deprecated (replaced by 'artifacts' parameter).  Enables publishing build logs as an Azure DevOps artifact.
   enablePublishBuildAssets: boolean # deprecated (replaced by 'artifacts' parameter). Enables publishing asset manifests as an Azure DevOps artifact.
-  enablePublishUsingPipelines: boolean # prevent gather / push manifest from executing when using publishing pipelines
   enablePublishTestResults: boolean # include publish test results task
   enableTelemetry: boolean # specifies whether to set the DOTNET_CLI_TELEMETRY_PROFILE environment variable. Default 'true', must explicitly set 'enableTelemetry: false' to disable
   name: string # Required:

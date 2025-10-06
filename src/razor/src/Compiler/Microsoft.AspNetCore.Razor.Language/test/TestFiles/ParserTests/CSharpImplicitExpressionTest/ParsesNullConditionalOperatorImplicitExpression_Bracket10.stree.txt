@@ -12,8 +12,8 @@
                             Identifier;[val];
                             QuestionMark;[?];
                             LeftBracket;[[];
-                            Minus;[-];
-                            IntegerLiteral;[1];
+                            CSharpOperator;[-];
+                            NumericLiteral;[1];
                             RightBracket;[]];
         MarkupTextLiteral - [9..10)::1 - [?] - Gen<Markup>
             QuestionMark;[?];

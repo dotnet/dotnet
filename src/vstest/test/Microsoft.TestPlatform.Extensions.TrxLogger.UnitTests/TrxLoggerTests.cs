@@ -739,11 +739,11 @@ public class TrxLoggerTests
 
         List<string> listCategoriesActual = Converter.GetCustomPropertyValueFromTestCase(testCase1, "MSTestDiscoverer.TestCategory");
 
-        List<string> listCategoriesExpected = new()
-        {
+        List<string> listCategoriesExpected =
+        [
             "ClassLevel",
             "AsmLevel"
-        };
+        ];
 
         CollectionAssert.AreEqual(listCategoriesExpected, listCategoriesActual);
     }
@@ -758,11 +758,11 @@ public class TrxLoggerTests
 
         List<string> listWorkItemsActual = Converter.GetCustomPropertyValueFromTestCase(testCase1, "WorkItemIds");
 
-        List<string> listWorkItemsExpected = new()
-        {
+        List<string> listWorkItemsExpected =
+        [
             "99999",
             "0"
-        };
+        ];
 
         CollectionAssert.AreEqual(listWorkItemsExpected, listWorkItemsActual);
     }

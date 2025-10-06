@@ -44,6 +44,9 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
         protected abstract Task ExecuteCoreAsync(HttpClient client);
 
         public override bool Execute()
+            => ExecuteAsync().GetAwaiter().GetResult();
+
+        private async Task<bool> ExecuteAsync()
         {
             try
             {
@@ -69,7 +72,7 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                         },
                     })
                     {
-                        ExecuteCoreAsync(client).GetAwaiter().GetResult();
+                        await ExecuteCoreAsync(client);
                     }
                 }
             }

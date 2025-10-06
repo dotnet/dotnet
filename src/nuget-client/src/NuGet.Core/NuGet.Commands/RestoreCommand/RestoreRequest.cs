@@ -23,16 +23,6 @@ namespace NuGet.Commands
 
         private Lazy<LockFile> _lockFileLazy;
 
-        [Obsolete("Use constructor with LockFileBuilderCache parameter")]
-        public RestoreRequest(
-            PackageSpec project,
-            RestoreCommandProviders dependencyProviders,
-            SourceCacheContext cacheContext,
-            ClientPolicyContext clientPolicyContext,
-            ILogger log) : this(project, dependencyProviders, cacheContext, clientPolicyContext, packageSourceMapping: null, log, new LockFileBuilderCache())
-        {
-        }
-
         public RestoreRequest(
             PackageSpec project,
             RestoreCommandProviders dependencyProviders,

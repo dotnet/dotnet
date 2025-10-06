@@ -1,36 +1,25 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal partial class TestProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
-    ProjectSnapshotManagerDispatcher dispatcher,
-    CancellationToken disposalToken)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, dispatcher)
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    ILoggerFactory loggerFactory,
+    CancellationToken disposalToken,
+    Action<ProjectSnapshotManager.Updater>? initializer = null)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions, loggerFactory, initializer)
 {
     private readonly CancellationToken _disposalToken = disposalToken;
-
-    public Task<TestDocumentSnapshot> CreateAndAddDocumentAsync(ProjectSnapshot projectSnapshot, string filePath)
-    {
-        return UpdateAsync(
-            updater =>
-            {
-                var documentSnapshot = TestDocumentSnapshot.Create(projectSnapshot, filePath);
-                updater.DocumentAdded(projectSnapshot.Key, documentSnapshot.HostDocument, new DocumentSnapshotTextLoader(documentSnapshot));
-
-                return documentSnapshot;
-            },
-            _disposalToken);
-    }
 
     public Listener ListenToNotifications() => new(this);
 

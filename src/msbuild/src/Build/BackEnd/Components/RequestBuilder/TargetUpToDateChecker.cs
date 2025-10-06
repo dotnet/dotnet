@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -368,6 +369,8 @@ namespace Microsoft.Build.BackEnd
             var args = ItemGroupLoggingHelper.CreateTaskParameterEventArgs(
                 _buildEventContext,
                 TaskParameterMessageKind.SkippedTargetInputs,
+                parameterName: null,
+                propertyName: null,
                 itemType: null,
                 _uniqueTargetInputs.Keys.ToArray(),
                 logItemMetadata: false,
@@ -377,6 +380,8 @@ namespace Microsoft.Build.BackEnd
             args = ItemGroupLoggingHelper.CreateTaskParameterEventArgs(
                 _buildEventContext,
                 TaskParameterMessageKind.SkippedTargetOutputs,
+                parameterName: null,
+                propertyName: null,
                 itemType: null,
                 _uniqueTargetOutputs.Keys.ToArray(),
                 logItemMetadata: false,
@@ -693,14 +698,14 @@ namespace Microsoft.Build.BackEnd
                         // them.
                         if (!changedTargetInputs.ItemTypes.Contains(inputItems[0].ItemType))
                         {
-                            changedTargetInputs.AddEmptyMarker(inputItems[0].ItemType);
+                            changedTargetInputs.ImportItemsOfType(inputItems[0].ItemType, Array.Empty<ProjectItemInstance>());
                         }
 
                         // We need to perform the same operation on the up-to-date side
                         // too.
                         if (!upToDateTargetInputs.ItemTypes.Contains(inputItems[0].ItemType))
                         {
-                            upToDateTargetInputs.AddEmptyMarker(inputItems[0].ItemType);
+                            upToDateTargetInputs.ImportItemsOfType(inputItems[0].ItemType, Array.Empty<ProjectItemInstance>());
                         }
                     }
                 }
@@ -834,15 +839,14 @@ namespace Microsoft.Build.BackEnd
                         }
 
                         // Do we already have a partition for this?
-                        if (!itemVectorCollection.ContainsKey(itemVectorType))
+                        if (!itemVectorCollection.TryGetValue(itemVectorType, out ItemVectorPartition itemVectorPartition))
                         {
                             // Nope, create one.
-                            itemVectorCollection[itemVectorType] = new ItemVectorPartition(MSBuildNameIgnoreCaseComparer.Default);
+                            itemVectorPartition = new ItemVectorPartition(MSBuildNameIgnoreCaseComparer.Default);
+                            itemVectorCollection[itemVectorType] = itemVectorPartition;
                         }
 
-                        ItemVectorPartition itemVectorPartition = itemVectorCollection[itemVectorType];
-
-                        ErrorUtilities.VerifyThrow(!itemVectorCollection[itemVectorType].ContainsKey(item), "ItemVectorPartition already contains a vector for items with the expression '{0}'", item);
+                        ErrorUtilities.VerifyThrow(!itemVectorPartition.ContainsKey(item), "ItemVectorPartition already contains a vector for items with the expression '{0}'", item);
                         itemVectorPartition[item] = itemVectorContents;
 
                         ErrorUtilities.VerifyThrow((itemVectorTransforms == null) || (itemVectorCollection.Equals(itemVectorTransforms)) || (itemVectorPartition.Count == 1),
@@ -1125,6 +1129,8 @@ namespace Microsoft.Build.BackEnd
         {
             input = EscapingUtilities.UnescapeAll(FileUtilities.FixFilePath(input));
             output = EscapingUtilities.UnescapeAll(FileUtilities.FixFilePath(output));
+            ProjectErrorUtilities.VerifyThrowInvalidProject(input.AsSpan().IndexOfAny(MSBuildConstants.InvalidPathChars) < 0, _project.ProjectFileLocation, "IllegalCharactersInFileOrDirectory", input, inputItemName);
+            ProjectErrorUtilities.VerifyThrowInvalidProject(output.AsSpan().IndexOfAny(MSBuildConstants.InvalidPathChars) < 0, _project.ProjectFileLocation, "IllegalCharactersInFileOrDirectory", output, outputItemName);
             bool outOfDate = (CompareLastWriteTimes(input, output, out bool inputDoesNotExist, out bool outputDoesNotExist) == 1) || inputDoesNotExist;
 
             // Only if we are not logging just critical events should we be gathering full details

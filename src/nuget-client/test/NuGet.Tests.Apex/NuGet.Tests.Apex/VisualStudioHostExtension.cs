@@ -37,7 +37,7 @@ namespace NuGet.Tests.Apex
         /// <summary>
         /// Assert Error List contains specific error.
         /// </summary>
-        internal static void AssertErrorListContainsSpecificError(this VisualStudioHost host, string errorMessage)
+        public static void AssertErrorListContainsSpecificError(this VisualStudioHost host, string errorMessage)
         {
             var errors = host.GetErrorsFromErrorList();
             errors.Should().NotBeEmpty("Empty errors in error list");

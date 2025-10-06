@@ -1,18 +1,17 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal sealed class SpanEditHandlerBuilder
 {
-    private static readonly Func<string, IEnumerable<SyntaxToken>> DefaultTokenizer = static content => Enumerable.Empty<SyntaxToken>();
-    private static readonly SpanEditHandler DefaultEditHandler = SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+    private static readonly Func<string, IEnumerable<SyntaxToken>> DefaultTokenizer = SpanEditHandler.NoTokenizer;
+    private static readonly SpanEditHandler DefaultEditHandler = SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any);
 
     private readonly Func<string, IEnumerable<SyntaxToken>>? _defaultLanguageTokenizer;
     private readonly SpanEditHandler? _defaultLanguageEditHandler;

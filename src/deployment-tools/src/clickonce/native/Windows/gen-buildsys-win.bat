@@ -5,7 +5,7 @@ rem This file invokes cmake and generates the build system for windows.
 set argC=0
 for %%x in (%*) do Set /A argC+=1
 
-if NOT %argC%==8 GOTO :USAGE
+if NOT %argC%==9 GOTO :USAGE
 if %1=="/?" GOTO :USAGE
 
 setlocal
@@ -26,10 +26,11 @@ set __LatestCommit=%4
 set __NativeVersion=%5
 set __NetCorePkgVersion=%6
 set __DotnetInstallDir=%~7
+set __AppHostLibDir=%~8
 shift
 
 :: Form the base RID to be used if we are doing a portable build
-if /i "%8" == "1"       (set cm_BaseRid=win)
+if /i "%9" == "1"       (set cm_BaseRid=win)
 set cm_BaseRid=%cm_BaseRid%-%__Arch%
 echo "Computed RID for native build is %cm_BaseRid%"
 
@@ -45,6 +46,7 @@ set __ExtraCmakeParams=%__ExtraCmakeParams% "-DCMAKE_SYSTEM_VERSION=10.0" "-DCLI
 set __ExtraCmakeParams=%__ExtraCmakeParams% "-DCLI_CMAKE_PKG_RID=%cm_BaseRid%" "-DCLI_CMAKE_COMMIT_HASH=%__LatestCommit%" "-DCLR_CMAKE_HOST_ARCH=%__Arch%"
 set __ExtraCmakeParams=%__ExtraCmakeParams% "-DCMAKE_INSTALL_PREFIX=%__CMakeBinDir%" "-DCLI_CMAKE_RESOURCE_DIR=%__ResourcesDir%" "-DCLR_ENG_NATIVE_DIR=%__sourceDir%\..\..\..\eng\native"
 set __ExtraCmakeParams=%__ExtraCmakeParams% "-DNET_CORE_PKG_VER=%__NetCorePkgVersion%" "-DDOTNET_PACKS_DIR=%__DotnetInstallDir%\packs"
+set __ExtraCmakeParams=%__ExtraCmakeParams% "-DAPP_HOST_LIB_DIR=%__AppHostLibDir%"
 
 echo "%CMakePath%" %__sourceDir% -G "Visual Studio %__VSString%" %__ExtraCmakeParams%
 "%CMakePath%" %__sourceDir% -G "Visual Studio %__VSString%" %__ExtraCmakeParams%
@@ -55,7 +57,7 @@ GOTO :DONE
   echo "Usage..."
   echo "gen-buildsys-win.bat <path to top level CMakeLists.txt> <VSVersion> <Target Architecture>"
   echo "Specify the path to the top level CMake file"
-  echo "Specify the VSVersion to be used - VS2017 or VS2019"
+  echo "Specify the VSVersion to be used - 2022"
   echo "Specify the Target Architecture - AnyCPU, x86, x64, ARM, or ARM64."
   echo "Specify latest commit hash"
   echo "Specify the native version"

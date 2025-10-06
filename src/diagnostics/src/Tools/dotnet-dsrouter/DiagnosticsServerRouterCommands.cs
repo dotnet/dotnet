@@ -72,6 +72,44 @@ namespace Microsoft.Diagnostics.Tools.DiagnosticsServerRouter
                 LogLevel = logLevel;
             }
 
+            protected static async Task WaitForQuitAsync(CancellationToken token)
+            {
+                if (!Console.IsInputRedirected)
+                {
+                    while (!token.IsCancellationRequested)
+                    {
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKey cmd = Console.ReadKey(true).Key;
+                            if (cmd == ConsoleKey.Q)
+                            {
+                                break;
+                            }
+                        }
+                        await Task.Delay(250, token).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    await Task.Run(async() => {
+                        Memory<char> buffer = new char[1];
+                        while (!token.IsCancellationRequested)
+                        {
+                            int result = await Console.In.ReadAsync(buffer, token).ConfigureAwait(false);
+                            if (result != 0)
+                            {
+                                char key = buffer.Span[0];
+                                if (key == 'Q' || key == 'q')
+                                {
+                                    break;
+                                }
+                            }
+                            await Task.Delay(250, token).ConfigureAwait(false);
+                        }
+                    }, token).ConfigureAwait(false);
+                }
+            }
+
             public abstract void ConfigureLauncher(CancellationToken cancellationToken);
 
             // The basic run loop: configure logging and the launcher, then create the router and run it until it exits or the user interrupts
@@ -91,26 +129,11 @@ namespace Microsoft.Diagnostics.Tools.DiagnosticsServerRouter
                 logger.LogInformation($"Starting dotnet-dsrouter using pid={pid}");
 
                 Task<int> routerTask = createRouterTask(logger, Launcher, linkedCancelToken);
+                Task waitForQuitTask = WaitForQuitAsync(linkedCancelToken.Token);
 
-                while (!linkedCancelToken.IsCancellationRequested)
+                if (!linkedCancelToken.IsCancellationRequested)
                 {
-                    await Task.WhenAny(routerTask, Task.Delay(
-                        250,
-                        linkedCancelToken.Token)).ConfigureAwait(false);
-                    if (routerTask.IsCompleted)
-                    {
-                        break;
-                    }
-
-                    if (!Console.IsInputRedirected && Console.KeyAvailable)
-                    {
-                        ConsoleKey cmd = Console.ReadKey(true).Key;
-                        if (cmd == ConsoleKey.Q)
-                        {
-                            cancelRouterTask.Cancel();
-                            break;
-                        }
-                    }
+                    await Task.WhenAny(routerTask, waitForQuitTask).ConfigureAwait(false);
                 }
 
                 if (!routerTask.IsCompleted)
@@ -334,41 +357,41 @@ namespace Microsoft.Diagnostics.Tools.DiagnosticsServerRouter
             }
         }
 
-        public async Task<int> RunIpcServerIOSSimulatorRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info)
+        public async Task<int> RunIpcServerIOSSimulatorRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info, string parentProcess)
         {
             if (info || ParseLogLevel(verbose) <= LogLevel.Information)
             {
-                logRouterUsageInfo("ios simulator", "127.0.0.1:9000", true);
+                logRouterUsageInfo("ios simulator", "127.0.0.1", "9000", true, parentProcess);
             }
 
             return await RunIpcServerTcpClientRouter(token, "", "127.0.0.1:9000", runtimeTimeout, verbose, "").ConfigureAwait(false);
         }
 
-        public async Task<int> RunIpcServerIOSRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info)
+        public async Task<int> RunIpcServerIOSRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info, string parentProcess)
         {
             if (info || ParseLogLevel(verbose) <= LogLevel.Information)
             {
-                logRouterUsageInfo("ios device", "127.0.0.1:9000", true);
+                logRouterUsageInfo("ios device", "127.0.0.1", "9000", true, parentProcess);
             }
 
             return await RunIpcServerTcpClientRouter(token, "", "127.0.0.1:9000", runtimeTimeout, verbose, "iOS").ConfigureAwait(false);
         }
 
-        public async Task<int> RunIpcServerAndroidEmulatorRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info)
+        public async Task<int> RunIpcServerAndroidEmulatorRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info, string parentProcess)
         {
             if (info || ParseLogLevel(verbose) <= LogLevel.Information)
             {
-                logRouterUsageInfo("android emulator", "10.0.2.2:9000", false);
+                logRouterUsageInfo("android emulator", "10.0.2.2", "9000", false, parentProcess);
             }
 
             return await RunIpcServerTcpServerRouter(token, "", "127.0.0.1:9000", runtimeTimeout, verbose, "").ConfigureAwait(false);
         }
 
-        public async Task<int> RunIpcServerAndroidRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info)
+        public async Task<int> RunIpcServerAndroidRouter(CancellationToken token, int runtimeTimeout, string verbose, bool info, string parentProcess)
         {
             if (info || ParseLogLevel(verbose) <= LogLevel.Information)
             {
-                logRouterUsageInfo("android device", "127.0.0.1:9000", false);
+                logRouterUsageInfo("android device", "127.0.0.1", "9000", false, parentProcess);
             }
 
             return await RunIpcServerTcpServerRouter(token, "", "127.0.0.1:9001", runtimeTimeout, verbose, "Android").ConfigureAwait(false);
@@ -478,7 +501,7 @@ namespace Microsoft.Diagnostics.Tools.DiagnosticsServerRouter
             return logLevel;
         }
 
-        private static void logRouterUsageInfo(string deviceName, string deviceTcpIpAddress, bool deviceListenMode)
+        private static void logRouterUsageInfo(string deviceName, string deviceTcpIpAddress, string deviceTcpIpPort, bool deviceListenMode, string parentProcess)
         {
             StringBuilder message = new();
 
@@ -486,13 +509,16 @@ namespace Microsoft.Diagnostics.Tools.DiagnosticsServerRouter
             int pid = Process.GetCurrentProcess().Id;
 
             message.AppendLine($"How to connect current dotnet-dsrouter pid={pid} with {deviceName} and diagnostics tooling.");
-            message.AppendLine($"Start an application on {deviceName} with ONE of the following environment variables set:");
+            message.AppendLine($"Build and run your application on {deviceName} such as:");
             message.AppendLine("[Default Tracing]");
-            message.AppendLine($"DOTNET_DiagnosticPorts={deviceTcpIpAddress},nosuspend,{listenMode}");
+            message.AppendLine($"dotnet build -t:Run -c Release -p:DiagnosticAddress={deviceTcpIpAddress} -p:DiagnosticPort={deviceTcpIpPort} -p:DiagnosticSuspend=false -p:DiagnosticListenMode={listenMode}");
             message.AppendLine("[Startup Tracing]");
-            message.AppendLine($"DOTNET_DiagnosticPorts={deviceTcpIpAddress},suspend,{listenMode}");
-            message.AppendLine($"Run diagnotic tool connecting application on {deviceName} through dotnet-dsrouter pid={pid}:");
-            message.AppendLine($"dotnet-trace collect -p {pid}");
+            message.AppendLine($"dotnet build -t:Run -c Release -p:DiagnosticAddress={deviceTcpIpAddress} -p:DiagnosticPort={deviceTcpIpPort} -p:DiagnosticSuspend=true -p:DiagnosticListenMode={listenMode}");
+            if (string.IsNullOrEmpty(parentProcess))
+            {
+                message.AppendLine($"Run diagnotic tool connecting application on {deviceName} through dotnet-dsrouter pid={pid}:");
+                message.AppendLine($"dotnet-trace collect -p {pid}");
+            }
             message.AppendLine($"See https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-dsrouter for additional details and examples.");
 
             ConsoleColor currentColor = Console.ForegroundColor;

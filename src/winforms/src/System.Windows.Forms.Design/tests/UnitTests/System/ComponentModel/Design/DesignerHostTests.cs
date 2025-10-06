@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.Collections;
 using System.ComponentModel.Design.Serialization;
@@ -140,7 +142,7 @@ public class DesignerHostTests
     {
         SubDesignSurface surface = new();
         IDesignerLoaderHost2 host = surface.Host;
-        Assert.Null(host.TransactionDescription);
+        host.TransactionDescription.Should().BeNullOrEmpty();
     }
 
     [WinFormsFact]
@@ -1449,8 +1451,8 @@ public class DesignerHostTests
         using RootDesignerComponent component2 = new();
         host.Container.Add(component1, "name1");
         host.Container.Add(component2, "name2");
-        Assert.Throws<Exception>(() => component1.Site.Name = "name2");
-        Assert.Throws<Exception>(() => component1.Site.Name = "NAME2");
+        Assert.Throws<InvalidOperationException>(() => component1.Site.Name = "name2");
+        Assert.Throws<InvalidOperationException>(() => component1.Site.Name = "NAME2");
     }
 
     [WinFormsFact]
@@ -1665,8 +1667,8 @@ public class DesignerHostTests
         using RootDesignerComponent component = new();
         host.Container.Add(component, component.GetType().FullName);
         Assert.Equal(component.GetType().FullName, host.RootComponentClassName);
-        Assert.Throws<Exception>(() => host.Container.Add(component));
-        Assert.Throws<Exception>(() => host.Container.Add(new RootDesignerComponent(), host.RootComponentClassName));
+        Assert.Throws<InvalidOperationException>(() => host.Container.Add(component));
+        Assert.Throws<InvalidOperationException>(() => host.Container.Add(new RootDesignerComponent(), host.RootComponentClassName));
     }
 
     [WinFormsFact]
@@ -1797,7 +1799,7 @@ public class DesignerHostTests
         SubDesignSurface surface = new();
         IDesignerLoaderHost2 host = surface.Host;
         IDisposable disposable = Assert.IsAssignableFrom<IDisposable>(host);
-        Assert.Throws<InvalidOperationException>(() => disposable.Dispose());
+        Assert.Throws<InvalidOperationException>(disposable.Dispose);
     }
 
     [WinFormsFact(Skip = "Unstable test, see: https://github.com/dotnet/winforms/issues/1460")]
@@ -1809,7 +1811,7 @@ public class DesignerHostTests
 
         using ThrowingDesignerDisposeComponent component = new();
         host.Container.Add(component);
-        Assert.Throws<InvalidOperationException>(() => surface.Dispose());
+        Assert.Throws<InvalidOperationException>(surface.Dispose);
         Assert.False(surface.IsLoaded);
         Assert.Empty(surface.LoadErrors);
         Assert.False(host.Loading);
@@ -1824,7 +1826,7 @@ public class DesignerHostTests
 
         using ThrowingDisposeDesignerComponent component = new();
         host.Container.Add(component);
-        Assert.Throws<InvalidOperationException>(() => surface.Dispose());
+        Assert.Throws<InvalidOperationException>(surface.Dispose);
         Assert.False(surface.IsLoaded);
         Assert.Empty(surface.LoadErrors);
         Assert.False(host.Loading);
@@ -1837,7 +1839,7 @@ public class DesignerHostTests
         IDesignerLoaderHost2 host = surface.Host;
         surface.BeginLoad(typeof(ThrowingRootDesignerDisposeComponent));
 
-        Assert.Throws<InvalidOperationException>(() => surface.Dispose());
+        Assert.Throws<InvalidOperationException>(surface.Dispose);
         Assert.False(surface.IsLoaded);
         Assert.Empty(surface.LoadErrors);
         Assert.False(host.Loading);
@@ -1849,7 +1851,7 @@ public class DesignerHostTests
         SubDesignSurface surface = new();
         IDesignerLoaderHost2 host = surface.Host;
         surface.BeginLoad(typeof(ThrowingDisposeRootDesignerComponent));
-        Assert.Throws<InvalidOperationException>(() => surface.Dispose());
+        Assert.Throws<InvalidOperationException>(surface.Dispose);
         Assert.False(surface.IsLoaded);
         Assert.Empty(surface.LoadErrors);
         Assert.False(host.Loading);
@@ -1995,7 +1997,7 @@ public class DesignerHostTests
         Assert.False(transaction2.Committed);
         Assert.Equal("Description2", transaction2.Description);
         Assert.False(host.InTransaction);
-        Assert.Null(host.TransactionDescription);
+        host.TransactionDescription.Should().BeNullOrEmpty();
     }
 
     [WinFormsFact]
@@ -2066,7 +2068,7 @@ public class DesignerHostTests
         IDesignerLoaderHost2 host = surface.Host;
         DesignerTransaction transaction1 = host.CreateTransaction("Description1");
         DesignerTransaction transaction2 = host.CreateTransaction("Description2");
-        Assert.Throws<InvalidOperationException>(() => transaction1.Cancel());
+        Assert.Throws<InvalidOperationException>(transaction1.Cancel);
     }
 
     [WinFormsFact]
@@ -2108,7 +2110,7 @@ public class DesignerHostTests
         Assert.True(transaction2.Committed);
         Assert.Equal("Description2", transaction2.Description);
         Assert.False(host.InTransaction);
-        Assert.Null(host.TransactionDescription);
+        host.TransactionDescription.Should().BeNullOrEmpty();
     }
 
     [WinFormsFact]
@@ -2179,37 +2181,37 @@ public class DesignerHostTests
         IDesignerLoaderHost2 host = surface.Host;
         DesignerTransaction transaction1 = host.CreateTransaction("Description1");
         DesignerTransaction transaction2 = host.CreateTransaction("Description2");
-        Assert.Throws<InvalidOperationException>(() => transaction1.Commit());
+        Assert.Throws<InvalidOperationException>(transaction1.Commit);
     }
 
     public static IEnumerable<object[]> DesignerHost_EndLoad_TestData()
     {
         yield return new object[] { null, true, null };
         yield return new object[] { null, true, Array.Empty<object>() };
-        yield return new object[] { null, true, new object[] { new Exception() } };
+        yield return new object[] { null, true, new object[] { new InvalidOperationException() } };
         yield return new object[] { null, true, new object[] { "abc" } };
         yield return new object[] { null, true, new object[] { null } };
         yield return new object[] { null, false, null };
         yield return new object[] { null, false, Array.Empty<object>() };
-        yield return new object[] { null, false, new object[] { new Exception() } };
+        yield return new object[] { null, false, new object[] { new InvalidOperationException() } };
         yield return new object[] { null, false, new object[] { "abc" } };
         yield return new object[] { null, false, new object[] { null } };
         yield return new object[] { string.Empty, true, null };
         yield return new object[] { string.Empty, true, Array.Empty<object>() };
-        yield return new object[] { string.Empty, true, new object[] { new Exception() } };
+        yield return new object[] { string.Empty, true, new object[] { new InvalidOperationException() } };
         yield return new object[] { string.Empty, true, new object[] { "abc" } };
         yield return new object[] { string.Empty, true, new object[] { null } };
         yield return new object[] { string.Empty, false, null };
         yield return new object[] { string.Empty, false, Array.Empty<object>() };
-        yield return new object[] { string.Empty, false, new object[] { new Exception() } };
+        yield return new object[] { string.Empty, false, new object[] { new InvalidOperationException() } };
         yield return new object[] { string.Empty, false, new object[] { "abc" } };
         yield return new object[] { string.Empty, false, new object[] { null } };
         yield return new object[] { "baseClassName", true, null };
-        yield return new object[] { "baseClassName", true, new object[] { new Exception() } };
+        yield return new object[] { "baseClassName", true, new object[] { new InvalidOperationException() } };
         yield return new object[] { "baseClassName", true, new object[] { "abc" } };
         yield return new object[] { "baseClassName", true, new object[] { null } };
         yield return new object[] { "baseClassName", false, null };
-        yield return new object[] { "baseClassName", false, new object[] { new Exception() } };
+        yield return new object[] { "baseClassName", false, new object[] { new InvalidOperationException() } };
         yield return new object[] { "baseClassName", false, new object[] { "abc" } };
         yield return new object[] { "baseClassName", false, new object[] { null } };
     }
@@ -2318,7 +2320,6 @@ public class DesignerHostTests
     [WinFormsFact]
     public void DesignerHost_GetServiceIMultitargetHelperServiceWithoutLoader_ReturnsNull()
     {
-        object service = new();
         Mock<IServiceProvider> mockServiceProvider = new(MockBehavior.Strict);
         SubDesignSurface surface = new(mockServiceProvider.Object);
         IDesignerLoaderHost2 host = surface.Host;

@@ -3,6 +3,7 @@
 namespace FSharp.Compiler.Scripting.UnitTests
 
 open System
+open System.Text
 open System.Diagnostics
 open System.IO
 open System.Reflection
@@ -11,12 +12,17 @@ open System.Threading
 open System.Threading.Tasks
 open FSharp.Compiler.Interactive
 open FSharp.Compiler.Interactive.Shell
+open FSharp.Test
 open FSharp.Test.ScriptHelpers
-open FSharp.Test.Utilities
 
 open Xunit
 
 type InteractiveTests() =
+
+    let copyHousingToTemp() =
+        let tempName = TestFramework.getTemporaryFileName()
+        File.Copy(__SOURCE_DIRECTORY__ ++ "housing.csv", tempName + ".csv")
+        tempName
 
     [<Fact>]
     member _.``ValueRestriction error message should not have type variables fully solved``() =
@@ -65,7 +71,7 @@ x
         let ce = new ControlledExecution(true)
         ce.Run(fun () ->
             use script = new FSharpScript()
-            let result, errors = 
+            let result, _errors = 
                 script.Eval("""
 open System
 let x = 1 + 2
@@ -83,9 +89,8 @@ x
 
     [<Fact>]
     member _.``Capture console input``() =
-        use input = new RedirectConsoleInput()
+        use _ = new TestConsole.ProvideInput("stdin:1234\r\n")
         use script = new FSharpScript()
-        input.ProvideInput "stdin:1234\r\n"
         let opt = script.Eval("System.Console.ReadLine()") |> getValue
         let value = opt.Value
         Assert.Equal(typeof<string>, value.ReflectionType)
@@ -93,15 +98,11 @@ x
 
     [<Fact>]
     member _.``Capture console output/error``() =
-        use output = new RedirectConsoleOutput()
+        use capture = new TestConsole.ExecutionCapture()
         use script = new FSharpScript()
-        use sawOutputSentinel = new ManualResetEvent(false)
-        use sawErrorSentinel = new ManualResetEvent(false)
-        output.OutputProduced.Add (fun line -> if line = "stdout:1234" then sawOutputSentinel.Set() |> ignore)
-        output.ErrorProduced.Add (fun line -> if line = "stderr:5678" then sawErrorSentinel.Set() |> ignore)
         script.Eval("printfn \"stdout:1234\"; eprintfn \"stderr:5678\"") |> ignoreValue
-        Assert.True(sawOutputSentinel.WaitOne(TimeSpan.FromSeconds(5.0)), "Expected to see output sentinel value written")
-        Assert.True(sawErrorSentinel.WaitOne(TimeSpan.FromSeconds(5.0)), "Expected to see error sentinel value written")
+        Assert.Contains("stdout:1234", capture.OutText)
+        Assert.Contains("stderr:5678", capture.ErrorText)
 
     [<Fact>]
     member _.``Maintain state between submissions``() =
@@ -177,7 +178,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
         Assert.Empty(errors)
         match result with
         | Ok(_) -> ()
-        | Error(ex) -> Assert.True(true, "expected no failures")
+        | Error _ -> Assert.True(true, "expected no failures")
 
     [<Theory>]
     [<InlineData("""#i""", "input.fsx (1,1)-(1,3) interactive warning Invalid directive '#i '")>]                                               // No argument
@@ -185,7 +186,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
     [<InlineData("""#i "        " """, "input.fsx (1,1)-(1,14) interactive error #i is not supported by the registered PackageManagers")>]      // whitespace only argument
     member _.``Script with #i syntax errors fail``(code, error0) =
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.NotEmpty(errors)
         Assert.Equal(errors.[0].ToString(), error0)
 
@@ -195,7 +196,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
                  "input.fsx (1,1)-(1,3) interactive warning Invalid directive '#i '")>]
     member _.``Script with more #i syntax errors fail``(code, error0, error1) =
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.NotEmpty(errors)
         Assert.Equal(errors.Length, 2)
         Assert.Equal(error0, errors.[0].ToString())
@@ -206,7 +207,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
                  "input.fsx (1,1)-(1,42) interactive error #i is not supported by the registered PackageManagers")>]
     member _.``Script with #i and no package manager specified``(code, error0) =
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.NotEmpty(errors)
         Assert.Equal(errors.Length, 1)
         Assert.Equal(errors.[0].ToString(), error0)
@@ -216,7 +217,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
                  "input.fsx (1,1)-(1,15) interactive error Invalid URI: The format of the URI could not be determined.")>]
     member _.``Script with #i and forgot to add quotes``(code, error) =
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.NotEmpty(errors)
         Assert.Equal(1, errors.Length)
         Assert.Equal(error, errors.[0].ToString())
@@ -226,7 +227,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
         let path = Path.GetTempPath()
         let code = sprintf "#i @\"nuget:%s\" " path
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.Empty(errors)
         Assert.Equal(0, errors.Length)
 
@@ -238,7 +239,7 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
         let code = sprintf "#i @\"nuget:%s\"" path
         let error = sprintf "interactive error The source directory '%s' not found" path
         use script = new FSharpScript()
-        let result, errors = script.Eval(code)
+        let _result, errors = script.Eval(code)
         Assert.NotEmpty(errors)
         Assert.Equal(1, errors.Length)
         Assert.True(errors.[0].ToString().EndsWith(error))
@@ -247,10 +248,14 @@ System.Configuration.ConfigurationManager.AppSettings.Item "Environment" <- "LOC
 #if NETSTANDARD
     [<Fact>]
     member _.``ML - use assembly with native dependencies``() =
-        let code = @"
-#r ""nuget:Microsoft.ML,version=1.4.0-preview""
-#r ""nuget:Microsoft.ML.AutoML,version=0.16.0-preview""
-#r ""nuget:Microsoft.Data.Analysis,version=0.4.0""
+        // Skip test on arm64, because there is not an arm64 native library
+        if RuntimeInformation.ProcessArchitecture = Architecture.Arm64 then
+            ()
+        else
+        let code = $"""
+#r "nuget:Microsoft.ML,version=1.4.0-preview"
+#r "nuget:Microsoft.ML.AutoML,version=0.16.0-preview"
+#r "nuget:Microsoft.Data.Analysis,version=0.4.0"
 
 open System
 open System.IO
@@ -266,7 +271,7 @@ let Shuffle (arr:int[]) =
         arr.[i] <- temp
     arr
 
-let housingPath = ""housing.csv""
+let housingPath = @"{copyHousingToTemp()}.csv"
 let housingData = DataFrame.LoadCsv(housingPath)
 let randomIndices = (Shuffle(Enumerable.Range(0, (int (housingData.Rows.Count) - 1)).ToArray()))
 let testSize = int (float (housingData.Rows.Count) * 0.1)
@@ -280,12 +285,12 @@ open Microsoft.ML.AutoML
 
 let mlContext = MLContext()
 let experiment = mlContext.Auto().CreateRegressionExperiment(maxExperimentTimeInSeconds = 15u)
-let result = experiment.Execute(housing_train, labelColumnName = ""median_house_value"")
+let result = experiment.Execute(housing_train, labelColumnName = "median_house_value")
 let details = result.RunDetails
-printfn ""%A"" result
+printfn "{@"%A"}" result
 123
-"
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+"""
+        use script = new FSharpScript(additionalArgs=[| |])
         let opt = script.Eval(code)  |> getValue
         let value = opt.Value
         Assert.Equal(123, value.ReflectionValue :?> int32)
@@ -293,7 +298,7 @@ printfn ""%A"" result
 
     [<Fact>]
     member _.``Eval script with package manager invalid key``() =
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+        use script = new FSharpScript(additionalArgs=[| |])
         let result, _errors = script.Eval(@"#r ""nugt:FSharp.Data""")
         match result with
         | Ok(_) -> Assert.False(true, "expected a failure")
@@ -301,35 +306,65 @@ printfn ""%A"" result
 
     [<Fact>]
     member _.``Eval script with invalid PackageName should fail immediately``() =
-        use output = new RedirectConsoleOutput()
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
-        let mutable found = 0
-        let outp = System.Collections.Generic.List<string>()
-        output.OutputProduced.Add(
-            fun line ->
-                if line.Contains("error NU1101:") && line.Contains("FSharp.Really.Not.A.Package") then
-                    found <- found + 1
-                outp.Add(line))
-        let result, errors = script.Eval("""#r "nuget:FSharp.Really.Not.A.Package" """)
-        Assert.True( (found = 0), "Did not expect to see output contains 'error NU1101:' and 'FSharp.Really.Not.A.Package'")
+        use capture = new TestConsole.ExecutionCapture()
+        use script = new FSharpScript(additionalArgs=[| |])
+        let _result, errors = script.Eval("""#r "nuget:FSharp.Really.Not.A.Package" """)
+
+        let lines = capture.OutText.Split([| Environment.NewLine |], StringSplitOptions.None)
+        let found = lines |> Seq.exists (fun line -> line.Contains("error NU1101:") && line.Contains("FSharp.Really.Not.A.Package"))
+        Assert.False(found, "Did not expect to see output contains 'error NU1101:' and 'FSharp.Really.Not.A.Package'")
         Assert.True( errors |> Seq.exists (fun error -> error.Message.Contains("error NU1101:")), "Expect to error containing 'error NU1101:'")
         Assert.True( errors |> Seq.exists (fun error -> error.Message.Contains("FSharp.Really.Not.A.Package")), "Expect to error containing 'FSharp.Really.Not.A.Package'")
 
     [<Fact>]
     member _.``Eval script with invalid PackageName should fail immediately and resolve one time only``() =
-        use output = new RedirectConsoleOutput()
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
-        let mutable foundResolve = 0
-        output.OutputProduced.Add (fun line -> if line.Contains("error NU1101:") then foundResolve <- foundResolve + 1)
-        let result, errors =
+        use capture = new TestConsole.ExecutionCapture()
+        use script = new FSharpScript(additionalArgs=[| |])
+        let _result, errors =
             script.Eval("""
 #r "nuget:FSharp.Really.Not.A.Package"
 #r "nuget:FSharp.Really.Not.Another.Package"
                 """)
-        Assert.True( (foundResolve = 0), (sprintf "Did not expected to see 'error NU1101:' in output" ))
+        Assert.DoesNotContain("error NU1101:", capture.OutText)
         Assert.Equal(2, (errors |> Seq.filter (fun error -> error.Message.Contains("error NU1101:")) |> Seq.length))
         Assert.Equal(1, (errors |> Seq.filter (fun error -> error.Message.Contains("FSharp.Really.Not.A.Package")) |> Seq.length))
         Assert.Equal(1, (errors |> Seq.filter (fun error -> error.Message.Contains("FSharp.Really.Not.Another.Package")) |> Seq.length))
+
+    [<Fact>]
+    member _.``FsharpPlus - report errors``() =
+        let code = """
+#i "nuget:https://api.nuget.org/v3/index.json"
+#r "nuget: FSharpPlus, 1.6.1"
+
+open FSharpPlus
+open FSharpPlus.Data
+
+let printTable x =
+    let lines (lst: 'Record list) = 
+        let fields = Reflection.FSharpType.GetRecordFields typeof<'Record>
+        let headers = fields |> Seq.map _.Name
+        let asList (x:'record) = fields |> Seq.map (fun field -> string (Reflection.FSharpValue.GetRecordField(x, field)))
+        let rows = Seq.map asList lst
+        let table = seq { yield headers; yield! rows }
+        let maxs = table |> (Seq.traverse ZipList >> ZipList.run) |>> Seq.map length |>> maxBy id
+        let rowSep = String.replicate (sum maxs + length maxs - 1) "-"
+        let fill (i, s) = s + String.replicate (i - length s) " "
+        let printRow r = "|" + (r |> zip maxs |>> fill |> intercalate "|") + "|"
+        seq {
+            yield "." + rowSep + "."
+            yield printRow headers
+            yield "|" + rowSep + "|"
+            yield! (rows |>> printRow)
+            yield "'" + rowSep + "'" }
+    x |> lines |> iter (printfn "%s")
+    x |> List.length
+
+printTable [{|Age = 15; Weight = 88; Name = "Blahboolahboogaloo"|}]
+"""
+        use script = new FSharpScript(additionalArgs=[| |])
+        let opt = script.Eval(code)  |> getValue
+        let value = opt.Value
+        Assert.Equal(1, downcast value.ReflectionValue)
 
     [<Fact>]
     member _.``ML - use assembly with ref dependencies``() =
@@ -343,7 +378,23 @@ let inputValues = [| 12.0; 10.0; 17.0; 5.0 |]
 let tInput = new DenseTensor<float>(inputValues.AsMemory(), new ReadOnlySpan<int>([|4|]))
 tInput.Length
 """
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+        use script = new FSharpScript(additionalArgs=[| |])
+        let opt = script.Eval(code)  |> getValue
+        let value = opt.Value
+        Assert.Equal(4L, downcast value.ReflectionValue)
+
+    [<FSharp.Test.FactForNETCOREAPP>] // usessdkrefs is not a valid option for desktop compiler
+    member _.``ML - use assembly with ref dependencies and without refing SMemory``() =
+        let code = """
+#r "nuget:Microsoft.ML.OnnxTransformer,1.4.0"
+
+open System
+open System.Numerics.Tensors
+let inputValues = [| 12.0; 10.0; 17.0; 5.0 |]
+let tInput = new DenseTensor<float>(inputValues.AsMemory(), new ReadOnlySpan<int>([|4|]))
+tInput.Length
+"""
+        use script = new FSharpScript(additionalArgs=[| "/usesdkrefs-" |])
         let opt = script.Eval(code)  |> getValue
         let value = opt.Value
         Assert.Equal(4L, downcast value.ReflectionValue)
@@ -354,7 +405,7 @@ tInput.Length
 #r "nuget:System.Device.Gpio, 1.0.0"
 typeof<System.Device.Gpio.GpioController>.Assembly.Location
 """
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+        use script = new FSharpScript(additionalArgs=[| |])
         let opt = script.Eval(code)  |> getValue
         let value = opt.Value
 
@@ -386,7 +437,7 @@ else
     printfn ""Current process: %d"" (Imports.getpid())
 123
 "
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+        use script = new FSharpScript(additionalArgs=[| |])
         let opt = script.Eval(code)  |> getValue
         let value = opt.Value
         Assert.Equal(123, value.ReflectionValue :?> int32)
@@ -460,6 +511,7 @@ let x =
         script.Eval(code) |> ignoreValue
         Assert.False(foundInner)
 
+
     [<Fact>]
     member _.``Script with nuget package that yields out of order dependencies works correctly``() =
         // regression test for: https://github.com/dotnet/fsharp/issues/9217
@@ -478,7 +530,40 @@ let test p str =
         false
 test pfloat "1.234"
 """
-        use script = new FSharpScript(additionalArgs=[|"/langversion:preview"|])
+        use script = new FSharpScript(additionalArgs=[| |])
         let opt = script.Eval(code)  |> getValue
         let value = opt.Value
         Assert.True(true = downcast value.ReflectionValue)
+
+    [<Fact>]
+    member _.``Nuget package with method duplicates differing only in generic arity``() =
+        // regression test for: https://github.com/dotnet/fsharp/issues/17796
+        // Was an internal error
+        let code = """
+#r "nuget: Microsoft.Extensions.DependencyInjection.Abstractions"
+open Microsoft.Extensions.DependencyInjection
+let add (col:IServiceCollection) = 
+    col.AddSingleton<string,string>()
+"""
+        use script = new FSharpScript(additionalArgs=[| |])
+        let _value,diag = script.Eval(code)
+        Assert.Empty(diag)
+
+    [<Theory>]
+    [<InlineData("""#r "nuget:envdte,usepackagetargets=true" """, true, "")>]
+    [<InlineData("""#r "nuget:envdte,usepackagetargets=false" """, true, "")>]
+    [<InlineData("""#r "nuget:envdte,usepackagetargets=invalidvalue" """, false, "input.fsx (1,1)-(1,49) interactive error Invalid value for boolean 'usepackagetargets', valid values: true or false")>]
+    [<InlineData("""#r "nuget:envdte,usepackagetargets=" """, false, "input.fsx (1,1)-(1,37) interactive error Invalid value for boolean 'usepackagetargets', valid values: true or false")>]
+    member _.``Eval script with usepackagetargets options``(code, shouldSucceed, error) =
+        use script = new FSharpScript()
+        let result, errors = script.Eval(code)
+        match shouldSucceed with
+        | true ->
+            Assert.Empty(errors)
+            match result with
+            | Ok(_) -> ()
+            | Error _ -> Assert.True(false, "expected no failures")
+        | false ->
+            Assert.NotEmpty(errors)
+            Assert.Equal(1, errors.Length)
+            Assert.Equal(error, errors.[0].ToString())

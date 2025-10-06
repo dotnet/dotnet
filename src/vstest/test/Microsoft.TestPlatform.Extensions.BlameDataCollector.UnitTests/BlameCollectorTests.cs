@@ -761,6 +761,7 @@ public class BlameCollectorTests
         /// <param name="mockFileHelper">
         /// MockFileHelper instance.
         /// </param>
+        /// <param name="mockProcessHelper">Mockd process helper</param>
         internal TestableBlameCollector(IBlameReaderWriter blameReaderWriter, IProcessDumpUtility processDumpUtility, IInactivityTimer? inactivityTimer,
             IFileHelper mockFileHelper, IProcessHelper mockProcessHelper)
             : base(blameReaderWriter, processDumpUtility, inactivityTimer, mockFileHelper, mockProcessHelper)

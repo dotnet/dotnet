@@ -26,7 +26,7 @@
                                     Text;[area];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [18..33)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -63,7 +63,7 @@
                                     Text;[base];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [54..69)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -100,7 +100,7 @@
                                     Text;[br];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [86..101)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -137,7 +137,7 @@
                                     Text;[col];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [120..135)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -174,7 +174,7 @@
                                     Text;[command];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [162..177)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -211,7 +211,7 @@
                                     Text;[embed];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [200..215)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -248,7 +248,7 @@
                                     Text;[hr];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [232..247)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -285,7 +285,7 @@
                                     Text;[img];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [266..281)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -322,7 +322,7 @@
                                     Text;[input];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [304..319)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -359,7 +359,7 @@
                                     Text;[keygen];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [344..359)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -396,7 +396,7 @@
                                     Text;[link];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [380..395)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -433,7 +433,7 @@
                                     Text;[meta];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [416..431)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -470,7 +470,7 @@
                                     Text;[param];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [454..469)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -507,7 +507,7 @@
                                     Text;[source];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [494..509)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -544,7 +544,7 @@
                                     Text;[track];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [532..547)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
@@ -581,7 +581,7 @@
                                     Text;[wbr];
                                     CloseAngle;[>];
                         CSharpStatementLiteral - [566..581)::15 - [var x = true;LF] - Gen<Stmt>
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];

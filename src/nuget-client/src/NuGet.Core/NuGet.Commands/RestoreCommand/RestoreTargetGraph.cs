@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Client;
@@ -41,8 +40,11 @@ namespace NuGet.Commands
         public IEnumerable<GraphNode<RemoteResolveResult>> Graphs { get; }
 
         public ISet<RemoteMatch> Install { get; }
+
         public ISet<GraphItem<RemoteResolveResult>> Flattened { get; }
+
         public ISet<LibraryRange> Unresolved { get; }
+
         public bool InConflict { get; }
 
         public string Name { get; }
@@ -50,13 +52,13 @@ namespace NuGet.Commands
         public string TargetGraphName { get; }
 
         // TODO: Move conflicts to AnalyzeResult
-        public IEnumerable<ResolverConflict> Conflicts { get; internal set; }
+        public IEnumerable<ResolverConflict> Conflicts { get; }
 
-        public AnalyzeResult<RemoteResolveResult> AnalyzeResult { get; private set; }
+        public AnalyzeResult<RemoteResolveResult> AnalyzeResult { get; }
 
         public ISet<ResolvedDependencyKey> ResolvedDependencies { get; }
 
-        private RestoreTargetGraph(IEnumerable<ResolverConflict> conflicts,
+        internal RestoreTargetGraph(IEnumerable<ResolverConflict> conflicts,
                                    NuGetFramework framework,
                                    string runtimeIdentifier,
                                    RuntimeGraph runtimeGraph,

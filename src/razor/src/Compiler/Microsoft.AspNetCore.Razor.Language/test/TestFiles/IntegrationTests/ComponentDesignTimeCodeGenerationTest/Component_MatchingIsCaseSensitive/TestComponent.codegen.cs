@@ -34,7 +34,15 @@ __o = typeof(global::Test.MyComponent);
 #line default
 #line hidden
 #nullable disable
-            __o = "";
+            __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+                          1
+
+#line default
+#line hidden
+#nullable disable
+            );
             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"

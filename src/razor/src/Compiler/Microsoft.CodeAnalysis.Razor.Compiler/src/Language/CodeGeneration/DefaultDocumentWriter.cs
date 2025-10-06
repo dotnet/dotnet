@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -10,67 +8,50 @@ using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-internal class DefaultDocumentWriter : DocumentWriter
+internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationOptions options) : DocumentWriter
 {
-    private readonly CodeTarget _codeTarget;
-    private readonly RazorCodeGenerationOptions _options;
-
-    public DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationOptions options)
-    {
-        _codeTarget = codeTarget;
-        _options = options;
-    }
+    private readonly CodeTarget _codeTarget = codeTarget;
+    private readonly RazorCodeGenerationOptions _options = options;
 
     public override RazorCSharpDocument WriteDocument(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
+        ArgHelper.ThrowIfNull(codeDocument);
+        ArgHelper.ThrowIfNull(documentNode);
 
-        if (documentNode == null)
-        {
-            throw new ArgumentNullException(nameof(documentNode));
-        }
-
-        using var context = new DefaultCodeRenderingContext(
-            new CodeWriter(Environment.NewLine, _options),
+        using var context = new CodeRenderingContext(
             _codeTarget.CreateNodeWriter(),
-            codeDocument,
+            codeDocument.Source,
             documentNode,
             _options);
-        context.Visitor = new Visitor(_codeTarget, context);
+
+        context.SetVisitor(new Visitor(_codeTarget, context));
 
         context.Visitor.VisitDocument(documentNode);
 
-        var cSharp = context.CodeWriter.GenerateCode();
+        var text = context.CodeWriter.GetText();
 
-        var allOrderedDiagnostics = context.Diagnostics.OrderBy(diagnostic => diagnostic.Span.AbsoluteIndex);
-        return new DefaultRazorCSharpDocument(
+        return new RazorCSharpDocument(
             codeDocument,
-            cSharp,
-            _options,
-            allOrderedDiagnostics.ToArray(),
-            context.SourceMappings.DrainToImmutable(),
-            context.LinePragmas.ToArray());
+            text,
+            context.GetDiagnostics(),
+            context.GetSourceMappings(),
+            context.GetLinePragmas());
     }
 
-    private class Visitor : IntermediateNodeVisitor
+    private sealed class Visitor(CodeTarget codeTarget, CodeRenderingContext context) : IntermediateNodeVisitor
     {
-        private readonly DefaultCodeRenderingContext _context;
-        private readonly CodeTarget _target;
+        private readonly CodeRenderingContext _context = context;
+        private readonly CodeTarget _codeTarget = codeTarget;
 
-        public Visitor(CodeTarget target, DefaultCodeRenderingContext context)
-        {
-            _target = target;
-            _context = context;
-        }
-
-        private DefaultCodeRenderingContext Context => _context;
+        private CodeWriter CodeWriter => _context.CodeWriter;
+        private IntermediateNodeWriter NodeWriter => _context.NodeWriter;
+        private RazorCodeGenerationOptions Options => _context.Options;
 
         public override void VisitDocument(DocumentIntermediateNode node)
         {
-            if (!Context.Options.SuppressChecksum)
+            var codeWriter = CodeWriter;
+
+            if (!Options.SuppressChecksum)
             {
                 // See http://msdn.microsoft.com/en-us/library/system.codedom.codechecksumpragma.checksumalgorithmid.aspx
                 // And https://github.com/dotnet/roslyn/blob/614299ff83da9959fa07131c6d0ffbc58873b6ae/src/Compilers/Core/Portable/PEWriter/DebugSourceDocument.cs#L67
@@ -78,7 +59,7 @@ internal class DefaultDocumentWriter : DocumentWriter
                 // We only support algorithms that the debugger understands, which is currently SHA1 and SHA256.
 
                 string algorithmId;
-                var algorithm = Context.SourceDocument.Text.ChecksumAlgorithm;
+                var algorithm = _context.SourceDocument.Text.ChecksumAlgorithm;
                 if (algorithm == CodeAnalysis.Text.SourceHashAlgorithm.Sha256)
                 {
                     algorithmId = "{8829d00f-11b8-4213-878b-770e8597ac16}";
@@ -89,80 +70,76 @@ internal class DefaultDocumentWriter : DocumentWriter
                 }
                 else
                 {
-                    var supportedAlgorithms = string.Join(" ", new string[]
-                    {
-                        HashAlgorithmName.SHA1.Name,
-                        HashAlgorithmName.SHA256.Name
-                    });
+                    // CodeQL [SM02196] This is supported by the underlying Roslyn APIs and as consumers we must also support it.
+                    string?[] supportedAlgorithms = [HashAlgorithmName.SHA1.Name, HashAlgorithmName.SHA256.Name];
 
                     var message = Resources.FormatUnsupportedChecksumAlgorithm(
                         algorithm,
-                        supportedAlgorithms,
-                        nameof(RazorCodeGenerationOptions) + "." + nameof(RazorCodeGenerationOptions.SuppressChecksum),
+                        string.Join(" ", supportedAlgorithms),
+                        $"{nameof(RazorCodeGenerationOptions)}.{nameof(RazorCodeGenerationOptions.SuppressChecksum)}",
                         bool.TrueString);
+
                     throw new InvalidOperationException(message);
                 }
 
-                var sourceDocument = Context.SourceDocument;
+                var sourceDocument = _context.SourceDocument;
 
                 var checksum = ChecksumUtilities.BytesToString(sourceDocument.Text.GetChecksum());
-                if (!string.IsNullOrEmpty(checksum))
+                var filePath = sourceDocument.FilePath.AssumeNotNull();
+
+                if (checksum.Length > 0)
                 {
-                    Context.CodeWriter
-                        .Write("#pragma checksum \"")
-                        .Write(sourceDocument.FilePath)
-                        .Write("\" \"")
-                        .Write(algorithmId)
-                        .Write("\" \"")
-                        .Write(checksum)
-                        .WriteLine("\"");
+                    codeWriter.WriteLine($"#pragma checksum \"{filePath}\" \"{algorithmId}\" \"{checksum}\"");
                 }
             }
 
-            Context.CodeWriter
+            codeWriter
                 .WriteLine("// <auto-generated/>")
                 .WriteLine("#pragma warning disable 1591");
 
             VisitDefault(node);
 
-            Context.CodeWriter.WriteLine("#pragma warning restore 1591");
+            codeWriter.WriteLine("#pragma warning restore 1591");
         }
 
         public override void VisitUsingDirective(UsingDirectiveIntermediateNode node)
         {
-            Context.NodeWriter.WriteUsingDirective(Context, node);
+            NodeWriter.WriteUsingDirective(_context, node);
         }
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
         {
-            using (Context.CodeWriter.BuildNamespace(node.Content, node.Source, Context))
+            var codeWriter = CodeWriter;
+
+            using (codeWriter.BuildNamespace(node.Name, node.Source, _context))
             {
                 if (node.Children.OfType<UsingDirectiveIntermediateNode>().Any())
                 {
                     // Tooling needs at least one line directive before using directives, otherwise Roslyn will
                     // not offer to create a new one. The last using in the group will output a hidden line
                     // directive after itself.
-                    Context.CodeWriter.WriteLine("#line default");
+                    codeWriter.WriteLine("#line default");
                 }
                 else
                 {
                     // If there are no using directives, we output the hidden directive here.
-                    Context.CodeWriter.WriteLine("#line hidden");
+                    codeWriter.WriteLine("#line hidden");
                 }
+
                 VisitDefault(node);
             }
         }
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
-            using (Context.CodeWriter.BuildClassDeclaration(
+            using (CodeWriter.BuildClassDeclaration(
                 node.Modifiers,
-                node.ClassName,
+                node.Name,
                 node.BaseType,
                 node.Interfaces,
                 node.TypeParameters,
-                Context,
-                useNullableContext: !Context.Options.SuppressNullabilityEnforcement && node.Annotations[CommonAnnotations.NullableContext] is not null))
+                _context,
+                useNullableContext: !Options.SuppressNullabilityEnforcement && node.NullableContext))
             {
                 VisitDefault(node);
             }
@@ -170,100 +147,96 @@ internal class DefaultDocumentWriter : DocumentWriter
 
         public override void VisitMethodDeclaration(MethodDeclarationIntermediateNode node)
         {
-            Context.CodeWriter.WriteLine("#pragma warning disable 1998");
+            var writer = CodeWriter;
 
-            for (var i = 0; i < node.Modifiers.Count; i++)
+            writer.WriteLine("#pragma warning disable 1998");
+
+            foreach (var modifier in node.Modifiers)
             {
-                Context.CodeWriter.Write(node.Modifiers[i]);
-                Context.CodeWriter.Write(" ");
+                writer.Write($"{modifier} ");
             }
 
-            Context.CodeWriter.Write(node.ReturnType);
-            Context.CodeWriter.Write(" ");
+            writer.Write($"{node.ReturnType} {node.Name}(");
 
-            Context.CodeWriter.Write(node.MethodName);
-            Context.CodeWriter.Write("(");
+            var isFirst = true;
 
-            for (var i = 0; i < node.Parameters.Count; i++)
+            foreach (var parameter in node.Parameters)
             {
-                var parameter = node.Parameters[i];
-
-                for (var j = 0; j < parameter.Modifiers.Count; j++)
+                if (isFirst)
                 {
-                    Context.CodeWriter.Write(parameter.Modifiers[j]);
-                    Context.CodeWriter.Write(" ");
+                    isFirst = false;
+                }
+                else
+                {
+                    writer.Write(", ");
                 }
 
-                Context.CodeWriter.Write(parameter.TypeName);
-                Context.CodeWriter.Write(" ");
-
-                Context.CodeWriter.Write(parameter.ParameterName);
-
-                if (i < node.Parameters.Count - 1)
+                foreach (var modifier in parameter.Modifiers)
                 {
-                    Context.CodeWriter.Write(", ");
+                    writer.Write($"{modifier} ");
                 }
+
+                writer.Write($"{parameter.Type} {parameter.Name}");
             }
 
-            Context.CodeWriter.Write(")");
-            Context.CodeWriter.WriteLine();
+            writer.WriteLine(")");
 
-            using (Context.CodeWriter.BuildScope())
+            using (writer.BuildScope())
             {
                 VisitDefault(node);
             }
 
-            Context.CodeWriter.WriteLine("#pragma warning restore 1998");
+            writer.WriteLine("#pragma warning restore 1998");
         }
 
         public override void VisitFieldDeclaration(FieldDeclarationIntermediateNode node)
         {
-            Context.CodeWriter.WriteField(node.SuppressWarnings, node.Modifiers, node.FieldType, node.FieldName);
+            CodeWriter.WriteField(node.SuppressWarnings, node.Modifiers, node.Type, node.Name);
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
         {
-            Context.CodeWriter.WriteAutoPropertyDeclaration(node.Modifiers, node.PropertyType, node.PropertyName);
+            CodeWriter.WritePropertyDeclaration(node.Modifiers, node.Type, node.Name, node.ExpressionBody, _context);
         }
 
         public override void VisitExtension(ExtensionIntermediateNode node)
         {
-            node.WriteNode(_target, Context);
+            node.WriteNode(_codeTarget, _context);
         }
 
         public override void VisitCSharpExpression(CSharpExpressionIntermediateNode node)
         {
-            Context.NodeWriter.WriteCSharpExpression(Context, node);
+            NodeWriter.WriteCSharpExpression(_context, node);
         }
 
         public override void VisitCSharpCode(CSharpCodeIntermediateNode node)
         {
-            Context.NodeWriter.WriteCSharpCode(Context, node);
+            NodeWriter.WriteCSharpCode(_context, node);
         }
 
         public override void VisitHtmlAttribute(HtmlAttributeIntermediateNode node)
         {
-            Context.NodeWriter.WriteHtmlAttribute(Context, node);
+            NodeWriter.WriteHtmlAttribute(_context, node);
         }
 
         public override void VisitHtmlAttributeValue(HtmlAttributeValueIntermediateNode node)
         {
-            Context.NodeWriter.WriteHtmlAttributeValue(Context, node);
+            NodeWriter.WriteHtmlAttributeValue(_context, node);
         }
 
         public override void VisitCSharpExpressionAttributeValue(CSharpExpressionAttributeValueIntermediateNode node)
         {
-            Context.NodeWriter.WriteCSharpExpressionAttributeValue(Context, node);
+            NodeWriter.WriteCSharpExpressionAttributeValue(_context, node);
         }
 
         public override void VisitCSharpCodeAttributeValue(CSharpCodeAttributeValueIntermediateNode node)
         {
-            Context.NodeWriter.WriteCSharpCodeAttributeValue(Context, node);
+            NodeWriter.WriteCSharpCodeAttributeValue(_context, node);
         }
 
         public override void VisitHtml(HtmlContentIntermediateNode node)
         {
-            Context.NodeWriter.WriteHtmlContent(Context, node);
+            NodeWriter.WriteHtmlContent(_context, node);
         }
 
         public override void VisitTagHelper(TagHelperIntermediateNode node)
@@ -273,67 +246,67 @@ internal class DefaultDocumentWriter : DocumentWriter
 
         public override void VisitComponent(ComponentIntermediateNode node)
         {
-            Context.NodeWriter.WriteComponent(Context, node);
+            NodeWriter.WriteComponent(_context, node);
         }
 
         public override void VisitComponentAttribute(ComponentAttributeIntermediateNode node)
         {
-            Context.NodeWriter.WriteComponentAttribute(Context, node);
+            NodeWriter.WriteComponentAttribute(_context, node);
         }
 
         public override void VisitComponentChildContent(ComponentChildContentIntermediateNode node)
         {
-            Context.NodeWriter.WriteComponentChildContent(Context, node);
+            NodeWriter.WriteComponentChildContent(_context, node);
         }
 
         public override void VisitComponentTypeArgument(ComponentTypeArgumentIntermediateNode node)
         {
-            Context.NodeWriter.WriteComponentTypeArgument(Context, node);
+            NodeWriter.WriteComponentTypeArgument(_context, node);
         }
 
         public override void VisitComponentTypeInferenceMethod(ComponentTypeInferenceMethodIntermediateNode node)
         {
-            Context.NodeWriter.WriteComponentTypeInferenceMethod(Context, node);
+            NodeWriter.WriteComponentTypeInferenceMethod(_context, node);
         }
 
         public override void VisitMarkupElement(MarkupElementIntermediateNode node)
         {
-            Context.NodeWriter.WriteMarkupElement(Context, node);
+            NodeWriter.WriteMarkupElement(_context, node);
         }
 
         public override void VisitMarkupBlock(MarkupBlockIntermediateNode node)
         {
-            Context.NodeWriter.WriteMarkupBlock(Context, node);
+            NodeWriter.WriteMarkupBlock(_context, node);
         }
 
         public override void VisitReferenceCapture(ReferenceCaptureIntermediateNode node)
         {
-            Context.NodeWriter.WriteReferenceCapture(Context, node);
+            NodeWriter.WriteReferenceCapture(_context, node);
         }
 
         public override void VisitSetKey(SetKeyIntermediateNode node)
         {
-            Context.NodeWriter.WriteSetKey(Context, node);
+            NodeWriter.WriteSetKey(_context, node);
         }
 
         public override void VisitSplat(SplatIntermediateNode node)
         {
-            Context.NodeWriter.WriteSplat(Context, node);
+            NodeWriter.WriteSplat(_context, node);
         }
 
         public override void VisitRenderMode(RenderModeIntermediateNode node)
         {
-            Context.NodeWriter.WriteRenderMode(Context, node);
+            NodeWriter.WriteRenderMode(_context, node);
         }
 
         public override void VisitFormName(FormNameIntermediateNode node)
         {
-            Context.NodeWriter.WriteFormName(Context, node);
+            NodeWriter.WriteFormName(_context, node);
         }
 
         public override void VisitDefault(IntermediateNode node)
         {
-            Context.RenderChildren(node);
+            _context.RenderChildren(node);
         }
     }
 }

@@ -33,6 +33,7 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
     /// <param name="testHostManager">
     /// Test host manager for this operation.
     /// </param>
+    /// <param name="testHostManagerFramework">Framework of the testhost.</param>
     /// <param name="proxyDataCollectionManager">
     /// The proxy Data Collection Manager.
     /// </param>

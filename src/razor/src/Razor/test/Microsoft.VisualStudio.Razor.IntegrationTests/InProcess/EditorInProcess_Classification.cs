@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -20,8 +20,10 @@ internal partial class EditorInProcess
     /// </summary>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <param name="count">The number of the given classification to expect.</param>
+    /// <param name="exact">Whether to wait for exactly <paramref name="count"/> classifications.</param>
     /// <returns>A <see cref="Task"/> which completes when classification is "ready".</returns>
-    public Task WaitForComponentClassificationAsync(CancellationToken cancellationToken, int count = 1) => WaitForSemanticClassificationAsync("RazorComponentElement", cancellationToken, count);
+    public Task WaitForComponentClassificationAsync(CancellationToken cancellationToken, int count = 1, bool exact = false)
+        => WaitForSemanticClassificationAsync("RazorComponentElement", cancellationToken, count, exact);
 
     /// <summary>
     /// Waits for any semantic classifications to be available on the active TextView, and for at least one of the
@@ -30,8 +32,9 @@ internal partial class EditorInProcess
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <param name="expectedClassification">The classification to wait for, if any.</param>
     /// <param name="count">The number of the given classification to expect.</param>
+    /// <param name="exact">Whether to wait for exactly <paramref name="count"/> classifications.</param>
     /// <returns>A <see cref="Task"/> which completes when classification is "ready".</returns>
-    public async Task WaitForSemanticClassificationAsync(string expectedClassification, CancellationToken cancellationToken, int count = 1)
+    public async Task WaitForSemanticClassificationAsync(string expectedClassification, CancellationToken cancellationToken, int count = 1, bool exact = false)
     {
         var textView = await TestServices.Editor.GetActiveTextViewAsync(cancellationToken);
         var classifier = await GetClassifierAsync(textView, cancellationToken);
@@ -42,7 +45,7 @@ internal partial class EditorInProcess
         classifier.ClassificationChanged += Classifier_ClassificationChanged;
 
         // Check that we're not ALREADY changed
-        if (HasClassification(classifier, textView, expectedClassification, count))
+        if (HasClassification(classifier, textView, expectedClassification, count, exact))
         {
             semaphore.Release();
             classifier.ClassificationChanged -= Classifier_ClassificationChanged;
@@ -60,13 +63,13 @@ internal partial class EditorInProcess
 
         void Classifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e)
         {
-            if (HasClassification(classifier, textView, expectedClassification, count))
+            if (HasClassification(classifier, textView, expectedClassification, count, exact))
             {
                 semaphore.Release();
             }
         }
 
-        static bool HasClassification(IClassifier classifier, ITextView textView, string expectedClassification, int count)
+        static bool HasClassification(IClassifier classifier, ITextView textView, string expectedClassification, int count, bool exact)
         {
             var classifications = GetClassifications(classifier, textView);
 
@@ -80,7 +83,8 @@ internal partial class EditorInProcess
                 }
             }
 
-            return found >= count;
+            return found == count ||
+                (!exact && found > count);
         }
 
         static bool ClassificationMatches(string expectedClassification, IClassificationType classificationType)
@@ -119,19 +123,54 @@ internal partial class EditorInProcess
         Assert.Equal(expectedArray.Length, actualArray.Length);
     }
 
-    public async Task<IEnumerable<ClassificationSpan>> GetClassificationsAsync(CancellationToken cancellationToken)
+    public async Task<IList<ClassificationSpan>> GetClassificationsAsync(CancellationToken cancellationToken)
     {
         var textView = await GetActiveTextViewAsync(cancellationToken);
         var classifier = await GetClassifierAsync(textView, cancellationToken);
         return GetClassifications(classifier, textView);
     }
 
-    private static IEnumerable<ClassificationSpan> GetClassifications(IClassifier classifier, ITextView textView)
+    private static IList<ClassificationSpan> GetClassifications(IClassifier classifier, ITextView textView)
     {
         var selectionSpan = new SnapshotSpan(textView.TextSnapshot, new Span(0, textView.TextSnapshot.Length));
 
-        var classifiedSpans = classifier.GetClassificationSpans(selectionSpan);
-        return classifiedSpans;
+        return classifier.GetClassificationSpans(selectionSpan);
+    }
+
+    /// <summary>
+    /// Validates that we aren't seeing disco colors in the editor
+    /// </summary>
+    /// <remarks>
+    /// This actually just calls <see cref="GetClassificationsAsync(CancellationToken)"/> because we always check for disco colors
+    /// when getting classifications, but this makes for a more discoverable API.
+    /// </remarks>
+    public async Task ValidateNoDiscoColorsAsync(CancellationToken cancellationToken)
+    {
+        var classifiedSpans = await GetClassificationsAsync(cancellationToken);
+
+        ValidateNoDiscoColors(classifiedSpans);
+    }
+
+    private static void ValidateNoDiscoColors(IList<ClassificationSpan> classifiedSpans)
+    {
+        // We never expect a word to have a classification change in the middle of it, so we can check for disco colors
+        // by making sure that each span either doesn't start with a letter or digit, or comes after something that isn't
+        // a letter or digit.
+        SnapshotSpan? previousSpan = null;
+        foreach (var span in classifiedSpans)
+        {
+            if (span.Span.IsEmpty)
+            {
+                continue;
+            }
+
+            if (previousSpan is { } previous)
+            {
+                Assert.False(previous.End.Position == span.Span.Start.Position && char.IsLetterOrDigit(span.Span.Start.GetChar()) && char.IsLetterOrDigit((previous.End - 1).GetChar()), $"Disco colors detected: {previous.GetText()}{span.Span.GetText()} has classification {span.ClassificationType.Classification} starting at character {previous.Length}");
+            }
+
+            previousSpan = span.Span;
+        }
     }
 
     private async Task<IClassifier> GetClassifierAsync(IWpfTextView textView, CancellationToken cancellationToken)

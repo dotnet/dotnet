@@ -1,35 +1,19 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal interface IRazorProjectService
 {
-    void AddDocument(string filePath);
-    void OpenDocument(string filePath, SourceText sourceText, int version);
-    void UpdateDocument(string filePath, SourceText sourceText, int version);
-    void CloseDocument(string filePath);
-    void RemoveDocument(string filePath);
-
-    ProjectKey AddProject(
-        string filePath,
-        string intermediateOutputPath,
-        RazorConfiguration? configuration,
-        string? rootNamespace,
-        string? displayName = null);
-
-    void UpdateProject(
-        ProjectKey projectKey,
-        RazorConfiguration? configuration,
-        string? rootNamespace,
-        string displayName,
-        ProjectWorkspaceState projectWorkspaceState,
-        ImmutableArray<DocumentSnapshotHandle> documents);
+    Task AddDocumentsToMiscProjectAsync(ImmutableArray<string> filePaths, CancellationToken cancellationToken);
+    Task AddDocumentToMiscProjectAsync(string filePath, CancellationToken cancellationToken);
+    Task OpenDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken);
+    Task UpdateDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken);
+    Task CloseDocumentAsync(string filePath, CancellationToken cancellationToken);
+    Task RemoveDocumentAsync(string filePath, CancellationToken cancellationToken);
 }

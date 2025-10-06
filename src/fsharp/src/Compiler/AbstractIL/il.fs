@@ -54,10 +54,10 @@ type PrimaryAssembly =
     static member IsPossiblePrimaryAssembly(fileName: string) =
         let name = System.IO.Path.GetFileNameWithoutExtension(fileName)
 
-        String.Compare(name, "mscorlib", true) <> 0
-        || String.Compare(name, "System.Runtime", true) <> 0
-        || String.Compare(name, "netstandard", true) <> 0
-        || String.Compare(name, "System.Private.CoreLib", true) <> 0
+        String.Equals(name, "System.Runtime", StringComparison.OrdinalIgnoreCase)
+        || String.Equals(name, "mscorlib", StringComparison.OrdinalIgnoreCase)
+        || String.Equals(name, "netstandard", StringComparison.OrdinalIgnoreCase)
+        || String.Equals(name, "System.Private.CoreLib", StringComparison.OrdinalIgnoreCase)
 
 // --------------------------------------------------------------------
 // Utilities: type names
@@ -90,22 +90,24 @@ let rec splitNamespaceAux (nm: string) =
     | -1 -> [ nm ]
     | idx ->
         let s1, s2 = splitNameAt nm idx
-        let s1 = memoizeNamespacePartTable.GetOrAdd(s1, id)
+        let s1 = memoizeNamespacePartTable.GetOrAdd(s1, s1)
         s1 :: splitNamespaceAux s2
 
+// Cache this as a delegate.
+let splitNamespaceAuxDelegate = Func<string, string list> splitNamespaceAux
+
 let splitNamespace nm =
-    memoizeNamespaceTable.GetOrAdd(nm, splitNamespaceAux)
+    memoizeNamespaceTable.GetOrAdd(nm, splitNamespaceAuxDelegate)
 
 // ++GLOBAL MUTABLE STATE (concurrency-safe)
 let memoizeNamespaceArrayTable = ConcurrentDictionary<string, string[]>()
 
+// Cache this as a delegate.
+let splitNamespaceToArrayDelegate =
+    Func<string, string array>(splitNamespace >> Array.ofList)
+
 let splitNamespaceToArray nm =
-    memoizeNamespaceArrayTable.GetOrAdd(
-        nm,
-        fun nm ->
-            let x = Array.ofList (splitNamespace nm)
-            x
-    )
+    memoizeNamespaceArrayTable.GetOrAdd(nm, splitNamespaceToArrayDelegate)
 
 let splitILTypeName (nm: string) =
     match nm.LastIndexOf '.' with
@@ -156,15 +158,20 @@ let splitTypeNameRightAux (nm: string) =
         let s1, s2 = splitNameAt nm idx
         Some s1, s2
 
+// Cache this as a delegate.
+let splitTypeNameRightAuxDelegate =
+    Func<string, string option * string> splitTypeNameRightAux
+
 let splitTypeNameRight nm =
-    memoizeNamespaceRightTable.GetOrAdd(nm, splitTypeNameRightAux)
+    memoizeNamespaceRightTable.GetOrAdd(nm, splitTypeNameRightAuxDelegate)
 
 // --------------------------------------------------------------------
 // Ordered lists with a lookup table
 // --------------------------------------------------------------------
 
 /// This is used to store event, property and field maps.
-type LazyOrderedMultiMap<'Key, 'Data when 'Key: equality>(keyf: 'Data -> 'Key, lazyItems: InterruptibleLazy<'Data list>) =
+type LazyOrderedMultiMap<'Key, 'Data when 'Key: equality and 'Key: not null>(keyf: 'Data -> 'Key, lazyItems: InterruptibleLazy<'Data list>)
+    =
 
     let quickMap =
         lazyItems
@@ -471,11 +478,11 @@ type ILAssemblyRef(data) =
     override x.GetHashCode() = uniqueStamp
 
     override x.Equals yobj =
-        ((yobj :?> ILAssemblyRef).UniqueStamp = uniqueStamp)
+        ((!!yobj :?> ILAssemblyRef).UniqueStamp = uniqueStamp)
 
     interface IComparable with
         override x.CompareTo yobj =
-            compare (yobj :?> ILAssemblyRef).UniqueStamp uniqueStamp
+            compare (!!yobj :?> ILAssemblyRef).UniqueStamp uniqueStamp
 
     static member Create(name, hash, publicKey, retargetable, version, locale) =
         ILAssemblyRef
@@ -509,7 +516,12 @@ type ILAssemblyRef(data) =
 
         let retargetable = aname.Flags = AssemblyNameFlags.Retargetable
 
-        ILAssemblyRef.Create(aname.Name, None, publicKey, retargetable, version, locale)
+        let name =
+            match aname.Name with
+            | null -> aname.FullName
+            | name -> name
+
+        ILAssemblyRef.Create(name, None, publicKey, retargetable, version, locale)
 
     member aref.QualifiedName =
         let b = StringBuilder(100)
@@ -739,7 +751,7 @@ type ILTypeRef =
     override x.GetHashCode() = x.hashCode
 
     override x.Equals yobj =
-        let y = (yobj :?> ILTypeRef)
+        let y = (!!yobj :?> ILTypeRef)
 
         (x.ApproxId = y.ApproxId)
         && (x.Scope = y.Scope)
@@ -782,7 +794,7 @@ type ILTypeRef =
     interface IComparable with
 
         override x.CompareTo yobj =
-            let y = (yobj :?> ILTypeRef)
+            let y = (!!yobj :?> ILTypeRef)
             let c = compare x.ApproxId y.ApproxId
 
             if c <> 0 then
@@ -817,7 +829,7 @@ type ILTypeRef =
     member x.DebugText = x.ToString()
 
     /// For debugging
-    override x.ToString() = x.FullName
+    override x.ToString() : string = x.FullName
 
 and [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>] ILTypeSpec =
     {
@@ -869,7 +881,7 @@ and [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugT
         && (x.GenericArgs = y.GenericArgs)
 
     override x.ToString() =
-        x.TypeRef.ToString() + if isNil x.GenericArgs then "" else "<...>"
+        x.TypeRef.FullName + if isNil x.GenericArgs then "" else "<...>"
 
 and [<RequireQualifiedAccess; StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>] ILType =
     | Void
@@ -1011,8 +1023,9 @@ type ILMethodRef =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    override x.ToString() =
-        x.DeclaringTypeRef.ToString() + "::" + x.Name + "(...)"
+    member x.FullName = x.DeclaringTypeRef.FullName + "::" + x.Name + "(...)"
+
+    override x.ToString() = x.FullName
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILFieldRef =
@@ -1027,7 +1040,7 @@ type ILFieldRef =
     member x.DebugText = x.ToString()
 
     override x.ToString() =
-        x.DeclaringTypeRef.ToString() + "::" + x.Name
+        x.DeclaringTypeRef.FullName + "::" + x.Name
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILMethodSpec =
@@ -1066,7 +1079,7 @@ type ILMethodSpec =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    override x.ToString() = x.MethodRef.ToString() + "(...)"
+    override x.ToString() = x.MethodRef.FullName + "(...)"
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILFieldSpec =
@@ -1207,7 +1220,7 @@ type ILAttribute =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    override x.ToString() = x.Method.ToString() + "(...)"
+    override x.ToString() = x.Method.MethodRef.FullName
 
 [<NoEquality; NoComparison; Struct>]
 type ILAttributes(array: ILAttribute[]) =
@@ -1251,6 +1264,9 @@ let storeILCustomAttrs (attrs: ILAttributes) =
         emptyILCustomAttrsStored
     else
         ILAttributesStored.Given attrs
+
+let mkILCustomAttrsComputed f =
+    ILAttributesStored.Reader(fun _ -> f ())
 
 let mkILCustomAttrsReader f = ILAttributesStored.Reader f
 
@@ -1562,7 +1578,7 @@ type ILFieldInit =
         | ILFieldInit.UInt64 u64 -> box u64
         | ILFieldInit.Single ieee32 -> box ieee32
         | ILFieldInit.Double ieee64 -> box ieee64
-        | ILFieldInit.Null -> (null :> Object)
+        | ILFieldInit.Null -> (null :> objnull)
 
 // --------------------------------------------------------------------
 // Native Types, for marshalling to the native C interface.
@@ -1850,6 +1866,7 @@ type ILGenericParameterDef =
         HasReferenceTypeConstraint: bool
         HasNotNullableValueTypeConstraint: bool
         HasDefaultConstructorConstraint: bool
+        HasAllowsRefStruct: bool
         CustomAttrsStored: ILAttributesStored
         MetadataIndex: int32
     }
@@ -1892,6 +1909,31 @@ let inline conditionalAdd condition flagToAdd source =
         source &&& ~~~flagToAdd
 
 let NoMetadataIdx = -1
+
+type InterfaceImpl =
+    {
+        Idx: int
+        Type: ILType
+        mutable CustomAttrsStored: ILAttributesStored
+    }
+
+    member x.CustomAttrs =
+        match x.CustomAttrsStored with
+        | ILAttributesStored.Reader f ->
+            let res = ILAttributes(f x.Idx)
+            x.CustomAttrsStored <- ILAttributesStored.Given res
+            res
+        | ILAttributesStored.Given attrs -> attrs
+
+    static member Create(ilType: ILType, customAttrsStored: ILAttributesStored) =
+        {
+            Idx = NoMetadataIdx
+            Type = ilType
+            CustomAttrsStored = customAttrsStored
+        }
+
+    static member Create(ilType: ILType) =
+        InterfaceImpl.Create(ilType, emptyILCustomAttrsStored)
 
 [<NoComparison; NoEquality; StructuredFormatDisplay("{DebugText}")>]
 type ILMethodDef
@@ -2529,34 +2571,46 @@ let typeEncodingOfFlags flags =
     elif f = 0x00010000 then ILDefaultPInvokeEncoding.Unicode
     else ILDefaultPInvokeEncoding.Ansi
 
-[<RequireQualifiedAccess>]
-type ILTypeDefKind =
-    | Class
-    | ValueType
-    | Interface
-    | Enum
-    | Delegate
+[<Flags>]
+type ILTypeDefAdditionalFlags =
+    | Class = 1
+    | ValueType = 2
+    | Interface = 4
+    | Enum = 8
+    | Delegate = 16
+    | IsKnownToBeAttribute = 32
+    /// The type can contain extension methods,
+    /// or this information may not be available at the time the ILTypeDef is created
+    | CanContainExtensionMethods = 1024
+
+let internal typeKindFlags =
+    ILTypeDefAdditionalFlags.Class
+    ||| ILTypeDefAdditionalFlags.ValueType
+    ||| ILTypeDefAdditionalFlags.Interface
+    ||| ILTypeDefAdditionalFlags.Enum
+    ||| ILTypeDefAdditionalFlags.Delegate
+
+let inline internal resetTypeKind flags = flags &&& ~~~typeKindFlags
+
+let (|HasFlag|_|) (flag: ILTypeDefAdditionalFlags) flags = flags &&& flag = flag
+
+let inline typeKindByNames extendsName typeName =
+    match extendsName with
+    | "System.Enum" -> ILTypeDefAdditionalFlags.Enum
+    | "System.Delegate" when typeName <> "System.MulticastDelegate" -> ILTypeDefAdditionalFlags.Delegate
+    | "System.MulticastDelegate" -> ILTypeDefAdditionalFlags.Delegate
+    | "System.ValueType" when typeName <> "System.Enum" -> ILTypeDefAdditionalFlags.ValueType
+    | _ -> ILTypeDefAdditionalFlags.Class
 
 let typeKindOfFlags nm (super: ILType option) flags =
     if (flags &&& 0x00000020) <> 0x0 then
-        ILTypeDefKind.Interface
+        ILTypeDefAdditionalFlags.Interface
     else
         match super with
-        | None -> ILTypeDefKind.Class
+        | None -> ILTypeDefAdditionalFlags.Class
         | Some ty ->
             let name = ty.TypeSpec.Name
-
-            if name = "System.Enum" then
-                ILTypeDefKind.Enum
-            elif
-                (name = "System.Delegate" && nm <> "System.MulticastDelegate")
-                || name = "System.MulticastDelegate"
-            then
-                ILTypeDefKind.Delegate
-            elif name = "System.ValueType" && nm <> "System.Enum" then
-                ILTypeDefKind.ValueType
-            else
-                ILTypeDefKind.Class
+            typeKindByNames name nm
 
 let convertTypeAccessFlags access =
     match access with
@@ -2572,11 +2626,8 @@ let convertTypeAccessFlags access =
 
 let convertTypeKind kind =
     match kind with
-    | ILTypeDefKind.Class -> TypeAttributes.Class
-    | ILTypeDefKind.ValueType -> TypeAttributes.Class
-    | ILTypeDefKind.Interface -> TypeAttributes.Abstract ||| TypeAttributes.Interface
-    | ILTypeDefKind.Enum -> TypeAttributes.Class
-    | ILTypeDefKind.Delegate -> TypeAttributes.Class
+    | HasFlag ILTypeDefAdditionalFlags.Interface -> TypeAttributes.Abstract ||| TypeAttributes.Interface
+    | _ -> TypeAttributes.Class
 
 let convertLayout layout =
     match layout with
@@ -2605,22 +2656,24 @@ let convertInitSemantics (init: ILTypeInit) =
     | ILTypeInit.BeforeField -> TypeAttributes.BeforeFieldInit
     | ILTypeInit.OnAny -> enum 0
 
+let emptyILExtends = notlazy<ILType option> None
+
 [<NoComparison; NoEquality; StructuredFormatDisplay("{DebugText}")>]
 type ILTypeDef
     (
         name: string,
         attributes: TypeAttributes,
         layout: ILTypeDefLayout,
-        implements: ILTypes,
+        implements: InterruptibleLazy<InterfaceImpl list>,
         genericParams: ILGenericParameterDefs,
-        extends: ILType option,
+        extends: InterruptibleLazy<ILType option>,
         methods: ILMethodDefs,
         nestedTypes: ILTypeDefs,
         fields: ILFieldDefs,
         methodImpls: ILMethodImplDefs,
         events: ILEventDefs,
         properties: ILPropertyDefs,
-        isKnownToBeAttribute: bool,
+        additionalFlags: ILTypeDefAdditionalFlags,
         securityDeclsStored: ILSecurityDeclsStored,
         customAttrsStored: ILAttributesStored,
         metadataIndex: int32
@@ -2628,21 +2681,26 @@ type ILTypeDef
 
     let mutable customAttrsStored = customAttrsStored
 
-    new(name,
-        attributes,
-        layout,
-        implements,
-        genericParams,
-        extends,
-        methods,
-        nestedTypes,
-        fields,
-        methodImpls,
-        events,
-        properties,
-        isKnownToBeAttribute,
-        securityDecls,
-        customAttrs) =
+    let hasFlag flag = additionalFlags &&& flag = flag
+
+    new
+        (
+            name,
+            attributes,
+            layout,
+            implements,
+            genericParams,
+            extends,
+            methods,
+            nestedTypes,
+            fields,
+            methodImpls,
+            events,
+            properties,
+            additionalFlags,
+            securityDecls,
+            customAttrs
+        ) =
         ILTypeDef(
             name,
             attributes,
@@ -2656,9 +2714,49 @@ type ILTypeDef
             methodImpls,
             events,
             properties,
-            isKnownToBeAttribute,
+            additionalFlags,
             storeILSecurityDecls securityDecls,
-            storeILCustomAttrs customAttrs,
+            customAttrs,
+            NoMetadataIdx
+        )
+
+    new
+        (
+            name,
+            attributes,
+            layout,
+            implements,
+            genericParams,
+            extends,
+            methods,
+            nestedTypes,
+            fields,
+            methodImpls,
+            events,
+            properties,
+            securityDecls,
+            customAttrs
+        ) =
+        let additionalFlags =
+            ILTypeDefAdditionalFlags.CanContainExtensionMethods
+            ||| typeKindOfFlags name extends (int attributes)
+
+        ILTypeDef(
+            name,
+            attributes,
+            layout,
+            InterruptibleLazy.FromValue(implements),
+            genericParams,
+            InterruptibleLazy.FromValue(extends),
+            methods,
+            nestedTypes,
+            fields,
+            methodImpls,
+            events,
+            properties,
+            additionalFlags,
+            storeILSecurityDecls securityDecls,
+            customAttrs,
             NoMetadataIdx
         )
 
@@ -2688,7 +2786,10 @@ type ILTypeDef
 
     member _.Properties = properties
 
-    member _.IsKnownToBeAttribute = isKnownToBeAttribute
+    member _.IsKnownToBeAttribute = hasFlag ILTypeDefAdditionalFlags.IsKnownToBeAttribute
+
+    member _.CanContainExtensionMethods =
+        hasFlag ILTypeDefAdditionalFlags.CanContainExtensionMethods
 
     member _.CustomAttrsStored = customAttrsStored
 
@@ -2708,7 +2809,7 @@ type ILTypeDef
             ?methodImpls,
             ?events,
             ?properties,
-            ?isKnownToBeAttribute,
+            ?newAdditionalFlags,
             ?customAttrs,
             ?securityDecls
         ) =
@@ -2726,11 +2827,11 @@ type ILTypeDef
             methodImpls = defaultArg methodImpls x.MethodImpls,
             events = defaultArg events x.Events,
             properties = defaultArg properties x.Properties,
-            isKnownToBeAttribute = defaultArg isKnownToBeAttribute x.IsKnownToBeAttribute,
-            customAttrs = defaultArg customAttrs x.CustomAttrs
+            additionalFlags = defaultArg newAdditionalFlags additionalFlags,
+            customAttrs = defaultArg customAttrs (x.CustomAttrsStored)
         )
 
-    member x.CustomAttrs =
+    member x.CustomAttrs: ILAttributes =
         match customAttrsStored with
         | ILAttributesStored.Reader f ->
             let res = ILAttributes(f x.MetadataIndex)
@@ -2740,20 +2841,15 @@ type ILTypeDef
 
     member x.SecurityDecls = x.SecurityDeclsStored.GetSecurityDecls x.MetadataIndex
 
-    member x.IsClass =
-        (typeKindOfFlags x.Name x.Extends (int x.Attributes)) = ILTypeDefKind.Class
+    member x.IsClass = hasFlag ILTypeDefAdditionalFlags.Class
 
-    member x.IsStruct =
-        (typeKindOfFlags x.Name x.Extends (int x.Attributes)) = ILTypeDefKind.ValueType
+    member x.IsStruct = hasFlag ILTypeDefAdditionalFlags.ValueType
 
-    member x.IsInterface =
-        (typeKindOfFlags x.Name x.Extends (int x.Attributes)) = ILTypeDefKind.Interface
+    member x.IsInterface = hasFlag ILTypeDefAdditionalFlags.Interface
 
-    member x.IsEnum =
-        (typeKindOfFlags x.Name x.Extends (int x.Attributes)) = ILTypeDefKind.Enum
+    member x.IsEnum = hasFlag ILTypeDefAdditionalFlags.Enum
 
-    member x.IsDelegate =
-        (typeKindOfFlags x.Name x.Extends (int x.Attributes)) = ILTypeDefKind.Delegate
+    member x.IsDelegate = hasFlag ILTypeDefAdditionalFlags.Delegate
 
     member x.Access = typeAccessOfFlags (int x.Attributes)
     member x.IsAbstract = x.Attributes &&& TypeAttributes.Abstract <> enum 0
@@ -2804,9 +2900,10 @@ type ILTypeDef
     member x.WithKind(kind) =
         x.With(
             attributes = (x.Attributes ||| convertTypeKind kind),
+            newAdditionalFlags = (resetTypeKind additionalFlags ||| kind),
             extends =
                 match kind with
-                | ILTypeDefKind.Interface -> None
+                | HasFlag ILTypeDefAdditionalFlags.Interface -> emptyILExtends
                 | _ -> x.Extends
         )
 
@@ -2818,6 +2915,9 @@ type ILTypeDef
 
     member x.WithInitSemantics(init) =
         x.With(attributes = (x.Attributes ||| convertInitSemantics init))
+
+    member x.WithIsKnownToBeAttribute() =
+        x.With(newAdditionalFlags = (additionalFlags ||| ILTypeDefAdditionalFlags.IsKnownToBeAttribute))
 
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
@@ -2867,35 +2967,17 @@ and [<NoEquality; NoComparison>] ILPreTypeDef =
 
 /// This is a memory-critical class. Very many of these objects get allocated and held to represent the contents of .NET assemblies.
 and [<Sealed>] ILPreTypeDefImpl(nameSpace: string list, name: string, metadataIndex: int32, storage: ILTypeDefStored) =
-    let mutable store: ILTypeDef = Unchecked.defaultof<_>
-    let mutable storage = storage
+    let stored =
+        lazy
+            match storage with
+            | ILTypeDefStored.Given td -> td
+            | ILTypeDefStored.Computed f -> f ()
+            | ILTypeDefStored.Reader f -> f metadataIndex
 
     interface ILPreTypeDef with
         member _.Namespace = nameSpace
         member _.Name = name
-
-        member x.GetTypeDef() =
-            match box store with
-            | null ->
-                let syncObj = storage
-                Monitor.Enter(syncObj)
-
-                try
-                    match box store with
-                    | null ->
-                        let value =
-                            match storage with
-                            | ILTypeDefStored.Given td -> td
-                            | ILTypeDefStored.Computed f -> f ()
-                            | ILTypeDefStored.Reader f -> f metadataIndex
-
-                        store <- value
-                        storage <- Unchecked.defaultof<_>
-                        value
-                    | _ -> store
-                finally
-                    Monitor.Exit(syncObj)
-            | _ -> store
+        member x.GetTypeDef() = stored.Value
 
 and ILTypeDefStored =
     | Given of ILTypeDef
@@ -3248,6 +3330,7 @@ let mkILSimpleTypar nm =
         HasReferenceTypeConstraint = false
         HasNotNullableValueTypeConstraint = false
         HasDefaultConstructorConstraint = false
+        HasAllowsRefStruct = false
         CustomAttrsStored = storeILCustomAttrs emptyILCustomAttrs
         MetadataIndex = NoMetadataIdx
     }
@@ -3295,6 +3378,8 @@ let mkILTypeDefsFromArray (l: ILTypeDef[]) =
 let mkILTypeDefs l = mkILTypeDefsFromArray (Array.ofList l)
 let mkILTypeDefsComputed f = ILTypeDefs f
 let emptyILTypeDefs = mkILTypeDefsFromArray [||]
+
+let emptyILInterfaceImpls = InterruptibleLazy<InterfaceImpl list>.FromValue([])
 
 // --------------------------------------------------------------------
 // Operations on method tables.
@@ -3417,6 +3502,11 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     let mkSysILTypeRef nm = mkILTyRef (primaryScopeRef, nm)
 
+    let byteIlType = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Byte))
+
+    let stringIlType =
+        mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_String))
+
     member _.primaryAssemblyScopeRef = primaryScopeRef
 
     member x.primaryAssemblyRef =
@@ -3434,7 +3524,7 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     member val typ_Object = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_Object))
 
-    member val typ_String = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_String))
+    member val typ_String = stringIlType
 
     member val typ_Array = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_Array))
 
@@ -3448,7 +3538,11 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     member val typ_Int64 = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Int64))
 
-    member val typ_Byte = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Byte))
+    member val typ_Byte = byteIlType
+
+    member val typ_ByteArray = ILType.Array(ILArrayShape.SingleDimensional, byteIlType)
+
+    member val typ_StringArray = ILType.Array(ILArrayShape.SingleDimensional, stringIlType)
 
     member val typ_UInt16 = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_UInt16))
 
@@ -4018,18 +4112,49 @@ let prependInstrsToMethod newCode md =
 let cdef_cctorCode2CodeOrCreate tag imports f (cd: ILTypeDef) =
     let mdefs = cd.Methods
 
-    let cctor =
+    let cctor, renamedCctors =
         match mdefs.FindByName ".cctor" with
-        | [ mdef ] -> mdef
+        | [ mdef ] -> mdef, []
         | [] ->
             let body = mkMethodBody (false, [], 1, nonBranchingInstrsToCode [], tag, imports)
-            mkILClassCtor body
-        | _ -> failwith "bad method table: more than one .cctor found"
+            mkILClassCtor body, []
+        | multipleCctors ->
+            // Handle multiple .cctor methods by renaming them and creating a new .cctor that calls them
+            // This resolves the "duplicate entry '.cctor' in method table" error (FS2014)
+            let renamedCctors =
+                multipleCctors
+                |> List.mapi (fun i mdef ->
+                    let newName = sprintf "cctor_renamed_%d" i
+                    mdef.With(name = newName))
+
+            // Create call instructions for each renamed .cctor
+            // Use a simple self-referencing type
+            let currentTypeRef = mkILTyRef (ILScopeRef.Local, cd.Name)
+            let currentType = mkILNonGenericBoxedTy currentTypeRef
+
+            let callInstrs =
+                renamedCctors
+                |> List.map (fun mdef ->
+                    let mspec =
+                        mkILNonGenericStaticMethSpecInTy (currentType, mdef.Name, [], ILType.Void)
+
+                    mkNormalCall mspec)
+
+            // Create new .cctor that calls all renamed methods
+            let newCctorInstrs = callInstrs @ [ I_ret ]
+
+            let newCctorBody =
+                mkMethodBody (false, [], 8, nonBranchingInstrsToCode newCctorInstrs, tag, imports)
+
+            let newCctor = mkILClassCtor newCctorBody
+
+            newCctor, renamedCctors
 
     let methods =
         ILMethodDefs(fun () ->
             [|
                 yield f cctor
+                yield! renamedCctors
                 for md in mdefs do
                     if md.Name <> ".cctor" then
                         yield md
@@ -4168,14 +4293,31 @@ let mkILStorageCtorWithParamNames (preblock: ILInstr list, ty, extraParams, flds
             | Some x -> I_seqpoint x
             | None -> ()
             yield! preblock
-            for (n, (_pnm, nm, fieldTy)) in List.indexed flds do
+            for (n, (_pnm, nm, fieldTy, _attrs)) in List.indexed flds do
                 mkLdarg0
                 mkLdarg (uint16 (n + 1))
                 mkNormalStfld (mkILFieldSpecInTy (ty, nm, fieldTy))
         ]
 
     let body = mkMethodBody (false, [], 2, nonBranchingInstrsToCode code, tag, imports)
-    mkILCtor (access, (flds |> List.map (fun (pnm, _, ty) -> mkILParamNamed (pnm, ty))) @ extraParams, body)
+
+    let fieldParams =
+        [
+            for (pnm, _, ty, attrs) in flds do
+                let ilParam = mkILParamNamed (pnm, ty)
+
+                let ilParam =
+                    match attrs with
+                    | [] -> ilParam
+                    | attrs ->
+                        { ilParam with
+                            CustomAttrsStored = storeILCustomAttrs (mkILCustomAttrs attrs)
+                        }
+
+                yield ilParam
+        ]
+
+    mkILCtor (access, fieldParams @ extraParams, body)
 
 let mkILSimpleStorageCtorWithParamNames (baseTySpec, ty, extraParams, flds, access, tag, imports) =
     let preblock =
@@ -4186,7 +4328,7 @@ let mkILSimpleStorageCtorWithParamNames (baseTySpec, ty, extraParams, flds, acce
     mkILStorageCtorWithParamNames (preblock, ty, extraParams, flds, access, tag, imports)
 
 let addParamNames flds =
-    flds |> List.map (fun (nm, ty) -> (nm, nm, ty))
+    flds |> List.map (fun (nm, ty, attrs) -> (nm, nm, ty, attrs))
 
 let mkILSimpleStorageCtor (baseTySpec, ty, extraParams, flds, access, tag, imports) =
     mkILSimpleStorageCtorWithParamNames (baseTySpec, ty, extraParams, addParamNames flds, access, tag, imports)
@@ -4194,7 +4336,7 @@ let mkILSimpleStorageCtor (baseTySpec, ty, extraParams, flds, access, tag, impor
 let mkILStorageCtor (preblock, ty, flds, access, tag, imports) =
     mkILStorageCtorWithParamNames (preblock, ty, [], addParamNames flds, access, tag, imports)
 
-let mkILGenericClass (nm, access, genparams, extends, impl, methods, fields, nestedTypes, props, events, attrs, init) =
+let mkILGenericClass (nm, access, genparams, extends, impls, methods, fields, nestedTypes, props, events, attrs, init) =
     let attributes =
         convertTypeAccessFlags access
         ||| TypeAttributes.AutoLayout
@@ -4208,17 +4350,16 @@ let mkILGenericClass (nm, access, genparams, extends, impl, methods, fields, nes
         name = nm,
         attributes = attributes,
         genericParams = genparams,
-        implements = impl,
+        implements = impls,
         layout = ILTypeDefLayout.Auto,
         extends = Some extends,
         methods = methods,
         fields = fields,
         nestedTypes = nestedTypes,
-        customAttrs = attrs,
+        customAttrs = storeILCustomAttrs attrs,
         methodImpls = emptyILMethodImpls,
         properties = props,
         events = events,
-        isKnownToBeAttribute = false,
         securityDecls = emptyILSecurityDecls
     )
 
@@ -4238,11 +4379,10 @@ let mkRawDataValueTypeDef (iltyp_ValueType: ILType) (nm, size, pack) =
         methods = emptyILMethods,
         fields = emptyILFields,
         nestedTypes = emptyILTypeDefs,
-        customAttrs = emptyILCustomAttrs,
+        customAttrs = emptyILCustomAttrsStored,
         methodImpls = emptyILMethodImpls,
         properties = emptyILProperties,
         events = emptyILEvents,
-        isKnownToBeAttribute = false,
         securityDecls = emptyILSecurityDecls
     )
 
@@ -4358,7 +4498,7 @@ let buildILCode (_methName: string) lab2pc instrs tryspecs localspecs : ILCode =
 // Detecting Delegates
 // --------------------------------------------------------------------
 
-let mkILDelegateMethods access (ilg: ILGlobals) (iltyp_AsyncCallback, iltyp_IAsyncResult) (parms, rtv: ILReturn) =
+let mkILDelegateMethods access (ilg: ILGlobals) (iltyp_AsyncCallback, iltyp_IAsyncResult) (params_, rtv: ILReturn) =
     let retTy = rtv.Type
 
     let one nm args ret =
@@ -4381,10 +4521,10 @@ let mkILDelegateMethods access (ilg: ILGlobals) (iltyp_AsyncCallback, iltyp_IAsy
 
     [
         ctor
-        one "Invoke" parms retTy
+        one "Invoke" params_ retTy
         one
             "BeginInvoke"
-            (parms
+            (params_
              @ [
                  mkILParamNamed ("callback", iltyp_AsyncCallback)
                  mkILParamNamed ("objects", ilg.typ_Object)
@@ -5538,8 +5678,8 @@ and refsOfILMethodImpl s m =
 and refsOfILTypeDef s (td: ILTypeDef) =
     refsOfILTypeDefs s td.NestedTypes
     refsOfILGenericParams s td.GenericParams
-    refsOfILTypes s td.Implements
-    Option.iter (refsOfILType s) td.Extends
+    refsOfILTypes s (td.Implements.Value |> List.map _.Type)
+    Option.iter (refsOfILType s) td.Extends.Value
     refsOfILMethodDefs s td.Methods
     refsOfILFieldDefs s (td.Fields.AsList())
     refsOfILMethodImpls s (td.MethodImpls.AsList())
@@ -5642,6 +5782,7 @@ let resolveILMethodRefWithRescope r (td: ILTypeDef) (mref: ILMethodRef) =
             mref.CallingConv = md.CallingConv
             && (md.Parameters, argTypes)
                ||> List.lengthsEqAndForall2 (fun p1 p2 -> r p1.Type = p2)
+            && md.GenericParams.Length = mref.GenericArity
             &&
             // REVIEW: this uses equality on ILType. For CMOD_OPTIONAL this is not going to be correct
             r md.Return.Type = retType)

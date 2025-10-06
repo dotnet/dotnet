@@ -28,7 +28,7 @@
                                     CSharpStatementLiteral - [16..46)::30 - [foreach(var p in Products) {LF] - Gen<Stmt>
                                         Keyword;[foreach];
                                         LeftParenthesis;[(];
-                                        Identifier;[var];
+                                        Keyword;[var];
                                         Whitespace;[ ];
                                         Identifier;[p];
                                         Whitespace;[ ];

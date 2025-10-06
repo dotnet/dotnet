@@ -1,11 +1,13 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System.CommandLine.Completions;
 using System.CommandLine.Help;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Xunit;
 using static System.Environment;
 
@@ -13,21 +15,21 @@ namespace System.CommandLine.Tests
 {
     public class SuggestDirectiveTests
     {
-        protected CliOption _fruitOption;
+        protected Option _fruitOption;
 
-        protected CliOption _vegetableOption;
+        protected Option _vegetableOption;
 
-        private readonly CliCommand _eatCommand;
+        private readonly Command _eatCommand;
 
         public SuggestDirectiveTests()
         {
-            _fruitOption = new CliOption<string>("--fruit");
+            _fruitOption = new Option<string>("--fruit");
             _fruitOption.CompletionSources.Add("apple", "banana", "cherry");
 
-            _vegetableOption = new CliOption<string>("--vegetable");
+            _vegetableOption = new Option<string>("--vegetable");
             _vegetableOption.CompletionSources.Add(_ => new[] { "asparagus", "broccoli", "carrot" });
 
-            _eatCommand = new CliCommand("eat")
+            _eatCommand = new Command("eat")
             {
                 _fruitOption,
                 _vegetableOption
@@ -37,21 +39,18 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_option_arguments_when_under_subcommand()
         {
-            CliRootCommand rootCommand = new()
+            RootCommand rootCommand = new()
             {
                 _eatCommand,
                 new SuggestDirective()
             };
-            CliConfiguration config = new(rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output= new StringWriter();
 
-            var result = rootCommand.Parse("[suggest:13] \"eat --fruit\"", config);
+            var result = rootCommand.Parse("[suggest:13] \"eat --fruit\"");
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
+            output
                    .ToString()
                    .Should()
                    .Be($"apple{NewLine}banana{NewLine}cherry{NewLine}");
@@ -60,24 +59,21 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_option_arguments_when_under_root_command()
         {
-            CliRootCommand rootCommand = new ()
+            RootCommand rootCommand = new()
             {
                 _fruitOption,
                 _vegetableOption
             };
-            CliConfiguration config = new (rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse($"[suggest:8] \"--fruit\"", config);
+            var result = rootCommand.Parse($"[suggest:8] \"--fruit\"");
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"apple{NewLine}banana{NewLine}cherry{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"apple{NewLine}banana{NewLine}cherry{NewLine}");
         }
 
         [Theory]
@@ -85,22 +81,19 @@ namespace System.CommandLine.Tests
         [InlineData("[suggest:6] \"eat --\"", new[] { "--fruit", "--help", "--vegetable" })]
         public async Task It_writes_suggestions_for_option_aliases_under_subcommand(string commandLine, string[] expectedCompletions)
         {
-            CliRootCommand rootCommand = new() { _eatCommand };
-            CliConfiguration config = new(rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            RootCommand rootCommand = new() { _eatCommand };
+            
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse(commandLine, config);
+            var result = rootCommand.Parse(commandLine);
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
             string expected = string.Join(NewLine, expectedCompletions) + NewLine;
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be(expected);
+            output.ToString()
+                  .Should()
+                  .Be(expected);
         }
 
         [Theory]
@@ -110,158 +103,138 @@ namespace System.CommandLine.Tests
         [InlineData("[suggest:0] ")]
         public async Task It_writes_suggestions_for_option_aliases_under_root_command(string input)
         {
-            CliRootCommand rootCommand = new()
+            RootCommand rootCommand = new()
             {
                 _vegetableOption,
                 _fruitOption
             };
-            CliConfiguration config = new(rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse(input, config);
-            await result.InvokeAsync();
+            await rootCommand.Parse(input).InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"--fruit{NewLine}--help{NewLine}--vegetable{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"--fruit{NewLine}--help{NewLine}--vegetable{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_subcommand_aliases_under_root_command()
         {
-            CliRootCommand rootCommand = new()
+            RootCommand rootCommand = new()
             {
                 _eatCommand
             };
-            CliConfiguration config = new(rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse("[suggest]", config);
-            await result.InvokeAsync();
+            var result = rootCommand.Parse("[suggest]");
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"--help{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}eat{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"--help{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}eat{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_aliases_under_root_command()
         {
-            CliRootCommand rootCommand = new()
+            RootCommand rootCommand = new()
             {
                 _fruitOption,
                 _vegetableOption
             };
-            CliConfiguration config = new (rootCommand)
-            {
-                Output = new StringWriter(),
-            };
+            
+             var output = new StringWriter();
 
-            var result = rootCommand.Parse("[suggest:1] \"f\"", config);
+            var result = rootCommand.Parse("[suggest:1] \"f\"");
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"--fruit{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"--fruit{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_partial_subcommand_aliases_under_root_command()
         {
-            CliRootCommand rootCommand = new ()
+            RootCommand rootCommand = new ()
             {
                 _eatCommand,
-                new CliCommand("wash-dishes")
+                new Command("wash-dishes")
             };
-            CliConfiguration config = new (rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse("[suggest:1] \"d\"", config);
+            var result = rootCommand.Parse("[suggest:1] \"d\"");
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"wash-dishes{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"wash-dishes{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_and_subcommand_aliases_under_root_command()
         {
-            CliRootCommand rootCommand = new ()
+            RootCommand rootCommand = new ()
             {
                 _eatCommand,
-                new CliCommand("wash-dishes"),
+                new Command("wash-dishes"),
             };
-            CliConfiguration config = new (rootCommand)
-            {
-                Output = new StringWriter()
-            };
+            var output = new StringWriter();
 
-            var result = rootCommand.Parse("[suggest:5] \"--ver\"", config);
+            var result = rootCommand.Parse("[suggest:5] \"--ver\"");
 
-            await result.InvokeAsync();
+            await result.InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"--version{NewLine}");
+            output
+                .ToString()
+                .Should()
+                .Be($"--version{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_and_subcommand_aliases_under_root_command_with_an_argument()
         {
-            CliRootCommand command = new("parent")
+            RootCommand command = new("parent")
             {
-                new CliCommand("child"),
-                new CliOption<bool>("--option1"),
-                new CliOption<bool>("--option2"),
-                new CliArgument<string>("arg")
-            };
-            CliConfiguration config = new (command)
-            {
-                Output = new StringWriter()
+                new Command("child"),
+                new Option<bool>("--option1"),
+                new Option<bool>("--option2"),
+                new Argument<string>("arg")
             };
 
-            await config.InvokeAsync("[suggest:3] \"opt\"");
+            var output = new StringWriter();
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .Be($"--option1{NewLine}--option2{NewLine}");
+            await command.Parse("[suggest:3] \"opt\"").InvokeAsync(new() { Output = output }, CancellationToken.None);
+
+            output.ToString()
+                  .Should()
+                  .Be($"--option1{NewLine}--option2{NewLine}");
         }
 
         [Fact]
         public async Task It_does_not_repeat_suggestion_for_already_specified_bool_option()
         {
-            var command = new CliRootCommand
+            var command = new RootCommand
             {
-                new CliOption<bool>("--bool-option")
+                new Option<bool>("--bool-option")
             };
-            CliConfiguration config = new (command)
-            {
-                Output = new StringWriter()
-            };
+
+            var output = new StringWriter();
 
             var commandLine = "--bool-option false";
 
-            await command.Parse($"[suggest:{commandLine.Length + 1}] \"{commandLine}\"", config).InvokeAsync();
+            await command.Parse($"[suggest:{commandLine.Length + 1}] \"{commandLine}\"").InvokeAsync(new() { Output = output }, CancellationToken.None);
 
-            config.Output
-                   .ToString()
-                   .Should()
-                   .NotContain("--bool-option");
+            output
+                .ToString()
+                .Should()
+                .NotContain("--bool-option");
         }
     }
 }

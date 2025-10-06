@@ -21,7 +21,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.ProjectKind, actualResult.ProjectKind);
         }
 
-        public static TheoryData IProjectContextInfos => new TheoryData<IProjectContextInfo>
+        public static TheoryData<IProjectContextInfo> IProjectContextInfos => new()
             {
                 { new ProjectContextInfo(ProjectId, ProjectModel.ProjectStyle.PackageReference, NuGetProjectKind.PackageReference) }
             };

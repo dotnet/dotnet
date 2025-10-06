@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.CodeAnalysis.CSharp;
@@ -78,7 +76,7 @@ namespace Test
 }
 ");
 
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
 
     internal override bool UseTwoPhaseCompilation => true;
 
@@ -93,7 +91,7 @@ namespace Test
 <GenericContext />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id, diagnostic.Id);
         Assert.Equal("""
             The type of component 'GenericContext' cannot be inferred based on the values provided. Consider specifying the type arguments directly using the following attributes: 'TItem'.
@@ -112,7 +110,7 @@ namespace Test
 <MultipleGenericParameter TItem1=int />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.GenericComponentMissingTypeArgument.Id, diagnostic.Id);
         Assert.Equal("""
             The component 'MultipleGenericParameter' is missing required type arguments. Specify the missing types using the attributes: 'TItem2', 'TItem3'.

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -25,8 +23,7 @@ internal sealed class EliminateMethodBodyPass : IntermediateNodePassBase, IRazor
             throw new ArgumentNullException(nameof(documentNode));
         }
 
-        var codeGenerationOptions = codeDocument.GetCodeGenerationOptions();
-        if (codeGenerationOptions == null || !codeGenerationOptions.SuppressPrimaryMethodBody)
+        if (!codeDocument.CodeGenerationOptions.SuppressPrimaryMethodBody)
         {
             return;
         }
@@ -45,28 +42,16 @@ internal sealed class EliminateMethodBodyPass : IntermediateNodePassBase, IRazor
         documentNode.Children.Insert(documentNode.Children.IndexOf(documentNode.FindPrimaryNamespace()), new CSharpCodeIntermediateNode()
         {
             Children =
-                {
-                    // Field is assigned but never used
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0414" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
+            {
+                // Field is assigned but never used
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0414" + Environment.NewLine),
 
-                    // Field is never assigned
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0649" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
+                // Field is never assigned
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0649" + Environment.NewLine),
 
-                    // Field is never used
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0169" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
-                },
+                // Field is never used
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0169" + Environment.NewLine)
+            }
         });
     }
 }

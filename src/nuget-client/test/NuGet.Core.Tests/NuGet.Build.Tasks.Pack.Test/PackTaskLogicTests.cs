@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using NuGet.Commands;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -14,12 +13,35 @@ using Xunit;
 
 namespace NuGet.Build.Tasks.Pack.Test
 {
+    /*
+       This test uses the ...\NuGet.Build.Tasks.Pack.Test\compiler\resources\json.assets.project file which is written to disk as project.assets.json when each test is run.
+       To regenerate that file, create a project with these contents:
+
+    <Project Sdk="Microsoft.NET.Sdk">
+      <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <CentralPackageVersionsFileImported>true</CentralPackageVersionsFileImported>
+        <ImportDirectoryPackagesProps>false</ImportDirectoryPackagesProps>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json.Bson" />
+      </ItemGroup>
+      <ItemGroup>
+        <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageVersion Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+      </ItemGroup>
+    </Project>
+
+    */
+
     public class PackTaskLogicTests
     {
+
         [Fact]
         public void PackTaskLogic_ProducesBasicPackage()
         {
-            // This test uses the ...\NuGet.Build.Tasks.Pack.Test\compiler\resources\project.assets.json assets file.
             // Arrange
             using (var testDir = TestDirectory.Create())
             {
@@ -54,12 +76,11 @@ namespace NuGet.Build.Tasks.Pack.Test
                     var dependencyGroupFramework = dependencyGroup.TargetFramework.Framework;
                     var dependentPackages = dependencyGroup.Packages.ToList();
                     var centralTransitiveDependentPackage = dependentPackages
-                        .Where(p => p.Id.Equals("Newtonsoft.Json", StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
+                        .FirstOrDefault(p => p.Id.Equals("Newtonsoft.Json", StringComparison.OrdinalIgnoreCase));
                     Assert.Equal(1, dependencyGroups.Count);
                     Assert.Equal(".NETStandard", dependencyGroupFramework);
                     Assert.NotNull(centralTransitiveDependentPackage);
-                    Assert.Equal(new List<string> { "Analyzers", "Build", "Runtime" }, centralTransitiveDependentPackage.Exclude);
+                    Assert.Equal(new List<string> { "Analyzers", "Build" }, centralTransitiveDependentPackage.Exclude);
                 }
             }
         }
@@ -782,8 +803,8 @@ namespace NuGet.Build.Tasks.Pack.Test
                 Directory.CreateDirectory(dllDir);
                 Directory.CreateDirectory(Path.Combine(testDir, "obj"));
                 File.WriteAllBytes(dllPath, new byte[0]);
-                var path = string.Join(".", typeof(PackTaskLogicTests).Namespace, "compiler.resources", "project.assets.json");
-                using (var reader = new StreamReader(GetType().GetTypeInfo().Assembly.GetManifestResourceStream(path)))
+                var path = string.Join(".", typeof(PackTaskLogicTests).Namespace, "compiler.resources", "json.assets.project");
+                using (var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream(path)))
                 {
                     var contents = reader.ReadToEnd();
                     File.WriteAllText(Path.Combine(testDir, "obj", "project.assets.json"), contents);

@@ -3,8 +3,6 @@
 
 #nullable disable
 
-using System.Collections.Generic;
-
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal sealed partial class MarkupMinimizedTagHelperAttributeSyntax
@@ -22,12 +20,7 @@ internal sealed partial class MarkupMinimizedTagHelperAttributeSyntax
 
     public MarkupMinimizedTagHelperAttributeSyntax WithTagHelperAttributeInfo(TagHelperAttributeInfo info)
     {
-        var annotations = new List<SyntaxAnnotation>(GetAnnotations())
-            {
-                new SyntaxAnnotation(TagHelperAttributeInfoKey, info)
-            };
-
-        var newGreen = Green.WithAnnotationsGreen(annotations.ToArray());
+        var newGreen = Green.WithAnnotationsGreen([.. GetAnnotations(), new(TagHelperAttributeInfoKey, info)]);
 
         return (MarkupMinimizedTagHelperAttributeSyntax)newGreen.CreateRed(Parent, Position);
     }

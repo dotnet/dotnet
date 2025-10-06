@@ -2,7 +2,7 @@ SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/RangeOfAttributeShouldBeIncludedInSynValSpfnAndMember.fsi",
       QualifiedNameOfFile RangeOfAttributeShouldBeIncludedInSynValSpfnAndMember,
-      [], [],
+      [],
       [SynModuleOrNamespaceSig
          ([SomeNamespace], false, DeclaredNamespace,
           [Types
@@ -27,7 +27,7 @@ SigFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (5,4--6,20),
+                            Single None, None, (5,4--6,20),
                             { LeadingKeyword = Abstract (6,4--6,12)
                               InlineKeyword = None
                               WithKeyword = None
@@ -45,4 +45,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--6,20),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [LineComment (5,13--5,23)] }, set []))

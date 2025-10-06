@@ -76,6 +76,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
     /// <param name="criteria">The test session criteria.</param>
     /// <param name="maxTesthostCount">The testhost count.</param>
     /// <param name="proxyCreator">The proxy creator.</param>
+    /// <param name="runtimeProviders">Runtime providers.</param>
     public ProxyTestSessionManager(
         StartTestSessionCriteria criteria,
         int maxTesthostCount,

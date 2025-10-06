@@ -41,9 +41,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -63,10 +61,11 @@ namespace Test
         // here and then ignoring them.
         Assert.Empty(component.Diagnostics);
         Assert.False(component.HasErrors);
-        Assert.Equal(ComponentMetadata.Component.TagHelperKind, component.Kind);
+        Assert.Equal(TagHelperKind.Component, component.Kind);
+        Assert.Equal(RuntimeKind.IComponent, component.RuntimeKind);
         Assert.False(component.IsDefaultKind());
         Assert.False(component.KindUsesDefaultTagHelperRuntime());
-        Assert.True(component.IsComponentOrChildContentTagHelper);
+        Assert.True(component.IsComponentOrChildContentTagHelper());
         Assert.True(component.CaseSensitive);
 
         // No documentation in this test
@@ -76,7 +75,9 @@ namespace Test
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
         Assert.Equal("Test.MyComponent", component.DisplayName);
-        Assert.Equal("Test.MyComponent", component.GetTypeName());
+        Assert.Equal("Test.MyComponent", component.TypeName);
+        Assert.Equal("Test", component.TypeNamespace);
+        Assert.Equal("MyComponent", component.TypeNameIdentifier);
 
         // Our use of matching rules is also very simple, and derived from the name. Verifying
         // it once in detail here and then ignoring it.
@@ -88,15 +89,6 @@ namespace Test
         Assert.Equal("MyComponent", rule.TagName);
         Assert.Equal(TagStructure.Unspecified, rule.TagStructure);
 
-        // Our use of metadata is also (for now) an invariant for all Components - other than the type name
-        // which is trivial. Verifying it once in detail and then ignoring it.
-        Assert.Collection(
-            component.Metadata.OrderBy(kvp => kvp.Key),
-            kvp => { Assert.Equal(TagHelperMetadata.Common.TypeName, kvp.Key); Assert.Equal("Test.MyComponent", kvp.Value); },
-            kvp => { Assert.Equal(TagHelperMetadata.Common.TypeNameIdentifier, kvp.Key); Assert.Equal("MyComponent", kvp.Value); },
-            kvp => { Assert.Equal(TagHelperMetadata.Common.TypeNamespace, kvp.Key); Assert.Equal("Test", kvp.Value); },
-            kvp => { Assert.Equal(TagHelperMetadata.Runtime.Name, kvp.Key); Assert.Equal("Components.IComponent", kvp.Value); });
-
         // Our use of bound attributes is what tests will focus on. As you might expect right now, this test
         // is going to cover a lot of trivial stuff that will be true for all components/component-properties.
         var attribute = Assert.Single(component.BoundAttributes);
@@ -104,7 +96,7 @@ namespace Test
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal("Components.Component", attribute.Kind);
+        Assert.Equal(TagHelperKind.Component, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
 
         // Related to dictionaries/indexers, not supported currently, not sure if we ever will
@@ -120,7 +112,7 @@ namespace Test
 
         // Names are trivially derived from the property name
         Assert.Equal("MyProperty", attribute.Name);
-        Assert.Equal("MyProperty", attribute.GetPropertyName());
+        Assert.Equal("MyProperty", attribute.PropertyName);
         Assert.Equal("string Test.MyComponent.MyProperty", attribute.DisplayName);
 
         // Defined from the property type
@@ -128,13 +120,7 @@ namespace Test
         Assert.True(attribute.IsStringProperty);
         Assert.False(attribute.IsBooleanProperty);
         Assert.False(attribute.IsEnum);
-
-        // Our use of metadata is also (for now) an invariant for all Component properties - other than the type name
-        // which is trivial. Verifying it once in detail and then ignoring it.
-        Assert.Collection(
-            attribute.Metadata.OrderBy(kvp => kvp.Key),
-            kvp => { Assert.Equal(TagHelperMetadata.Common.GloballyQualifiedTypeName, kvp.Key); Assert.Equal("global::System.String", kvp.Value); },
-            kvp => { Assert.Equal(TagHelperMetadata.Common.PropertyName, kvp.Key); Assert.Equal("MyProperty", kvp.Value); });
+        Assert.Equal("global::System.String", attribute.GetGloballyQualifiedTypeName());
     }
 
     [Fact]
@@ -166,9 +152,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -182,7 +166,7 @@ namespace Test
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
         Assert.Equal("Test.MyComponent<T>", component.DisplayName);
-        Assert.Equal("Test.MyComponent<T>", component.GetTypeName());
+        Assert.Equal("Test.MyComponent<T>", component.TypeName);
 
         Assert.True(component.IsGenericTypedComponent());
 
@@ -194,7 +178,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("MyProperty", a.Name);
-                Assert.Equal("MyProperty", a.GetPropertyName());
+                Assert.Equal("MyProperty", a.PropertyName);
                 Assert.Equal("string Test.MyComponent<T>.MyProperty", a.DisplayName);
                 Assert.Equal("System.String", a.TypeName);
 
@@ -202,7 +186,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
@@ -230,9 +214,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -272,9 +254,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -312,9 +292,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -352,9 +330,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -405,9 +381,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -453,9 +427,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -501,9 +473,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -522,7 +492,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("MyProperty", a.Name);
-                Assert.Equal("MyProperty", a.GetPropertyName());
+                Assert.Equal("MyProperty", a.PropertyName);
                 Assert.Equal("T Test.MyComponent<T>.MyProperty", a.DisplayName);
                 Assert.Equal("T", a.TypeName);
                 Assert.True(a.IsGenericTypedProperty());
@@ -531,7 +501,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
@@ -565,9 +535,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -640,9 +608,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -690,9 +656,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -724,7 +688,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
@@ -752,9 +716,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -803,9 +765,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -858,9 +818,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -893,7 +851,7 @@ namespace Test
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
@@ -921,9 +879,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -932,7 +888,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -949,7 +905,7 @@ namespace Test
         Assert.True(attribute.IsChildContentProperty());
         Assert.False(attribute.IsParameterizedChildContentProperty());
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
@@ -978,9 +934,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -989,7 +943,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1006,24 +960,24 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.False(a.IsGenericTypedProperty());
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
         Assert.True(contextAttribute.IsChildContentParameterNameProperty());
@@ -1053,9 +1007,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1064,7 +1016,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1081,24 +1033,24 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.False(a.IsGenericTypedProperty());
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.False(a.IsChildContentParameterNameProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
         Assert.True(contextAttribute.IsChildContentParameterNameProperty());
@@ -1125,9 +1077,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1136,7 +1086,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1153,33 +1103,33 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.True(a.IsGenericTypedProperty());
 
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             },
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
         Assert.True(contextAttribute.IsChildContentParameterNameProperty());
@@ -1207,9 +1157,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1218,7 +1166,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1235,33 +1183,33 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.False(a.IsGenericTypedProperty());
 
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             },
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
         Assert.True(contextAttribute.IsChildContentParameterNameProperty());
@@ -1289,9 +1237,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1300,7 +1246,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1317,33 +1263,33 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.True(a.IsGenericTypedProperty());
 
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             },
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
         Assert.True(contextAttribute.IsChildContentParameterNameProperty());
@@ -1375,9 +1321,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1386,7 +1330,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1403,33 +1347,33 @@ namespace Test
                 Assert.False(a.IsEnum);
                 Assert.False(a.IsStringProperty);
                 Assert.False(a.IsDelegateProperty()); // We treat RenderFragment as separate from generalized delegates
-                    Assert.True(a.IsChildContentProperty());
+                Assert.True(a.IsChildContentProperty());
                 Assert.True(a.IsParameterizedChildContentProperty());
                 Assert.True(a.IsGenericTypedProperty());
 
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             },
             a =>
             {
                 Assert.Equal("T", a.Name);
-                Assert.Equal("T", a.GetPropertyName());
+                Assert.Equal("T", a.PropertyName);
                 Assert.Equal("T", a.DisplayName);
                 Assert.Equal("System.Type", a.TypeName);
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
+        var childContent = Assert.Single(components, c => c.Kind == TagHelperKind.ChildContent);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
 
         // A RenderFragment<T> tag helper has a parameter to allow you to set the lambda parameter name.
         var contextAttribute = Assert.Single(childContent.BoundAttributes);
-        Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, contextAttribute.Name);
+        Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, contextAttribute.Name);
         Assert.Equal("System.String", contextAttribute.TypeName);
         Assert.Equal("Specifies the parameter name for the 'ChildContent2' child content expression.", contextAttribute.Documentation);
     }
@@ -1461,9 +1405,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1472,7 +1414,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 4);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1487,7 +1429,7 @@ namespace Test
             },
             a =>
             {
-                Assert.Equal(ComponentMetadata.ChildContent.ParameterAttributeName, a.Name);
+                Assert.Equal(ComponentHelpers.ChildContent.ParameterAttributeName, a.Name);
                 Assert.True(a.IsChildContentParameterNameProperty());
             },
             a =>
@@ -1504,7 +1446,7 @@ namespace Test
             });
 
 
-        var childContents = components.Where(c => c.IsChildContentTagHelper).OrderBy(c => c.Name);
+        var childContents = components.Where(c => c.Kind == TagHelperKind.ChildContent).OrderBy(c => c.Name);
         Assert.Collection(
             childContents,
             c => Assert.Equal("Test.MyComponent.ChildContent", c.Name),
@@ -1553,9 +1495,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1609,9 +1549,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1620,7 +1558,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 1);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper);
+        var component = Assert.Single(components, c => c.Kind == TagHelperKind.Component);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyDerivedComponent2", component.Name);
@@ -1669,9 +1607,10 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-        context.Items.SetTargetSymbol((IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(compilation.References.First(r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll"))));
+        var targetAssembly = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
+            compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test")));
+
+        var context = new TagHelperDescriptorProviderContext(compilation, targetAssembly);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1680,8 +1619,8 @@ namespace Test
         // Assert
         Assert.NotNull(compilation.GetTypeByMetadataName(testComponent));
         Assert.Empty(context.Results); // Target assembly contains no components
-        Assert.Empty(context.Results.Where(f => f.GetTypeName() == testComponent));
-        Assert.Empty(context.Results.Where(f => f.GetTypeName() == routerComponent));
+        Assert.Empty(context.Results.Where(f => f.TypeName == testComponent));
+        Assert.Empty(context.Results.Where(f => f.TypeName == routerComponent));
     }
 
     [Fact]
@@ -1715,8 +1654,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1725,7 +1663,7 @@ namespace Test
         // Assert
         Assert.NotNull(compilation.GetTypeByMetadataName(testComponent));
         Assert.NotEmpty(context.Results);
-        Assert.NotEmpty(context.Results.Where(f => f.GetTypeName() == testComponent));
-        Assert.NotEmpty(context.Results.Where(f => f.GetTypeName() == routerComponent));
+        Assert.NotEmpty(context.Results.Where(f => f.TypeName == testComponent));
+        Assert.NotEmpty(context.Results.Where(f => f.TypeName == routerComponent));
     }
 }

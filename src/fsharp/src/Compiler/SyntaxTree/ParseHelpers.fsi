@@ -7,6 +7,7 @@ open FSharp.Compiler.Syntax
 open FSharp.Compiler.SyntaxTrivia
 open FSharp.Compiler.Features
 open FSharp.Compiler.Text
+open FSharp.Compiler.UnicodeLexing
 open FSharp.Compiler.Xml
 open Internal.Utilities.Text.Lexing
 open Internal.Utilities.Text.Parsing
@@ -38,25 +39,6 @@ val rhs2: parseState: IParseState -> i: int -> j: int -> range
 
 val rhs: parseState: IParseState -> i: int -> range
 
-type IParseState with
-
-    member SynArgNameGenerator: SyntaxTreeOps.SynArgNameGenerator
-    member ResetSynArgNameGenerator: unit -> unit
-
-module LexbufLocalXmlDocStore =
-
-    val ClearXmlDoc: lexbuf: UnicodeLexing.Lexbuf -> unit
-
-    val SaveXmlDocLine: lexbuf: UnicodeLexing.Lexbuf * lineText: string * range: range -> unit
-
-    val GrabXmlDocBeforeMarker: lexbuf: UnicodeLexing.Lexbuf * markerRange: range -> PreXmlDoc
-
-    val AddGrabPoint: lexbuf: UnicodeLexing.Lexbuf -> unit
-
-    val AddGrabPointDelayed: lexbuf: UnicodeLexing.Lexbuf -> unit
-
-    val ReportInvalidXmlDocPositions: lexbuf: UnicodeLexing.Lexbuf -> range list
-
 type LexerIfdefStackEntry =
     | IfDefIf
     | IfDefElse
@@ -67,35 +49,7 @@ type LexerIfdefStack = LexerIfdefStackEntries
 
 type LexerEndlineContinuation =
     | Token
-    | Skip of int * range: range
-
-type LexerIfdefExpression =
-    | IfdefAnd of LexerIfdefExpression * LexerIfdefExpression
-    | IfdefOr of LexerIfdefExpression * LexerIfdefExpression
-    | IfdefNot of LexerIfdefExpression
-    | IfdefId of string
-
-val LexerIfdefEval: lookup: (string -> bool) -> _arg1: LexerIfdefExpression -> bool
-
-module LexbufIfdefStore =
-
-    val SaveIfHash: lexbuf: UnicodeLexing.Lexbuf * lexed: string * expr: LexerIfdefExpression * range: range -> unit
-
-    val SaveElseHash: lexbuf: UnicodeLexing.Lexbuf * lexed: string * range: range -> unit
-
-    val SaveEndIfHash: lexbuf: UnicodeLexing.Lexbuf * lexed: string * range: range -> unit
-
-    val GetTrivia: lexbuf: UnicodeLexing.Lexbuf -> ConditionalDirectiveTrivia list
-
-module LexbufCommentStore =
-
-    val SaveSingleLineComment: lexbuf: UnicodeLexing.Lexbuf * startRange: range * endRange: range -> unit
-
-    val SaveBlockComment: lexbuf: UnicodeLexing.Lexbuf * startRange: range * endRange: range -> unit
-
-    val GetComments: lexbuf: UnicodeLexing.Lexbuf -> CommentTrivia list
-
-    val ClearComments: lexbuf: UnicodeLexing.Lexbuf -> unit
+    | IfdefSkip of int * range: range
 
 [<RequireQualifiedAccess>]
 type LexerStringStyle =
@@ -243,7 +197,19 @@ val mkClassMemberLocalBindings:
     isStatic: bool * initialRangeOpt: range option * attrs: SynAttributes * vis: SynAccess option * BindingSet ->
         SynMemberDefn
 
-val mkLocalBindings: mWhole: range * BindingSet * mIn: range option * body: SynExpr -> SynExpr
+/// Creates SynExpr.LetOrUse based on isBang parameter
+/// Handles all four cases: 'let', 'let!', 'use', and 'use!'
+val mkLetExpression:
+    isBang: bool *
+    mIn: range option *
+    mWhole: range *
+    body: SynExpr *
+    bindingInfo: BindingSet option *
+    bangInfo: (SynPat * SynExpr * SynBinding list * range * range option * bool) option ->
+        SynExpr
+
+val mkAndBang:
+    mKeyword: range * pat: SynPat * rhs: SynExpr * mWhole: range * mEquals: range * mIn: range option -> SynBinding
 
 val mkDefnBindings:
     mWhole: range * BindingSet * attrs: SynAttributes * vis: SynAccess option * attrsm: range -> SynModuleDecl list
@@ -272,7 +238,7 @@ val mkAutoPropDefn:
     typ: SynType option ->
     mEquals: range option ->
     expr: SynExpr ->
-    accessors: range option * (SynMemberKind * GetSetKeywords option) ->
+    accessors: range option * (SynMemberKind * GetSetKeywords option * SynAccess option * SynAccess option) ->
         xmlDoc: PreXmlDoc ->
         attribs: SynAttributes ->
         flags: (SynMemberKind -> SynMemberFlags) * SynLeadingKeyword ->
@@ -302,3 +268,5 @@ val mkSynField:
     rangeStart: range ->
     leadingKeyword: SynLeadingKeyword option ->
         SynField
+
+val leadingKeywordIsAbstract: SynLeadingKeyword -> bool

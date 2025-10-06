@@ -1,13 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LiveShare;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 public class ProxyAccessorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
@@ -19,7 +20,7 @@ public class ProxyAccessorTest(ITestOutputHelper testOutput) : ToolingTestBase(t
 
         var collaborationSessionMock = new StrictMock<CollaborationSession>();
         collaborationSessionMock
-            .Setup(x => x.GetRemoteServiceAsync<IProjectHierarchyProxy>(typeof(IProjectHierarchyProxy).Name, CancellationToken.None))
+            .Setup(x => x.GetRemoteServiceAsync<IProjectHierarchyProxy>(typeof(IProjectHierarchyProxy).Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(projectHierarchyProxy);
 
         var liveShareSessionAccessorMock = new StrictMock<ILiveShareSessionAccessor>();

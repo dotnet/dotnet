@@ -1,20 +1,18 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
-
-#nullable disable
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(new HtmlCommitCharacterResponseRewriter(TestRazorLSPOptionsMonitor.Create()), testOutput)
+public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
 {
     [Theory]
     [CombinatorialData]
@@ -68,14 +66,20 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
         TestFileMarkupParser.GetPosition(input, out var documentContent, out var cursorPosition);
         var delegatedCompletionList = GenerateCompletionList(useDefaultCommitCharacters: true, useVSTypes, "Element1", "Element2");
 
-        var options = TestRazorLSPOptionsMonitor.Create();
-        await options.UpdateAsync(options.CurrentValue with { CommitElementsWithSpace = false }, CancellationToken.None);
-        var rewriter = new HtmlCommitCharacterResponseRewriter(options);
+        var razorCompletionOptions = new RazorCompletionOptions(
+                SnippetsSupported: true,
+                AutoInsertAttributeQuotes: true,
+                CommitElementsWithSpace: false,
+                UseVsCodeCompletionCommitCharacters: false);
 
         // Act
-        var rewrittenCompletionList = await GetRewrittenCompletionListAsync(cursorPosition, documentContent, delegatedCompletionList, rewriter);
+        var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
+            cursorPosition, documentContent, delegatedCompletionList, razorCompletionOptions);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
+        Assert.NotNull(rewrittenCompletionList.CommitCharacters);
+
         if (useVSTypes)
         {
             Assert.Contains(rewrittenCompletionList.CommitCharacters.Value.Second, c => c.Character == " ");
@@ -90,11 +94,13 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
             completion =>
             {
                 Assert.Equal("Element1", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             },
             completion =>
             {
                 Assert.Equal("Element2", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             });
     }
@@ -111,40 +117,48 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
         TestFileMarkupParser.GetPosition(input, out var documentContent, out var cursorPosition);
         var delegatedCompletionList = GenerateCompletionList(useDefaultCommitCharacters: false, useVSTypes, "Element1", "Element2");
 
-        var options = TestRazorLSPOptionsMonitor.Create();
-        await options.UpdateAsync(options.CurrentValue with { CommitElementsWithSpace = false }, CancellationToken.None);
-        var rewriter = new HtmlCommitCharacterResponseRewriter(options);
+        var razorCompletionOptions = new RazorCompletionOptions(
+            SnippetsSupported: true,
+            AutoInsertAttributeQuotes: true,
+            CommitElementsWithSpace: false,
+            UseVsCodeCompletionCommitCharacters: false);
+        var rewriter = new HtmlCommitCharacterResponseRewriter();
 
         // Act
-        var rewrittenCompletionList = await GetRewrittenCompletionListAsync(cursorPosition, documentContent, delegatedCompletionList, rewriter);
+        var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
+            cursorPosition,
+            documentContent,
+            delegatedCompletionList,
+            razorCompletionOptions);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Null(rewrittenCompletionList.CommitCharacters);
         Assert.Collection(
             rewrittenCompletionList.Items,
             completion =>
             {
                 Assert.Equal("Element1", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             },
             completion =>
             {
                 Assert.Equal("Element2", completion.Label);
+                Assert.NotNull(completion.CommitCharacters);
                 Assert.DoesNotContain(completion.CommitCharacters, c => c == " ");
             });
     }
 
-    private static VSInternalCompletionList GenerateCompletionList(bool useDefaultCommitCharacters, bool useVSTypes, params string[] itemLabels)
-    {
-        var items = itemLabels.Select(label => new VSInternalCompletionItem()
+    private static RazorVSInternalCompletionList GenerateCompletionList(bool useDefaultCommitCharacters, bool useVSTypes, params string[] itemLabels)
+        => new()
         {
-            Kind = CompletionItemKind.Element,
-            Label = label,
-            CommitCharacters = useDefaultCommitCharacters ? null : new string[] { " ", ">" }
-        }).ToArray();
-        return new VSInternalCompletionList()
-        {
-            Items = items,
+            Items = [.. itemLabels.Select(label => new VSInternalCompletionItem()
+            {
+                Kind = CompletionItemKind.Element,
+                Label = label,
+                CommitCharacters = useDefaultCommitCharacters ? null : [" ", ">"]
+            })],
             CommitCharacters = (useDefaultCommitCharacters, useVSTypes) switch
             {
                 (true, true) => new VSInternalCommitCharacter[] { new() { Character = " " }, new() { Character = ">" } },
@@ -152,5 +166,4 @@ public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutpu
                 _ => null
             }
         };
-    }
 }

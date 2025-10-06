@@ -167,7 +167,11 @@ namespace NuGet.Configuration
                                                                     Resources.FileCertItemPathFileNotExist));
             }
 
+#if NET9_0_OR_GREATER
+            return new[] { string.IsNullOrWhiteSpace(Password) ? X509CertificateLoader.LoadPkcs12FromFile(filePath, null) : X509CertificateLoader.LoadPkcs12FromFile(filePath, Password) };
+#else
             return new[] { string.IsNullOrWhiteSpace(Password) ? new X509Certificate2(filePath) : new X509Certificate2(filePath, Password) };
+#endif
         }
 
         public void Update(string filePath, string? password, bool storePasswordInClearText)

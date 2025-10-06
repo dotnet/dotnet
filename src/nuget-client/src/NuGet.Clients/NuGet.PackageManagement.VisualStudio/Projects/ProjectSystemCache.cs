@@ -22,7 +22,7 @@ namespace NuGet.PackageManagement.VisualStudio
         // 0 - Cache is clean
         // 1 - Cache is dirty
         private int _isCacheDirty = 0;
-        private readonly Dictionary<string, CacheEntry> _primaryCache = new Dictionary<string, CacheEntry>();
+        private readonly Dictionary<string, CacheEntry> _primaryCache = new Dictionary<string, CacheEntry>(StringComparer.OrdinalIgnoreCase);
         private readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim();
 
         // Secondary index. Mapping from all names to a project name structure

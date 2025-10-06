@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 namespace System.Windows.Forms.Design.Tests;
 
@@ -26,14 +28,18 @@ public sealed class RadioButtonDesignerTests
     }
 
     [Fact]
-    public void SelectionRules_WithDefaultRadioButton_ShouldThrowNullReferenceException()
+    public void SelectionRules_WithDefaultRadioButton_ShouldReturnExpectedValue()
     {
         using RadioButtonDesigner radioButtonDesigner = new();
         using RadioButton radioButton = new();
         radioButtonDesigner.Initialize(radioButton);
 
-        Action action = () => _ = radioButtonDesigner.SelectionRules;
+        SelectionRules selectionRules;
+        using (new NoAssertContext())
+        {
+            selectionRules = radioButtonDesigner.SelectionRules;
+        }
 
-        action.Should().ThrowExactly<NullReferenceException>();
+        selectionRules.Should().Be(SelectionRules.AllSizeable | SelectionRules.Moveable | SelectionRules.Visible);
     }
 }

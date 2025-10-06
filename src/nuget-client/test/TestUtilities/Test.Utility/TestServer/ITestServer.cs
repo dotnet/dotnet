@@ -11,7 +11,8 @@ namespace NuGet.Test.Server
         ConnectFailure,
         ServerProtocolViolation,
         NameResolutionFailure,
-        SlowResponseBody
+        SlowResponseBody,
+        InvalidTLSCertificate,
     }
 
     public interface ITestServer

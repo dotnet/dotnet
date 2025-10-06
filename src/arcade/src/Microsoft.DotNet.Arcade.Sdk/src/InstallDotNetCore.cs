@@ -25,6 +25,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
     public class InstallDotNetCore : Microsoft.Build.Utilities.Task
     {
 #endif
+        private static readonly char[] s_keyTrimChars = [ '$', '(', ')' ];
+
         public string VersionsPropsPath { get; set; }
 
         [Required]
@@ -107,7 +109,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                     // Try to parse version
                                     if (!SemanticVersion.TryParse(item.Key, out version))
                                     {
-                                        var propertyName = item.Key.Trim('$', '(', ')');
+                                        var propertyName = item.Key.Trim(s_keyTrimChars);
 
                                         // Unable to parse version, try to find the corresponding identifier from the MSBuild loaded MSBuild properties
                                         ProjectProperty property = properties[propertyName].FirstOrDefault();

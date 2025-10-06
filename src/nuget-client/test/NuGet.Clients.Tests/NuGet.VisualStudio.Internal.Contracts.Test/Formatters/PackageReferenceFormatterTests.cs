@@ -31,7 +31,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.TargetFramework, actualResult.TargetFramework);
         }
 
-        public static TheoryData PackageReferences => new TheoryData<PackageReference>
+        public static TheoryData<PackageReference> PackageReferences => new()
             {
                 { new PackageReference(PackageIdentity, Framework) },
                 { new PackageReference(PackageIdentity, Framework, userInstalled: true) },

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #if NET472
 
@@ -63,7 +63,10 @@ internal sealed class XunitDisposeHook : MarshalByRefObject
                     // ret
                     Marshal.WriteByte(functionPointer, 0xC3);
                     break;
-
+                case Architecture.Arm64:
+                    // This place is not a place of honor. No highly esteemed deed is commemorated here.
+                    Marshal.WriteInt64(functionPointer, 0xD65F03C0);
+                    break;
                 default:
                     throw new NotSupportedException();
             }

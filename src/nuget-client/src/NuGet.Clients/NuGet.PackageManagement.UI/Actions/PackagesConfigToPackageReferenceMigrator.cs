@@ -11,7 +11,6 @@ using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using NuGet.Common;
 using NuGet.PackageManagement.Telemetry;
-using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.VisualStudio.Internal.Contracts;

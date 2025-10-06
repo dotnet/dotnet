@@ -176,7 +176,7 @@ public class TestExtensions
     /// The info about new extensions discovered
     /// </param>
     /// <returns>
-    /// The <see cref="Dictionary"/> of extensions discovered
+    /// The <see cref="Dictionary{TKey, TValue}"/> of extensions discovered
     /// </returns>
     internal Dictionary<string, TPluginInfo>? AddExtension<TPluginInfo>(Dictionary<string, TPluginInfo>? newExtensions)
         where TPluginInfo : TestPluginInformation
@@ -415,7 +415,7 @@ public class TestExtensions
     /// <typeparam name="TPluginInfo">
     /// </typeparam>
     /// <returns>
-    /// The <see cref="Dictionary"/>. of extensions discovered in assembly
+    /// The <see cref="Dictionary{TKey, TValue}"/>. of extensions discovered in assembly
     /// </returns>
     internal static Dictionary<string, TPluginInfo> GetExtensionsDiscoveredFromAssembly<TPluginInfo>(
         Dictionary<string, TPluginInfo>? extensionCollection,

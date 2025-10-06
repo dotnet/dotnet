@@ -10,7 +10,6 @@ using WellKnownSearchFilters = Microsoft.TemplateEngine.Utils.WellKnownSearchFil
 
 namespace Microsoft.TemplateEngine.IDE.IntegrationTests
 {
-    [UsesVerify]
     [Collection("Verify Tests")]
     public class End2EndTests : BootstrapperTestBase
     {
@@ -561,6 +560,13 @@ common text
                 {
 "test.sln",
 @"# comment bar
+bar
+baz
+"
+                },
+                {
+"test.slnx",
+@"<!-- comment bar -->
 bar
 baz
 "

@@ -24,6 +24,7 @@ type IntelliSenseOptions =
         ShowAfterCharIsDeleted: bool
         IncludeSymbolsFromUnopenedNamespacesOrModules: bool
         EnterKeySetting: EnterKeySetting
+        GenerateBodyForOverriddenMethod: bool
     }
 
     static member Default =
@@ -32,6 +33,7 @@ type IntelliSenseOptions =
             ShowAfterCharIsDeleted = false
             IncludeSymbolsFromUnopenedNamespacesOrModules = false
             EnterKeySetting = EnterKeySetting.NeverNewline
+            GenerateBodyForOverriddenMethod = true
         }
 
 [<RequireQualifiedAccess>]
@@ -89,7 +91,6 @@ type LanguageServicePerformanceOptions =
         EnableParallelReferenceResolution: bool
         EnableFastFindReferencesAndRename: bool
         EnablePartialTypeChecking: bool
-        UseSyntaxTreeCache: bool
         KeepAllBackgroundResolutions: bool
         KeepAllBackgroundSymbolUses: bool
         EnableBackgroundItemKeyStoreAndSemanticClassification: bool
@@ -104,7 +105,6 @@ type LanguageServicePerformanceOptions =
             EnableParallelReferenceResolution = false
             EnableFastFindReferencesAndRename = true
             EnablePartialTypeChecking = true
-            UseSyntaxTreeCache = FSharpExperimentalFeaturesEnabledAutomatically
             KeepAllBackgroundResolutions = false
             KeepAllBackgroundSymbolUses = false
             EnableBackgroundItemKeyStoreAndSemanticClassification = true
@@ -168,7 +168,7 @@ type EditorOptions() =
     member _.Formatting: FormattingOptions = store.Get()
 
     [<Export(typeof<SettingsStore.ISettingsStore>)>]
-    member private _.SettingsStore = store
+    member _.SettingsStore = store
 
     member _.With value = store.Register value
 
@@ -222,7 +222,7 @@ module internal OptionsUI =
         override this.CreateView() =
             upcast LanguageServicePerformanceOptionControl()
 
-    [<Guid(Guids.advancedSettingsPageIdSring)>]
+    [<Guid(Guids.advancedSettingsPageIdString)>]
     type internal AdvancedSettingsOptionPage() =
         inherit AbstractOptionPage<AdvancedOptions>()
         override _.CreateView() = upcast AdvancedOptionsControl()

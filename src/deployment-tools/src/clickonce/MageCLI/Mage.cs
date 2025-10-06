@@ -9,10 +9,6 @@ using System.Runtime.Versioning;
 using Microsoft.Build.Tasks.Deployment.ManifestUtilities;
 using Microsoft.Deployment.Utilities;
 
-#if !RUNTIME_TYPE_NETCORE
-using System.Diagnostics;
-#endif
-
 namespace Microsoft.Deployment.MageCLI
 {
     /// <summary>
@@ -106,6 +102,7 @@ namespace Microsoft.Deployment.MageCLI
         /// <param name="appProviderUrl">Application provider URL</param>
         /// <param name="minVersion">Minimum version</param>
         /// <param name="install">Install state</param>
+        /// <param name="mapFileExtensions">MapFileExtensions state</param>
         /// <param name="includeDeploymentProviderUrl"></param>
         /// <param name="publisherName">Publisher name</param>
         /// <param name="supportUrl">Support URL</param>
@@ -115,7 +112,7 @@ namespace Microsoft.Deployment.MageCLI
         public static DeployManifest GenerateDeploymentManifest(string deploymentManifestPath,
             string appName, Version version, Processors processor,
             ApplicationManifest applicationManifest, string applicationManifestPath, string appCodeBase,
-            string appProviderUrl, string minVersion, TriStateBool install, TriStateBool includeDeploymentProviderUrl,
+            string appProviderUrl, string minVersion, TriStateBool install, TriStateBool mapFileExtensions, TriStateBool includeDeploymentProviderUrl,
             string publisherName, string supportUrl, string targetFrameworkVersion, TriStateBool trustUrlParameters)
         {
             /*
@@ -140,6 +137,15 @@ namespace Microsoft.Deployment.MageCLI
             else
             {
                 manifest.Install = false;
+            }
+
+            if (mapFileExtensions == TriStateBool.True)
+            {
+                manifest.MapFileExtensions = true;
+            }
+            else
+            {
+                manifest.MapFileExtensions = false;
             }
 
             // Use default application name if none was specified
@@ -168,7 +174,7 @@ namespace Microsoft.Deployment.MageCLI
 
             UpdateDeploymentManifest(manifest, deploymentManifestPath, appName, version, processor,
                 applicationManifest, applicationManifestPath, appCodeBase,
-                appProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                appProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
 
             return manifest;
         }
@@ -217,19 +223,12 @@ namespace Microsoft.Deployment.MageCLI
                 manifest.AssemblyIdentity.Culture = defaultCulture;
             }
 
-#if RUNTIME_TYPE_NETCORE
             // TrustInfo is always Full-trust on .NET (Core)
             if (manifest.TrustInfo == null)
             {
                 // TrustInfo object is initialized as Full-trust for all apps running on .NET (Core)
                 manifest.TrustInfo = new Microsoft.Build.Tasks.Deployment.ManifestUtilities.TrustInfo();
             }
-#else
-            if (trustLevel != Command.TrustLevels.None)
-            {
-                SetTrustLevel(manifest, trustLevel);
-            }
-#endif
 
             if (iconFile != null)
             {
@@ -262,13 +261,13 @@ namespace Microsoft.Deployment.MageCLI
                 }
                 else
                 {
-#if RUNTIME_TYPE_NETCORE
                     // GetRegisteredOrganization() is a Windows-only API
                     manifest.Publisher = string.Empty;
                     if (OperatingSystem.IsWindows())
-#endif
-                    // Get the default publisher name
-                    manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                    {
+                        // Get the default publisher name
+                        manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(supportUrl))
@@ -314,6 +313,7 @@ namespace Microsoft.Deployment.MageCLI
         /// <param name="appProviderUrl">Application provider URL</param>
         /// <param name="minVersion">Minimum version</param>
         /// <param name="install">Install state</param>
+        /// <param name="mapFileExtensions">MapFileExtensions state</param>
         /// <param name="includeDeploymentProviderUrl"></param>
         /// <param name="publisherName">Publisher name</param>
         /// <param name="supportUrl">Support URL</param>
@@ -324,6 +324,7 @@ namespace Microsoft.Deployment.MageCLI
             ApplicationManifest applicationManifest, string applicationManifestPath,
             string appCodeBase, string appProviderUrl, string minVersion,
             TriStateBool install,
+            TriStateBool mapFileExtensions,
             TriStateBool includeDeploymentProviderUrl,
             string publisherName, string supportUrl, string targetFrameworkVersion,
             TriStateBool trustUrlParameters)
@@ -348,6 +349,18 @@ namespace Microsoft.Deployment.MageCLI
                 }
             }
 
+            if (mapFileExtensions != TriStateBool.Undefined)
+            {
+                if (mapFileExtensions == TriStateBool.False)
+                {
+                    manifest.MapFileExtensions = false;
+                }
+                else
+                {
+                    manifest.MapFileExtensions = true;
+                }
+            }
+
             if (appName != null)
             {
                 manifest.AssemblyIdentity.Name = appName;
@@ -367,13 +380,13 @@ namespace Microsoft.Deployment.MageCLI
             }
             else
             {
-#if RUNTIME_TYPE_NETCORE
                 // GetRegisteredOrganization() is a Windows-only API
                 manifest.Publisher = string.Empty;
                 if (OperatingSystem.IsWindows())
-#endif
-                // Get the default publisher name
-                manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                {
+                    // Get the default publisher name
+                    manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                }
             }
 
             // Ensure Publisher is not empty (otherwise ClickOnce runtime will refuse to load the manifest)
@@ -548,31 +561,5 @@ namespace Microsoft.Deployment.MageCLI
                 collection.Add(ar);
             }
         }
-
-#if !RUNTIME_TYPE_NETCORE
-        /// <summary>
-        /// Set the application's trust information
-        /// </summary>
-        /// <param name="manifest">ApplicationManifest object</param>
-        /// <param name="trustLevel">Trust level</param>
-        private static void SetTrustLevel(ApplicationManifest manifest, Command.TrustLevels trustLevel)
-        {
-            if (trustLevel != Command.TrustLevels.None)
-            {
-                TrustInfo ti = new Microsoft.Build.Tasks.Deployment.ManifestUtilities.TrustInfo();
-                manifest.TrustInfo = ti;
-
-                if (trustLevel == Command.TrustLevels.FullTrust)
-                {
-                    ti.IsFullTrust = true;
-                }
-                else
-                {
-                    ti.PermissionSet = SecurityUtilities.ComputeZonePermissionSet(trustLevel.ToString(), null, null);
-                    ti.IsFullTrust = false;
-                }
-            }
-        }
-#endif
     }
 }

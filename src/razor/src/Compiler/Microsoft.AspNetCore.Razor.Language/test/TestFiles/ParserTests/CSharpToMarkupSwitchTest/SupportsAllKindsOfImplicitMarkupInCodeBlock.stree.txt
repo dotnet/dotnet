@@ -42,7 +42,7 @@
                             Keyword;[foreach];
                             Whitespace;[ ];
                             LeftParenthesis;[(];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[p];
                             Whitespace;[ ];
@@ -52,10 +52,10 @@
                             Dot;[.];
                             Identifier;[Range];
                             LeftParenthesis;[(];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Comma;[,];
                             Whitespace;[ ];
-                            IntegerLiteral;[10];
+                            NumericLiteral;[10];
                             RightParenthesis;[)];
                             RightParenthesis;[)];
                             Whitespace;[ ];

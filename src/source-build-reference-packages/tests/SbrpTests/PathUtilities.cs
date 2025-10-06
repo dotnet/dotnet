@@ -9,18 +9,18 @@ namespace SbrpTests;
 
 internal static class PathUtilities
 {
-    public static string GetRepoRoot () =>
-        (string)AppContext.GetData("SbrpTests.RepoRoot")!;
+    public static string GetRepoRoot() => (string)AppContext.GetData("SbrpTests.RepoRoot")!;
 
-    public static string GetSourceBuildRepoRoot ()
-    {
-        var artifactsDir = (string)AppContext.GetData ("SbrpTests.ArtifactsDir")!;
-        return Path.Combine(artifactsDir, "sb", "src");
-    }
-    
-    public static string GetSourceBuildPackagesShippingDir ()
-    {
-        var configuration = (string)AppContext.GetData ("SbrpTests.Configuration")!;
-        return Path.Combine(GetSourceBuildRepoRoot(), "artifacts", "packages", configuration, "Shipping");
-    }
+    public static string GetArtifactsPackagesDir() => (string)AppContext.GetData("SbrpTests.ArtifactsPackagesDir")!;
+
+    public static string GetArtifactsReferenceOnlyPackagesDir() =>
+        (string)AppContext.GetData("SbrpTests.ArtifactsReferenceOnlyPackagesDir")!;
+
+    public static string GetPackageTypeDir(PackageType type)
+        => type switch
+        {
+            PackageType.Reference => "referencePackages",
+            PackageType.Text      => "textOnlyPackages",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, $"Unknown package type '{type}'")
+        };
 }

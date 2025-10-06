@@ -5,12 +5,10 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Threading;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
 using NuGet.VisualStudio.Internal.Contracts;
-using NuGet.VisualStudio.Telemetry;
 
 namespace NuGet.SolutionRestoreManager
 {

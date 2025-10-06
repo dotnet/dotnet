@@ -119,6 +119,10 @@ namespace NuGet.Commands
                 logger.LogMinimal(Environment.NewLine + string.Format(CultureInfo.CurrentCulture,
                     Strings.VerifyCommand_VerifyingPackage,
                     packageIdentity.ToString()));
+                string contentHash = packageReader.GetContentHash(CancellationToken.None);
+                logger.LogMinimal(string.Format(CultureInfo.CurrentCulture,
+                    Strings.VerifyCommand_ContentHash,
+                    contentHash));
                 logger.LogInformation($"{packagePath}{Environment.NewLine}");
 
                 var logMessages = verificationResult.Results.SelectMany(p => p.Issues).ToList();

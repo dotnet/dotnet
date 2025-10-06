@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Threading.Tasks;
-using Microsoft;
 using NuGet.VisualStudio;
 using Task = System.Threading.Tasks.Task;
 

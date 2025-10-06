@@ -1,7 +1,7 @@
 SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/EqualsTokenIsPresentInSynValSigMember.fsi",
-      QualifiedNameOfFile Meh, [], [],
+      QualifiedNameOfFile Meh, [],
       [SynModuleOrNamespaceSig
          ([Meh], false, NamedModule,
           [Types
@@ -20,7 +20,7 @@ SigFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, Some (Const (Int32 10, (5,21--5,23))),
+                            Single None, Some (Const (Int32 10, (5,21--5,23))),
                             (5,4--5,23), { LeadingKeyword = Member (5,4--5,10)
                                            InlineKeyword = None
                                            WithKeyword = None
@@ -38,4 +38,5 @@ SigFile
           PreXmlDoc ((2,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (2,0--5,23), { LeadingKeyword = Module (2,0--2,6) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

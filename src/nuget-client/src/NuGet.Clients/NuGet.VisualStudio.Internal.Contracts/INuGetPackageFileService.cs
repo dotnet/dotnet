@@ -15,5 +15,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
     {
         ValueTask<Stream?> GetPackageIconAsync(PackageIdentity packageIdentity, CancellationToken cancellationToken);
         ValueTask<Stream?> GetEmbeddedLicenseAsync(PackageIdentity packageIdentity, CancellationToken cancellationToken);
+        ValueTask<Stream?> GetReadmeAsync(Uri readmeUri, CancellationToken cancellationToken);
     }
 }

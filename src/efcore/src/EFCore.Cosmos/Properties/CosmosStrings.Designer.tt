@@ -1,0 +1,7 @@
+﻿<#
+    Session = new System.Collections.Generic.Dictionary<string, object>();
+    Session["ResourceFile"] = "CosmosStrings.resx";
+    Session["ResourceNamespace"] = "Microsoft.EntityFrameworkCore.Cosmos.Properties";
+    Session["LoggingDefinitionsClass"] = "Diagnostics.Internal.CosmosLoggingDefinitions";
+#>
+<#@ include file="..\..\..\tools\Resources.tt" #>

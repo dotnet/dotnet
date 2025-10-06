@@ -1,13 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
+using Microsoft.VisualStudio.Razor.Documents;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -36,7 +36,7 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
     }
 
     [UIFact]
-    public async Task Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
+    public void Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
     {
         // Arrange
         var testImportsPath = Path.Combine(_directoryPath, "_ViewImports.cshtml");
@@ -44,14 +44,14 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
         var tracker = StrictMock.Of<IVisualStudioDocumentTracker>(t =>
             t.FilePath == Path.Combine(_directoryPath, "Views", "Home", "_ViewImports.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
+            t.ProjectSnapshot == StrictMock.Of<ILegacyProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
                 p.GetDocument(It.IsAny<string>()) == null));
 
         var anotherTracker = StrictMock.Of<IVisualStudioDocumentTracker>(t =>
             t.FilePath == Path.Combine(_directoryPath, "anotherFile.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == StrictMock.Of<IProjectSnapshot>(p =>
+            t.ProjectSnapshot == StrictMock.Of<ILegacyProjectSnapshot>(p =>
                 p.GetProjectEngine() == _projectEngine &&
                 p.GetDocument(It.IsAny<string>()) == null));
 
@@ -76,17 +76,11 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
             .Returns(StrictMock.Of<IFileChangeTracker>());
 
         var called = false;
-        var manager = new ImportDocumentManager(Dispatcher, fileChangeTrackerFactoryMock.Object);
+        var manager = new ImportDocumentManager(fileChangeTrackerFactoryMock.Object);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            manager.OnSubscribed(tracker);
-        });
+        manager.OnSubscribed(tracker);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            manager.OnSubscribed(anotherTracker);
-        });
+        manager.OnSubscribed(anotherTracker);
 
         manager.Changed += (sender, args) =>
         {
@@ -101,10 +95,7 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
-        });
+        fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
 
         // Assert
         Assert.True(called);

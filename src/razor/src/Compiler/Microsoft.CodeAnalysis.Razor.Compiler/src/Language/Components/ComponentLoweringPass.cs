@@ -34,11 +34,11 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         // APIs.
         var usings = documentNode.FindDescendantNodes<UsingDirectiveIntermediateNode>();
         var references = documentNode.FindDescendantReferences<TagHelperIntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
+
+        foreach (var reference in references)
         {
-            var reference = references[i];
-            var node = (TagHelperIntermediateNode)reference.Node;
-            if (node.TagHelpers.Any(t => t.IsChildContentTagHelper))
+            var node = reference.Node;
+            if (node.TagHelpers.Any(t => t.Kind == TagHelperKind.ChildContent))
             {
                 // This is a child content tag helper. This will be rewritten when we visit its parent.
                 continue;
@@ -46,15 +46,15 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
             // The element didn't match any child content descriptors. Look for any matching component descriptors.
             var count = 0;
-            for (var j = 0; j < node.TagHelpers.Count; j++)
+            foreach (var tagHelper in node.TagHelpers)
             {
-                if (node.TagHelpers[j].IsComponentTagHelper)
+                if (tagHelper.Kind == TagHelperKind.Component)
                 {
                     // Only allow a single component tag helper per element. If there are multiple, we'll just consider
                     // the first one and ignore the others.
                     if (++count > 1)
                     {
-                        node.Diagnostics.Add(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, node.TagHelpers));
+                        node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, node.TagHelpers));
                         break;
                     }
                 }
@@ -62,7 +62,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
             if (count == 1)
             {
-                reference.Replace(RewriteAsComponent(node, node.TagHelpers.Single(n => n.IsComponentTagHelper)));
+                reference.Replace(RewriteAsComponent(node, node.TagHelpers.Single(n => n.Kind == TagHelperKind.Component)));
             }
             else if (count > 1)
             {
@@ -89,10 +89,9 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         {
             TagHelperDescriptor candidate = null;
             List<TagHelperDescriptor> matched = null;
-            for (var i = 0; i < node.TagHelpers.Count; i++)
+            foreach (var tagHelper in node.TagHelpers)
             {
-                var tagHelper = node.TagHelpers[i];
-                if (!tagHelper.IsComponentTagHelper)
+                if (tagHelper.Kind != TagHelperKind.Component)
                 {
                     continue;
                 }
@@ -100,7 +99,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 for (var j = 0; j < usings.Count; j++)
                 {
                     var usingNamespace = usings[j].Content;
-                    if (string.Equals(tagHelper.GetTypeNamespace(), usingNamespace, StringComparison.Ordinal))
+                    if (string.Equals(tagHelper.TypeNamespace, usingNamespace, StringComparison.Ordinal))
                     {
                         if (candidate == null)
                         {
@@ -118,17 +117,17 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             if (matched != null)
             {
                 matched.Add(candidate);
-                var diagnostic = ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, candidate.Name, matched);
+
                 // Iterate over existing diagnostics to avoid adding multiple diagnostics when we find an ambiguous tag.
-                for (var i = 0; i < node.Diagnostics.Count; i++)
+                foreach (var diagnostic in node.Diagnostics)
                 {
-                    var existing = node.Diagnostics[i];
-                    if (diagnostic.Id == existing.Id)
+                    if (diagnostic.Id == ComponentDiagnosticFactory.MultipleComponents.Id)
                     {
                         return null;
                     }
                 }
-                node.Diagnostics.Add(diagnostic);
+
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, candidate.Name, matched));
 
                 return null;
             }
@@ -144,13 +143,10 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             Component = tagHelper,
             Source = node.Source,
             TagName = node.TagName,
-            TypeName = tagHelper.GetTypeName(),
+            TypeName = tagHelper.TypeName,
         };
 
-        for (var i = 0; i < node.Diagnostics.Count; i++)
-        {
-            component.Diagnostics.Add(node.Diagnostics[i]);
-        }
+        component.AddDiagnosticsFromNode(node);
 
         var visitor = new ComponentRewriteVisitor(component);
         visitor.Visit(node);
@@ -159,7 +155,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         // because we see the nodes in the wrong order.
         foreach (var childContent in component.ChildContents)
         {
-            childContent.ParameterName ??= component.ChildContentParameterName ?? ComponentMetadata.ChildContent.DefaultParameterName;
+            childContent.ParameterName ??= component.ChildContentParameterName ?? ComponentHelpers.ChildContent.DefaultParameterName;
         }
 
         ValidateRequiredAttributes(node, tagHelper, component);
@@ -169,7 +165,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
     private static void ValidateRequiredAttributes(TagHelperIntermediateNode node, TagHelperDescriptor tagHelper, ComponentIntermediateNode intermediateNode)
     {
-        if (intermediateNode.Children.Any(c => c is TagHelperDirectiveAttributeIntermediateNode node && (node.TagHelper?.IsSplatTagHelper() ?? false)))
+        if (intermediateNode.Children.Any(static c => c is TagHelperDirectiveAttributeIntermediateNode node && (node.TagHelper?.Kind == TagHelperKind.Splat)))
         {
             // If there are any splat attributes, assume the user may have provided all values.
             // This pass runs earlier than ComponentSplatLoweringPass, so we cannot rely on the presence of SplatIntermediateNode to make this check.
@@ -180,7 +176,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         {
             if (!IsPresentAsAttribute(requiredAttribute.Name, intermediateNode))
             {
-                intermediateNode.Diagnostics.Add(
+                intermediateNode.AddDiagnostic(
                   RazorDiagnosticFactory.CreateComponent_EditorRequiredParameterNotSpecified(
                       node.Source,
                       intermediateNode.TagName,
@@ -203,13 +199,36 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 const string bindPrefix = "@bind-";
                 if (child is TagHelperDirectiveAttributeIntermediateNode { OriginalAttributeName: { } originalAttributeName } &&
                     originalAttributeName.StartsWith(bindPrefix, StringComparison.Ordinal) &&
-                    originalAttributeName.AsSpan()[bindPrefix.Length..].Equals(attributeName.AsSpan(), StringComparison.Ordinal))
+                    EqualsWithOptionalChangedOrExpressionSuffix(originalAttributeName.AsSpan(start: bindPrefix.Length), attributeName))
                 {
+                    return true;
+                }
+                if (child is TagHelperDirectiveAttributeParameterIntermediateNode { OriginalAttributeName: { } originalName, AttributeNameWithoutParameter: { } nameWithoutParameter } &&
+                    originalName.StartsWith(bindPrefix, StringComparison.Ordinal) &&
+                    EqualsWithOptionalChangedOrExpressionSuffix(nameWithoutParameter.AsSpan(start: bindPrefix.Length - 1), attributeName))
+                {
+                    // `@bind-Value:get` or `@bind-Value:set` is specified.
                     return true;
                 }
             }
 
             return false;
+        }
+
+        // True if `requiredName` is equal to `specifiedName` or to `specifiedName + "Changed"` or to `specifiedName + "Expression"`.
+        static bool EqualsWithOptionalChangedOrExpressionSuffix(ReadOnlySpan<char> specifiedName, string requiredName)
+        {
+            var requiredNameSpan = requiredName.AsSpan();
+            return EqualsWithSuffix(specifiedName, requiredNameSpan, "Changed") ||
+                EqualsWithSuffix(specifiedName, requiredNameSpan, "Expression") ||
+                specifiedName.Equals(requiredNameSpan, StringComparison.Ordinal);
+        }
+
+        // True if `requiredName` is equal to `specifiedName + suffix`.
+        static bool EqualsWithSuffix(ReadOnlySpan<char> specifiedName, ReadOnlySpan<char> requiredName, string suffix)
+        {
+            return requiredName.EndsWith(suffix.AsSpan(), StringComparison.Ordinal) &&
+                specifiedName.Equals(requiredName[..^suffix.Length], StringComparison.Ordinal);
         }
     }
 
@@ -221,10 +240,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             TagName = node.TagName,
         };
 
-        for (var i = 0; i < node.Diagnostics.Count; i++)
-        {
-            result.Diagnostics.Add(node.Diagnostics[i]);
-        }
+        result.AddDiagnosticsFromNode(node);
 
         var visitor = new ElementRewriteVisitor(result.Children);
         visitor.Visit(node);
@@ -286,7 +302,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             //    which is always allowed.
             // 5. Each 'child content' element will generate its own lambda, and be assigned to the property
             //    that matches the element name.
-            if (!node.Children.OfType<TagHelperIntermediateNode>().Any(t => t.TagHelpers.Any(th => th.IsChildContentTagHelper)))
+            if (!node.Children.OfType<TagHelperIntermediateNode>().Any(t => t.TagHelpers.Any(th => th.Kind == TagHelperKind.ChildContent)))
             {
                 // This node has implicit child content. It may or may not have an attribute that matches.
                 var attribute = _component.Component.BoundAttributes
@@ -309,7 +325,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 if (child is TagHelperIntermediateNode tagHelperNode &&
-                    tagHelperNode.TagHelpers.Any(th => th.IsChildContentTagHelper))
+                    tagHelperNode.TagHelpers.Any(th => th.Kind == TagHelperKind.ChildContent))
                 {
                     // This is a child content element
                     var attribute = _component.Component.BoundAttributes
@@ -320,7 +336,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 // If we get here then this is significant content inside a component with explicit child content.
-                child.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentMixedWithExplicitChildContent(child.Source, _component));
+                child.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentMixedWithExplicitChildContent(child.Source, _component));
                 _children.Add(child);
             }
 
@@ -377,22 +393,22 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                         }
 
                         // The parameter name is invalid.
-                        childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameter(property.Source, property.AttributeName, attribute.Name));
+                        childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameter(property.Source, property.AttributeName, attribute.Name));
                         continue;
                     }
 
                     // This is an unrecognized tag helper bound attribute. This will practically never happen unless the child content descriptor was misconfigured.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(property.Source, property.AttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(property.Source, property.AttributeName, attribute.Name));
                 }
                 else if (child is TagHelperHtmlAttributeIntermediateNode a)
                 {
                     // This is an HTML attribute on a child content.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(a.Source, a.AttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(a.Source, a.AttributeName, attribute.Name));
                 }
                 else if (child is TagHelperDirectiveAttributeIntermediateNode directiveAttribute)
                 {
                     // We don't support directive attributes inside child content, this is possible if you try to do something like put '@ref' on a child content.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(directiveAttribute.Source, directiveAttribute.OriginalAttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(directiveAttribute.Source, directiveAttribute.OriginalAttributeName, attribute.Name));
                 }
                 else
                 {
@@ -474,7 +490,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             // Each 'tag helper property' belongs to a specific tag helper. We want to handle
             // the cases for components, but leave others alone. This allows our other passes
             // to handle those cases.
-            if (!node.TagHelper.IsComponentTagHelper)
+            if (node.TagHelper.Kind != TagHelperKind.Component)
             {
                 _children.Add(node);
                 return;
@@ -503,7 +519,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 // The parameter name is invalid.
-                _component.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameterOnComponent(node.Source, node.AttributeName, _component.TagName));
+                _component.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameterOnComponent(node.Source, node.AttributeName, _component.TagName));
                 return;
             }
 
@@ -556,12 +572,10 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 AttributeName = node.AttributeName,
                 Source = node.Source,
             };
+
             _children.Add(attribute);
 
-            for (var i = 0; i < node.Diagnostics.Count; i++)
-            {
-                attribute.Diagnostics.Add(node.Diagnostics[i]);
-            }
+            attribute.AddDiagnosticsFromNode(node);
 
             switch (node.AttributeStructure)
             {
@@ -601,10 +615,8 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                         value.Children.Add(html.Children[i]);
                     }
 
-                    for (var i = 0; i < html.Diagnostics.Count; i++)
-                    {
-                        value.Diagnostics.Add(html.Diagnostics[i]);
-                    }
+
+                    value.AddDiagnosticsFromNode(html);
 
                     return value;
                 }
@@ -619,7 +631,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             // Each 'tag helper property' belongs to a specific tag helper. We want to handle
             // the cases for components, but leave others alone. This allows our other passes
             // to handle those cases.
-            _children.Add(node.TagHelper.IsComponentTagHelper ? (IntermediateNode)new ComponentAttributeIntermediateNode(node) : node);
+            _children.Add(node.TagHelper.Kind == TagHelperKind.Component ? new ComponentAttributeIntermediateNode(node) : node);
         }
 
         public override void VisitTagHelperDirectiveAttribute(TagHelperDirectiveAttributeIntermediateNode node)

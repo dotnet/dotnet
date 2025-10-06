@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Threading;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis;
 
@@ -23,7 +25,15 @@ public sealed class SourceGeneratedDocument : Document
     // TODO: make this public. Tracked by https://github.com/dotnet/roslyn/issues/50546
     internal SourceGeneratedDocumentIdentity Identity => State.Identity;
 
-    internal override Document WithFrozenPartialSemantics(CancellationToken cancellationToken)
+    internal DateTime GenerationDateTime => State.GenerationDateTime;
+
+    internal new SourceGeneratedDocument WithText(SourceText text)
+        => (SourceGeneratedDocument)base.WithText(text);
+
+    internal new SourceGeneratedDocument WithSyntaxRoot(SyntaxNode root)
+        => (SourceGeneratedDocument)base.WithSyntaxRoot(root);
+
+    internal override Document WithFrozenPartialSemantics(bool forceFreeze, CancellationToken cancellationToken)
     {
         // For us to implement frozen partial semantics here with a source generated document,
         // we'd need to potentially deal with the combination where that happens on a snapshot that was already

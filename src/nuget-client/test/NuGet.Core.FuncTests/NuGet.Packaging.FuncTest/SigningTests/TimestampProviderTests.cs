@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
@@ -266,7 +265,7 @@ namespace NuGet.Packaging.FuncTest
 
             certificateAuthority.Revoke(
                 timestampService.Certificate,
-                RevocationReason.KeyCompromise,
+                X509RevocationReason.KeyCompromise,
                 DateTimeOffset.UtcNow);
 
             VerifyTimestampData(
@@ -348,11 +347,12 @@ namespace NuGet.Packaging.FuncTest
         [CIOnlyFact]
         public async Task GetTimestampAsync_WhenCertificateSignatureAlgorithmIsSha1_ThrowsAsync()
         {
+            Oid sha1 = new(Oids.Sha1);
             var testServer = await _testFixture.GetSigningTestServerAsync();
             var certificateAuthority = await _testFixture.GetDefaultTrustedCertificateAuthorityAsync();
-            var timestampServiceOptions = new TimestampServiceOptions() { SignatureHashAlgorithm = new Oid(Oids.Sha1) };
+            var timestampServiceOptions = new TimestampServiceOptions() { SignatureHashAlgorithm = sha1 };
             var issueCertificateOptions = IssueCertificateOptions.CreateDefaultForTimestampService();
-            issueCertificateOptions.SignatureAlgorithmName = "SHA1WITHRSA";
+            issueCertificateOptions.SignatureAlgorithm = sha1;
 
             var timestampService = TimestampService.Create(certificateAuthority, timestampServiceOptions, issueCertificateOptions);
 
@@ -429,7 +429,7 @@ namespace NuGet.Packaging.FuncTest
                 primarySignature.Should().NotBeNull();
                 primarySignature.SignedCms.Should().NotBeNull();
                 primarySignature.SignerInfo.Should().NotBeNull();
-                primarySignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterOrEqualTo(1);
+                primarySignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterThanOrEqualTo(1);
 
                 var hasTimestampUnsignedAttribute = false;
                 var timestampCms = new SignedCms();
@@ -478,7 +478,7 @@ namespace NuGet.Packaging.FuncTest
                 // Assert
                 repositoryCountersignature.Should().NotBeNull();
                 repositoryCountersignature.SignerInfo.Should().NotBeNull();
-                repositoryCountersignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterOrEqualTo(1);
+                repositoryCountersignature.SignerInfo.UnsignedAttributes.Count.Should().BeGreaterThanOrEqualTo(1);
 
                 var hasTimestampUnsignedAttribute = false;
                 var timestampCms = new SignedCms();
@@ -543,4 +543,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

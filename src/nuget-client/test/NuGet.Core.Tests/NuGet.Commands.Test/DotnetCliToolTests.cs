@@ -96,7 +96,7 @@ namespace NuGet.Commands.Test
                 var lockFile = lockFormat.Read(path);
 
                 // Verify only packages
-                Assert.Empty(lockFile.Libraries.Where(e => e.Type != "package"));
+                Assert.DoesNotContain(lockFile.Libraries, e => e.Type != "package");
             }
         }
 

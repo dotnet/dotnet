@@ -6,6 +6,8 @@
 // because we continue to support older coreclrs and the windows desktop framework through netstandard2.0
 // we access the features using reflection
 
+#nowarn "3262" // The `Option.ofObj (Type.GetType..) construct warns in ns20, because Type.GetType is not annotated as nullable
+
 namespace FSharp.Compiler.Interactive
 
 open System
@@ -13,6 +15,7 @@ open System.Reflection
 open System.Threading
 
 open Internal.Utilities.FSharpEnvironment
+open Internal.Utilities.Library
 
 open Unchecked
 
@@ -24,21 +27,20 @@ type internal ControlledExecution(isInteractive: bool) =
     static let ceType: Type option =
         Option.ofObj (Type.GetType("System.Runtime.ControlledExecution, System.Private.CoreLib", false))
 
-    static let threadType: Type option = Option.ofObj (typeof<Threading.Thread>)
+    static let threadType: Type option = typeof<Threading.Thread> |> Option.ofObj
 
     static let ceRun: MethodInfo option =
         match ceType with
         | None -> None
         | Some t ->
-            Option.ofObj (
-                t.GetMethod(
-                    "Run",
-                    BindingFlags.Static ||| BindingFlags.Public,
-                    defaultof<Binder>,
-                    [| typeof<System.Action>; typeof<System.Threading.CancellationToken> |],
-                    [||]
-                )
+            t.GetMethod(
+                "Run",
+                BindingFlags.Static ||| BindingFlags.Public,
+                defaultof<Binder>,
+                [| typeof<System.Action>; typeof<System.Threading.CancellationToken> |],
+                [||]
             )
+            |> Option.ofObj
 
     static let threadResetAbort: MethodInfo option =
         match isRunningOnCoreClr, threadType with
@@ -67,6 +69,8 @@ type internal ControlledExecution(isInteractive: bool) =
 
     static member StripTargetInvocationException(exn: Exception) =
         match exn with
-        | :? TargetInvocationException as e when not (isNull e.InnerException) ->
-            ControlledExecution.StripTargetInvocationException(e.InnerException)
+        | :? TargetInvocationException as e ->
+            match e.InnerException with
+            | null -> exn
+            | innerEx -> ControlledExecution.StripTargetInvocationException(innerEx)
         | _ -> exn

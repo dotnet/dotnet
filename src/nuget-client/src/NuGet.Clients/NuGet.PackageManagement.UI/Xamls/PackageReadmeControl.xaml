@@ -1,0 +1,79 @@
+<UserControl
+  x:Class="NuGet.PackageManagement.UI.PackageReadmeControl"
+  x:Name="PackageReadmeUserControl"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:imagingTheme="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+  xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Utilities"
+  xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+  Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
+  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+  DataContextChanged="UserControl_DataContextChanged"
+  Loaded="PackageReadmeControl_Loaded"
+  mc:Ignorable="d"
+  d:DesignHeight="300"
+  d:DesignWidth="300">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <ContentControl
+      x:Name="descriptionMarkdownPreview"
+      ClipToBounds="True"
+      Focusable="False"
+      Visibility="{Binding ElementName=PackageReadmeUserControl, Path=IsReadmeReady, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    <Grid
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center"
+      Visibility="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy, Mode=OneWay, FallbackValue=Visible, Converter={StaticResource BooleanToVisibilityConverter}}" >
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <nuget:Spinner
+        Grid.Column="0"
+        Height="20"
+        Width="20"/>
+      <TextBlock
+        Padding="10,0,0,0"
+        Grid.Column="1"
+        TextWrapping="Wrap"
+        Text="{x:Static nuget:Resources.Text_LoadingReadme}" />
+      <!--
+        Special TextBlock to report loading status to assistive technologies (narrator).
+        Code behind changes to the Text property will trigger a narrator event.
+      -->
+      <vs:LiveTextBlock
+        Visibility="Collapsed"
+        IsFrequencyLimited="True"
+        Focusable="False"
+        AutomationProperties.IsOffscreenBehavior="Offscreen">
+        <vs:LiveTextBlock.Resources>
+          <Style TargetType="vs:LiveTextBlock">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy}" Value="True">
+                <Setter Property="Text" Value="{x:Static nuget:Resources.Text_LoadingReadme}"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding ElementName=PackageReadmeUserControl, Path=IsBusy}" Value="False">
+                <Setter Property="Text" Value="{x:Static nuget:Resources.Text_ReadmeLoaded}"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </vs:LiveTextBlock.Resources>
+      </vs:LiveTextBlock>
+    </Grid>
+    <TextBlock
+      TextWrapping="Wrap"
+      Text="{x:Static nuget:Resources.Error_UnableToLoadReadme}"
+      Visibility="{Binding Path=ErrorWithReadme, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+  </Grid>
+</UserControl>

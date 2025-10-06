@@ -19,11 +19,7 @@ namespace NuGet.ProjectModel.Test
         public static PackageSpec GetPackageSpec(string json, IEnvironmentVariableReader environmentReader)
         {
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            var streamReader = new StreamReader(ms);
-            var jsonReader = new JsonTextReader(streamReader);
-#pragma warning disable CS0612 // Type or member is obsolete
-            return JsonPackageSpecReader.GetPackageSpec(jsonReader, "project", "project.json", environmentReader);
-#pragma warning restore CS0612 // Type or member is obsolete
+            return JsonPackageSpecReader.GetPackageSpec(ms, "project", "project.json", null, environmentReader);
         }
 
         public static PackageSpec RoundTripJson(string json, IEnvironmentVariableReader environmentReader)
@@ -51,18 +47,20 @@ namespace NuGet.ProjectModel.Test
 
         public static PackageSpec RoundTrip(this PackageSpec spec)
         {
-            using (var jsonWriter = new JTokenWriter())
-            using (var writer = new JsonObjectWriter(jsonWriter))
+            using (var memoryStream = new MemoryStream())
             {
-                writer.WriteObjectStart();
+                using (var streamWriter = new StreamWriter(memoryStream, Encoding.UTF8, 1024, leaveOpen: true))
+                using (var jsonWriter = new JsonTextWriter(streamWriter))
+                using (var writer = new JsonObjectWriter(jsonWriter))
+                {
+                    writer.WriteObjectStart();
+                    PackageSpecWriter.Write(spec, writer);
+                    writer.WriteObjectEnd();
+                }
 
-                PackageSpecWriter.Write(spec, writer);
+                memoryStream.Position = 0;
 
-                writer.WriteObjectEnd();
-
-#pragma warning disable CS0618
-                return JsonPackageSpecReader.GetPackageSpec((JObject)jsonWriter.Token);
-#pragma warning restore CS0618
+                return JsonPackageSpecReader.GetPackageSpec(memoryStream, null, null, null);
             }
         }
 
@@ -99,23 +97,24 @@ namespace NuGet.ProjectModel.Test
 
         public static PackageSpec GetSpec()
         {
-            return GetSpec("netcoreapp2.0");
+            return GetSpec(assetTargetFallback: false, "netcoreapp2.0");
         }
 
-        public static PackageSpec GetSpec(params NuGetFramework[] frameworks)
+        public static PackageSpec GetSpec(bool assetTargetFallback, params NuGetFramework[] frameworks)
         {
             var tfis = new List<TargetFrameworkInformation>(
                 frameworks.Select(e => new TargetFrameworkInformation()
                 {
+                    AssetTargetFallback = assetTargetFallback,
                     FrameworkName = e
                 }));
 
             return new PackageSpec(tfis);
         }
 
-        public static PackageSpec GetSpec(params string[] frameworks)
+        public static PackageSpec GetSpec(bool assetTargetFallback, params string[] frameworks)
         {
-            return GetSpec(frameworks.Select(NuGetFramework.Parse).ToArray());
+            return GetSpec(assetTargetFallback: assetTargetFallback, frameworks.Select(NuGetFramework.Parse).ToArray());
         }
     }
 }

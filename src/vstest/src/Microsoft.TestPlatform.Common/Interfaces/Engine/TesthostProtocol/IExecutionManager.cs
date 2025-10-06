@@ -17,6 +17,7 @@ public interface IExecutionManager
     /// Initializes the execution manager.
     /// </summary>
     /// <param name="pathToAdditionalExtensions"> The path to additional extensions. </param>
+    /// <param name="testMessageEventsHandler">Handler of test messages.</param>
     void Initialize(IEnumerable<string> pathToAdditionalExtensions, ITestMessageEventHandler? testMessageEventsHandler);
 
     /// <summary>
@@ -48,12 +49,12 @@ public interface IExecutionManager
     /// <summary>
     /// Cancel the test execution.
     /// </summary>
-    /// <param name="eventHandler"> EventHandler for handling execution events from Engine. </param>
+    /// <param name="testRunEventsHandler"> EventHandler for handling execution events from Engine. </param>
     void Cancel(IInternalTestRunEventsHandler testRunEventsHandler);
 
     /// <summary>
     /// Aborts the test execution.
     /// </summary>
-    /// <param name="eventHandler"> EventHandler for handling execution events from Engine. </param>
+    /// <param name="testRunEventsHandler"> EventHandler for handling execution events from Engine. </param>
     void Abort(IInternalTestRunEventsHandler testRunEventsHandler);
 }

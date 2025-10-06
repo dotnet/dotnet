@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 using System.CodeDom;
 using System.ComponentModel.Design.Serialization;
@@ -29,7 +31,7 @@ public class CodeDomSerializerExceptionTests
 
     public static IEnumerable<object[]> Ctor_Exception_CodeLinePragma_TestData()
     {
-        yield return new object[] { new Exception(), new CodeLinePragma() };
+        yield return new object[] { new InvalidOperationException(), new CodeLinePragma() };
         yield return new object[] { null, null };
     }
 
@@ -63,7 +65,7 @@ public class CodeDomSerializerExceptionTests
     public static IEnumerable<object[]> Ctor_Exception_IDesignerSerializationManager_TestData()
     {
         Mock<IDesignerSerializationManager> mockDesignerSerializationManager = new(MockBehavior.Strict);
-        yield return new object[] { new Exception(), mockDesignerSerializationManager.Object };
+        yield return new object[] { new InvalidOperationException(), mockDesignerSerializationManager.Object };
         yield return new object[] { null, mockDesignerSerializationManager.Object };
     }
 
@@ -81,7 +83,7 @@ public class CodeDomSerializerExceptionTests
     public void CodeDomSerializerException_NullManager_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>("manager", () => new CodeDomSerializerException("message", (IDesignerSerializationManager)null));
-        Assert.Throws<ArgumentNullException>("manager", () => new CodeDomSerializerException(new Exception(), (IDesignerSerializationManager)null));
+        Assert.Throws<ArgumentNullException>("manager", () => new CodeDomSerializerException(new InvalidOperationException(), (IDesignerSerializationManager)null));
     }
 
     [Theory]
@@ -106,6 +108,6 @@ public class CodeDomSerializerExceptionTests
     public void CodeDomSerializerException_GetObjectData_ThrowsPlatformNotSupportedException()
     {
         CodeDomSerializerException exception = new("message", new CodeLinePragma("fileName.cs", 11));
-        Assert.Throws<PlatformNotSupportedException>(() => exception.GetObjectData(null, new StreamingContext()));
+        Assert.Throws<PlatformNotSupportedException>(() => exception.GetObjectData(null, default));
     }
 }

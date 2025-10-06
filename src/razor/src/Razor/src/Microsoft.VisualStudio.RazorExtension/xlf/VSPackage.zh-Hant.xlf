@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
-        <target state="translated">自動插入結尾標籤</target>
+        <source>Auto insert closing tag</source>
+        <target state="translated">自動插入結尾標記</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
@@ -58,8 +58,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
-        <target state="translated">自動插入屬性引號</target>
+        <source>Auto insert attribute quotes</source>
+        <target state="translated">自動插入屬性引用</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -68,7 +68,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
+        <source>Code/functions block open brace on next line</source>
         <target state="translated">程式碼/函數區塊左大括弧在下一行</target>
         <note />
       </trans-unit>
@@ -78,18 +78,28 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
+        <source>Background for C# code</source>
         <target state="translated">C# 程式碼的背景</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
-        <target state="translated">若為 true，按下空格鍵將會提交 Html 元素和元件的建議</target>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
+        <target state="translated">若為 true，按下空格鍵將會認可 Html 元素和元件的建議</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
-        <target state="translated">透過空格鍵提交元素</target>
+        <source>Commit elements with space</source>
+        <target state="translated">透過空格鍵認可元素</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">如為 true，貼上內容時將啟用格式化</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">於貼上時格式化</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -98,7 +108,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
+        <source>Format on type</source>
         <target state="translated">輸入時格式化</target>
         <note />
       </trans-unit>
@@ -113,8 +123,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDescription">
-        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
-        <target state="translated">設定要在輸出視窗的「Razor 記錄器輸出」類別中顯示的日誌記錄級別。</target>
+        <source>Sets the level of logging to show in the Razor Logger Output category of the Output Window.</source>
+        <target state="translated">設定要在輸出視窗的「Razor 記錄器輸出」類別中顯示的記錄層級。</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDisplayName">

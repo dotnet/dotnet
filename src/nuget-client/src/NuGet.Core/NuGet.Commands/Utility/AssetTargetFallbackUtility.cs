@@ -1,13 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 using NuGet.Common;
 using NuGet.Frameworks;
-using NuGet.ProjectModel;
 using NuGet.Shared;
 
 namespace NuGet.Commands
@@ -59,26 +57,32 @@ namespace NuGet.Commands
         /// <summary>
         /// Update TargetFrameworkInformation properties.
         /// </summary>
-        public static void ApplyFramework(TargetFrameworkInformation targetFrameworkInfo, IEnumerable<NuGetFramework> packageTargetFallback, IEnumerable<NuGetFramework> assetTargetFallback)
+        public static (NuGetFramework frameworkName, ImmutableArray<NuGetFramework> imports, bool assetTargetFallback, bool warn) GetFallbackFrameworkInformation(NuGetFramework originalFrameworkName, IEnumerable<NuGetFramework> packageTargetFallback, IEnumerable<NuGetFramework> assetTargetFallbackEnum)
         {
             // Update the framework appropriately
-            targetFrameworkInfo.FrameworkName = GetFallbackFramework(
-                targetFrameworkInfo.FrameworkName,
+            var frameworkName = GetFallbackFramework(
+                originalFrameworkName,
                 packageTargetFallback,
-                assetTargetFallback);
+                assetTargetFallbackEnum);
 
-            if (assetTargetFallback?.Any() == true)
+            ImmutableArray<NuGetFramework> imports = [];
+            bool assetTargetFallback = false;
+            bool warn = false;
+
+            if (assetTargetFallbackEnum?.Any() == true)
             {
                 // AssetTargetFallback
-                targetFrameworkInfo.Imports = assetTargetFallback.AsList();
-                targetFrameworkInfo.AssetTargetFallback = true;
-                targetFrameworkInfo.Warn = true;
+                imports = assetTargetFallbackEnum.ToImmutableArray();
+                assetTargetFallback = true;
+                warn = true;
             }
             else if (packageTargetFallback?.Any() == true)
             {
                 // PackageTargetFallback
-                targetFrameworkInfo.Imports = packageTargetFallback.AsList();
+                imports = packageTargetFallback.ToImmutableArray();
             }
+
+            return (frameworkName, imports, assetTargetFallback, warn);
         }
     }
 }

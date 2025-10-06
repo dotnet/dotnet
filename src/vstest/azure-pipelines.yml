@@ -81,7 +81,7 @@ stages:
         timeoutInMinutes: 120
         pool:
           name: NetCore-Public
-          demands: ImageOverride -equals windows.vs2022.amd64.open
+          demands: ImageOverride -equals windows.vs2022preview.amd64.open
         strategy:
           matrix:
             Release:
@@ -112,6 +112,7 @@ stages:
             -nobl
             -integrationTest
             -performanceTest
+            /bl:$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)/Test.binlog
           name: Test
           displayName: Test
 
@@ -156,8 +157,8 @@ stages:
             Ubuntu_22_04:
               vmImage: ubuntu-22.04
               pwsh: true
-            macOS_11:
-              vmImage: macOS-11
+            macOS_12:
+              vmImage: macos-14
               pwsh: true
         pool:
           vmImage: $[ variables['vmImage'] ]

@@ -284,7 +284,7 @@ namespace NuGet.PackageManagement.Test
 
             var packagesWithVulnerabilities = AuditChecker.FindPackagesWithKnownVulnerabilities(knownVulnerabilities, packages);
             packagesWithVulnerabilities.Should().HaveCount(1);
-            (PackageIdentity vulnerablePackage, AuditChecker.PackageAuditInfo auditInfo) = packagesWithVulnerabilities.Single();
+            (PackageIdentity vulnerablePackage, AuditChecker.PackageAuditInfo auditInfo) = packagesWithVulnerabilities!.Single();
             vulnerablePackage.Should().Be(packageIdentity);
             auditInfo.Identity.Should().Be(packageIdentity);
             auditInfo.Vulnerabilities.Should().HaveCount(2);
@@ -359,7 +359,7 @@ namespace NuGet.PackageManagement.Test
             {
                 new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), new List<INuGetResourceProvider>{new VulnerabilityInfoResourceProvider(vulnerabilityResults) })
             };
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().BeNull();
             count.Should().Be(0);
         }
@@ -393,12 +393,12 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.Exceptions.Should().BeNull();
             vulnerabilityData.KnownVulnerabilities.Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Single().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Single().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Single().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Single().Values.Single().Should().HaveCount(1);
             count.Should().Be(1);
         }
 
@@ -434,12 +434,12 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             count.Should().Be(1);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Single().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Single().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Single().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Single().Values.Single().Should().HaveCount(1);
             vulnerabilityData.Exceptions.Should().NotBeNull();
             vulnerabilityData.Exceptions!.InnerException.Should().NotBeNull();
             vulnerabilityData.Exceptions.InnerException!.Message.Should().Be(failureMessage);
@@ -488,13 +488,13 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(2);
-            vulnerabilityData.KnownVulnerabilities.First().Keys.Should().Contain("B");
-            vulnerabilityData.KnownVulnerabilities.First().Values.Single().Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Last().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Last().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.First().Keys.Should().Contain("B");
+            vulnerabilityData.KnownVulnerabilities!.First().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Last().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Last().Values.Single().Should().HaveCount(1);
             count.Should().Be(2);
         }
 
@@ -509,14 +509,92 @@ namespace NuGet.PackageManagement.Test
             using SourceCacheContext cacheContext = new();
 
             // Act
-            (int count, GetVulnerabilityInfoResult? result) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, cacheContext, NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? result) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, cacheContext, NullLogger.Instance, CancellationToken.None);
 
             // Assert
             result.Should().NotBeNull();
             result!.KnownVulnerabilities.Should().BeNull();
             result.Exceptions.Should().NotBeNull();
             count.Should().Be(0);
+        }
 
+        [Fact]
+        public async Task GetAllVulnerabilityDataAsync_PackageAndAuditSource_ReturnsAuditSourceVulnerabilitiesOnly()
+        {
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> firstKnownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        "A",
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Low, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> secondKnownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        "B",
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability2"), PackageVulnerabilitySeverity.Low, VersionRange.Parse("[2.0.0,3.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string packageSourceUrl = "https://contoso.test/vulnerability/v3/index.json";
+            string auditSourceUrl = "https://contoso.test/vulnerability/secondary/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { packageSourceUrl, new GetVulnerabilityInfoResult(firstKnownVulnerabilities, exceptions: null) },
+                { auditSourceUrl, new GetVulnerabilityInfoResult(secondKnownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var packageSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(packageSourceUrl), providers),
+            };
+            var auditSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(auditSourceUrl), providers)
+            };
+
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(packageSources, auditSources, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            vulnerabilityData.Should().NotBeNull();
+            vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities![0].Keys.Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities[0].Keys.First().Should().Be("B");
+        }
+
+        [Fact]
+        public async Task GetAllVulnerabilityDataAsync_AuditSourceWithoutVulnerabilityDB_RaisesWarning()
+        {
+            // Arrange
+            string auditSourceUrl = "https://contoso.test/nuget/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new();
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var packageSources = new List<SourceRepository>();
+            var auditSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(auditSourceUrl), providers)
+            };
+
+            var logger = new TestLogger();
+
+            // Act
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(packageSources, auditSources, Mock.Of<SourceCacheContext>(), logger, CancellationToken.None);
+
+            // Assert
+            logger.LogMessages.Should().ContainSingle();
+            ILogMessage logMessage = logger.LogMessages.Single();
+            logMessage.Code.Should().Be(NuGetLogCode.NU1905);
+            logMessage.Message.Should().Contain(auditSourceUrl);
         }
 
         [Fact]
@@ -535,8 +613,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -546,6 +624,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().BeEmpty();
@@ -575,8 +655,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -586,6 +666,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(2);
@@ -631,8 +713,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -642,6 +724,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -694,8 +778,8 @@ namespace NuGet.PackageManagement.Test
                 {packageC, packageAuditInfoC },
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -705,6 +789,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(11);
@@ -745,13 +831,13 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>()
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
             {
-                { projectPath1 , (true, PackageVulnerabilitySeverity.Moderate) },
-                { projectPath2 , (false, PackageVulnerabilitySeverity.Moderate) }
+                { projectPath1 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) },
+                { projectPath2 , new AuditChecker.ProjectAuditSettings(false, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) }
             };
 
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -761,6 +847,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -799,13 +887,13 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>()
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
             {
-                { projectPath1 , (true, PackageVulnerabilitySeverity.Moderate) },
-                { projectPath2 , (true, PackageVulnerabilitySeverity.High) }
+                { projectPath1 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) },
+                { projectPath2 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.High, suppressedAdvisories: null) }
             };
 
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -815,6 +903,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -831,8 +921,112 @@ namespace NuGet.PackageManagement.Test
             Sev2Matches.Should().Be(0);
             Sev3Matches.Should().Be(0);
             InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(0);
+            DistinctAdvisoriesSuppressedCount.Should().Be(0);
             packagesWithReportedAdvisories.Should().HaveCount(1);
             packagesWithReportedAdvisories[0].Should().Be(packageIdentity);
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task CheckPackageVulnerabilitiesAsync_WithEmptyPackages_ReturnsNoopAuditResult(string enableAudit)
+        {
+            // Arrange
+            string packageId = "A";
+
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        packageId,
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string sourceWithVulnerabilityData = "https://contoso.com/vulnerability/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { sourceWithVulnerabilityData, new GetVulnerabilityInfoResult(knownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var sourceRepositories = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), providers)
+            };
+
+            var sourceCacheContext = new SourceCacheContext();
+            var logger = new TestLogger();
+            var auditChecker = new AuditChecker(sourceRepositories, sourceCacheContext, logger);
+
+            var packages = Enumerable.Empty<PackageRestoreData>();
+            var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>
+            {
+                { "C:\\project.csproj", new RestoreAuditProperties { EnableAudit = enableAudit } }
+            };
+
+            // Act
+            var result = await auditChecker.CheckPackageVulnerabilitiesAsync(packages, restoreAuditProperties, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().Be(AuditCheckResult.NoopAuditResult);
+
+            // Verify that we don't waste time fetching vulnerability data when there are no packages
+            logger.LogMessages.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task CheckPackageVulnerabilitiesAsync_WithNullPackages_ThrowsArgumentNullException(string enableAudit)
+        {
+            // Arrange
+            string packageId = "A";
+
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        packageId,
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string sourceWithVulnerabilityData = "https://contoso.com/vulnerability/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { sourceWithVulnerabilityData, new GetVulnerabilityInfoResult(knownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var sourceRepositories = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), providers)
+            };
+
+            var sourceCacheContext = new SourceCacheContext();
+            var logger = new TestLogger();
+            var auditChecker = new AuditChecker(sourceRepositories, sourceCacheContext, logger);
+
+            IEnumerable<PackageRestoreData>? packages = null;
+            var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>
+            {
+                { "C:\\project.csproj", new RestoreAuditProperties { EnableAudit = enableAudit } }
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                async () => await auditChecker.CheckPackageVulnerabilitiesAsync(packages!, restoreAuditProperties, CancellationToken.None));
         }
 
         [Fact]
@@ -925,6 +1119,140 @@ namespace NuGet.PackageManagement.Test
             result.Severity2VulnerabilitiesFound.Should().Be(0);
             result.Severity3VulnerabilitiesFound.Should().Be(0);
             result.InvalidSeverityVulnerabilitiesFound.Should().Be(0);
+        }
+
+        [Fact]
+        public void CreateWarnings_WithAuditSettings_WithSuppressedAdvisories_SuppressesExpectedVulnerabilities()
+        {
+            string cveUrl1 = "https://cve.test/suppressed/1";
+            string cveUrl2 = "https://cve.test/suppressed/2";
+
+            PackageIdentity packageIdentity = new("packageId", new NuGetVersion(2, 0, 0));
+            var projectPath = "C:\\solution\\project\\project1.csproj";
+            AuditChecker.PackageAuditInfo packageAuditInfo = new(packageIdentity, new string[] { projectPath });
+
+            packageAuditInfo.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1),
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfo.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl2),
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            var suppressedAdvisories = new HashSet<string> { cveUrl1 }; // suppress one of the two advisories
+
+            Dictionary<PackageIdentity, AuditChecker.PackageAuditInfo> result = new()
+            {
+                {packageIdentity, packageAuditInfo }
+            };
+
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
+            {
+                { projectPath , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories) }
+            };
+
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
+            List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
+
+            List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
+                       auditSettings,
+                       ref Sev0Matches,
+                       ref Sev1Matches,
+                       ref Sev2Matches,
+                       ref Sev3Matches,
+                       ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
+                       ref packagesWithReportedAdvisories);
+
+            warnings.Should().HaveCount(1);
+            warnings.Any(m => m.Message.Contains(cveUrl1)).Should().BeFalse(); // cveUrl1 should be suppressed
+            warnings.Any(m => m.Message.Contains(cveUrl2)).Should().BeTrue(); // cveUrl2 should not be suppressed
+
+            Sev0Matches.Should().Be(0);
+            Sev1Matches.Should().Be(1);
+            Sev2Matches.Should().Be(0);
+            Sev3Matches.Should().Be(0);
+            InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(1);
+            DistinctAdvisoriesSuppressedCount.Should().Be(1);
+            packagesWithReportedAdvisories.Should().HaveCount(1);
+            packagesWithReportedAdvisories[0].Should().Be(packageIdentity);
+        }
+
+        [Fact]
+        public void CreateWarnings_WithAuditSettings_WithSuppressedAdvisories_CountsSuppressedAdvisoriesCorrectly()
+        {
+            string cveUrl1 = "https://cve.test/suppressed/1";
+            string cveUrl2 = "https://cve.test/suppressed/2";
+            string cveUrl3 = "https://cve.test/suppressed/3";
+
+            var projectPath = "C:\\solution\\project\\project1.csproj";
+
+            PackageIdentity packageIdentityA = new("packageA", new NuGetVersion(2, 0, 0));
+            AuditChecker.PackageAuditInfo packageAuditInfoA = new(packageIdentityA, new string[] { projectPath });
+            packageAuditInfoA.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfoA.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl2), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            PackageIdentity packageIdentityB = new("packageB", new NuGetVersion(2, 0, 0));
+            AuditChecker.PackageAuditInfo packageAuditInfoB = new(packageIdentityB, new string[] { projectPath });
+            packageAuditInfoB.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfoB.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl3), // this will not be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            var suppressedAdvisories = new HashSet<string> { cveUrl1, cveUrl2 };
+
+            Dictionary<PackageIdentity, AuditChecker.PackageAuditInfo> result = new()
+            {
+                { packageIdentityA, packageAuditInfoA },
+                { packageIdentityB, packageAuditInfoB }
+            };
+
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
+            {
+                { projectPath , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories) }
+            };
+
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
+            List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
+
+            List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
+                       auditSettings,
+                       ref Sev0Matches,
+                       ref Sev1Matches,
+                       ref Sev2Matches,
+                       ref Sev3Matches,
+                       ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
+                       ref packagesWithReportedAdvisories);
+
+            warnings.Should().HaveCount(1);
+            warnings.Any(m => m.Message.Contains(cveUrl1)).Should().BeFalse();
+            warnings.Any(m => m.Message.Contains(cveUrl2)).Should().BeFalse();
+            warnings.Any(m => m.Message.Contains(cveUrl3)).Should().BeTrue();
+
+            Sev0Matches.Should().Be(0);
+            Sev1Matches.Should().Be(1);
+            Sev2Matches.Should().Be(0);
+            Sev3Matches.Should().Be(0);
+            InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(3);
+            DistinctAdvisoriesSuppressedCount.Should().Be(2);
+            packagesWithReportedAdvisories.Should().HaveCount(1);
+            packagesWithReportedAdvisories[0].Should().Be(packageIdentityB);
         }
 
         // Setup a test bed with multiple sources, 1 source with vulnerabilities, 1 vulnerable package wih a moderate vulnerability.

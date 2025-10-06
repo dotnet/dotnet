@@ -27,10 +27,9 @@ namespace Test
 #nullable disable
             , 2, (context) => (__builder2) => {
                 __builder2.OpenElement(3, "div");
-                __builder2.AddContent(4, 
 #nullable restore
-#line (2,9)-(2,26) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLower()
+#line (2,9)-(2,26) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(4, context.ToLower()
 
 #line default
 #line hidden
@@ -51,7 +50,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<TItem> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (1,14)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }

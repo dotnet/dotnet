@@ -1,1 +1,1 @@
-[Microsoft.VisualStudio.Editor.Razor.JoinableTaskContextExtensions]::AssertUIThread
+[Microsoft.VisualStudio.Razor.Extensions.JoinableTaskContextExtensions]::AssertUIThread

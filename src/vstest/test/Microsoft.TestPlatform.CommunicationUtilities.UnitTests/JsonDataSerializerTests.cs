@@ -49,16 +49,16 @@ public class JsonDataSerializerTests
 
         var classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(null);
         classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(classWithSelfReferencingLoop);
-        classWithSelfReferencingLoop.InfiniteRefernce!.InfiniteRefernce = classWithSelfReferencingLoop;
+        classWithSelfReferencingLoop.InfiniteReference!.InfiniteReference = classWithSelfReferencingLoop;
 
         string serializedPayload = _jsonDataSerializer.SerializePayload("dummy", classWithSelfReferencingLoop, version);
         if (version <= 1)
         {
-            Assert.AreEqual("{\"MessageType\":\"dummy\",\"Payload\":{\"InfiniteRefernce\":{}}}", serializedPayload);
+            Assert.AreEqual("{\"MessageType\":\"dummy\",\"Payload\":{\"InfiniteReference\":{}}}", serializedPayload);
         }
         else
         {
-            Assert.AreEqual($"{{\"Version\":{version},\"MessageType\":\"dummy\",\"Payload\":{{\"InfiniteRefernce\":{{}}}}}}", serializedPayload);
+            Assert.AreEqual($"{{\"Version\":{version},\"MessageType\":\"dummy\",\"Payload\":{{\"InfiniteReference\":{{}}}}}}", serializedPayload);
         }
 
         JsonConvert.DefaultSettings = null;
@@ -76,7 +76,7 @@ public class JsonDataSerializerTests
             PreserveReferencesHandling = PreserveReferencesHandling.All,
         };
 
-        Message message = _jsonDataSerializer.DeserializeMessage("{\"MessageType\":\"dummy\",\"Payload\":{\"InfiniteRefernce\":{}}}");
+        Message message = _jsonDataSerializer.DeserializeMessage("{\"MessageType\":\"dummy\",\"Payload\":{\"InfiniteReference\":{}}}");
         Assert.AreEqual("dummy", message?.MessageType);
         JsonConvert.DefaultSettings = null;
     }
@@ -137,7 +137,7 @@ public class JsonDataSerializerTests
         };
 
         // This line should deserialize properly
-        Message message = _jsonDataSerializer.DeserializeMessage($"{{\"Version\":\"{version}\",\"MessageType\":\"dummy\",\"Payload\":{{\"InfiniteRefernce\":{{}}}}}}");
+        Message message = _jsonDataSerializer.DeserializeMessage($"{{\"Version\":\"{version}\",\"MessageType\":\"dummy\",\"Payload\":{{\"InfiniteReference\":{{}}}}}}");
 
 
         //restore the default settings to null
@@ -150,7 +150,7 @@ public class JsonDataSerializerTests
     {
         var classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(null);
         classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(classWithSelfReferencingLoop);
-        classWithSelfReferencingLoop.InfiniteRefernce!.InfiniteRefernce = classWithSelfReferencingLoop;
+        classWithSelfReferencingLoop.InfiniteReference!.InfiniteReference = classWithSelfReferencingLoop;
 
         // This line should not throw exception
         _jsonDataSerializer.SerializePayload("dummy", classWithSelfReferencingLoop);
@@ -161,7 +161,7 @@ public class JsonDataSerializerTests
     {
         var classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(null);
         classWithSelfReferencingLoop = new ClassWithSelfReferencingLoop(classWithSelfReferencingLoop);
-        classWithSelfReferencingLoop.InfiniteRefernce!.InfiniteRefernce = classWithSelfReferencingLoop;
+        classWithSelfReferencingLoop.InfiniteReference!.InfiniteReference = classWithSelfReferencingLoop;
 
         var json = _jsonDataSerializer.SerializePayload("dummy", classWithSelfReferencingLoop);
 
@@ -169,7 +169,7 @@ public class JsonDataSerializerTests
         var result = _jsonDataSerializer.Deserialize<ClassWithSelfReferencingLoop>(json, 1)!;
 
         Assert.AreEqual(typeof(ClassWithSelfReferencingLoop), result.GetType());
-        Assert.IsNull(result.InfiniteRefernce);
+        Assert.IsNull(result.InfiniteReference);
     }
 
     [TestMethod]
@@ -255,9 +255,9 @@ public class JsonDataSerializerTests
     {
         public ClassWithSelfReferencingLoop(ClassWithSelfReferencingLoop? ir)
         {
-            InfiniteRefernce = ir;
+            InfiniteReference = ir;
         }
 
-        public ClassWithSelfReferencingLoop? InfiniteRefernce { get; set; }
+        public ClassWithSelfReferencingLoop? InfiniteReference { get; set; }
     }
 }

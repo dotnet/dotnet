@@ -15,9 +15,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public void CreateNetCoreProject_RestoresNewProject(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 VisualStudio.AssertNoErrors();
@@ -30,9 +27,6 @@ namespace NuGet.Tests.Apex
         [Timeout(DefaultTimeout)]
         public void CreateNetCoreProject_AddProjectReference(ProjectTemplate projectTemplate)
         {
-            // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject2");
@@ -55,8 +49,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallPackageFromPMUIFromExpectedSource_Succeeds(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");
@@ -121,8 +113,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallAndUpdatePackageFromPMUIFromExpectedSource_Succeeds(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");
@@ -191,8 +181,6 @@ namespace NuGet.Tests.Apex
         public async Task WithSourceMappingEnabled_InstallPackageFromPMUIAndNoSourcesFound_Fails(ProjectTemplate projectTemplate)
         {
             // Arrange
-            EnsureVisualStudioHost();
-
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
                 var privateRepositoryPath = Path.Combine(testContext.SolutionRoot, "PrivateRepository");
@@ -242,106 +230,6 @@ namespace NuGet.Tests.Apex
 
                 // Assert
                 CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
-            }
-        }
-
-        [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task InstallPackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
-        {
-            EnsureVisualStudioHost();
-
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
-            {
-                // Arrange
-                var packageName = "NetCoreInstallTestPackage";
-                var packageVersion = "1.0.0";
-                await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
-
-                VisualStudio.AssertNoErrors();
-
-                // Act
-                CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
-                var nugetTestService = GetNuGetTestService();
-                var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
-                uiwindow.InstallPackageFromUI(packageName, packageVersion);
-
-                // Assert
-                VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
-            }
-        }
-
-        [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task UpdatePackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
-        {
-            EnsureVisualStudioHost();
-
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
-            {
-                // Arrange
-                var packageName = "NetCoreUpdateTestPackage";
-                var packageVersion1 = "1.0.0";
-                var packageVersion2 = "2.0.0";
-
-                await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion1);
-                await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion2);
-
-                VisualStudio.AssertNoErrors();
-
-                // Act
-                CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
-                var nugetTestService = GetNuGetTestService();
-                var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
-                uiwindow.InstallPackageFromUI(packageName, packageVersion1);
-                testContext.SolutionService.Build();
-                testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
-                testContext.SolutionService.Build();
-                testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                // Assert
-                VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, packageVersion2, Logger);
-            }
-        }
-
-        [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task UninstallPackageFromNetCoreProjectFromUI(ProjectTemplate projectTemplate)
-        {
-            EnsureVisualStudioHost();
-
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
-            {
-                // Arrange
-                var packageName = "NetCoreUninstallTestPackage";
-                var packageVersion = "1.0.0";
-
-                await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
-
-                VisualStudio.AssertNoErrors();
-
-                // Act
-                CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
-                var nugetTestService = GetNuGetTestService();
-                var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
-                uiwindow.InstallPackageFromUI(packageName, packageVersion);
-                testContext.SolutionService.Build();
-                testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                uiwindow.UninstallPackageFromUI(packageName);
-                testContext.SolutionService.Build();
-                testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                // Assert
-                VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, testContext.Project, packageName, Logger);
             }
         }
 

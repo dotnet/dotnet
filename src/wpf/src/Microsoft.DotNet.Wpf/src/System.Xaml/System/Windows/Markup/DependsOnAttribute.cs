@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Runtime.CompilerServices;
 
@@ -23,7 +22,7 @@ namespace System.Windows.Markup
         /// Constructor for DependsOnAttribute
         /// </summary>
         /// <param name="name">The name of the property that the property depends on</param>
-        public DependsOnAttribute(string name)
+        public DependsOnAttribute(string? name)
         {
             Name = name;
         }
@@ -36,6 +35,6 @@ namespace System.Windows.Markup
         /// <summary>
         /// The name of the property that is declared to depend on
         /// </summary>
-        public string Name { get; }
+        public string? Name { get; }
     }
 }

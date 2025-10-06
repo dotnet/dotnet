@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -27,22 +26,25 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(directive);
         });
-        var options = RazorParserOptions.Create(builder => builder.Directives.Add(directive));
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(directive)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var customDirectives = documentNode.FindDirectiveReferences(directive);
-        var customDirective = (DirectiveIntermediateNode)Assert.Single(customDirectives).Node;
+        var customDirective = Assert.Single(customDirectives).Node;
         var stringToken = Assert.Single(customDirective.Tokens);
         Assert.Equal("\"hello\"", stringToken.Content);
     }
@@ -62,22 +64,25 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(directive);
         });
-        var options = RazorParserOptions.Create(builder => builder.Directives.Add(directive));
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(directive)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("@custom \"world\"");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var customDirectives = documentNode.FindDirectiveReferences(directive);
-        var customDirective = (DirectiveIntermediateNode)Assert.Single(customDirectives).Node;
+        var customDirective = Assert.Single(customDirectives).Node;
         var stringToken = Assert.Single(customDirective.Tokens);
         Assert.Equal("\"world\"", stringToken.Content);
     }
@@ -97,23 +102,26 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(directive);
         });
-        var options = RazorParserOptions.Create(builder => builder.Directives.Add(directive));
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(directive)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource1 = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import1.cshtml");
         var importSource2 = TestRazorSourceDocument.Create("@custom \"world\"", filePath: "import2.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource1, options), RazorSyntaxTree.Parse(importSource2, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource1, options), RazorSyntaxTree.Parse(importSource2, options)]);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var customDirectives = documentNode.FindDirectiveReferences(directive);
-        var customDirective = (DirectiveIntermediateNode)Assert.Single(customDirectives).Node;
+        var customDirective = Assert.Single(customDirectives).Node;
         var stringToken = Assert.Single(customDirective.Tokens);
         Assert.Equal("\"world\"", stringToken.Content);
     }
@@ -128,28 +136,27 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(codeBlockDirective);
             b.AddDirective(razorBlockDirective);
         });
-        var options = RazorParserOptions.Create(builder =>
-        {
-            builder.Directives.Add(codeBlockDirective);
-            builder.Directives.Add(razorBlockDirective);
-        });
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(codeBlockDirective, razorBlockDirective)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource = TestRazorSourceDocument.Create(
 @"@code ""code block"" { }
 @razor ""razor block"" { }",
             filePath: "testImports.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var directives = documentNode.Children.OfType<DirectiveIntermediateNode>();
         Assert.Empty(directives);
     }
@@ -163,21 +170,24 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(directive);
         });
-        var options = RazorParserOptions.Create(builder => builder.Directives.Add(directive));
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(directive)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource = TestRazorSourceDocument.Create("@custom { }", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
         var expectedDiagnostic = RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported("custom");
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var directives = documentNode.Children.OfType<DirectiveIntermediateNode>();
         Assert.Empty(directives);
         var diagnostic = Assert.Single(documentNode.GetAllDiagnostics());
@@ -193,21 +203,24 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
             b.AddDirective(directive);
         });
-        var options = RazorParserOptions.Create(builder => builder.Directives.Add(directive));
+
+        var options = RazorParserOptions.Default
+            .WithDirectives(directive)
+            .WithFlags(useRoslynTokenizer: true);
+
         var importSource = TestRazorSourceDocument.Create("@custom { }", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees(new[] { RazorSyntaxTree.Parse(importSource, options) }.ToImmutableArray());
+        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
         var expectedDiagnostic = RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported("custom");
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var directives = documentNode.Children.OfType<DirectiveIntermediateNode>();
         Assert.Empty(directives);
         var diagnostic = Assert.Single(documentNode.GetAllDiagnostics());
@@ -223,7 +236,6 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
@@ -245,16 +257,19 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
         });
+
+        var options = RazorParserOptions.Default
+            .WithFlags(useRoslynTokenizer: true);
+
         var codeDocument = TestRazorCodeDocument.Create("<p class=@(");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
+        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         var diagnostic = Assert.Single(documentNode.Diagnostics);
         Assert.Equal(@"The explicit expression block is missing a closing "")"" character.  Make sure you have a matching "")"" character for all the ""("" characters within this block, and that none of the "")"" characters are being interpreted as markup.",
             diagnostic.GetMessage(CultureInfo.CurrentCulture));
@@ -268,23 +283,25 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b =>
         {
             b.Phases.Add(phase);
-            b.Features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
         });
 
+        var parseOptions = RazorParserOptions.Default
+            .WithFlags(useRoslynTokenizer: true);
+
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
-        codeDocument.SetImportSyntaxTrees(new[]
-        {
-            RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("@ ")),
-            RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("<p @(")),
-        }.ToImmutableArray());
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, parseOptions));
+        codeDocument.SetImportSyntaxTrees(
+        [
+            RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("@ "), parseOptions),
+            RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("<p @("), parseOptions),
+        ]);
+        var options = RazorCodeGenerationOptions.Default;
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         Assert.Collection(documentNode.Diagnostics,
             diagnostic =>
             {

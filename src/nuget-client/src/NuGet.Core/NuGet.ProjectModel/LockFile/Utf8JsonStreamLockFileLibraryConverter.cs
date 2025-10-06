@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
 using NuGet.Versioning;
@@ -36,21 +37,16 @@ namespace NuGet.ProjectModel
 
         public LockFileLibrary Read(ref Utf8JsonStreamReader reader)
         {
-
             if (reader.TokenType != JsonTokenType.PropertyName)
             {
                 throw new JsonException("Expected PropertyName, found " + reader.TokenType);
             }
 
-            var lockFileLibrary = new LockFileLibrary();
             //We want to read the property name right away
             var propertyName = reader.GetString();
             var (name, version) = propertyName.SplitInTwo(LockFile.DirectorySeparatorChar);
-            lockFileLibrary.Name = name;
-            if (!string.IsNullOrWhiteSpace(version))
-            {
-                lockFileLibrary.Version = NuGetVersion.Parse(version);
-            }
+
+            var nugetVersion = !string.IsNullOrWhiteSpace(version) ? NuGetVersion.Parse(version) : null;
 
             reader.Read();
             if (reader.TokenType != JsonTokenType.StartObject)
@@ -58,44 +54,65 @@ namespace NuGet.ProjectModel
                 throw new JsonException("Expected StartObject, found " + reader.TokenType);
             }
 
+            string type = null;
+            string path = null;
+            string mSBuildProject = null;
+            string sha512 = null;
+            var isServiceable = false;
+            var hasTools = false;
+            var files = ImmutableArray<string>.Empty;
             while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
             {
                 if (reader.ValueTextEquals(TypePropertyName))
                 {
-                    lockFileLibrary.Type = reader.ReadNextTokenAsString();
+                    type = reader.ReadNextTokenAsString();
                 }
                 else if (reader.ValueTextEquals(PathPropertyName))
                 {
-                    lockFileLibrary.Path = reader.ReadNextTokenAsString();
+                    path = reader.ReadNextTokenAsString();
                 }
                 else if (reader.ValueTextEquals(MsbuildProjectPropertyName))
                 {
-                    lockFileLibrary.MSBuildProject = reader.ReadNextTokenAsString();
+                    mSBuildProject = reader.ReadNextTokenAsString();
                 }
                 else if (reader.ValueTextEquals(Sha512PropertyName))
                 {
-                    lockFileLibrary.Sha512 = reader.ReadNextTokenAsString();
+                    sha512 = reader.ReadNextTokenAsString();
                 }
                 else if (reader.ValueTextEquals(ServicablePropertyName))
                 {
                     reader.Read();
-                    lockFileLibrary.IsServiceable = reader.GetBoolean();
+                    isServiceable = reader.GetBoolean();
                 }
                 else if (reader.ValueTextEquals(HasToolsPropertyName))
                 {
                     reader.Read();
-                    lockFileLibrary.HasTools = reader.GetBoolean();
+                    hasTools = reader.GetBoolean();
                 }
                 else if (reader.ValueTextEquals(FilesPropertyName))
                 {
                     reader.Read();
-                    reader.ReadStringArrayAsIList(lockFileLibrary.Files);
+                    files = reader.ReadStringArrayAsImmutableArray();
                 }
                 else
                 {
                     reader.Skip();
                 }
             }
+
+            var lockFileLibrary = new LockFileLibrary()
+            {
+                Files = files,
+                HasTools = hasTools,
+                IsServiceable = isServiceable,
+                MSBuildProject = mSBuildProject,
+                Name = name,
+                Path = path,
+                Sha512 = sha512,
+                Type = type,
+                Version = nugetVersion
+            };
+
             return lockFileLibrary;
         }
     }

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NuGet.Packaging" Version="$(NugetPackagingVersion)" />
+    <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
 </Project>

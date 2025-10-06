@@ -1,7 +1,6 @@
 SigFile
   (ParsedSigFileInput
      ("/root/Member/SignatureMemberWithSetget.fsi", QualifiedNameOfFile Meh, [],
-      [],
       [SynModuleOrNamespaceSig
          ([Meh], false, NamedModule,
           [Types
@@ -20,7 +19,7 @@ SigFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((6,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (6,4--8,39),
+                            Single None, None, (6,4--8,39),
                             { LeadingKeyword = Member (6,4--6,10)
                               InlineKeyword = None
                               WithKeyword = Some (7,20--7,24)
@@ -40,4 +39,5 @@ SigFile
           PreXmlDoc ((2,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (2,0--8,39), { LeadingKeyword = Module (2,0--2,6) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [LineComment (5,4--5,23)] }, set []))

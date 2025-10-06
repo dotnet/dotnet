@@ -1,29 +1,17 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class HtmlConventions
 {
-    private const string HtmlCaseRegexReplacement = "-$1$2";
     private static readonly char[] InvalidNonWhitespaceHtmlCharacters =
-        new[] { '@', '!', '<', '/', '?', '[', '>', ']', '=', '"', '\'', '*' };
-
-    // This matches the following AFTER the start of the input string (MATCH).
-    // Any letter/number followed by an uppercase letter then lowercase letter: 1(Aa), a(Aa), A(Aa)
-    // Any lowercase letter followed by an uppercase letter: a(A)
-    // Each match is then prefixed by a "-" via the ToHtmlCase method.
-    private static readonly Regex HtmlCaseRegex =
-        new Regex(
-            "(?<!^)((?<=[a-zA-Z0-9])[A-Z][a-z])|((?<=[a-z])[A-Z])",
-            RegexOptions.None,
-            TimeSpan.FromMilliseconds(500));
-
+        ['@', '!', '<', '/', '?', '[', '>', ']', '=', '"', '\'', '*'];
 
     internal static bool IsInvalidNonWhitespaceHtmlCharacters(char testChar)
     {
@@ -50,8 +38,81 @@ public static class HtmlConventions
     /// ONE1TWO2THREE3 => one1two2three3
     /// First_Second_ThirdHi => first_second_third-hi
     /// </example>
-    public static string ToHtmlCase(string name)
+    public static string ToHtmlCase(string input)
     {
-        return HtmlCaseRegex.Replace(name, HtmlCaseRegexReplacement).ToLowerInvariant();
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        return TryGetKebabCaseString(input, out var result)
+            ? result
+            : input;
+    }
+
+    private static bool TryGetKebabCaseString(ReadOnlySpan<char> input, [NotNullWhen(true)] out string? result)
+    {
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        var allLower = true;
+        var i = 0;
+        foreach (var c in input)
+        {
+            if (char.IsUpper(c))
+            {
+                allLower = false;
+
+                if (ShouldInsertHyphenBeforeUppercase(input, i))
+                {
+                    builder.Append('-');
+                }
+
+                builder.Append(char.ToLowerInvariant(c));
+            }
+            else
+            {
+                builder.Append(c);
+            }
+
+            i++;
+        }
+
+        if (allLower)
+        {
+            // If the input is all lowercase, we don't need to realize the builder,
+            // it will just be cleared when the pooled object is disposed.
+            result = null;
+            return false;
+        }
+
+        result = builder.ToString();
+        return true;
+    }
+
+    private static bool ShouldInsertHyphenBeforeUppercase(ReadOnlySpan<char> input, int i)
+    {
+        Debug.Assert(char.IsUpper(input[i]));
+
+        if (i == 0)
+        {
+            // First character is uppercase, no hyphen needed (e.g. This → this)
+            return false;
+        }
+
+        var prev = input[i - 1];
+        if (char.IsLower(prev))
+        {
+            // Lowercase followed by uppercase (e.g. someThing → some-thing)
+            return true;
+        }
+
+        if ((char.IsUpper(prev) || char.IsDigit(prev)) &&
+            (i + 1 < input.Length) && char.IsLower(input[i + 1]))
+        {
+            // Uppercase or digit followed by uppercase, followed by lowercase (e.g. CAPSOn → caps-on or ONE1Two → ONE1-Two)
+            return true;
+        }
+
+        return false;
     }
 }

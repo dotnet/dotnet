@@ -2,13 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Pkcs;
 using Xunit;
-using BcCommitmentTypeIndication = Org.BouncyCastle.Asn1.Esf.CommitmentTypeIndication;
-using BcCommitmentTypeQualifier = Org.BouncyCastle.Asn1.Esf.CommitmentTypeQualifier;
 
 namespace NuGet.Packaging.Test
 {
@@ -17,7 +15,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WhenCommitmentTypeIdNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => CommitmentTypeIndication.Create(commitmentTypeId: null));
 
             Assert.Equal("commitmentTypeId", exception.ParamName);
@@ -26,7 +24,8 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_WithCommitmentTypeId_ReturnsInstance()
         {
-            var commitmentTypeIndication = CommitmentTypeIndication.Create(new Oid(Oids.CommitmentTypeIdentifierProofOfOrigin));
+            CommitmentTypeIndication commitmentTypeIndication = CommitmentTypeIndication.Create(
+                new Oid(Oids.CommitmentTypeIdentifierProofOfOrigin));
 
             Assert.Equal(Oids.CommitmentTypeIdentifierProofOfOrigin, commitmentTypeIndication.CommitmentTypeId.Value);
             Assert.Null(commitmentTypeIndication.Qualifiers);
@@ -42,13 +41,12 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithOnlyCommitmentTypeId_ReturnsInstance()
         {
-            var bcCommitmentTypeIndication = new BcCommitmentTypeIndication(PkcsObjectIdentifiers.IdCtiEtsProofOfSender);
-            var bytes = bcCommitmentTypeIndication.GetDerEncoded();
+            byte[] bytes = GetCommitmentTypeIndicationBytes(TestOids.CommitmentTypeIdentifierProofOfSender);
 
-            var commitmentTypeIndication = CommitmentTypeIndication.Read(bytes);
+            CommitmentTypeIndication commitmentTypeIndication = CommitmentTypeIndication.Read(bytes);
 
             Assert.Equal(
-                bcCommitmentTypeIndication.CommitmentTypeID.ToString(),
+                TestOids.CommitmentTypeIdentifierProofOfSender.Value,
                 commitmentTypeIndication.CommitmentTypeId.Value);
             Assert.Null(commitmentTypeIndication.Qualifiers);
         }
@@ -56,12 +54,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithEmptyQualifiers_Throws()
         {
-            var bcCommitmentTypeIndication = new BcCommitmentTypeIndication(
-                PkcsObjectIdentifiers.IdCtiEtsProofOfSender,
-                DerSequence.Empty);
-            var bytes = bcCommitmentTypeIndication.GetDerEncoded();
+            byte[] bytes = GetCommitmentTypeIndicationBytes(
+                TestOids.CommitmentTypeIdentifierProofOfSender, Array.Empty<Oid>());
 
-            var exception = Assert.Throws<SignatureException>(
+            SignatureException exception = Assert.Throws<SignatureException>(
                 () => CommitmentTypeIndication.Read(bytes));
 
             Assert.Equal("The commitment-type-indication attribute is invalid.", exception.Message);
@@ -70,17 +66,40 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithQualifiers_ReturnsInstance()
         {
-            var commitmentTypeIdentifier = new DerObjectIdentifier("1.2.3");
-            var bcCommitmentTypeQualifier = new BcCommitmentTypeQualifier(commitmentTypeIdentifier);
-            var bcCommitmentTypeIndication = new BcCommitmentTypeIndication(
-                PkcsObjectIdentifiers.IdCtiEtsProofOfSender,
-                new DerSequence(bcCommitmentTypeQualifier));
-            var bytes = bcCommitmentTypeIndication.GetDerEncoded();
+            Oid qualifier = new("1.2.3");
+            byte[] bytes = GetCommitmentTypeIndicationBytes(
+                TestOids.CommitmentTypeIdentifierProofOfSender, new[] { qualifier });
 
-            var commitmentTypeIndication = CommitmentTypeIndication.Read(bytes);
+            CommitmentTypeIndication commitmentTypeIndication = CommitmentTypeIndication.Read(bytes);
 
             Assert.Equal(1, commitmentTypeIndication.Qualifiers.Count);
-            Assert.Equal(commitmentTypeIdentifier.ToString(), commitmentTypeIndication.Qualifiers[0].CommitmentTypeIdentifier.Value);
+            Assert.Equal(qualifier.Value, commitmentTypeIndication.Qualifiers[0].CommitmentTypeIdentifier.Value);
+        }
+
+        private static byte[] GetCommitmentTypeIndicationBytes(Oid commitmentTypeIdentifier, Oid[] qualifiers = null)
+        {
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            using (writer.PushSequence())
+            {
+                writer.WriteObjectIdentifier(commitmentTypeIdentifier.Value!);
+
+                if (qualifiers is not null)
+                {
+                    using (writer.PushSequence())
+                    {
+                        foreach (Oid qualifier in qualifiers)
+                        {
+                            using (writer.PushSequence())
+                            {
+                                writer.WriteObjectIdentifier(qualifier.Value!);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return writer.Encode();
         }
     }
 }

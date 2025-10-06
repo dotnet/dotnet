@@ -25,7 +25,7 @@ namespace System.Runtime.InteropServices.JavaScript
         internal struct JSMarshalerArgumentImpl
         {
             [FieldOffset(0)]
-            internal bool BooleanValue;
+            internal bool BooleanValue;  // note this is 1 byte
             [FieldOffset(0)]
             internal byte ByteValue;
             [FieldOffset(0)]
@@ -64,7 +64,7 @@ namespace System.Runtime.InteropServices.JavaScript
             internal IntPtr ContextHandle;
 
             [FieldOffset(20)]
-            internal bool ReceiverShouldFree;
+            internal bool ReceiverShouldFree; // note this is 1 byte
 
             [FieldOffset(24)]
             internal IntPtr CallerNativeTID;
@@ -80,7 +80,7 @@ namespace System.Runtime.InteropServices.JavaScript
 #if !DEBUG
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public unsafe void Initialize()
+        public void Initialize()
         {
             slot.Type = MarshalerType.None;
 #if FEATURE_WASM_MANAGED_THREADS

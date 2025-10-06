@@ -21,10 +21,9 @@ namespace Test
             __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.OpenElement(2, "h1");
                 __builder2.AddContent(3, "Child content at ");
-                __builder2.AddContent(4, 
 #nullable restore
-#line (2,27)-(2,39) "x:\dir\subdir\Test\TestComponent.cshtml"
-DateTime.Now
+#line (2,27)-(2,39) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(4, DateTime.Now
 
 #line default
 #line hidden
@@ -34,10 +33,9 @@ DateTime.Now
                 __builder2.AddMarkupContent(5, "\r\n    ");
                 __builder2.OpenElement(6, "p");
                 __builder2.AddContent(7, "Very ");
-                __builder2.AddContent(8, 
 #nullable restore
-#line (3,15)-(3,21) "x:\dir\subdir\Test\TestComponent.cshtml"
-"good"
+#line (3,15)-(3,21) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(8, "good"
 
 #line default
 #line hidden

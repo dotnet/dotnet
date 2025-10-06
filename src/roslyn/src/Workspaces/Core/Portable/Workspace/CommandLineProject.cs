@@ -44,7 +44,7 @@ public static class CommandLineProject
 
         var analyzerLoader = languageServices.SolutionServices.GetRequiredService<IAnalyzerService>().GetLoader();
         var xmlFileResolver = new XmlFileResolver(commandLineArguments.BaseDirectory);
-        var strongNameProvider = new DesktopStrongNameProvider(commandLineArguments.KeyFileSearchPaths);
+        var strongNameProvider = new DesktopStrongNameProvider(commandLineArguments.KeyFileSearchPaths, Path.GetTempPath());
 
         // Resolve all metadata references.
         //
@@ -112,6 +112,8 @@ public static class CommandLineProject
 
         // TODO (tomat): what should be the assemblyName when compiling a netmodule? Should it be /moduleassemblyname
 
+        var outputFilePath = commandLineArguments.OutputFileName != null ? commandLineArguments.GetOutputFilePath(commandLineArguments.OutputFileName) : null;
+
         var projectInfo = ProjectInfo.Create(
             new ProjectInfo.ProjectAttributes(
                 id: projectId,
@@ -119,7 +121,9 @@ public static class CommandLineProject
                 name: projectName,
                 assemblyName: assemblyName,
                 language: language,
-                compilationOutputFilePaths: new CompilationOutputInfo(commandLineArguments.OutputFileName != null ? commandLineArguments.GetOutputFilePath(commandLineArguments.OutputFileName) : null),
+                compilationOutputInfo: new CompilationOutputInfo(outputFilePath, commandLineArguments.GeneratedFilesOutputDirectory),
+                outputFilePath: outputFilePath,
+                outputRefFilePath: commandLineArguments.OutputRefFilePath,
                 checksumAlgorithm: commandLineArguments.ChecksumAlgorithm),
             compilationOptions: commandLineArguments.CompilationOptions
                 .WithXmlReferenceResolver(xmlFileResolver)
@@ -189,7 +193,7 @@ public static class CommandLineProject
         var directory = Path.GetDirectoryName(path);
         if (string.IsNullOrEmpty(directory))
         {
-            return ImmutableArray.Create<string>();
+            return [];
         }
         else
         {

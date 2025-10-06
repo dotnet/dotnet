@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -7,19 +7,13 @@ internal abstract class LanguageServerFeatureOptions
 {
     public abstract bool SupportsFileManipulation { get; }
 
-    public abstract string ProjectConfigurationFileName { get; }
-
     public abstract string CSharpVirtualDocumentSuffix { get; }
 
     public abstract string HtmlVirtualDocumentSuffix { get; }
 
-    public abstract bool SingleServerCompletionSupport { get; }
-
     public abstract bool SingleServerSupport { get; }
 
     public abstract bool DelegateToCSharpOnDiagnosticPublish { get; }
-
-    public abstract bool UsePreciseSemanticTokenRanges { get; }
 
     public abstract bool ShowAllCSharpCodeActions { get; }
 
@@ -35,21 +29,22 @@ internal abstract class LanguageServerFeatureOptions
     /// </summary>
     public abstract bool IncludeProjectKeyInGeneratedFilePath { get; }
 
-    /// <summary>
-    /// Whether to monitor the entire workspace folder for any project.razor.bin files
-    /// </summary>
-    /// <remarks>
-    /// When this is off, the language server won't have any project knowledge unless the
-    /// razor/monitorProjectConfigurationFilePath notification is sent.
-    /// </remarks>
-    public abstract bool MonitorWorkspaceFolderForConfigurationFiles { get; }
-
     public abstract bool UseRazorCohostServer { get; }
 
-    public abstract bool DisableRazorLanguageServer { get; }
+    /// <summary>
+    /// Indicates that client supports soft selection in completion list, meaning that typing a commit 
+    /// character with a soft-selected item will not commit that item.
+    /// </summary>
+    public abstract bool SupportsSoftSelectionInCompletion { get; }
 
     /// <summary>
-    /// When enabled, design time code will not be generated. All tooling will be using runtime code generation.
+    /// Indicates that VSCode-compatible completion trigger character set should be used
     /// </summary>
-    public abstract bool ForceRuntimeCodeGeneration { get; }
+    public abstract bool UseVsCodeCompletionCommitCharacters { get; }
+
+    /// <summary>
+    /// Indicates whether the language server's miscellanous files project will be initialized with
+    /// all Razor files found under the workspace root path.
+    /// </summary>
+    public abstract bool DoNotInitializeMiscFilesProjectFromWorkspace { get; }
 }

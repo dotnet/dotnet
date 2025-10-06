@@ -150,7 +150,7 @@ public class DiscoveryEventHandlerForBatchSize : ITestDiscoveryEventsHandler2, I
         if (level == TestMessageLevel.Error)
         {
             Console.WriteLine($"ERROR:{message}");
-        };
+        }
     }
 
     public void HandleDiscoveryComplete(DiscoveryCompleteEventArgs discoveryCompleteEventArgs, IEnumerable<TestCase>? lastChunk)

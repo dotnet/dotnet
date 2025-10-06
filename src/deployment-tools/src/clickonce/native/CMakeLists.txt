@@ -11,6 +11,6 @@ if(MSVC)
     add_compile_options(/EHsc)
 endif()
 
-set(APP_HOST_LIB_DIR ${DOTNET_PACKS_DIR}/Microsoft.NETCore.App.Host.win-${CLR_CMAKE_HOST_ARCH}/${NET_CORE_PKG_VER}/runtimes/win-${CLR_CMAKE_HOST_ARCH}/native)
+set(APP_HOST_LIB_DIR ${APP_HOST_LIB_DIR})
 
 add_subdirectory(projects)

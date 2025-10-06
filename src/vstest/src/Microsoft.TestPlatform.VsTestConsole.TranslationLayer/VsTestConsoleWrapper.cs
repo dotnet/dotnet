@@ -1155,7 +1155,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         bool collectMetrics,
         ITestRunAttachmentsProcessingEventsHandler testSessionEventsHandler,
         CancellationToken cancellationToken)
-        => ProcessTestRunAttachmentsAsync(attachments, Enumerable.Empty<InvokedDataCollector>(), processingSettings, isLastBatch, collectMetrics, testSessionEventsHandler, cancellationToken);
+        => ProcessTestRunAttachmentsAsync(attachments, [], processingSettings, isLastBatch, collectMetrics, testSessionEventsHandler, cancellationToken);
 
     #endregion
 

@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/LeadingKeyword/DefaultValKeyword.fs", false,
-      QualifiedNameOfFile DefaultValKeyword, [], [],
+      QualifiedNameOfFile DefaultValKeyword, [],
       [SynModuleOrNamespace
          ([DefaultValKeyword], false, AnonModule,
           [Types
@@ -28,7 +28,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 1, (3,26--3,27)), (3,4--3,27),
+                         GetSet (None, None, None),
+                         Const (Int32 1, (3,26--3,27)), (3,4--3,27),
                          { LeadingKeyword =
                             DefaultVal ((3,4--3,11), (3,12--3,15))
                            WithKeyword = None
@@ -39,4 +40,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--3,27))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddComponentParameter(1, "IntProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,5)-(2,16) "x:\dir\subdir\Test\TestComponent.cshtml"
+IntProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
 #line (2,18)-(2,21) "x:\dir\subdir\Test\TestComponent.cshtml"
 123
@@ -27,7 +35,15 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.
+#nullable restore
+#line (3,5)-(3,17) "x:\dir\subdir\Test\TestComponent.cshtml"
+BoolProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
 #line (3,19)-(3,23) "x:\dir\subdir\Test\TestComponent.cshtml"
 true
@@ -36,8 +52,24 @@ true
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(3, "StringProperty", "My string");
-            __builder.AddComponentParameter(4, "ObjectProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Test.SomeType>(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (4,5)-(4,19) "x:\dir\subdir\Test\TestComponent.cshtml"
+StringProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), "My string");
+            __builder.AddComponentParameter(4, nameof(global::Test.MyComponent.
+#nullable restore
+#line (5,5)-(5,19) "x:\dir\subdir\Test\TestComponent.cshtml"
+ObjectProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Test.SomeType>(
 #nullable restore
 #line (5,21)-(5,35) "x:\dir\subdir\Test\TestComponent.cshtml"
 new SomeType()

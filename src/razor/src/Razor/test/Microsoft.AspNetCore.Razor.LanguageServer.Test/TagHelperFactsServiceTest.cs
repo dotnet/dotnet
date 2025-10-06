@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -8,11 +8,9 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
@@ -23,8 +21,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @test='abc' />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -44,8 +42,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @test:something='abc' />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -65,8 +63,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @minimized />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -86,8 +84,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @minimized:something />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -106,21 +104,21 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_TagHelperAttribute()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("WithBoundAttribute", "TestAssembly");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("WithBoundAttribute", "TestAssembly");
+        tagHelper.SetTypeName("WithBoundAttribute", typeNamespace: null, typeNameIdentifier: null);
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetMetadata(PropertyName("Bound"));
+            attribute.PropertyName = "Bound";
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument("""
             @addTagHelper *, TestAssembly
             <test bound='true' />
             """, isRazorFile: false, tagHelper.Build());
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -139,21 +137,21 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_MinimizedTagHelperAttribute()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("WithBoundAttribute", "TestAssembly");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("WithBoundAttribute", "TestAssembly");
+        tagHelper.SetTypeName("WithBoundAttribute", typeNamespace: null, typeNameIdentifier: null);
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetMetadata(PropertyName("Bound"));
+            attribute.PropertyName = "Bound";
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument("""
             @addTagHelper *, TestAssembly
             <test bound />
             """, isRazorFile: false, tagHelper.Build());
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -176,8 +174,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound='hello world' />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -200,8 +198,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -224,8 +222,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound @DateTime.Now />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -244,8 +242,14 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         tagHelpers = tagHelpers.NullToEmpty();
         var sourceDocument = TestRazorSourceDocument.Create(text);
-        var projectEngine = RazorProjectEngine.Create(builder => { });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
-        return codeDocument;
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+
+        return projectEngine.Process(sourceDocument, RazorFileKind.Component, importSources: default, tagHelpers);
     }
 }

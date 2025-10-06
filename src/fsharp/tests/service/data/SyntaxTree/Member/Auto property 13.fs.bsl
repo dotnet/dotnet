@@ -1,7 +1,6 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Member/Auto property 13.fs", false, QualifiedNameOfFile Module, [],
-      [],
       [SynModuleOrNamespace
          ([Module], false, NamedModule,
           [Types
@@ -27,7 +26,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((4,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 1, (4,19--4,20)), (4,4--4,20),
+                         GetSet (None, None, None),
+                         Const (Int32 1, (4,19--4,20)), (4,4--4,20),
                          { LeadingKeyword =
                             MemberVal ((4,4--4,10), (4,11--4,14))
                            WithKeyword = Some (4,21--4,25)
@@ -63,6 +63,7 @@ ImplFile
           PreXmlDoc ((1,0), FSharp.Compiler.Xml.XmlDocCollector), [], None,
           (1,0--5,22), { LeadingKeyword = Module (1,0--1,6) })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
 
 (4,21)-(4,25) parse error Unexpected syntax or possible incorrect indentation: this token is offside of context started at position (4:5). Try indenting this further.

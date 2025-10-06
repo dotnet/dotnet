@@ -19,7 +19,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Plus_Is_Recognized()
     {
-        TestSingleToken("+", SyntaxKind.Plus);
+        TestSingleToken("+", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -31,13 +31,13 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Arrow_Is_Recognized()
     {
-        TestSingleToken("->", SyntaxKind.Arrow);
+        TestSingleToken("->", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void AndAssign_Is_Recognized()
     {
-        TestSingleToken("&=", SyntaxKind.AndAssign);
+        TestSingleToken("&=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Minus_Is_Recognized()
     {
-        TestSingleToken("-", SyntaxKind.Minus);
+        TestSingleToken("-", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -61,13 +61,13 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Equals_Is_Recognized()
     {
-        TestSingleToken("==", SyntaxKind.Equals);
+        TestSingleToken("==", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void OrAssign_Is_Recognized()
     {
-        TestSingleToken("|=", SyntaxKind.OrAssign);
+        TestSingleToken("|=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Star_Is_Recognized()
     {
-        TestSingleToken("*", SyntaxKind.Star);
+        TestSingleToken("*", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -91,13 +91,13 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void NotEqual_Is_Recognized()
     {
-        TestSingleToken("!=", SyntaxKind.NotEqual);
+        TestSingleToken("!=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void XorAssign_Is_Recognized()
     {
-        TestSingleToken("^=", SyntaxKind.XorAssign);
+        TestSingleToken("^=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Slash_Is_Recognized()
     {
-        TestSingleToken("/", SyntaxKind.Slash);
+        TestSingleToken("/", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -121,15 +121,13 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void LessThanEqual_Is_Recognized()
     {
-        TestSingleToken("<=", SyntaxKind.LessThanEqual);
+        TestSingleToken("<=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
-    public void LeftShift_Is_Not_Specially_Recognized()
+    public void LeftShift_Is_Recognized()
     {
-        TestTokenizer("<<",
-            SyntaxFactory.Token(SyntaxKind.LessThan, "<"),
-            SyntaxFactory.Token(SyntaxKind.LessThan, "<"));
+        TestSingleToken("<<", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -141,25 +139,25 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Modulo_Is_Recognized()
     {
-        TestSingleToken("%", SyntaxKind.Modulo);
+        TestSingleToken("%", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void NullCoalesce_Is_Recognized()
     {
-        TestSingleToken("??", SyntaxKind.NullCoalesce);
+        TestSingleToken("??", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void GreaterThanEqual_Is_Recognized()
     {
-        TestSingleToken(">=", SyntaxKind.GreaterThanEqual);
+        TestSingleToken(">=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void EqualGreaterThan_Is_Recognized()
     {
-        TestSingleToken("=>", SyntaxKind.GreaterThanEqual);
+        TestSingleToken("=>", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -171,7 +169,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void And_Is_Recognized()
     {
-        TestSingleToken("&", SyntaxKind.And);
+        TestSingleToken("&", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -183,7 +181,7 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void PlusAssign_Is_Recognized()
     {
-        TestSingleToken("+=", SyntaxKind.PlusAssign);
+        TestSingleToken("+=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -195,19 +193,19 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Tilde_Is_Recognized()
     {
-        TestSingleToken("~", SyntaxKind.Tilde);
+        TestSingleToken("~", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void DoubleOr_Is_Recognized()
     {
-        TestSingleToken("||", SyntaxKind.DoubleOr);
+        TestSingleToken("||", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void ModuloAssign_Is_Recognized()
     {
-        TestSingleToken("%=", SyntaxKind.ModuloAssign);
+        TestSingleToken("%=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -225,13 +223,13 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void DoubleAnd_Is_Recognized()
     {
-        TestSingleToken("&&", SyntaxKind.DoubleAnd);
+        TestSingleToken("&&", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void DivideAssign_Is_Recognized()
     {
-        TestSingleToken("/=", SyntaxKind.DivideAssign);
+        TestSingleToken("/=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -243,19 +241,19 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Xor_Is_Recognized()
     {
-        TestSingleToken("^", SyntaxKind.Xor);
+        TestSingleToken("^", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void Decrement_Is_Recognized()
     {
-        TestSingleToken("--", SyntaxKind.Decrement);
+        TestSingleToken("--", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void MultiplyAssign_Is_Recognized()
     {
-        TestSingleToken("*=", SyntaxKind.MultiplyAssign);
+        TestSingleToken("*=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -267,19 +265,19 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
     [Fact]
     public void Or_Is_Recognized()
     {
-        TestSingleToken("|", SyntaxKind.Or);
+        TestSingleToken("|", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void Increment_Is_Recognized()
     {
-        TestSingleToken("++", SyntaxKind.Increment);
+        TestSingleToken("++", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
     public void MinusAssign_Is_Recognized()
     {
-        TestSingleToken("-=", SyntaxKind.MinusAssign);
+        TestSingleToken("-=", SyntaxKind.CSharpOperator);
     }
 
     [Fact]
@@ -288,11 +286,5 @@ public class CSharpTokenizerOperatorsTest : CSharpTokenizerTestBase
         TestTokenizer(">>",
             SyntaxFactory.Token(SyntaxKind.GreaterThan, ">"),
             SyntaxFactory.Token(SyntaxKind.GreaterThan, ">"));
-    }
-
-    [Fact]
-    public void Hash_Is_Recognized()
-    {
-        TestSingleToken("#", SyntaxKind.Hash);
     }
 }

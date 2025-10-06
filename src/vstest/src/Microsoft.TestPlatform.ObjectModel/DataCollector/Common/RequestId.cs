@@ -133,7 +133,7 @@ public sealed class RequestId : IEquatable<RequestId>, IComparable<RequestId>, I
 
         RequestId? other = obj as RequestId;
         return other == null
-            ? throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.Common_ObjectMustBeOfType, new object[] { typeof(RequestId).Name }), nameof(obj))
+            ? throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.Common_ObjectMustBeOfType, [typeof(RequestId).Name]), nameof(obj))
             : Id.CompareTo(other.Id);
     }
 

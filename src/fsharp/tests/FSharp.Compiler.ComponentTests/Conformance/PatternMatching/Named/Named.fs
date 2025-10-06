@@ -8,147 +8,189 @@ open FSharp.Test.Compiler
 
 module Named =
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"ActivePatternOutsideMatch01.fs"|])>]
+    [<Theory; FileInlineData("ActivePatternOutsideMatch01.fs")>]
     let ``Named - ActivePatternOutsideMatch01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"ActivePatternOutsideMatch02.fs"|])>]
+    [<Theory; FileInlineData("ActivePatternOutsideMatch02.fs")>]
     let ``Named - ActivePatternOutsideMatch02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns01.fs"|])>]
+    [<Theory; FileInlineData("activePatterns01.fs")>]
     let ``Named - activePatterns01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns02.fs"|])>]
+    [<Theory; FileInlineData("activePatterns02.fs")>]
     let ``Named - activePatterns02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns03.fs"|])>]
+    [<Theory; FileInlineData("activePatterns03.fs")>]
     let ``Named - activePatterns03_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns05.fs"|])>]
+    [<Theory; FileInlineData("activePatterns05.fs")>]
     let ``Named - activePatterns05_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns06.fs"|])>]
+    [<Theory; FileInlineData("activePatterns06.fs")>]
     let ``Named - activePatterns06_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns07.fs"|])>]
+    [<Theory; FileInlineData("activePatterns07.fs")>]
     let ``Named - activePatterns07_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"activePatterns08.fs"|])>]
+    [<Theory; FileInlineData("activePatterns08.fs")>]
     let ``Named - activePatterns08_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
+    [<Theory; FileInlineData("activePatterns09.fs")>]
+    let ``Named - activePatterns09_fs`` compilation =
+        compilation
+        |> getCompilation
+        |> asFs
+        |> typecheck
+        |> shouldSucceed
+
+    [<Theory; FileInlineData("activePatterns10.fs")>]
+    let ``Named - activePatterns10_fs`` compilation =
+        compilation
+        |> getCompilation
+        |> asFs
+        |> typecheck
+        |> shouldFail
+        |> withDiagnostics [
+            (Warning 25, Line 6, Col 5, Line 6, Col 26, "Incomplete pattern matches on this expression.")
+            (Warning 25, Line 7, Col 5, Line 7, Col 28, "Incomplete pattern matches on this expression.")
+            (Warning 25, Line 8, Col 5, Line 8, Col 28, "Incomplete pattern matches on this expression.")
+            (Warning 25, Line 9, Col 5, Line 9, Col 30, "Incomplete pattern matches on this expression.")
+            (Warning 25, Line 13, Col 5, Line 13, Col 22, "Incomplete pattern matches on this expression. For example, the value '``some-other-subtype``' may indicate a case not covered by the pattern(s).")
+            (Warning 25, Line 14, Col 5, Line 14, Col 24, "Incomplete pattern matches on this expression. For example, the value '``some-other-subtype``' may indicate a case not covered by the pattern(s).")
+            (Warning 25, Line 15, Col 5, Line 15, Col 24, "Incomplete pattern matches on this expression. For example, the value '``some-other-subtype``' may indicate a case not covered by the pattern(s).")
+            (Warning 25, Line 16, Col 5, Line 16, Col 26, "Incomplete pattern matches on this expression. For example, the value '``some-other-subtype``' may indicate a case not covered by the pattern(s).")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"ActivePatternUnconstrained01.fs"|])>]
+    [<Theory; FileInlineData("ActivePatternUnconstrained01.fs")>]
     let ``Named - ActivePatternUnconstrained01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> ignoreWarnings
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AsHighOrderFunc01.fs"|])>]
+    [<Theory; FileInlineData("AsHighOrderFunc01.fs")>]
     let ``Named - AsHighOrderFunc01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"discUnion01.fs"|])>]
+    [<Theory; FileInlineData("discUnion01.fs")>]
     let ``Named - discUnion01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation 
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
         
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"discUnion02.fs"|])>]
+    [<Theory; FileInlineData("discUnion02.fs")>]
     let ``Named - _DiscUnion01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ActivePatternHasNoFields.fs"|])>]
+    [<Theory; FileInlineData("E_ActivePatternHasNoFields.fs")>]
     let ``Named - E_ActivePatternHasNoFields_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation 
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withSingleDiagnostic (Error 3174, Line 10, Col 24, Line 10, Col 25, "Active patterns do not have fields. This syntax is invalid.")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ActivePatternNotAFuncion.fs"|])>]
-    let ``Named - E_ActivePatternNotAFuncion_fs - --test:ErrorRanges`` compilation =
+    [<Theory; FileInlineData("E_ActivePatternNotAFunction.fs")>]
+    let ``Named - E_ActivePatternNotAFunction_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withSingleDiagnostic (Error 1209, Line 5, Col 6, Line 5, Col 11, "Active pattern '|A|B|' is not a function")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ActivePatterns01.fs"|])>]
+    [<Theory; FileInlineData("E_ActivePatterns01.fs")>]
     let ``Named - E_ActivePatterns01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
@@ -163,11 +205,12 @@ module Named =
             (Error 624, Line 17, Col 9, Line 17, Col 17, "The '|' character is not permitted in active pattern case identifiers")
             (Error 623, Line 18, Col 7, Line 18, Col 9, "Active pattern case identifiers must begin with an uppercase letter")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ActivePatterns02.fs"|])>]
+    [<Theory; FileInlineData("E_ActivePatterns02.fs")>]
     let ``Named - E_ActivePatterns02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
@@ -176,11 +219,83 @@ module Named =
             (Error 3210, Line 6, Col 15, Line 6, Col 24, "A is an active pattern and cannot be treated as a discriminated union case with named fields.")
             (Warning 20, Line 6, Col 1, Line 6, Col 38, "The result of this expression has type 'int' and is implicitly ignored. Consider using 'ignore' to discard this value explicitly, e.g. 'expr |> ignore', or 'let' to bind the result to a name, e.g. 'let result = expr'.")
         ]
-        
+
+    [<Theory; FileInlineData("E_ActivePatterns03.fs")>]
+    let ``Named - E_ActivePatterns03_fs - --test:ErrorRanges`` compilation =
+        compilation
+        |> getCompilation
+        |> asFs
+        |> withOptions ["--test:ErrorRanges"]
+        |> typecheck
+        |> shouldFail
+        |> withDiagnostics [
+            (Error 1, Line 3, Col 8, Line 3, Col 17, "This expression was expected to have type
+    'Choice<'a,'b>'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 4, Col 8, Line 4, Col 21, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 4, Col 8, Line 4, Col 21, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 5, Col 8, Line 5, Col 29, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 5, Col 8, Line 5, Col 29, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
+            (Error 1, Line 6, Col 8, Line 6, Col 16, "This expression was expected to have type
+    ''a option'    
+but here has type
+    'string'    ")
+            (Error 1, Line 11, Col 8, Line 11, Col 17, "This expression was expected to have type
+    'Choice<'a,'b>'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 12, Col 8, Line 12, Col 21, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 12, Col 8, Line 12, Col 21, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 13, Col 8, Line 13, Col 29, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 13, Col 8, Line 13, Col 29, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
+            (Error 1, Line 14, Col 8, Line 14, Col 16, "This expression was expected to have type
+    ''a option'    
+but here has type
+    'string'    ")
+            (Error 1, Line 19, Col 12, Line 19, Col 21, "This expression was expected to have type
+    'Choice<'a,'b>'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 20, Col 12, Line 20, Col 25, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 20, Col 12, Line 20, Col 25, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+            (Error 3872, Line 21, Col 13, Line 21, Col 34, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.");
+            (Error 1, Line 21, Col 13, Line 21, Col 34, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
+            (Error 1, Line 22, Col 12, Line 22, Col 20, "This expression was expected to have type
+    ''a option'    
+but here has type
+    'string'    ")
+            (Error 39, Line 29, Col 8, Line 29, Col 18, "The pattern discriminator 'FooA++' is not defined.")
+            (Warning 25, Line 29, Col 7, Line 29, Col 22, "Incomplete pattern matches on this expression.")
+            (Error 39, Line 31, Col 50, Line 31, Col 54, "The value or constructor 'OneA' is not defined.")
+            (Error 39, Line 31, Col 60, Line 31, Col 69, "The value or constructor 'TwoA+' is not defined.")
+            (Error 39, Line 34, Col 8, Line 34, Col 18, "The pattern discriminator 'FooB++' is not defined.")
+            (Warning 25, Line 34, Col 7, Line 34, Col 22, "Incomplete pattern matches on this expression.")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ActivePatternUnconstrained01.fs"|])>]
+    [<Theory; FileInlineData("E_ActivePatternUnconstrained01.fs")>]
     let ``Named - E_ActivePatternUnconstrained01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation 
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
@@ -192,192 +307,238 @@ module Named =
         ]
         
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_LetRec01.fs"|])>]
+    [<Theory; FileInlineData("E_Error_LetRec01.fs")>]
     let ``Named - E_Error_LetRec01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 1, Line 5, Col 9, Line 5, Col 30, "This expression was expected to have type
+        |> withSingleDiagnostic (Error 1, Line 5, Col 10, Line 5, Col 19, "This expression was expected to have type
     'Choice<'a,'b>'    
 but here has type
     'string'    ")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_LetRec02.fs"|])>]
+    [<Theory; FileInlineData("E_Error_LetRec02.fs")>]
     let ``Named - E_Error_LetRec02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 827, Line 4, Col 9, Line 4, Col 34, "This is not a valid name for an active pattern")
-        
+        |> withDiagnostics [
+            (Error 3872, Line 4, Col 10, Line 4, Col 23, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 10, Line 4, Col 23, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_LetRec03.fs"|])>]
+    [<Theory; FileInlineData("E_Error_LetRec03.fs")>]
     let ``Named - E_Error_LetRec03_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 827, Line 4, Col 10, Line 4, Col 43, "This is not a valid name for an active pattern")
-        
+        |> withDiagnostics [
+            (Error 3872, Line 4, Col 11, Line 4, Col 32, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 11, Line 4, Col 32, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_LetRec04.fs"|])>]
+    [<Theory; FileInlineData("E_Error_LetRec04.fs")>]
     let ``Named - E_Error_LetRec04_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 1, Line 4, Col 9, Line 4, Col 29, "This expression was expected to have type
+        |> withSingleDiagnostic (Error 1, Line 4, Col 10, Line 4, Col 18, "This expression was expected to have type
     ''a option'    
 but here has type
     'string'    ")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_NonParam01.fs"|])>]
+    [<Theory; FileInlineData("E_Error_NonParam01.fs")>]
     let ``Named - E_Error_NonParam01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 1, Line 4, Col 5, Line 4, Col 18, "This expression was expected to have type
+        |> withSingleDiagnostic (Error 1, Line 4, Col 6, Line 4, Col 15, "This expression was expected to have type
     'Choice<'a,'b>'    
 but here has type
     'string'    ")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_NonParam02.fs"|])>]
+    [<Theory; FileInlineData("E_Error_NonParam02.fs")>]
     let ``Named - E_Error_NonParam02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation 
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 827, Line 4, Col 5, Line 4, Col 22, "This is not a valid name for an active pattern")
+        |> withDiagnostics [
+            (Error 3872, Line 4, Col 6, Line 4, Col 19, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 6, Line 4, Col 19, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+        ]
         
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_NonParam03.fs"|])>]
+    [<Theory; FileInlineData("E_Error_NonParam03.fs")>]
     let ``Named - E_Error_NonParam03_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 827, Line 4, Col 5, Line 4, Col 30, "This is not a valid name for an active pattern")
-        
+        |> withDiagnostics [
+            (Error 3872, Line 4, Col 6, Line 4, Col 27, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 6, Line 4, Col 27, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_NonParam04.fs"|])>]
+    [<Theory; FileInlineData("E_Error_NonParam04.fs")>]
     let ``Named - E_Error_NonParam04_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 1, Line 4, Col 5, Line 4, Col 17, "This expression was expected to have type
+        |> withSingleDiagnostic (Error 1, Line 4, Col 6, Line 4, Col 14, "This expression was expected to have type
     ''a option'    
 but here has type
     'string'    ")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_Param01.fs"|])>]
+    [<Theory; FileInlineData("E_Error_Param01.fs")>]
     let ``Named - E_Error_Param01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 1, Line 4, Col 5, Line 4, Col 26, "This expression was expected to have type
+        |> withSingleDiagnostic (Error 1, Line 4, Col 6, Line 4, Col 15, "This expression was expected to have type
     'Choice<'a,'b>'    
 but here has type
     'string'    ")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_Param02.fs"|])>]
+    [<Theory; FileInlineData("E_Error_Param02.fs")>]
     let ``Named - E_Error_Param02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
-        |> withSingleDiagnostic (Error 827, Line 4, Col 5, Line 4, Col 31, "This is not a valid name for an active pattern")
-    
+        |> withDiagnostics [
+            (Error 3872, Line 4, Col 6, Line 4, Col 19, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 6, Line 4, Col 19, "This expression was expected to have type
+    'Choice<'a,'b> option'    
+but here has type
+    'string'    ")
+        ]
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_Param03.fs"|])>]
+    [<Theory; FileInlineData("E_Error_Param03.fs")>]
     let ``Named - E_Error_Param03_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
-            (Error 827, Line 4, Col 5, Line 4, Col 38, "This is not a valid name for an active pattern")
+            (Error 3872, Line 4, Col 6, Line 4, Col 27, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 1, Line 4, Col 6, Line 4, Col 27, "This expression was expected to have type
+    'Choice<'a,'b,'c> option'    
+but here has type
+    'string'    ")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_Error_Param04.fs"|])>]
+    [<Theory; FileInlineData("E_Error_Param04.fs")>]
     let ``Named - E_Error_Param04_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
-            (Error 1, Line 4, Col 5, Line 4, Col 25, "This expression was expected to have type
+            (Error 1, Line 4, Col 6, Line 4, Col 14, "This expression was expected to have type
     ''a option'    
 but here has type
     'string'    ")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_LargeActivePat01.fs"|])>]
+    [<Theory; FileInlineData("E_LargeActivePat01.fs")>]
     let ``Named - E_LargeActivePat01_fs - --test:ErrorRanges`` compilation =
         compilation
-        |> asFs
-        |> withOptions ["--test:ErrorRanges"]
-        |> typecheck
-        |> shouldFail
-        |> withSingleDiagnostic (Error 265, Line 6, Col 53, Line 6, Col 56, "Active patterns cannot return more than 7 possibilities")
-        
-    
-    // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_MulticasePartialNotAllowed01.fs"|])>]
-    let ``Named - E_MulticasePartialNotAllowed01_fs - --test:ErrorRanges`` compilation =
-        compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withDiagnostics [
-            (Error 827, Line 8, Col 5, Line 8, Col 64, "This is not a valid name for an active pattern")
-            (Error 39, Line 20, Col 7, Line 20, Col 15, "The pattern discriminator 'Sentence' is not defined.")
-            (Error 72, Line 20, Col 25, Line 20, Col 37, "Lookup on object of indeterminate type based on information prior to this program point. A type annotation may be needed prior to this program point to constrain the type of the object. This may allow the lookup to be resolved.")
-            (Error 39, Line 21, Col 7, Line 21, Col 11, "The pattern discriminator 'Word' is not defined.")
-            (Error 72, Line 21, Col 20, Line 21, Col 31, "Lookup on object of indeterminate type based on information prior to this program point. A type annotation may be needed prior to this program point to constrain the type of the object. This may allow the lookup to be resolved.")
-            (Warning 49, Line 22, Col 7, Line 22, Col 17, "Uppercase variable identifiers should not generally be used in patterns, and may indicate a missing open declaration or a misspelt pattern name.")
-            (Error 39, Line 23, Col 7, Line 23, Col 18, "The pattern discriminator 'Punctuation' is not defined.")
-            (Warning 26, Line 23, Col 7, Line 23, Col 20, "This rule will never be matched")
-            (Warning 26, Line 24, Col 7, Line 24, Col 8, "This rule will never be matched")
+            (Error 265, Line 6, Col 6, Line 6, Col 47, "Active patterns cannot return more than 7 possibilities")
+            (Error 265, Line 8, Col 6, Line 8, Col 23, "Active patterns cannot return more than 7 possibilities")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_ParameterRestrictions01.fs"|])>]
+    [<Theory; FileInlineData("E_MulticasePartialNotAllowed01.fs")>]
+    let ``Named - E_MulticasePartialNotAllowed01_fs - --test:ErrorRanges`` compilation =
+        compilation
+        |> getCompilation
+        |> asFs
+        |> withOptions ["--test:ErrorRanges"]
+        |> typecheck
+        |> shouldFail
+        |> withDiagnostics [
+            (Error 3872, Line 8, Col 6, Line 8, Col 46, "Multi-case partial active patterns are not supported. Consider using a single-case partial active pattern or a full active pattern.")
+            (Error 3868, Line 22, Col 7, Line 22, Col 17, "This active pattern expects exactly one pattern argument, e.g., 'WhiteSpace pat'.");
+            (Error 1107, Line 20, Col 7, Line 20, Col 21, "Partial active patterns may only generate one result")
+        ]
+
+    // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
+    [<Theory; FileInlineData("E_ParameterRestrictions01.fs")>]
     let ``Named - E_ParameterRestrictions01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withSingleDiagnostic (Error 722, Line 15, Col 23, Line 15, Col 34, "Only active patterns returning exactly one result may accept arguments")
-    
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_PatternMatchRegressions02.fs"|])>]
+    [<Theory; FileInlineData("E_PatternMatchRegressions02.fs")>]
     let ``Named - E_PatternMatchRegressions02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
@@ -387,57 +548,63 @@ but here has type
             (Warning 25, Line 30, Col 11, Line 30, Col 12, "Incomplete pattern matches on this expression.")
             (Error 1210, Line 22, Col 6, Line 22, Col 38, "Active pattern '|ClientExternalTypeUse|WillFail|' has a result type containing type variables that are not determined by the input. The common cause is a when a result case is not mentioned, e.g. 'let (|A|B|) (x:int) = A x'. This can be fixed with a type constraint, e.g. 'let (|A|B|) (x:int) : Choice<int,unit> = A x'")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"MultiActivePatterns01.fs"|])>]
+    [<Theory; FileInlineData("MultiActivePatterns01.fs")>]
     let ``Named - MultiActivePatterns01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"NamedLiteral01.fs"|])>]
+    [<Theory; FileInlineData("NamedLiteral01.fs")>]
     let ``Named - NamedLiteral01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"NamedLiteral02.fs"|])>]
+    [<Theory; FileInlineData("NamedLiteral02.fs")>]
     let ``Named - NamedLiteral02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"ParamertizedPartialActivePattern01.fs"|])>]
-    let ``Named - ParamertizedPartialActivePattern01_fs - --test:ErrorRanges`` compilation =
+    [<Theory; FileInlineData("ParameterizedPartialActivePattern01.fs")>]
+    let ``Named - ParameterizedPartialActivePattern01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldSucceed
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"PatternMatchRegressions01.fs"|])>]
+    [<Theory; FileInlineData("PatternMatchRegressions01.fs")>]
     let ``Named - PatternMatchRegressions01_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
         |> shouldFail
         |> withSingleDiagnostic (Warning 25, Line 22, Col 11, Line 22, Col 12, "Incomplete pattern matches on this expression.")
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"PatternMatchRegressions02.fs"|])>]
+    [<Theory; FileInlineData("PatternMatchRegressions02.fs")>]
     let ``Named - PatternMatchRegressions02_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck
@@ -445,11 +612,12 @@ but here has type
         |> withDiagnostics [
             (Warning 25, Line 20, Col 11, Line 20, Col 12, "Incomplete pattern matches on this expression.")
         ]
-        
+
     // This test was automatically generated (moved from FSharpQA suite - Conformance/PatternMatching/Named)
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"RecursiveActivePats.fs"|])>]
+    [<Theory; FileInlineData("RecursiveActivePats.fs")>]
     let ``Named - RecursiveActivePats_fs - --test:ErrorRanges`` compilation =
         compilation
+        |> getCompilation 
         |> asFs
         |> withOptions ["--test:ErrorRanges"]
         |> typecheck

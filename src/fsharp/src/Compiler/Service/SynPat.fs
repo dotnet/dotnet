@@ -28,23 +28,6 @@ module SynPat =
         else
             ValueNone
 
-    /// Matches if any member in the given list is an inherit
-    /// or implementation of an interface with generic type args.
-    [<return: Struct>]
-    let (|AnyGenericInheritOrInterfaceImpl|_|) members =
-        if
-            members
-            |> List.exists (function
-                | SynMemberDefn.ImplicitInherit(inheritType = SynType.App(typeArgs = _ :: _))
-                | SynMemberDefn.ImplicitInherit(inheritType = SynType.LongIdentApp(typeArgs = _ :: _))
-                | SynMemberDefn.Interface(interfaceType = SynType.App(typeArgs = _ :: _))
-                | SynMemberDefn.Interface(interfaceType = SynType.LongIdentApp(typeArgs = _ :: _)) -> true
-                | _ -> false)
-        then
-            ValueSome AnyGenericInheritOrInterfaceImpl
-        else
-            ValueNone
-
     /// Matches the rightmost potentially dangling nested pattern.
     let rec (|Rightmost|) pat =
         match pat with
@@ -109,11 +92,17 @@ module SynPat =
         //     set (x: …, y: …) = …
         | SynPat.Typed _, SyntaxNode.SynPat(Rightmost(SynPat.Paren(Is pat, _))) :: SyntaxNode.SynMatchClause _ :: _
         | Rightmost(SynPat.Typed _), SyntaxNode.SynMatchClause _ :: _
-        | SynPat.Typed _, SyntaxNode.SynExpr(SynExpr.LetOrUseBang _) :: _
-        | SynPat.Typed _, SyntaxNode.SynPat(SynPat.Tuple(isStruct = false)) :: SyntaxNode.SynExpr(SynExpr.LetOrUseBang _) :: _
-        | SynPat.Tuple(isStruct = false; elementPats = AnyTyped), SyntaxNode.SynExpr(SynExpr.LetOrUseBang _) :: _
+        | SynPat.Typed _, SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _
+        | SynPat.Typed _, SyntaxNode.SynPat(SynPat.Tuple(isStruct = false)) :: SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _
+        | SynPat.Tuple(isStruct = false; elementPats = AnyTyped), SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _
         | SynPat.Typed _, SyntaxNode.SynPat(SynPat.Tuple(isStruct = false)) :: SyntaxNode.SynBinding _ :: _
         | SynPat.Tuple(isStruct = false; elementPats = AnyTyped), SyntaxNode.SynBinding _ :: _
+
+        //     let! (_ : obj) = …
+        | SynPat.Typed _, SyntaxNode.SynBinding _ :: SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _ -> true
+
+        //     let! (A _) = …
+        | SynPat.LongIdent _, SyntaxNode.SynBinding _ :: SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _ -> false
         | SynPat.LongIdent(argPats = SynArgPats.Pats(_ :: _)), SyntaxNode.SynBinding _ :: _
         | SynPat.LongIdent(argPats = SynArgPats.Pats(_ :: _)), SyntaxNode.SynExpr(SynExpr.Lambda _) :: _
         | SynPat.Tuple(isStruct = false), SyntaxNode.SynExpr(SynExpr.Lambda(parsedData = Some _)) :: _
@@ -127,6 +116,51 @@ module SynPat =
                                          MemberKind = SynMemberKind.PropertyGetSet | SynMemberKind.PropertyGet | SynMemberKind.PropertySet
                                      }))) :: _ -> true
 
+        // Parens must be kept when there is a multiline expression
+        // to the right whose offsides line would be shifted if the
+        // parentheses were removed from a leading pattern on the same line, e.g.,
+        //
+        //     match maybe with
+        //     | Some(x) -> let y = x * 2
+        //                  let z = 99
+        //                  x + y + z
+        //     | None -> 3
+        //
+        // or
+        //
+        //     let (x) = printfn "…"
+        //               printfn "…"
+        | _ when
+            // This is arbitrary and will result in some false positives.
+            let maxBacktracking = 10
+
+            let rec wouldMoveRhsOffsides n pat path =
+                if n = maxBacktracking then
+                    true
+                else
+                    // This does not thoroughly search the trailing
+                    // expression — nor does it go up the expression
+                    // tree and search farther rightward, or look at record bindings,
+                    // etc., etc., etc. — and will result in some false negatives.
+                    match path with
+                    // Expand the range to that of the outer pattern, since
+                    // the parens may extend beyond the inner pat
+                    | SyntaxNode.SynPat outer :: path when n = 1 -> wouldMoveRhsOffsides (n + 1) outer path
+                    | SyntaxNode.SynPat _ :: path -> wouldMoveRhsOffsides (n + 1) pat path
+
+                    | SyntaxNode.SynExpr(SynExpr.Lambda(body = rhs)) :: _
+                    | SyntaxNode.SynExpr(SynExpr.LetOrUse(body = rhs)) :: _
+                    | SyntaxNode.SynBinding(SynBinding(expr = rhs)) :: _
+                    | SyntaxNode.SynMatchClause(SynMatchClause(resultExpr = rhs)) :: _ ->
+                        let rhsRange = rhs.Range
+                        rhsRange.StartLine <> rhsRange.EndLine && pat.Range.EndLine = rhsRange.StartLine
+
+                    | _ -> false
+
+            wouldMoveRhsOffsides 1 pat path
+            ->
+            true
+
         // () is parsed as this.
         | SynPat.Const(SynConst.Unit, _), _ -> true
 
@@ -136,15 +170,20 @@ module SynPat =
         //     type C<'T> = abstract M : 'T -> unit
         //     let _ = { new C<unit> with override _.M (()) = () }
         //     let _ = { new C<int * int> with override _.M ((x, y)) = () }
+        //
+        // Single versus double parens are also compiled differently in cases like these:
+        //
+        //     type T =
+        //         static member M ()                   = () // .method public static void M()
+        //         static member M (())                 = () // .method public static void M(class [FSharp.Core]Microsoft.FSharp.Core.Unit _arg1)
+        //         static member M (_ : int, _ : int)   = () // .method public static void M(int32 _arg1, int32 _arg2)
+        //         static member M ((_ : int, _ : int)) = () // .method public static void M(class [System.Runtime]System.Tuple`2<int32, int32> _arg1)
         | SynPat.Paren((SynPat.Const(SynConst.Unit, _) | SynPat.Tuple(isStruct = false)), _),
-          SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: SyntaxNode.SynExpr(SynExpr.ObjExpr(
-              objType = SynType.App(typeArgs = _ :: _) | SynType.LongIdentApp(typeArgs = _ :: _))) :: _
+          SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: _
         | SynPat.Tuple(isStruct = false),
-          SyntaxNode.SynPat(SynPat.Paren _) :: SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: SyntaxNode.SynExpr(SynExpr.ObjExpr(
-              objType = SynType.App(typeArgs = _ :: _) | SynType.LongIdentApp(typeArgs = _ :: _))) :: _
+          SyntaxNode.SynPat(SynPat.Paren _) :: SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: _
         | SynPat.Paren((SynPat.Const(SynConst.Unit, _) | SynPat.Tuple(isStruct = false)), _),
-          SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: SyntaxNode.SynMemberDefn _ :: SyntaxNode.SynTypeDefn(SynTypeDefn(
-              typeRepr = SynTypeDefnRepr.ObjectModel(members = AnyGenericInheritOrInterfaceImpl))) :: _ -> true
+          SyntaxNode.SynPat(SynPat.LongIdent _) :: SyntaxNode.SynBinding _ :: SyntaxNode.SynMemberDefn _ :: _ -> true
 
         // Not required:
         //
@@ -209,7 +248,7 @@ module SynPat =
         //     fun (x) -> …
         | _, SyntaxNode.SynBinding _ :: _
         | _, SyntaxNode.SynExpr(SynExpr.ForEach _) :: _
-        | _, SyntaxNode.SynExpr(SynExpr.LetOrUseBang _) :: _
+        | _, SyntaxNode.SynExpr(SynExpr.LetOrUse(isBang = true)) :: _
         | _, SyntaxNode.SynMatchClause _ :: _
         | Atomic, SyntaxNode.SynExpr(SynExpr.Lambda(parsedData = Some _)) :: _ -> false
 

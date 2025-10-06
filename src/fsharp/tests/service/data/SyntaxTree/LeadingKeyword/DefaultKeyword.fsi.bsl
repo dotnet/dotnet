@@ -1,7 +1,7 @@
 SigFile
   (ParsedSigFileInput
      ("/root/LeadingKeyword/DefaultKeyword.fsi",
-      QualifiedNameOfFile DefaultKeyword, [], [],
+      QualifiedNameOfFile DefaultKeyword, [],
       [SynModuleOrNamespaceSig
          ([X], false, DeclaredNamespace,
           [Types
@@ -20,7 +20,7 @@ SigFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (5,4--5,19),
+                            Single None, None, (5,4--5,19),
                             { LeadingKeyword = Default (5,4--5,11)
                               InlineKeyword = None
                               WithKeyword = None
@@ -38,4 +38,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--5,19),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

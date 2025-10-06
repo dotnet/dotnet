@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -19,7 +19,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
         ProjectManager = CreateProjectSnapshotManager();
 
         await ProjectManager.UpdateAsync(
-            updater => updater.ProjectAdded(HostProject),
+            updater => updater.AddProject(HostProject),
             CancellationToken.None);
 
         ProjectManager.Changed += SnapshotManager_Changed;
@@ -45,7 +45,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
             {
                 for (var i = 0; i < Documents.Length; i++)
                 {
-                    updater.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
+                    updater.AddDocument(HostProject.Key, Documents[i], TextLoaders[i % 4]);
                 }
             },
             CancellationToken.None);
@@ -56,9 +56,8 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
     private void SnapshotManager_Changed(object sender, ProjectChangeEventArgs e)
     {
         // The real work happens here.
-        var project = ProjectManager.GetLoadedProject(e.ProjectKey);
-        var document = project.GetDocument(e.DocumentFilePath);
+        var document = ProjectManager.GetRequiredDocument(e.ProjectKey, e.DocumentFilePath);
 
-        Tasks.Add(document.GetGeneratedOutputAsync());
+        Tasks.Add(document.GetGeneratedOutputAsync(CancellationToken.None).AsTask());
     }
 }

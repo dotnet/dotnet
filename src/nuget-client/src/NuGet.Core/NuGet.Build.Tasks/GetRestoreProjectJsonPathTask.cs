@@ -3,7 +3,6 @@
 
 using System.IO;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Newtonsoft.Json;
 using NuGet.Common;
 

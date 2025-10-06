@@ -1,0 +1,188 @@
+parameters:
+- name: sbJobName
+  type: string
+
+- name: msftJobName
+  type: string
+
+- name: sbTargetRid
+  type: string
+
+- name: msftTargetRid
+  type: string
+
+- name: architecture
+  type: string
+
+- name: dotnetDotnetRunId
+  type: string
+
+- name: publishTestResultsPr
+  type: boolean
+  default: false
+
+jobs:
+- job: ${{ parameters.sbJobName }}_${{ parameters.architecture }}
+  timeoutInMinutes: 150
+  variables:
+  - template: ../variables/pipelines.yml
+  templateContext:
+    outputs:
+    - output: pipelineArtifact
+      displayName: 'Publish BuildLogs'
+      condition: succeededOrFailed()
+      targetPath: '$(Build.StagingDirectory)/BuildLogs'
+      artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+  steps:
+  - script: |
+      dotnet_dotnet_build='${{ replace(parameters.dotnetDotnetRunId, ' ', '') }}'
+      dotnet_dotnet_sha=''
+
+      triggering_alias=$(Resources.TriggeringAlias)
+      triggering_alias=$(echo $triggering_alias | sed 's/\./_/g' | tr '[:lower:]' '[:upper:]')
+
+      if [[ -z "$dotnet_dotnet_build" ]]; then
+        if [[ -z "$triggering_alias" ]]; then
+          dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --top 1 --query "[].id" --output tsv)
+        else
+          runID=RESOURCES_PIPELINE_${triggering_alias}_RUNID
+          dotnet_dotnet_build=$(printenv "$runID")
+        fi
+      fi
+
+      if [[ -z "$dotnet_dotnet_build" ]]; then
+        echo "Could not find a completed dotnet-dotnet build for branch '$(Build.SourceBranch)'"
+        exit 1
+      fi
+
+      if [[ -z "$dotnet_dotnet_sha" ]]; then
+        if [[ -z "$triggering_alias" ]]; then
+          dotnet_dotnet_sha=$(az pipelines build show --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --id "$dotnet_dotnet_build" --query "sourceVersion" --output tsv)
+        else
+          sourceCommit=RESOURCES_PIPELINE_${triggering_alias}_SOURCECOMMIT
+          dotnet_dotnet_sha=$(printenv "$sourceCommit")
+        fi
+      fi
+
+      if [[ -z "$dotnet_dotnet_sha" ]]; then
+        echo "Could not find a completed dotnet-dotnet build for branch '$(Build.SourceBranch)'"
+        exit 1
+      fi
+      
+      echo "Dotnet-dotnet build: https://dev.azure.com/dnceng/internal/_build/results?buildId=$dotnet_dotnet_build&view=results"
+
+      echo "##vso[build.addbuildtag]dotnet $dotnet_dotnet_sha"
+      echo "##vso[task.setvariable variable=DotnetDotnetBuildId]$dotnet_dotnet_build"
+    displayName: Find associated build
+    name: Get_Build_Id
+    env:
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+
+  - template: ../steps/download-vmr-artifact.yml
+    parameters:
+      buildName: ${{ parameters.msftJobName }}
+      architecture: ${{ parameters.architecture }}
+      patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.msftTargetRid }}.tar.gz'
+      displayName: Download MSFT SDK
+
+  - template: ../steps/download-vmr-artifact.yml
+    parameters:
+      buildName: ${{ parameters.sbJobName }}
+      architecture: ${{ parameters.architecture }}
+      patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.sbTargetRid }}.tar.gz' 
+      displayName: Download Source Build SDK
+
+  - template: ../steps/download-vmr-artifact.yml
+    parameters:
+      buildName: ${{ parameters.sbJobName }}
+      architecture: ${{ parameters.architecture }}
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.sbTargetRid }}.tar.gz' 
+      displayName: Download Source Built Artifacts
+
+  - script: |
+      find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
+    displayName: Move Artifacts to root
+
+  - script: |
+      msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.msftTargetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$msft_sdk_tarball_name" ]]; then
+        echo "Microsoft SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed."
+        exit 1
+      fi
+
+      sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.sbTargetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$sdk_tarball_name" ]]; then
+        echo "Source-build SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed"
+        exit 1
+      fi
+
+      artifacts_path=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.sbTargetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$artifacts_path" ]]; then
+        echo "Source-build artifacts path does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed"
+        exit 1
+      fi
+
+      eng/common/build.sh -bl --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj --restore
+
+      echo "##vso[task.setvariable variable=MsftSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$msft_sdk_tarball_name"
+      echo "##vso[task.setvariable variable=SdkTarballPath]$(Pipeline.Workspace)/Artifacts/$sdk_tarball_name"
+      echo "##vso[task.setvariable variable=SourceBuiltArtifactsPath]$(Pipeline.Workspace)/Artifacts/$artifacts_path"
+    displayName: Prepare Tests
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - script: >
+      .dotnet/dotnet test
+      $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
+      --filter "Category=SdkContent"
+      --logger:'trx;LogFileName=$(Agent.JobName)_SDKDiffTests.trx'
+      --logger:'console;verbosity=detailed'
+      -c Release
+      -bl:$(Build.SourcesDirectory)/artifacts/log/Debug/BuildTests_$(date +"%m%d%H%M%S").binlog 
+      -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/BuildTests_$(date +"%m%d%H%M%S").log
+      -clp:v=m
+      /p:MsftSdkTarballPath=$(MsftSdkTarballPath)
+      /p:SdkTarballPath=$(SdkTarballPath)
+      /p:SourceBuiltArtifactsPath=$(SourceBuiltArtifactsPath)
+      /p:TargetRid=${{ parameters.sbTargetRid }}
+      /p:PortableTargetRid=${{ parameters.msftTargetRid }}
+    displayName: Run Tests
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - script: |
+      set -x
+      targetFolder=$(Build.StagingDirectory)/BuildLogs/
+      mkdir -p ${targetFolder}
+      cd "$(Build.SourcesDirectory)"
+      find artifacts/log/ -type f -name "BuildTests*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/log/ -type f -name "BuildTests*.log" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.diff" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "Updated*.txt" -exec cp {} --parents -t ${targetFolder} \;
+    displayName: Prepare BuildLogs staging directory
+    continueOnError: true
+    condition: succeededOrFailed()
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    condition: succeededOrFailed()
+    continueOnError: true
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
+      searchFolder: $(Build.SourcesDirectory)/artifacts/TestResults
+      mergeTestResults: true
+      publishRunAttachments: true
+      testRunTitle: $(Agent.JobName)
+
+  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
+      - template: ../steps/create-baseline-update-pr.yml
+        parameters:
+          pipeline: sdk
+          repo: dotnet/dotnet
+          originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/SdkContentTests
+          updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
+          pullRequestTitle: Update Source-Build SDK Diff Tests Baselines and Exclusions

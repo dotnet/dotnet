@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3a0bc9cf-f9bf-4961-8615-1919c99fdd27</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.DotNet.XUnitExtensions.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\ActiveIssueAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\ConditionalClassAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\ConditionalFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\ConditionalTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\DotNetOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\DotNetOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\LinuxOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\LinuxOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\MacOSOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\MacOSOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\OuterLoopAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\ParallelTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\PlatformSpecificAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\SkipOnCIAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\SkipOnCoreClrAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\SkipOnMonoAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\SkipOnPlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\SkipOnTargetFrameworkAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\TestCategoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\UnixOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\UnixOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\WindowsFullFrameworkOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\WindowsFullFrameworkOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\WindowsOnlyFactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\WindowsOnlyTheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConditionalDiscovererException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreClrConfigurationDetection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesktopTraceListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DiscovererHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ActiveIssueDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ConditionalClassDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ConditionalFactDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ConditionalTestDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ConditionalTheoryDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\OuterLoopTestsDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\ParallelTheoryDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\PlatformSpecificDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnCIDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnCoreClrDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnMonoDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnPlatformDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnTargetFrameworkDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Discoverers\TestCategoryDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TheoryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RuntimeConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RuntimeTestModes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkippedFactTestCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkippedTestCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkippedTestMessageBus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkippedTheoryTestCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StaticReflectionConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TargetFrameworkMonikers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestPlatforms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestRuntimes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XunitConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XunitParallelTheoryTestCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XunitParallelTheoryTestCaseRunner.cs" />
+  </ItemGroup>
+</Project>

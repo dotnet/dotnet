@@ -33,7 +33,7 @@ namespace Microsoft.Diagnostics.TestHelpers
         {
             ITarget target = services.GetService<ITarget>();
             Debug.Assert(target is not null);
-            AddMembers(Target, typeof(ITarget), target, nameof(ITarget.Id), nameof(ITarget.GetTempDirectory));
+            AddMembers(Target, typeof(ITarget), target, nameof(ITarget.Id));
 
             XElement modulesElement = new("Modules");
             Target.Add(modulesElement);
@@ -84,7 +84,7 @@ namespace Microsoft.Diagnostics.TestHelpers
             {
                 XElement runtimeElement = new("Runtime");
                 runtimesElement.Add(runtimeElement);
-                AddMembers(runtimeElement, typeof(IRuntime), runtime, nameof(IRuntime.GetDacFilePath), nameof(IRuntime.GetDbiFilePath));
+                AddMembers(runtimeElement, typeof(IRuntime), runtime, nameof(IRuntime.GetDacFilePath), nameof(IRuntime.GetCDacFilePath), nameof(IRuntime.GetDbiFilePath));
 
                 XElement runtimeModuleElement = new("RuntimeModule");
                 runtimeElement.Add(runtimeModuleElement);

@@ -43,9 +43,9 @@ public partial class ControlDesigner
             }
 
             // We want these messages to go through the designer's WndProc method, and we want people to be able
-            // to do default processing with the designer's DefWndProc.  So, we stuff the old window target into
+            // to do default processing with the designer's DefWndProc. So, we stuff the old window target into
             // the designer's target and then call their WndProc.
-            IDesignerTarget designerTarget = _designer.DesignerTarget;
+            IDesignerTarget? designerTarget = _designer.DesignerTarget;
             _designer.DesignerTarget = this;
 
             try
@@ -61,7 +61,7 @@ public partial class ControlDesigner
                 // If the designer disposed us, then we should follow suit.
                 if (_designer.DesignerTarget is null)
                 {
-                    designerTarget.Dispose();
+                    designerTarget?.Dispose();
                 }
                 else
                 {
@@ -74,10 +74,10 @@ public partial class ControlDesigner
                 // do not have a designer for these controls, and they prevent the ParentControlDesigner's
                 // drag-drop from working. What we do is to loop through all child controls that do not have a
                 // designer (in HookChildControls()), and RevokeDragDrop() after their handles have been created.
-                if (m.Msg == (int)PInvoke.WM_CREATE)
+                if (m.Msg == (int)PInvokeCore.WM_CREATE)
                 {
                     Debug.Assert(_handle != IntPtr.Zero, "Handle for control not created");
-                    PInvoke.RevokeDragDrop(_handle);
+                    PInvokeCore.RevokeDragDrop(_handle);
                 }
             }
         }

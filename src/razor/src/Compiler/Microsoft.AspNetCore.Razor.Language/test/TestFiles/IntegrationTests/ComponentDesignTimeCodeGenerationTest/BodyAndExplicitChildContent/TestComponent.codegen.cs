@@ -47,7 +47,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
-            __o = new global::Microsoft.AspNetCore.Components.RenderFragment<System.String>(
+            __o = new global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                      header

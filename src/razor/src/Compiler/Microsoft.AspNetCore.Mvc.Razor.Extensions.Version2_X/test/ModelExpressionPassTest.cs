@@ -1,55 +1,56 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
-public class ModelExpressionPassTest
+public class ModelExpressionPassTest : RazorProjectEngineTestBase
 {
+    protected override RazorLanguageVersion Version => RazorLanguageVersion.Version_2_1;
+
+    protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
+    {
+        builder.Features.Add(new RazorPageDocumentClassifierPass());
+        builder.Features.Add(new MvcViewDocumentClassifierPass());
+    }
+
+    protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
+    {
+        processor.ExecutePhasesThrough<IRazorDirectiveClassifierPhase>();
+    }
+
     [Fact]
     public void ModelExpressionPass_NonModelExpressionProperty_Ignored()
     {
         // Arrange
-        var codeDocument = CreateDocument(@"
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("Foo")
+                .TypeName("System.Int32"))
+            .TagMatchingRuleDescriptor(rule =>
+                rule.RequireTagName("p"))
+            .Build();
+
+        var codeDocument = ProjectEngine.CreateCodeDocument(@"
 @addTagHelper TestTagHelper, TestAssembly
-<p foo=""17"">");
+<p foo=""17"">",
+            [tagHelper]);
 
-        var tagHelpers = new[]
-        {
-                TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                            .Name("Foo")
-                            .TypeName("System.Int32"))
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule.RequireTagName("p"))
-                    .Build()
-            };
-
-        var engine = CreateEngine(tagHelpers);
-        var pass = new ModelExpressionPass()
-        {
-            Engine = engine,
-        };
-
-        var irDocument = CreateIRDocument(engine, codeDocument);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<ModelExpressionPass>();
 
         // Assert
-        var tagHelper = FindTagHelperNode(irDocument);
-        var setProperty = tagHelper.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
+        var documentNode = processor.GetDocumentNode();
+        var tagHelperNode = documentNode.GetTagHelperNode();
+        var setProperty = tagHelperNode.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
 
-        var token = Assert.IsAssignableFrom<IntermediateToken>(Assert.Single(setProperty.Children));
-        Assert.True(token.IsCSharp);
+        var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(Assert.Single(setProperty.Children));
         Assert.Equal("17", token.Content);
     }
 
@@ -57,150 +58,71 @@ public class ModelExpressionPassTest
     public void ModelExpressionPass_ModelExpressionProperty_SimpleExpression()
     {
         // Arrange
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("Foo")
+                .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
+            .TagMatchingRuleDescriptor(rule =>
+                rule.RequireTagName("p"))
+            .Build();
 
         // Using \r\n here because we verify line mappings
-        var codeDocument = CreateDocument(
-            "@addTagHelper TestTagHelper, TestAssembly\r\n<p foo=\"Bar\">");
+        var codeDocument = ProjectEngine.CreateCodeDocument(
+            "@addTagHelper TestTagHelper, TestAssembly\r\n<p foo=\"Bar\">",
+            [tagHelper]);
 
-        var tagHelpers = new[]
-        {
-                TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                            .Name("Foo")
-                            .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule.RequireTagName("p"))
-                    .Build()
-            };
-
-        var engine = CreateEngine(tagHelpers);
-        var pass = new ModelExpressionPass()
-        {
-            Engine = engine,
-        };
-
-        var irDocument = CreateIRDocument(engine, codeDocument);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<ModelExpressionPass>();
 
         // Assert
-        var tagHelper = FindTagHelperNode(irDocument);
-        var setProperty = tagHelper.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
+        var documentNode = processor.GetDocumentNode();
+        var tagHelperNode = documentNode.GetTagHelperNode();
+        var setProperty = tagHelperNode.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
 
         var expression = Assert.IsType<CSharpExpressionIntermediateNode>(Assert.Single(setProperty.Children));
-        Assert.Equal("ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.Bar)", GetCSharpContent(expression));
+        Assert.Equal("ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.Bar)", expression.GetCSharpContent());
 
-        var originalNode = Assert.IsAssignableFrom<IntermediateToken>(expression.Children[2]);
-        Assert.Equal(TokenKind.CSharp, originalNode.Kind);
+        var originalNode = Assert.IsAssignableFrom<CSharpIntermediateToken>(expression.Children[2]);
         Assert.Equal("Bar", originalNode.Content);
-        Assert.Equal(new SourceSpan("test.cshtml", 51, 1, 8, 3), originalNode.Source.Value);
+        var source = Assert.NotNull(originalNode.Source);
+        Assert.Equal(new SourceSpan("test.cshtml", 51, 1, 8, 3), source);
     }
 
     [Fact]
     public void ModelExpressionPass_ModelExpressionProperty_ComplexExpression()
     {
         // Arrange
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("Foo")
+                .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
+            .TagMatchingRuleDescriptor(rule =>
+                rule.RequireTagName("p"))
+            .Build();
 
         // Using \r\n here because we verify line mappings
-        var codeDocument = CreateDocument(
-            "@addTagHelper TestTagHelper, TestAssembly\r\n<p foo=\"@Bar\">");
+        var codeDocument = ProjectEngine.CreateCodeDocument(
+            "@addTagHelper TestTagHelper, TestAssembly\r\n<p foo=\"@Bar\">",
+            [tagHelper]);
 
-        var tagHelpers = new[]
-        {
-                TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                            .Name("Foo")
-                            .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule.RequireTagName("p"))
-                    .Build()
-            };
-
-        var engine = CreateEngine(tagHelpers);
-        var pass = new ModelExpressionPass()
-        {
-            Engine = engine,
-        };
-
-        var irDocument = CreateIRDocument(engine, codeDocument);
+        var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        pass.Execute(codeDocument, irDocument);
+        processor.ExecutePass<ModelExpressionPass>();
 
         // Assert
-        var tagHelper = FindTagHelperNode(irDocument);
-        var setProperty = tagHelper.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
+        var documentNode = processor.GetDocumentNode();
+        var tagHelperNode = documentNode.GetTagHelperNode();
+        var setProperty = tagHelperNode.Children.OfType<TagHelperPropertyIntermediateNode>().Single();
 
         var expression = Assert.IsType<CSharpExpressionIntermediateNode>(Assert.Single(setProperty.Children));
-        Assert.Equal("ModelExpressionProvider.CreateModelExpression(ViewData, __model => Bar)", GetCSharpContent(expression));
+        Assert.Equal("ModelExpressionProvider.CreateModelExpression(ViewData, __model => Bar)", expression.GetCSharpContent());
 
-        var originalNode = Assert.IsAssignableFrom<IntermediateToken>(expression.Children[1]);
-        Assert.Equal(TokenKind.CSharp, originalNode.Kind);
+        var originalNode = Assert.IsAssignableFrom<CSharpIntermediateToken>(expression.Children[1]);
         Assert.Equal("Bar", originalNode.Content);
-        Assert.Equal(new SourceSpan("test.cshtml", 52, 1, 9, 3), originalNode.Source.Value);
-    }
-
-    private RazorCodeDocument CreateDocument(string content)
-    {
-        var source = RazorSourceDocument.Create(content, "test.cshtml");
-        return RazorCodeDocument.Create(source);
-    }
-
-    private RazorEngine CreateEngine(params TagHelperDescriptor[] tagHelpers)
-    {
-        return RazorProjectEngine.Create(b =>
-        {
-            b.Features.Add(new TestTagHelperFeature(tagHelpers));
-        }).Engine;
-    }
-
-    private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
-    {
-        foreach (var phase in engine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorDirectiveClassifierPhase)
-            {
-                break;
-            }
-        }
-
-        return codeDocument.GetDocumentIntermediateNode();
-    }
-
-    private TagHelperIntermediateNode FindTagHelperNode(IntermediateNode node)
-    {
-        var visitor = new TagHelperNodeVisitor();
-        visitor.Visit(node);
-        return visitor.Node;
-    }
-
-    private string GetCSharpContent(IntermediateNode node)
-    {
-        var builder = new StringBuilder();
-        for (var i = 0; i < node.Children.Count; i++)
-        {
-            var child = node.Children[i] as IntermediateToken;
-            if (child.Kind == TokenKind.CSharp)
-            {
-                builder.Append(child.Content);
-            }
-        }
-
-        return builder.ToString();
-    }
-
-    private class TagHelperNodeVisitor : IntermediateNodeWalker
-    {
-        public TagHelperIntermediateNode Node { get; set; }
-
-        public override void VisitTagHelper(TagHelperIntermediateNode node)
-        {
-            Node = node;
-        }
+        var source = Assert.NotNull(originalNode.Source);
+        Assert.Equal(new SourceSpan("test.cshtml", 52, 1, 9, 3), source);
     }
 }

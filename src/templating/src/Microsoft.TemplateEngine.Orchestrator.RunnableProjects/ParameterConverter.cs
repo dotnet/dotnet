@@ -1,10 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Microsoft.TemplateEngine.Abstractions;
 
 namespace Microsoft.TemplateEngine.Utils
@@ -62,7 +59,7 @@ namespace Microsoft.TemplateEngine.Utils
                 return null;
             }
 
-            if (!literal.Contains("\""))
+            if (!literal.Contains('"'))
             {
                 if (TryResolveBooleanValue(literal, out bool parsedBool))
                 {
@@ -191,6 +188,7 @@ namespace Microsoft.TemplateEngine.Utils
             }
 
             string? partialMatch = null;
+            bool multiplePartialMatches = false;
 
             foreach (string choiceValue in param.Choices.Keys)
             {
@@ -208,11 +206,17 @@ namespace Microsoft.TemplateEngine.Utils
                     }
                     else
                     {
-                        // multiple partial matches, can't take one.
-                        match = null;
-                        return false;
+                        // Multiple partial matches, keep searching for exact match, fail if we don't find one
+                        // because we don't know which partial match we should select.
+                        multiplePartialMatches = true;
                     }
                 }
+            }
+
+            if (multiplePartialMatches)
+            {
+                match = null;
+                return false;
             }
 
             match = partialMatch;

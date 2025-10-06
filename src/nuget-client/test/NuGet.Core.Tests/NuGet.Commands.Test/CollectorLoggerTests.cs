@@ -628,7 +628,7 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.AddRangeOfCodes(new List<NuGetLogCode> { NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1605 }, libraryId, targetFramework);
+            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1605], libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -669,7 +669,7 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.AddRangeOfCodes(new List<NuGetLogCode> { NuGetLogCode.NU1500 }, libraryId, targetFramework);
+            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500], libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -727,7 +727,7 @@ namespace NuGet.Commands.Test
             collector.Log(new RestoreLogMessage(LogLevel.Debug, "Debug") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Verbose, "Verbose") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Information, "Information") { ShouldDisplay = true });
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString));
             collector.Log(new RestoreLogMessage(LogLevel.Error, NuGetLogCode.NU1000, "Error") { ShouldDisplay = true });
 
             // Assert
@@ -768,7 +768,7 @@ namespace NuGet.Commands.Test
             collector.Log(new RestoreLogMessage(LogLevel.Debug, "Debug") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Verbose, "Verbose") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Information, "Information") { ShouldDisplay = true });
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString, netcoreFrameworkString));
             collector.Log(new RestoreLogMessage(LogLevel.Error, NuGetLogCode.NU1000, "Error") { ShouldDisplay = true });
 
             // Assert
@@ -809,9 +809,9 @@ namespace NuGet.Commands.Test
             collector.Log(new RestoreLogMessage(LogLevel.Debug, "Debug") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Verbose, "Verbose") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Information, "Information") { ShouldDisplay = true });
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId));
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId));
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1605, "Warning", libraryId));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId, frameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1605, "Warning", libraryId, frameworkString));
             collector.Log(new RestoreLogMessage(LogLevel.Error, NuGetLogCode.NU1000, "Error") { ShouldDisplay = true });
 
             // Assert
@@ -854,9 +854,9 @@ namespace NuGet.Commands.Test
             collector.Log(new RestoreLogMessage(LogLevel.Debug, "Debug") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Verbose, "Verbose") { ShouldDisplay = true });
             collector.Log(new RestoreLogMessage(LogLevel.Information, "Information") { ShouldDisplay = true });
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId));
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId));
-            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1605, "Warning", libraryId));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString, netcoreFrameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId, frameworkString, netcoreFrameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1605, "Warning", libraryId, frameworkString, netcoreFrameworkString));
             collector.Log(new RestoreLogMessage(LogLevel.Error, NuGetLogCode.NU1000, "Error") { ShouldDisplay = true });
 
             // Assert
@@ -1054,6 +1054,92 @@ namespace NuGet.Commands.Test
             VerifyInnerLoggerCalls(innerLogger, LogLevel.Warning, "Warning", Times.Never());
             VerifyInnerLoggerCalls(innerLogger, LogLevel.Error, "Warning As Error: Warning", Times.Once(), NuGetLogCode.NU1107);
             VerifyInnerLoggerCalls(innerLogger, LogLevel.Error, "Error", Times.Once());
+        }
+
+        [Fact]
+        public void CollectorLogger_NoSuppressedWarnings_SuppressedWarningsEmpty()
+        {
+            // Arrange
+            var noWarnSet = new HashSet<NuGetLogCode> { };
+            var warnAsErrorSet = new HashSet<NuGetLogCode> { };
+            var warningsNotAsErrors = new HashSet<NuGetLogCode>();
+            var allWarningsAsErrors = false;
+            var innerLogger = new Mock<ILogger>();
+            var collector = new RestoreCollectorLogger(innerLogger.Object)
+            {
+                ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
+                    new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
+                    null,
+                    null)
+            };
+
+            // Act
+            collector.Log(new RestoreLogMessage(LogLevel.Warning, NuGetLogCode.NU1500, "Warning") { ShouldDisplay = true });
+
+            // Assert
+            Assert.Equal(0, collector.SuppressedWarnings.Count());
+        }
+
+        [Fact]
+        public void CollectorLogger_PackageSpecificNoWarnSet_SuppressedWarningsTracked()
+        {
+            // Arrange
+            var libraryId = "test_library";
+            var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
+            var noWarnSet = new HashSet<NuGetLogCode> { };
+            var warnAsErrorSet = new HashSet<NuGetLogCode> { };
+            var warningsNotAsErrors = new HashSet<NuGetLogCode>();
+            var allWarningsAsErrors = false;
+            var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
+
+            var innerLogger = new Mock<ILogger>();
+            var collector = new RestoreCollectorLogger(innerLogger.Object)
+            {
+                ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
+                    new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
+                    packageSpecificWarningProperties,
+                    null)
+            };
+
+            // Act
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, "Warning", libraryId, frameworkString));
+            collector.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1605, "Warning", libraryId, frameworkString));
+
+            // Assert
+            Assert.Equal(3, collector.SuppressedWarnings.Count());
+            Assert.Contains(NuGetLogCode.NU1500, collector.SuppressedWarnings.Select(x => x.Code));
+            Assert.Contains(NuGetLogCode.NU1601, collector.SuppressedWarnings.Select(x => x.Code));
+            Assert.Contains(NuGetLogCode.NU1605, collector.SuppressedWarnings.Select(x => x.Code));
+        }
+
+        [Fact]
+        public void CollectorLogger_ProjectWideNoWarnSet_SuppressedWarningsTracked()
+        {
+            // Arrange
+            var noWarnSet = new HashSet<NuGetLogCode> { NuGetLogCode.NU1500 };
+            var warnAsErrorSet = new HashSet<NuGetLogCode> { };
+            var warningsNotAsErrors = new HashSet<NuGetLogCode>();
+            var allWarningsAsErrors = false;
+            var innerLogger = new Mock<ILogger>();
+            var collector = new RestoreCollectorLogger(innerLogger.Object)
+            {
+                ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
+                    new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
+                    null,
+                    null)
+            };
+
+            // Act
+            collector.Log(new RestoreLogMessage(LogLevel.Warning, NuGetLogCode.NU1500, "Warning") { ShouldDisplay = true });
+
+            // Assert
+            Assert.Equal(1, collector.SuppressedWarnings.Count());
+            Assert.Contains(NuGetLogCode.NU1500, collector.SuppressedWarnings.Select(x => x.Code));
         }
 
         private void VerifyInnerLoggerCalls(Mock<ILogger> innerLogger, LogLevel messageLevel, string message, Times times, NuGetLogCode code = NuGetLogCode.Undefined, string filePath = null, string projectPath = null)

@@ -19,13 +19,16 @@ namespace NuGet.Common
         private const int HashLength = 20;
         private static readonly TimeSpan SleepDuration = TimeSpan.FromMilliseconds(10);
         private static readonly KeyedLock PerFileLock = new KeyedLock();
+        private static bool? _useDeleteOnClose = null;
 
         // FileOptions.DeleteOnClose causes concurrency issues on Mac OS X and Linux.
         // These are fixed in .NET 7 (https://github.com/dotnet/runtime/pull/55327).
         // To continue working in parallel with older versions of .NET,
         // we cannot use DeleteOnClose by default until .NET 6 goes EOL (Nov 2024).
-        private static bool UseDeleteOnClose = RuntimeEnvironmentHelper.IsWindows ||
-                                               Environment.GetEnvironmentVariable("NUGET_ConcurrencyUtils_DeleteOnClose") == "1"; // opt-in.
+        private static bool UseDeleteOnClose => _useDeleteOnClose ??= RuntimeEnvironmentHelper.IsWindows ||
+                                               EnvironmentVariableReader.GetEnvironmentVariable("NUGET_ConcurrencyUtils_DeleteOnClose") == "1"; // opt-in.
+
+        internal static IEnvironmentVariableReader EnvironmentVariableReader { get; set; } = EnvironmentVariableWrapper.Instance;
 
         public async static Task<T> ExecuteWithFileLockedAsync<T>(string filePath,
             Func<CancellationToken, Task<T>> action,

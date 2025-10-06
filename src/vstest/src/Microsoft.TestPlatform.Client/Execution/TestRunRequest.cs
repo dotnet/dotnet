@@ -121,7 +121,7 @@ public class TestRunRequest : ITestRunRequest, IInternalTestRunEventsHandler
             _executionStartTime = DateTime.UtcNow;
 
             // Collecting Number of sources Sent For Execution
-            var numberOfSources = (uint)(TestRunCriteria.Sources != null ? TestRunCriteria.Sources.Count() : 0);
+            var numberOfSources = (uint)(TestRunCriteria.Sources?.Count() ?? 0);
             _requestData.MetricsCollection.Add(TelemetryDataConstants.NumberOfSourcesSentForRun, numberOfSources);
 
             EqtTrace.Info("TestRunRequest.ExecuteAsync: Starting run with settings:{0}", TestRunCriteria);

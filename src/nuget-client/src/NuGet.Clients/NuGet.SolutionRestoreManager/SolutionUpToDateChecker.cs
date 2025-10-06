@@ -183,9 +183,6 @@ namespace NuGet.SolutionRestoreManager
         /// <returns>The list of the projects passed in and their parents in the dependencyGraphSpec</returns>
         internal static IList<string> GetParents(List<string> DirtySpecs, DependencyGraphSpec dependencyGraphSpec)
         {
-            var projectsByUniqueName = dependencyGraphSpec.Projects
-                .ToDictionary(t => t.RestoreMetadata.ProjectUniqueName, t => t, PathUtility.GetStringComparerBasedOnOS());
-
             var DirtyProjects = new HashSet<string>(DirtySpecs, PathUtility.GetStringComparerBasedOnOS());
 
             var sortedProjects = DependencyGraphSpec.SortPackagesByDependencyOrder(dependencyGraphSpec.Projects);

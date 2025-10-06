@@ -19,7 +19,7 @@ namespace NuGetVSExtension {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binding Redirects.
+        /// </summary>
+        internal static string BindingRedirects {
+            get {
+                return ResourceManager.GetString("BindingRedirects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not create tool window..
         /// </summary>
         internal static string CanNotCreateWindow {
@@ -70,11 +79,74 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear NuGet local resources.
+        /// </summary>
+        internal static string clearLocalResources {
+            get {
+                return ResourceManager.GetString("clearLocalResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default package management format.
+        /// </summary>
+        internal static string defaultPackageManagementFormat {
+            get {
+                return ResourceManager.GetString("defaultPackageManagementFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The project &apos;{0}&apos; is unsupported.
         /// </summary>
         internal static string DTE_ProjectUnsupported {
             get {
                 return ResourceManager.GetString("DTE_ProjectUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A package pattern must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceMappingPattern_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceMappingPattern_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one source must be selected..
+        /// </summary>
+        internal static string Error_PackageSourceMappingSource_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceMappingSource_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A name must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceName_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceName_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A source must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceUri_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceUri_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A hostname must be provided after &apos;://&apos;..
+        /// </summary>
+        internal static string Error_PackageSourceUriHostname_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceUriHostname_Missing", resourceCulture);
             }
         }
         
@@ -142,6 +214,60 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package Management.
+        /// </summary>
+        internal static string PackageManagement {
+            get {
+                return ResourceManager.GetString("PackageManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PackageReference.
+        /// </summary>
+        internal static string PackageReference {
+            get {
+                return ResourceManager.GetString("PackageReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package Restore.
+        /// </summary>
+        internal static string PackageRestore {
+            get {
+                return ResourceManager.GetString("PackageRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically check for missing packages during build in Visual Studio.
+        /// </summary>
+        internal static string packageRestoreAutomatic {
+            get {
+                return ResourceManager.GetString("packageRestoreAutomatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow NuGet to download missing packages.
+        /// </summary>
+        internal static string PackageRestoreConsent {
+            get {
+                return ResourceManager.GetString("PackageRestoreConsent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packages.config.
+        /// </summary>
+        internal static string PackagesConfig {
+            get {
+                return ResourceManager.GetString("PackagesConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} nuget configuration is invalid..
         /// </summary>
         internal static string ProjectHasAnInvalidNuGetConfiguration {
@@ -153,9 +279,45 @@ namespace NuGetVSExtension {
         /// <summary>
         ///   Looks up a localized string similar to Project is not eligible for migration. Either the project is not packages.config based or doesn&apos;t support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information..
         /// </summary>
+        internal static string ProjectJsonMigrateErrorMessage {
+            get {
+                return ResourceManager.GetString("ProjectJsonMigrateErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project is not eligible for migration as it&apos;s not project.json based..
+        /// </summary>
         internal static string ProjectMigrateErrorMessage {
             get {
                 return ResourceManager.GetString("ProjectMigrateErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to These settings are stored in %NuGet.Config% files.
+        /// </summary>
+        internal static string SettingsStoredInNuGetConfiguration {
+            get {
+                return ResourceManager.GetString("SettingsStoredInNuGetConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prompt for format selection on first package install.
+        /// </summary>
+        internal static string showPackageManagementChooser {
+            get {
+                return ResourceManager.GetString("showPackageManagementChooser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip applying binding redirects.
+        /// </summary>
+        internal static string skipBindingRedirects {
+            get {
+                return ResourceManager.GetString("skipBindingRedirects", resourceCulture);
             }
         }
         
@@ -165,6 +327,123 @@ namespace NuGetVSExtension {
         internal static string SolutionIsNotSaved {
             get {
                 return ResourceManager.GetString("SolutionIsNotSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Insecure Connections.
+        /// </summary>
+        internal static string Text_AllowInsecureConnections_Header {
+            get {
+                return ResourceManager.GetString("Text_AllowInsecureConnections_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/).
+        /// </summary>
+        internal static string Text_ConfigurationFiles_CommonLink {
+            get {
+                return ResourceManager.GetString("Text_ConfigurationFiles_CommonLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration files are listed in order from highest to lowest priority..
+        /// </summary>
+        internal static string Text_ConfigurationFiles_Priority {
+            get {
+                return ResourceManager.GetString("Text_ConfigurationFiles_Priority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Path.
+        /// </summary>
+        internal static string Text_FilePath_Header {
+            get {
+                return ResourceManager.GetString("Text_FilePath_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) for more information..
+        /// </summary>
+        internal static string Text_HttpSource_Error {
+            get {
+                return ResourceManager.GetString("Text_HttpSource_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HTTP sources are insecure. Consider using HTTPS instead. &apos;AllowInsecureConnections&apos; is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)..
+        /// </summary>
+        internal static string Text_HttpSource_Warning {
+            get {
+                return ResourceManager.GetString("Text_HttpSource_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        internal static string Text_PackageSourceEnabled_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceEnabled_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package pattern.
+        /// </summary>
+        internal static string Text_PackageSourceMappingPattern_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceMappingPattern_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string Text_PackageSourceName_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceName_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Machine-wide package sources.
+        /// </summary>
+        internal static string Text_PackageSources_MachineWide {
+            get {
+                return ResourceManager.GetString("Text_PackageSources_MachineWide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package sources.
+        /// </summary>
+        internal static string Text_PackageSources_NotMachineWide {
+            get {
+                return ResourceManager.GetString("Text_PackageSources_NotMachineWide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        internal static string Text_PackageSourceUrl_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceUrl_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contoso.Contracts or System.*.
+        /// </summary>
+        internal static string Text_Watermark_ExamplePackageIdPattern {
+            get {
+                return ResourceManager.GetString("Text_Watermark_ExamplePackageIdPattern", resourceCulture);
             }
         }
     }

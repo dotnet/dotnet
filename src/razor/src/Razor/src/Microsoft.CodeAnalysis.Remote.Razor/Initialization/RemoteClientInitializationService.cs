@@ -1,35 +1,42 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteClientInitializationService : RazorServiceBase, IRemoteClientInitializationService
+internal sealed class RemoteClientInitializationService(in ServiceArgs args) : RazorBrokeredServiceBase(in args), IRemoteClientInitializationService
 {
-    internal RemoteClientInitializationService(IServiceBroker serviceBroker)
-        : base(serviceBroker)
+    internal sealed class Factory : FactoryBase<IRemoteClientInitializationService>
     {
+        protected override IRemoteClientInitializationService CreateService(in ServiceArgs args)
+            => new RemoteClientInitializationService(in args);
     }
 
+    private readonly RemoteLanguageServerFeatureOptions _remoteLanguageServerFeatureOptions = args.ExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
+    private readonly ImmutableArray<ILspLifetimeService> _lspLifetimeServices = args.ExportProvider.GetExportedValues<ILspLifetimeService>().ToImmutableArray();
+
     public ValueTask InitializeAsync(RemoteClientInitializationOptions options, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(_ =>
+        => RunServiceAsync(ct =>
             {
-                RemoteLanguageServerFeatureOptions.SetOptions(options);
+                _remoteLanguageServerFeatureOptions.SetOptions(options);
                 return default;
             },
             cancellationToken);
 
-    public ValueTask InitializeLSPAsync(RemoteClientLSPInitializationOptions options, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(_ =>
-        {
-            RemoteSemanticTokensLegendService.SetLegend(options.TokenTypes, options.TokenModifiers);
-            return default;
-        },
+    public ValueTask InitializeLspAsync(RemoteClientLSPInitializationOptions options, CancellationToken cancellationToken)
+        => RunServiceAsync(ct =>
+            {
+                foreach (var service in _lspLifetimeServices)
+                {
+                    service.OnLspInitialized(options);
+                }
+
+                return default;
+            },
             cancellationToken);
 }

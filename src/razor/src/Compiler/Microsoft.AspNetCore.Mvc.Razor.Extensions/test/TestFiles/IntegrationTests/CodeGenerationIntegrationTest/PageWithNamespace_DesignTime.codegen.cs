@@ -16,7 +16,7 @@ namespace Test.Namespace
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PageWithNamespace.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
+    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     #nullable disable
     {
         #pragma warning disable 219
@@ -61,8 +61,12 @@ global::System.Object __typeHelper = nameof(Test.Namespace);
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace> Html { get; private set; } = default!;
         #nullable disable
-        public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace>)PageContext?.ViewData;
-        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace Model => ViewData.Model;
+        #nullable restore
+public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace>)PageContext?.ViewData!;
+#nullable disable
+        #nullable restore
+public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace Model => ViewData.Model!;
+#nullable disable
     }
 }
 #pragma warning restore 1591

@@ -39,8 +39,8 @@ public class RazorSyntaxTreeTest
         Assert.Empty(syntaxTree.Diagnostics);
         Assert.NotNull(syntaxTree);
 
-        var children = syntaxTree.Root.DescendantNodes();
-        Assert.All(children, node => Assert.Equal(filePath, node.GetSourceLocation(source).FilePath));
+        var children = syntaxTree.Root.DescendantNodesAndTokens();
+        Assert.All(children, nodeOrToken => Assert.Equal(filePath, nodeOrToken.GetSourceLocation(source).FilePath));
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class RazorSyntaxTreeTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("\r\n  \r\n    @*SomeComment*@ \r\n  @tagHelperPrefix \"SomePrefix\"\r\n<html>\r\n@if (true) {\r\n @if(false) { <div>@something.</div> } \r\n}");
-        var options = RazorParserOptions.Create(builder => builder.ParseLeadingDirectives = true);
+        var options = RazorParserOptions.Default.WithFlags(parseLeadingDirectives: true);
 
         // Act
         var syntaxTree = RazorSyntaxTree.Parse(source, options);
@@ -57,8 +57,8 @@ public class RazorSyntaxTreeTest
         var root = syntaxTree.Root;
         Assert.NotNull(syntaxTree);
         Assert.Equal(61, root.EndPosition);
-        Assert.Single(root.DescendantNodes().Where(n => n is RazorDirectiveBodySyntax body && body.Keyword.GetContent() == "tagHelperPrefix"));
-        Assert.Empty(root.DescendantNodes().Where(n => n is MarkupElementSyntax));
+        Assert.Single(root.DescendantNodes().OfType<RazorDirectiveBodySyntax>().Where(body => body.Keyword.GetContent() == "tagHelperPrefix"));
+        Assert.Empty(root.DescendantNodes().OfType<MarkupElementSyntax>());
         Assert.Empty(syntaxTree.Diagnostics);
     }
 }

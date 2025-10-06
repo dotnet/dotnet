@@ -23,6 +23,8 @@
     x:Key="EmptyEnumerableToVisibilityConverter" />
   <nuget:EnumerableToVisibilityConverter
     x:Key="EnumerableToVisibilityConverter" />
+  <nuget:LastItemToVisibilityConverter
+    x:Key="LastItemToVisibilityConverter" />
   <nuget:InverseBooleanConverter
     x:Key="InverseBooleanConverter" />
   <nuget:BooleanToGridRowHeightConverter
@@ -38,8 +40,8 @@
     VisibilityIfFalse="Visible" />
   <vsui:BooleanToHiddenVisibilityConverter
     x:Key="BooleanToHiddenVisibilityConverter" />
-  <nuget:DownloadCountToVisibilityConverter
-    x:Key="DownloadCountToVisibilityConverter" />
+  <nuget:GreaterThanThresholdToVisibilityConverter
+    x:Key="GreaterThanThresholdToVisibilityConverter" />
   <nuget:FontSizeConverter
     Scale="122"
     x:Key="Font122PercentSizeConverter" />
@@ -165,17 +167,11 @@
     <Setter Property="FocusVisualStyle" Value="{StaticResource GridSplitterFocusVisualStyle}"/>
   </Style>
 
-  <Style x:Key="{x:Type ComboBox}" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ComboBoxStyleKey}}">
-    <Setter Property="FocusVisualStyle" Value="{StaticResource ControlsFocusVisualStyle}"/>
-  </Style>
-
-  <Style x:Key="{x:Type ComboBoxItem}" TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ComboBoxItemStyleKey}}">
-    <Setter Property="FocusVisualStyle" Value="{StaticResource ControlsFocusVisualStyle}"/>
-  </Style>
-
   <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ScrollBarStyleKey}}"/>
 
   <Style x:Key="{x:Type ScrollViewer}" TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ScrollViewerStyleKey}}"/>
+
+  <Style x:Key="{x:Type ProgressBar}" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ProgressBarStyleKey}}"/>
 
   <Style x:Key="TooltipStyle" TargetType="{x:Type TextBlock}">
     <Setter Property="TextWrapping" Value="Wrap" />
@@ -681,6 +677,29 @@
           Property="TextBlock.TextDecorations"
           Value="{x:Null}" />
       </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="HyperlinkSelectorAware" TargetType="{x:Type Hyperlink}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ThemedDialogHyperlinkStyleKey}}">
+    <Style.Triggers>
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+          <Condition Binding="{Binding (Selector.IsSelectionActive), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="False" />
+        </MultiDataTrigger.Conditions>
+        <Setter
+          Property="Foreground"
+          Value="{DynamicResource {x:Static nuget:Brushes.ContentInactiveSelectedTextBrushKey}}" />
+      </MultiDataTrigger>
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+          <Condition Binding="{Binding (Selector.IsSelectionActive), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+        </MultiDataTrigger.Conditions>
+        <Setter
+          Property="Foreground"
+          Value="{DynamicResource {x:Static nuget:Brushes.ContentSelectedTextBrushKey}}" />
+      </MultiDataTrigger>
     </Style.Triggers>
   </Style>
 

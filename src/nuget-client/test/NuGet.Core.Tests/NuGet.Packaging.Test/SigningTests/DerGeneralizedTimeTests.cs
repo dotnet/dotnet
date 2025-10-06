@@ -3,8 +3,8 @@
 
 using System;
 using System.Security.Cryptography;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing.DerEncoding;
-using Test.Utility.Signing;
 using Xunit;
 
 namespace NuGet.Packaging.Test

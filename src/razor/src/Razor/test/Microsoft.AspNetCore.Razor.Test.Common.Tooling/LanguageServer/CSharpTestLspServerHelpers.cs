@@ -1,26 +1,23 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -33,13 +30,22 @@ internal static class CSharpTestLspServerHelpers
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
         CancellationToken cancellationToken) =>
-        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), cancellationToken);
+        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), capabilitiesUpdater: null, cancellationToken);
 
     public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
-        IRazorSpanMappingService razorSpanMappingService,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        CancellationToken cancellationToken) =>
+        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), capabilitiesUpdater, cancellationToken);
+
+    public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
+        SourceText csharpSourceText,
+        Uri csharpDocumentUri,
+        VSInternalServerCapabilities serverCapabilities,
+        IRazorMappingService razorMappingService,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
         var files = new[]
@@ -47,19 +53,28 @@ internal static class CSharpTestLspServerHelpers
             (csharpDocumentUri, csharpSourceText)
         };
 
-        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, cancellationToken);
+        return CreateCSharpLspServerAsync(files, serverCapabilities, razorMappingService, multiTargetProject: true, capabilitiesUpdater, cancellationToken);
     }
 
-    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, VSInternalServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, CancellationToken cancellationToken)
+    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
+        IEnumerable<(Uri Uri, SourceText SourceText)> files,
+        VSInternalServerCapabilities serverCapabilities,
+        IRazorMappingService razorMappingService,
+        bool multiTargetProject,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
-        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
-        var metadataReferences = (await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken))
-            // ComponentBase here comes from our ComponentShim project, not the real ASP.NET libraries. It's enough for the generated C#
-            // in tests to at least compile better.
-            .Add(MetadataReference.CreateFromFile(typeof(ComponentBase).Assembly.Location));
-        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorSpanMappingService);
+        var exportProvider = TestComposition.RoslynFeatures
+            .AddParts(typeof(RazorTestLanguageServerFactory))
+            .ExportProviderFactory.CreateExportProvider();
+
+        var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
+        metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);
+
+        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorMappingService, multiTargetProject);
+
         var clientCapabilities = new VSInternalClientCapabilities
         {
             SupportsVisualStudioExtensions = true,
@@ -69,7 +84,7 @@ internal static class CSharpTestLspServerHelpers
                 {
                     CompletionListSetting = new()
                     {
-                        ItemDefaults = new string[] { EditRangeSetting }
+                        ItemDefaults = [EditRangeSetting]
                     },
                     CompletionItem = new()
                     {
@@ -88,6 +103,8 @@ internal static class CSharpTestLspServerHelpers
             }
         };
 
+        capabilitiesUpdater?.Invoke(clientCapabilities);
+
         return await CSharpTestLspServer.CreateAsync(
             workspace, exportProvider, clientCapabilities, serverCapabilities, cancellationToken);
     }
@@ -96,10 +113,10 @@ internal static class CSharpTestLspServerHelpers
         IEnumerable<CSharpFile> files,
         ExportProvider exportProvider,
         ImmutableArray<MetadataReference> metadataReferences,
-        IRazorSpanMappingService razorSpanMappingService)
+        IRazorMappingService razorMappingService,
+        bool multiTargetProject)
     {
-        var hostServices = MefHostServices.Create(exportProvider.AsCompositionContext());
-        var workspace = TestWorkspace.Create(hostServices);
+        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
 
         // Add project and solution to workspace
         var projectInfoNet60 = ProjectInfo.Create(
@@ -120,27 +137,23 @@ internal static class CSharpTestLspServerHelpers
             filePath: @"C:\TestSolution\TestProject.csproj",
             metadataReferences: metadataReferences);
 
-        var projectInfos = new ProjectInfo[] { projectInfoNet60, projectInfoNet80 };
+        ProjectInfo[] projectInfos = multiTargetProject
+            ? [projectInfoNet60, projectInfoNet80]
+            : [projectInfoNet80];
 
-        var solutionInfo = SolutionInfo.Create(
-            id: SolutionId.CreateNewId("TestSolution"),
-            version: VersionStamp.Default,
-            projects: projectInfos);
-
-        workspace.AddSolution(solutionInfo);
-
-        AddAnalyzersToWorkspace(workspace, exportProvider);
+        foreach (var projectInfo in projectInfos)
+        {
+            workspace.AddProject(projectInfo);
+        }
 
         // Add document to workspace. We use an IVT method to create the DocumentInfo variable because there's
         // a special constructor in Roslyn that will help identify the document as belonging to Razor.
-        var languageServerFactory = exportProvider.GetExportedValue<IRazorLanguageServerFactoryWrapper>();
+        var languageServerFactory = exportProvider.GetExportedValue<AbstractRazorLanguageServerFactoryWrapper>();
 
         var documentCount = 0;
         foreach (var (documentUri, csharpSourceText) in files)
         {
-            // File path logic here has to match https://github.com/dotnet/roslyn/blob/3db75baf44332efd490bc0d166983103552370a3/src/Features/LanguageServer/Protocol/Extensions/ProtocolConversions.cs#L163
-            // or the Roslyn side won't see the file in the project/solution
-            var documentFilePath = documentUri.IsFile ? documentUri.LocalPath : documentUri.AbsolutePath;
+            var documentFilePath = documentUri.GetDocumentFilePath();
             var textAndVersion = TextAndVersion.Create(csharpSourceText, VersionStamp.Default, documentFilePath);
 
             foreach (var projectInfo in projectInfos)
@@ -150,7 +163,7 @@ internal static class CSharpTestLspServerHelpers
                     name: "TestDocument" + documentCount,
                     filePath: documentFilePath,
                     loader: TextLoader.From(textAndVersion),
-                    razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorSpanMappingService));
+                    razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorMappingService));
 
                 workspace.AddDocument(documentInfo);
             }
@@ -161,37 +174,18 @@ internal static class CSharpTestLspServerHelpers
         return workspace;
     }
 
-    private static void AddAnalyzersToWorkspace(Workspace workspace, ExportProvider exportProvider)
-    {
-        var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
-
-        var analyzerPaths = new DirectoryInfo(AppContext.BaseDirectory).GetFiles("*.dll")
-            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer") && !f.Name.Contains("Test.Utilities"))
-            .Select(f => f.FullName)
-            .ToImmutableArray();
-        var references = new List<AnalyzerFileReference>();
-        foreach (var analyzerPath in analyzerPaths)
-        {
-            if (File.Exists(analyzerPath))
-            {
-                references.Add(new AnalyzerFileReference(analyzerPath, analyzerLoader));
-            }
-        }
-
-        workspace.TryApplyChanges(workspace.CurrentSolution.WithAnalyzerReferences(references));
-
-        // Make sure Roslyn is producing diagnostics for our workspace
-        var razorTestAnalyzerLoader = exportProvider.GetExportedValue<RazorTestAnalyzerLoader>();
-        razorTestAnalyzerLoader.InitializeDiagnosticsServices(workspace);
-    }
-
     private record CSharpFile(Uri DocumentUri, SourceText CSharpSourceText);
 
-    private class EmptyMappingService : IRazorSpanMappingService
+    private class EmptyMappingService : IRazorMappingService
     {
         public Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
         {
-            return Task.FromResult(ImmutableArray<RazorMappedSpanResult>.Empty);
+            return SpecializedTasks.EmptyImmutableArray<RazorMappedSpanResult>();
+        }
+
+        public Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)
+        {
+            return SpecializedTasks.EmptyImmutableArray<RazorMappedEditResult>();
         }
     }
 }

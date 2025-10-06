@@ -1,29 +1,26 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Mef;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
-using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.MapCode;
 
-[UseExportProvider]
 public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private const string RazorFilePath = "C:/path/to/file.razor";
@@ -186,31 +183,6 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             <PageTitle>Title</PageTitle>
             """;
 
-        Location[][] locations = [
-            [
-                new Location
-                {
-                    Range = new Range
-                    {
-                        Start = new Position(1, 0),
-                        End = new Position(1, 0)
-                    },
-                    Uri = new Uri(RazorFilePath)
-                }
-            ],
-            [
-                new Location
-                {
-                    Range = new Range
-                    {
-                        Start = new Position(0, 0),
-                        End = new Position(5, 0)
-                    },
-                    Uri = new Uri(RazorFilePath)
-                }
-            ]
-        ];
-
         var expectedCode = """
             <h3>Component</h3>
             <PageTitle>Title</PageTitle>
@@ -303,7 +275,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         string[] codeToMap,
         string expectedCode,
         string razorFilePath = RazorFilePath,
-        LSP.Location[][]? locations = null)
+        LspLocation[][]? locations = null)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(originalCode, out var output, out int cursorPosition, out ImmutableArray<TextSpan> spans);
@@ -311,12 +283,12 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(razorFilePath + "__virtual.g.cs");
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorSpanMappingService: null, DisposalToken);
-        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
+            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorMappingService: null, capabilitiesUpdater: null, DisposalToken);
+        await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString(), DisposalToken);
 
-        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
+        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
         var languageServer = new MapCodeServer(csharpServer, csharpDocumentUri);
-        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
+        var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var endpoint = new MapCodeEndpoint(documentMappingService, documentContextFactory, languageServer, NoOpTelemetryReporter.Instance);
 
@@ -327,27 +299,22 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         capabilitiesProvider.ApplyCapabilities(serverCapabilities, new());
         Assert.True(serverCapabilities.MapCodeProvider);
 
-        var sourceText = codeDocument.GetSourceText();
-        sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
+        var sourceText = codeDocument.Source.Text;
 
         var mappings = new VSInternalMapCodeMapping[]
         {
             new() {
                 TextDocument = new TextDocumentIdentifier
                 {
-                    Uri = new Uri(razorFilePath)
+                    DocumentUri = new(new Uri(razorFilePath))
                 },
                 FocusLocations = locations ??
                 [
                     [
-                        new Location
+                        new LspLocation
                         {
-                            Range = new Range
-                            {
-                                Start = new Position(line, offset),
-                                End = new Position(line, offset)
-                            },
-                            Uri = new Uri(razorFilePath)
+                            Range = sourceText.GetZeroWidthRange(cursorPosition),
+                            DocumentUri = new(new Uri(razorFilePath))
                         }
                     ]
                 ],
@@ -359,7 +326,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             Mappings = mappings
         };
 
-        var documentContext = documentContextFactory.TryCreateForOpenDocument(request.Mappings[0].TextDocument!);
+        Assert.True(documentContextFactory.TryCreate(request.Mappings[0].TextDocument!, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -372,28 +339,15 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         AssertEx.EqualOrDiff(expectedCode, actualCode.ToString());
     }
 
-    private class MapCodeServer : IClientConnection
+    private sealed class MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
-        private readonly CSharpTestLspServer _csharpServer;
-        private readonly Uri _csharpDocumentUri;
-
-        public MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri)
-        {
-            _csharpServer = csharpServer;
-            _csharpDocumentUri = csharpDocumentUri;
-        }
-
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
-        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorMapCodeEndpoint, method);
             var delegatedMapCodeParams = Assert.IsType<DelegatedMapCodeParams>(@params);
@@ -403,7 +357,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 new() {
                     TextDocument = new TextDocumentIdentifier()
                     {
-                        Uri = _csharpDocumentUri
+                        DocumentUri = new(csharpDocumentUri)
                     },
                     Contents = delegatedMapCodeParams.Contents,
                     FocusLocations = delegatedMapCodeParams.FocusLocations
@@ -414,14 +368,8 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 Mappings = mappings
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
+            return csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, TResponse>(
                 VSInternalMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
-            if (result is null)
-            {
-                return (TResponse)(object)new WorkspaceEdit();
-            }
-
-            return (TResponse)(object)result;
         }
     }
 
@@ -432,11 +380,11 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
         foreach (var edit in edits)
         {
-            Assert.Equal(documentUri, edit.TextDocument.Uri);
+            Assert.Equal(documentUri, edit.TextDocument.DocumentUri.GetRequiredParsedUri());
 
             foreach (var currentEdit in edit.Edits)
             {
-                sourceText = sourceText.WithChanges(currentEdit.ToTextChange(sourceText));
+                sourceText = sourceText.WithChanges(sourceText.GetTextChange(((TextEdit)currentEdit)));
             }
         }
 

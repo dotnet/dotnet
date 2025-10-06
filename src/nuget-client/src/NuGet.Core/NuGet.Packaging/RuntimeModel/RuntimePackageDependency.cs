@@ -31,12 +31,6 @@ namespace NuGet.RuntimeModel
             VersionRange = versionRange;
         }
 
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
-        public RuntimePackageDependency Clone()
-        {
-            return this;
-        }
-
         public override string ToString()
         {
             return $"{Id} {VersionRange}";

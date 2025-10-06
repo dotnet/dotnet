@@ -57,6 +57,12 @@ After it's finished, open `FSharp.sln` in your editor of choice.
 
 Even if you find a single-character typo, we're happy to take the change! Although the codebase can feel daunting for beginners, we and other contributors are happy to help you along.
 
+Not sure where to contribute?
+Look at the [curated list of issues asking for help](https://github.com/dotnet/fsharp/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22). If you want to tackle any of those, use the comments section of the chosen issue to indicate interest and feel free to ask for initial guidance. We are happy to help with resolving outstanding issues while making a successful PR addressing the issue.
+
+The issues in this repository can have big differences in the complexity for fixing them.
+Are you getting started? We do have a label for [good first issues](https://github.com/dotnet/fsharp/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) as well.
+
 ## Per-build NuGet packages
 
 ### 7.0.40x series
@@ -126,3 +132,13 @@ If you're curious about F# itself, check out these links:
 * [Get started with F#](https://learn.microsoft.com/dotnet/fsharp/get-started/)
 * [F# Software Foundation](https://fsharp.org)
 * [F# Testimonials](https://fsharp.org/testimonials)
+
+## Contributors ✨
+
+F# exists because of these wonderful people:
+
+<a href="https://github.com/dotnet/fsharp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dotnet/fsharp" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).

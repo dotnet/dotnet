@@ -20,9 +20,9 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.DataCollector.UnitTests;
 [TestClass]
 public class DataCollectorMainTests
 {
-    private readonly string[] _args = { "--port", "1025", "--parentprocessid", "100", "--diag", "abc.txt", "--tracelevel", "3" };
-    private readonly string[] _argsWithEmptyDiagArg = { "--port", "1025", "--parentprocessid", "100", "--diag", "", "--tracelevel", "3" };
-    private readonly string[] _argsWithInvalidTraceLevel = { "--port", "1025", "--parentprocessid", "100", "--diag", "abc.txt", "--tracelevel", "5" };
+    private readonly string[] _args = ["--port", "1025", "--parentprocessid", "100", "--diag", "abc.txt", "--tracelevel", "3"];
+    private readonly string[] _argsWithEmptyDiagArg = ["--port", "1025", "--parentprocessid", "100", "--diag", "", "--tracelevel", "3"];
+    private readonly string[] _argsWithInvalidTraceLevel = ["--port", "1025", "--parentprocessid", "100", "--diag", "abc.txt", "--tracelevel", "5"];
 
     private static readonly string TimeoutErrorMessage =
         "datacollector process failed to connect to vstest.console process after 90 seconds. This may occur due to machine slowness, please set environment variable VSTEST_CONNECTION_TIMEOUT to increase timeout.";

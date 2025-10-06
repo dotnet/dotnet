@@ -33,32 +33,23 @@ namespace System.Reflection
     {
         public abstract Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName);
     }
-
     public sealed partial class MetadataLoadContext : IDisposable
     {
         public MetadataLoadContext(MetadataAssemblyResolver resolver, string? coreAssemblyName = null) { }
-
         public Assembly? CoreAssembly { get { throw null; } }
 
         public void Dispose() { }
-
         public Collections.Generic.IEnumerable<Assembly> GetAssemblies() { throw null; }
-
         public Assembly LoadFromAssemblyName(AssemblyName assemblyName) { throw null; }
-
         public Assembly LoadFromAssemblyName(string assemblyName) { throw null; }
-
         public Assembly LoadFromAssemblyPath(string assemblyPath) { throw null; }
-
         public Assembly LoadFromByteArray(byte[] assembly) { throw null; }
-
         public Assembly LoadFromStream(IO.Stream assembly) { throw null; }
     }
 
     public partial class PathAssemblyResolver : MetadataAssemblyResolver
     {
         public PathAssemblyResolver(Collections.Generic.IEnumerable<string> assemblyPaths) { }
-
         public override Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName) { throw null; }
     }
 }

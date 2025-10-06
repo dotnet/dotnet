@@ -23,3 +23,17 @@
 #define EXIT_FAILURE_TEMPRTJSONFile MAKE_NETCORECHECK_HRESULT(6)  // Failed to create temp json file
 
 int CheckRuntime(LPCWSTR frameworkName, LPCWSTR frameworkVersion, LPCWSTR rollForwardPolicy, LPCWSTR existingRuntimeConfigPath, bool useTempDirectory);
+
+typedef
+_Success_(return > 0 && return < BufferLength)
+DWORD
+WINAPI
+GETTEMPPATH2W(
+    _In_ DWORD BufferLength,
+    _Out_writes_to_opt_(BufferLength, return +1) LPWSTR Buffer
+    );
+
+_Success_(return > 0 && return < BufferLength)
+DWORD MyGetTempPath(
+    _In_ DWORD BufferLength,
+    _Out_writes_to_opt_(BufferLength, return + 1) PWSTR Buffer);

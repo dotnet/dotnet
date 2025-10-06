@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
+
 internal class ShowDeprecateDotnetVStestMessageArgumentProcessor : IArgumentProcessor
 {
     public const string CommandName = "/ShowDeprecateDotnetVSTestMessage";

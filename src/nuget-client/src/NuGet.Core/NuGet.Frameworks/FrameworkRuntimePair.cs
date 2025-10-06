@@ -51,12 +51,6 @@ namespace NuGet.Frameworks
                 RuntimeIdentifier);
         }
 
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
-        public FrameworkRuntimePair Clone()
-        {
-            return this;
-        }
-
         public int CompareTo(FrameworkRuntimePair? other)
         {
             if (other == null) return 1;

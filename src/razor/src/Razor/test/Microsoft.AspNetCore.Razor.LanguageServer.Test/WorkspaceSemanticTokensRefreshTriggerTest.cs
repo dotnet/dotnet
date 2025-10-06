@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -29,18 +29,18 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
     {
         return _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject);
-            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
+            updater.AddProject(s_hostProject);
+            updater.AddDocument(s_hostProject.Key, s_hostDocument, EmptyTextLoader.Instance);
         });
     }
 
     [Fact]
-    public async Task PublishesOnWorkspaceUpdate()
+    public async Task NotifiesOnWorkspaceUpdate()
     {
         // Arrange
-        var publisher = new StrictMock<IWorkspaceSemanticTokensRefreshPublisher>();
+        var publisher = new StrictMock<IWorkspaceSemanticTokensRefreshNotifier>();
         publisher
-            .Setup(w => w.EnqueueWorkspaceSemanticTokensRefresh())
+            .Setup(w => w.NotifyWorkspaceSemanticTokensRefresh())
             .Verifiable();
 
         var refreshTrigger = new TestWorkspaceSemanticTokensRefreshTrigger(publisher.Object, _projectManager);
@@ -49,14 +49,16 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
         var newDocument = new HostDocument("/path/to/newFile.razor", "newFile.razor");
 
         await _projectManager.UpdateAsync(updater =>
-            updater.DocumentAdded(s_hostProject.Key, newDocument, new EmptyTextLoader(newDocument.FilePath)));
+        {
+            updater.AddDocument(s_hostProject.Key, newDocument, EmptyTextLoader.Instance);
+        });
 
         // Assert
         publisher.VerifyAll();
     }
 
     private class TestWorkspaceSemanticTokensRefreshTrigger(
-        IWorkspaceSemanticTokensRefreshPublisher publisher,
-        IProjectSnapshotManager projectManager)
+        IWorkspaceSemanticTokensRefreshNotifier publisher,
+        ProjectSnapshotManager projectManager)
         : WorkspaceSemanticTokensRefreshTrigger(publisher, projectManager);
 }

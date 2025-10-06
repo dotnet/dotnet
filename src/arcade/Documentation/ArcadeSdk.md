@@ -219,7 +219,31 @@ optimizations by setting 'RestoreUsingNuGetTargets' to false.
 </Project>
 ```
 
-CoreFx does not use the default build projects in its repo - [example](https://github.com/dotnet/corefx/blob/66392f577c7852092f668876822b6385bcafbd44/eng/Build.props).
+#### Example: batching projects together for more complex build ordering
+
+Arcade builds all passed-in projects in parallel by default. While it's possible to set the `BuildInParallel` property or item metadata, more complex build order requirements might be necessary. When projects should be built in batches, the `BuildStep` item metadata can be used to express that.
+
+Below, the build order is the following: `native1 -> native2 -> java & managed (parallel) -> installer1 & installer2 (parallel) -> cleanup -> optimization.
+```xml
+<!-- eng/Build.props -->
+<Project>
+  <PropertyGroup>
+    <RestoreUsingNuGetTargets>false</RestoreUsingNuGetTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectToBuild Include="src\native1.proj" BuildStep="native" BuildInParallel="false" />
+    <ProjectToBuild Include="src\native2.proj" BuildStep="native" BuildInParallel="false" />
+    <ProjectToBuild Include="src\java.proj" BuildStep="managed" />
+    <ProjectToBuild Include="src\managed.proj" BuildStep="managed" />
+    <ProjectToBuild Include="src\installer1.proj" BuildStep="installers" />
+    <ProjectToBuild Include="src\installer2.proj" BuildStep="installers" />
+    <ProjectToBuild Include="src\cleanup.proj" BuildStep="finish" BuildInParallel="false" />
+    <ProjectToBuild Include="src\optimization.proj" BuildStep="finish" BuildInParallel="false" />
+  </ItemGroup>
+</Project>
+```
+
+Runtime does not use the default build projects in its repo - [example](https://github.com/dotnet/runtime/blob/1e6311a9795556149b5a051c5f5b2159d5a9765c/eng/Build.props#L7).
 
 ### /eng/Versions.props: A single file listing component versions and used tools
 
@@ -266,6 +290,7 @@ These tools are only used for build operations performed outside of the reposito
 Customization of Authenticode signing process.
 
 Configurable item groups:
+
 - `ItemsToSign`
   List of files to sign in-place, during the build. May list individual files to sign (e.g. .dll, .exe, .ps1, etc.) as well as container files (.nupkg, .vsix, .zip, etc.). All files embedded in a container file are signed (recursively) unless specified otherwise.
 - `ItemsToSignPostBuild`
@@ -278,8 +303,12 @@ Configurable item groups:
   Specifies Authenticode certificate properties, such as whether a certificate allows dual signing.
 - `StrongNameSignInfo`
   Strong Name key to use to sign a specific managed assembly.
+- `Artifact`
+  List of files to sign and publish, either in-place or post-build depending on `PostBuildSign`. May list packages and blobs to publish.
+  More documentation available in the section on Publishing.props.
 
 Properties:
+
 - `AllowEmptySignList`
   True to allow ItemsToSign to be empty (the repository doesn't have any file to sign in-build).
 - `AllowEmptyPostBuildSignList`
@@ -296,6 +325,16 @@ To change the key used for strong-naming assemblies see `StrongNameKeyId` proper
 ### /eng/Publishing.props (optional)
 
 Customization of publishing process.
+
+Configurable item groups:
+
+- `Artifact`: List of files to publish. May list packages and blobs to publish.
+  Supported Metadata:
+  - `Visibility`
+    - Visibility of the artifact. Default is `External`. Visibility options are listed below:
+      - `External`: The artifact is visible outside of the build. It will be uploaded to AzDO artifacts and published to [the Build Asset Registry (BAR)](./Maestro/BuildAssetRegistry.md) as an artifact of the build.
+      - `Internal`: The artifact is visible only within the build. It will be uploaded to AzDO artifacts but not published to BAR.
+      - `Vertical`: The artifact is only visible within a given vertical in a Vertical Build. It will be copied into the local artifacts folder for the repository on disk during a vertical build. It will not be uploaded to AzDO artifacts, nor published to BAR. Any artifacts marked with `Vertical` visibility are also not available in any other Join Points in a Unified Build. See [here](./UnifiedBuild/Unified-Build-Join-Point.md) for more information. `Vertical` visibility is only available in a Vertical Build.
 
 ### /eng/AfterSolutionBuild.targets (optional)
 
@@ -662,8 +701,8 @@ The following task restores tools that are only available from internal feeds.
       command: restore
       feedsToUse: config
       restoreSolution: 'eng\common\internal\Tools.csproj'
-      nugetConfigPath: 'NuGet.config'
-      restoreDirectory: '$(Build.SourcesDirectory)\.packages'
+      nugetConfigPath: 'eng\common\internal\NuGet.config'
+      restoreDirectory: '$(System.DefaultWorkingDirectory)\.packages'
 ```
 
 [The tools](https://github.com/dotnet/arcade/blob/master/eng/common/internal/Tools.csproj) are restored conditionally based on which Arcade SDK features the repository uses (these are specified via `UsingToolXxx` properties).
@@ -706,7 +745,7 @@ The Build Pipeline needs to link the following variable group:
 - task: PublishBuildArtifacts@1
     displayName: Publish Logs
     inputs:
-      PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
+      PathtoPublish: '$(System.DefaultWorkingDirectory)\artifacts\log\$(BuildConfiguration)'
       ArtifactName: '$(OperatingSystemName) $(BuildConfiguration)'
     continueOnError: true
     condition: not(succeeded())
@@ -848,7 +887,7 @@ The following build definition steps are required for successful generation of a
     inputs:
       dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
       buildNumber: 'ProfilingInputs/DevDiv/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
-      sourcePath: '$(Build.SourcesDirectory)\artifacts\OptProf\$(BuildConfiguration)\Data'
+      sourcePath: '$(System.DefaultWorkingDirectory)\artifacts\OptProf\$(BuildConfiguration)\Data'
       toLowerCase: false
       usePat: false
     displayName: 'OptProf - Publish to Artifact Services - ProfilingInputs'
@@ -861,7 +900,7 @@ The following build definition steps are required for successful generation of a
       vsMajorVersion: $(VisualStudio.MajorVersion)
       channelName: $(VisualStudio.ChannelName)
       manifests: $(VisualStudio.SetupManifestList)
-      outputFolder: '$(Build.SourcesDirectory)\artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+      outputFolder: '$(System.DefaultWorkingDirectory)\artifacts\VSSetup\$(BuildConfiguration)\Insertion'
     displayName: 'OptProf - Build VS bootstrapper'
     condition: succeeded()
 
@@ -1060,9 +1099,6 @@ If set to `true` the GetResourceString method is not included in the generated c
 
 #### `FlagNetStandard1XDependencies` (bool)
 If set to `true` the `FlagNetStandard1xDependencies` target validates that the dependency graph doesn't contain any netstandard1.x packages.
-
-#### `_OverrideArcadeInitializeBuildToolFramework` (string)
-If this environment variable is set, the value will be used to override the default Build Tools Framework version.
 
 <!-- Begin Generated Content: Doc Feedback -->
 <sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CArcadeSdk.md)](https://helix.dot.net/f/p/5?p=Documentation%5CArcadeSdk.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CArcadeSdk.md)</sub>

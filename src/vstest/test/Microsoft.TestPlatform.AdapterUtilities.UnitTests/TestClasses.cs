@@ -133,7 +133,16 @@ namespace TestClasses
         public void Overload0(Tuple<Tuple<string>, Tuple<int>> t) { }
         public void Overload0<U>(Tuple<Tuple<Outer<U>.Inner<U>>> t) { }
     }
+
+    public class Class狧麱狵錋狾龍龪啊阿埃挨哎唉0u㐀㐁㐂㐃㐄㐅㐆㐇6ⅶ０ǒoU1U2U38丂丄丅丆丏丒丟
+    {
+        public void Method0()
+        {
+
+        }
+    }
 }
+
 
 #pragma warning restore IDE0161 // Convert to file-scoped namespace
 #pragma warning restore IDE0060 // Remove unused parameter

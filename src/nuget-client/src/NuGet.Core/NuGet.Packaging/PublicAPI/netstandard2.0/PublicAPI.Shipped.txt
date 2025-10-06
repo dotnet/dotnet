@@ -30,18 +30,16 @@ NuGet.ContentModel.Asset.Asset() -> void
 ~NuGet.ContentModel.Asset.Path.set -> void
 NuGet.ContentModel.ContentItem
 NuGet.ContentModel.ContentItem.ContentItem() -> void
-~NuGet.ContentModel.ContentItem.Path.get -> string
-~NuGet.ContentModel.ContentItem.Path.set -> void
-~NuGet.ContentModel.ContentItem.Properties.get -> System.Collections.Generic.Dictionary<string, object>
+NuGet.ContentModel.ContentItem.Path.get -> string!
+NuGet.ContentModel.ContentItem.Path.init -> void
+NuGet.ContentModel.ContentItem.Properties.get -> System.Collections.Generic.Dictionary<string!, object!>!
 NuGet.ContentModel.ContentItemCollection
 NuGet.ContentModel.ContentItemCollection.ContentItemCollection() -> void
-~NuGet.ContentModel.ContentItemCollection.FindBestItemGroup(NuGet.ContentModel.SelectionCriteria criteria, params NuGet.ContentModel.PatternSet[] definitions) -> NuGet.ContentModel.ContentItemGroup
-~NuGet.ContentModel.ContentItemCollection.FindItemGroups(NuGet.ContentModel.PatternSet definition) -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.ContentItemGroup>
-~NuGet.ContentModel.ContentItemCollection.FindItems(NuGet.ContentModel.PatternSet definition) -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.ContentItem>
+NuGet.ContentModel.ContentItemCollection.FindBestItemGroup(NuGet.ContentModel.SelectionCriteria! criteria, params NuGet.ContentModel.PatternSet![]! definitions) -> NuGet.ContentModel.ContentItemGroup?
+NuGet.ContentModel.ContentItemCollection.FindItems(NuGet.ContentModel.PatternSet! definition) -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.ContentItem!>!
 NuGet.ContentModel.ContentItemCollection.HasContract.get -> bool
-~NuGet.ContentModel.ContentItemCollection.HasItemGroup(NuGet.ContentModel.SelectionCriteria criteria, params NuGet.ContentModel.PatternSet[] definitions) -> bool
-~NuGet.ContentModel.ContentItemCollection.Load(System.Collections.Generic.IEnumerable<string> paths) -> void
-~NuGet.ContentModel.ContentItemCollection.PopulateItemGroups(NuGet.ContentModel.PatternSet definition, System.Collections.Generic.IList<NuGet.ContentModel.ContentItemGroup> contentItemGroupList) -> void
+NuGet.ContentModel.ContentItemCollection.Load(System.Collections.Generic.IEnumerable<string!>! paths) -> void
+NuGet.ContentModel.ContentItemCollection.PopulateItemGroups(NuGet.ContentModel.PatternSet! definition, System.Collections.Generic.IList<NuGet.ContentModel.ContentItemGroup!>! contentItemGroupList) -> void
 NuGet.ContentModel.ContentItemGroup
 NuGet.ContentModel.ContentItemGroup.ContentItemGroup() -> void
 ~NuGet.ContentModel.ContentItemGroup.Items.get -> System.Collections.Generic.IList<NuGet.ContentModel.ContentItem>
@@ -49,39 +47,27 @@ NuGet.ContentModel.ContentItemGroup.ContentItemGroup() -> void
 NuGet.ContentModel.ContentPropertyDefinition
 ~NuGet.ContentModel.ContentPropertyDefinition.CompareTest.get -> System.Func<object, object, object, int>
 ~NuGet.ContentModel.ContentPropertyDefinition.CompatibilityTest.get -> System.Func<object, object, bool>
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Collections.Generic.IEnumerable<string> fileExtensions) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Collections.Generic.IEnumerable<string> fileExtensions, bool allowSubfolders) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<object, object, bool> compatibilityTest) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser, System.Collections.Generic.IEnumerable<string> fileExtensions) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser, System.Collections.Generic.IEnumerable<string> fileExtensions, bool allowSubfolders) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser, System.Func<object, object, bool> compatibilityTest) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser, System.Func<object, object, bool> compatibilityTest, System.Func<object, object, object, int> compareTest) -> void
-~NuGet.ContentModel.ContentPropertyDefinition.ContentPropertyDefinition(string name, System.Func<string, NuGet.ContentModel.PatternTable, object> parser, System.Func<object, object, bool> compatibilityTest, System.Func<object, object, object, int> compareTest, System.Collections.Generic.IEnumerable<string> fileExtensions, bool allowSubfolders) -> void
 NuGet.ContentModel.ContentPropertyDefinition.FileExtensionAllowSubFolders.get -> bool
 ~NuGet.ContentModel.ContentPropertyDefinition.FileExtensions.get -> System.Collections.Generic.List<string>
 ~NuGet.ContentModel.ContentPropertyDefinition.Name.get -> string
-~NuGet.ContentModel.ContentPropertyDefinition.Parser.get -> System.Func<string, NuGet.ContentModel.PatternTable, object>
 NuGet.ContentModel.Infrastructure.PatternExpression
 ~NuGet.ContentModel.Infrastructure.PatternExpression.PatternExpression(NuGet.ContentModel.PatternDefinition pattern) -> void
 NuGet.ContentModel.PatternDefinition
-~NuGet.ContentModel.PatternDefinition.Defaults.get -> System.Collections.Generic.IReadOnlyDictionary<string, object>
-~NuGet.ContentModel.PatternDefinition.Pattern.get -> string
-~NuGet.ContentModel.PatternDefinition.PatternDefinition(string pattern) -> void
-~NuGet.ContentModel.PatternDefinition.PatternDefinition(string pattern, NuGet.ContentModel.PatternTable table) -> void
-~NuGet.ContentModel.PatternDefinition.PatternDefinition(string pattern, NuGet.ContentModel.PatternTable table, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> defaults) -> void
-~NuGet.ContentModel.PatternDefinition.Table.get -> NuGet.ContentModel.PatternTable
+NuGet.ContentModel.PatternDefinition.Defaults.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>!
+NuGet.ContentModel.PatternDefinition.Pattern.get -> string!
+NuGet.ContentModel.PatternDefinition.PatternDefinition(string! pattern) -> void
+NuGet.ContentModel.PatternDefinition.PatternDefinition(string! pattern, NuGet.ContentModel.PatternTable? table) -> void
+NuGet.ContentModel.PatternDefinition.PatternDefinition(string! pattern, NuGet.ContentModel.PatternTable? table, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object!>>! defaults) -> void
+NuGet.ContentModel.PatternDefinition.Table.get -> NuGet.ContentModel.PatternTable?
 NuGet.ContentModel.PatternSet
-~NuGet.ContentModel.PatternSet.GroupPatterns.get -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition>
-~NuGet.ContentModel.PatternSet.PathPatterns.get -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition>
-~NuGet.ContentModel.PatternSet.PatternSet(System.Collections.Generic.IReadOnlyDictionary<string, NuGet.ContentModel.ContentPropertyDefinition> properties, System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition> groupPatterns, System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition> pathPatterns) -> void
-~NuGet.ContentModel.PatternSet.PropertyDefinitions.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.ContentModel.ContentPropertyDefinition>
-~NuGet.ContentModel.PatternSet.PropertyDefinitions.set -> void
+NuGet.ContentModel.PatternSet.GroupPatterns.get -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition!>!
+NuGet.ContentModel.PatternSet.PathPatterns.get -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition!>!
+NuGet.ContentModel.PatternSet.PatternSet(System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.ContentModel.ContentPropertyDefinition!>! properties, System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition!>! groupPatterns, System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternDefinition!>! pathPatterns) -> void
+NuGet.ContentModel.PatternSet.PropertyDefinitions.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.ContentModel.ContentPropertyDefinition!>!
+NuGet.ContentModel.PatternSet.PropertyDefinitions.set -> void
 NuGet.ContentModel.PatternTable
 NuGet.ContentModel.PatternTable.PatternTable() -> void
 ~NuGet.ContentModel.PatternTable.PatternTable(System.Collections.Generic.IEnumerable<NuGet.ContentModel.PatternTableEntry> entries) -> void
-~NuGet.ContentModel.PatternTable.TryLookup(string propertyName, string name, out object value) -> bool
 NuGet.ContentModel.PatternTableEntry
 ~NuGet.ContentModel.PatternTableEntry.Name.get -> string
 ~NuGet.ContentModel.PatternTableEntry.PatternTableEntry(string propertyName, string name, object value) -> void
@@ -397,17 +383,6 @@ NuGet.Packaging.Licenses.WithOperator
 ~NuGet.Packaging.Licenses.WithOperator.Exception.get -> NuGet.Packaging.Licenses.NuGetLicenseException
 ~NuGet.Packaging.Licenses.WithOperator.License.get -> NuGet.Packaging.Licenses.NuGetLicense
 ~NuGet.Packaging.Licenses.WithOperator.WithOperator(NuGet.Packaging.Licenses.NuGetLicense license, NuGet.Packaging.Licenses.NuGetLicenseException exception) -> void
-NuGet.Packaging.LocalPackageArchiveDownloader
-~NuGet.Packaging.LocalPackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader
-~NuGet.Packaging.LocalPackageArchiveDownloader.CopyNupkgFileToAsync(string destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~NuGet.Packaging.LocalPackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader
-NuGet.Packaging.LocalPackageArchiveDownloader.Dispose() -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.GetPackageHashAsync(string hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~NuGet.Packaging.LocalPackageArchiveDownloader.LocalPackageArchiveDownloader(string source, string packageFilePath, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Common.ILogger logger) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception, System.Threading.Tasks.Task<bool>> handleExceptionAsync) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim throttle) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Packaging.LocalPackageArchiveDownloader.Source.get -> string
 NuGet.Packaging.Manifest
 ~NuGet.Packaging.Manifest.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile>
 NuGet.Packaging.Manifest.HasFilesNode.get -> bool
@@ -1235,7 +1210,6 @@ NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.Compress = 2 -> NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.None = 0 -> NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.Skip = 1 -> NuGet.Packaging.XmlDocFileSaveMode
-NuGet.Packaging.XmlUtility
 NuGet.Packaging.ZipArchiveExtensions
 NuGet.Packaging.ZipFilePair
 ~NuGet.Packaging.ZipFilePair.FileFullPath.get -> string
@@ -1256,6 +1230,7 @@ NuGet.RuntimeModel.IObjectWriter.WriteArrayEnd() -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, bool value) -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, int value) -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, string value) -> void
+~NuGet.RuntimeModel.IObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
 NuGet.RuntimeModel.IObjectWriter.WriteObjectEnd() -> void
 NuGet.RuntimeModel.IObjectWriter.WriteObjectStart() -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteObjectStart(string name) -> void
@@ -1268,19 +1243,18 @@ NuGet.RuntimeModel.JsonObjectWriter.WriteArrayEnd() -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, bool value) -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, int value) -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, string value) -> void
+~NuGet.RuntimeModel.JsonObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
 NuGet.RuntimeModel.JsonObjectWriter.WriteObjectEnd() -> void
 NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart() -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart(string name) -> void
 NuGet.RuntimeModel.JsonRuntimeFormat
 NuGet.RuntimeModel.RuntimeDependencySet
-~NuGet.RuntimeModel.RuntimeDependencySet.Clone() -> NuGet.RuntimeModel.RuntimeDependencySet
 ~NuGet.RuntimeModel.RuntimeDependencySet.Dependencies.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.RuntimePackageDependency>
 ~NuGet.RuntimeModel.RuntimeDependencySet.Equals(NuGet.RuntimeModel.RuntimeDependencySet other) -> bool
 ~NuGet.RuntimeModel.RuntimeDependencySet.Id.get -> string
 ~NuGet.RuntimeModel.RuntimeDependencySet.RuntimeDependencySet(string id) -> void
 ~NuGet.RuntimeModel.RuntimeDependencySet.RuntimeDependencySet(string id, System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimePackageDependency> dependencies) -> void
 NuGet.RuntimeModel.RuntimeDescription
-~NuGet.RuntimeModel.RuntimeDescription.Clone() -> NuGet.RuntimeModel.RuntimeDescription
 ~NuGet.RuntimeModel.RuntimeDescription.Equals(NuGet.RuntimeModel.RuntimeDescription other) -> bool
 ~NuGet.RuntimeModel.RuntimeDescription.InheritedRuntimes.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.RuntimeModel.RuntimeDescription.RuntimeDependencySets.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.RuntimeDependencySet>
@@ -1302,7 +1276,6 @@ NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumera
 NuGet.RuntimeModel.RuntimeGraph.Runtimes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.RuntimeDescription!>!
 NuGet.RuntimeModel.RuntimeGraph.Supports.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.CompatibilityProfile!>!
 NuGet.RuntimeModel.RuntimePackageDependency
-~NuGet.RuntimeModel.RuntimePackageDependency.Clone() -> NuGet.RuntimeModel.RuntimePackageDependency
 ~NuGet.RuntimeModel.RuntimePackageDependency.Equals(NuGet.RuntimeModel.RuntimePackageDependency other) -> bool
 ~NuGet.RuntimeModel.RuntimePackageDependency.Id.get -> string
 ~NuGet.RuntimeModel.RuntimePackageDependency.RuntimePackageDependency(string id, NuGet.Versioning.VersionRange versionRange) -> void
@@ -1371,7 +1344,7 @@ const NuGet.Packaging.PackageIdValidator.MaxPackageIdLength = 100 -> int
 ~const NuGet.Packaging.Signing.Oids.TSTInfoContentType = "1.2.840.113549.1.9.16.1.4" -> string
 ~const NuGet.Packaging.Signing.Oids.TimeStampingEku = "1.3.6.1.5.5.7.3.8" -> string
 ~override NuGet.ContentModel.Asset.ToString() -> string
-~override NuGet.ContentModel.ContentItem.ToString() -> string
+override NuGet.ContentModel.ContentItem.ToString() -> string!
 ~override NuGet.ContentModel.SelectionCriteriaEntryBuilder.Add.get -> NuGet.ContentModel.SelectionCriteriaEntryBuilder
 ~override NuGet.ContentModel.SelectionCriteriaEntryBuilder.Criteria.get -> NuGet.ContentModel.SelectionCriteria
 ~override NuGet.Packaging.Core.PackageDependency.Equals(object obj) -> bool
@@ -1484,7 +1457,7 @@ override NuGet.RuntimeModel.RuntimeGraph.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimePackageDependency.Equals(object obj) -> bool
 override NuGet.RuntimeModel.RuntimePackageDependency.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimePackageDependency.ToString() -> string
-~static NuGet.ContentModel.PatternDefinition.implicit operator NuGet.ContentModel.PatternDefinition(string pattern) -> NuGet.ContentModel.PatternDefinition
+static NuGet.ContentModel.PatternDefinition.implicit operator NuGet.ContentModel.PatternDefinition!(string! pattern) -> NuGet.ContentModel.PatternDefinition!
 ~static NuGet.Packaging.CollectionExtensions.AddRange<T>(this System.Collections.Generic.ICollection<T> collection, System.Collections.Generic.IEnumerable<T> items) -> void
 ~static NuGet.Packaging.Core.NuspecUtility.GetPackageTypes(System.Xml.Linq.XElement metadataNode, bool useMetadataNamespace) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>
 ~static NuGet.Packaging.Core.NuspecUtility.IsServiceable(System.Xml.Linq.XElement metadataNode) -> bool
@@ -1519,11 +1492,9 @@ override NuGet.RuntimeModel.RuntimePackageDependency.GetHashCode() -> int
 ~static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Versioning.NuGetVersion packageMinClientVersion) -> bool
 ~static NuGet.Packaging.MinClientVersionUtility.VerifyMinClientVersion(NuGet.Packaging.Core.NuspecCoreReaderBase nuspecReader) -> void
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.Stream stream, NuGet.Common.ILogger log, string path) -> NuGet.Packaging.NupkgMetadataFile
-~static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.TextReader reader, NuGet.Common.ILogger log, string path) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath, NuGet.Common.ILogger log) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.Stream stream, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
-~static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.TextWriter textWriter, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Write(string filePath, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
 ~static NuGet.Packaging.PackageBuilder.ValidateReferenceAssemblies(System.Collections.Generic.IEnumerable<NuGet.Packaging.IPackageFile> files, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet> packageAssemblyReferences) -> void
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.get -> NuGet.Packaging.XmlDocFileSaveMode
@@ -1618,6 +1589,7 @@ static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSav
 ~static NuGet.Packaging.Signing.CertificateUtility.IsSelfIssued(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.IsSignatureAlgorithmSupported(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.IsValidForPurposeFast(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, string ekuOid) -> bool
+~static NuGet.Packaging.Signing.CertificateUtility.TryDeduceHashAlgorithm(string certificateFingerprint, out NuGet.Common.HashAlgorithmName hashAlgorithmName) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.X509Certificate2CollectionToString(System.Security.Cryptography.X509Certificates.X509Certificate2Collection certCollection, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string
 ~static NuGet.Packaging.Signing.CertificateUtility.X509Certificate2ToString(System.Security.Cryptography.X509Certificates.X509Certificate2 cert, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string
 ~static NuGet.Packaging.Signing.CertificateUtility.X509ChainToString(System.Security.Cryptography.X509Certificates.X509Chain chain, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string
@@ -1681,8 +1653,6 @@ static NuGet.Packaging.Signing.VerificationUtility.IsVerificationTarget(NuGet.Pa
 ~static NuGet.Packaging.XElementExtensions.ElementsNoNamespace(this System.Xml.Linq.XContainer container, string localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement>
 ~static NuGet.Packaging.XElementExtensions.Except(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target) -> System.Xml.Linq.XElement
 ~static NuGet.Packaging.XElementExtensions.GetOptionalAttributeValue(this System.Xml.Linq.XElement element, string localName, string namespaceName = null) -> string
-~static NuGet.Packaging.XmlUtility.LoadSafe(System.IO.Stream input) -> System.Xml.Linq.XDocument
-~static NuGet.Packaging.XmlUtility.LoadSafe(System.IO.Stream input, bool ignoreWhiteSpace) -> System.Xml.Linq.XDocument
 ~static NuGet.Packaging.ZipArchiveExtensions.GetFiles(this System.IO.Compression.ZipArchive zipArchive) -> System.Collections.Generic.IEnumerable<string>
 ~static NuGet.Packaging.ZipArchiveExtensions.LookupEntry(this System.IO.Compression.ZipArchive zipArchive, string path) -> System.IO.Compression.ZipArchiveEntry
 ~static NuGet.Packaging.ZipArchiveExtensions.OpenFile(this System.IO.Compression.ZipArchive zipArchive, string path) -> System.IO.Stream
@@ -1778,7 +1748,6 @@ static readonly NuGet.RuntimeModel.RuntimeGraph.Empty -> NuGet.RuntimeModel.Runt
 static readonly NuGet.RuntimeModel.RuntimeGraph.RuntimeGraphFileName -> string!
 ~virtual NuGet.ContentModel.ContentPropertyDefinition.Compare(object criteriaValue, object candidateValue1, object candidateValue2) -> int
 ~virtual NuGet.ContentModel.ContentPropertyDefinition.IsCriteriaSatisfied(object critieriaValue, object candidateValue) -> bool
-~virtual NuGet.ContentModel.ContentPropertyDefinition.TryLookup(string name, NuGet.ContentModel.PatternTable table, out object value) -> bool
 ~virtual NuGet.ContentModel.SelectionCriteriaBuilder.Add.get -> NuGet.ContentModel.SelectionCriteriaEntryBuilder
 ~virtual NuGet.ContentModel.SelectionCriteriaBuilder.Criteria.get -> NuGet.ContentModel.SelectionCriteria
 ~virtual NuGet.Packaging.Core.NuspecCoreReader.GetDependencies() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency>

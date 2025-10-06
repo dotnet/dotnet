@@ -1,13 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
@@ -16,7 +16,7 @@ using Xunit;
 
 namespace NuGet.Packaging.FuncTest
 {
-    using X509StorePurpose = global::Test.Utility.Signing.X509StorePurpose;
+    using X509StorePurpose = Microsoft.Internal.NuGet.Testing.SignedPackages.X509StorePurpose;
 
     [Collection(SigningTestCollection.Name)]
     public class TimestampTests
@@ -50,7 +50,7 @@ namespace NuGet.Packaging.FuncTest
                 StoreLocation storeLocation = CertificateStoreUtilities.GetTrustedCertificateStoreLocation();
 
                 using (var trustedServerRoot = TrustedTestCert.Create(
-                    new X509Certificate2(rootCa.Certificate.GetEncoded()),
+                    new X509Certificate2(rootCa.Certificate),
                     X509StorePurpose.Timestamping,
                     StoreName.Root,
                     storeLocation))
@@ -101,4 +101,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

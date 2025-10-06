@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Configuration;
@@ -16,9 +17,18 @@ namespace NuGet.CommandLine.XPlat.ListPackage
     internal class ListPackageConsoleRenderer : IReportRenderer
     {
         protected List<ReportProblem> _problems = new();
+        private readonly TextWriter _consoleOut;
+        private readonly TextWriter _consoleError;
 
         public ListPackageConsoleRenderer()
+            : this(Console.Out, Console.Error)
         { }
+
+        internal ListPackageConsoleRenderer(TextWriter consoleOut, TextWriter consoleError)
+        {
+            _consoleOut = consoleOut;
+            _consoleError = consoleError;
+        }
 
         public void AddProblem(ProblemType problemType, string text)
         {
@@ -38,40 +48,51 @@ namespace NuGet.CommandLine.XPlat.ListPackage
         private void WriteToConsole(ListPackageReportModel listPackageReportModel)
         {
             // Print non-project related problems first.
-            PrintProblems(_problems, listPackageReportModel.ListPackageArgs);
+            PrintProblems(_consoleOut, _consoleError, _problems, listPackageReportModel.ListPackageArgs);
 
             if (_problems?.Any(p => p.ProblemType == ProblemType.Error) == true)
             {
                 return;
             }
 
-            WriteSources(listPackageReportModel.ListPackageArgs);
-            WriteProjects(listPackageReportModel.Projects, listPackageReportModel.ListPackageArgs);
+            if (listPackageReportModel.ListPackageArgs.ReportType == ReportType.Vulnerable && listPackageReportModel.AuditSourcesUsed.Count > 0)
+            {
+                _consoleOut.WriteLine();
+                _consoleOut.WriteLine(Strings.ListPkg_SourcesUsedDescription);
+                PrintSources(_consoleOut, listPackageReportModel.AuditSourcesUsed);
+                _consoleOut.WriteLine();
+            }
+            else
+            {
+                WriteSources(_consoleOut, listPackageReportModel.ListPackageArgs);
+            }
+
+            WriteProjects(_consoleOut, _consoleError, listPackageReportModel.Projects, listPackageReportModel.ListPackageArgs);
 
             // Print a legend message for auto-reference markers used
             if (listPackageReportModel.Projects.Any(p => p.AutoReferenceFound))
             {
-                Console.WriteLine(Strings.ListPkg_AutoReferenceDescription);
+                _consoleOut.WriteLine(Strings.ListPkg_AutoReferenceDescription);
             }
         }
 
-        private static void WriteSources(ListPackageArgs listPackageArgs)
+        private static void WriteSources(TextWriter consoleOut, ListPackageArgs listPackageArgs)
         {
             // Print sources, but not for generic list (which is offline)
             if (listPackageArgs.ReportType != ReportType.Default)
             {
-                Console.WriteLine();
-                Console.WriteLine(Strings.ListPkg_SourcesUsedDescription);
-                PrintSources(listPackageArgs.PackageSources);
-                Console.WriteLine();
+                consoleOut.WriteLine();
+                consoleOut.WriteLine(Strings.ListPkg_SourcesUsedDescription);
+                PrintSources(consoleOut, listPackageArgs.PackageSources);
+                consoleOut.WriteLine();
             }
         }
 
-        private static void WriteProjects(List<ListPackageProjectModel> projects, ListPackageArgs listPackageArgs)
+        private static void WriteProjects(TextWriter consoleOut, TextWriter consoleError, List<ListPackageProjectModel> projects, ListPackageArgs listPackageArgs)
         {
             foreach (ListPackageProjectModel project in projects)
             {
-                PrintProblems(project.ProjectProblems, listPackageArgs);
+                PrintProblems(consoleOut, consoleError, project.ProjectProblems, listPackageArgs);
 
                 if (project.ProjectProblems?.Any(p => p.ProblemType == ProblemType.Error) == true)
                 {
@@ -80,7 +101,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
 
                 if (project.TargetFrameworkPackages == null)
                 {
-                    Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoPackagesFoundForFrameworks, project.ProjectName));
+                    consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoPackagesFoundForFrameworks, project.ProjectName));
                     continue;
                 }
 
@@ -93,13 +114,13 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                     switch (listPackageArgs.ReportType)
                     {
                         case ReportType.Outdated:
-                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoUpdatesForProject, project.ProjectName));
+                            consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoUpdatesForProject, project.ProjectName));
                             break;
                         case ReportType.Deprecated:
-                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoDeprecatedPackagesForProject, project.ProjectName));
+                            consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoDeprecatedPackagesForProject, project.ProjectName));
                             break;
                         case ReportType.Vulnerable:
-                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoVulnerablePackagesForProject, project.ProjectName));
+                            consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoVulnerablePackagesForProject, project.ProjectName));
                             break;
                     }
                 }
@@ -110,7 +131,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                     continue;
                 }
 
-                Console.WriteLine(GetProjectHeader(project.ProjectName, listPackageArgs));
+                consoleOut.WriteLine(GetProjectHeader(project.ProjectName, listPackageArgs));
 
                 foreach (ListPackageReportFrameworkPackage frameworkPackages in project.TargetFrameworkPackages)
                 {
@@ -126,16 +147,16 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                         switch (listPackageArgs.ReportType)
                         {
                             case ReportType.Outdated:
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoUpdatesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoUpdatesForFramework, frameworkPackages.Framework));
                                 break;
                             case ReportType.Deprecated:
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoDeprecationsForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoDeprecationsForFramework, frameworkPackages.Framework));
                                 break;
                             case ReportType.Vulnerable:
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoVulnerabilitiesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoVulnerabilitiesForFramework, frameworkPackages.Framework));
                                 break;
                             case ReportType.Default:
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoPackagesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoPackagesForFramework, frameworkPackages.Framework));
                                 break;
                         }
 
@@ -145,7 +166,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                     {
                         // Print name of the framework
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: ", frameworkPackages.Framework));
+                        consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: ", frameworkPackages.Framework));
                         Console.ResetColor();
 
                         // Print top-level packages
@@ -176,15 +197,15 @@ namespace NuGet.CommandLine.XPlat.ListPackage
             }
         }
 
-        private static void PrintSources(IEnumerable<PackageSource> packageSources)
+        private static void PrintSources(TextWriter consoleOut, IEnumerable<PackageSource> packageSources)
         {
             foreach (var source in packageSources)
             {
-                Console.WriteLine("   " + source.Source);
+                consoleOut.WriteLine("   " + source.Source);
             }
         }
 
-        private static void PrintProblems(IEnumerable<ReportProblem> problems, ListPackageArgs listPackageArgs)
+        private static void PrintProblems(TextWriter consoleOut, TextWriter consoleError, IEnumerable<ReportProblem> problems, ListPackageArgs listPackageArgs)
         {
             if (problems == null)
             {
@@ -199,8 +220,8 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                         listPackageArgs.Logger.LogWarning(problem.Text);
                         break;
                     case ProblemType.Error:
-                        Console.Error.WriteLine(problem.Text);
-                        Console.WriteLine();
+                        consoleError.WriteLine(problem.Text);
+                        consoleOut.WriteLine();
                         break;
                     default:
                         break;

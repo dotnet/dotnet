@@ -13,7 +13,7 @@ inline mdTypeDef TypeHandle::GetCl() const
 {
     LIMITED_METHOD_DAC_CONTRACT;
 
-    PREFIX_ASSUME(GetMethodTable() != NULL);
+    _ASSERTE(GetMethodTable() != NULL);
     return GetMethodTable()->GetCl();
 }
 
@@ -83,7 +83,7 @@ inline PTR_TypeDesc TypeHandle::AsTypeDesc() const
     _ASSERTE(IsTypeDesc());
 
     PTR_TypeDesc result = PTR_TypeDesc(m_asTAddr - 2);
-    PREFIX_ASSUME(result != NULL);
+    _ASSERTE(result != NULL);
     return result;
 }
 
@@ -94,7 +94,7 @@ inline FnPtrTypeDesc* TypeHandle::AsFnPtrType() const
     _ASSERTE(IsFnPtrType());
 
     FnPtrTypeDesc* result = PTR_FnPtrTypeDesc(m_asTAddr - 2);
-    PREFIX_ASSUME(result != NULL);
+    _ASSERTE(result != NULL);
     return result;
 }
 
@@ -105,7 +105,7 @@ inline TypeVarTypeDesc* TypeHandle::AsGenericVariable() const
     _ASSERTE(IsGenericVariable());
 
     TypeVarTypeDesc* result = PTR_TypeVarTypeDesc(m_asTAddr - 2);
-    PREFIX_ASSUME(result != NULL);
+    _ASSERTE(result != NULL);
     return result;
 }
 
@@ -233,7 +233,7 @@ inline void TypeHandle::ForEachComponentMethodTable(T &callback) const
 }
 
 #ifndef DACCESS_COMPILE
-FORCEINLINE OBJECTREF TypeHandle::GetManagedClassObjectFast() const
+FORCEINLINE OBJECTREF TypeHandle::GetManagedClassObjectIfExists() const
 {
     CONTRACTL
     {
@@ -252,26 +252,7 @@ FORCEINLINE OBJECTREF TypeHandle::GetManagedClassObjectFast() const
     }
     else
     {
-        switch (AsTypeDesc()->GetInternalCorElementType())
-        {
-        case ELEMENT_TYPE_BYREF:
-        case ELEMENT_TYPE_PTR:
-            o = dac_cast<PTR_ParamTypeDesc>(AsTypeDesc())->GetManagedClassObjectFast();
-            break;
-
-        case ELEMENT_TYPE_VAR:
-        case ELEMENT_TYPE_MVAR:
-            o = dac_cast<PTR_TypeVarTypeDesc>(AsTypeDesc())->GetManagedClassObjectFast();
-            break;
-
-        case ELEMENT_TYPE_FNPTR:
-            o = dac_cast<PTR_FnPtrTypeDesc>(AsTypeDesc())->GetManagedClassObjectFast();
-            break;
-
-        default:
-            _ASSERTE(!"Bad Element Type");
-            return NULL;
-        }
+        return AsTypeDesc()->GetManagedClassObjectIfExists();
     }
 
     return o;

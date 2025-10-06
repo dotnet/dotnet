@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Type/NestedTypeHasStaticTypeAsLeadingKeyword.fs", false,
-      QualifiedNameOfFile NestedTypeHasStaticTypeAsLeadingKeyword, [], [],
+      QualifiedNameOfFile NestedTypeHasStaticTypeAsLeadingKeyword, [],
       [SynModuleOrNamespace
          ([NestedTypeHasStaticTypeAsLeadingKeyword], false, AnonModule,
           [Types
@@ -30,4 +30,7 @@ ImplFile
                     WithKeyword = None })], (2,0--6,0))], PreXmlDocEmpty, [],
           None, (2,0--6,0), { LeadingKeyword = None })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))
+
+(3,11)-(3,15) parse error Nested type definitions are not allowed. Types must be defined at module or namespace level.

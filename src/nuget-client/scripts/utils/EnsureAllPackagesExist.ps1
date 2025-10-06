@@ -26,7 +26,6 @@ Param (
 "NuGet.LibraryModel",
 "NuGet.Localization",
 "NuGet.PackageManagement",
-"NuGet.Packaging.Core",
 "NuGet.Packaging",
 "NuGet.ProjectModel",
 "NuGet.Protocol",
@@ -35,7 +34,7 @@ Param (
 
 if (!$BuildRTM)
 {
-    $PackageIDListShouldExist.Add("Test.Utility")
+    $PackageIDListShouldExist.Add("Microsoft.Internal.NuGet.Testing.SignedPackages")
     $PackageIDListShouldExist.Add("NuGet.Localization")
 }
 

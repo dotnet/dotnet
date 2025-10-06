@@ -9,13 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+#line (1,2)-(1,12) "x:\dir\subdir\Test\UseTestComponent.cshtml"
 using Test
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class UseTestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -49,10 +49,9 @@ item1
 #nullable disable
             , 4, (context) => (__builder2) => {
                 __builder2.OpenElement(5, "p");
-                __builder2.AddContent(6, 
 #nullable restore
-#line (3,9)-(3,16) "x:\dir\subdir\Test\UseTestComponent.cshtml"
-context
+#line (3,9)-(3,16) 25 "x:\dir\subdir\Test\UseTestComponent.cshtml"
+__builder2.AddContent(6, context
 
 #line default
 #line hidden
@@ -88,9 +87,33 @@ namespace __Blazor.Test.UseTestComponent
             where TItem3 : global::Image, new()
         {
         __builder.OpenComponent<global::Test.TestComponent<TItem1, TItem2, TItem3>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item1", __arg0);
-        __builder.AddComponentParameter(__seq1, "Items2", __arg1);
-        __builder.AddComponentParameter(__seq2, "Item3", __arg2);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,16)-(2,21) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Item1
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,29)-(2,35) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Items2
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg1);
+        __builder.AddComponentParameter(__seq2, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,43)-(2,48) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Item3
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg2);
         __builder.AddComponentParameter(__seq3, "ChildContent", __arg3);
         __builder.CloseComponent();
         }

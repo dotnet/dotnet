@@ -647,7 +647,7 @@ namespace Microsoft.FSharp.Control
         /// <category index="4">Threads and Contexts</category>
         ///
         /// <example-tbd></example-tbd>
-        static member SwitchToContext :  syncContext:System.Threading.SynchronizationContext -> Async<unit> 
+        static member SwitchToContext : syncContext:(System.Threading.SynchronizationContext | null) -> Async<unit> 
 
         /// <summary>Creates an asynchronous computation that captures the current
         /// success, exception and cancellation continuations. The callback must 
@@ -860,7 +860,7 @@ namespace Microsoft.FSharp.Control
         /// <category index="5">Legacy .NET Async Interoperability</category>
         ///
         /// <example-tbd></example-tbd>
-        static member FromBeginEnd : beginAction:(System.AsyncCallback * obj -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
+        static member FromBeginEnd : beginAction:(System.AsyncCallback * objnull -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
 
         /// <summary>
         ///  Creates an asynchronous computation in terms of a Begin/End pair of actions in 
@@ -885,7 +885,7 @@ namespace Microsoft.FSharp.Control
         /// <category index="5">Legacy .NET Async Interoperability</category>
         ///
         /// <example-tbd></example-tbd>
-        static member FromBeginEnd : arg:'Arg1 * beginAction:('Arg1 * System.AsyncCallback * obj -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
+        static member FromBeginEnd : arg:'Arg1 * beginAction:('Arg1 * System.AsyncCallback * objnull -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
 
         /// <summary>
         /// Creates an asynchronous computation in terms of a Begin/End pair of actions in 
@@ -909,7 +909,7 @@ namespace Microsoft.FSharp.Control
         /// <category index="5">Legacy .NET Async Interoperability</category>
         ///
         /// <example-tbd></example-tbd>
-        static member FromBeginEnd : arg1:'Arg1 * arg2:'Arg2 * beginAction:('Arg1 * 'Arg2 * System.AsyncCallback * obj -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
+        static member FromBeginEnd : arg1:'Arg1 * arg2:'Arg2 * beginAction:('Arg1 * 'Arg2 * System.AsyncCallback * objnull -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
 
         /// <summary>Creates an asynchronous computation in terms of a Begin/End pair of actions in 
         /// the style used in .NET 2.0 APIs.</summary>
@@ -933,7 +933,7 @@ namespace Microsoft.FSharp.Control
         /// <category index="5">Legacy .NET Async Interoperability</category>
         ///
         /// <example-tbd></example-tbd>
-        static member FromBeginEnd : arg1:'Arg1 * arg2:'Arg2 * arg3:'Arg3 * beginAction:('Arg1 * 'Arg2 * 'Arg3 * System.AsyncCallback * obj -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
+        static member FromBeginEnd : arg1:'Arg1 * arg2:'Arg2 * arg3:'Arg3 * beginAction:('Arg1 * 'Arg2 * 'Arg3 * System.AsyncCallback * objnull -> System.IAsyncResult) * endAction:(System.IAsyncResult -> 'T) * ?cancelAction : (unit -> unit) -> Async<'T>
 
         /// <summary>Creates three functions that can be used to implement the .NET 1.0 Asynchronous 
         /// Programming Model (APM) for a given asynchronous computation.</summary>
@@ -948,7 +948,7 @@ namespace Microsoft.FSharp.Control
         /// <example-tbd></example-tbd>
         static member AsBeginEnd : computation:('Arg -> Async<'T>) -> 
                                      // The 'Begin' member
-                                     ('Arg * System.AsyncCallback * obj -> System.IAsyncResult) * 
+                                     ('Arg * System.AsyncCallback * objnull -> System.IAsyncResult) * 
                                      // The 'End' member
                                      (System.IAsyncResult -> 'T) * 
                                      // The 'Cancel' member
@@ -1040,7 +1040,7 @@ namespace Microsoft.FSharp.Control
         /// </summary>
         ///
         /// <remarks>If no cancellation token is provided then the default cancellation token is used.
-        /// You may prefer using this method if you want to achive a similar behviour to async await in C# as 
+        /// You may prefer using this method if you want to achieve a similar behavior to async await in C# as 
         /// async computation starts on the current thread with an ability to return a result.
         /// </remarks>
         ///
@@ -1325,7 +1325,7 @@ namespace Microsoft.FSharp.Control
         /// <returns>An asynchronous computation that binds and eventually disposes <c>resource</c>.</returns>
         ///
         /// <example-tbd></example-tbd>
-        member Using: resource:'T * binder:('T -> Async<'U>) -> Async<'U> when 'T :> System.IDisposable
+        member Using: resource:'T * binder:('T -> Async<'U>) -> Async<'U> when 'T :> System.IDisposable|null
 
         /// <summary>Creates an asynchronous computation that runs <c>computation</c>, and when 
         /// <c>computation</c> generates a result <c>T</c>, runs <c>binder res</c>.</summary>

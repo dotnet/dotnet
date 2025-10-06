@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Diagnostics.Analyzers.NamingStyles;
 using Microsoft.CodeAnalysis.Options;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis;
 
@@ -51,6 +50,15 @@ internal static class AnalyzerConfigOptionsExtensions
 
         value = default!;
         return false;
+    }
+
+    public static bool IsCodeStyleSeverityEnabled(this AnalyzerConfigOptions analyzerConfigOptions)
+    {
+        const string EnableCodeStyleSeverityKey = "build_property.EnableCodeStyleSeverity";
+
+        return analyzerConfigOptions.TryGetValue(EnableCodeStyleSeverityKey, out var value)
+            && bool.TryParse(value, out var parsedValue)
+            && parsedValue;
     }
 
     public static bool IsAnalysisLevelGreaterThanOrEquals(this AnalyzerConfigOptions analyzerConfigOptions, int minAnalysisLevel)

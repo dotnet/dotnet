@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using NuGet.VisualStudio;
@@ -25,10 +26,16 @@ namespace NuGet.PackageManagement.UI
             DataContextChanged += PackageMetadataControl_DataContextChanged;
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return null;
+        }
+
         private void ViewLicense_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is DetailedPackageMetadata metadata)
+            if (DataContext is DetailControlModel detailControlModel)
             {
+                var metadata = detailControlModel.PackageMetadata;
                 var window = new LicenseFileWindow()
                 {
                     DataContext = new LicenseFileData
@@ -46,7 +53,7 @@ namespace NuGet.PackageManagement.UI
                     flowDoc.Blocks.AddRange(PackageLicenseUtilities.GenerateParagraphs(content));
                     await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                     (window.DataContext as LicenseFileData).LicenseText = flowDoc;
-                }).PostOnFailure(nameof(PackageMetadataControl), nameof(ViewLicense_Click));
+                }).PostOnFailure(nameof(PackageDetailsTabControl), nameof(ViewLicense_Click));
 
                 window.ShowModal();
             }
@@ -54,7 +61,7 @@ namespace NuGet.PackageManagement.UI
 
         private void PackageMetadataControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is DetailedPackageMetadata)
+            if (DataContext is DetailControlModel)
             {
                 Visibility = Visibility.Visible;
             }

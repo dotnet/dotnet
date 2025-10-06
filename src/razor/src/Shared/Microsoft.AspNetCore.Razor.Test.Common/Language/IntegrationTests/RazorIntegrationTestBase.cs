@@ -1,21 +1,20 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Test.Utilities;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Sdk;
 
@@ -30,29 +29,14 @@ public class RazorIntegrationTestBase
     // so making sure it doesn't happen for each test.
     protected static readonly CSharpCompilation DefaultBaseCompilation;
 
-    private static CSharpParseOptions CSharpParseOptions { get; }
+    protected static CSharpParseOptions CSharpParseOptions { get; }
 
     static RazorIntegrationTestBase()
     {
-        var referenceAssemblyRoots = new[]
-        {
-            typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-            typeof(Enumerable).Assembly, // Other .NET fundamental types
-            typeof(System.Linq.Expressions.Expression).Assembly,
-            typeof(ComponentBase).Assembly,
-            typeof(CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly, // needed to support `dynamic`
-        };
-
-        var referenceAssemblies = referenceAssemblyRoots
-            .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-            .Distinct()
-            .Select(Assembly.Load)
-            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-            .ToList();
         DefaultBaseCompilation = CSharpCompilation.Create(
             "TestAssembly",
             Array.Empty<SyntaxTree>(),
-            referenceAssemblies,
+            ReferenceUtil.AspNetLatestAll,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
@@ -62,13 +46,13 @@ public class RazorIntegrationTestBase
     {
         AdditionalSyntaxTrees = new List<SyntaxTree>();
         AdditionalRazorItems = new List<RazorProjectItem>();
-        ImportItems = new List<RazorProjectItem>();
+        ImportItems = ImmutableArray.CreateBuilder<RazorProjectItem>();
 
         BaseCompilation = DefaultBaseCompilation;
         Configuration = RazorConfiguration.Default;
         FileSystem = new VirtualRazorProjectFileSystem();
         PathSeparator = Path.DirectorySeparatorChar.ToString();
-        WorkingDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
+        WorkingDirectory = PlatformInformation.IsWindows ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
 
         DefaultRootNamespace = "Test"; // Matches the default working directory
         DefaultFileName = "TestComponent.cshtml";
@@ -76,7 +60,7 @@ public class RazorIntegrationTestBase
 
     internal List<RazorProjectItem> AdditionalRazorItems { get; }
 
-    internal List<RazorProjectItem> ImportItems { get; }
+    internal ImmutableArray<RazorProjectItem>.Builder ImportItems { get; }
 
     internal List<SyntaxTree> AdditionalSyntaxTrees { get; }
 
@@ -84,9 +68,11 @@ public class RazorIntegrationTestBase
 
     internal virtual RazorConfiguration Configuration { get; }
 
-    internal virtual string DefaultRootNamespace { get; }
+    internal string DefaultRootNamespace { get; set; }
 
     internal virtual string DefaultFileName { get; }
+
+    internal string DefaultDocumentPath => WorkingDirectory + PathSeparator + DefaultFileName;
 
     internal virtual bool DesignTime { get; }
 
@@ -96,7 +82,7 @@ public class RazorIntegrationTestBase
     /// Gets a hardcoded document kind to be added to each code document that's created. This can
     /// be used to generate components.
     /// </summary>
-    internal virtual string FileKind { get; }
+    internal virtual RazorFileKind? FileKind { get; }
 
     internal virtual VirtualRazorProjectFileSystem FileSystem { get; }
 
@@ -104,7 +90,7 @@ public class RazorIntegrationTestBase
     // for the baseline tests that exercise line mappings. Even though we normalize
     // newlines for testing, the difference between platforms affects the data through
     // the *count* of characters written.
-    internal virtual string LineEnding { get; }
+    internal virtual string? LineEnding { get; }
 
     internal virtual string PathSeparator { get; }
 
@@ -115,26 +101,31 @@ public class RazorIntegrationTestBase
     internal virtual string WorkingDirectory { get; }
 
     // intentionally private - we don't want individual tests messing with the project engine
-    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration, MetadataReference[] references, bool supportLocalizedComponentNames)
+    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration, MetadataReference[] references, bool supportLocalizedComponentNames, CSharpParseOptions? csharpParseOptions)
     {
         return RazorProjectEngine.Create(configuration, FileSystem, b =>
         {
             b.SetRootNamespace(DefaultRootNamespace);
 
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
                 // Turn off checksums, we're testing code generation.
-                b.Features.Add(new SuppressChecksum());
+                builder.SuppressChecksum = true;
 
-            if (supportLocalizedComponentNames)
-            {
-                b.Features.Add(new SupportLocalizedComponentNames());
-            }
+                if (supportLocalizedComponentNames)
+                {
+                    builder.SupportLocalizedComponentNames = true;
+                }
 
-            b.Features.Add(new TestImportProjectFeature(ImportItems));
+                if (LineEnding != null)
+                {
+                    builder.NewLine = LineEnding;
+                }
 
-            if (LineEnding != null)
-            {
-                b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
-            }
+                builder.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
+            });
+
+            b.Features.Add(new TestImportProjectFeature(ImportItems.ToImmutable()));
 
             b.Features.Add(new CompilationTagHelperFeature());
             b.Features.Add(new DefaultMetadataReferenceFeature()
@@ -142,13 +133,25 @@ public class RazorIntegrationTestBase
                 References = references,
             });
 
-            b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
+            csharpParseOptions ??= CSharpParseOptions;
+
+            b.SetCSharpLanguageVersion(csharpParseOptions.LanguageVersion);
+
+            b.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+                builder.CSharpParseOptions = csharpParseOptions;
+            });
 
             CompilerFeatures.Register(b);
         });
     }
 
-    internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent, string fileKind = null, string cssScope = null)
+    internal RazorProjectItem CreateProjectItem(
+        string cshtmlRelativePath,
+        string cshtmlContent,
+        RazorFileKind? fileKind = null,
+        string? cssScope = null)
     {
         var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
 
@@ -176,36 +179,47 @@ public class RazorIntegrationTestBase
         };
     }
 
+    protected CompileToCSharpResult CompileToCSharp(string cshtmlContent, params DiagnosticDescription[] expectedCSharpDiagnostics)
+    {
+        return CompileToCSharp(
+            DefaultFileName,
+            cshtmlContent: cshtmlContent,
+            expectedCSharpDiagnostics: expectedCSharpDiagnostics);
+    }
+
     protected CompileToCSharpResult CompileToCSharp(
         string cshtmlContent,
-        bool throwOnFailure = true,
-        string cssScope = null,
+        string? cssScope = null,
         bool supportLocalizedComponentNames = false,
         bool nullableEnable = false,
-        RazorConfiguration configuration = null,
-        CSharpCompilation baseCompilation = null)
+        RazorConfiguration? configuration = null,
+        CSharpCompilation? baseCompilation = null,
+        CSharpParseOptions? csharpParseOptions = null,
+        params DiagnosticDescription[] expectedCSharpDiagnostics)
     {
         return CompileToCSharp(
             DefaultFileName,
             cshtmlContent,
-            throwOnFailure,
             cssScope: cssScope,
             supportLocalizedComponentNames: supportLocalizedComponentNames,
             nullableEnable: nullableEnable,
             configuration: configuration,
-            baseCompilation: baseCompilation);
+            baseCompilation: baseCompilation,
+            csharpParseOptions: csharpParseOptions,
+            expectedCSharpDiagnostics: expectedCSharpDiagnostics);
     }
 
     protected CompileToCSharpResult CompileToCSharp(
         string cshtmlRelativePath,
         string cshtmlContent,
-        bool throwOnFailure = true,
-        string fileKind = null,
-        string cssScope = null,
+        RazorFileKind? fileKind = null,
+        string? cssScope = null,
         bool supportLocalizedComponentNames = false,
         bool nullableEnable = false,
-        RazorConfiguration configuration = null,
-        CSharpCompilation baseCompilation = null)
+        RazorConfiguration? configuration = null,
+        CSharpCompilation? baseCompilation = null,
+        CSharpParseOptions? csharpParseOptions = null,
+        params DiagnosticDescription[] expectedCSharpDiagnostics)
     {
         if (DeclarationOnly && DesignTime)
         {
@@ -231,16 +245,16 @@ public class RazorIntegrationTestBase
         {
             // The first phase won't include any metadata references for component discovery. This mirrors
             // what the build does.
-            var projectEngine = CreateProjectEngine(configuration, Array.Empty<MetadataReference>(), supportLocalizedComponentNames);
+            var projectEngine = CreateProjectEngine(configuration, Array.Empty<MetadataReference>(), supportLocalizedComponentNames, csharpParseOptions);
 
             RazorCodeDocument codeDocument;
             foreach (var item in AdditionalRazorItems)
             {
                 // Result of generating declarations
                 codeDocument = projectEngine.ProcessDeclarationOnly(item);
-                Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
+                Assert.Empty(codeDocument.GetRequiredCSharpDocument().Diagnostics);
 
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetRequiredCSharpDocument().Text, csharpParseOptions, path: item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
 
@@ -251,26 +265,27 @@ public class RazorIntegrationTestBase
             {
                 BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                RazorDiagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
+                ParseOptions = csharpParseOptions,
             };
 
             // Result of doing 'temp' compilation
-            var tempAssembly = CompileToAssembly(declaration, throwOnFailure);
+            var tempAssembly = CompileToAssembly(declaration, expectedDiagnostics: expectedCSharpDiagnostics);
 
             // Add the 'temp' compilation as a metadata reference
             var references = baseCompilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
-            projectEngine = CreateProjectEngine(configuration, references, supportLocalizedComponentNames);
+            projectEngine = CreateProjectEngine(configuration, references, supportLocalizedComponentNames, csharpParseOptions);
 
             // Now update the any additional files
             foreach (var item in AdditionalRazorItems)
             {
                 // Result of generating definition
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(item) : projectEngine.Process(item);
-                Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
+                Assert.Empty(codeDocument.GetRequiredCSharpDocument().Diagnostics);
 
                 // Replace the 'declaration' syntax tree
-                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                var syntaxTree = Parse(codeDocument.GetRequiredCSharpDocument().Text, csharpParseOptions, path: item.FilePath);
                 AdditionalSyntaxTrees.RemoveAll(st => st.FilePath == item.FilePath);
                 AdditionalSyntaxTrees.Add(syntaxTree);
             }
@@ -281,15 +296,16 @@ public class RazorIntegrationTestBase
             {
                 BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                RazorDiagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
+                ParseOptions = csharpParseOptions,
             };
         }
         else
         {
             // For single phase compilation tests just use the base compilation's references.
             // This will include the built-in components.
-            var projectEngine = CreateProjectEngine(configuration, baseCompilation.References.ToArray(), supportLocalizedComponentNames);
+            var projectEngine = CreateProjectEngine(configuration, baseCompilation.References.ToArray(), supportLocalizedComponentNames, csharpParseOptions);
 
             var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent, fileKind, cssScope);
 
@@ -311,30 +327,30 @@ public class RazorIntegrationTestBase
             {
                 BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
-                Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                Code = codeDocument.GetRequiredCSharpDocument().Text.ToString(),
+                RazorDiagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics,
+                ParseOptions = csharpParseOptions,
             };
         }
     }
 
     protected CompileToAssemblyResult CompileToAssembly(string cshtmlRelativePath, string cshtmlContent)
     {
-        var cSharpResult = CompileToCSharp(cshtmlRelativePath, cshtmlContent);
+        var cSharpResult = CompileToCSharp(cshtmlRelativePath, cshtmlContent: cshtmlContent);
         return CompileToAssembly(cSharpResult);
     }
 
-    protected CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, bool throwOnFailure = true)
+    protected static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, params DiagnosticDescription[] expectedDiagnostics)
     {
-        if (cSharpResult.Diagnostics.Any() && throwOnFailure)
-        {
-            var diagnosticsLog = string.Join(Environment.NewLine, cSharpResult.Diagnostics.Select(d => d.ToString()).ToArray());
-            throw new InvalidOperationException($"Aborting compilation to assembly because RazorCompiler returned nonempty diagnostics: {diagnosticsLog}");
-        }
+        return CompileToAssembly(cSharpResult, diagnostics => diagnostics.Verify(expectedDiagnostics));
+    }
 
+    protected static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, Action<IEnumerable<Diagnostic>> verifyDiagnostics)
+    {
         var syntaxTrees = new[]
         {
-                Parse(cSharpResult.Code),
-            };
+            Parse(cSharpResult.Code, cSharpResult.ParseOptions),
+        };
 
         var compilation = cSharpResult.BaseCompilation.AddSyntaxTrees(syntaxTrees);
 
@@ -342,37 +358,33 @@ public class RazorIntegrationTestBase
             .GetDiagnostics()
             .Where(d => d.Severity != DiagnosticSeverity.Hidden);
 
-        if (diagnostics.Any() && throwOnFailure)
-        {
-            throw new CompilationFailedException(compilation);
-        }
-        else if (diagnostics.Any())
-        {
-            return new CompileToAssemblyResult
-            {
-                Compilation = compilation,
-                Diagnostics = diagnostics,
-            };
-        }
+        verifyDiagnostics(diagnostics);
 
-        using (var peStream = new MemoryStream())
-        {
-            var emitResult = compilation.Emit(peStream);
-            if (!emitResult.Success)
-            {
-                throw new CompilationFailedException(compilation, emitResult.Diagnostics);
-            }
+        var peStream = !diagnostics.Any() ? EmitCompilation(compilation) : null;
 
-            return new CompileToAssemblyResult
-            {
-                Compilation = compilation,
-                Diagnostics = diagnostics,
-                Assembly = diagnostics.Any() ? null : Assembly.Load(peStream.ToArray())
-            };
-        }
+        return new CompileToAssemblyResult
+        {
+            Compilation = compilation,
+            CSharpDiagnostics = diagnostics,
+            ExecutableStream = peStream
+        };
     }
 
-    protected IComponent CompileToComponent(string cshtmlSource)
+    private static MemoryStream EmitCompilation(Compilation compilation)
+    {
+        var peStream = new MemoryStream();
+        var options = new EmitOptions(debugInformationFormat: DebugInformationFormat.Embedded);
+        var emitResult = compilation.Emit(peStream, options: options);
+        if (!emitResult.Success)
+        {
+            throw new CompilationFailedException(compilation, emitResult.Diagnostics);
+        }
+
+        peStream.Position = 0;
+        return peStream;
+    }
+
+    protected INamedTypeSymbol CompileToComponent(string cshtmlSource)
     {
         var assemblyResult = CompileToAssembly(DefaultFileName, cshtmlSource);
 
@@ -380,37 +392,38 @@ public class RazorIntegrationTestBase
         return CompileToComponent(assemblyResult, componentFullTypeName);
     }
 
-    protected IComponent CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
+    protected INamedTypeSymbol CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
     {
         return CompileToComponent(CompileToAssembly(cSharpResult), fullTypeName);
     }
 
-    protected IComponent CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
+    protected INamedTypeSymbol CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
     {
-        var componentType = assemblyResult.Assembly.GetType(fullTypeName);
+        var componentType = assemblyResult.Compilation.GetTypeByMetadataName(fullTypeName);
         if (componentType == null)
         {
-            throw new XunitException(
-                $"Failed to find component type '{fullTypeName}'. Found types:" + Environment.NewLine +
-                string.Join(Environment.NewLine, assemblyResult.Assembly.ExportedTypes.Select(t => t.FullName)));
+            throw new XunitException($"Failed to find component type '{fullTypeName}'");
         }
 
-        return (IComponent)Activator.CreateInstance(componentType);
+        return componentType;
     }
 
-    protected static CSharpSyntaxTree Parse(string text, string path = null)
+    protected static CSharpSyntaxTree Parse(SourceText text, CSharpParseOptions? parseOptions = null, string path = "")
     {
-        return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
+        return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, parseOptions ?? CSharpParseOptions, path: path);
     }
 
-    protected static string FullTypeName<T>() => typeof(T).FullName.Replace('+', '.');
+    protected static CSharpSyntaxTree Parse(string text, CSharpParseOptions? parseOptions = null, string path = "")
+    {
+        return Parse(SourceText.From(text, Encoding.UTF8), parseOptions, path);
+    }
 
     protected static void AssertSourceEquals(string expected, CompileToCSharpResult generated)
     {
         // Normalize the paths inside the expected result to match the OS paths
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
-            var windowsPath = Path.Combine(ArbitraryWindowsPath, generated.CodeDocument.Source.RelativePath).Replace('/', '\\');
+            var windowsPath = Path.Combine(ArbitraryWindowsPath, generated.CodeDocument.Source.RelativePath ?? "").Replace('/', '\\');
             expected = expected.Replace(windowsPath, generated.CodeDocument.Source.FilePath);
         }
 
@@ -421,18 +434,19 @@ public class RazorIntegrationTestBase
     protected class CompileToCSharpResult
     {
         // A compilation that can be used *with* this code to compile an assembly
-        public Compilation BaseCompilation { get; set; }
-        public RazorCodeDocument CodeDocument { get; set; }
-        public string Code { get; set; }
-        public IEnumerable<RazorDiagnostic> Diagnostics { get; set; }
+        public required Compilation BaseCompilation { get; set; }
+        public required RazorCodeDocument CodeDocument { get; set; }
+        public required string Code { get; set; }
+        public required IEnumerable<RazorDiagnostic> RazorDiagnostics { get; set; }
+        public CSharpParseOptions? ParseOptions { get; set; }
     }
 
     protected class CompileToAssemblyResult
     {
-        public Assembly Assembly { get; set; }
-        public Compilation Compilation { get; set; }
-        public string VerboseLog { get; set; }
-        public IEnumerable<Diagnostic> Diagnostics { get; set; }
+        public required Compilation Compilation { get; set; }
+        public string? VerboseLog { get; set; }
+        public required IEnumerable<Diagnostic> CSharpDiagnostics { get; set; }
+        public required MemoryStream? ExecutableStream { get; set; }
     }
 
     private class CompilationFailedException : XunitException
@@ -480,64 +494,6 @@ public class RazorIntegrationTestBase
 
                 return builder.ToString();
             }
-        }
-    }
-
-    private class SuppressChecksum : IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public RazorEngine Engine { get; set; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    private class SupportLocalizedComponentNames : IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public RazorEngine Engine { get; set; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SupportLocalizedComponentNames = true;
-        }
-    }
-
-    private class ForceLineEndingPhase : RazorEnginePhaseBase
-    {
-        public ForceLineEndingPhase(string lineEnding)
-        {
-            LineEnding = lineEnding;
-        }
-
-        public string LineEnding { get; }
-
-        protected override void ExecuteCore(RazorCodeDocument codeDocument)
-        {
-            var field = typeof(CodeRenderingContext).GetField("NewLineString", BindingFlags.Static | BindingFlags.NonPublic);
-            var key = field.GetValue(null);
-            codeDocument.Items[key] = LineEnding;
-        }
-    }
-
-    private class TestImportProjectFeature : IImportProjectFeature
-    {
-        private readonly List<RazorProjectItem> _imports;
-
-        public TestImportProjectFeature(List<RazorProjectItem> imports)
-        {
-            _imports = imports;
-        }
-
-        public RazorProjectEngine ProjectEngine { get; set; }
-
-        public IReadOnlyList<RazorProjectItem> GetImports(RazorProjectItem projectItem)
-        {
-            return _imports;
         }
     }
 }

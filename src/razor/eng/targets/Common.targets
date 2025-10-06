@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Packaging.targets" />
+
+  <Target Name="_CheckLongPathSupport" BeforeTargets="BeforeBuild;CollectPackageReferences" Condition="'$(MSBuildRuntimeType)' == 'Full'">
+    <PropertyGroup>
+      <_RazorLongPathsEnabled>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\FileSystem', 'LongPathsEnabled', null, RegistryView.Registry64, RegistryView.Registry32))</_RazorLongPathsEnabled>
+    </PropertyGroup>
+    <Warning Condition="'$(_RazorLongPathsEnabled)' != '1'"
+      Code="LongPathsDisabled"
+      Text="Long paths are required for this project. See 'docs/contributing/LongPaths.md'"
+      HelpLink="https://github.com/dotnet/razor/blob/main/docs/contributing/LongPaths.md"
+    />
+  </Target>
+
+</Project>

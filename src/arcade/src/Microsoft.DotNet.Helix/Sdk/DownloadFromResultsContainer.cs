@@ -26,8 +26,6 @@ namespace Microsoft.DotNet.Helix.Sdk
         [Required]
         public ITaskItem[] MetadataToWrite { get; set; }
 
-        public string ResultsContainerReadSAS { get; set; }
-
         private const string MetadataFile = "metadata.txt";
 
         private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
@@ -74,6 +72,7 @@ namespace Microsoft.DotNet.Helix.Sdk
 
                 // Use the Helix API to get the last possible iteration of the work item's execution 
                 var allAvailableFiles = await HelixApi.WorkItem.ListFilesAsync(workItemName, JobId, true, ct);
+                var resultsUri = await HelixApi.Job.ResultsAsync(JobId, ct);
 
                 DirectoryInfo destinationDir = Directory.CreateDirectory(Path.Combine(directoryPath, workItemName));
                 foreach (string file in filesToDownload)
@@ -95,19 +94,28 @@ namespace Microsoft.DotNet.Helix.Sdk
                             Log.LogWarning($"Work item {workItemName} in Job {JobId} did not upload a result file with path '{file}' ");
                             continue;
                         }
-                        
+
+                        // Default timeout for blob operations is 100 seconds, this might not be enough for large result files or low end machines.
+                        var blobClientOptions = new BlobClientOptions
+                        {
+                            Retry =
+                            {
+                                NetworkTimeout = TimeSpan.FromMinutes(5)
+                            }
+                        };
+
                         BlobClient blob;
                         // If we have no read SAS token from the build, make a best-effort attempt using the URL from the Helix API.
                         // For restricted queues, there will be no read SAS token available to use in the Helix API's result
                         // (but hopefully the 'else' branch will be hit in this case)
-                        if (string.IsNullOrEmpty(ResultsContainerReadSAS)) 
+                        if (string.IsNullOrEmpty(resultsUri.ResultsUriRSAS)) 
                         {
-                            blob = new BlobClient(new Uri(fileAvailableForDownload.Link));
+                            blob = new BlobClient(new Uri(fileAvailableForDownload.Link), blobClientOptions);
                         }
                         else 
                         {
                             var strippedFileUri = new Uri(fileAvailableForDownload.Link.Substring(0, fileAvailableForDownload.Link.LastIndexOf('?')));
-                            blob = new BlobClient(strippedFileUri, new AzureSasCredential(ResultsContainerReadSAS));
+                            blob = new BlobClient(strippedFileUri, new AzureSasCredential(resultsUri.ResultsUriRSAS), blobClientOptions);
                         }
                         await blob.DownloadToAsync(destinationFile);
                     }

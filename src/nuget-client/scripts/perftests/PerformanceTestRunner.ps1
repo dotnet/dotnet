@@ -20,8 +20,19 @@ How many times to run each test. The default is 3
 .PARAMETER skipRepoCleanup
 Whether to delete the checked out repos from the test cases.
 
+.PARAMETER additionalOptions
+Additional options such as ones to skip certain runs like -skipWarmup or maybe run the local version of NuGet, -useLocallyBuiltNuGet. 
+To get the list of all options check out RunPerformanceTests.ps1 in the same folder.
+
 .EXAMPLE
 .\PerformanceTestRunner.ps1 -resultsFolderPath resultsFolder -nugetClientFilePaths F:\NuGetExe\NuGet.exe,"C:\Program Files\dotnet\dotnet.exe" 
+
+.EXAMPLE
+.\PerformanceTestRunner.ps1 -resultsFolderPath resultsFolder -nugetClientFilePaths "C:\Program Files\Microsoft Visual Studio\2022\Preview\MSBuild\Current\Bin\amd64\MSBuild.exe" -skipRepoCleanup -additionalOptions "-useLocallyBuiltNuGet -staticGraphRestore"
+
+.EXAMPLE
+.\PerformanceTestRunner.ps1 -resultsFolderPath resultsFolder -nugetClientFilePaths "C:\Program Files\Microsoft Visual Studio\2022\Preview\MSBuild\Current\Bin\amd64\MSBuild.exe" -skipRepoCleanup -additionalOptions "-useLocallyBuiltNuGet"
+
 #>
 Param(
     [Parameter(Mandatory = $true)]
@@ -31,7 +42,9 @@ Param(
     [string] $testRootFolderPath,
     [string] $logsFolderPath,
     [int] $iterationCount = 3,
-    [switch] $skipRepoCleanup
+    [string] $testCaseDirectory,
+    [switch] $skipRepoCleanup,
+    [string] $additionalOptions
 )
 
 . "$PSScriptRoot\PerformanceTestUtilities.ps1"
@@ -86,10 +99,16 @@ Try
                 Exit 1
             }
 
-            Log "Discovering the test cases."
-            $testFiles = $(Get-ChildItem $PSScriptRoot\testCases "Test-*.ps1" ) | ForEach-Object { $_.FullName }
-            Log "Discovered test cases: $testFiles" "green"
+            $testCasesDirectory = "$PSScriptRoot\testCases"
+            If (-not [string]::IsNullOrWhiteSpace($testCaseDirectory))
+            {
+                $testCasesDirectory = $testCaseDirectory
+            }
 
+            Log "Discovering the test cases in $testCasesDirectory"
+            $testFiles = $(Get-ChildItem $testCasesDirectory "Test-*.ps1" ) | ForEach-Object { $_.FullName }
+            Log "Discovered test cases: $testFiles" "green"
+            
             $testFiles | ForEach-Object {
                 $testCase = $_
                 Try
@@ -100,7 +119,8 @@ Try
                         -resultsFolderPath $resultsFolderPath `
                         -logsFolderPath $logsFolderPath `
                         -nugetFoldersPath $nugetFoldersPath `
-                        -iterationCount $iterationCount
+                        -iterationCount $iterationCount `
+                        -additionalOptions $additionalOptions
                 }
                 Catch
                 {

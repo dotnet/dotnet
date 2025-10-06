@@ -10,8 +10,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <NuGetAudit>false</NuGetAudit>
 
     <RestoreIlTooling>true</RestoreIlTooling>
+
+    <IsShippingPackage>false</IsShippingPackage>
+    <ArtifactsNonShippingPackagesDir>$(ArtifactsReferenceOnlyPackagesDir)</ArtifactsNonShippingPackagesDir>
 
     <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
     <NoWarn>$(NoWarn);NU5131</NoWarn>

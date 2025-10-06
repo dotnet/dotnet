@@ -20,7 +20,7 @@ namespace NuGet.VisualStudio
 
         /// <summary>
         /// The environment variable means of enabled this feature.
-        /// Might be <see cref="null"/>.
+        /// Might be <c>null</c>.
         /// </summary>
         internal string FlightEnvironmentVariable { get; }
 

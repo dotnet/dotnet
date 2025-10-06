@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -7,10 +7,9 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -23,7 +22,7 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
     /// </summary>
     private static readonly Dictionary<string, IProjectEngineFactory> s_configurationNameToFactoryMap = CreateConfigurationNameToFactoryMap();
 
-    private readonly CompilationTagHelperResolver _compilationTagHelperResolver = new(telemetryReporter);
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     private static Dictionary<string, IProjectEngineFactory> CreateConfigurationNameToFactoryMap()
     {
@@ -41,17 +40,9 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
         Project workspaceProject,
         RazorConfiguration? configuration,
         CancellationToken cancellationToken)
-    {
-        if (configuration is null)
-        {
-            return new(ImmutableArray<TagHelperDescriptor>.Empty);
-        }
-
-        return _compilationTagHelperResolver.GetTagHelpersAsync(
-            workspaceProject,
-            CreateProjectEngine(configuration),
-            cancellationToken);
-    }
+        => configuration is not null
+            ? workspaceProject.GetTagHelpersAsync(CreateProjectEngine(configuration), _telemetryReporter, cancellationToken)
+            : new([]);
 
     private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration)
     {
@@ -60,7 +51,7 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
         // This will stop a crash from happening in this case (misconfigured project), but will still make
         // it obvious to the user that something is wrong.
 
-        IProjectEngineFactory factory;
+        IProjectEngineFactory? factory;
 
         lock (s_configurationNameToFactoryMap)
         {

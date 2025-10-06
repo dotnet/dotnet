@@ -16,7 +16,7 @@ indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
 
-file_header_template = Copyright (c) .NET Foundation. All rights reserved.\nLicensed under the MIT license. See License.txt in the project root for license information.
+file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
 
 # Xml project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -38,6 +38,9 @@ dotnet_separate_import_directive_groups = false
 
 # IDE0005 - Remove unnecessary imports
 dotnet_diagnostic.IDE0005.severity = warning
+
+# IDE0052 - Private member can be removed
+dotnet_diagnostic.IDE0052.severity = warning
 
 # IDE0046: If expression can be simplified
 dotnet_style_prefer_conditional_expression_over_return = false:silent

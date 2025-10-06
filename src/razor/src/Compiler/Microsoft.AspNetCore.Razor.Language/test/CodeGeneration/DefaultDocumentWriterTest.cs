@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
@@ -20,7 +17,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -29,7 +26,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -46,13 +43,14 @@ public class DefaultDocumentWriterTest
     {
         // Arrange
         var sourceText = SourceText.From("", checksumAlgorithm: SourceHashAlgorithm.Sha1);
-        var sourceDocument = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+        var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+
+        var projectEngine = RazorProjectEngine.CreateEmpty();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
 
         var document = new DocumentIntermediateNode();
 
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.CreateDefault();
-
+        var options = codeDocument.CodeGenerationOptions;
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
 
@@ -60,7 +58,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "da39a3ee5e6b4b0d3255bfef95601890afd80709"
@@ -77,13 +75,14 @@ public class DefaultDocumentWriterTest
     {
         // Arrange
         var sourceText = SourceText.From("", checksumAlgorithm: SourceHashAlgorithm.Sha256);
-        var sourceDocument = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+        var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create("test.cshtml", null));
+
+        var projectEngine = RazorProjectEngine.CreateEmpty();
+        var codeDocument = projectEngine.CreateCodeDocument(source);
 
         var document = new DocumentIntermediateNode();
 
-        var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.CreateDefault();
-
+        var options = codeDocument.CodeGenerationOptions;
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
 
@@ -91,7 +90,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -110,11 +109,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var optionsBuilder = new DefaultRazorCodeGenerationOptionsBuilder(designTime: false)
-        {
-            SuppressChecksum = true
-        };
-        var options = optionsBuilder.Build();
+        var options = RazorCodeGenerationOptions.Default.WithFlags(suppressChecksum: true);
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -123,7 +118,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
 @"// <auto-generated/>
 #pragma warning disable 1591
@@ -140,11 +135,11 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new NamespaceDeclarationIntermediateNode()
         {
-            Content = "TestNamespace",
+            Name = "TestNamespace",
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -153,7 +148,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -177,22 +172,18 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers =
-            {
-                "internal"
-            },
-            BaseType = "TestBase",
-            Interfaces = new List<string> { "IFoo", "IBar", },
-            TypeParameters = new List<TypeParameter>
-            {
-                new TypeParameter() { ParameterName = "TKey", },
-                new TypeParameter() { ParameterName = "TValue", },
-            },
-            ClassName = "TestClass",
+            Modifiers = ["internal"],
+            BaseType = new BaseTypeWithModel("TestBase"),
+            Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
+            TypeParameters = [
+                new("TKey"),
+                new("TValue")
+            ],
+            Name = "TestClass"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -201,7 +192,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -224,26 +215,19 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers =
-            {
-                "internal"
-            },
-            BaseType = "TestBase",
-            Interfaces = new List<string> { "IFoo", "IBar", },
-            TypeParameters = new List<TypeParameter>
-            {
-                new TypeParameter() { ParameterName = "TKey", },
-                new TypeParameter() { ParameterName = "TValue", },
-            },
-            ClassName = "TestClass",
-            Annotations =
-            {
-                [CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext,
-            },
+            Modifiers = ["internal"],
+            BaseType = new BaseTypeWithModel("TestBase"),
+            Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
+            TypeParameters = [
+                new("TKey"),
+                new("TValue")
+            ],
+            Name = "TestClass",
+            NullableContext = true
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -252,7 +236,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -277,22 +261,18 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers =
-                {
-                    "internal"
-                },
-            BaseType = "TestBase",
-            Interfaces = new List<string> { "IFoo", "IBar", },
-            TypeParameters = new List<TypeParameter>
-                {
-                    new TypeParameter() { ParameterName = "TKey", Constraints = "where TKey : class" },
-                    new TypeParameter() { ParameterName = "TValue", Constraints = "where TValue : class" },
-                },
-            ClassName = "TestClass",
+            Modifiers = ["internal"],
+            BaseType = new BaseTypeWithModel("TestBase"),
+            Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
+            TypeParameters = [
+                new("TKey", "where TKey : class"),
+                new("TValue", "where TValue : class")
+            ],
+            Name = "TestClass"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -301,7 +281,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -326,36 +306,17 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new MethodDeclarationIntermediateNode()
         {
-            Modifiers =
-                {
-                    "internal",
-                    "virtual",
-                    "async",
-                },
-            MethodName = "TestMethod",
-            Parameters =
-                {
-                    new MethodParameter()
-                    {
-                        Modifiers =
-                        {
-                            "readonly",
-                            "ref",
-                        },
-                        ParameterName = "a",
-                        TypeName = "int",
-                    },
-                    new MethodParameter()
-                    {
-                        ParameterName = "b",
-                        TypeName = "string",
-                    }
-                },
-            ReturnType = "string",
+            Modifiers = ["internal", "virtual", "async"],
+            Name = "TestMethod",
+            Parameters = [
+                new(name: "a", type: "int", modifiers: ["readonly", "ref"]),
+                new(name: "b", type: "string")
+            ],
+            ReturnType = "string"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -364,7 +325,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -389,17 +350,13 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new FieldDeclarationIntermediateNode()
         {
-            Modifiers =
-                {
-                    "internal",
-                    "readonly",
-                },
-            FieldName = "_foo",
-            FieldType = "string",
+            Modifiers = ["internal", "readonly"],
+            Name = "_foo",
+            Type = "string",
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -408,7 +365,7 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
@@ -429,17 +386,14 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new PropertyDeclarationIntermediateNode()
         {
-            Modifiers =
-                {
-                    "internal",
-                    "virtual",
-                },
-            PropertyName = "Foo",
-            PropertyType = "string",
+            Modifiers = ["internal", "virtual"],
+            Name = "Foo",
+            Type = IntermediateNodeFactory.CSharpToken("string"),
+            ExpressionBody = "default"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -448,13 +402,13 @@ public class DefaultDocumentWriterTest
         var result = writer.WriteDocument(codeDocument, document);
 
         // Assert
-        var csharp = result.GeneratedCode;
+        var csharp = result.Text.ToString();
         AssertEx.AssertEqualToleratingWhitespaceDifferences(
             """
             #pragma checksum "test.cshtml" "{8829d00f-11b8-4213-878b-770e8597ac16}" "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
             // <auto-generated/>
             #pragma warning disable 1591
-            internal virtual string Foo { get; set; }
+            internal virtual string Foo => default;
             #pragma warning restore 1591
 
             """,

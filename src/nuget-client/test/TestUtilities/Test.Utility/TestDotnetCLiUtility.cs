@@ -16,6 +16,12 @@ namespace NuGet.Test.Utility
 {
     public static class TestDotnetCLiUtility
     {
+#if NET9_0 // This override allows us to test the next version of the CLI without making all the projects target that version.
+        private static NuGetFramework FrameworkOverride = new NuGetFramework("net10.0");
+#elif !IS_DESKTOP
+        private static NuGetFramework FrameworkOverride = null;
+#endif
+
         internal static string SdkVersion { get; private set; }
         internal static NuGetFramework SdkTfm { get; private set; }
         internal static string CliDirSource { get; private set; }
@@ -103,7 +109,7 @@ namespace NuGet.Test.Utility
         private static string GetSdkToTestByAssemblyPath(string testAssemblyPath)
         {
             // The TFM we're testing
-            var testTfm = AssemblyReader.GetTargetFramework(testAssemblyPath);
+            var testTfm = FrameworkOverride ?? AssemblyReader.GetTargetFramework(testAssemblyPath);
 
             var selectedVersion =
                 Directory.EnumerateDirectories(SdkDirSource) // get all directories in sdk folder
@@ -180,8 +186,7 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
             var artifactsDirectory = TestFileSystemUtility.GetArtifactsDirectoryInRepo();
             var pathToSdkInCli = Path.Combine(
                     Directory.EnumerateDirectories(Path.Combine(cliDirectory, "sdk"))
-                    .Where(d => !string.Equals(Path.GetFileName(d), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase))
-                    .First());
+                        .First(d => !string.Equals(Path.GetFileName(d), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase)));
             const string configuration =
 #if DEBUG
                 "Debug";
@@ -190,6 +195,7 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
 #endif
             CopyPackSdkArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
             CopyRestoreArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
+            CopyNuGetSdkResolverArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
         }
 
         private static void CopyRestoreArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
@@ -252,6 +258,23 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
             }
         }
 
+        private static void CopyNuGetSdkResolverArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
+        {
+            var projectName = "Microsoft.Build.NuGetSdkResolver";
+            var projectArtifactsBinFolder = Path.Combine(artifactsDirectory, projectName, "bin", configuration);
+
+            var tfmToCopy = GetTfmToCopy(projectArtifactsBinFolder);
+            var frameworkArtifactsFolder = new DirectoryInfo(Path.Combine(projectArtifactsBinFolder, tfmToCopy));
+
+            // Copy the resolver assembly
+            var resolverAssemblySourcePath = Path.Combine(frameworkArtifactsFolder.FullName, projectName + ".dll");
+            var resolverAssemblyDestinationPath = Path.Combine(pathToSdkInCli, projectName + ".dll");
+            File.Copy(
+                sourceFileName: resolverAssemblySourcePath,
+                destFileName: resolverAssemblyDestinationPath,
+                overwrite: true);
+        }
+
         private static string GetTfmToCopy(string projectArtifactsBinFolder)
         {
             var compiledTfms =
@@ -293,32 +316,15 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
             var targetRuntimeType = "CoreCLR";
 
             var packAssemblyDestinationDirectory = Path.Combine(pathToPackSdk, targetRuntimeType);
-            // Be smart here so we don't have to call ILMerge in the VS build. It takes ~15s total.
-            // In VisualStudio, simply use the non il merged version.
-            var ilMergedPackDirectoryPath = Path.Combine(packProjectCoreArtifactsDirectory.FullName, "ilmerge");
-            if (Directory.Exists(ilMergedPackDirectoryPath))
+
+            foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
             {
-                var packFileName = packProjectName + ".dll";
-                // Only use the il merged assembly if it's newer than the build.
-                DateTime packAssemblyCreationDate = File.GetCreationTimeUtc(Path.Combine(packProjectCoreArtifactsDirectory.FullName, packFileName));
-                DateTime ilMergedPackAssemblyCreationDate = File.GetCreationTimeUtc(Path.Combine(ilMergedPackDirectoryPath, packFileName));
-                if (ilMergedPackAssemblyCreationDate > packAssemblyCreationDate)
-                {
-                    File.Copy(sourceFileName: Path.Combine(packProjectCoreArtifactsDirectory.FullName, "ilmerge", packFileName),
-                        destFileName: Path.Combine(packAssemblyDestinationDirectory, packFileName),
-                        overwrite: true);
-                }
+                File.Copy(
+                    sourceFileName: assembly.FullName,
+                    destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
+                    overwrite: true);
             }
-            else
-            {
-                foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
-                {
-                    File.Copy(
-                        sourceFileName: assembly.FullName,
-                        destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
-                        overwrite: true);
-                }
-            }
+
             // Copy the pack targets
             var packTargetsSource = Path.Combine(packProjectCoreArtifactsDirectory.FullName, packTargetsName);
             var targetsDestination = Path.Combine(pathToPackSdk, "build", packTargetsName);

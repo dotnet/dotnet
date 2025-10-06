@@ -1,50 +1,42 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
 internal class DocumentOnTypeFormattingEndpoint(
     IRazorFormattingService razorFormattingService,
-    IRazorDocumentMappingService razorDocumentMappingService,
-    IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-    IRazorLoggerFactory loggerFactory)
+    IHtmlFormatter htmlFormatter,
+    RazorLSPOptionsMonitor optionsMonitor,
+    ILoggerFactory loggerFactory)
     : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
-    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService ?? throw new ArgumentNullException(nameof(razorFormattingService));
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
-    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentOnTypeFormattingEndpoint>();
-
-    private static readonly IReadOnlyList<string> s_csharpTriggerCharacters = new[] { "}", ";" };
-    private static readonly IReadOnlyList<string> s_htmlTriggerCharacters = new[] { "\n", "{", "}", ";" };
-    private static readonly IReadOnlyList<string> s_allTriggerCharacters = s_csharpTriggerCharacters.Concat(s_htmlTriggerCharacters).ToArray();
+    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly IHtmlFormatter _htmlFormatter = htmlFormatter;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentOnTypeFormattingEndpoint>();
 
     public bool MutatesSolutionState => false;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.DocumentOnTypeFormattingProvider = new DocumentOnTypeFormattingOptions
-        {
-            FirstTriggerCharacter = s_allTriggerCharacters[0],
-            MoreTriggerCharacter = s_allTriggerCharacters.Skip(1).ToArray(),
-        };
+        serverCapabilities.DocumentOnTypeFormattingProvider = new DocumentOnTypeFormattingOptions().EnableOnTypeFormattingTriggerCharacters();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentOnTypeFormattingParams request)
@@ -54,90 +46,86 @@ internal class DocumentOnTypeFormattingEndpoint(
 
     public async Task<TextEdit[]?> HandleRequestAsync(DocumentOnTypeFormattingParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting OnTypeFormatting request for {requestTextDocumentUri}.", request.TextDocument.Uri);
+        _logger.LogInformation($"Starting OnTypeFormatting request for {request.TextDocument.DocumentUri}.");
 
-        if (!_optionsMonitor.CurrentValue.EnableFormatting)
+        if (!_optionsMonitor.CurrentValue.Formatting.IsEnabled())
         {
-            _logger.LogInformation("Formatting option disabled.");
+            _logger.LogInformation($"Formatting option disabled.");
             return null;
         }
 
-        if (!_optionsMonitor.CurrentValue.FormatOnType)
+        if (!_optionsMonitor.CurrentValue.Formatting.IsOnTypeEnabled())
         {
-            _logger.LogInformation("Formatting on type disabled.");
+            _logger.LogInformation($"Formatting on type disabled.");
             return null;
         }
 
-        if (!s_allTriggerCharacters.Contains(request.Character, StringComparer.Ordinal))
+        if (!RazorFormattingService.AllTriggerCharacterSet.Contains(request.Character))
         {
-            _logger.LogWarning("Unexpected trigger character '{requestCharacter}'.", request.Character);
+            _logger.LogWarning($"Unexpected trigger character '{request.Character}'.");
             return null;
         }
 
         var documentContext = requestContext.DocumentContext;
-
         if (documentContext is null)
         {
-            _logger.LogWarning("Failed to find document {requestTextDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to find document {request.TextDocument.DocumentUri}.");
             return null;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            _logger.LogWarning("Failed to retrieve generated output for document {requestTextDocumentUri}.", request.TextDocument.Uri);
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (!request.Position.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex))
+        if (!sourceText.TryGetAbsoluteIndex(request.Position, out var hostDocumentIndex))
         {
             return null;
         }
 
-        var triggerCharacterKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
-        if (triggerCharacterKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
+        if (!_razorFormattingService.TryGetOnTypeFormattingTriggerKind(codeDocument, hostDocumentIndex, request.Character, out var triggerCharacterKind) ||
+            triggerCharacterKind == RazorLanguageKind.Razor)
         {
-            _logger.LogInformation("Unsupported trigger character language {triggerCharacterKind:G}.", triggerCharacterKind);
-            return null;
-        }
-
-        if (!IsApplicableTriggerCharacter(request.Character, triggerCharacterKind))
-        {
-            // We were triggered but the trigger character doesn't make sense for the current cursor position. Bail.
-            _logger.LogInformation("Unsupported trigger character location.");
             return null;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        Debug.Assert(request.Character.Length > 0);
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        var formattedEdits = await _razorFormattingService.FormatOnTypeAsync(documentContext, triggerCharacterKind, Array.Empty<TextEdit>(), request.Options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
-        if (formattedEdits.Length == 0)
+        ImmutableArray<TextChange> formattedChanges;
+        if (triggerCharacterKind == RazorLanguageKind.CSharp)
         {
-            _logger.LogInformation("No formatting changes were necessary");
+            formattedChanges = await _razorFormattingService.GetCSharpOnTypeFormattingChangesAsync(documentContext, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+        }
+        else if (triggerCharacterKind == RazorLanguageKind.Html)
+        {
+            if (await _htmlFormatter.GetOnTypeFormattingEditsAsync(
+                documentContext.Snapshot,
+                documentContext.Uri,
+                request.Position,
+                request.Character,
+                request.Options,
+                cancellationToken).ConfigureAwait(false) is not { } htmlChanges)
+            {
+                return null;
+            }
+
+            formattedChanges = await _razorFormattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            Assumed.Unreachable();
             return null;
         }
 
-        _logger.LogInformation("Returning {formattingEditsLength} final formatted results.", formattedEdits.Length);
-        return formattedEdits;
-    }
-
-    private static bool IsApplicableTriggerCharacter(string triggerCharacter, RazorLanguageKind languageKind)
-    {
-        if (languageKind == RazorLanguageKind.CSharp)
+        if (formattedChanges.Length == 0)
         {
-            return s_csharpTriggerCharacters.Contains(triggerCharacter);
-        }
-        else if (languageKind == RazorLanguageKind.Html)
-        {
-            return s_htmlTriggerCharacters.Contains(triggerCharacter);
+            _logger.LogInformation($"No formatting changes were necessary");
+            return null;
         }
 
-        // Unknown trigger character.
-        return false;
+        _logger.LogInformation($"Returning {formattedChanges.Length} final formatted results.");
+        return [.. formattedChanges.Select(sourceText.GetTextEdit)];
     }
 }

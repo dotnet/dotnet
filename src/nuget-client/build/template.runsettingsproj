@@ -9,13 +9,14 @@
     <TestSessionTimeout Condition=" '$(TestSessionTimeout)' == ''">9000000</TestSessionTimeout>
     <TestAdaptersPaths>C:\Test;C:\NuGet</TestAdaptersPaths>
     <ResultsDirectory>C:\Test\Results</ResultsDirectory>
+    <ProcDumpCollector Condition=" '$(ProcDumpCollector)' == '' ">enabled</ProcDumpCollector>
     <LingeringProcessCollector Condition=" '$(LingeringProcessCollector)' == '' ">enabled</LingeringProcessCollector>
     <OptProfCollector Condition=" '$(OptProfCollector)' == '' ">disabled</OptProfCollector>
     <ScreenshotCollector Condition=" '$(ScreenshotCollector)' == '' ">enabled</ScreenshotCollector>
     <TestRunParametersLogger Condition=" '$(TestRunParametersLogger)' == '' ">enabled</TestRunParametersLogger>
     <VideoRecorderCollector Condition=" '$(VideoRecorderCollector)' == '' ">enabled</VideoRecorderCollector>
     <TRXLogger>enabled</TRXLogger>
-    <VsConfigPath Condition=" '$(VsConfigPath)' == '' ">tests.dev$(VsTargetMajorVersion).vsconfig</VsConfigPath>
+    <VsConfigPath Condition=" '$(VsConfigPath)' == '' ">tests.vsconfig</VsConfigPath>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -107,7 +108,7 @@
       <Configuration>
         <KillLingeringProcesses>true</KillLingeringProcesses>
         <LoggingBehavior>Warning</LoggingBehavior>
-        <CollectDumps>true</CollectDumps>
+        <CollectDumps>false</CollectDumps>
         <RootDumpDirectory>%SystemDrive%\Test\Logs\Dumps</RootDumpDirectory>
         <ShutdownCommands>$(LingeringProcessCollectorShutdownCommands)</ShutdownCommands>
         <WhiteList>
@@ -139,7 +140,8 @@
     <DataCollector Condition="'$(ProcDumpCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/ProcDumpCollector/v1">
       <FriendlyName>ProcDump Collector</FriendlyName>
       <Configuration>
-        <RootDumpDirectory>C:\Test\Logs\Dumps</RootDumpDirectory>
+        <RootDumpDirectory>%SystemDrive%\dumps</RootDumpDirectory>
+        <AttachDumpFilesToResults>true</AttachDumpFilesToResults>
         <Deployment PackageName="Microsoft.DevDiv.TestExtensions.ProcDumpCollector" />
       </Configuration>
     </DataCollector>

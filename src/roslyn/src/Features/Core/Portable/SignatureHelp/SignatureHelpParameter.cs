@@ -17,8 +17,8 @@ namespace Microsoft.CodeAnalysis.SignatureHelp;
 /// Once that it done, this will be converted to normal SignatureHelpParameters which only 
 /// point to TaggedText parts.
 /// </summary>
-internal class SignatureHelpSymbolParameter(
-    string name,
+internal sealed class SignatureHelpSymbolParameter(
+    string? name,
     bool isOptional,
     Func<CancellationToken, IEnumerable<TaggedText>>? documentationFactory,
     IEnumerable<SymbolDisplayPart> displayParts,
@@ -65,8 +65,7 @@ internal class SignatureHelpSymbolParameter(
     /// </summary>
     public IList<SymbolDisplayPart> SelectedDisplayParts { get; } = selectedDisplayParts.ToImmutableArrayOrEmpty();
 
-    private static readonly Func<CancellationToken, IEnumerable<TaggedText>> s_emptyDocumentationFactory =
-        _ => SpecializedCollections.EmptyEnumerable<TaggedText>();
+    private static readonly Func<CancellationToken, IEnumerable<TaggedText>> s_emptyDocumentationFactory = _ => [];
 
     internal IEnumerable<SymbolDisplayPart> GetAllParts()
     {
@@ -86,8 +85,8 @@ internal class SignatureHelpSymbolParameter(
     }
 }
 
-internal class SignatureHelpParameter(
-    string name,
+internal sealed class SignatureHelpParameter(
+    string? name,
     bool isOptional,
     Func<CancellationToken, IEnumerable<TaggedText>>? documentationFactory,
     IEnumerable<TaggedText> displayParts,
@@ -134,8 +133,7 @@ internal class SignatureHelpParameter(
     /// </summary>
     public IList<TaggedText> SelectedDisplayParts { get; } = selectedDisplayParts.ToImmutableArrayOrEmpty();
 
-    private static readonly Func<CancellationToken, IEnumerable<TaggedText>> s_emptyDocumentationFactory =
-        _ => SpecializedCollections.EmptyEnumerable<TaggedText>();
+    private static readonly Func<CancellationToken, IEnumerable<TaggedText>> s_emptyDocumentationFactory = _ => [];
 
     // Constructor kept for binary compat with TS.  Remove when they move to the new API.
     public SignatureHelpParameter(

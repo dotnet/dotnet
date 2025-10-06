@@ -48,7 +48,6 @@ internal class RunTestsWithSources : BaseRunTests
     /// <param name="testCaseEventsHandler"></param>
     /// <param name="testRunEventsHandler"></param>
     /// <param name="executorUriVsSourceList"></param>
-    /// <param name="testRunCache"></param>
     internal RunTestsWithSources(IRequestData requestData, Dictionary<string, IEnumerable<string>> adapterSourceMap, string? package, string? runSettings, TestExecutionContext testExecutionContext, ITestCaseEventsHandler? testCaseEventsHandler, IInternalTestRunEventsHandler testRunEventsHandler, Dictionary<Tuple<Uri, string>, IEnumerable<string>>? executorUriVsSourceList)
         : base(requestData, package, runSettings, testExecutionContext, testCaseEventsHandler, testRunEventsHandler, TestPlatformEventSource.Instance)
     {

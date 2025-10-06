@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Editing;
@@ -75,4 +73,7 @@ public static class SyntaxEditorExtensions
 
     public static void AddBaseType(this SyntaxEditor editor, SyntaxNode declaration, SyntaxNode baseType)
         => editor.ReplaceNode(declaration, (d, g) => g.AddBaseType(d, baseType));
+
+    internal static void RemovePrimaryConstructor(this SyntaxEditor editor, SyntaxNode declaration)
+        => editor.ReplaceNode(declaration, (d, g) => g.RemovePrimaryConstructor(d));
 }

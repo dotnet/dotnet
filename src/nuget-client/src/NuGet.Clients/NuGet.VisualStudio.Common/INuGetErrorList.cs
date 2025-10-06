@@ -13,7 +13,7 @@ namespace NuGet.VisualStudio.Common
         /// <param name="entries"> NuGet entries to add to the error list. </param>
         void AddNuGetEntries(params ErrorListTableEntry[] entries);
 
-        /// <summary> Bring to front if settings permit. </summary>
+        /// <summary> Bring to front if settings permit only when NuGet entries were added to the error list. </summary>
         Task BringToFrontIfSettingsPermitAsync();
 
         /// <summary> Clear NuGet entries. </summary>

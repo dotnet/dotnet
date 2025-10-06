@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace NuGet.Packaging.Signing
 {
@@ -51,7 +51,6 @@ namespace NuGet.Packaging.Signing
             return Task.FromResult(result);
         }
 
-#if IS_SIGNING_SUPPORTED
         private PackageVerificationResult Verify(
             PrimarySignature signature,
             SignedPackageVerifierSettings settings)
@@ -296,13 +295,6 @@ namespace NuGet.Packaging.Signing
             return summary.SignatureType != SignatureType.Repository && summary.ExpirationTime.HasValue;
         }
 
-#else
-        private PackageVerificationResult Verify(
-            PrimarySignature signature,
-            SignedPackageVerifierSettings settings)
-        {
-            throw new NotSupportedException();
-        }
-#endif
+
     }
 }

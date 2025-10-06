@@ -3,9 +3,6 @@
 set -e
 
 function wasm_common() {
-    # prebuild for WASM, so it is ready for wasm development
-    make -C src/mono/browser provision-wasm
-    export EMSDK_PATH=$PWD/src/mono/browser/emsdk
     case "$1" in
     wasm)
         # Put your common commands for wasm here
@@ -34,7 +31,7 @@ case "$opt" in
 
     android)
         # prebuild the repo for Mono, so it is ready for development
-        ./build.sh mono+libs -os android
+        ./build.sh mono+libs+clr.runtime+clr.alljits+clr.corelib+clr.nativecorelib+clr.tools+clr.packages -os android
         # restore libs tests so that the project is ready to be loaded by OmniSharp
         ./build.sh libs.tests -restore
     ;;

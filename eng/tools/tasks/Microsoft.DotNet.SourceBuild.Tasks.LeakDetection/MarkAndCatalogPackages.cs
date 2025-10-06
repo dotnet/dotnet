@@ -1,9 +1,11 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+
+#nullable disable
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.UnifiedBuild.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,10 +77,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                     var packageEntry = new CatalogPackageEntry();
                     packageEntries.Add(packageEntry);
                     packageEntry.Path = p.ItemSpec;
-                    using (var stream = File.OpenRead(p.ItemSpec))
-                    {
-                        packageEntry.OriginalHash = sha.ComputeHash(stream);
-                    }
                     var packageIdentity = ReadNuGetPackageInfos.ReadIdentity(p.ItemSpec);
                     packageEntry.Id = packageIdentity.Id;
                     packageEntry.Version = packageIdentity.Version.OriginalVersion;
@@ -94,29 +92,16 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                             continue;
                         }
 
-                        var catalogFileEntry = new CatalogFileEntry();
-                        packageEntry.Files.Add(catalogFileEntry);
-                        catalogFileEntry.Path = Utility.MakeRelativePath(file, packageTempPath);
-
-                        // There seem to be some weird issues with using a file stream both for hashing and
-                        // assembly loading, even closing it in between.  Use a MemoryStream to avoid issues.
-                        var memStream = new MemoryStream();
-                        using (var stream = File.OpenRead(file))
-                        {
-                            stream.CopyTo(memStream);
-                        }
-
-                        // First get the original hash of the file
-                        memStream.Seek(0, SeekOrigin.Begin);
-                        catalogFileEntry.OriginalHash = sha.ComputeHash(memStream);
-
                         // Add poison marker to assemblies
                         try
                         {
                             AssemblyName asm = AssemblyName.GetAssemblyName(file);
                             Poison(file);
 
-                            // then get the hash of the now-poisoned file
+                            var catalogFileEntry = new CatalogFileEntry();
+                            packageEntry.Files.Add(catalogFileEntry);
+                            catalogFileEntry.Path = Utility.MakeRelativePath(file, packageTempPath);
+
                             using (var stream = File.OpenRead(file))
                             {
                                 catalogFileEntry.PoisonedHash = sha.ComputeHash(stream);

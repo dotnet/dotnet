@@ -32,7 +32,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -107,7 +107,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -184,7 +184,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -264,7 +264,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -362,7 +362,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -447,7 +447,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -522,7 +522,7 @@ namespace NuGet.PackageManagement.Test
         {
             // Arrange
             using SimpleTestPathContext pathContext = new();
-            using var solutionManager = new TestSolutionManager(pathContext);
+            using var solutionManager = new TestVSSolutionManager(pathContext);
             SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
             var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
@@ -596,7 +596,7 @@ namespace NuGet.PackageManagement.Test
             net50Target.Libraries[0].Version.Should().Be(b100.Version);
         }
 
-        private static NuGetProject CreateBuildIntegratedProjectAndAddToSolutionManager(TestSolutionManager solutionManager, ISettings settings, string referenceSpec)
+        private static NuGetProject CreateBuildIntegratedProjectAndAddToSolutionManager(TestVSSolutionManager solutionManager, ISettings settings, string referenceSpec)
         {
             var packageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", solutionManager.SolutionDirectory, referenceSpec).WithSettingsBasedRestoreMetadata(settings);
             var dependencyGraphSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);

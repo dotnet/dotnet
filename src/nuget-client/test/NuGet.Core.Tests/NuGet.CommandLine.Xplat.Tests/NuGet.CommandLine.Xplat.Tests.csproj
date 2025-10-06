@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
+    <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
     <Description>Unit tests for NuGet.CommandLine.XPlat.</Description>
   </PropertyGroup>
 
@@ -11,14 +10,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.IO.Compression" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Locator" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>
-      <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
-      <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
-      <PackageReference Include="Microsoft.Build.Locator" />
-      <PackageReference Include="System.Memory" />
-      <PackageReference Include="System.CommandLine" />
+    <EmbeddedResource Include="compiler\resources\DNW.Test.SampleProject1.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.SampleProject2.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.TwoDifferentVersions.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.MultiTfmMultiRidProject.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\Test.NoPackageRidSpecificPackageProject.project.assets.json" />
   </ItemGroup>
 </Project>

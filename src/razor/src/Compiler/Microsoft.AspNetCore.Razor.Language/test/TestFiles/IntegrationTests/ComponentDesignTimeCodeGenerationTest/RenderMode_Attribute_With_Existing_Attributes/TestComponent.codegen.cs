@@ -28,7 +28,7 @@ namespace Test
             __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                     Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -51,7 +51,7 @@ namespace Test
             ((global::Test.TestComponent)default).
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                                            P1
+                                                                                                       P1
 
 #line default
 #line hidden

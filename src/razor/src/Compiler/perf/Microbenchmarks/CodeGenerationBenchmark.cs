@@ -26,7 +26,7 @@ public class CodeGenerationBenchmark
 
         ProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, fileSystem, b => RazorExtensions.Register(b)); ;
 
-        MSN = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), FileKinds.Legacy);
+        MSN = fileSystem.GetItem(Path.Combine(root.FullName, "MSN.cshtml"), RazorFileKind.Legacy);
     }
 
     public RazorProjectEngine ProjectEngine { get; }
@@ -37,9 +37,9 @@ public class CodeGenerationBenchmark
     public void CodeGeneration_DesignTime_LargeStaticFile()
     {
         var codeDocument = ProjectEngine.ProcessDesignTime(MSN);
-        var generated = codeDocument.GetCSharpDocument();
+        var generated = codeDocument.GetRequiredCSharpDocument();
 
-        if (generated.Diagnostics.Count != 0)
+        if (generated.Diagnostics.Length > 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, generated.Diagnostics));
         }
@@ -49,9 +49,9 @@ public class CodeGenerationBenchmark
     public void CodeGeneration_Runtime_LargeStaticFile()
     {
         var codeDocument = ProjectEngine.Process(MSN);
-        var generated = codeDocument.GetCSharpDocument();
+        var generated = codeDocument.GetRequiredCSharpDocument();
 
-        if (generated.Diagnostics.Count != 0)
+        if (generated.Diagnostics.Length > 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, generated.Diagnostics));
         }

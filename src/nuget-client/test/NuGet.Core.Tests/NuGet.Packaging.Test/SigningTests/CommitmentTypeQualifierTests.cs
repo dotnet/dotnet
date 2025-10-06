@@ -1,17 +1,16 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
 using Xunit;
-using BcCommitmentTypeQualifier = Org.BouncyCastle.Asn1.Esf.CommitmentTypeQualifier;
 
 namespace NuGet.Packaging.Test
 {
     public class CommitmentTypeQualifierTests
     {
-        private readonly DerObjectIdentifier _commitmentTypeQualifierId = new DerObjectIdentifier("1.2.3");
+        private readonly Oid _commitmentTypeQualifierId = new("1.2.3");
 
         [Fact]
         public void Read_WithInvalidAsn1_Throws()
@@ -23,30 +22,44 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithOnlyCommitmentTypeId_ReturnsCommitmentTypeQualifier()
         {
-            var bcCommitmentTypeQualifier = new BcCommitmentTypeQualifier(_commitmentTypeQualifierId);
-            var bytes = bcCommitmentTypeQualifier.GetDerEncoded();
+            byte[] bytes = GetCommitmentTypeQualifierBytes(_commitmentTypeQualifierId);
 
-            var commitmentTypeQualifier = CommitmentTypeQualifier.Read(bytes);
+            CommitmentTypeQualifier commitmentTypeQualifier = CommitmentTypeQualifier.Read(bytes);
 
             Assert.Equal(
-                bcCommitmentTypeQualifier.CommitmentTypeIdentifier.ToString(),
-                commitmentTypeQualifier.CommitmentTypeIdentifier.Value);
+                _commitmentTypeQualifierId.Value!,
+                commitmentTypeQualifier.CommitmentTypeIdentifier.Value!);
             Assert.Null(commitmentTypeQualifier.Qualifier);
         }
 
         [Fact]
         public void Read_WithQualifier_ReturnsCommitmentTypeQualifier()
         {
-            var bcCommitmentTypeQualifier = new BcCommitmentTypeQualifier(
-                _commitmentTypeQualifierId, DerNull.Instance);
-            var bytes = bcCommitmentTypeQualifier.GetDerEncoded();
+            byte[] bytes = GetCommitmentTypeQualifierBytes(_commitmentTypeQualifierId, addNullQualifier: true);
 
-            var commitmentTypeQualifier = CommitmentTypeQualifier.Read(bytes);
+            CommitmentTypeQualifier commitmentTypeQualifier = CommitmentTypeQualifier.Read(bytes);
 
             Assert.Equal(
-                bcCommitmentTypeQualifier.CommitmentTypeIdentifier.ToString(),
-                commitmentTypeQualifier.CommitmentTypeIdentifier.Value);
-            Assert.Equal(DerNull.Instance.GetDerEncoded(), commitmentTypeQualifier.Qualifier);
+                _commitmentTypeQualifierId.Value!,
+                commitmentTypeQualifier.CommitmentTypeIdentifier.Value!);
+            Assert.Equal(new byte[] { 0x05, 0x00 }, commitmentTypeQualifier.Qualifier);
+        }
+
+        private static byte[] GetCommitmentTypeQualifierBytes(Oid oid, bool addNullQualifier = false)
+        {
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            using (writer.PushSequence())
+            {
+                writer.WriteObjectIdentifier(oid.Value!);
+
+                if (addNullQualifier)
+                {
+                    writer.WriteNull();
+                }
+            }
+
+            return writer.Encode();
         }
     }
 }

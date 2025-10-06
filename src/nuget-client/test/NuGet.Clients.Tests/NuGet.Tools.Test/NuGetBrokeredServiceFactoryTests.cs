@@ -148,12 +148,12 @@ namespace NuGet.Tools.Test
             }
         }
 
-        public static TheoryData ServicesAndFactories => new TheoryData<ServiceRpcDescriptor, Type>
+        public static TheoryData<ServiceRpcDescriptor, Type> ServicesAndFactories => new()
             {
                 { ContractsNuGetServices.NuGetProjectServiceV1, typeof(NuGetProjectService) }
             };
 
-        public static TheoryData ServicesAndAuthorizingFactories => new TheoryData<ServiceRpcDescriptor, Type>
+        public static TheoryData<ServiceRpcDescriptor, Type> ServicesAndAuthorizingFactories => new()
             {
                 { NuGetServices.ProjectManagerService, typeof(NuGetProjectManagerService) },
                 { NuGetServices.ProjectUpgraderService, typeof(NuGetProjectUpgraderService) },

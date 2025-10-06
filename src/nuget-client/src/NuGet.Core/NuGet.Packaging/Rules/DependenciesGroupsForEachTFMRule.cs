@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,7 @@ namespace NuGet.Packaging.Rules
 
         internal IEnumerable<PackagingLogMessage> GenerateWarnings(HashSet<NuGetFramework> compatNotExactMatches, HashSet<NuGetFramework> noExactMatchesFromFile, HashSet<NuGetFramework> noExactMatchesFromNuspec)
         {
-            (string noExactMatchString, string compatMatchString) = GenerateWarningString(noExactMatchesFromFile, noExactMatchesFromNuspec, (ICollection<NuGetFramework>)compatNotExactMatches);
+            (string noExactMatchString, string compatMatchString) = GenerateWarningString(noExactMatchesFromFile, noExactMatchesFromNuspec, compatNotExactMatches);
 
             var issues = new List<PackagingLogMessage>();
 

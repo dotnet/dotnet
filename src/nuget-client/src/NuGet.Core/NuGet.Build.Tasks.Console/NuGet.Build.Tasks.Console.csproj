@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(IsVsixBuild)' != 'true'">$(TargetFrameworksExe)</TargetFrameworks>
+    <TargetFramework Condition="'$(IsVsixBuild)' == 'true'">$(NETFXTargetFramework)</TargetFramework>
     <OutputType>Exe</OutputType>
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
@@ -18,11 +19,6 @@
     <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">
-    <TargetFrameworks />
-    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
   </ItemGroup>
@@ -37,10 +33,14 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <Reference Include="Microsoft.Build.Utilities.v4.0" Aliases="MicrosoftBuildUtilitiesv4" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="App.config" Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' " />
     <None Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,10 +51,14 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.Build.Tasks.Console.Test" />
+  </ItemGroup>
+
   <Target Name="PackBuildOutputs">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(TargetPath)" PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
-      <TfmSpecificPackageFile Include="$(ProjectRuntimeConfigFilePath)" Condition=" '$(IsCore)' == 'true' " PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
+      <TfmSpecificPackageFile Include="$(ProjectRuntimeConfigFilePath)" Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' " PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
     </ItemGroup>
   </Target>
 </Project>

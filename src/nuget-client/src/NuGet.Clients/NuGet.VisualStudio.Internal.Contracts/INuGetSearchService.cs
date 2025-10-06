@@ -83,5 +83,10 @@ namespace NuGet.VisualStudio.Internal.Contracts
         Task<IReadOnlyList<SourceRepository>> GetAllPackageFoldersAsync(
             IReadOnlyCollection<IProjectContextInfo> projectContextInfos,
             CancellationToken cancellationToken);
+
+        void ClearFromCache(
+            string id,
+            IReadOnlyCollection<PackageSourceContextInfo> packageSources,
+            bool includePrerelease);
     }
 }

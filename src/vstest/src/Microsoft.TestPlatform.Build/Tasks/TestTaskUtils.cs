@@ -215,6 +215,7 @@ internal static class TestTaskUtils
         if (task.VSTestNoLogo)
         {
             builder.AppendSwitch("--nologo");
+            Environment.SetEnvironmentVariable("VSTEST_MSBUILD_NOLOGO", "1");
         }
 
         if (string.Equals(task.VSTestArtifactsProcessingMode, "collect", StringComparison.OrdinalIgnoreCase))

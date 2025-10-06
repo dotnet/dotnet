@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
@@ -14,9 +14,11 @@ internal static partial class RazorWrapperFactory
 {
     private class CodeDocumentWrapper(RazorCodeDocument obj) : Wrapper<RazorCodeDocument>(obj), IRazorCodeDocument
     {
+        private string? _csharpGeneratedCode;
+
         public ImmutableArray<ClassifiedSpan> GetClassifiedSpans()
         {
-            var result = Object.GetSyntaxTree().GetClassifiedSpans();
+            var result = Object.GetRequiredSyntaxTree().GetClassifiedSpans();
 
             using var builder = new PooledArrayBuilder<ClassifiedSpan>(capacity: result.Length);
 
@@ -32,12 +34,12 @@ internal static partial class RazorWrapperFactory
 #pragma warning restore CS0618 // Type or member is obsolete
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<TagHelperSpan> GetTagHelperSpans()
         {
-            var result = Object.GetSyntaxTree().GetTagHelperSpans();
+            var result = Object.GetRequiredSyntaxTree().GetTagHelperSpans();
 
             using var builder = new PooledArrayBuilder<TagHelperSpan>(capacity: result.Length);
 
@@ -48,29 +50,32 @@ internal static partial class RazorWrapperFactory
                     WrapAll(item.Binding.Descriptors, Wrap)));
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<RazorSourceMapping> GetSourceMappings()
         {
-            var mappings = Object.GetCSharpDocument().SourceMappings;
+            var mappings = Object.GetRequiredCSharpDocument().SourceMappings;
 
             return WrapAll<SourceMapping, RazorSourceMapping>(mappings, ConvertSourceMapping);
         }
 
         public ImmutableArray<IRazorDiagnostic> GetDiagnostics()
         {
-            var diagnostics = Object.GetCSharpDocument().Diagnostics;
+            var diagnostics = Object.GetRequiredCSharpDocument().Diagnostics;
             return WrapAll(diagnostics, Wrap);
         }
 
-        public IRazorTagHelperDocumentContext GetTagHelperContext()
-            => WrapTagHelperDocumentContext(Object.GetTagHelperContext());
+        public IRazorTagHelperDocumentContext? GetTagHelperContext()
+            => Object.TryGetTagHelperContext(out var tagHelperContext)
+                ? WrapTagHelperDocumentContext(tagHelperContext)
+                : null;
 
         public int? GetDesiredIndentation(ITextSnapshot snapshot, ITextSnapshotLine line, int indentSize, int tabSize)
-            => RazorIndentationFacts.GetDesiredIndentation(Object.GetSyntaxTree(), snapshot, line, indentSize, tabSize);
+            => RazorIndentationFacts.GetDesiredIndentation(Object.GetRequiredSyntaxTree(), snapshot, line, indentSize, tabSize);
 
         public string GetGeneratedCode()
-            => Object.GetCSharpDocument().GeneratedCode;
+            => _csharpGeneratedCode ??=
+                InterlockedOperations.Initialize(ref _csharpGeneratedCode, Object.GetRequiredCSharpDocument().Text.ToString());
     }
 }

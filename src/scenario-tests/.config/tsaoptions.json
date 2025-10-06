@@ -1,10 +1,10 @@
-{  
+{
     "instanceUrl": "https://devdiv.visualstudio.com/",
     "template": "TFSDEVDIV",
     "projectName": "DEVDIV",
-    "areaPath": "DevDiv\\NET Fundamentals\\Infrastructure\\Arcade\\SDL",
+    "areaPath": "DevDiv\\.NET Shared",
     "iterationPath": "DevDiv",
     "notificationAliases": [ "dnceng@microsoft.com" ],
-    "repositoryName":"xliff-tasks",
-    "codebaseName": "xliff-tasks"
+    "repositoryName":"scenario-tests",
+    "codebaseName": "scenario-tests"
 }

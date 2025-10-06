@@ -227,6 +227,22 @@ namespace Mono.Cecil {
 
 			if (!type.HasMethods)
 				return null;
+			
+			// This is here to handle privatescope.  Aka CompilerControlled.
+			// GetMethod cannot correctly resolve a privatescope method when the method name is the same as another method in the type.
+			// because GetMethod operates on a MethodReference which doesn't have access to the MethodAttributes.
+			// privatescope methods are always private.  There should also never be a MethodReference to a privatescope method.
+			// in other words, privatescope methods should always be referenced by their MethodDefinition.
+			// 
+			// privatescope methods aside, if method is ever a MethodDefinition we don't need to go searching all of the methods on the type
+			// we can return the method directly.  This avoids the cost of a linear search.
+			//
+			// So we have this optimization opportunity here.
+			// And we need to handle privatescope methods somehow, because GetMethod can't.
+			//
+			// and 2 birds one stone.  This if check covers the optimization and privatescope handling.
+			if (method is MethodDefinition definition)
+				return definition;
 
 			return GetMethod (type, method);
 		}
@@ -262,6 +278,9 @@ namespace Mono.Cecil {
 					continue;
 
 				if (!AreSame (method.ReturnType, reference.ReturnType))
+					continue;
+
+				if (method.HasThis != reference.HasThis)
 					continue;
 
 				if (method.IsVarArg () != reference.IsVarArg ())
@@ -331,6 +350,35 @@ namespace Mono.Cecil {
 			if (a.IsArray)
 				return AreSame ((ArrayType) a, (ArrayType) b);
 
+			if (a.IsFunctionPointer)
+				return AreSame ((FunctionPointerType) a, (FunctionPointerType) b);
+
+			return true;
+		}
+
+		static bool AreSame (FunctionPointerType a, FunctionPointerType b)
+		{
+			if (a.HasThis != b.HasThis)
+				return false;
+			
+			if (a.CallingConvention != b.CallingConvention)
+				return false;
+
+			if (!AreSame (a.ReturnType, b.ReturnType))
+				return false;
+
+			if (a.ContainsGenericParameter != b.ContainsGenericParameter)
+				return false;
+
+			if (a.HasParameters != b.HasParameters)
+				return false;
+
+			if (!a.HasParameters)
+				return true;
+
+			if (!AreSame (a.Parameters, b.Parameters))
+				return false;
+			
 			return true;
 		}
 

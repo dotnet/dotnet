@@ -22,10 +22,8 @@
                                         Transition;[<Missing>];
                                     CSharpImplicitExpressionBody - [14..32)::18
                                         CSharpCodeBlock - [14..32)::18
-                                            CSharpExpressionLiteral - [14..15)::1 - [@] - Gen<Expr>
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [15..32)::17 - [DateTime.Now.Year] - Gen<Expr>
-                                                Identifier;[DateTime];
+                                            CSharpExpressionLiteral - [14..32)::18 - [@DateTime.Now.Year] - Gen<Expr>
+                                                Identifier;[@DateTime];
                                                 Dot;[.];
                                                 Identifier;[Now];
                                                 Dot;[.];

@@ -1,27 +1,29 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Composition;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using SemanticTokenModifiers = Microsoft.CodeAnalysis.Razor.SemanticTokens.SemanticTokenModifiers;
+using SemanticTokenTypes = Microsoft.CodeAnalysis.Razor.SemanticTokens.SemanticTokenTypes;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 
-[Export(typeof(ISemanticTokensLegendService)), Shared]
-internal sealed class RemoteSemanticTokensLegendService : ISemanticTokensLegendService
+[Shared]
+[Export(typeof(ISemanticTokensLegendService))]
+[Export(typeof(ILspLifetimeService))]
+internal sealed class RemoteSemanticTokensLegendService : ISemanticTokensLegendService, ILspLifetimeService
 {
-    private static SemanticTokenModifiers s_tokenModifiers = null!;
-    private static SemanticTokenTypes s_tokenTypes = null!;
+    private SemanticTokenModifiers _tokenModifiers = null!;
+    private SemanticTokenTypes _tokenTypes = null!;
 
-    public SemanticTokenModifiers TokenModifiers => s_tokenModifiers;
+    public SemanticTokenModifiers TokenModifiers => _tokenModifiers;
 
-    public SemanticTokenTypes TokenTypes => s_tokenTypes;
+    public SemanticTokenTypes TokenTypes => _tokenTypes;
 
-    public static void SetLegend(string[] tokenTypes, string[] tokenModifiers)
+    public void OnLspInitialized(RemoteClientLSPInitializationOptions options)
     {
-        if (s_tokenTypes is null)
-        {
-            s_tokenTypes = new SemanticTokenTypes(tokenTypes);
-            s_tokenModifiers = new SemanticTokenModifiers(tokenModifiers);
-        }
+        _tokenTypes = new SemanticTokenTypes(options.TokenTypes);
+        _tokenModifiers = new SemanticTokenModifiers(options.TokenModifiers);
     }
 }

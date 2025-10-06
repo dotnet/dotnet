@@ -10,14 +10,12 @@
   Optional parameters:
     Configuration                   Build configuration: "Debug", "Release", etc.
 
-    DotNetBuildRepo                 Build the repo as part of the entire .NET stack.
-    DotNetBuildInnerRepo            Build the repo as part of the entire .NET stack. This switch is used on the inner repo invocation and should not be passed by the user.
-    DotNetBuildOrchestrator         Build the entire .NET stack.
-    DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
-    DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
-    DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
-    DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
-    DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
+    DotNetBuild                     Build the repo as part of the entire .NET stack.
+    DotNetBuildFromVMR              Identifies that the the repo is built from within the VMR.
+    DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
+    DotNetBuildSourceOnly           Build the repo as as part of the .NET stack in source-only mode, with no external dependencies.
+    DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
+    DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolExpirationInDays    Symbol expiration time in days (defaults to 10 years).
     DotNetSignType                  Specifies the signing type: 'real' (default), 'test'.
     DotNetRuntimeSourceFeed         Storage account to lookup for the .Net runtime files
@@ -44,21 +42,24 @@
 
   <ItemDefinitionGroup>
     <ProjectToBuild>
+      <BuildStep>1</BuildStep>
       <RestoreInParallel>true</RestoreInParallel>
       <BuildInParallel>true</BuildInParallel>
+      <DotNetBuildPass>1</DotNetBuildPass>
     </ProjectToBuild>
   </ItemDefinitionGroup>
 
   <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
-  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true'" />
-
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
 
   <PropertyGroup>
     <_ProjectsPropertyWasUpdatedInBuildProps Condition="'$(_OriginalProjectsValue)' != '$(Projects)'">true</_ProjectsPropertyWasUpdatedInBuildProps>
+    <!-- An empty DotNetBuildPass refers to the 1st build pass. -->
+    <_DotNetBuildPassNormalized Condition="'$(DotNetBuildPass)' != ''">$(DotNetBuildPass)</_DotNetBuildPassNormalized>
+    <_DotNetBuildPassNormalized Condition="'$(DotNetBuildPass)' == ''">1</_DotNetBuildPassNormalized>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Projects)' != ''">
@@ -67,38 +68,36 @@
     <!-- Setting 'Projects' overrides the ProjectToBuild list. -->
     <ProjectToBuild Remove="@(ProjectToBuild)" />
     <ProjectToBuild Include="$(Projects)" />
+    <ProjectToBuild Update="@(ProjectToBuild)" Condition="'$(_DotNetBuildPassNormalized)' != ''" DotNetBuildPass="$(_DotNetBuildPassNormalized)" />
+  </ItemGroup>
+
+  <!--
+    Filter out projects that are part of a different build pass in the inner build when doing a unified build.
+    Don't do this filtering in non-unified builds to allow repos to define how different build passes are handled
+    in their own repo-specific builds.
+  -->
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
+    <_ProjectToBuildCurrentBuildPass Include="@(ProjectToBuild->WithMetadataValue('DotNetBuildPass', '$(_DotNetBuildPassNormalized)'))" />
+    <ProjectToBuild Remove="@(ProjectToBuild)" />
+    <ProjectToBuild Include="@(_ProjectToBuildCurrentBuildPass)" />
   </ItemGroup>
 
   <!--
     Default values.
+    If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln(x) files in the repo root.
+    For build passes after the first, build nothing by default.
   -->
-  <!-- If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln files in the repo root. -->
-  <ItemGroup Condition="'@(ProjectToBuild)' == ''">
-    <ProjectToBuild Include="$(RepoRoot)*.sln" />
+  <ItemGroup>
+    <RepoRootSlnFile Include="$(RepoRoot)*.sln" />
+    <RepoRootSlnxFile Include="$(RepoRoot)*.slnx" />
   </ItemGroup>
 
-  <Target Name="Execute">
-    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
-    <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
-    <Error Text="File 'global.json' must exist in directory specified by RepoRoot: '$(RepoRoot)'" Condition="'$(RepoRoot)' != '' and !Exists('$(RepoRoot)global.json')"/>
+  <ItemGroup Condition="'@(ProjectToBuild)' == '' and '$(_DotNetBuildPassNormalized)' == '1'">
+    <ProjectToBuild Include="@(RepoRootSlnFile)" />
+    <ProjectToBuild Include="@(RepoRootSlnxFile)" Condition="'@(ProjectToBuild)' == ''"/>
+  </ItemGroup>
 
-    <PropertyGroup>
-      <!-- 'IsRunningFromVisualStudio' may be true even when running msbuild.exe from command line. This generally means that MSBuild is from a Visual Studio installation and therefore we need to find NuGet.targets in a different location. -->
-      <_NuGetRestoreTargets Condition="Exists('$(MSBuildToolsPath)\NuGet.targets')" >$(MSBuildToolsPath)\NuGet.targets</_NuGetRestoreTargets>
-      <_NuGetRestoreTargets Condition="'$([MSBuild]::IsRunningFromVisualStudio())' == 'true' And Exists('$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets')">$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets</_NuGetRestoreTargets>
-
-      <!-- If `DotNetPublishUsingPipelines` is not set we default it to false. -->
-      <DotNetPublishUsingPipelines Condition="'$(DotNetPublishUsingPipelines)' == ''">false</DotNetPublishUsingPipelines>
-
-      <!-- 
-        If DotNetPublishUsingPipelines is set we don't publish symbols during the build stage,
-        only in the Maestro post-build stages. If DotNetPublishUsingPipelines is NOT set then
-        we publish symbols during the build stage.
-      -->
-      <PublishToSymbolServer>true</PublishToSymbolServer>
-      <PublishToSymbolServer Condition="'$(DotNetPublishUsingPipelines)' == 'true'">false</PublishToSymbolServer>
-    </PropertyGroup>
-
+  <Target Name="InitializeSolutionBuildInputs">
     <ItemGroup>
       <_SolutionBuildTargets Include="Rebuild" Condition="'$(Rebuild)' == 'true'" />
       <_SolutionBuildTargets Include="Build" Condition="'$(Build)' == 'true' and '$(Rebuild)' != 'true'" />
@@ -121,10 +120,10 @@
       <_CommonProps Include="VersionsPropsPath=$(VersionsPropsPath)"/>
 
       <!--
-        When building in source-only or product scenarios, some projects may have set ExcludeFromSourceBuild=true or ExcludeFromDotNetBuild.
+        In .NET product build mode, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
         NuGet Restore task reports a warning for such projects, which we suppress here.
       -->
-      <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuild)' == 'true'"/>
+      <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
 
       <!--
         C++ projects expect VCTargetsPath property to be set. MSBuild generates this property to solution
@@ -133,48 +132,42 @@
       <_CommonProps Include="VCTargetsPath=$([MSBuild]::ValueOrDefault('$(VCTargetsPath)', '$([MSBuild]::GetVsInstallRoot())\Common7\IDE\VC\VCTargets\'))" Condition="'$(MSBuildRuntimeType)' != 'Core'"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <_SolutionBuildProps Include="@(_CommonProps)"/>
+      <_SolutionBuildProps Include="__DeployProjectOutput=$(Deploy)" Condition="'$(Deploy)' != ''"/>
+      <_SolutionBuildProps Include="__ImportPackTargets=true" Condition="'$(Pack)' == 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="Execute" DependsOnTargets="InitializeSolutionBuildInputs">
+    <Error Text="Both .sln and .slnx files found. Please specify one to use in the eng/Build.props file." Condition="'@(RepoRootSlnFile)' != '' and '@(RepoRootSlnxFile)' != ''" />
+    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
+    <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
+    <Error Text="File 'global.json' must exist in directory specified by RepoRoot: '$(RepoRoot)'" Condition="'$(RepoRoot)' != '' and !Exists('$(RepoRoot)global.json')"/>
+
+    <PropertyGroup>
+      <!-- 'IsRunningFromVisualStudio' may be true even when running msbuild.exe from command line. This generally means that MSBuild is from a Visual Studio installation and therefore we need to find NuGet.targets in a different location. -->
+      <_NuGetRestoreTargets Condition="Exists('$(MSBuildToolsPath)\NuGet.targets')" >$(MSBuildToolsPath)\NuGet.targets</_NuGetRestoreTargets>
+      <_NuGetRestoreTargets Condition="'$([MSBuild]::IsRunningFromVisualStudio())' == 'true' And Exists('$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets')">$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets</_NuGetRestoreTargets>
+    </PropertyGroup>
+
     <ItemGroup Condition="'$(Restore)' == 'true'">
       <_RestoreToolsProps Include="@(_CommonProps)"/>
       <_RestoreToolsProps Include="BaseIntermediateOutputPath=$(ArtifactsToolsetDir)Common"/>
       <_RestoreToolsProps Include="ExcludeRestorePackageImports=true"/>
       <_RestoreToolsProps Include="_NuGetRestoreTargets=$(_NuGetRestoreTargets)"/>
-      
+
       <!-- Used in the SDK (Tools.proj) to control whether Build.Tasks.Feed will be restored or not. -->
       <_RestoreToolsProps Include="Publish=$(Publish)"/>
-
-      <!-- Used in the SDK (Tools.proj) to control whether SymbolUploader.Build.Task will be restored or not. -->
-      <_RestoreToolsProps Include="PublishToSymbolServer=$(PublishToSymbolServer)"/>
-
-      <!-- Forward this property because we can't assume it will be available globally. -->
-      <_RestoreToolsProps Include="DotNetPublishUsingPipelines=$(DotNetPublishUsingPipelines)"/>
     </ItemGroup>
 
     <!--
-      Builds from the 'internal' project, and only those, can download the .net Runtime 
+      Builds from the 'internal' project, and only those, can download the .net Runtime
       from a private location.
     -->
     <ItemGroup Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">
       <_RestoreToolsProps Include="DotNetRuntimeSourceFeed=$(DotNetRuntimeSourceFeed)"/>
       <_RestoreToolsProps Include="DotNetRuntimeSourceFeedKey=$(DotNetRuntimeSourceFeedKey)"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <_PublishProps Include="@(_CommonProps)"/>
-
-      <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
-      <_PublishProps Include="Publish=$(Publish)"/>
-
-      <!-- Used in the SDK (Publish.proj) to control whether in-build symbol publishing should be performed. -->
-      <_PublishProps Include="PublishToSymbolServer=$(PublishToSymbolServer)"/>
-
-      <!-- Forward this property because we can't assume it will be available globally. -->
-      <_PublishProps Include="DotNetPublishUsingPipelines=$(DotNetPublishUsingPipelines)"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <_SolutionBuildProps Include="@(_CommonProps)"/>
-      <_SolutionBuildProps Include="__DeployProjectOutput=$(Deploy)" Condition="'$(Deploy)' != ''"/>
-      <_SolutionBuildProps Include="__ImportPackTargets=true" Condition="'$(Pack)' == 'true'" />
     </ItemGroup>
 
     <!--
@@ -205,8 +198,10 @@
       <_SolutionRestoreProps Include="_NETCORE_ENGINEERING_TELEMETRY=Restore" />
       <_SolutionRestoreProps Include="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
       <_SolutionRestoreProps Include="RestoreUseStaticGraphEvaluation=$(RestoreUseStaticGraphEvaluation)" />
+      <_SolutionRestoreProps Include="RestoreEmbedFilesInBinlog=true" />
+      <_SolutionRestoreProps Include="RestoreStaticGraphEnableBinaryLogger=$(GenerateRestoreUseStaticGraphEvaluationBinlog)" />
     </ItemGroup>
-    
+
     <PropertyGroup>
       <!-- This can be set to false as an optimization for repos that don't use NuGet. -->
       <RestoreUsingNuGetTargets Condition="'$(RestoreUsingNuGetTargets)' == ''">true</RestoreUsingNuGetTargets>
@@ -226,7 +221,7 @@
              Targets="_IsProjectRestoreSupported"
              SkipNonexistentTargets="true"
              BuildInParallel="true"
-             Condition="'$(RestoreUsingNuGetTargets)' != 'false' and '%(ProjectToBuild.Extension)' != '.sln' and '%(ProjectToBuild.Extension)' != '.slnf' and '$(RestoreUseStaticGraphEvaluation)' != 'true' and '$(Restore)' == 'true'">
+             Condition="'$(RestoreUsingNuGetTargets)' != 'false' and '%(ProjectToBuild.Extension)' != '.sln' and '%(ProjectToBuild.Extension)' != '.slnf' and '%(ProjectToBuild.Extension)' != '.slnx' and '$(RestoreUseStaticGraphEvaluation)' != 'true' and '$(Restore)' == 'true'">
 
       <Output TaskParameter="TargetOutputs" ItemName="_ProjectToRestoreWithNuGet" />
     </MSBuild>
@@ -249,27 +244,28 @@
     <!-- Enable binlog generation during static graph restore evaluation -->
     <ItemGroup Condition="'$(GenerateRestoreUseStaticGraphEvaluationBinlog)' == 'true'">
       <_ProjectToRestore>
-        <AdditionalProperties>RESTORE_TASK_BINLOG_PARAMETERS=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
+        <AdditionalProperties>RestoreStaticGraphBinaryLoggerParameters=$(ArtifactsLogDir)Restore-%(Filename)%(Extension).binlog</AdditionalProperties>
       </_ProjectToRestore>
     </ItemGroup>
 
+    <!--
+      Filter TreatWarningsAsErrors during Restore so CLI script builds and Visual Studio builds restore the same.
+      Don't ignore it when it set to 'false' to apply '-warnaserror false' from CLI script builds.
+    -->
+    <PropertyGroup>
+      <_RestoreRemoveProps>$(_RemoveProps)</_RestoreRemoveProps>
+      <_RestoreRemoveProps Condition="'$(TreatWarningsAsErrors)' != 'false'">$(_RestoreRemoveProps);TreatWarningsAsErrors</_RestoreRemoveProps>
+    </PropertyGroup>
+
     <MSBuild Projects="@(_ProjectToRestore)"
              Properties="@(_SolutionRestoreProps)"
-             RemoveProperties="$(_RemoveProps);TreatWarningsAsErrors"
+             RemoveProperties="$(_RestoreRemoveProps)"
              Targets="Restore"
              SkipNonexistentTargets="true"
              BuildInParallel="%(_ProjectToRestore.RestoreInParallel)"
              Condition="'$(Restore)' == 'true'"/>
 
-    <!--
-      Build solution.
-    -->
-    <MSBuild Projects="@(ProjectToBuild)"
-             Properties="@(_SolutionBuildProps);__BuildPhase=SolutionBuild;_NETCORE_ENGINEERING_TELEMETRY=Build"
-             RemoveProperties="$(_RemoveProps)"
-             Targets="@(_SolutionBuildTargets)"
-             BuildInParallel="%(ProjectToBuild.BuildInParallel)"
-             Condition="'@(_SolutionBuildTargets)' != ''" />
+    <CallTarget Targets="ExecuteBuildTargets" Condition="'@(_SolutionBuildTargets)' != ''" />
 
     <MSBuild Projects="AfterSolutionBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Build"
@@ -287,40 +283,30 @@
     <MSBuild Projects="AfterSigning.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
              Targets="@(_SolutionBuildTargets)"
-             Condition="'@(_SolutionBuildTargets)' != ''"/>
+             Condition="'@(_SolutionBuildTargets)' != ''" />
 
-    <!--
-      Perform post-source-build tasks. Validate source-build requirements, such as the prebuilt
-      usage baseline, and generate the source-build intermediate nupkg.
-    -->
-    <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
-             Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true'"/>
-
-    <!--
-      Publish artifacts. This should run in the following situations:
-      - Regular single repo builds
-        - When running in the outer build phase of a source-only repo build, to properly publish the source-build intermediate nupkg.
-      - VMR builds
-        - When running in the inner build phase
-
-      It shouldn't run:
-      - In an inner build if running from single repo build.
-      - In an outer build if running from the full product build.
-    -->
-
-    <PropertyGroup>
-      <_VmrBuild Condition="'$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true'">true</_VmrBuild>
-      <_InnerRepoBuild Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildPhase)' == 'InnerRepo'">true</_InnerRepoBuild>
-      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' == 'true' and '$(_VmrBuild)' == 'true'">true</_ShouldRunPublish>
-      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' != 'true' and '$(_VmrBuild)' != 'true'">true</_ShouldRunPublish>
-    </PropertyGroup>
+    <ItemGroup>
+      <_PublishProps Include="@(_CommonProps)"/>
+      <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
+      <_PublishProps Include="Publish=$(Publish)"/>
+    </ItemGroup>
 
       <!-- Make sure we always publish in VMR build - working around runtime repo which sets Publish to false. -->
     <MSBuild Projects="Publish.proj"
              Properties="@(_PublishProps);_NETCORE_ENGINEERING_TELEMETRY=Publish"
              Targets="Publish"
-             Condition="'$(Publish)' == 'true' and '$(_ShouldRunPublish)' == 'true'"/>
+             Condition="'$(Publish)' == 'true'"/>
+  </Target>
+
+  <Target Name="ExecuteBuildTargets"
+          Inputs="%(ProjectToBuild.BuildStep)"
+          Outputs="unused"
+          DependsOnTargets="InitializeSolutionBuildInputs">
+    <MSBuild Projects="@(ProjectToBuild)"
+             Properties="@(_SolutionBuildProps);__BuildPhase=SolutionBuild;_NETCORE_ENGINEERING_TELEMETRY=Build"
+             RemoveProperties="$(_RemoveProps)"
+             Targets="@(_SolutionBuildTargets)"
+             BuildInParallel="%(ProjectToBuild.BuildInParallel)" />
   </Target>
 
 </Project>

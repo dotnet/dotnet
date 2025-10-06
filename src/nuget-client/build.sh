@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
+CONFIGURATION=
+CI=0
+BUILD_NUMBER=
+RELEASE_LABEL=zlocal
+ARGUMENTS=()
+
 while true ; do
 	case "$1" in
-		-c|--clear-cache) CLEAR_CACHE=1 ; shift ;;
+		-c) CONFIGURATION=$2 ; shift ;;
+		--ci) CI=1 ; shift ;;
+		--clear-cache) CLEAR_CACHE=1 ; shift ;;
+		-n) BUILD_NUMBER=$2 ; shift ;;
+		-l) RELEASE_LABEL=$2 ; shift ;;
+		-p:*) ARGUMENTS+=( "$1" ) ; shift ;;
+		/p:*) ARGUMENTS+=( "$1" ) ; shift ;;
 		--) shift ; break ;;
 		*) shift ; break ;;
 	esac
@@ -15,10 +27,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# init the repo
-git submodule init
-git submodule update
-
 # clear caches
 if [ "$CLEAR_CACHE" == "1" ]; then
 	# echo "Clearing the nuget web cache folder"
@@ -28,9 +36,26 @@ if [ "$CLEAR_CACHE" == "1" ]; then
 	rm -r -f ~/.nuget/packages/*
 fi
 
+if [ "$BUILD_NUMBER" != "" ]; then
+	ARGUMENTS+=( "/p:BuildNumber=$BUILD_NUMBER" )
+fi
+
+if [ "$RELEASE_LABEL" != "" ]; then
+	ARGUMENTS+=( "/p:ReleaseLabel=$RELEASE_LABEL" )
+fi
+
+# CI build is Release by default, local builds are Debug by default
+if [ "$CONFIGURATION" == "" ]; then
+	if [ "$CI" == "1" ]; then
+		CONFIGURATION=Release
+	else
+		CONFIGURATION=Debug
+	fi
+fi
+
 # restore packages
-echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta"
-dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta
+echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION" ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
+dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
 
 if [ $? -ne 0 ]; then
 	echo "Restore failed!!"
@@ -38,8 +63,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # run tests
-echo "dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta"
-dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta
+echo "dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION" ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
+dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
 
 if [ $? -ne 0 ]; then
 	echo "Tests failed!!"

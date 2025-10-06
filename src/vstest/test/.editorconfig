@@ -32,4 +32,7 @@ dotnet_diagnostic.CA1051.severity = silent # Disabled on tests as it does not ma
 # CA1710: Identifiers should have correct suffix
 dotnet_diagnostic.CA1710.severity = warning
 
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = silent
+
 #### C# Naming styles ####

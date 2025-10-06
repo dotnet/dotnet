@@ -49,7 +49,7 @@ internal class FakeTestBatchBuilder
     /// <summary>
     /// Sets the dll path (source) to be the provided value.
     /// </summary>
-    /// <param name="batchSize"></param>
+    /// <param name="path"></param>
     /// <returns></returns>
     internal FakeTestBatchBuilder WithDllPath(string path)
     {

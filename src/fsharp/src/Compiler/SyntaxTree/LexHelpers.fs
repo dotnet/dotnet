@@ -9,20 +9,17 @@ open Internal.Utilities
 open Internal.Utilities.Library
 open Internal.Utilities.Text.Lexing
 
-open FSharp.Compiler.IO
 open FSharp.Compiler.DiagnosticsLogger
 open FSharp.Compiler.Features
+open FSharp.Compiler.IO
 open FSharp.Compiler.ParseHelpers
-open FSharp.Compiler.UnicodeLexing
 open FSharp.Compiler.Parser
 open FSharp.Compiler.Syntax
 open FSharp.Compiler.Syntax.PrettyNaming
+open FSharp.Compiler.SyntaxTreeOps
 open FSharp.Compiler.Text
 open FSharp.Compiler.Text.Range
-
-/// The "mock" file name used by fsi.exe when reading from stdin.
-/// Has special treatment by the lexer, i.e. __SOURCE_DIRECTORY__ becomes GetCurrentDirectory()
-let stdinMockFileName = "stdin"
+open FSharp.Compiler.UnicodeLexing
 
 /// Lexer args: status of #light processing.  Mutated when a #light
 /// directive is processed. This alters the behaviour of the lexfilter.
@@ -76,15 +73,8 @@ type LongUnicodeLexResult =
     | Invalid
 
 let mkLexargs
-    (
-        conditionalDefines,
-        indentationSyntaxStatus,
-        resourceManager,
-        ifdefStack,
-        diagnosticsLogger,
-        pathMap: PathMap,
-        applyLineDirectives
-    ) =
+    (conditionalDefines, indentationSyntaxStatus, resourceManager, ifdefStack, diagnosticsLogger, pathMap: PathMap, applyLineDirectives)
+    =
     {
         conditionalDefines = conditionalDefines
         ifdefStack = ifdefStack
@@ -98,10 +88,8 @@ let mkLexargs
     }
 
 /// Register the lexbuf and call the given function
-let reusingLexbufForParsing lexbuf f =
+let reusingLexbufForParsing (lexbuf: Lexbuf) f =
     use _ = UseBuildPhase BuildPhase.Parse
-    LexbufLocalXmlDocStore.ClearXmlDoc lexbuf
-    LexbufCommentStore.ClearComments lexbuf
 
     try
         f ()
@@ -222,18 +210,34 @@ let addUnicodeChar buf c = addIntChar buf (int c)
 
 let addByteChar buf (c: char) = addIntChar buf (int32 c % 256)
 
+type LargerThanOneByte = int
+type LargerThan127ButInsideByte = int
+
 /// Sanity check that high bytes are zeros. Further check each low byte <= 127
-let stringBufferIsBytes (buf: ByteBuffer) =
+let errorsInByteStringBuffer (buf: ByteBuffer) =
     let bytes = buf.AsMemory()
-    let mutable ok = true
+    assert (bytes.Length % 2 = 0)
+
+    // Enhancement?: return faulty values?
+    //     But issue: we don't know range of values -> no direct mapping from value to range & notation
+
+    // values with high byte <> 0
+    let mutable largerThanOneByteCount = 0
+    // values with high byte = 0, but low byte > 127
+    let mutable largerThan127ButSingleByteCount = 0
 
     for i = 0 to bytes.Length / 2 - 1 do
         if bytes.Span[i * 2 + 1] <> 0uy then
-            ok <- false
+            largerThanOneByteCount <- largerThanOneByteCount + 1
+        elif bytes.Span[i * 2] > 127uy then
+            largerThan127ButSingleByteCount <- largerThan127ButSingleByteCount + 1
 
-    ok
+    if largerThanOneByteCount + largerThan127ButSingleByteCount > 0 then
+        Some(largerThanOneByteCount, largerThan127ButSingleByteCount)
+    else
+        None
 
-let newline (lexbuf: LexBuffer<_>) = lexbuf.EndPos <- lexbuf.EndPos.NextLine
+let incrLine (lexbuf: LexBuffer<_>) = lexbuf.EndPos <- lexbuf.EndPos.NextLine
 
 let advanceColumnBy (lexbuf: LexBuffer<_>) n =
     lexbuf.EndPos <- lexbuf.EndPos.ShiftColumnBy(n)
@@ -465,26 +469,9 @@ module Keywords =
                 v
         | _ ->
             match s with
-            | "__SOURCE_DIRECTORY__" ->
-                let fileName = FileIndex.fileOfFileIndex lexbuf.StartPos.FileIndex
-
-                let dirname =
-                    if String.IsNullOrWhiteSpace(fileName) then
-                        String.Empty
-                    else if fileName = stdinMockFileName then
-                        System.IO.Directory.GetCurrentDirectory()
-                    else
-                        fileName
-                        |> FileSystem.GetFullPathShim (* asserts that path is already absolute *)
-                        |> System.IO.Path.GetDirectoryName
-
-                if String.IsNullOrEmpty dirname then
-                    dirname
-                else
-                    PathMap.applyDir args.pathMap dirname
-                |> fun dir -> KEYWORD_STRING(s, dir)
-            | "__SOURCE_FILE__" -> KEYWORD_STRING(s, System.IO.Path.GetFileName(FileIndex.fileOfFileIndex lexbuf.StartPos.FileIndex))
-            | "__LINE__" -> KEYWORD_STRING(s, string lexbuf.StartPos.Line)
+            | "__SOURCE_DIRECTORY__"
+            | "__SOURCE_FILE__"
+            | "__LINE__" -> KEYWORD_STRING(s, getSourceIdentifierValue args.pathMap s lexbuf.LexemeRange)
             | _ -> IdentifierToken args lexbuf s
 
 /// Arbitrary value

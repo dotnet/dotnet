@@ -2,16 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Security;
-using Test.Utility.Signing;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Xunit;
-using BcEssCertId = Org.BouncyCastle.Asn1.Ess.EssCertID;
-using BcGeneralName = Org.BouncyCastle.Asn1.X509.GeneralName;
-using BcIssuerSerial = Org.BouncyCastle.Asn1.X509.IssuerSerial;
 using EssCertId = NuGet.Packaging.Signing.EssCertId;
+using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
 
 namespace NuGet.Packaging.Test
 {
@@ -37,28 +34,48 @@ namespace NuGet.Packaging.Test
                 () => EssCertId.Read(new byte[] { 0x30, 0x0b }));
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public void Read_WithValidInput_ReturnsEssCertId()
         {
-            using (var certificate = _fixture.GetDefaultCertificate())
+            using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
-                var bcCertificate = DotNetUtilities.FromX509Certificate(certificate);
-                var bcGeneralNames = new GeneralNames(
-                    new BcGeneralName(BcGeneralName.DirectoryName, bcCertificate.IssuerDN));
-                var bcIssuerSerial = new BcIssuerSerial(bcGeneralNames, new DerInteger(bcCertificate.SerialNumber));
-                var hash = SigningTestUtility.GetHash(certificate, Common.HashAlgorithmName.SHA256);
-                var bcEssCertId = new BcEssCertId(hash, bcIssuerSerial);
-                var bytes = bcEssCertId.GetDerEncoded();
-
-                var essCertId = EssCertId.Read(bytes);
+                byte[] bytes = CreateEssCertId(certificate);
+                EssCertId essCertId = EssCertId.Read(bytes);
 
                 Assert.Equal(1, essCertId.IssuerSerial.GeneralNames.Count);
                 Assert.Equal(certificate.IssuerName.Name, essCertId.IssuerSerial.GeneralNames[0].DirectoryName.Name);
-                SigningTestUtility.VerifyByteArrays(hash, essCertId.CertificateHash);
-                SigningTestUtility.VerifyByteArrays(bcIssuerSerial.Serial.Value.ToByteArray(), essCertId.IssuerSerial.SerialNumber);
+
+                byte[] serialNumber = HexConverter.ToByteArray(certificate.SerialNumber);
+
+                SigningTestUtility.VerifyByteArrays(certificate.GetCertHash(), essCertId.CertificateHash);
+                SigningTestUtility.VerifyByteArrays(serialNumber, essCertId.IssuerSerial.SerialNumber);
             }
         }
-#endif
+
+        private static byte[] CreateEssCertId(X509Certificate2 certificate)
+        {
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            using (writer.PushSequence())
+            {
+                writer.WriteOctetString(certificate.GetCertHash());
+
+                using (writer.PushSequence())
+                {
+                    using (writer.PushSequence())
+                    {
+                        TestGeneralName generalName = new(directoryName: certificate.IssuerName.RawData);
+
+                        generalName.Encode(writer);
+                    }
+
+                    byte[] serialNumber = HexConverter.ToByteArray(certificate.SerialNumber);
+
+                    writer.WriteInteger(serialNumber);
+                }
+            }
+
+            return writer.Encode();
+        }
     }
 }

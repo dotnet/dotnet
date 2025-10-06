@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,11 @@ internal static class RazorTestResources
             using var stream = GetResourceStream(name, folder);
 
             value = new byte[stream.Length];
+#if NET
+            stream.ReadExactly(value);
+#else
             stream.Read(value, 0, value.Length);
+#endif
 
             s_bytesMap.Add(key, value);
 
@@ -87,12 +91,7 @@ internal static class RazorTestResources
             {
                 var bytes = GetResourceBytes(BlazorServerAppTagHelpersJson);
 
-                using var stream = new MemoryStream(bytes);
-                using var reader = new StreamReader(stream);
-
-                return JsonDataConvert.DeserializeData(reader,
-                    static r => r.ReadImmutableArray(
-                        static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+                return JsonDataConvert.DeserializeTagHelperArray(bytes);
             }
         }
     }

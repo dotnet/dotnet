@@ -19,7 +19,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult, actualResult);
         }
 
-        public static TheoryData NuGetFrameworks => new TheoryData<NuGetFramework>
+        public static TheoryData<NuGetFramework> NuGetFrameworks => new()
             {
                 { new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.Net, new Version(4, 5), "Profile344") },
                 { new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.Net, new Version(4, 8)) },

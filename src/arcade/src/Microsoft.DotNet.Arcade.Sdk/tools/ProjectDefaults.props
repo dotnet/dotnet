@@ -20,6 +20,9 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)Assets\DotNetPackageIcon.png</PackageIconFullPath>
 
+    <!-- Turn on package pruning by default. -->
+    <RestoreEnablePackagePruning>true</RestoreEnablePackagePruning>
+
     <!-- Disable the message indicating we are using a preview SDK. That is understood and by design -->
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 
@@ -128,9 +131,5 @@
     </When>
 
   </Choose>
-
-  <ItemGroup Condition="'$(EnableRichCodeNavigation)' == 'true'">
-    <PackageReference Include="RichCodeNav.EnvVarDump" Version="$(RichCodeNavPackageVersion)" IsImplicitlyDefined="true" PrivateAssets="all" />
-  </ItemGroup>
 
 </Project>

@@ -29,9 +29,11 @@ Copyright (c) .NET Foundation. All rights reserved.
   -->
   <Target Name="VSTest" DependsOnTargets="ShowInfoMessageIfProjectHasNoIsTestProjectProperty">
     <!-- Unloggable colorized output (cf. https://github.com/microsoft/vstest/issues/680) -->
-    <CallTarget Targets="_VSTestConsole" Condition="!$(VsTestUseMSBuildOutput) OR $(MSBUILDENSURESTDOUTFORTASKPROCESSES) == '1'" />
+    <!-- Fallback to this old view when terminal logger is not enabled (_MSBUILDTLENABLED==0) , or when user explicitly opts out (VsTestUseMSBuildOutput != true) -->
+    <CallTarget Targets="_VSTestConsole" Condition="$(_MSBUILDTLENABLED) == '0' OR !$(VsTestUseMSBuildOutput) OR $(MSBUILDENSURESTDOUTFORTASKPROCESSES) == '1'" />
     <!-- Proper MSBuild integration, but no custom colorization -->
-    <CallTarget Targets="_VSTestMSBuild" Condition="$(VsTestUseMSBuildOutput)" />
+    <!-- Use the new view whe terminal logger is enabled (_MSBUILDTLENABLED==0), and user did not opt out (VsTestUseMSBuildOutput == true) -->
+    <CallTarget Targets="_VSTestMSBuild" Condition="$(_MSBUILDTLENABLED) == '1' AND $(VsTestUseMSBuildOutput)" />
   </Target>
 
   <!--

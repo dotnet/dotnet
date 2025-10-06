@@ -3,7 +3,6 @@ SigFile
      ("/root/SignatureType/MemberSigOfSynMemberSigMemberShouldContainsTheRangeOfTheWithKeyword.fsi",
       QualifiedNameOfFile
         MemberSigOfSynMemberSigMemberShouldContainsTheRangeOfTheWithKeyword, [],
-      [],
       [SynModuleOrNamespaceSig
          ([X], false, DeclaredNamespace,
           [Types
@@ -22,7 +21,7 @@ SigFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((5,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (5,4--5,42),
+                            Single None, None, (5,4--5,42),
                             { LeadingKeyword =
                                AbstractMember ((5,4--5,12), (5,13--5,19))
                               InlineKeyword = None
@@ -42,4 +41,5 @@ SigFile
                     WithKeyword = None })], (4,0--5,42))], PreXmlDocEmpty, [],
           None, (2,0--5,42), { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

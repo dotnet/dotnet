@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>$(NETCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <Description>The verification engine for the templates for .NET template engine.</Description>
     <IsPackable>true</IsPackable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <EnablePublicApiAnalyzer>true</EnablePublicApiAnalyzer>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Unset IsTestProject which gets set by xunit.props which gets imported by the xunit PackageReference below. -->
+    <IsTestProject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="Verify.Xunit" />
     <PackageReference Include="Verify.DiffPlex" />
-    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,18 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="LocalizableStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LocalizableStrings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="LocalizableStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Update="LocalizableStrings.resx"
+                      GenerateSource="true" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,4 +37,5 @@
     <InternalsVisibleTo Include="Microsoft.TemplateEngine.Authoring.TemplateApiVerifier" Key="$(TemplateEnginePublicKey)" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(DynamicProxyGenAssembly2PublicKey)" />
   </ItemGroup>
+
 </Project>

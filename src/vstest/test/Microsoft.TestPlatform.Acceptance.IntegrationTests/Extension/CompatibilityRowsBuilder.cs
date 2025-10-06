@@ -155,7 +155,7 @@ public class CompatibilityRowsBuilder
             allRows[i].Index = i;
         }
 
-        return JustRow == null ? allRows : new List<RunnerInfo> { allRows[JustRow.Value] };
+        return JustRow == null ? allRows : [allRows[JustRow.Value]];
     }
 
     private static SemanticVersion ParseAndPatchSemanticVersion(string? version)
@@ -244,7 +244,7 @@ public class CompatibilityRowsBuilder
                 // .NET Framework testhost ships with the runner, and the version from the
                 // runner directory is always the same as the runner. There are no variations
                 // so we just need to add host versions for .NET testhosts.
-                var hostVersions = isNetFramework ? Array.Empty<string>() : _hostVersions.ToArray();
+                var hostVersions = isNetFramework ? [] : _hostVersions.ToArray();
                 foreach (var hostVersion in hostVersions)
                 {
                     foreach (var _ in _adapters)
@@ -366,7 +366,9 @@ public class CompatibilityRowsBuilder
             false when version.StartsWith("15.") => GetContentFilesPath("netcoreapp2.0"),
             false when NuGetVersion.TryParse(version, out var v)
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) < new NuGetVersion("17.4.0") => GetContentFilesPath("netcoreapp2.1"),
-            false => GetContentFilesPath("netcoreapp3.1"),
+            false when NuGetVersion.TryParse(version, out var v)
+                && new NuGetVersion(v.Major, v.Minor, v.Patch) <= new NuGetVersion("17.12.0") => GetContentFilesPath("netcoreapp3.1"),
+            false => GetContentFilesPath("net9.0"),
         };
 
         return new VSTestConsoleInfo

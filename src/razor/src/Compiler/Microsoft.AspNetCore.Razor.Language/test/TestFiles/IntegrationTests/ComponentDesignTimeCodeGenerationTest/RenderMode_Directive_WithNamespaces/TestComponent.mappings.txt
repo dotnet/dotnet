@@ -3,8 +3,8 @@
 Generated Location: (823:22,44 [16] )
 |Custom.Namespace|
 
-Source Location: (43:2,12 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1075:32,44 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (43:2,12 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (1075:32,44 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 

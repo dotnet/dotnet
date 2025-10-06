@@ -20,14 +20,9 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
         s_nugetPackageFolder = Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg");
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
-    {
-        Directory.Delete(s_nugetPackageFolder, true);
-    }
-
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [Ignore("Code Coverage is using 17.x.x dependency, will be solved in other PR. https://github.com/microsoft/vstest/issues/15223")]
     [NetFullTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
     [NetCoreTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
     public void RunMultipleTestAssembliesWithCodeCoverage(RunnerInfo runnerInfo)

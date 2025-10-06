@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Completion.Providers;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ErrorReporting;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
@@ -29,12 +29,33 @@ using static DocumentationCommentXmlNames;
 [ExportCompletionProvider(nameof(XmlDocCommentCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(PartialTypeCompletionProvider))]
 [Shared]
-internal partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompletionProvider<DocumentationCommentTriviaSyntax>
+internal sealed partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompletionProvider<DocumentationCommentTriviaSyntax>
 {
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
     public XmlDocCommentCompletionProvider() : base(s_defaultRules)
     {
+    }
+
+    private static readonly ImmutableArray<string> s_keywordNames;
+
+    static XmlDocCommentCompletionProvider()
+    {
+        using var _ = ArrayBuilder<string>.GetInstance(out var keywordsBuilder);
+
+        foreach (var keywordKind in SyntaxFacts.GetKeywordKinds())
+        {
+            var keywordText = SyntaxFacts.GetText(keywordKind);
+
+            // There are several very special keywords like `__makeref`, which are not intended for pubic use.
+            // They all start with `_`, so we are filtering them here
+            if (keywordText[0] != '_')
+            {
+                keywordsBuilder.Add(keywordText);
+            }
+        }
+
+        s_keywordNames = keywordsBuilder.ToImmutable();
     }
 
     internal override string Language => LanguageNames.CSharp;
@@ -85,7 +106,9 @@ internal partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompl
 
             if (IsAttributeNameContext(token, position, out var elementName, out var existingAttributes))
             {
-                return GetAttributeItems(elementName, existingAttributes);
+                var nextToken = token.GetNextToken();
+                return GetAttributeItems(elementName, existingAttributes,
+                    addEqualsAndQuotes: !nextToken.IsKind(SyntaxKind.EqualsToken) || nextToken.HasLeadingTrivia);
             }
 
             var wasTriggeredAfterSpace = trigger.Kind == CompletionTriggerKind.Insertion && trigger.Character == ' ';
@@ -105,6 +128,13 @@ internal partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompl
             {
                 // With the use of IsTriggerAfterSpaceOrStartOfWordCharacter, the code below is much
                 // too aggressive at suggesting tags, so exit early before degrading the experience
+                return null;
+            }
+            else if (trigger.Kind == CompletionTriggerKind.Deletion)
+            {
+                // Do not show completion in xml text or tags when TriggerOnDeletion is true. Attribute
+                // names and values are handled above. This differs slightly from the vb implementation
+                // as it better handles completion in tags.
                 return null;
             }
 
@@ -158,7 +188,7 @@ internal partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompl
         }
         catch (Exception e) when (FatalError.ReportAndCatchUnlessCanceled(e, cancellationToken, ErrorSeverity.General))
         {
-            return SpecializedCollections.EmptyEnumerable<CompletionItem>();
+            return [];
         }
     }
 
@@ -311,18 +341,8 @@ internal partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompl
         return false;
     }
 
-    protected override IEnumerable<string> GetKeywordNames()
-    {
-        yield return SyntaxFacts.GetText(SyntaxKind.NullKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.StaticKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.VirtualKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.TrueKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.FalseKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.AbstractKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.SealedKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.AsyncKeyword);
-        yield return SyntaxFacts.GetText(SyntaxKind.AwaitKeyword);
-    }
+    protected override ImmutableArray<string> GetKeywordNames()
+        => s_keywordNames;
 
     protected override IEnumerable<string> GetExistingTopLevelElementNames(DocumentationCommentTriviaSyntax syntax)
         => syntax.Content.Select(GetElementName).WhereNotNull();

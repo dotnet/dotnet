@@ -80,7 +80,9 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                     WaitAndLogPackageActions();
                     UnsubscribeFromProgressEvents();
 
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                     return TaskResult.True;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
                 }, Token);
             });
 

@@ -45,7 +45,7 @@ internal class CustomKeyValueConverter : TypeConverter
             using var stream = new MemoryStream(Encoding.Unicode.GetBytes(data));
             // Converting Json data to array of KeyValuePairs with duplicate keys.
             var listOfTraitObjects = _serializer.ReadObject(stream) as TraitObject[];
-            return listOfTraitObjects?.Select(trait => new KeyValuePair<string?, string?>(trait.Key, trait.Value)).ToArray() ?? new KeyValuePair<string?, string?>[0];
+            return listOfTraitObjects?.Select(trait => new KeyValuePair<string?, string?>(trait.Key, trait.Value)).ToArray() ?? [];
         }
 
         return null;

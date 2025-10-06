@@ -63,7 +63,7 @@ module ``Check resumable code can capture variables`` =
     check "vwervwkhevh" (makeStateMachine 3) 4
 
 
-module ``Check resumable code may be preceeded by value definitions`` =
+module ``Check resumable code may be preceded by value definitions`` =
     let makeStateMachine x = 
         let rnd = System.Random().Next(4)
         __stateMachine<int, int>
@@ -91,7 +91,7 @@ module ``Check resumable code may contain local function definitions`` =
             (AfterCode<_,_>(fun sm -> MoveOnce(&sm)))
     check "vewwevbrklbre" (makeStateMachine 3) 8
 
-module ``Check resumable code may be preceeded by function definitions`` =
+module ``Check resumable code may be preceded by function definitions`` =
     let makeStateMachine y = 
         let someFunction1 x = x + 1
         let someFunction2 x = someFunction1 x + 2
@@ -656,6 +656,19 @@ module ``Check after code may include closures`` =
                 f 3))
     check "vwelvewl" (makeStateMachine 3) -2
 
+module ``Check simple state machine as top level value`` =
+    let stateMachine = 
+        __stateMachine<int, int>
+            (MoveNextMethodImpl<_>(fun sm -> 
+                if __useResumableCode then
+                    sm.Data <- 42 // we expect this result for successful resumable code compilation
+                else
+                    sm.Data <- 0xdeadbeef // if we get this result it means we've failed to compile as resumable code
+                )) 
+            (SetStateMachineMethodImpl<_>(fun sm state -> ()))
+            (AfterCode<_,_>(fun sm -> MoveOnce(&sm)))
+    check "top_level_value" stateMachine 42
+
 #if TESTS_AS_APP
 let RUN() = !failures
 #else
@@ -663,7 +676,7 @@ let aa =
   match !failures with 
   | [] -> 
       stdout.WriteLine "Test Passed"
-      System.IO.File.WriteAllText("test.ok","ok")
+      printf "TEST PASSED OK" ;
       exit 0
   | _ -> 
       stdout.WriteLine "Test Failed"

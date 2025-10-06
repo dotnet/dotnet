@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+  <!--
+      This file is heavily based on the GeneratedPkgDef.target file in Roslyn, but is isolated to its PkgDefBrokeredService functionality.
+         Emits $RootKey$\BrokeredServices entry.
+         Entries with ProfferingPackageId correspond to Microsoft.VisualStudio.Shell.ServiceBroker.ProvideBrokeredServiceAttribute.
+
+         Metadata:
+         - ItemSpec: service name
+         - Audience ('Local'|'Process'|...): Microsoft.VisualStudio.Shell.ServiceBroker.ServiceAudience enum value
+         - ProfferingPackageId (guid, optional): GUID of the proffering package or empty for ServiceHub services
+  -->
+
+  <!--
+    Initializes metadata of PkgDefBrokeredService items.
+  -->
+  <Target Name="_InitializeBrokeredServiceEntries"
+          BeforeTargets="GenerateBrokeredServicesPkgDef">
+    <ItemGroup>
+      <PkgDefBrokeredService Update="@(PkgDefBrokeredService)">
+        <_Audience>dword:00000003</_Audience> <!-- default: Local -->
+        <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'Process'">dword:00000001</_Audience>
+        <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'RemoteExclusiveClient'">dword:00000100</_Audience>
+        <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'LiveShareGuest'">dword:00000400</_Audience>
+        <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'RemoteExclusiveServer'">dword:00000800</_Audience>
+        <_Audience Condition="'%(PkgDefBrokeredService.Audience)' == 'AllClientsIncludingGuests'">dword:00000503</_Audience>
+        <_ServiceLocation Condition="'%(PkgDefBrokeredService.SubFolder)' == ''">"$PackageFolder$"</_ServiceLocation>
+        <_ServiceLocation Condition="'%(PkgDefBrokeredService.SubFolder)' != ''">"$PackageFolder$\%(PkgDefBrokeredService.SubFolder)"</_ServiceLocation>
+      </PkgDefBrokeredService>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Generates a .pkgdef file based on items in PkgDef* groups.
+  -->
+  <Target Name="GenerateBrokeredServicesPkgDef"
+          DependsOnTargets="$(GeneratePkgDefDependsOn)"
+          BeforeTargets="GeneratePkgDef"
+          Inputs="@(PkgDefBrokeredService)"
+          Outputs="$(IntermediateOutputPath)$(TargetName).BrokeredServices.pkgdef">
+
+    <PropertyGroup>
+      <_GeneratePkgDefOutputFile>$(IntermediateOutputPath)$(TargetName).BrokeredServices.pkgdef</_GeneratePkgDefOutputFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_PkgDefEntry Include="@(PkgDefBrokeredService)" Condition="'%(PkgDefBrokeredService.ProfferingPackageId)' == ''">
+        <!-- 11ad60fc-6d87-4674-8f88-9abe79176cbe is id of the HubClient package which proffers ServiceHub services -->
+        <RawValue>
+          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)]
+@="{11ad60fc-6d87-4674-8f88-9abe79176cbe}"
+"IsServiceHub"=dword:00000001
+"ServiceLocation"=%(PkgDefBrokeredService._ServiceLocation)
+"audience"=%(PkgDefBrokeredService._Audience)
+]]>
+        </RawValue>
+      </_PkgDefEntry>
+
+      <_PkgDefEntry Include="@(PkgDefBrokeredService)" Condition="'%(PkgDefBrokeredService.ProfferingPackageId)' != ''">
+        <RawValue>
+          <![CDATA[[$RootKey$\BrokeredServices\%(PkgDefBrokeredService.Identity)]
+@="%(PkgDefBrokeredService.ProfferingPackageId)"
+"audience"=%(PkgDefBrokeredService._Audience)
+]]>
+        </RawValue>
+      </_PkgDefEntry>
+
+    </ItemGroup>
+
+    <!-- Include content generated above -->
+    <ItemGroup>
+      <_PkgDefLines Include="@(_PkgDefEntry->'%(RawValue)')" />
+    </ItemGroup>
+
+    <!-- Write final pkgdef content. If the CTO file was changed, touch the pkgdef file to cause a re-merge (see VSSDK targets). -->
+    <WriteLinesToFile File="$(_GeneratePkgDefOutputFile)"
+                      Lines="@(_PkgDefLines)"
+                      Overwrite="true"
+                      Encoding="UTF-8"
+                      WriteOnlyWhenDifferent="!$([MSBuild]::ValueOrDefault('$(CTOFileHasChanged)', 'false'))" />
+    <ItemGroup>
+      <FileWrites Include="$(_GeneratePkgDefOutputFile)" />
+      <VSIXSourceItem Include="$(_GeneratePkgDefOutputFile)" />
+    </ItemGroup>
+  </Target>
+</Project>

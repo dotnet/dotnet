@@ -82,6 +82,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             NamedTypeSymbol containingType = AdaptedMethodSymbol.ContainingType;
+
+            if (AdaptedMethodSymbol is SynthesizedExtensionMarker marker)
+            {
+                return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingMarkerType(marker);
+            }
+            else if (AdaptedMethodSymbol.GetIsNewExtensionMember())
+            {
+                return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
+            }
+
             var moduleBeingBuilt = (PEModuleBuilder)context.Module;
 
             return moduleBeingBuilt.Translate(containingType,
@@ -300,6 +310,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return synthesizedGlobalMethod.ContainingPrivateImplementationDetailsType;
                 }
 
+                // Tracked by https://github.com/dotnet/roslyn/issues/78827 : code quality, share logic with Cci.ITypeMemberReference.GetContainingType implementation?
+                if (AdaptedMethodSymbol is SynthesizedExtensionMarker marker)
+                {
+                    return ((SourceMemberContainerTypeSymbol)AdaptedMethodSymbol.ContainingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingMarkerType(marker);
+                }
+                else if (AdaptedMethodSymbol.GetIsNewExtensionMember())
+                {
+                    var containingType = AdaptedMethodSymbol.ContainingType;
+                    return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
+                }
+
                 return AdaptedMethodSymbol.ContainingType.GetCciAdapter();
             }
         }
@@ -395,7 +416,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 CheckDefinitionInvariant();
 
-                return AdaptedMethodSymbol.IsExternal;
+                return !AdaptedMethodSymbol.ContainingType.IsExtension && AdaptedMethodSymbol.IsExternal;
             }
         }
 
@@ -422,7 +443,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                return AdaptedMethodSymbol.GetDllImportData() != null;
+                return !AdaptedMethodSymbol.ContainingType.IsExtension && AdaptedMethodSymbol.GetDllImportData() != null;
             }
         }
 #nullable disable
@@ -431,14 +452,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                return AdaptedMethodSymbol.GetDllImportData();
+                return AdaptedMethodSymbol.ContainingType.IsExtension ? null : AdaptedMethodSymbol.GetDllImportData();
             }
         }
 
         System.Reflection.MethodImplAttributes Cci.IMethodDefinition.GetImplementationAttributes(EmitContext context)
         {
             CheckDefinitionInvariant();
-            return AdaptedMethodSymbol.ImplementationAttributes;
+            return AdaptedMethodSymbol.ContainingType.IsExtension ? default : AdaptedMethodSymbol.ImplementationAttributes;
         }
 
         bool Cci.IMethodDefinition.IsRuntimeSpecial
@@ -510,7 +531,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             CheckDefinitionInvariant();
 
             ImmutableArray<CSharpAttributeData> userDefined = AdaptedMethodSymbol.GetReturnTypeAttributes();
-            ArrayBuilder<SynthesizedAttributeData> synthesized = null;
+            ArrayBuilder<CSharpAttributeData> synthesized = null;
             AdaptedMethodSymbol.AddSynthesizedReturnTypeAttributes((PEModuleBuilder)context.Module, ref synthesized);
 
             // Note that callers of this method (CCI and ReflectionEmitter) have to enumerate 
@@ -658,12 +679,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// signature).
         /// WARN WARN WARN: We won't have a final value for this until declaration
         /// diagnostics have been computed for all <see cref="SourceMemberContainerTypeSymbol"/>s, so pass
-        /// ignoringInterfaceImplementationChanges: true if you need a value sooner
+        /// option: <see cref="IsMetadataVirtualOption.IgnoreInterfaceImplementationChanges"/> if you need a value sooner
         /// and aren't concerned about tweaks made to satisfy interface implementation 
         /// requirements.
         /// NOTE: Not ignoring changes can only result in a value that is more true.
+        ///
+        /// Use IsMetadataVirtualOption.ForceCompleteIfNeeded in DEBUG/assertion code
+        /// to get the final value.
         /// </summary>
-        internal abstract bool IsMetadataVirtual(bool ignoreInterfaceImplementationChanges = false);
+        internal abstract bool IsMetadataVirtual(IsMetadataVirtualOption option = IsMetadataVirtualOption.None);
+
+        internal enum IsMetadataVirtualOption
+        {
+            None = 0,
+            IgnoreInterfaceImplementationChanges,
+#if DEBUG
+            ForceCompleteIfNeeded
+#endif
+        }
 
         internal virtual bool ReturnValueIsMarshalledExplicitly
         {

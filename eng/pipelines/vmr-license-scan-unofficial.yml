@@ -1,0 +1,39 @@
+# Pipeline documentation at https://github.com/dotnet/dotnet/blob/main/docs/license-scanning.md
+
+pr: none
+trigger: none
+
+parameters:
+# Provides a way to scan a specific repo. If not provided, all repos of the VMR will be scanned.
+- name: specificRepoName
+  type: string
+  displayName: "Specific repo name to scan (e.g. runtime, sdk). If empty, scans all repos of the VMR."
+  default: " " # Set it to an empty string to allow it be an optional parameter
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: NetCore1ESPool-Svc-Internal
+      image: 1es-ubuntu-2204
+      os: linux
+    containers:
+      azurelinuxSourceBuildTestContainer:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
+        options: '--memory=6g'
+    sdl:
+      sourceAnalysisPool:
+          name: NetCore1ESPool-Svc-Internal
+          image: 1es-windows-2022
+          os: windows
+    stages:
+    - template: /eng/pipelines/templates/stages/vmr-license-scan.yml@self
+      parameters:
+        specificRepoName: ${{ parameters.specificRepoName }}

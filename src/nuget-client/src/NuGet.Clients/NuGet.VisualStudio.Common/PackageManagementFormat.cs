@@ -18,7 +18,7 @@ namespace NuGet.VisualStudio
         // keep track of current value for selected package format
         private int _selectedPackageFormat = -1;
 
-        // keep track of current value for shwo dialog checkbox
+        // keep track of current value for show dialog checkbox
         private bool? _showDialogValue;
 
         public PackageManagementFormat(Configuration.ISettings settings)
@@ -102,10 +102,17 @@ namespace NuGet.VisualStudio
 
         public void ApplyChanges()
         {
-            _settings.AddOrUpdate(ConfigurationConstants.PackageManagementSection,
-                new AddItem(ConfigurationConstants.DefaultPackageManagementFormatKey, _selectedPackageFormat.ToString(CultureInfo.InvariantCulture)));
-            _settings.AddOrUpdate(ConfigurationConstants.PackageManagementSection,
-                new AddItem(ConfigurationConstants.DoNotShowPackageManagementSelectionKey, _showDialogValue.Value.ToString(CultureInfo.InvariantCulture)));
+            if (_selectedPackageFormat != -1)
+            {
+                _settings.AddOrUpdate(ConfigurationConstants.PackageManagementSection,
+                    new AddItem(ConfigurationConstants.DefaultPackageManagementFormatKey, _selectedPackageFormat.ToString(CultureInfo.InvariantCulture)));
+            }
+
+            if (_showDialogValue.HasValue)
+            {
+                _settings.AddOrUpdate(ConfigurationConstants.PackageManagementSection,
+                    new AddItem(ConfigurationConstants.DoNotShowPackageManagementSelectionKey, _showDialogValue.Value.ToString(CultureInfo.InvariantCulture)));
+            }
             _settings.SaveToDisk();
         }
 

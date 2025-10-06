@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -12,19 +12,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
 using Item = System.Collections.Generic.KeyValuePair<string, System.Collections.Immutable.IImmutableDictionary<string, string>>;
+using Rules = Microsoft.CodeAnalysis.Razor.ProjectSystem.Rules;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // This class is responsible for initializing the Razor ProjectSnapshotManager for cases where
 // MSBuild provides configuration support (>= 2.1).
 [AppliesTo("DotNetCoreRazor & DotNetCoreRazorConfiguration")]
 [Export(ExportContractNames.Scopes.UnconfiguredProject, typeof(IProjectDynamicLoadComponent))]
-internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
+[method: ImportingConstructor]
+internal class DefaultWindowsRazorProjectHost(
+    IUnconfiguredProjectCommonServices commonServices,
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+    ProjectSnapshotManager projectManager,
+    LanguageServerFeatureOptions languageServerFeatureOptions)
+    : WindowsRazorProjectHostBase(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
 {
     private const string RootNamespaceProperty = "RootNamespace";
     private static readonly ImmutableHashSet<string> s_ruleNames = ImmutableHashSet.CreateRange(new string[]
@@ -36,25 +45,12 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             Rules.RazorGenerateWithTargetPath.SchemaName,
             ConfigurationGeneralSchemaName,
         });
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-
-    [ImportingConstructor]
-    public DefaultWindowsRazorProjectHost(
-        IUnconfiguredProjectCommonServices commonServices,
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager,
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
-        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-    }
 
     protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
 
     protected override async Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
-        if (TryGetConfiguration(update.Value.CurrentState, _languageServerFeatureOptions.ForceRuntimeCodeGeneration, out var configuration) &&
+        if (TryGetConfiguration(update.Value.CurrentState, out var configuration) &&
             TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
         {
             TryGetRootNamespace(update.Value.CurrentState, out var rootNamespace);
@@ -67,8 +63,8 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                 await UpdateAsync(
                     updater =>
                     {
-                        var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
-                        updater.ProjectRemoved(beforeProjectKey);
+                        var beforeProjectKey = new ProjectKey(beforeIntermediateOutputPath);
+                        updater.RemoveProject(beforeProjectKey);
                     },
                     CancellationToken.None)
                     .ConfigureAwait(false);
@@ -94,20 +90,17 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
                     var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
 
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
-
                     UpdateProject(updater, hostProject);
 
                     for (var i = 0; i < changedDocuments.Length; i++)
                     {
-                        updater.DocumentRemoved(hostProject.Key, changedDocuments[i]);
+                        updater.RemoveDocument(hostProject.Key, changedDocuments[i].FilePath);
                     }
 
                     for (var i = 0; i < documents.Length; i++)
                     {
                         var document = documents[i];
-                        updater.DocumentAdded(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
+                        updater.AddDocument(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
                     }
                 },
                 CancellationToken.None)
@@ -119,7 +112,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             await UpdateAsync(
                 updater =>
                 {
-                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    var projectKeys = GetProjectKeysWithFilePath(CommonServices.UnconfiguredProject.FullPath);
                     foreach (var projectKey in projectKeys)
                     {
                         RemoveProject(updater, projectKey);
@@ -134,7 +127,6 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
     // Internal for testing
     internal static bool TryGetConfiguration(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
-        bool forceRuntimeCodeGeneration,
         [NotNullWhen(returnValue: true)] out RazorConfiguration? configuration)
     {
         if (!TryGetDefaultConfiguration(state, out var defaultConfiguration))
@@ -162,7 +154,11 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             return false;
         }
 
-        configuration = new(languageVersion, configurationItem.Key, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
+        configuration = new(
+            languageVersion,
+            configurationItem.Key,
+            extensions);
+
         return true;
     }
 
@@ -283,7 +279,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             }
         }
 
-        extensions = builder.DrainToImmutable();
+        extensions = builder.ToImmutableAndClear();
         return true;
     }
 
@@ -326,7 +322,10 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-                    var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
+
+                    var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
+                        ? kind
+                        : RazorFileKind.Component;
 
                     documents.Add(new HostDocument(filePath, targetPath, fileKind));
                 }
@@ -342,7 +341,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                     !string.IsNullOrWhiteSpace(targetPath))
                 {
                     var filePath = CommonServices.UnconfiguredProject.MakeRooted(kvp.Key);
-                    documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
+                    documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
                 }
             }
         }
@@ -364,7 +363,10 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-                        var fileKind = FileKinds.GetComponentFileKindFromFilePath(filePath);
+
+                        var fileKind = FileKinds.TryGetFileKindFromPath(filePath, out var kind) && kind != RazorFileKind.Legacy
+                            ? kind
+                            : RazorFileKind.Component;
 
                         documents.Add(new HostDocument(filePath, targetPath, fileKind));
                     }
@@ -383,7 +385,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                         !string.IsNullOrWhiteSpace(targetPath))
                     {
                         var filePath = CommonServices.UnconfiguredProject.MakeRooted(key);
-                        documents.Add(new HostDocument(filePath, targetPath, FileKinds.Legacy));
+                        documents.Add(new HostDocument(filePath, targetPath, RazorFileKind.Legacy));
                     }
                 }
             }

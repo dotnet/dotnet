@@ -3,7 +3,6 @@
 
 using System;
 using System.CommandLine;
-using System.CommandLine.IO;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Diagnostics.NETCore.Client;
@@ -32,43 +31,26 @@ namespace Microsoft.Diagnostics.Tools.Dump
         {
         }
 
-        public int Collect(IConsole console, int processId, string output, bool diag, bool crashreport, DumpTypeOption type, string name)
+        public int Collect(TextWriter stdOutput, TextWriter stdError, int processId, string output, bool diag, bool crashreport, DumpTypeOption type, string name, string diagnosticPort)
         {
-            Console.WriteLine(name);
-            if (name != null)
-            {
-                if (processId != 0)
-                {
-                    Console.WriteLine("Can only specify either --name or --process-id option.");
-                    return -1;
-                }
-                processId = CommandUtils.FindProcessIdWithName(name);
-                if (processId < 0)
-                {
-                    return -1;
-                }
-            }
-
-            if (processId == 0)
-            {
-                Console.Error.WriteLine("ProcessId is required.");
-                return -1;
-            }
-
-            if (processId < 0)
-            {
-                Console.Error.WriteLine($"The PID cannot be negative: {processId}");
-                return -1;
-            }
-
             try
             {
+                if (CommandUtils.ResolveProcessForAttach(processId, name, diagnosticPort, string.Empty, out int resolvedProcessId))
+                {
+                    processId = resolvedProcessId;
+                }
+                else
+                {
+                    return -1;
+                }
+
                 if (output == null)
                 {
                     // Build timestamp based file path
                     string timestamp = $"{DateTime.Now:yyyyMMdd_HHmmss}";
                     output = Path.Combine(Directory.GetCurrentDirectory(), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"dump_{timestamp}.dmp" : $"core_{timestamp}");
                 }
+
                 // Make sure the dump path is NOT relative. This path could be sent to the runtime
                 // process on Linux which may have a different current directory.
                 output = Path.GetFullPath(output);
@@ -90,7 +72,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
                         dumpTypeMessage = "triage dump";
                         break;
                 }
-                console.Out.WriteLine($"Writing {dumpTypeMessage} to {output}");
+                stdOutput.WriteLine($"Writing {dumpTypeMessage} to {output}");
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -104,7 +86,21 @@ namespace Microsoft.Diagnostics.Tools.Dump
                 }
                 else
                 {
-                    DiagnosticsClient client = new(processId);
+                    DiagnosticsClient client;
+                    if (!string.IsNullOrEmpty(diagnosticPort))
+                    {
+                        IpcEndpointConfig diagnosticPortConfig = IpcEndpointConfig.Parse(diagnosticPort);
+                        if (!diagnosticPortConfig.IsConnectConfig)
+                        {
+                            Console.WriteLine("dotnet-dump only supports connect mode to a runtime.");
+                            return -1;
+                        }
+                        client = new DiagnosticsClient(diagnosticPortConfig);
+                    }
+                    else
+                    {
+                        client = new DiagnosticsClient(processId);
+                    }
 
                     DumpType dumpType = DumpType.Normal;
                     switch (type)
@@ -136,23 +132,20 @@ namespace Microsoft.Diagnostics.Tools.Dump
                     client.WriteDump(dumpType, output, flags);
                 }
             }
-            catch (Exception ex) when
-                (ex is FileNotFoundException or
-                 ArgumentException or
-                 DirectoryNotFoundException or
-                 UnauthorizedAccessException or
-                 PlatformNotSupportedException or
-                 UnsupportedCommandException or
-                 InvalidDataException or
-                 InvalidOperationException or
-                 NotSupportedException or
-                 DiagnosticsClientException)
+            catch (Exception ex)
             {
-                console.Error.WriteLine($"{ex.Message}");
+                if (diag)
+                {
+                    stdError.WriteLine($"{ex}");
+                }
+                else
+                {
+                    stdError.WriteLine($"{ex.Message}");
+                }
                 return -1;
             }
 
-            console.Out.WriteLine($"Complete");
+            stdOutput.WriteLine($"Complete");
             return 0;
         }
     }

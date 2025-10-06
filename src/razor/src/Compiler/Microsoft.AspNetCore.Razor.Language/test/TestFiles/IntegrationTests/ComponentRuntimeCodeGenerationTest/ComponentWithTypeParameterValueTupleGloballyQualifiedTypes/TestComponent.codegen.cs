@@ -9,13 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(1,9) "x:\dir\subdir\Test\TestComponent.cshtml"
 using N
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent<
 #nullable restore
@@ -40,20 +40,18 @@ TParam
 #line hidden
 #nullable disable
             , 2, (context) => (__builder2) => {
-                __builder2.AddContent(3, 
 #nullable restore
-#line (14,10)-(14,30) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.I1.MyClassId
+#line (14,10)-(14,30) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(3, context.I1.MyClassId
 
 #line default
 #line hidden
 #nullable disable
                 );
                 __builder2.AddContent(4, " - ");
-                __builder2.AddContent(5, 
 #nullable restore
-#line (14,34)-(14,55) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.I2.MyStructId
+#line (14,34)-(14,55) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(5, context.I2.MyStructId
 
 #line default
 #line hidden
@@ -86,7 +84,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateTestComponent_0<TParam>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TParam __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<(global::N.MyClass I1, global::N.MyStruct I2, TParam P)> __arg1)
         {
         __builder.OpenComponent<global::Test.TestComponent<TParam>>(seq);
-        __builder.AddComponentParameter(__seq0, "InferParam", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TParam>.
+#nullable restore
+#line (12,16)-(12,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+InferParam
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "Template", __arg1);
         __builder.CloseComponent();
         }

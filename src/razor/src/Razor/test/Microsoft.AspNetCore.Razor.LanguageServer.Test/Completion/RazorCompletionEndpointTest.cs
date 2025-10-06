@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -7,7 +7,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,14 +22,14 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         var optionsMonitor = GetOptionsMonitor();
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, triggerAndCommitCharacters: null, NoOpTelemetryReporter.Instance, optionsMonitor, TestLanguageServerFeatureOptions.Instance);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = new Uri(documentPath)
+                DocumentUri = new(new Uri(documentPath))
             },
-            Position = new Position(0, 1),
+            Position = LspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext(),
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -49,14 +50,14 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         var uri = new Uri(documentPath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(autoShowCompletion: false);
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, triggerAndCommitCharacters: null, NoOpTelemetryReporter.Instance, optionsMonitor, TestLanguageServerFeatureOptions.Instance);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = uri
+                DocumentUri = new(uri)
             },
-            Position = new Position(0, 1),
+            Position = LspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext() { InvokeKind = VSInternalCompletionInvokeKind.Typing },
         };
         var requestContext = CreateRazorRequestContext(documentContext);

@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -208,7 +207,7 @@ namespace NuGet.Indexing
             {
                 return new TermQuery(terms[0][0]);
             }
-            else if (terms.Select(l => l.Count).Sum() == terms.Count)
+            else if (terms.Sum(l => l.Count) == terms.Count)
             {
                 PhraseQuery phraseQuery = new PhraseQuery();
                 foreach (var positionList in terms)

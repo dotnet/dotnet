@@ -27,10 +27,9 @@ namespace Test
 
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
-                __builder2.AddContent(1, 
 #nullable restore
-#line (1,57)-(1,68) "x:\dir\subdir\Test\TestComponent.cshtml"
-person.Name
+#line (1,57)-(1,68) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(1, person.Name
 
 #line default
 #line hidden
@@ -47,7 +46,15 @@ person.Name
 #nullable disable
 
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddComponentParameter(3, "PersonTemplate", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>)(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,14)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+PersonTemplate
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<global::Test.Person>)(
 #nullable restore
 #line (2,31)-(2,39) "x:\dir\subdir\Test\TestComponent.cshtml"
 template

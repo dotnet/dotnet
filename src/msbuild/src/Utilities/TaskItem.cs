@@ -4,7 +4,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+#if FEATURE_APPDOMAIN
+using System.Runtime.Remoting;
+#endif
 #if FEATURE_SECURITY_PERMISSIONS
 using System.Security;
 #endif
@@ -12,6 +16,7 @@ using System.Security;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Collections;
+using System.Collections.Immutable;
 
 #nullable disable
 
@@ -44,7 +49,7 @@ namespace Microsoft.Build.Utilities
         // project file via XML child elements of the item element.  These have
         // no meaning to MSBuild, but tasks may use them.
         // Values are stored in escaped form.
-        private CopyOnWriteDictionary<string> _metadata;
+        private ImmutableDictionary<string, string> _metadata;
 
         // cache of the fullpath value
         private string _fullPath;
@@ -60,8 +65,12 @@ namespace Microsoft.Build.Utilities
         #region Constructors
 
         /// <summary>
-        /// Default constructor -- we need it so this type is COM-createable.
+        /// Default constructor -- do not use.
         /// </summary>
+        /// <remarks>
+        /// This constructor exists only so that the type is COM-creatable. Prefer <see cref="TaskItem(string, bool)"/>.
+        /// </remarks>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public TaskItem()
         {
             _itemSpec = string.Empty;
@@ -70,14 +79,31 @@ namespace Microsoft.Build.Utilities
         /// <summary>
         /// This constructor creates a new task item, given the item spec.
         /// </summary>
-        /// <comments>Assumes the itemspec passed in is escaped.</comments>
+        /// <comments>Assumes the itemspec passed in is escaped and represents a file path. </comments>
         /// <param name="itemSpec">The item-spec string.</param>
-        public TaskItem(
-            string itemSpec)
-        {
-            ErrorUtilities.VerifyThrowArgumentNull(itemSpec, nameof(itemSpec));
+        public TaskItem(string itemSpec)
+            : this(itemSpec, treatAsFilePath: true) { }
 
-            _itemSpec = FileUtilities.FixFilePath(itemSpec);
+        /// <summary>
+        /// This constructor creates a new task item, given the item spec.
+        /// </summary>
+        /// <comments>
+        /// Assumes the itemspec passed in is escaped.
+        /// If <see name="treatAsFilePath" /> is set to <see langword="true" />, the value in <see name="itemSpec" />
+        /// will be fixed up as a path by having any backslashes replaced with slashes.
+        /// </comments>
+        /// <param name="itemSpec">The item-spec string.</param>
+        /// <param name="treatAsFilePath">
+        /// Specifies whether or not to treat the value in <see name="itemSpec" />
+        /// as a file path and attempt to normalize it.
+        /// </param>
+        public TaskItem(
+            string itemSpec,
+            bool treatAsFilePath)
+        {
+            ErrorUtilities.VerifyThrowArgumentNull(itemSpec);
+
+            _itemSpec = treatAsFilePath ? FileUtilities.FixFilePath(itemSpec) : itemSpec;
         }
 
         /// <summary>
@@ -94,11 +120,11 @@ namespace Microsoft.Build.Utilities
             IDictionary itemMetadata) :
             this(itemSpec)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(itemMetadata, nameof(itemMetadata));
+            ErrorUtilities.VerifyThrowArgumentNull(itemMetadata);
 
             if (itemMetadata.Count > 0)
             {
-                _metadata = new CopyOnWriteDictionary<string>(MSBuildNameIgnoreCaseComparer.Default);
+                ImmutableDictionary<string, string>.Builder builder = ImmutableDictionaryExtensions.EmptyMetadata.ToBuilder();
 
                 foreach (DictionaryEntry singleMetadata in itemMetadata)
                 {
@@ -106,9 +132,11 @@ namespace Microsoft.Build.Utilities
                     string key = (string)singleMetadata.Key;
                     if (!FileUtilities.ItemSpecModifiers.IsDerivableItemSpecModifier(key))
                     {
-                        _metadata[key] = (string)singleMetadata.Value ?? string.Empty;
+                        builder[key] = (string)singleMetadata.Value ?? string.Empty;
                     }
                 }
+
+                _metadata = builder.ToImmutable();
             }
         }
 
@@ -119,7 +147,7 @@ namespace Microsoft.Build.Utilities
         public TaskItem(
             ITaskItem sourceItem)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(sourceItem, nameof(sourceItem));
+            ErrorUtilities.VerifyThrowArgumentNull(sourceItem);
 
             // Attempt to preserve escaped state
             if (!(sourceItem is ITaskItem2 sourceItemAsITaskItem2))
@@ -211,21 +239,25 @@ namespace Microsoft.Build.Utilities
         public int MetadataCount => (_metadata?.Count ?? 0) + FileUtilities.ItemSpecModifiers.All.Length;
 
         /// <summary>
+        /// Gets the backing metadata dictionary in a serializable wrapper.
+        /// </summary>
+        SerializableMetadata IMetadataContainer.BackingMetadata => Metadata;
+
+        /// <summary>
+        /// Gets a value indicating whether indicates whether the item has any custom metadata.
+        /// </summary>
+        bool IMetadataContainer.HasCustomMetadata => _metadata?.Count > 0;
+
+        /// <summary>
         /// Gets the metadata dictionary
         /// Property is required so that we can access the metadata dictionary in an item from
         /// another appdomain, as the CLR has implemented remoting policies that disallow accessing
         /// private fields in remoted items.
         /// </summary>
-        private CopyOnWriteDictionary<string> Metadata
+        private SerializableMetadata Metadata
         {
-            get
-            {
-                return _metadata;
-            }
-            set
-            {
-                _metadata = value;
-            }
+            get => new(_metadata);
+            set => _metadata = value.Dictionary;
         }
 
         #endregion
@@ -238,11 +270,11 @@ namespace Microsoft.Build.Utilities
         /// <param name="metadataName">Name of metadata to remove.</param>
         public void RemoveMetadata(string metadataName)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(metadataName, nameof(metadataName));
+            ErrorUtilities.VerifyThrowArgumentNull(metadataName);
             ErrorUtilities.VerifyThrowArgument(!FileUtilities.ItemSpecModifiers.IsItemSpecModifier(metadataName),
                 "Shared.CannotChangeItemSpecModifiers", metadataName);
 
-            _metadata?.Remove(metadataName);
+            _metadata = _metadata?.Remove(metadataName);
         }
 
         /// <summary>
@@ -257,16 +289,16 @@ namespace Microsoft.Build.Utilities
             string metadataName,
             string metadataValue)
         {
-            ErrorUtilities.VerifyThrowArgumentLength(metadataName, nameof(metadataName));
+            ErrorUtilities.VerifyThrowArgumentLength(metadataName);
 
             // Non-derivable metadata can only be set at construction time.
             // That's why this is IsItemSpecModifier and not IsDerivableItemSpecModifier.
             ErrorUtilities.VerifyThrowArgument(!FileUtilities.ItemSpecModifiers.IsDerivableItemSpecModifier(metadataName),
                 "Shared.CannotChangeItemSpecModifiers", metadataName);
 
-            _metadata ??= new CopyOnWriteDictionary<string>(MSBuildNameIgnoreCaseComparer.Default);
+            _metadata ??= ImmutableDictionaryExtensions.EmptyMetadata;
 
-            _metadata[metadataName] = metadataValue ?? string.Empty;
+            _metadata = _metadata.SetItem(metadataName, metadataValue ?? string.Empty);
         }
 
         /// <summary>
@@ -291,34 +323,61 @@ namespace Microsoft.Build.Utilities
         /// <param name="destinationItem">The item to copy metadata to.</param>
         public void CopyMetadataTo(ITaskItem destinationItem)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(destinationItem, nameof(destinationItem));
+            ErrorUtilities.VerifyThrowArgumentNull(destinationItem);
 
             // also copy the original item-spec under a "magic" metadata -- this is useful for tasks that forward metadata
             // between items, and need to know the source item where the metadata came from
             string originalItemSpec = destinationItem.GetMetadata("OriginalItemSpec");
             ITaskItem2 destinationAsITaskItem2 = destinationItem as ITaskItem2;
+            IMetadataContainer destinationAsMetadataContainer = destinationItem as IMetadataContainer;
 
             if (_metadata != null)
             {
                 if (destinationItem is TaskItem destinationAsTaskItem)
                 {
-                    CopyOnWriteDictionary<string> copiedMetadata;
+                    ImmutableDictionary<string, string> copiedMetadata;
+                    ImmutableDictionary<string, string> destinationMetadata = destinationAsTaskItem.Metadata.Dictionary;
+
                     // Avoid a copy if we can, and if not, minimize the number of items we have to set.
-                    if (destinationAsTaskItem.Metadata == null)
+                    if (!destinationAsMetadataContainer.HasCustomMetadata)
                     {
-                        copiedMetadata = _metadata.Clone(); // Copy on write!
+                        copiedMetadata = _metadata;
                     }
-                    else if (destinationAsTaskItem.Metadata.Count < _metadata.Count)
+                    else if (destinationMetadata.Count < _metadata.Count)
                     {
-                        copiedMetadata = _metadata.Clone(); // Copy on write!
-                        copiedMetadata.SetItems(destinationAsTaskItem.Metadata.Where(entry => !String.IsNullOrEmpty(entry.Value)));
+                        copiedMetadata = _metadata.SetItems(destinationMetadata.Where(entry => !String.IsNullOrEmpty(entry.Value)));
                     }
                     else
                     {
-                        copiedMetadata = destinationAsTaskItem.Metadata.Clone();
-                        copiedMetadata.SetItems(_metadata.Where(entry => !destinationAsTaskItem.Metadata.TryGetValue(entry.Key, out string val) || String.IsNullOrEmpty(val)));
+                        copiedMetadata = destinationMetadata.SetItems(_metadata.Where(entry => !destinationMetadata.TryGetValue(entry.Key, out string val) || String.IsNullOrEmpty(val)));
                     }
-                    destinationAsTaskItem.Metadata = copiedMetadata;
+
+                    // Wrap in SerializableMetadata since ImmutableDictionary is not serializable.
+                    destinationAsTaskItem.Metadata = new SerializableMetadata(copiedMetadata);
+                }
+                else if (destinationAsITaskItem2 != null && destinationAsMetadataContainer != null)
+                {
+                    // Most likely the destination item is a ProjectItemInstance.TaskItem.
+                    // Defer any LINQ queries. If the destination supports copy-on-write cloning, we may be able to pass
+                    // a direct reference to the metadata.
+                    IEnumerable<KeyValuePair<string, string>> metadataToImport = _metadata;
+
+                    // If the destination already has existing metadata, only import values which are not already set.
+                    if (destinationAsMetadataContainer.HasCustomMetadata)
+                    {
+                        metadataToImport = metadataToImport
+                            .Where(metadatum => string.IsNullOrEmpty(destinationAsITaskItem2.GetMetadataValueEscaped(metadatum.Key)));
+                    }
+
+#if FEATURE_APPDOMAIN
+                    if (RemotingServices.IsTransparentProxy(destinationItem))
+                    {
+                        // Linq is not serializable so materialize the collection before making the call.
+                        metadataToImport = metadataToImport.ToList();
+                    }
+#endif
+
+                    destinationAsMetadataContainer.ImportMetadata(metadataToImport);
                 }
                 else
                 {
@@ -414,7 +473,7 @@ namespace Microsoft.Build.Utilities
         /// <returns>The item-spec of the item.</returns>
         public static explicit operator string(TaskItem taskItemToCast)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(taskItemToCast, nameof(taskItemToCast));
+            ErrorUtilities.VerifyThrowArgumentNull(taskItemToCast);
             return taskItemToCast.ItemSpec;
         }
 
@@ -427,7 +486,7 @@ namespace Microsoft.Build.Utilities
         /// </summary>
         string ITaskItem2.GetMetadataValueEscaped(string metadataName)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(metadataName, nameof(metadataName));
+            ErrorUtilities.VerifyThrowArgumentNull(metadataName);
 
             string metadataValue = null;
 
@@ -460,7 +519,7 @@ namespace Microsoft.Build.Utilities
         /// <returns>The cloned metadata.</returns>
         IDictionary ITaskItem2.CloneCustomMetadataEscaped() => _metadata == null
             ? new CopyOnWriteDictionary<string>(MSBuildNameIgnoreCaseComparer.Default)
-            : _metadata.Clone();
+            : new CopyOnWriteDictionary<string>(_metadata);
 
         #endregion
 
@@ -482,15 +541,22 @@ namespace Microsoft.Build.Utilities
 
         void IMetadataContainer.ImportMetadata(IEnumerable<KeyValuePair<string, string>> metadata)
         {
-            _metadata ??= new CopyOnWriteDictionary<string>(MSBuildNameIgnoreCaseComparer.Default);
-            _metadata.SetItems(metadata.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value ?? string.Empty)));
+            if ((_metadata == null || _metadata.IsEmpty) && metadata is ImmutableDictionary<string, string> immutableMetadata)
+            {
+                _metadata = immutableMetadata;
+                return;
+            }
+
+            _metadata ??= ImmutableDictionaryExtensions.EmptyMetadata;
+            _metadata = _metadata.SetItems(metadata.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value ?? string.Empty)));
         }
 
+#if FEATURE_APPDOMAIN
         private IEnumerable<KeyValuePair<string, string>> EnumerateMetadataEager()
         {
             if (_metadata == null)
             {
-                return Enumerable.Empty<KeyValuePair<string, string>>();
+                return [];
             }
 
             int count = _metadata.Count;
@@ -504,6 +570,7 @@ namespace Microsoft.Build.Utilities
 
             return result;
         }
+#endif
 
         private IEnumerable<KeyValuePair<string, string>> EnumerateMetadataLazy()
         {

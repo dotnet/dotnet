@@ -9,12 +9,12 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(1,15) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Models;
 
-#line default
-#line hidden
 #nullable disable
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -22,7 +22,15 @@ using Models;
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.Grid<WeatherForecast>>(0);
+            __builder.OpenComponent<global::Test.Grid<
+#nullable restore
+#line (3,14)-(3,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+WeatherForecast
+
+#line default
+#line hidden
+#nullable disable
+            >>(0);
             __builder.AddComponentParameter(1, "Items", 
 #nullable restore
 #line (3,40)-(3,70) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -51,7 +59,15 @@ namespace __Blazor.Test.TestComponent
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, "Title", __arg0);
-        __builder.AddComponentParameter(__seq1, "FieldName", __arg1);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.Column<TItem>.
+#nullable restore
+#line (5,30)-(5,39) "x:\dir\subdir\Test\TestComponent.cshtml"
+FieldName
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg1);
         __builder.AddComponentParameter(__seq2, "Format", __arg2);
         __builder.AddComponentParameter(__seq3, "Width", __arg3);
         __builder.CloseComponent();

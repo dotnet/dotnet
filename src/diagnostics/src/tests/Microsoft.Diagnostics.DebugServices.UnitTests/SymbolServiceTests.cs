@@ -55,8 +55,8 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
             Assert.Equal(defaultPath, symbolService.FormatSymbolStores());
             symbolService.DisableSymbolStore();
 
-            Assert.True(symbolService.ParseSymbolPath($"srv*{localSymbolCache}*{SymbolService.SymwebSymbolServer}"));
-            string testpath1 = $"Cache: {localSymbolCache} Server: {SymbolService.SymwebSymbolServer}";
+            Assert.True(symbolService.ParseSymbolPath($"srv*{localSymbolCache}*https://symweb/"));
+            string testpath1 = $"Cache: {localSymbolCache} Server: https://symweb/";
             Assert.Equal(testpath1, symbolService.FormatSymbolStores());
             symbolService.DisableSymbolStore();
 
@@ -102,6 +102,10 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
         public IServiceProvider Services => throw new NotImplementedException();
 
         public IEnumerable<ITarget> EnumerateTargets() => throw new NotImplementedException();
+
+        public int AddTarget(ITarget target) => throw new NotImplementedException();
+
+        public string GetTempDirectory() => throw new NotImplementedException();
 
         #endregion
     }

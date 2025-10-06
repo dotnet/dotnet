@@ -17,19 +17,19 @@ internal class WhitespaceRewriter : SyntaxRewriter
             return base.Visit(node);
         }
 
-        var children = node.ChildNodes();
+        var children = node.ChildNodesAndTokens();
         for (var i = 0; i < children.Count; i++)
         {
             var child = children[i];
-            if (child is CSharpCodeBlockSyntax codeBlock &&
+            if (child.AsNode() is CSharpCodeBlockSyntax codeBlock &&
                 TryRewriteWhitespace(codeBlock, out var rewritten, out var whitespaceLiteral))
             {
                 // Replace the existing code block with the whitespace literal
                 // followed by the rewritten code block (with the code whitespace removed).
-                node = node.ReplaceNode(codeBlock, new SyntaxNode[] { whitespaceLiteral, rewritten });
+                node = node.ReplaceNode(codeBlock, [whitespaceLiteral, rewritten]);
 
                 // Since we replaced node, its children are different. Update our collection.
-                children = node.ChildNodes();
+                children = node.ChildNodesAndTokens();
             }
         }
 
@@ -43,19 +43,10 @@ internal class WhitespaceRewriter : SyntaxRewriter
 
         rewritten = null;
         whitespaceLiteral = null;
-        var children = codeBlock.ChildNodes();
-        if (children.Count < 2)
-        {
-            return false;
-        }
 
-        if (children[0] is CSharpStatementLiteralSyntax literal &&
-            (children[1] is CSharpExplicitExpressionSyntax || children[1] is CSharpImplicitExpressionSyntax))
+        if (codeBlock.Children is [CSharpStatementLiteralSyntax literal, CSharpExplicitExpressionSyntax or CSharpImplicitExpressionSyntax, ..])
         {
-            var containsNonWhitespace = literal.DescendantNodes()
-                .Where(n => n.IsToken)
-                .Cast<SyntaxToken>()
-                .Any(t => !string.IsNullOrWhiteSpace(t.Content));
+            var containsNonWhitespace = literal.DescendantTokens().Any(static t => !string.IsNullOrWhiteSpace(t.Content));
 
             if (!containsNonWhitespace)
             {

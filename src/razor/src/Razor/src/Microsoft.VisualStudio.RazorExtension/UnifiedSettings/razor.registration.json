@@ -1,11 +1,11 @@
 {
   "properties": {
     /*
-    * Migration works by using the previous path that we stored in the VsUserSettingsRegister. This comes
-    * from the OptionsStorage strings related to the option with the form of "{collection}\{name}".
-    * Names much match exactly for the setting to work.
-    */
-    "textEditor.razor.advanced.formatOnType": {
+     * Migration works by using the previous path that we stored in the VsUserSettingsRegister. This comes
+     * from the OptionsStorage strings related to the option with the form of "{collection}\{name}".
+     * Names much match exactly for the setting to work.
+     */
+    "languages.razor.advanced.formatOnType": {
       "type": "boolean",
       "default": true,
       "title": "@Setting_FormattingOnTypeDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -19,7 +19,21 @@
         }
       }
     },
-    "textEditor.razor.advanced.autoClosingTags": {
+    "languages.razor.advanced.formatOnPaste": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_FormattingOnPasteDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_FormattingOnPasteDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass": {
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\FormatOnPaste"
+          }
+        }
+      }
+    },
+    "languages.razor.advanced.autoClosingTags": {
       "type": "boolean",
       "default": true,
       "title": "@Setting_AutoClosingTagsDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -33,7 +47,7 @@
         }
       }
     },
-    "textEditor.razor.advanced.autoInsertAttributeQuotes": {
+    "languages.razor.advanced.autoInsertAttributeQuotes": {
       "type": "boolean",
       "default": true,
       "title": "@Setting_AutoInsertAttributeQuotesDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -47,7 +61,7 @@
         }
       }
     },
-    "textEditor.razor.advanced.colorBackground": {
+    "languages.razor.advanced.colorBackground": {
       "type": "boolean",
       "default": false,
       "title": "@Setting_ColorBackgroundDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -61,7 +75,7 @@
         }
       }
     },
-    "textEditor.razor.advanced.codeBlockBraceOnNextLine": {
+    "languages.razor.advanced.codeBlockBraceOnNextLine": {
       "type": "boolean",
       "default": false,
       "title": "@Setting_CodeBlockBraceOnNextLineDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -75,7 +89,7 @@
         }
       }
     },
-    "textEditor.razor.advanced.commitElementsWithSpace": {
+    "languages.razor.advanced.commitElementsWithSpace": {
       "type": "boolean",
       "default": true,
       "title": "@Setting_CommitElementsWithSpaceDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -89,14 +103,10 @@
         }
       }
     },
-    "textEditor.razor.advanced.snippets": {
+    "languages.razor.advanced.snippets": {
       "type": "string",
       "default": "all",
-      "enum": [
-        "all",
-        "custom",
-        "none"
-      ],
+      "enum": ["all", "custom", "none"],
       "enumItemLabels": [
         "@Setting_SnippetsAll;{13b72f58-279e-49e0-a56d-296be02f0805}",
         "@Setting_SnippetsCustom;{13b72f58-279e-49e0-a56d-296be02f0805}",
@@ -127,7 +137,7 @@
         }
       }
     },
-    "textEditor.razor.advanced.logLevel": {
+    "languages.razor.advanced.logLevel": {
       "type": "string",
       "default": "warning",
       "enum": [
@@ -158,31 +168,31 @@
           },
           "map": [
             {
-              "result": "trace",
+              "result": "none",
               "match": 0
             },
             {
-              "result": "debug",
+              "result": "trace",
               "match": 1
             },
             {
-              "result": "information",
+              "result": "debug",
               "match": 2
             },
             {
-              "result": "warning",
+              "result": "information",
               "match": 3
             },
             {
-              "result": "error",
+              "result": "warning",
               "match": 4
             },
             {
-              "result": "critical",
+              "result": "error",
               "match": 5
             },
             {
-              "result": "none",
+              "result": "critical",
               "match": 6
             }
           ]
@@ -191,12 +201,11 @@
     }
   },
   "categories": {
-    "textEditor.razor": {
+    "languages.razor": {
       "title": "@110;{13b72f58-279e-49e0-a56d-296be02f0805}" // Razor (ASP.NET Core)
     },
-    "textEditor.razor.advanced": {
-      "title": "@1050;{13b72f58-279e-49e0-a56d-296be02f0805}", // Advanced
-      "legacyOptionPageId": "8EBB7F64-5BF7-49E6-9023-7CD7B9912203"
+    "languages.razor.advanced": {
+      "title": "@1050;{13b72f58-279e-49e0-a56d-296be02f0805}" // Advanced
     }
   }
 }

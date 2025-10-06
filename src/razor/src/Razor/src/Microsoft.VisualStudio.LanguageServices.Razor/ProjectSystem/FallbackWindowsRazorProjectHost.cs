@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -13,15 +13,17 @@ using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
-using ContentItem = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
-using ItemReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
-using NoneItem = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.NoneItem;
-using ResolvedCompilationReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ResolvedCompilationReference;
+using ContentItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
+using ItemReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
+using NoneItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.NoneItem;
+using ResolvedCompilationReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ResolvedCompilationReference;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // This class is responsible for initializing the Razor ProjectSnapshotManager for cases where
 // MSBuild does not provides configuration support (SDK < 2.1).
@@ -37,18 +39,15 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             NoneItem.SchemaName,
             ConfigurationGeneralSchemaName,
         });
-    private readonly LanguageServerFeatureOptions? _languageServerFeatureOptions;
 
     [ImportingConstructor]
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager,
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        LanguageServerFeatureOptions? languageServerFeatureOptions)
-        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
+        ProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
+        : base(commonServices, serviceProvider, projectManager, languageServerFeatureOptions)
     {
-        _languageServerFeatureOptions = languageServerFeatureOptions;
     }
 
     protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
@@ -75,7 +74,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             await UpdateAsync(
                 updater =>
                 {
-                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    var projectKeys = GetProjectKeysWithFilePath(CommonServices.UnconfiguredProject.FullPath);
                     foreach (var projectKey in projectKeys)
                     {
                         RemoveProject(updater, projectKey);
@@ -93,7 +92,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             await UpdateAsync(
                 updater =>
                 {
-                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    var projectKeys = GetProjectKeysWithFilePath(CommonServices.UnconfiguredProject.FullPath);
                     foreach (var projectKey in projectKeys)
                     {
                         RemoveProject(updater, projectKey);
@@ -118,7 +117,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             await UpdateAsync(
                 updater =>
                 {
-                    var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
+                    var beforeProjectKey = new ProjectKey(beforeIntermediateOutputPath);
                     RemoveProject(updater, beforeProjectKey);
                 },
                 CancellationToken.None)
@@ -145,23 +144,17 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
             var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null, displayName);
 
-            if (_languageServerFeatureOptions is not null)
-            {
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
-            }
-
             UpdateProject(updater, hostProject);
 
             for (var i = 0; i < changedDocuments.Length; i++)
             {
-                updater.DocumentRemoved(hostProject.Key, changedDocuments[i]);
+                updater.RemoveDocument(hostProject.Key, changedDocuments[i].FilePath);
             }
 
             for (var i = 0; i < documents.Length; i++)
             {
                 var document = documents[i];
-                updater.DocumentAdded(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
+                updater.AddDocument(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
             }
         }, CancellationToken.None).ConfigureAwait(false);
     }
@@ -254,7 +247,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             if (targetPath.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
             {
                 targetPath = CommonServices.UnconfiguredProject.MakeRooted(targetPath);
-                razorDocument = new HostDocument(filePath, targetPath, FileKinds.Legacy);
+                razorDocument = new HostDocument(filePath, targetPath, RazorFileKind.Legacy);
                 return true;
             }
         }

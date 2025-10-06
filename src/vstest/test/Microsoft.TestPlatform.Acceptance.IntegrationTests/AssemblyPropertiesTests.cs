@@ -19,7 +19,7 @@ public class AssemblyPropertiesTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net462")]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetAssemblyTypeForManagedDll(string framework)
     {
         var assemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject3.dll", framework);
@@ -47,7 +47,7 @@ public class AssemblyPropertiesTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [DataRow("netcoreapp3.1")]
+    [DataRow("net8.0")]
     public void GetAssemblyTypeForNetCoreManagedExe(string framework)
     {
         var assemblyPath = _testEnvironment.GetTestAsset("ConsoleManagedApp.dll", framework);

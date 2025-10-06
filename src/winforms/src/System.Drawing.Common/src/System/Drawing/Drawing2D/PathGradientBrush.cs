@@ -5,14 +5,35 @@ using System.ComponentModel;
 
 namespace System.Drawing.Drawing2D;
 
+/// <summary>
+///  Encapsulates a <see cref="Brush"/> object that fills the interior of a <see cref="GraphicsPath"/> object with a gradient.
+/// </summary>
 public sealed unsafe class PathGradientBrush : Brush
 {
-    public PathGradientBrush(PointF[] points) : this(points, WrapMode.Clamp) { }
+    /// <summary>
+    ///  Initializes a new instance of the <see cref="PathGradientBrush"/> class with the specified points.
+    /// </summary>
+    public PathGradientBrush(params PointF[] points) : this(points, WrapMode.Clamp) { }
 
-    public PathGradientBrush(PointF[] points, WrapMode wrapMode)
+#if NET9_0_OR_GREATER
+    /// <inheritdoc cref="PathGradientBrush(PointF[])"/>
+    public PathGradientBrush(params ReadOnlySpan<PointF> points) : this(WrapMode.Clamp, points) { }
+#endif
+
+    /// <summary>
+    ///  Initializes a new instance of the <see cref="PathGradientBrush"/> class with the specified points and
+    ///  <see cref="WrapMode"/>.
+    /// </summary>
+    public PathGradientBrush(PointF[] points, WrapMode wrapMode) : this(wrapMode, points.OrThrowIfNull().AsSpan()) { }
+
+    /// <inheritdoc cref="PathGradientBrush(PointF[], WrapMode)"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    PathGradientBrush(WrapMode wrapMode, params ReadOnlySpan<PointF> points)
     {
-        ArgumentNullException.ThrowIfNull(points);
-
         if (wrapMode is < WrapMode.Tile or > WrapMode.Clamp)
             throw new InvalidEnumArgumentException(nameof(wrapMode), (int)wrapMode, typeof(WrapMode));
 
@@ -22,7 +43,7 @@ public sealed unsafe class PathGradientBrush : Brush
         fixed (PointF* p = points)
         {
             GpPathGradient* nativeBrush;
-            PInvoke.GdipCreatePathGradient(
+            PInvokeGdiPlus.GdipCreatePathGradient(
                 (GdiPlus.PointF*)p,
                 points.Length,
                 (GdiPlus.WrapMode)wrapMode,
@@ -32,12 +53,28 @@ public sealed unsafe class PathGradientBrush : Brush
         }
     }
 
-    public PathGradientBrush(Point[] points) : this(points, WrapMode.Clamp) { }
+    /// <inheritdoc cref="PathGradientBrush(PointF[])"/>
+    public PathGradientBrush(params Point[] points) : this(points, WrapMode.Clamp) { }
 
-    public PathGradientBrush(Point[] points, WrapMode wrapMode)
+    /// <inheritdoc cref="PathGradientBrush(PointF[])"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    PathGradientBrush(params ReadOnlySpan<Point> points) : this(WrapMode.Clamp, points) { }
+
+    /// <inheritdoc cref="PathGradientBrush(PointF[], WrapMode)"/>
+    public PathGradientBrush(Point[] points, WrapMode wrapMode) : this(wrapMode, points.OrThrowIfNull().AsSpan()) { }
+
+    /// <inheritdoc cref="PathGradientBrush(PointF[], WrapMode)"/>
+#if NET9_0_OR_GREATER
+    public
+#else
+    private
+#endif
+    PathGradientBrush(WrapMode wrapMode, params ReadOnlySpan<Point> points)
     {
-        ArgumentNullException.ThrowIfNull(points);
-
         if (wrapMode is < WrapMode.Tile or > WrapMode.Clamp)
             throw new InvalidEnumArgumentException(nameof(wrapMode), (int)wrapMode, typeof(WrapMode));
 
@@ -47,7 +84,7 @@ public sealed unsafe class PathGradientBrush : Brush
         fixed (Point* p = points)
         {
             GpPathGradient* nativeBrush;
-            PInvoke.GdipCreatePathGradientI(
+            PInvokeGdiPlus.GdipCreatePathGradientI(
                 (GdiPlus.Point*)p,
                 points.Length,
                 (GdiPlus.WrapMode)wrapMode,
@@ -61,7 +98,7 @@ public sealed unsafe class PathGradientBrush : Brush
     {
         ArgumentNullException.ThrowIfNull(path);
         GpPathGradient* nativeBrush;
-        PInvoke.GdipCreatePathGradientFromPath(path._nativePath, &nativeBrush).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCreatePathGradientFromPath(path._nativePath, &nativeBrush).ThrowIfFailed();
         SetNativeBrushInternal((GpBrush*)nativeBrush);
     }
 
@@ -76,7 +113,7 @@ public sealed unsafe class PathGradientBrush : Brush
     public override object Clone()
     {
         GpBrush* clonedBrush;
-        PInvoke.GdipCloneBrush(NativeBrush, &clonedBrush).ThrowIfFailed();
+        PInvokeGdiPlus.GdipCloneBrush(NativeBrush, &clonedBrush).ThrowIfFailed();
         GC.KeepAlive(this);
         return new PathGradientBrush((GpPathGradient*)clonedBrush);
     }
@@ -86,13 +123,13 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             ARGB argb;
-            PInvoke.GdipGetPathGradientCenterColor(NativePathGradient, (uint*)&argb).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientCenterColor(NativePathGradient, (uint*)&argb).ThrowIfFailed();
             GC.KeepAlive(this);
             return argb;
         }
         set
         {
-            PInvoke.GdipSetPathGradientCenterColor(NativePathGradient, (ARGB)value).ThrowIfFailed();
+            PInvokeGdiPlus.GdipSetPathGradientCenterColor(NativePathGradient, (ARGB)value).ThrowIfFailed();
             GC.KeepAlive(this);
         }
     }
@@ -102,12 +139,12 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             int count;
-            PInvoke.GdipGetPathGradientSurroundColorCount(NativePathGradient, &count).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientSurroundColorCount(NativePathGradient, &count).ThrowIfFailed();
 
             using ArgbBuffer buffer = new(count);
             fixed (uint* b = buffer)
             {
-                PInvoke.GdipGetPathGradientSurroundColorsWithCount(NativePathGradient, b, &count).ThrowIfFailed();
+                PInvokeGdiPlus.GdipGetPathGradientSurroundColorsWithCount(NativePathGradient, b, &count).ThrowIfFailed();
             }
 
             GC.KeepAlive(this);
@@ -121,7 +158,7 @@ public sealed unsafe class PathGradientBrush : Brush
             int count = value.Length;
             fixed (uint* b = buffer)
             {
-                PInvoke.GdipSetPathGradientSurroundColorsWithCount(
+                PInvokeGdiPlus.GdipSetPathGradientSurroundColorsWithCount(
                     NativePathGradient,
                     b,
                     &count).ThrowIfFailed();
@@ -136,13 +173,13 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             PointF point;
-            PInvoke.GdipGetPathGradientCenterPoint(NativePathGradient, (GdiPlus.PointF*)&point).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientCenterPoint(NativePathGradient, (GdiPlus.PointF*)&point).ThrowIfFailed();
             GC.KeepAlive(this);
             return point;
         }
         set
         {
-            PInvoke.GdipSetPathGradientCenterPoint(NativePathGradient, (GdiPlus.PointF*)&value).ThrowIfFailed();
+            PInvokeGdiPlus.GdipSetPathGradientCenterPoint(NativePathGradient, (GdiPlus.PointF*)&value).ThrowIfFailed();
             GC.KeepAlive(this);
         }
     }
@@ -152,7 +189,7 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             RectangleF rect;
-            PInvoke.GdipGetPathGradientRect(NativePathGradient, (RectF*)&rect).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientRect(NativePathGradient, (RectF*)&rect).ThrowIfFailed();
             GC.KeepAlive(this);
             return rect;
         }
@@ -164,7 +201,7 @@ public sealed unsafe class PathGradientBrush : Brush
         {
             // Figure out the size of blend factor array
             int count;
-            PInvoke.GdipGetPathGradientBlendCount(NativePathGradient, &count).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientBlendCount(NativePathGradient, &count).ThrowIfFailed();
 
             float[] factors = new float[count];
             float[] positions = new float[count];
@@ -172,7 +209,7 @@ public sealed unsafe class PathGradientBrush : Brush
             // Retrieve horizontal blend factors
             fixed (float* f = factors, p = positions)
             {
-                PInvoke.GdipGetPathGradientBlend(NativePathGradient, f, p, count).ThrowIfFailed();
+                PInvokeGdiPlus.GdipGetPathGradientBlend(NativePathGradient, f, p, count).ThrowIfFailed();
             }
 
             // Return the result in a managed array
@@ -199,7 +236,7 @@ public sealed unsafe class PathGradientBrush : Brush
             fixed (float* f = value.Factors, p = value.Positions)
             {
                 // Set blend factors
-                PInvoke.GdipSetPathGradientBlend(NativePathGradient, f, p, count).ThrowIfFailed();
+                PInvokeGdiPlus.GdipSetPathGradientBlend(NativePathGradient, f, p, count).ThrowIfFailed();
                 GC.KeepAlive(this);
             }
         }
@@ -209,7 +246,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void SetSigmaBellShape(float focus, float scale)
     {
-        PInvoke.GdipSetPathGradientSigmaBlend(NativePathGradient, focus, scale).ThrowIfFailed();
+        PInvokeGdiPlus.GdipSetPathGradientSigmaBlend(NativePathGradient, focus, scale).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -217,7 +254,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void SetBlendTriangularShape(float focus, float scale)
     {
-        PInvoke.GdipSetPathGradientLinearBlend(NativePathGradient, focus, scale).ThrowIfFailed();
+        PInvokeGdiPlus.GdipSetPathGradientLinearBlend(NativePathGradient, focus, scale).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -227,7 +264,7 @@ public sealed unsafe class PathGradientBrush : Brush
         {
             // Figure out the size of blend factor array
             int count;
-            PInvoke.GdipGetPathGradientPresetBlendCount(NativePathGradient, &count).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientPresetBlendCount(NativePathGradient, &count).ThrowIfFailed();
 
             if (count == 0)
             {
@@ -243,7 +280,7 @@ public sealed unsafe class PathGradientBrush : Brush
             fixed (float* p = positions)
             {
                 // Retrieve horizontal blend factors
-                PInvoke.GdipGetPathGradientPresetBlend(NativePathGradient, c, p, count).ThrowIfFailed();
+                PInvokeGdiPlus.GdipGetPathGradientPresetBlend(NativePathGradient, c, p, count).ThrowIfFailed();
             }
 
             blend.Positions = positions;
@@ -266,7 +303,7 @@ public sealed unsafe class PathGradientBrush : Brush
             fixed (uint* a = argbColors)
             {
                 // Set blend factors
-                PInvoke.GdipSetPathGradientPresetBlend(NativePathGradient, a, p, count).ThrowIfFailed();
+                PInvokeGdiPlus.GdipSetPathGradientPresetBlend(NativePathGradient, a, p, count).ThrowIfFailed();
                 GC.KeepAlive(this);
             }
         }
@@ -277,14 +314,14 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             Matrix matrix = new();
-            PInvoke.GdipGetPathGradientTransform(NativePathGradient, matrix.NativeMatrix).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientTransform(NativePathGradient, matrix.NativeMatrix).ThrowIfFailed();
             GC.KeepAlive(this);
             return matrix;
         }
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            PInvoke.GdipSetPathGradientTransform(NativePathGradient, value.NativeMatrix).ThrowIfFailed();
+            PInvokeGdiPlus.GdipSetPathGradientTransform(NativePathGradient, value.NativeMatrix).ThrowIfFailed();
             GC.KeepAlive(value);
             GC.KeepAlive(this);
         }
@@ -292,7 +329,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void ResetTransform()
     {
-        PInvoke.GdipResetPathGradientTransform(NativePathGradient).ThrowIfFailed();
+        PInvokeGdiPlus.GdipResetPathGradientTransform(NativePathGradient).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -301,7 +338,7 @@ public sealed unsafe class PathGradientBrush : Brush
     public void MultiplyTransform(Matrix matrix, MatrixOrder order)
     {
         ArgumentNullException.ThrowIfNull(matrix);
-        PInvoke.GdipMultiplyPathGradientTransform(
+        PInvokeGdiPlus.GdipMultiplyPathGradientTransform(
             NativePathGradient,
             matrix.NativeMatrix,
             (GdiPlus.MatrixOrder)order).ThrowIfFailed();
@@ -314,7 +351,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void TranslateTransform(float dx, float dy, MatrixOrder order)
     {
-        PInvoke.GdipTranslatePathGradientTransform(NativePathGradient, dx, dy, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipTranslatePathGradientTransform(NativePathGradient, dx, dy, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -322,7 +359,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void ScaleTransform(float sx, float sy, MatrixOrder order)
     {
-        PInvoke.GdipScalePathGradientTransform(NativePathGradient, sx, sy, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipScalePathGradientTransform(NativePathGradient, sx, sy, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -330,7 +367,7 @@ public sealed unsafe class PathGradientBrush : Brush
 
     public void RotateTransform(float angle, MatrixOrder order)
     {
-        PInvoke.GdipRotatePathGradientTransform(NativePathGradient, angle, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
+        PInvokeGdiPlus.GdipRotatePathGradientTransform(NativePathGradient, angle, (GdiPlus.MatrixOrder)order).ThrowIfFailed();
         GC.KeepAlive(this);
     }
 
@@ -340,13 +377,13 @@ public sealed unsafe class PathGradientBrush : Brush
         {
             float scaleX;
             float scaleY;
-            PInvoke.GdipGetPathGradientFocusScales(NativePathGradient, &scaleX, &scaleY).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientFocusScales(NativePathGradient, &scaleX, &scaleY).ThrowIfFailed();
             GC.KeepAlive(this);
             return new PointF(scaleX, scaleY);
         }
         set
         {
-            PInvoke.GdipSetPathGradientFocusScales(NativePathGradient, value.X, value.Y).ThrowIfFailed();
+            PInvokeGdiPlus.GdipSetPathGradientFocusScales(NativePathGradient, value.X, value.Y).ThrowIfFailed();
             GC.KeepAlive(this);
         }
     }
@@ -356,7 +393,7 @@ public sealed unsafe class PathGradientBrush : Brush
         get
         {
             WrapMode mode;
-            PInvoke.GdipGetPathGradientWrapMode(NativePathGradient, (GdiPlus.WrapMode*)&mode).ThrowIfFailed();
+            PInvokeGdiPlus.GdipGetPathGradientWrapMode(NativePathGradient, (GdiPlus.WrapMode*)&mode).ThrowIfFailed();
             GC.KeepAlive(this);
             return mode;
         }
@@ -365,7 +402,7 @@ public sealed unsafe class PathGradientBrush : Brush
             if (value is < WrapMode.Tile or > WrapMode.Clamp)
                 throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(WrapMode));
 
-            PInvoke.GdipSetPathGradientWrapMode(NativePathGradient, (GdiPlus.WrapMode)value).ThrowIfFailed();
+            PInvokeGdiPlus.GdipSetPathGradientWrapMode(NativePathGradient, (GdiPlus.WrapMode)value).ThrowIfFailed();
             GC.KeepAlive(this);
         }
     }

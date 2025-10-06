@@ -13,7 +13,7 @@
     <XHarnessAppleProject Include="$(MSBuildThisFileDirectory)XHarness\XHarness.Apple.Simulator.Run.proj" />
     <XHarnessAppleProject Include="$(MSBuildThisFileDirectory)XHarness\XHarness.Apple.Simulator.CustomCommands.proj" />
 
-    <HelixTargetQueue Include="osx.1200.amd64.open"/>
+    <HelixTargetQueue Include="osx.15.amd64.open"/>
   </ItemGroup>
 
   <Target Name="Pack"/>

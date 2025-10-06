@@ -1,23 +1,21 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -33,8 +31,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 // Even though the DTO declares this as non-null, we want to make sure we behave
@@ -42,23 +40,21 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             },
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0));
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.Net.Dns"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
     }
 
@@ -70,8 +66,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -97,25 +93,22 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0), supportsCodeActionResolve: false);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0), supportsCodeActionResolve: false);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.Net.Dns"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
-
     }
 
     [Fact]
@@ -126,8 +119,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -140,18 +133,15 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0));
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = Array.Empty<RazorVSInternalCodeAction>();
+        var csharpCodeActions = ImmutableArray<RazorVSInternalCodeAction>.Empty;
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
 
     }
@@ -167,8 +157,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "@code { Path; }";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -181,10 +171,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                     {
                         Severity = DiagnosticSeverity.Error,
                         Code = errorCode,
-                        Range = new Range{
-                            Start = new Position(0, 8),
-                            End = new Position(0, 12),
-                        }
+                        Range = LspFactory.CreateRange(0, 8, 0, 12)
                     },
                     new Diagnostic()
                     {
@@ -195,12 +182,11 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -211,20 +197,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "System.IO.SomethingElse",
                 Name = "CodeActionFromVSCode"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
-            r =>
+        r =>
             {
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },
@@ -246,20 +231,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "@inject Path";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
             }
         };
 
-        var location = new SourceLocation(8, 0, 8);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 8, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -270,20 +254,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "using System.IO;",
                 Name = "AddImport"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             }
@@ -298,20 +281,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "@code { Path; }";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -322,20 +304,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "using System.IO;",
                 Name = "AddImport"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             },
@@ -356,8 +337,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var contents = "@code { Path; }";
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
+            Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -370,10 +351,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                     {
                         Severity = DiagnosticSeverity.Error,
                         Code = "CS0246",
-                        Range = new Range{
-                            Start = new Position(0, 8),
-                            End = new Position(0, 12)
-                        }
+                        Range = LspFactory.CreateRange(0, 8, 0, 12)
                     },
                     new Diagnostic()
                     {
@@ -384,12 +362,11 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
-        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "Fully qualify 'Path' -> System.IO.Path",
@@ -400,20 +377,19 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "Fully qualify 'Path' -> SuperSpecialNamespace.Path",
                 Name = "CodeActionFromVSCode"
             }
-        };
+        ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
                 Assert.Equal("@using SuperSpecialNamespace", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },
@@ -422,7 +398,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },
@@ -443,16 +419,16 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
         VSCodeActionParams request,
-        SourceLocation location,
+        int absoluteIndex,
         string filePath,
         string text,
         SourceSpan componentSourceSpan,
         bool supportsFileCreation = true,
         bool supportsCodeActionResolve = true)
     {
-        var shortComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
+        var shortComponent = TagHelperDescriptorBuilder.CreateComponent("Fully.Qualified.Component", "TestAssembly");
         shortComponent.TagMatchingRule(rule => rule.TagName = "Component");
-        var fullyQualifiedComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
+        var fullyQualifiedComponent = TagHelperDescriptorBuilder.CreateComponent("Fully.Qualified.Component", "TestAssembly");
         fullyQualifiedComponent.TagMatchingRule(rule => rule.TagName = "Fully.Qualified.Component");
 
         var tagHelpers = ImmutableArray.Create(shortComponent.Build(), fullyQualifiedComponent.Build());
@@ -462,24 +438,42 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         {
             builder.AddTagHelpers(tagHelpers);
             builder.AddDirective(InjectDirective.Directive);
-        });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
 
-        var cSharpDocument = codeDocument.GetCSharpDocument();
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+
+        var codeDocument = projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
+
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);
         var diagnostic = RazorDiagnostic.Create(diagnosticDescriptor, componentSourceSpan);
-        var cSharpDocumentWithDiagnostic = RazorCSharpDocument.Create(codeDocument, cSharpDocument.GeneratedCode, cSharpDocument.Options, new[] { diagnostic });
-        codeDocument.SetCSharpDocument(cSharpDocumentWithDiagnostic);
+        var csharpDocumentWithDiagnostic = new RazorCSharpDocument(codeDocument, csharpDocument.Text, [diagnostic]);
+        codeDocument.SetCSharpDocument(csharpDocumentWithDiagnostic);
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
-            document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
-            document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()) &&
-            document.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()) == new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers), MockBehavior.Strict);
+        var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
+        documentSnapshotMock
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument);
+        documentSnapshotMock
+            .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument.Source.Text);
+        documentSnapshotMock
+            .Setup(x => x.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tagHelpers);
 
-        var sourceText = SourceText.From(text);
-
-        var context = new RazorCodeActionContext(request, documentSnapshot, codeDocument, location, sourceText, supportsFileCreation, supportsCodeActionResolve: supportsCodeActionResolve);
-
-        return context;
+        return new RazorCodeActionContext(
+            request,
+            documentSnapshotMock.Object,
+            codeDocument,
+            DelegatedDocumentUri: null,
+            StartAbsoluteIndex: absoluteIndex,
+            EndAbsoluteIndex: absoluteIndex,
+            RazorLanguageKind.Razor,
+            codeDocument.Source.Text,
+            supportsFileCreation,
+            supportsCodeActionResolve);
     }
 }

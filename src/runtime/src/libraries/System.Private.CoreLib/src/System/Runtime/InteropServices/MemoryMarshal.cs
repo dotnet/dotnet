@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-#pragma warning disable 8500 // sizeof of managed types
-
 namespace System.Runtime.InteropServices
 {
     /// <summary>
@@ -33,7 +31,7 @@ namespace System.Runtime.InteropServices
             where T : struct
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
 
             return new Span<byte>(
                 ref Unsafe.As<T, byte>(ref GetReference(span)),
@@ -56,7 +54,7 @@ namespace System.Runtime.InteropServices
             where T : struct
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
 
             return new ReadOnlySpan<byte>(
                 ref Unsafe.As<T, byte>(ref GetReference(span)),
@@ -73,7 +71,7 @@ namespace System.Runtime.InteropServices
         /// as <see cref="Memory{T}"/> but only used for reading to store a <see cref="ReadOnlyMemory{T}"/>.
         /// </remarks>
         public static Memory<T> AsMemory<T>(ReadOnlyMemory<T> memory) =>
-            Unsafe.As<ReadOnlyMemory<T>, Memory<T>>(ref memory);
+            new Memory<T>(memory._object, memory._index, memory._length);
 
         /// <summary>
         /// Returns a reference to the 0th element of the Span. If the Span is empty, returns a reference to the location where the 0th element
@@ -113,19 +111,19 @@ namespace System.Runtime.InteropServices
         /// Thrown when <typeparamref name="TFrom"/> or <typeparamref name="TTo"/> contains pointers.
         /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Span<TTo> Cast<TFrom, TTo>(Span<TFrom> span)
+        public static unsafe Span<TTo> Cast<TFrom, TTo>(Span<TFrom> span)
             where TFrom : struct
             where TTo : struct
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<TFrom>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(TFrom));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(TFrom));
             if (RuntimeHelpers.IsReferenceOrContainsReferences<TTo>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(TTo));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(TTo));
 
             // Use unsigned integers - unsigned division by constant (especially by power of 2)
             // and checked casts are faster and smaller.
-            uint fromSize = (uint)Unsafe.SizeOf<TFrom>();
-            uint toSize = (uint)Unsafe.SizeOf<TTo>();
+            uint fromSize = (uint)sizeof(TFrom);
+            uint toSize = (uint)sizeof(TTo);
             uint fromLength = (uint)span.Length;
             int toLength;
             if (fromSize == toSize)
@@ -168,19 +166,19 @@ namespace System.Runtime.InteropServices
         /// Thrown when <typeparamref name="TFrom"/> or <typeparamref name="TTo"/> contains pointers.
         /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ReadOnlySpan<TTo> Cast<TFrom, TTo>(ReadOnlySpan<TFrom> span)
+        public static unsafe ReadOnlySpan<TTo> Cast<TFrom, TTo>(ReadOnlySpan<TFrom> span)
             where TFrom : struct
             where TTo : struct
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<TFrom>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(TFrom));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(TFrom));
             if (RuntimeHelpers.IsReferenceOrContainsReferences<TTo>())
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(TTo));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(TTo));
 
             // Use unsigned integers - unsigned division by constant (especially by power of 2)
             // and checked casts are faster and smaller.
-            uint fromSize = (uint)Unsafe.SizeOf<TFrom>();
-            uint toSize = (uint)Unsafe.SizeOf<TTo>();
+            uint fromSize = (uint)sizeof(TFrom);
+            uint toSize = (uint)sizeof(TTo);
             uint fromLength = (uint)span.Length;
             int toLength;
             if (fromSize == toSize)
@@ -472,9 +470,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if (sizeof(T) > source.Length)
+            if (source.Length < sizeof(T))
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.length);
             }
@@ -491,9 +489,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if (sizeof(T) > (uint)source.Length)
+            if (source.Length < sizeof(T))
             {
                 value = default;
                 return false;
@@ -511,9 +509,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if ((uint)sizeof(T) > (uint)destination.Length)
+            if (destination.Length < sizeof(T))
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.length);
             }
@@ -530,9 +528,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if (sizeof(T) > (uint)destination.Length)
+            if (destination.Length < sizeof(T))
             {
                 return false;
             }
@@ -553,9 +551,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if (sizeof(T) > (uint)span.Length)
+            if (span.Length < sizeof(T))
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.length);
             }
@@ -575,9 +573,9 @@ namespace System.Runtime.InteropServices
         {
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                ThrowHelper.ThrowInvalidTypeWithPointersNotSupported(typeof(T));
+                ThrowHelper.ThrowArgument_TypeContainsReferences(typeof(T));
             }
-            if (sizeof(T) > (uint)span.Length)
+            if (span.Length < sizeof(T))
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.length);
             }

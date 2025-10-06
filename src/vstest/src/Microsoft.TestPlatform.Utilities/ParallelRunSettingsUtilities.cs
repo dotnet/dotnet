@@ -29,7 +29,7 @@ public static class ParallelRunSettingsUtilities
     /// <summary>
     /// This will update the RunSetting with MaxCpuCount 0 if RunSetting doesn't configured with this setting.
     /// </summary>
-    /// <param name="runSettingsDocument">RunSetting file.</param>
+    /// <param name="navigator">XPATH navigator.</param>
     public static void UpdateRunSettingsWithParallelSettingIfNotConfigured(XPathNavigator navigator)
     {
         var node = navigator.SelectSingleNode(XpathOfMaxCpuCount);

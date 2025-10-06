@@ -16,7 +16,13 @@ namespace AspNetCore
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"b96e944bd86a2acecd5a176708eedb3cdc8eef05122fd51aa5c4fe58d4069af7", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml")]
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ModelExpressionTagHelper : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DateTime>
+    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ModelExpressionTagHelper : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<
+#line (1,8)-(1,16) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml"
+DateTime
+
+#line default
+#line hidden
+    >
     {
         #line hidden
         #pragma warning disable 0649
@@ -49,7 +55,7 @@ namespace AspNetCore
             WriteLiteral("\r\n");
             EndContext();
             BeginContext(66, 25, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "__UniqueIdSuppressedForTesting__", async() => {
             }
             );
             __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();
@@ -74,7 +80,7 @@ Date
             WriteLiteral("\r\n");
             EndContext();
             BeginContext(93, 27, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "__UniqueIdSuppressedForTesting__", async() => {
             }
             );
             __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();

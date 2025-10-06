@@ -3,6 +3,14 @@
 # This file is used by the Binary Tool to remove binaries from the VMR
 # If importing a file, include the relative path to the file
 
+# Well known non-checked in infrastructure
+artifacts/
+.dotnet/
+.git/
+.packages/
+prereqs/packages/
+MicroBuild/ # This is introduced in real and test signed CI builds. Remove with https://github.com/dotnet/arcade/issues/15731
+
 **/*.bmp
 **/*.doc
 **/*.docx
@@ -31,7 +39,6 @@ src/aspnetcore/src/**/Samples/**/*.woff*
 src/aspnetcore/src/Components/benchmarkapps/BlazingPizza.Server/wwwroot/css/font/quicksand-v8-latin-*.woff*
 src/aspnetcore/src/Components/Web.JS/dist/Release/blazor.*.js # JavaScript files with a null bytes
 src/aspnetcore/src/ProjectTemplates/Web.ProjectTemplates/**/app.db
-src/aspnetcore/src/submodules/Node-Externals/cache/**/* # https://github.com/dotnet/source-build/issues/4161
 
 # fsharp
 src/fsharp/src/fsi/fsi.res # Icon
@@ -41,19 +48,16 @@ src/razor/**/SampleApp/**/fonts/**/*.eot
 src/razor/**/SampleApp/**/fonts/**/*.otf
 src/razor/**/SampleApp/**/fonts/**/*.woff
 
-# roslyn
-src/roslyn/src/ExpressionEvaluator/Core/Source/ExpressionCompiler/Resources/WindowsProxy.winmd
-
 # runtime
 src/runtime/src/libraries/System.Diagnostics.EventLog/src/Messages/EventLogMessages.res # Icon
 src/runtime/src/libraries/System.Speech/src/**/*.upsmap # https://github.com/dotnet/runtime/issues/81692
 src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp # https://github.com/dotnet/runtime/issues/81693
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 
-# source-build-externals
-src/source-build-externals/src/humanizer/src/Humanizer.Tests**/*.pfx
-src/source-build-externals/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
-src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
-src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
-src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
-src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer
+# source-build-reference-packages
+src/source-build-reference-packages/src/externalPackages/src/humanizer/src/Humanizer.Tests**/*.pfx
+src/source-build-reference-packages/src/externalPackages/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer

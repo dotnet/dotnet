@@ -1,0 +1,4 @@
+# Each line represents arguments for the .NET SDK installer script (https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script)
+-Channel 10.0.1xx -Quality daily
+-Channel 9.0 -Runtime dotnet
+-Channel 8.0 -Runtime dotnet

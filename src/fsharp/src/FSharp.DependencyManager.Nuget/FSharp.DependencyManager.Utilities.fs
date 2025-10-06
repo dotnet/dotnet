@@ -95,9 +95,7 @@ module internal Utilities =
     let getResolutionsFromFile resolutionsFile =
         let lines =
             try
-                File
-                    .ReadAllText(resolutionsFile)
-                    .Split([| '\r'; '\n' |], StringSplitOptions.None)
+                File.ReadAllText(resolutionsFile).Split([| '\r'; '\n' |], StringSplitOptions.None)
                 |> Array.filter (String.IsNullOrEmpty >> not)
             with _ ->
                 [||]
@@ -154,16 +152,16 @@ module internal Utilities =
         let result = ResizeArray()
         let mutable insideSQ = false
         let mutable start = 0
-        let isSeperator c = c = ','
+        let isSeparator c = c = ','
 
         for i = 0 to last do
             match text[i], insideSQ with
-            | c, false when isSeperator c -> // split when seeing a separator
+            | c, false when isSeparator c -> // split when seeing a separator
                 result.Add(text.Substring(start, i - start))
                 insideSQ <- false
                 start <- i + 1
             | _, _ when i = last -> result.Add(text.Substring(start, i - start + 1))
-            | c, true when isSeperator c -> // keep reading if a separator is inside quotation
+            | c, true when isSeparator c -> // keep reading if a separator is inside quotation
                 insideSQ <- true
             | '\'', _ when isNotQuotedQuotation text i -> // open or close quotation
                 insideSQ <- not insideSQ // keep reading
@@ -320,10 +318,9 @@ module internal Utilities =
             //      https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
             // Use enabled feeds only (see NuGet.Commands.ListSourceRunner.Run) and strip off the flags.
             let pattern =
-                @"(\s*\d+\.+\s*)(?'name'\S*)(\s*)\[(?'enabled'Enabled|Disabled)\](\s*)$(\s*)(?'uri'\S*)"
+                @"(\s*\d+\.+\s*)(?'name'\S*)(\s*)\[(?'enabled'Enabled|Disabled)\](\s*)(?'uri'[^\0\r\n]*)"
 
-            let regex =
-                new Regex(pattern, RegexOptions.Multiline ||| RegexOptions.ExplicitCapture)
+            let regex = new Regex(pattern, RegexOptions.ExplicitCapture)
 
             let sourcelist = String.concat Environment.NewLine stdOut
 

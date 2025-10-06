@@ -1,13 +1,3 @@
-variables:
-  - template: /eng/common-variables.yml
-  - template: /eng/common/templates/variables/pool-providers.yml
-  - name: Build.Repository.Clean
-    value: true
-  - name: CheckNuGetSizesScript
-    value: >-
-      $nupkgs_large=(Get-ChildItem artifacts/packages/$(_BuildConfig)/Shipping -recurse -include "*.nupkg" | Select-Object Name,Length | Where-Object { $_.Length -gt 250*1MB });
-      if ($nupkgs_large.Length -gt 0) { Write-Error "NuGet size exceeds 250MiB: $($nupkgs_large | Format-Table | Out-String)"; exit 1 }
-
 trigger:
   batch: true
   branches:
@@ -15,281 +5,259 @@ trigger:
     - main
     - release/*
 
-pr:
-  branches:
-    include:
-    - main
-    - release/*
+pr: none
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      enablePublishBuildArtifacts: true
-      enablePublishBuildAssets: true
-      enablePublishUsingPipelines: true
-      enableMicrobuild: true
-      enableSourceBuild: true
-      variables:
-        - _BuildConfig: Release
+variables:
+- template: /eng/common-variables.yml@self
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- name: LinuxImage
+  value: build.ubuntu.2204.amd64
+- name: WindowsImage
+  value: windows.vs2022.amd64
+- name: MacImage
+  value: macOS-13
+- name: CheckNuGetSizesScript
+  value: >-
+    $nupkgs_large=(Get-ChildItem artifacts/packages/$(_BuildConfig)/Shipping -recurse -include "*.nupkg" | Select-Object Name,Length | Where-Object { $_.Length -gt 250*1MB });
+    if ($nupkgs_large.Length -gt 0) { Write-Error "NuGet size exceeds 250MiB: $($nupkgs_large | Format-Table | Out-String)"; exit 1 }
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      tsa:
+        enabled: true
+      policheck:
+        enabled: true
+      binskim:
+        scanOutputDirectoryOnly: true
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: $(WindowsImage)
+        os: windows
+    stages:
+    - stage: build
+      displayName: Build
       jobs:
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: true
 
-      ############ macOS BUILD ############
-      - job: Build_macOS
-        displayName: macOS
-        timeoutInMinutes: 120
-        pool:
-          vmImage: macOS-11
-        strategy:
-          matrix:
-            x64:
-              assetManifestOS: osx
-              assetManifestPlatform: x64
-              archflag: --arch x64
-            arm64:
-              assetManifestOS: osx
-              assetManifestPlatform: arm64
-              archflag: --arch arm64
-        steps:
-        - bash: |
-            ./build.sh $(archflag) --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
-          displayName: Build
-        - publish: artifacts/packages
-          artifact: Packages_macOS_$(assetManifestPlatform)
-        - bash: |
-            rm -rf binaryen node python llvm emscripten
-          displayName: Remove temporary artifacts
-        - powershell: $(CheckNuGetSizesScript)
-          displayName: Check NuGet sizes
+          jobs:
+          ############ macOS BUILD ############
+          - job: Build_macOS_x64
+            displayName: macOS_x64
+            timeoutInMinutes: 120
+            pool:
+              name: Azure Pipelines
+              image: $(MacImage)
+              os: macOS
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=x64
+                /p:TargetRid=osx-x64
+                /p:AssetManifestOS=osx
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
 
-      # Only run in case of in-build signing
-      - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'), ne(variables['PostBuildSign'], 'true')) }}:
-        - job: Sign_macOS
-          dependsOn: Build_macOS
-          displayName: Sign macOS
-          timeoutInMinutes: 30
-          pool:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64
-          strategy:
-            matrix:
-              x64:
-                assetManifestOS: osx
-                assetManifestPlatform: x64
-              arm64:
-                assetManifestOS: osx
-                assetManifestPlatform: arm64
-          steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: Packages_macOS_$(assetManifestPlatform)
-              path: 'artifacts/packages'
+          - job: Build_macOS_arm64
+            displayName: macOS_arm64
+            timeoutInMinutes: 120
+            pool:
+              name: Azure Pipelines
+              image: $(MacImage)
+              os: macOS
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=osx-arm64
+                /p:AssetManifestOS=osx
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
+          
+          ############ Linux BUILD ############
+          - job: Build_linux_x64
+            displayName: Linux_x64
+            timeoutInMinutes: 120
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(LinuxImage)
+              os: linux
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=x64
+                /p:TargetRid=linux-x64
+                /p:AssetManifestOS=linux
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
+          
+          - job: Build_linux_arm64
+            displayName: Linux_arm64
+            timeoutInMinutes: 120
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(LinuxImage)
+              os: linux
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=linux-arm64
+                /p:AssetManifestOS=linux
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
 
-          - powershell: |
-              ./eng/common/build.ps1 -ci -configuration $(_BuildConfig) -restore -sign -publish /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) $(_InternalBuildArgs)
-            displayName: Sign and Publish
+          - job: Build_linux_musl_x64
+            displayName: Linux_musl_x64
+            timeoutInMinutes: 120
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(LinuxImage)
+              os: linux
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=x64
+                /p:TargetRid=linux-musl-x64
+                /p:AssetManifestOS=linux-musl
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
+          
+          - job: Build_linux_musl_arm64
+            displayName: Linux_musl_arm64
+            timeoutInMinutes: 120
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(LinuxImage)
+              os: linux
+            steps:
+            - bash: ./build.sh
+                --ci
+                --prepareMachine
+                --configuration $(_BuildConfig)
+                --pack
+                --publish
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=linux-musl-arm64
+                /p:AssetManifestOS=linux-musl
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - bash: |
+                rm -rf binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
+  
+          ############ Windows BUILD ############
+          - job: Build_win_x64
+            displayName: Windows_x64
+            timeoutInMinutes: 240
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(WindowsImage)
+              os: windows
+            steps:
+            - script: build.cmd
+                -ci
+                -prepareMachine
+                -configuration $(_BuildConfig)
+                -pack
+                -publish
+                /p:TargetArchitecture=x64
+                /p:TargetRid=win-x64
+                /p:AssetManifestOS=win
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - script: |
+                rmdir /s /q binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
 
-      ############ Linux BUILD ############
-      - job: Build_Linux
-        displayName: Linux
-        timeoutInMinutes: 120
-        pool:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals build.ubuntu.2204.amd64
-        strategy:
-          matrix:
-            x64:
-              assetManifestOS: linux
-              assetManifestPlatform: x64
-              archflag: --arch x64
-            arm64:
-              assetManifestOS: linux
-              assetManifestPlatform: arm64
-              archflag: --arch arm64
-            x64_musl:
-              assetManifestOS: linux-musl
-              assetManifestPlatform: x64
-              archflag: --arch x64
-            arm64_musl:
-              assetManifestOS: linux-musl
-              assetManifestPlatform: arm64
-              archflag: --arch arm64
-        steps:
-        - bash: |
-            ./build.sh $(archflag) --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
-          displayName: Build
-        - publish: artifacts/packages
-          artifact: Packages_$(assetManifestOS)_$(assetManifestPlatform)
-        - bash: |
-            rm -rf binaryen node llvm emscripten
-          displayName: Remove temporary artifacts
-        - powershell: $(CheckNuGetSizesScript)
-          displayName: Check NuGet sizes
+          - job: Build_win_arm64
+            displayName: Windows_arm64
+            timeoutInMinutes: 240
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: $(WindowsImage)
+              os: windows
+            steps:
+            - script: build.cmd
+                -ci
+                -prepareMachine
+                -configuration $(_BuildConfig)
+                -pack
+                -publish
+                /p:TargetArchitecture=arm64
+                /p:TargetRid=win-arm64
+                /p:AssetManifestOS=win
+                $(_InternalBuildArgs)
+              displayName: Build and Publish
+            - script: |
+                rmdir /s /q binaryen node python llvm emscripten
+              displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
 
-      # Only run in case of in-build signing
-      - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'), ne(variables['PostBuildSign'], 'true')) }}:
-        - job: Sign_Linux
-          dependsOn: Build_Linux
-          displayName: Sign Linux
-          timeoutInMinutes: 30
-          pool:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64
-          strategy:
-            matrix:
-              x64:
-                assetManifestOS: linux
-                assetManifestPlatform: x64
-              arm64:
-                assetManifestOS: linux
-                assetManifestPlatform: arm64
-              x64_musl:
-                assetManifestOS: linux-musl
-                assetManifestPlatform: x64
-              arm64_musl:
-                assetManifestOS: linux-musl
-                assetManifestPlatform: arm64
-          steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: Packages_$(assetManifestOS)_$(assetManifestPlatform)
-              path: 'artifacts/packages'
-
-          - powershell: |
-              ./eng/common/build.ps1 -ci -configuration $(_BuildConfig) -restore -sign -publish /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) $(_InternalBuildArgs)
-            displayName: Sign and Publish
-
-      ############ Windows BUILD ############
-      - job: Build_Windows
-        displayName: Windows
-        timeoutInMinutes: 120
-        pool:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64.open
-          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64
-        strategy:
-          matrix:
-            x64:
-              assetManifestOS: win
-              assetManifestPlatform: x64
-              archflag: -arch x64
-              SkipPublishWorkloads: true
-            arm64:
-              assetManifestOS: win
-              assetManifestPlatform: arm64
-              archflag: -arch arm64
-              SkipPublishWorkloads: true
-        steps:
-        - script: |
-            .\build.cmd $(archflag) -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipWorkloads=true /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
-          displayName: Build and Publish
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-            CleanTargetFolder: false
-            Overwrite: true
-        - task: PublishBuildArtifacts@1
-          displayName: Publish intermediate artifacts
-          inputs:
-            pathToPublish: '$(Build.StagingDirectory)/IntermediateArtifacts'
-            artifactName: IntermediateArtifacts
-            artifactType: container
-        - script: |
-            rmdir /s /q binaryen node python llvm emscripten
-          displayName: Remove temporary artifacts
-
-      - job: Build_Workloads
-        displayName: Workloads
-        dependsOn:
-          - Build_Windows
-        timeoutInMinutes: 120
-        pool:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64.open
-          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64
-        strategy:
-          matrix:
-            x64:
-              assetManifestOS: win
-              assetManifestPlatform: x64
-              archflag: -arch x64
-              SkipPublishWorkloads: false
-        steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifact: IntermediateArtifacts
-            path: 'artifacts/packages'
-            patterns: |
-              IntermediateArtifacts/windows/Shipping/*.*
-        - script: |
-            .\build.cmd $(archflag) -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipBuild=true /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestFileName=win-workloads.xml /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping $(_InternalBuildArgs)
-          displayName: Build and Publish
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-            CleanTargetFolder: false
-            Overwrite: true
-        - task: PublishBuildArtifacts@1
-          displayName: Publish intermediate artifacts
-          inputs:
-            pathToPublish: '$(Build.StagingDirectory)/IntermediateArtifacts'
-            artifactName: IntermediateArtifacts
-            artifactType: container
-        # Upload packages wrapping msis
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/windows'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/workloads'
-            CleanTargetFolder: true
-        # Delete wixpdb files before they are uploaded to artifacts
-        - task: DeleteFiles@1
-          displayName: Delete wixpdb's
-          inputs:
-            SourceFolder: $(Build.SourcesDirectory)/artifacts/workloadPackages
-            Contents: '*.wixpdb'
-        # Upload artifacts to be used for generating VS components
-        - task: PublishPipelineArtifact@1
-          displayName: Publish workload artifacts
-          inputs:
-            targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
-            artifactName: 'Workloads'
-          continueOnError: true
-          condition: ne(variables['SkipPublishWorkloads'], 'true')
-        - powershell: $(CheckNuGetSizesScript)
-          displayName: Check NuGet sizes
-
-############ POST BUILD ARCADE LOGIC ############
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      enableSourceLinkValidation: false
-      enableSigningValidation: false
-      enableSymbolValidation: false
-      enableNugetValidation: true
+    - stage: Publish
+      displayName: Publish
+      dependsOn: []
+      jobs:
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          isAssetlessBuild: true

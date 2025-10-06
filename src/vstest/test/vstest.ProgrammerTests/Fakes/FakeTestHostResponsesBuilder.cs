@@ -41,7 +41,6 @@ internal class FakeTestHostResponsesBuilder
     /// For VersionCheck message it does the given before action and responds with the given FakeMessage and then does the given after action.
     /// Use FakeMessage.NoResponse to not respond.
     /// </summary>
-    /// <param name="message"></param>
     /// <returns></returns>
     internal FakeTestHostResponsesBuilder VersionCheck(FakeMessage message, Action<FakeTestHostFixture>? beforeAction = null, Action<FakeTestHostFixture>? afterAction = null)
     {

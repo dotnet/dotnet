@@ -12,7 +12,9 @@
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
 ###   --no-sdk                    Exclude the download of the .NET SDK
 ###   --artifacts-rid             The RID of the previously source-built artifacts archive to download
-###                               Default is centos.8-x64
+###                               Default is centos.9-x64
+###   --bootstrap-rid <value>     The (portable) RID for the bootstrap artifacts to restore. For example, linux-arm64, linux-musl-x64
+###                               Default is the current portable RID.
 ###   --runtime-source-feed       URL of a remote server or a local directory, from which SDKs and
 ###                               runtimes can be downloaded
 ###   --runtime-source-feed-key   Key for accessing the above server, if necessary
@@ -30,16 +32,21 @@ IFS=$'\n\t'
 source="${BASH_SOURCE[0]}"
 REPO_ROOT="$( cd -P "$( dirname "$0" )" && pwd )"
 
+# Load common helper functions
+source "$REPO_ROOT/eng/download-source-built-archive.sh"
+source "$REPO_ROOT/eng/source-build-toolset-init.sh"
+
 function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
 
+packagesDir="$REPO_ROOT/prereqs/packages"
+
 # SB prep default arguments
-defaultArtifactsRid='centos.8-x64'
+defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
-defaultDotnetSdk="$REPO_ROOT/.dotnet"
-defaultPackagesDir="$REPO_ROOT/prereqs/packages/previously-source-built"
+defaultPsbDir="$packagesDir/previously-source-built"
 
 # SB prep arguments
 buildBootstrap=true
@@ -48,12 +55,19 @@ downloadPrebuilts=true
 removeBinaries=true
 installDotnet=true
 artifactsRid=$defaultArtifactsRid
+bootstrap_rid=''
 runtime_source_feed='' # IBM requested these to support s390x scenarios
 runtime_source_feed_key='' # IBM requested these to support s390x scenarios
 
 # Binary Tooling arguments
-dotnetSdk=$defaultDotnetSdk
-packagesDir=$defaultPackagesDir
+customSdkDir=''
+psbDir=$defaultPsbDir
+
+artifactsBaseFileName="Private.SourceBuilt.Artifacts"
+artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
+
+prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
+prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
 
 positional_args=()
 while :; do
@@ -80,6 +94,11 @@ while :; do
       ;;
     --artifacts-rid)
       artifactsRid=$2
+      shift
+      ;;
+    --bootstrap-rid)
+      bootstrap_rid=$2
+      shift
       ;;
     --runtime-source-feed)
       runtime_source_feed=$2
@@ -93,11 +112,15 @@ while :; do
       removeBinaries=false
       ;;
     --with-sdk)
-      dotnetSdk=$2
+      customSdkDir="$(cd -P "$2" && pwd)"
       shift
       ;;
     --with-packages)
-      packagesDir=$2
+      psbDir="$(cd -P "$2" && pwd)"
+      if [ ! -d "$psbDir" ]; then
+          echo "Custom previously built packages directory '$psbDir' does not exist"
+          exit 1
+      fi
       shift
       ;;
     *)
@@ -107,6 +130,42 @@ while :; do
 
   shift
 done
+
+function BootstrapArtifacts {
+  DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
+  local tarballDir="$1"
+  local tarball=$(find "$tarballDir" -maxdepth 1 -name "$artifactsTarballPattern" | head -n 1)
+
+  echo "  Building bootstrap from $tarballDir"
+
+  # Extract PackageVersions.props from the found tarball
+  if [ -f "$tarball" ]; then
+    echo "  Extracting PackageVersions.props from $tarball"
+    workingDir="$REPO_ROOT/artifacts/prep-bootstrap"
+    mkdir -p "$workingDir"
+    tar -xzf "$tarball" -C "$workingDir" PackageVersions.props || true
+  else
+    echo "  ERROR: Tarball $tarball not found in $tarballDir"
+    exit 1
+  fi
+
+  # Copy bootstrap project to working dir
+  cp "$REPO_ROOT/eng/bootstrap/buildBootstrapPreviouslySB.csproj" "$workingDir"
+
+  # Copy NuGet.config from the sdk repo to have the right feeds
+  cp "$REPO_ROOT/src/sdk/NuGet.config" "$workingDir"
+
+  properties=( "/p:ArchiveDir=$packagesArchiveDir" )
+  if [[ -n "$bootstrap_rid" ]]; then
+    properties+=( "/p:PortableTargetRid=$bootstrap_rid" )
+  fi
+
+  # Run restore on project to initiate download of bootstrap packages
+  "$DOTNET_SDK_PATH/dotnet" restore "$workingDir/buildBootstrapPreviouslySB.csproj" /bl:artifacts/log/prep-bootstrap.binlog /fileLoggerParameters:LogFile=artifacts/log/prep-bootstrap.log "${properties[@]}"
+
+  # Remove working directory
+  rm -rf "$workingDir"
+}
 
 # Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
 # or a pre-existing .dotnet SDK directory must exist.
@@ -123,128 +182,86 @@ then
 fi
 
 # Check if Private.SourceBuilt artifacts archive exists
-artifactsBaseFileName="Private.SourceBuilt.Artifacts"
-packagesArchiveDir="$REPO_ROOT/prereqs/packages/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
-  echo "  Private.SourceBuilt.Artifacts.*.tar.gz exists...it will not be downloaded"
-  downloadArtifacts=false
+downloadPsbArtifacts=$downloadArtifacts
+packagesArchiveDir="$packagesDir/archive/"
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPsbArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
-  echo "  Private.SourceBuilt.Prebuilts.*.tar.gz exists...it will not be downloaded"
+if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
 # Check if dotnet is installed
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
 if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ./.dotnet SDK directory exists...it will not be installed"
-  installDotnet=false;
+  installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
+  if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
+    echo "  Skipping SDK installation - version $expectedSdkVersion detected"
+    installDotnet=false
+  fi
 fi
-
-function DownloadArchive {
-  archiveType="$1"
-  isRequired="$2"
-  artifactsRid="$3"
-
-  packageVersionsPath="$REPO_ROOT/eng/Versions.props"
-  notFoundMessage="No source-built $archiveType found to download..."
-
-  echo "  Looking for source-built $archiveType to download..."
-  archiveVersionLine=$(grep -m 1 "<PrivateSourceBuilt${archiveType}Version>" "$packageVersionsPath" || :)
-  versionPattern="<PrivateSourceBuilt${archiveType}Version>(.*)</PrivateSourceBuilt${archiveType}Version>"
-  if [[ $archiveVersionLine =~ $versionPattern ]]; then
-    archiveVersion="${BASH_REMATCH[1]}"
-
-    if [ "$archiveType" == "Prebuilts" ]; then
-        archiveRid=$defaultArtifactsRid
-    else
-        archiveRid=$artifactsRid
-    fi
-
-    archiveUrl="https://dotnetcli.azureedge.net/source-built-artifacts/assets/Private.SourceBuilt.$archiveType.$archiveVersion.$archiveRid.tar.gz"
-
-    echo "  Downloading source-built $archiveType from $archiveUrl..."
-    (cd "$packagesArchiveDir" && curl -f --retry 5 -O "$archiveUrl")
-  elif [ "$isRequired" == true ]; then
-    echo "  ERROR: $notFoundMessage"
-    exit 1
-  else
-    echo "  $notFoundMessage"
-  fi
-}
-
-function BootstrapArtifacts {
-  DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
-
-  # Create working directory for running bootstrap project
-  workingDir=$(mktemp -d)
-  echo "  Building bootstrap previously source-built in $workingDir"
-
-  # Copy bootstrap project to working dir
-  cp "$REPO_ROOT/eng/bootstrap/buildBootstrapPreviouslySB.csproj" "$workingDir"
-
-  # Copy NuGet.config from the installer repo to have the right feeds
-  cp "$REPO_ROOT/src/installer/NuGet.config" "$workingDir"
-
-  # Get PackageVersions.props from existing prev-sb archive
-  echo "  Retrieving PackageVersions.props from existing archive"
-  sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
-  if [ -f "$sourceBuiltArchive" ]; then
-      tar -xzf "$sourceBuiltArchive" -C "$workingDir" PackageVersions.props
-  fi
-
-  # Run restore on project to initiate download of bootstrap packages
-  "$DOTNET_SDK_PATH/dotnet" restore "$workingDir/buildBootstrapPreviouslySB.csproj" /bl:artifacts/log/prep-bootstrap.binlog /fileLoggerParameters:LogFile=artifacts/log/prep-bootstrap.log /p:ArchiveDir="$packagesArchiveDir" /p:BootstrapOverrideVersionsProps="$REPO_ROOT/eng/bootstrap/OverrideBootstrapVersions.props"
-
-  # Remove working directory
-  rm -rf "$workingDir"
-}
 
 # Check for the version of dotnet to install
 if [ "$installDotnet" == true ]; then
-  echo "  Installing dotnet..."
+  echo "  Installing .NET SDK $expectedSdkVersion"
   use_installed_dotnet_cli=false
   (source ./eng/common/tools.sh && InitializeDotNetCli true)
 fi
 
 # Read the eng/Versions.props to get the archives to download and download them
-if [ "$downloadArtifacts" == true ]; then
-  DownloadArchive Artifacts true $artifactsRid
+if [ "$downloadPsbArtifacts" == true ]; then
+  DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$packagesArchiveDir"
+
   if [ "$buildBootstrap" == true ]; then
-      BootstrapArtifacts
+    BootstrapArtifacts "$packagesArchiveDir"
   fi
 fi
 
 if [ "$downloadPrebuilts" == true ]; then
-  DownloadArchive Prebuilts false $artifactsRid
+  DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
 fi
 
 if [ "$removeBinaries" == true ]; then
 
-  # If --with-packages is not passed, unpack PSB artifacts
-  if [[ $packagesDir == $defaultPackagesDir ]]; then
-    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
+  originalPackagesDir=$packagesDir
+  # Create working directory for extracting packages
+  workingDir=$(mktemp -d)
 
-    if [ ! -d "$packagesDir" ] && [ -f "$sourceBuiltArchive" ]; then
-      echo "  Unpacking Private.SourceBuilt.Artifacts.*.tar.gz into $packagesDir"
-      mkdir -p "$packagesDir"
-      tar -xzf "$sourceBuiltArchive" -C "$packagesDir"
-    elif [ ! -f "$packagesDir/PackageVersions.props" ] && [ -f "$sourceBuiltArchive" ]; then
-      echo "  Creating $packagesDir/PackageVersions.props..."
-      tar -xzf "$sourceBuiltArchive" -C "$packagesDir" PackageVersions.props
-    elif [ ! -f "$sourceBuiltArchive" ]; then
-      echo "  ERROR: Private.SourceBuilt.Artifacts.*.tar.gz does not exist..."\
+  # If --with-packages is not passed, unpack PSB artifacts
+  if [[ $psbDir == $defaultPsbDir ]]; then
+    echo "  Extracting previously source-built to $workingDir"
+    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern")
+
+    if [ ! -f "$sourceBuiltArchive" ]; then
+      echo "  ERROR: $artifactsTarballPattern does not exist..."\
             "Cannot remove non-SB allowed binaries. Either pass --with-packages or download the artifacts."
       exit 1
     fi
+
+    echo "  Unpacking $artifactsTarballPattern into $workingDir"
+    tar -xzf "$sourceBuiltArchive" -C "$workingDir"
+
+    psbDir=$workingDir
   fi
 
- "$REPO_ROOT/eng/detect-binaries.sh" \
-  --clean \
-  --allowed-binaries-file "$REPO_ROOT/eng/allowed-sb-binaries.txt" \
-  --with-packages $packagesDir \
-  --with-sdk $dotnetSdk \
+  # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
+  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true"
 
+  "$_InitializeBuildTool" build \
+    "$REPO_ROOT/eng/init-detect-binaries.proj" \
+    "/p:BinariesMode=Clean" \
+    "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \
+    "/p:BinariesPackagesDir=$psbDir" \
+    "/bl:artifacts/log/prep-remove-binaries.binlog" \
+    "/fileLoggerParameters:LogFile=artifacts/log/prep-remove-binaries.log" \
+    "${positional_args[@]}"
+
+  rm -rf "$workingDir"
+
+  psbDir="$originalPackagesDir"
+  unset originalPackagesDir
 fi

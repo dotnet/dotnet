@@ -41,6 +41,9 @@ Skips clean restores.
 .PARAMETER skipColdRestores
 Skips cold restores
 
+.PARAMETER skipOfflineRestores
+Skips offline restores
+
 .PARAMETER skipForceRestores
 Skips force restores
 
@@ -49,6 +52,11 @@ Skips no-op restore.
 
 .PARAMETER staticGraphRestore
 Uses static graph restore if applicable for the client.
+
+.PARAMETER useLocallyBuiltNuGet
+Whether to use locally built NuGet. Only works with msbuild.exe. It simply bootstraps the release configuration pre-built version of NuGet
+
+.PARAMETER forceLegacyResolverFallback
 
 .EXAMPLE
 .\RunPerformanceTests.ps1 -nugetClientFilePath "C:\Program Files\dotnet\dotnet.exe" -solutionFilePath F:\NuGet.Client\NuGet.sln -resultsFilePath results.csv
@@ -67,9 +75,12 @@ Param(
     [switch] $skipWarmup,
     [switch] $skipCleanRestores,
     [switch] $skipColdRestores,
+    [switch] $skipOfflineRestores,
     [switch] $skipForceRestores,
     [switch] $skipNoOpRestores,
-    [switch] $staticGraphRestore
+    [switch] $staticGraphRestore,
+    [switch] $useLocallyBuiltNuGet,
+    [switch] $forceLegacyResolverFallback
 )
 
 . "$PSScriptRoot\PerformanceTestUtilities.ps1"
@@ -182,7 +193,7 @@ Try
     If (!$skipWarmup)
     {
         Log "Running 1x warmup restore"
-        $enabledSwitches = @("cleanGlobalPackagesFolder", "cleanHttpCache", "cleanPluginsCache", "killMSBuildAndDotnetExeProcess")
+        $enabledSwitches = @("cleanGlobalPackagesFolder", "cleanHttpCache", "cleanPluginsCache", "killMSBuildAndDotnetExeProcess", "cleanRepository")
         If ($isPackagesConfig)
         {
             $enabledSwitches += "isPackagesConfig"
@@ -190,6 +201,14 @@ Try
         If ($staticGraphRestore)
         {
             $enabledSwitches += "staticGraphRestore"
+        }
+        If ($useLocallyBuiltNuGet)
+        {
+            $enabledSwitches += "useLocallyBuiltNuGet"
+        }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
         }
         $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "warmup" -enabledSwitches $enabledSwitches
         RunRestore @arguments
@@ -198,7 +217,7 @@ Try
     If (!$skipCleanRestores)
     {
         Log "Running $($iterationCount)x clean restores"
-        $enabledSwitches = @("cleanGlobalPackagesFolder", "cleanHttpCache", "cleanPluginsCache", "killMSBuildAndDotnetExeProcess")
+        $enabledSwitches = @("cleanGlobalPackagesFolder", "cleanHttpCache", "cleanPluginsCache", "killMSBuildAndDotnetExeProcess", "cleanRepository")
         If ($isPackagesConfig)
         {
             $enabledSwitches += "isPackagesConfig"
@@ -206,6 +225,14 @@ Try
         If ($staticGraphRestore)
         {
             $enabledSwitches += "staticGraphRestore"
+        }
+        If ($useLocallyBuiltNuGet)
+        {
+            $enabledSwitches += "useLocallyBuiltNuGet"
+        }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
         }
         $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "arctic" -enabledSwitches $enabledSwitches
         1..$iterationCount | % { RunRestore @arguments }
@@ -214,7 +241,7 @@ Try
     If (!$skipColdRestores)
     {
         Log "Running $($iterationCount)x without a global packages folder"
-        $enabledSwitches = @("cleanGlobalPackagesFolder", "killMSBuildAndDotnetExeProcess")
+        $enabledSwitches = @("cleanGlobalPackagesFolder", "killMSBuildAndDotnetExeProcess", "cleanRepository")
         If ($isPackagesConfig)
         {
             $enabledSwitches += "isPackagesConfig"
@@ -223,7 +250,39 @@ Try
         {
             $enabledSwitches += "staticGraphRestore"
         }
+        If ($useLocallyBuiltNuGet)
+        {
+            $enabledSwitches += "useLocallyBuiltNuGet"
+        }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
+        }
         $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "cold" -enabledSwitches $enabledSwitches
+        1..$iterationCount | % { RunRestore @arguments }
+    }
+
+    If (!$skipOfflineRestores)
+    {
+        Log "Running $($iterationCount)x offline restores without http cache"
+        $enabledSwitches = @("cleanHttpCache", "cleanPluginsCache", "killMSBuildAndDotnetExeProcess", "cleanRepository")
+        If ($isPackagesConfig)
+        {
+            $enabledSwitches += "isPackagesConfig"
+        }
+        If ($staticGraphRestore)
+        {
+            $enabledSwitches += "staticGraphRestore"
+        }
+        If ($useLocallyBuiltNuGet)
+        {
+            $enabledSwitches += "useLocallyBuiltNuGet"
+        }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
+        }
+        $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "offline" -enabledSwitches $enabledSwitches
         1..$iterationCount | % { RunRestore @arguments }
     }
 
@@ -235,6 +294,14 @@ Try
         {
             $enabledSwitches += "staticGraphRestore"
         }
+        If ($useLocallyBuiltNuGet)
+        {
+            $enabledSwitches += "useLocallyBuiltNuGet"
+        }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
+        }
         $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "force" -enabledSwitches $enabledSwitches
         1..$iterationCount | % { RunRestore @arguments }
     }
@@ -242,14 +309,23 @@ Try
     If (!$skipNoOpRestores)
     {
         Log "Running $($iterationCount)x no-op restores"
+
+        [string[]]$enabledSwitches = @()
         If ($staticGraphRestore)
         {
-            $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "noop" -enabledSwitches @("staticGraphRestore")
+            $enabledSwitches += "staticGraphRestore"
         }
-        Else
+        If ($useLocallyBuiltNuGet)
         {
-            $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "noop"
+            $enabledSwitches += "useLocallyBuiltNuGet"
         }
+        If ($forceLegacyResolverFallback)
+        {
+            $enabledSwitches += "forceLegacyResolverFallback"
+        }
+
+        $arguments = CreateNugetClientArguments $solutionFilePath $nugetClientFilePath $resultsFilePath $logsFolderPath $solutionName $testRunId "noop" -enabledSwitches $enabledSwitches
+        
         1..$iterationCount | % { RunRestore @arguments }
     }
 

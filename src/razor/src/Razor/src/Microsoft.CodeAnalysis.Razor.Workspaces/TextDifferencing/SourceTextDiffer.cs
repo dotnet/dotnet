@@ -1,16 +1,17 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.TextDifferencing;
+namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
 internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
 {
@@ -63,12 +64,12 @@ internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
         }
     }
 
-    private IReadOnlyList<TextChange> ConsolidateEdits(List<DiffEdit> edits)
+    private ImmutableArray<TextChange> ConsolidateEdits(List<DiffEdit> edits)
     {
         // Scan through the list of edits and collapse them into a minimal set of TextChanges.
         // This method assumes that there are no overlapping changes and the changes are sorted.
 
-        var minimalChanges = new List<TextChange>();
+        using var minimalChanges = new PooledArrayBuilder<TextChange>(capacity: edits.Count);
 
         var start = 0;
         var end = 0;
@@ -99,28 +100,18 @@ internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
             minimalChanges.Add(new TextChange(TextSpan.FromBounds(start, end), builder.ToString()));
         }
 
-        return minimalChanges;
+        return minimalChanges.ToImmutableAndClear();
     }
 
-    public static IReadOnlyList<TextChange> GetMinimalTextChanges(SourceText oldText, SourceText newText, DiffKind kind = DiffKind.Line)
+    public static ImmutableArray<TextChange> GetMinimalTextChanges(SourceText oldText, SourceText newText, DiffKind kind = DiffKind.Line)
     {
-        if (oldText is null)
-        {
-            throw new ArgumentNullException(nameof(oldText));
-        }
-
-        if (newText is null)
-        {
-            throw new ArgumentNullException(nameof(newText));
-        }
-
         if (oldText.ContentEquals(newText))
         {
-            return Array.Empty<TextChange>();
+            return [];
         }
         else if (oldText.Length == 0 || newText.Length == 0)
         {
-            return newText.GetTextChanges(oldText);
+            return newText.GetTextChangesArray(oldText);
         }
 
         using SourceTextDiffer differ = kind == DiffKind.Line

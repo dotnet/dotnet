@@ -108,9 +108,9 @@ namespace NuGet.PackageManagement.VisualStudio
         private static void RemoveProjectJsonReference(Microsoft.Build.Evaluation.Project buildProject, string projectJsonFilePath)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var projectJsonItem = buildProject.GetItems("None")
-            .Where(t => string.Equals(t.EvaluatedInclude, Path.GetFileName(projectJsonFilePath), StringComparison.OrdinalIgnoreCase))
-            .FirstOrDefault();
+            var projectJsonItem = buildProject
+                .GetItems("None")
+                .FirstOrDefault(t => string.Equals(t.EvaluatedInclude, Path.GetFileName(projectJsonFilePath), StringComparison.OrdinalIgnoreCase));
 
             if (projectJsonItem != null)
             {
@@ -131,7 +131,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 Directory.CreateDirectory(backupDirectory);
 
                 var backupJsonFile = Path.Combine(backupDirectory, Path.GetFileName(projectJsonFilePath));
-                FileUtility.Move(projectJsonFilePath, backupJsonFile);
+                FileUtility.Replace(projectJsonFilePath, backupJsonFile);
                 var backupProjectFile = Path.Combine(backupDirectory, Path.GetFileName(project.MSBuildProjectPath));
                 File.Copy(project.MSBuildProjectPath, backupProjectFile);
             }

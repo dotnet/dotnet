@@ -1,7 +1,8 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,229 +10,116 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-internal class DelegatedCompletionListProvider
+internal class DelegatedCompletionListProvider(
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    CompletionListCache completionListCache,
+    CompletionTriggerAndCommitCharacters completionTriggerAndCommitCharacters)
 {
-    private static readonly ImmutableHashSet<string> s_razorTriggerCharacters = new[] { "@" }.ToImmutableHashSet();
-    private static readonly ImmutableHashSet<string> s_csharpTriggerCharacters = new[] { " ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~" }.ToImmutableHashSet();
-    private static readonly ImmutableHashSet<string> s_htmlTriggerCharacters = new[] { ":", "@", "#", ".", "!", "*", ",", "(", "[", "-", "<", "&", "\\", "/", "'", "\"", "=", ":", " ", "`" }.ToImmutableHashSet();
-    private static readonly ImmutableHashSet<string> s_allTriggerCharacters =
-        s_csharpTriggerCharacters
-            .Union(s_htmlTriggerCharacters)
-            .Union(s_razorTriggerCharacters);
-
-    private readonly ImmutableArray<DelegatedCompletionResponseRewriter> _responseRewriters;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    private readonly CompletionListCache _completionListCache;
-
-    public DelegatedCompletionListProvider(
-        IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters,
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        CompletionListCache completionListCache)
-    {
-        _responseRewriters = responseRewriters.OrderBy(rewriter => rewriter.Order).ToImmutableArray();
-        _documentMappingService = documentMappingService;
-        _clientConnection = clientConnection;
-        _completionListCache = completionListCache;
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly CompletionListCache _completionListCache = completionListCache;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = completionTriggerAndCommitCharacters;
 
     // virtual for tests
-    public virtual ImmutableHashSet<string> TriggerCharacters => s_allTriggerCharacters;
-
-    // virtual for tests
-    public virtual async Task<VSInternalCompletionList?> GetCompletionListAsync(
+    public virtual ValueTask<RazorVSInternalCompletionList?> GetCompletionListAsync(
+        RazorCodeDocument codeDocument,
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
+        RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
-        var positionInfo = await _documentMappingService.GetPositionInfoAsync(documentContext, absoluteIndex, cancellationToken).ConfigureAwait(false);
-
+        var positionInfo = _documentMappingService.GetPositionInfo(codeDocument, absoluteIndex);
         if (positionInfo.LanguageKind == RazorLanguageKind.Razor)
         {
             // Nothing to delegate to.
-            return null;
+            return default;
         }
 
-        var provisionalCompletion = await TryGetProvisionalCompletionInfoAsync(documentContext, completionContext, positionInfo, cancellationToken).ConfigureAwait(false);
         TextEdit? provisionalTextEdit = null;
-        if (provisionalCompletion is not null)
+        if (DelegatedCompletionHelper.TryGetProvisionalCompletionInfo(codeDocument, completionContext, positionInfo, _documentMappingService, out var provisionalCompletion))
         {
             provisionalTextEdit = provisionalCompletion.ProvisionalTextEdit;
-            positionInfo = provisionalCompletion.ProvisionalPositionInfo;
+            positionInfo = provisionalCompletion.DocumentPositionInfo;
         }
 
-        completionContext = RewriteContext(completionContext, positionInfo.LanguageKind);
+        if (DelegatedCompletionHelper.RewriteContext(completionContext, positionInfo.LanguageKind, _triggerAndCommitCharacters) is not { } rewrittenContext)
+        {
+            return default;
+        }
 
-        var shouldIncludeSnippets = await ShouldIncludeSnippetsAsync(documentContext, absoluteIndex, cancellationToken).ConfigureAwait(false);
+        completionContext = rewrittenContext;
 
+        // It's a bit confusing, but we have two different "add snippets" options - one is a part of
+        // RazorCompletionOptions and becomes a part of RazorCompletionContext and is used by
+        // RazorCompletionFactsService, and the second one below that's used for delegated completion
+        // Their values are not related in any way.
+        var shouldIncludeDelegationSnippets = DelegatedCompletionHelper.ShouldIncludeSnippets(codeDocument, absoluteIndex);
+
+        return new(GetDelegatedCompletionListAsync(
+            codeDocument,
+            absoluteIndex,
+            completionContext,
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            clientCapabilities,
+            razorCompletionOptions,
+            correlationId,
+            positionInfo,
+            provisionalTextEdit,
+            shouldIncludeDelegationSnippets,
+            cancellationToken));
+    }
+
+    private async Task<RazorVSInternalCompletionList?> GetDelegatedCompletionListAsync(
+        RazorCodeDocument codeDocument,
+        int absoluteIndex,
+        VSInternalCompletionContext completionContext,
+        TextDocumentIdentifierAndVersion identifier,
+        VSInternalClientCapabilities clientCapabilities,
+        RazorCompletionOptions razorCompletionOptions,
+        Guid correlationId,
+        DocumentPositionInfo positionInfo,
+        TextEdit? provisionalTextEdit,
+        bool shouldIncludeDelegationSnippets,
+        CancellationToken cancellationToken)
+    {
         var delegatedParams = new DelegatedCompletionParams(
-            documentContext.Identifier,
+            identifier,
             positionInfo.Position,
             positionInfo.LanguageKind,
             completionContext,
             provisionalTextEdit,
-            shouldIncludeSnippets,
+            shouldIncludeDelegationSnippets,
             correlationId);
 
-        var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
-            LanguageServerConstants.RazorCompletionEndpointName,
-            delegatedParams,
-            cancellationToken).ConfigureAwait(false);
-
-        if (delegatedResponse is null)
-        {
-            // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
-            // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
-            // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
-            // so we'd only ever return Razor completion items.
-            return new VSInternalCompletionList() { IsIncomplete = true, Items = [] };
-        }
-
-        var rewrittenResponse = delegatedResponse;
-
-        foreach (var rewriter in _responseRewriters)
-        {
-            rewrittenResponse = await rewriter.RewriteAsync(
-                rewrittenResponse,
-                absoluteIndex,
-                documentContext,
+        var delegatedResponse = await _clientConnection
+            .SendRequestAsync<DelegatedCompletionParams, RazorVSInternalCompletionList?>(
+                LanguageServerConstants.RazorCompletionEndpointName,
                 delegatedParams,
-                cancellationToken).ConfigureAwait(false);
-        }
+                cancellationToken)
+            .ConfigureAwait(false);
 
-        var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-        var resolutionContext = new DelegatedCompletionResolutionContext(delegatedParams, rewrittenResponse.Data);
+        var rewrittenResponse = positionInfo.LanguageKind == RazorLanguageKind.CSharp
+            ? DelegatedCompletionHelper.RewriteCSharpResponse(delegatedResponse, absoluteIndex, codeDocument, positionInfo.Position, razorCompletionOptions)
+            : DelegatedCompletionHelper.RewriteHtmlResponse(delegatedResponse, razorCompletionOptions);
+
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, positionInfo.LanguageKind, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
-        rewrittenResponse.SetResultId(resultId, completionCapability);
+        rewrittenResponse.SetResultId(resultId, clientCapabilities);
 
         return rewrittenResponse;
     }
-
-    private async Task<bool> ShouldIncludeSnippetsAsync(VersionedDocumentContext documentContext, int absoluteIndex, CancellationToken cancellationToken)
-    {
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var tree = codeDocument.GetSyntaxTree();
-
-        var token = tree.Root.FindToken(absoluteIndex, includeWhitespace: false);
-        var node = token.Parent;
-        var startOrEndTag = node?.FirstAncestorOrSelf<SyntaxNode>(n => RazorSyntaxFacts.IsAnyStartTag(n) || RazorSyntaxFacts.IsAnyEndTag(n));
-
-        if (startOrEndTag is null)
-        {
-            return token.Kind is not (SyntaxKind.OpenAngle or SyntaxKind.CloseAngle);
-        }
-
-        if (startOrEndTag.Span.Start == absoluteIndex)
-        {
-            // We're at the start of the tag, we should include snippets. This is the case for things like $$<div></div> or <div>$$</div>, since the
-            // index is right associative to the token when using FindToken.
-            return true;
-        }
-
-        return !startOrEndTag.Span.Contains(absoluteIndex);
-    }
-
-    private static VSInternalCompletionContext RewriteContext(VSInternalCompletionContext context, RazorLanguageKind languageKind)
-    {
-        if (context.TriggerKind != CompletionTriggerKind.TriggerCharacter ||
-            context.TriggerCharacter is not { } triggerCharacter)
-        {
-            // Non-triggered based completion, the existing context is valid.
-            return context;
-        }
-
-        if (languageKind == RazorLanguageKind.CSharp && s_csharpTriggerCharacters.Contains(triggerCharacter))
-        {
-            // C# trigger character for C# content
-            return context;
-        }
-
-        if (languageKind == RazorLanguageKind.Html && s_htmlTriggerCharacters.Contains(triggerCharacter))
-        {
-            // HTML trigger character for HTML content
-            return context;
-        }
-
-        // Trigger character not associated with the current language. Transform the context into an invoked context.
-        var rewrittenContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = context.InvokeKind,
-            TriggerKind = CompletionTriggerKind.Invoked,
-        };
-
-        if (languageKind == RazorLanguageKind.CSharp && s_razorTriggerCharacters.Contains(triggerCharacter))
-        {
-            // The C# language server will not return any completions for the '@' character unless we
-            // send the completion request explicitly.
-            rewrittenContext.InvokeKind = VSInternalCompletionInvokeKind.Explicit;
-        }
-
-        return rewrittenContext;
-    }
-
-    private async Task<ProvisionalCompletionInfo?> TryGetProvisionalCompletionInfoAsync(
-        VersionedDocumentContext documentContext,
-        VSInternalCompletionContext completionContext,
-        DocumentPositionInfo positionInfo,
-        CancellationToken cancellationToken)
-    {
-        if (positionInfo.LanguageKind != RazorLanguageKind.Html ||
-            completionContext.TriggerKind != CompletionTriggerKind.TriggerCharacter ||
-            completionContext.TriggerCharacter != ".")
-        {
-            // Invalid provisional completion context
-            return null;
-        }
-
-        if (positionInfo.Position.Character == 0)
-        {
-            // We're at the start of line. Can't have provisional completions here.
-            return null;
-        }
-
-        var previousCharacterPositionInfo = await _documentMappingService
-            .GetPositionInfoAsync(documentContext, positionInfo.HostDocumentIndex - 1, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (previousCharacterPositionInfo.LanguageKind != RazorLanguageKind.CSharp)
-        {
-            return null;
-        }
-
-        var previousPosition = previousCharacterPositionInfo.Position;
-
-        // Edit the CSharp projected document to contain a '.'. This allows C# completion to provide valid
-        // completion items for moments when a user has typed a '.' that's typically interpreted as Html.
-        var addProvisionalDot = new TextEdit()
-        {
-            Range = new Range()
-            {
-                Start = previousPosition,
-                End = previousPosition,
-            },
-            NewText = ".",
-        };
-
-        var provisionalPositionInfo = new DocumentPositionInfo(
-            RazorLanguageKind.CSharp,
-            new Position(
-                previousPosition.Line,
-                previousPosition.Character + 1),
-            previousCharacterPositionInfo.HostDocumentIndex + 1);
-
-        return new ProvisionalCompletionInfo(addProvisionalDot, provisionalPositionInfo);
-    }
-
-    private record class ProvisionalCompletionInfo(TextEdit ProvisionalTextEdit, DocumentPositionInfo ProvisionalPositionInfo);
 }

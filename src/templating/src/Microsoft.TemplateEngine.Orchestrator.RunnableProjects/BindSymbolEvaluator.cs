@@ -1,11 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Abstractions.Components;
@@ -152,10 +147,10 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
 
             string? prefix = null;
             string binding = configuredBinding;
-            if (configuredBinding.Contains(":"))
+            if (configuredBinding.Contains(':'))
             {
-                prefix = configuredBinding.Substring(0, configuredBinding.IndexOf(":")).Trim();
-                binding = configuredBinding.Substring(configuredBinding.IndexOf(":") + 1).Trim();
+                prefix = configuredBinding.Substring(0, configuredBinding.IndexOf(':')).Trim();
+                binding = configuredBinding.Substring(configuredBinding.IndexOf(':') + 1).Trim();
             }
             if (string.IsNullOrWhiteSpace(binding))
             {

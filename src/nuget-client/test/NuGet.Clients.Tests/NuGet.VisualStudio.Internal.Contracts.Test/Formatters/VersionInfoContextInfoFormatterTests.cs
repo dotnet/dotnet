@@ -46,7 +46,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             }
         }
 
-        public static TheoryData TestData => new TheoryData<VersionInfoContextInfo>
+        public static TheoryData<VersionInfoContextInfo> TestData => new()
             {
                 {
                     new VersionInfoContextInfo(NuGetVersion.Parse("1.0.0"), 100)

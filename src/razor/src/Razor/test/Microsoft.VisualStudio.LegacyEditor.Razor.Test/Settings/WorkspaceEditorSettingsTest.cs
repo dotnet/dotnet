@@ -1,12 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Accessors;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -54,7 +54,7 @@ public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : VisualS
 
         settingsManagerMock.Raise(
             x => x.ClientSettingsChanged += null,
-            new ClientSettingsChangedEventArgs(ClientSettings.Default));
+            EventArgs.Empty);
 
         // Assert
         Assert.True(called);
@@ -73,11 +73,11 @@ public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : VisualS
         var editorSettings = new WorkspaceEditorSettings(settingsManagerMock.Object);
         var accessor = new TestAccessor(editorSettings);
 
-        static void Listener1(object caller, ClientSettingsChangedEventArgs args)
+        static void Listener1(object caller, EventArgs args)
         {
         }
 
-        static void Listener2(object caller, ClientSettingsChangedEventArgs args)
+        static void Listener2(object caller, EventArgs args)
         {
         }
 
@@ -89,7 +89,7 @@ public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : VisualS
         Assert.Equal(2, accessor._listenerCount);
 
         settingsManagerMock.VerifyAdd(
-            x => x.ClientSettingsChanged += It.IsAny<EventHandler<ClientSettingsChangedEventArgs>>(),
+            x => x.ClientSettingsChanged += It.IsAny<EventHandler<EventArgs>>(),
             Times.Once());
 
         // Act 2
@@ -100,7 +100,7 @@ public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : VisualS
         Assert.Equal(0, accessor._listenerCount);
 
         settingsManagerMock.VerifyRemove(
-            x => x.ClientSettingsChanged -= It.IsAny<EventHandler<ClientSettingsChangedEventArgs>>(),
+            x => x.ClientSettingsChanged -= It.IsAny<EventHandler<EventArgs>>(),
             Times.Once());
     }
 

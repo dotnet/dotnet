@@ -74,7 +74,7 @@ internal class InProcessProxyDiscoveryManager : IProxyDiscoveryManager
 
                 var discoveryCompeleteEventsArg = new DiscoveryCompleteEventArgs(-1, true);
 
-                eventHandler.HandleDiscoveryComplete(discoveryCompeleteEventsArg, Enumerable.Empty<TestCase>());
+                eventHandler.HandleDiscoveryComplete(discoveryCompeleteEventsArg, []);
             }
         });
     }
@@ -103,7 +103,7 @@ internal class InProcessProxyDiscoveryManager : IProxyDiscoveryManager
 
     private void InitializeExtensions(IEnumerable<string> sources)
     {
-        var extensionsFromSource = _testHostManager.GetTestPlatformExtensions(sources, Enumerable.Empty<string>());
+        var extensionsFromSource = _testHostManager.GetTestPlatformExtensions(sources, []);
         if (extensionsFromSource.Any())
         {
             TestPluginCache.Instance.UpdateExtensions(extensionsFromSource, false);
@@ -111,7 +111,7 @@ internal class InProcessProxyDiscoveryManager : IProxyDiscoveryManager
 
         // We don't need to pass list of extension as we are running inside vstest.console and
         // it will use TestPluginCache of vstest.console
-        _discoveryManager.Initialize(Enumerable.Empty<string>(), null);
+        _discoveryManager.Initialize([], null);
     }
 
     public void InitializeDiscovery(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler2 eventHandler, bool skipDefaultAdapters)

@@ -70,12 +70,6 @@ namespace NuGet.RuntimeModel
             return combiner.CombinedHash;
         }
 
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
-        public RuntimeDependencySet Clone()
-        {
-            return this;
-        }
-
         public override string ToString()
         {
             return $"{Id} -> {string.Join(",", Dependencies.Select(d => d.Value.Id + " " + d.Value.VersionRange.ToString()))}";

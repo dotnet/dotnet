@@ -268,6 +268,15 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSource_Single {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}..
         /// </summary>
         internal static string Error_InvalidLockFileInput {
@@ -889,6 +898,15 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Audit source &apos;{0}&apos; did not provide any vulnerability data..
+        /// </summary>
+        internal static string Warning_AuditSourceWithoutData {
+            get {
+                return ResourceManager.GetString("Warning_AuditSourceWithoutData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Directory &apos;{0}&apos; is not empty. Skipping....
         /// </summary>
         internal static string Warning_DirectoryNotEmpty {
@@ -921,15 +939,6 @@ namespace NuGet.PackageManagement {
         internal static string Warning_FileModified {
             get {
                 return ResourceManager.GetString("Warning_FileModified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
-        /// </summary>
-        internal static string Warning_HttpServerUsage {
-            get {
-                return ResourceManager.GetString("Warning_HttpServerUsage", resourceCulture);
             }
         }
         

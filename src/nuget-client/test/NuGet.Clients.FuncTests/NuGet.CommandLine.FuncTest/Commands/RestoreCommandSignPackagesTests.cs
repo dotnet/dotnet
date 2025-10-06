@@ -10,6 +10,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging.Signing;
@@ -17,6 +19,7 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.FuncTest.Commands
 {
@@ -34,14 +37,17 @@ namespace NuGet.CommandLine.FuncTest.Commands
         private static readonly string NU3005CompressedMessage = "The package signature file entry is invalid. The central directory header field 'compression method' has an invalid value (8).";
         private static readonly string NU3005 = "NU3005: {0}";
 
-        private SignCommandTestFixture _testFixture;
-        private TrustedTestCert<TestCertificate> _trustedTestCert;
+        private readonly SignCommandTestFixture _testFixture;
+        private readonly ITestOutputHelper _testOutputHelper;
+        private readonly TrustedTestCert<TestCertificate> _trustedTestCert;
         private readonly string _nugetExePath;
 
-        public RestoreCommandSignPackagesTests(SignCommandTestFixture fixture)
+        public RestoreCommandSignPackagesTests(SignCommandTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _testFixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
-            _trustedTestCert = SigningTestUtility.GenerateTrustedTestCertificate();
+            _testOutputHelper = testOutputHelper;
+            // Do not dispose this.  The fixture will dispose it.
+            _trustedTestCert = fixture.TrustedTestCertificate;
             _nugetExePath = _testFixture.NuGetExePath;
         }
 
@@ -406,7 +412,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        public static CommandRunnerResult RunRestore(string nugetExe, SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArgs)
+        public CommandRunnerResult RunRestore(string nugetExe, SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArgs)
         {
             // Store the dg file for debugging
             var envVars = new Dictionary<string, string>()
@@ -428,7 +434,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nugetExe,
                 pathContext.WorkingDirectory,
                 string.Join(" ", args),
-                environmentVariables: envVars);
+                environmentVariables: envVars,
+                testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.True(expectedExitCode == r.ExitCode, r.AllOutput);

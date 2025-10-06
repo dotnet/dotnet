@@ -17,6 +17,10 @@ namespace NuGet.Protocol.Events
 
         public static event ProtocolDiagnosticsNupkgCopiedEventHandler NupkgCopiedEvent;
 
+        public delegate void ProtocolDiagnosticServiceIndexEntryEventHandler(ProtocolDiagnosticServiceIndexEntryEvent pdEvent);
+
+        public static event ProtocolDiagnosticServiceIndexEntryEventHandler ServiceIndexEntryEvent;
+
         internal static void RaiseEvent(ProtocolDiagnosticHttpEvent pdEvent)
         {
             HttpEvent?.Invoke(pdEvent);
@@ -30,6 +34,11 @@ namespace NuGet.Protocol.Events
         internal static void RaiseEvent(ProtocolDiagnosticNupkgCopiedEvent ncEvent)
         {
             NupkgCopiedEvent?.Invoke(ncEvent);
+        }
+
+        internal static void RaiseEvent(ProtocolDiagnosticServiceIndexEntryEvent pdEvent)
+        {
+            ServiceIndexEntryEvent?.Invoke(pdEvent);
         }
     }
 }

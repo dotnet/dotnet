@@ -47,9 +47,17 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem[] __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<TItem[]> __arg1, int __seq2, global::System.Linq.Expressions.Expression<global::System.Func<TItem[]>> __arg2)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Value", __arg0);
-        __builder.AddComponentParameter(__seq1, "ValueChanged", __arg1);
-        __builder.AddComponentParameter(__seq2, "ValueExpression", __arg2);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (1,20)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.MyComponent<TItem>.ValueChanged), __arg1);
+        __builder.AddComponentParameter(__seq2, nameof(global::Test.MyComponent<TItem>.ValueExpression), __arg2);
         __builder.CloseComponent();
         }
     }

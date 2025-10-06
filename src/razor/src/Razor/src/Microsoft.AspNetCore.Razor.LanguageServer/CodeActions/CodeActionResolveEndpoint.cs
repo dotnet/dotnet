@@ -1,199 +1,67 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 [RazorLanguageServerEndpoint(Methods.CodeActionResolveName)]
-internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandler<CodeAction, CodeAction>
+internal sealed class CodeActionResolveEndpoint(
+    ICodeActionResolveService codeActionResolveService,
+    IDelegatedCodeActionResolver delegatedCodeActionResolver,
+    RazorLSPOptionsMonitor razorLSPOptionsMonitor) : IRazorRequestHandler<CodeAction, CodeAction>
 {
-    private readonly ImmutableDictionary<string, IRazorCodeActionResolver> _razorCodeActionResolvers;
-    private readonly ImmutableDictionary<string, BaseDelegatedCodeActionResolver> _csharpCodeActionResolvers;
-    private readonly ImmutableDictionary<string, BaseDelegatedCodeActionResolver> _htmlCodeActionResolvers;
-    private readonly ILogger _logger;
+    private readonly ICodeActionResolveService _codeActionResolveService = codeActionResolveService;
+    private readonly IDelegatedCodeActionResolver _delegatedCodeActionResolver = delegatedCodeActionResolver;
+    private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
 
     public bool MutatesSolutionState => false;
 
-    public CodeActionResolveEndpoint(
-        IEnumerable<IRazorCodeActionResolver> razorCodeActionResolvers,
-        IEnumerable<CSharpCodeActionResolver> csharpCodeActionResolvers,
-        IEnumerable<HtmlCodeActionResolver> htmlCodeActionResolvers,
-        IRazorLoggerFactory loggerFactory)
-    {
-        if (razorCodeActionResolvers is null)
-        {
-            throw new ArgumentNullException(nameof(razorCodeActionResolvers));
-        }
-
-        if (htmlCodeActionResolvers is null)
-        {
-            throw new ArgumentNullException(nameof(htmlCodeActionResolvers));
-        }
-
-        if (csharpCodeActionResolvers is null)
-        {
-            throw new ArgumentNullException(nameof(csharpCodeActionResolvers));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.CreateLogger<CodeActionResolveEndpoint>();
-
-        _razorCodeActionResolvers = CreateResolverMap(razorCodeActionResolvers);
-        _csharpCodeActionResolvers = CreateResolverMap<BaseDelegatedCodeActionResolver>(csharpCodeActionResolvers);
-        _htmlCodeActionResolvers = CreateResolverMap<BaseDelegatedCodeActionResolver>(htmlCodeActionResolvers);
-    }
+    public TextDocumentIdentifier GetTextDocumentIdentifier(CodeAction request)
+        => CodeActionResolveService.GetRazorCodeActionResolutionParams(request).TextDocument;
 
     public async Task<CodeAction> HandleRequestAsync(CodeAction request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (request is null)
+        var options = new RazorFormattingOptions
         {
-            throw new ArgumentNullException(nameof(request));
-        }
+            TabSize = _razorLSPOptionsMonitor.CurrentValue.TabSize,
+            InsertSpaces = _razorLSPOptionsMonitor.CurrentValue.InsertSpaces,
+            CodeBlockBraceOnNextLine = _razorLSPOptionsMonitor.CurrentValue.CodeBlockBraceOnNextLine
+        };
+        var documentContext = requestContext.DocumentContext.AssumeNotNull();
 
-        if (request.Data is not JObject paramsObj)
-        {
-            _logger.LogError("Invalid CodeAction Received '{requestTitle}'.", request.Title);
-            return request;
-        }
+        var context = CodeActionResolveService.GetRazorCodeActionResolutionParams(request);
 
-        var resolutionParams = paramsObj.ToObject<RazorCodeActionResolutionParams>();
+        var resolvedDelegatedCodeAction = context.Language != RazorLanguageKind.Razor
+            ? await ResolveDelegatedCodeActionAsync(documentContext, request, context, cancellationToken).ConfigureAwait(false)
+            : null;
 
-        if (resolutionParams is null)
-        {
-            throw new ArgumentOutOfRangeException($"request.Data should be convertible to {nameof(RazorCodeActionResolutionParams)}");
-        }
-
-        var codeActionId = GetCodeActionId(resolutionParams);
-        _logger.LogInformation("Resolving workspace edit for action {codeActionId}.", codeActionId);
-
-        // If it's a special "edit based code action" then the edit has been pre-computed and we
-        // can extract the edit details and return to the client. This is only required for VSCode
-        // as it does not support Command.Edit based code actions anymore.
-        if (resolutionParams.Action == LanguageServerConstants.CodeActions.EditBasedCodeActionCommand)
-        {
-            request.Edit = (resolutionParams.Data as JObject)?.ToObject<WorkspaceEdit>();
-            return request;
-        }
-
-        switch (resolutionParams.Language)
-        {
-            case LanguageServerConstants.CodeActions.Languages.Razor:
-                return await ResolveRazorCodeActionAsync(
-                    request,
-                    resolutionParams,
-                    cancellationToken).ConfigureAwait(false);
-            case LanguageServerConstants.CodeActions.Languages.CSharp:
-                return await ResolveCSharpCodeActionAsync(
-                    request,
-                    resolutionParams,
-                    cancellationToken).ConfigureAwait(false);
-            case LanguageServerConstants.CodeActions.Languages.Html:
-                return await ResolveHtmlCodeActionAsync(
-                    request,
-                    resolutionParams,
-                    cancellationToken).ConfigureAwait(false);
-            default:
-                _logger.LogError("Invalid CodeAction.Data.Language. Received {codeActionId}.", codeActionId);
-                return request;
-        }
+        return await _codeActionResolveService.ResolveCodeActionAsync(documentContext, request, resolvedDelegatedCodeAction, options, cancellationToken).ConfigureAwait(false);
     }
 
-    // Internal for testing
-    internal async Task<CodeAction> ResolveRazorCodeActionAsync(
-        CodeAction codeAction,
-        RazorCodeActionResolutionParams resolutionParams,
-        CancellationToken cancellationToken)
+    private async Task<CodeAction> ResolveDelegatedCodeActionAsync(DocumentContext documentContext, CodeAction request, RazorCodeActionResolutionParams context, CancellationToken cancellationToken)
     {
-        if (!_razorCodeActionResolvers.TryGetValue(resolutionParams.Action, out var resolver))
-        {
-            var codeActionId = GetCodeActionId(resolutionParams);
-            _logger.LogWarning("No resolver registered for {codeActionId}", codeActionId);
-            Debug.Fail($"No resolver registered for {codeActionId}.");
-            return codeAction;
-        }
+        var originalData = request.Data;
+        request.Data = context.Data;
 
-        if (resolutionParams.Data is not JObject data)
+        try
         {
-            return codeAction;
+            var resolvedCodeAction = await _delegatedCodeActionResolver.ResolveCodeActionAsync(documentContext.GetTextDocumentIdentifier(), documentContext.Snapshot.Version, context.Language, request, cancellationToken).ConfigureAwait(false);
+            return resolvedCodeAction ?? request;
         }
-
-        var edit = await resolver.ResolveAsync(data, cancellationToken).ConfigureAwait(false);
-        codeAction.Edit = edit;
-        return codeAction;
+        finally
+        {
+            request.Data = originalData;
+        }
     }
-
-    // Internal for testing
-    internal Task<CodeAction> ResolveCSharpCodeActionAsync(CodeAction codeAction, RazorCodeActionResolutionParams resolutionParams, CancellationToken cancellationToken)
-        => ResolveDelegatedCodeActionAsync(_csharpCodeActionResolvers, codeAction, resolutionParams, cancellationToken);
-
-    // Internal for testing
-    internal Task<CodeAction> ResolveHtmlCodeActionAsync(CodeAction codeAction, RazorCodeActionResolutionParams resolutionParams, CancellationToken cancellationToken)
-        => ResolveDelegatedCodeActionAsync(_htmlCodeActionResolvers, codeAction, resolutionParams, cancellationToken);
-
-    private async Task<CodeAction> ResolveDelegatedCodeActionAsync(ImmutableDictionary<string, BaseDelegatedCodeActionResolver> resolvers, CodeAction codeAction, RazorCodeActionResolutionParams resolutionParams, CancellationToken cancellationToken)
-    {
-        if (resolutionParams.Data is not JObject csharpParamsObj)
-        {
-            _logger.LogError("Invalid CodeAction Received.");
-            Debug.Fail($"Invalid CSharp CodeAction Received.");
-            return codeAction;
-        }
-
-        var csharpParams = csharpParamsObj.ToObject<CodeActionResolveParams>();
-        if (csharpParams is null)
-        {
-            throw new ArgumentOutOfRangeException($"Data was not convertible to {nameof(CodeActionResolveParams)}");
-        }
-
-        codeAction.Data = csharpParams.Data as JToken;
-
-        if (!resolvers.TryGetValue(resolutionParams.Action, out var resolver))
-        {
-            var codeActionId = GetCodeActionId(resolutionParams);
-            _logger.LogWarning("No resolver registered for {codeActionId}", codeActionId);
-            Debug.Fail($"No resolver registered for {codeActionId}.");
-            return codeAction;
-        }
-
-        var resolvedCodeAction = await resolver.ResolveAsync(csharpParams, codeAction, cancellationToken).ConfigureAwait(false);
-        return resolvedCodeAction;
-    }
-
-    private static ImmutableDictionary<string, T> CreateResolverMap<T>(IEnumerable<T> codeActionResolvers)
-        where T : ICodeActionResolver
-    {
-        using var _ = DictionaryPool<string, T>.GetPooledObject(out var resolverMap);
-
-        foreach (var resolver in codeActionResolvers)
-        {
-            if (resolverMap.ContainsKey(resolver.Action))
-            {
-                Debug.Fail($"Duplicate resolver action for {resolver.Action} of type {typeof(T)}.");
-            }
-
-            resolverMap[resolver.Action] = resolver;
-        }
-
-        return resolverMap.ToImmutableDictionary();
-    }
-
-    private static string GetCodeActionId(RazorCodeActionResolutionParams resolutionParams) =>
-        $"`{resolutionParams.Language}.{resolutionParams.Action}`";
 }

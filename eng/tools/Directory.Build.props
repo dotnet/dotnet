@@ -1,13 +1,12 @@
 <Project>
 
-  <!--
-    Do not import the Arcade SDK for the local tooling projects. This lets us
-    build them with just the .NET SDK, simplifying the build.
-  -->
-  <PropertyGroup>
-    <SkipArcadeSdkImport>true</SkipArcadeSdkImport>
-  </PropertyGroup>
-
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <!-- Don't use these feeds when testing. Projects under this directory are referenced by
+       test projects. This makes sure that the feeds aren't used. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsTestRun)' != 'true'">
+    <RestoreSources>$(PrebuiltPackagesPath);$(PreviouslySourceBuiltPackagesPath)</RestoreSources>
+    <RestoreSources Condition="Exists('$(SharedComponentsArtifactsPath)')">$(RestoreSources);$(SharedComponentsArtifactsPath)</RestoreSources>
+  </PropertyGroup>
 
 </Project>

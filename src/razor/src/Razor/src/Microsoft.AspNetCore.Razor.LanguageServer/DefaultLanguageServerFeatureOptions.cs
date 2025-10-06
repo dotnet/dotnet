@@ -1,7 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -13,13 +13,9 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool SupportsFileManipulation => true;
 
-    public override string ProjectConfigurationFileName => LanguageServerConstants.DefaultProjectConfigurationFile;
-
     public override string CSharpVirtualDocumentSuffix => DefaultCSharpVirtualDocumentSuffix;
 
     public override string HtmlVirtualDocumentSuffix => DefaultHtmlVirtualDocumentSuffix;
-
-    public override bool SingleServerCompletionSupport => false;
 
     public override bool SingleServerSupport => false;
 
@@ -29,20 +25,17 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     // Code action and rename paths in Windows VS Code need to be prefixed with '/':
     // https://github.com/dotnet/razor/issues/8131
-    public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash
-        => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => PlatformInformation.IsWindows;
 
     public override bool ShowAllCSharpCodeActions => false;
 
     public override bool IncludeProjectKeyInGeneratedFilePath => false;
 
-    public override bool UsePreciseSemanticTokenRanges => false;
-
-    public override bool MonitorWorkspaceFolderForConfigurationFiles => true;
-
     public override bool UseRazorCohostServer => false;
 
-    public override bool DisableRazorLanguageServer => false;
+    public override bool SupportsSoftSelectionInCompletion => true;
 
-    public override bool ForceRuntimeCodeGeneration => false;
+    public override bool UseVsCodeCompletionCommitCharacters => false;
+
+    public override bool DoNotInitializeMiscFilesProjectFromWorkspace => false;
 }

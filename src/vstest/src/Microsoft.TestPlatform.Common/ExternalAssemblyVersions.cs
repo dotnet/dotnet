@@ -10,5 +10,5 @@ internal class ExternalAssemblyVersions
     /// Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness package.
     /// The Package version can be found in "eng\Versions.props"
     /// </summary>
-    internal const string MicrosoftFakesAssemblyVersion = "17.0.0.0";
+    internal const string MicrosoftFakesAssemblyVersion = "18.0.0.0";
 }

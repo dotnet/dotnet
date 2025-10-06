@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../SR.resx">
+    <body>
+      <trans-unit id="Argument_InvalidOidValue">
+        <source>The OID value was invalid.</source>
+        <target state="translated">Il valore di OID non è valido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cryptography_Der_Invalid_Encoding">
+        <source>ASN1 corrupted data.</source>
+        <target state="translated">I dati ASN1 sono danneggiati.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cryptography_Invalid_IA5String">
+        <source>The string contains a character not in the 7 bit ASCII character set.</source>
+        <target state="translated">La stringa contiene un carattere non incluso nel set di caratteri ASCII a 7 bit.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

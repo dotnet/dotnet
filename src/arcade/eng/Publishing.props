@@ -1,5 +1,13 @@
 <Project>
+
+   <!-- Update all Artifacts with Kind=Package to have additional metadata item Category="InfrastructurePackage" --> 
+   <ItemGroup>
+     <Artifact Update="@(Artifact->WithMetadataValue('Kind', 'Package'))" Category="InfrastructurePackage" />
+   </ItemGroup>
+
    <PropertyGroup>
-      <PublishingVersion>3</PublishingVersion>
+     <!-- Do not auto-generate symbol packages. Arcade embeds all PDBs so it's just waste of space -->
+     <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
    </PropertyGroup>
+
 </Project>

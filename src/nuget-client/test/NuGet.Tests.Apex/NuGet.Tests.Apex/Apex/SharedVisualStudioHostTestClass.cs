@@ -91,5 +91,13 @@ namespace NuGet.Tests.Apex
         {
             return string.Join(Environment.NewLine, VisualStudio.GetOutputWindowsLines());
         }
+
+        [TestInitialize]
+        public override void TestInitialize()
+        {
+            base.TestInitialize();
+
+            EnsureVisualStudioHost();
+        }
     }
 }

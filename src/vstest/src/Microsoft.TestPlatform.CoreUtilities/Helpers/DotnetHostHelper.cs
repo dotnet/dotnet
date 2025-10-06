@@ -23,6 +23,13 @@ public class DotnetHostHelper : IDotnetHostHelper
 {
     public const string MONOEXENAME = "mono";
 
+    // Mach-O magic numbers from https://en.wikipedia.org/wiki/Mach-O
+    private const uint MachOMagic32BigEndian = 0xfeedface;    // 32-bit big-endian
+    private const uint MachOMagic64BigEndian = 0xfeedfacf;    // 64-bit big-endian
+    private const uint MachOMagic32LittleEndian = 0xcefaedfe; // 32-bit little-endian
+    private const uint MachOMagic64LittleEndian = 0xcffaedfe; // 64-bit little-endian
+    private const uint MachOMagicFatBigEndian = 0xcafebabe;   // Multi-architecture big-endian
+
     private readonly IFileHelper _fileHelper;
     private readonly IEnvironment _environment;
     private readonly IWindowsRegistryHelper _windowsRegistryHelper;
@@ -409,10 +416,19 @@ public class DotnetHostHelper : IDotnetHostHelper
             using var headerReader = _fileHelper.GetStream(path, FileMode.Open, FileAccess.Read);
             var magicBytes = new byte[4];
             var cpuInfoBytes = new byte[4];
-            headerReader.Read(magicBytes, 0, magicBytes.Length);
-            headerReader.Read(cpuInfoBytes, 0, cpuInfoBytes.Length);
+
+            ReadExactly(headerReader, magicBytes, 0, magicBytes.Length);
+            ReadExactly(headerReader, cpuInfoBytes, 0, cpuInfoBytes.Length);
 
             var magic = BitConverter.ToUInt32(magicBytes, 0);
+
+            // Validate magic bytes to ensure this is a valid Mach-O binary
+            if (magic is not (MachOMagic32BigEndian or MachOMagic64BigEndian or MachOMagic32LittleEndian or MachOMagic64LittleEndian or MachOMagicFatBigEndian))
+            {
+                EqtTrace.Error($"DotnetHostHelper.GetMuxerArchitectureByMachoOnMac: Invalid Mach-O magic bytes: 0x{magic:X8}");
+                return null;
+            }
+
             var cpuInfo = BitConverter.ToUInt32(cpuInfoBytes, 0);
             PlatformArchitecture? architecture = (MacOsCpuType)cpuInfo switch
             {
@@ -432,6 +448,27 @@ public class DotnetHostHelper : IDotnetHostHelper
 
         return null;
     }
+
+#if NET
+    private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+    {
+        stream.ReadExactly(buffer, offset, count);
+    }
+#else
+    private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+    {
+        while (count > 0)
+        {
+            int read = stream.Read(buffer, offset, count);
+            if (read <= 0)
+            {
+                throw new EndOfStreamException();
+            }
+            offset += read;
+            count -= read;
+        }
+    }
+#endif
 
     internal enum MacOsCpuType : uint
     {

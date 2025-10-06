@@ -45,13 +45,10 @@ public abstract class RazorProjectItem
     /// <summary>
     /// Gets the document kind that should be used for the generated document. If possible this will be inferred from the file path. May be null.
     /// </summary>
-    public virtual string FileKind
-    {
-        get
-        {
-            return FilePath == null ? null : FileKinds.GetFileKindFromFilePath(FilePath);
-        }
-    }
+    public virtual RazorFileKind FileKind
+        => FilePath == null
+            ? RazorFileKind.None
+            : FileKinds.GetFileKindFromPath(FilePath);
 
     /// <summary>
     /// Gets the file contents as readonly <see cref="Stream"/>.
@@ -68,19 +65,9 @@ public abstract class RazorProjectItem
     /// The root relative path of the item.
     /// </summary>
     public string CombinedPath
-    {
-        get
-        {
-            if (BasePath == "/")
-            {
-                return FilePath;
-            }
-            else
-            {
-                return BasePath + FilePath;
-            }
-        }
-    }
+        => BasePath == RazorProjectFileSystem.DefaultBasePath
+            ? FilePath
+            : BasePath + FilePath;
 
     /// <summary>
     /// The extension of the file.
@@ -132,10 +119,9 @@ public abstract class RazorProjectItem
         }
     }
 
-    internal RazorSourceDocument RazorSourceDocument { get; set; }
+    internal virtual RazorSourceDocument GetSource()
+        => RazorSourceDocument.ReadFrom(this);
 
-    private string DebuggerToString()
-    {
-        return CombinedPath;
-    }
+    protected virtual string DebuggerToString()
+        => CombinedPath;
 }

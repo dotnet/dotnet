@@ -191,7 +191,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(Parent, node));
+                Trees.Add(new IntermediateNodeReference(node, Parent));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;
@@ -241,7 +241,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(Parent, node));
+                Trees.Add(new IntermediateNodeReference(node, Parent));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;
@@ -255,7 +255,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
                 _foundNonHtml = true;
             }
 
-            if (node.IsCSharp)
+            if (node is CSharpIntermediateToken)
             {
                 _foundNonHtml = true;
             }
@@ -264,15 +264,11 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
     private class RewriteVisitor : IntermediateNodeWalker
     {
-        private readonly StringBuilder _encodingBuilder;
-
         private readonly List<IntermediateNodeReference> _trees;
 
         public RewriteVisitor(List<IntermediateNodeReference> trees)
         {
             _trees = trees;
-
-            _encodingBuilder = new StringBuilder();
         }
 
         public StringBuilder Builder { get; } = new StringBuilder();

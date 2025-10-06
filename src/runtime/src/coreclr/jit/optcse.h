@@ -29,6 +29,28 @@ protected:
 #ifdef DEBUG
     jitstd::vector<unsigned>* m_sequence;
 #endif
+#if defined(TARGET_AMD64)
+    unsigned cntCalleeTrashInt;
+    unsigned cntCalleeTrashFlt;
+
+    FORCEINLINE unsigned get_CNT_CALLEE_TRASH_INT() const
+    {
+        return this->cntCalleeTrashInt;
+    }
+
+    FORCEINLINE unsigned get_CNT_CALLEE_TRASH_FLOAT() const
+    {
+        return this->cntCalleeTrashFlt;
+    }
+#endif // TARGET_AMD64
+#if defined(TARGET_XARCH)
+    unsigned cntCalleeTrashMsk;
+
+    FORCEINLINE unsigned get_CNT_CALLEE_TRASH_MASK() const
+    {
+        return this->cntCalleeTrashMsk;
+    }
+#endif // TARGET_XARCH
 
 public:
     virtual void Initialize()
@@ -92,6 +114,10 @@ public:
         JITDUMP("%s\n", Name());
     }
 #endif
+
+private:
+    void ReplaceCSENode(Statement* stmt, GenTree* exp, GenTree* newNode);
+    void InsertUseIntoSsa(class IncrementalSsaBuilder& ssaBuilder, const struct UseDefLocation& useDefLoc);
 };
 
 #ifdef DEBUG
@@ -151,7 +177,11 @@ class CSE_HeuristicParameterized : public CSE_HeuristicCommon
 protected:
     struct Choice
     {
-        Choice(CSEdsc* dsc, double preference) : m_dsc(dsc), m_preference(preference), m_softmax(0), m_performed(false)
+        Choice(CSEdsc* dsc, double preference)
+            : m_dsc(dsc)
+            , m_preference(preference)
+            , m_softmax(0)
+            , m_performed(false)
         {
         }
 
@@ -181,11 +211,11 @@ public:
     void CaptureLocalWeights();
     void GreedyPolicy();
 
-    void GetFeatures(CSEdsc* dsc, double* features);
+    void   GetFeatures(CSEdsc* dsc, double* features);
     double Preference(CSEdsc* dsc);
-    void GetStoppingFeatures(double* features);
+    void   GetStoppingFeatures(double* features);
     double StoppingPreference();
-    void BuildChoices(ArrayStack<Choice>& choices);
+    void   BuildChoices(ArrayStack<Choice>& choices);
 
     Choice& ChooseGreedy(ArrayStack<Choice>& choices, bool recompute);
 
@@ -213,6 +243,55 @@ public:
 
 #ifdef DEBUG
 
+// NOTE: The RL and Parameterized heuristic support has not
+// been updated to properly track enregistration for different
+// register types and still classifies simd/masks under the
+// integer budget. This and the relevant training scripts should
+// be updated to support this the next time they are touched.
+
+// General Reinforcement Learning CSE heuristic hook.
+//
+// Produces a wide set of data to train a RL model.
+// Consumes the decisions made by a model to perform CSEs.
+//
+class CSE_HeuristicRLHook : public CSE_HeuristicCommon
+{
+private:
+    static const char* const s_featureNameAndType[];
+
+    void GetFeatures(CSEdsc* cse, int* features);
+
+    enum
+    {
+        maxFeatures = 19,
+    };
+
+    enum
+    {
+        rlHookTypeOther  = 0,
+        rlHookTypeInt    = 1,
+        rlHookTypeLong   = 2,
+        rlHookTypeFloat  = 3,
+        rlHookTypeDouble = 4,
+        rlHookTypeStruct = 5,
+        rlHookTypeSimd   = 6,
+    };
+
+public:
+    CSE_HeuristicRLHook(Compiler*);
+    void ConsiderCandidates();
+    bool ConsiderTree(GenTree* tree, bool isReturn);
+
+    const char* Name() const
+    {
+        return "RL Hook CSE Heuristic";
+    }
+
+#ifdef DEBUG
+    virtual void DumpMetrics();
+#endif
+};
+
 // Reinforcement Learning CSE heuristic
 //
 // Uses a "linear" feature model with
@@ -227,12 +306,12 @@ private:
     bool      m_updateParameters;
     bool      m_greedy;
 
-    Choice& ChooseSoftmax(ArrayStack<Choice>& choices);
-    void Softmax(ArrayStack<Choice>& choices);
-    void SoftmaxPolicy();
-    void UpdateParametersStep(CSEdsc* dsc, ArrayStack<Choice>& choices, double reward, double* delta);
-    void    UpdateParameters();
-    Choice* FindChoice(CSEdsc* dsc, ArrayStack<Choice>& choices);
+    Choice&     ChooseSoftmax(ArrayStack<Choice>& choices);
+    void        Softmax(ArrayStack<Choice>& choices);
+    void        SoftmaxPolicy();
+    void        UpdateParametersStep(CSEdsc* dsc, ArrayStack<Choice>& choices, double reward, double* delta);
+    void        UpdateParameters();
+    Choice*     FindChoice(CSEdsc* dsc, ArrayStack<Choice>& choices);
     const char* Name() const;
 
 public:
@@ -258,7 +337,9 @@ class CSE_Heuristic : public CSE_HeuristicCommon
 private:
     weight_t aggressiveRefCnt;
     weight_t moderateRefCnt;
-    unsigned enregCount; // count of the number of predicted enregistered variables
+    unsigned enregCountInt;
+    unsigned enregCountFlt;
+    unsigned enregCountMsk;
     bool     largeFrame;
     bool     hugeFrame;
 
@@ -304,11 +385,7 @@ struct CSEdsc
     weight_t csdDefWtCnt; // weighted def count
     weight_t csdUseWtCnt; // weighted use count  (excluding the implicit uses at defs)
 
-    GenTree*    csdTree;  // treenode containing the 1st occurrence
-    Statement*  csdStmt;  // stmt containing the 1st occurrence
-    BasicBlock* csdBlock; // block containing the 1st occurrence
-
-    treeStmtLst* csdTreeList; // list of matching tree nodes: head
+    treeStmtLst  csdTreeList; // list of matching tree nodes: head
     treeStmtLst* csdTreeLast; // list of matching tree nodes: tail
 
     // The exception set that is now required for all defs of this CSE.
@@ -317,11 +394,6 @@ struct CSEdsc
 
     // The set of exceptions we currently can use for CSE uses.
     ValueNum defExcSetCurrent;
-
-    // if all def occurrences share the same conservative normal value
-    // number, this will reflect it; otherwise, NoVN.
-    // not used for shared const CSE's
-    ValueNum defConservNormVN;
 
     // Number of distinct locals referenced (in first def tree)
     // and total number of local nodes.
@@ -447,7 +519,7 @@ public:
     // TODO-CQ: With ValNum CSE's the Expr and its cost can vary.
     GenTree* Expr()
     {
-        return m_CseDsc->csdTree;
+        return m_CseDsc->csdTreeList.tslTree;
     }
     unsigned Cost()
     {

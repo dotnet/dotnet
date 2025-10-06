@@ -246,36 +246,17 @@ module Structure =
                 rcheck Scope.New Collapse.Below r e.Range
                 parseExpr e
 
-            | SynExpr.YieldOrReturn(_, e, r) ->
+            | SynExpr.YieldOrReturn(_, e, r, _) ->
                 rcheck Scope.YieldOrReturn Collapse.Below r r
                 parseExpr e
 
-            | SynExpr.YieldOrReturnFrom(_, e, r) ->
+            | SynExpr.YieldOrReturnFrom(_, e, r, _) ->
                 rcheck Scope.YieldOrReturnBang Collapse.Below r r
                 parseExpr e
 
-            | SynExpr.DoBang(e, r) ->
+            | SynExpr.DoBang(expr = e; range = r) ->
                 rcheck Scope.Do Collapse.Below r <| Range.modStart 3 r
                 parseExpr e
-
-            | SynExpr.LetOrUseBang(pat = pat; rhs = eLet; andBangs = es; body = eBody) ->
-                let exprs =
-                    [
-                        eLet
-                        for SynExprAndBang(body = eAndBang) in es do
-                            eAndBang
-                    ]
-
-                for e in exprs do
-                    // for `let!`, `use!` or `and!` the pattern begins at the end of the
-                    // keyword so that this scope can be used without adjustment if there is no `=`
-                    // on the same line. If there is an `=` the range will be adjusted during the
-                    // tooltip creation
-                    let r = Range.endToEnd pat.Range e.Range
-                    rcheck Scope.LetOrUseBang Collapse.Below r r
-                    parseExpr e
-
-                parseExpr eBody
 
             | SynExpr.For(doBody = e; range = r)
             | SynExpr.ForEach(_, _, _, _, _, _, e, r) ->
@@ -337,7 +318,7 @@ module Structure =
                 parseExpr argExpr
                 parseExpr funcExpr
 
-            | SynExpr.Sequential(_, _, e1, e2, _) ->
+            | SynExpr.Sequential(expr1 = e1; expr2 = e2) ->
                 parseExpr e1
                 parseExpr e2
 

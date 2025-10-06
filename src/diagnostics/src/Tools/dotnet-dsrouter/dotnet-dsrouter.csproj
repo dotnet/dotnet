@@ -1,19 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>$(NetCoreAppMinTargetFramework)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ToolCommandName>dotnet-dsrouter</ToolCommandName>
     <RootNamespace>Microsoft.Diagnostics.Tools.DiagnosticsServerRouter</RootNamespace>
     <Description>.NET Performance Diagnostic Server Router Tool</Description>
     <PackageTags>Diagnostic</PackageTags>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Common\CommandExtensions.cs" Link="CommandExtensions.cs" />
     <Compile Include="..\Common\ReversedServerHelpers\ReversedServerHelpers.cs" Link="ReversedServerHelpers.cs" />
     <Compile Include="..\Common\CommandLineErrorException.cs" Link="CommandLineErrorException.cs" />
+    <Compile Include="..\Common\ProcessTerminationHandler.cs" Link="ProcessTerminationHandler.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,7 @@
     <PackageReference Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
+    <PackageReference Include="Xamarin.Android.Tools.AndroidSdk" Version="$(XamarinAndroidToolsAndroidSdkVersion)" />
   </ItemGroup>
 
 </Project>

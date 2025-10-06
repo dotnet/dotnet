@@ -80,13 +80,17 @@ try {
   {
     $buildToolPath = Join-Path $bootstrapRoot "net472\MSBuild\Current\Bin\MSBuild.exe"
     $buildToolCommand = "";
-    $buildToolFramework = "net472"
+    $buildToolFramework = "netframework"
   }
   else
   {
-    $buildToolPath = $dotnetExePath
-    $buildToolCommand = Join-Path $bootstrapRoot "net8.0\MSBuild\MSBuild.dll"
-    $buildToolFramework = "net8.0"
+    $buildToolPath = "$bootstrapRoot\core\dotnet.exe"
+    $propsFile = Join-Path $PSScriptRoot "Versions.props"
+    $bootstrapSdkVersion = ([xml](Get-Content $propsFile)).SelectSingleNode("//PropertyGroup/BootstrapSdkVersion").InnerText
+    $buildToolCommand = "$bootstrapRoot\core\sdk\$bootstrapSdkVersion\MSBuild.dll"
+    $buildToolFramework = "net"
+
+    $env:DOTNET_ROOT="$bootstrapRoot\core"
   }
 
   # Use separate artifacts folder for stage 2
@@ -115,13 +119,12 @@ try {
 
   # When using bootstrapped MSBuild:
   # - Turn off node reuse (so that bootstrapped MSBuild processes don't stay running and lock files)
-  # - Do run tests
-  # - Don't try to create a bootstrap deployment
+  # - Create bootstrap environment as it's required when also running tests
   if ($onlyDocChanged) {
     & $PSScriptRoot\Common\Build.ps1 -restore -build -ci /p:CreateBootstrap=false /nr:false @properties
   }
   else {
-    & $PSScriptRoot\Common\Build.ps1 -restore -build -test -ci /p:CreateBootstrap=false /nr:false @properties
+    & $PSScriptRoot\Common\Build.ps1 -restore -build -test -ci /nr:false @properties
   }
 
   exit $lastExitCode

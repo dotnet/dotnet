@@ -15,7 +15,7 @@ using ReleaseTool.Core;
 
 namespace DiagnosticsReleaseTool.Impl
 {
-    internal sealed class DiagnosticsManifestGenerator : IManifestGenerator
+    internal sealed partial class DiagnosticsManifestGenerator : IManifestGenerator
     {
         private readonly ReleaseMetadata _productReleaseMetadata;
         private readonly JsonDocument _assetManifestManifestDom;
@@ -24,8 +24,12 @@ namespace DiagnosticsReleaseTool.Impl
         public DiagnosticsManifestGenerator(ReleaseMetadata productReleaseMetadata, FileInfo toolManifest, ILogger logger)
         {
             _productReleaseMetadata = productReleaseMetadata;
-            string manifestContent = File.ReadAllText(toolManifest.FullName);
-            _assetManifestManifestDom = JsonDocument.Parse(manifestContent);
+            using Stream manifestStream = File.OpenRead(toolManifest.FullName);
+            _assetManifestManifestDom = JsonDocument.Parse(manifestStream, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
+            });
             _logger = logger;
         }
 
@@ -160,16 +164,12 @@ namespace DiagnosticsReleaseTool.Impl
             return $"{_productReleaseMetadata.ReleaseVersion}/{pathHash}/{fi.Name}";
         }
 
-        private static readonly Regex s_akaMsMetadataMatcher = new(
-                $@"<(?<metadata>[a-zA-Z]\w*)>",
-                RegexOptions.Compiled | RegexOptions.ExplicitCapture);
-
         private string GenerateLinkFromMetadata(FileReleaseData fileToRelease, string linkSchema)
         {
             FileInfo fi = new(fileToRelease.FileMap.LocalSourcePath);
             string link = linkSchema;
             //TODO: Revisit for perf if necessary...
-            MatchCollection results = s_akaMsMetadataMatcher.Matches(linkSchema);
+            MatchCollection results = AkamsMetadataMatcher().Matches(linkSchema);
             foreach (Match match in results)
             {
                 if (!match.Groups.TryGetValue("metadata", out Group metadataGroup))
@@ -219,5 +219,8 @@ namespace DiagnosticsReleaseTool.Impl
                 element.WriteTo(writer);
             }
         }
+
+        [GeneratedRegex(@"<(?<metadata>[a-zA-Z]\w*)>", RegexOptions.ExplicitCapture | RegexOptions.Compiled)]
+        private static partial Regex AkamsMetadataMatcher();
     }
 }

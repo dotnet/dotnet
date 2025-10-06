@@ -3,7 +3,6 @@ SigFile
      ("/root/SignatureType/SynTypeDefnSigWithObjectModelDelegateContainsTheRangeOfTheEqualsSign.fsi",
       QualifiedNameOfFile
         SynTypeDefnSigWithObjectModelDelegateContainsTheRangeOfTheEqualsSign, [],
-      [],
       [SynModuleOrNamespaceSig
          ([Foo], false, DeclaredNamespace,
           [Types
@@ -32,7 +31,7 @@ SigFile
                             SynValInfo
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, None, None, (4,9--4,37),
+                            PreXmlDocEmpty, Single None, None, (4,9--4,37),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None
@@ -50,4 +49,5 @@ SigFile
           PreXmlDocEmpty, [], None, (2,0--4,37),
           { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

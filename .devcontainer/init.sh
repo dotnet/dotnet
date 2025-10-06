@@ -9,6 +9,6 @@ workspace_dir=$(realpath "$script_root/../../")
 tmp_dir=$(realpath "$workspace_dir/tmp")
 vmr_dir=$(realpath "$workspace_dir/dotnet")
 
-cp "$vmr_dir/.devcontainer/synchronize-vmr.sh" "$workspace_dir"
+$vmr_dir/.devcontainer/init-toolset.sh $vmr_dir
 
 mkdir -p "$tmp_dir"

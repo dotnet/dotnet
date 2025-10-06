@@ -93,7 +93,7 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
 
         // Fill the parameters.
         consoleParameters.ParentProcessId =
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
             Environment.ProcessId;
 #else
             System.Diagnostics.Process.GetCurrentProcess().Id;
@@ -126,7 +126,8 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         ProcessHelper.ExternalEnvironmentVariables = environmentVariableBaseline;
 
         string someExistingFile = typeof(InProcessVsTestConsoleWrapper).Assembly.Location;
-        var args = new VsTestConsoleProcessManager(someExistingFile).BuildArguments(consoleParameters);
+        using var manager = new VsTestConsoleProcessManager(someExistingFile);
+        var args = manager.BuildArguments(consoleParameters);
         // Skip vstest.console path, we are already running in process, so it would just end up
         // being understood as test dll to run. (it is present even though we don't provide
         // dotnet path, because it is a .dll file).

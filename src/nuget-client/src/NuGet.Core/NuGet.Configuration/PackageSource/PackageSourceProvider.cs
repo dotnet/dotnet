@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using NuGet.Common;
 
 namespace NuGet.Configuration
 {
@@ -112,7 +113,7 @@ namespace NuGet.Configuration
             return defaultSources.AsReadOnly();
         }
 
-        private static List<PackageSource> GetPackageSourceFromSettings(ISettings settings, string sectionName)
+        private static List<PackageSource> GetPackageSourceFromSettings(ISettings settings, string sectionName, IEnvironmentVariableReader environmentVariableReader)
         {
             var packageSourcesSection = settings.GetSection(sectionName);
             var sourcesItems = packageSourcesSection?.Items.OfType<SourceItem>();
@@ -140,7 +141,7 @@ namespace NuGet.Configuration
                 {
                     var name = setting.Key;
                     var isEnabled = !disabledSources.Contains(name);
-                    var packageSource = ReadPackageSource(setting, isEnabled, settings);
+                    var packageSource = ReadPackageSource(setting, isEnabled, settings, environmentVariableReader);
 
                     AddOrUpdateIndexedSource(packageSourceLookup, packageSource, ref packageIndex);
                 }
@@ -164,12 +165,20 @@ namespace NuGet.Configuration
         /// </summary>
         public IEnumerable<PackageSource> LoadPackageSources()
         {
-            return LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources);
+            return LoadPackageSources(EnvironmentVariableWrapper.Instance);
+        }
+        internal IEnumerable<PackageSource> LoadPackageSources(IEnvironmentVariableReader environmentVariableReader)
+        {
+            return LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources, environmentVariableReader);
         }
 
         public IReadOnlyList<PackageSource> LoadAuditSources()
         {
-            return LoadPackageSources(Settings, ConfigurationConstants.AuditSources, _configurationDefaultAuditSources);
+            return LoadAuditSources(EnvironmentVariableWrapper.Instance);
+        }
+        internal IReadOnlyList<PackageSource> LoadAuditSources(IEnvironmentVariableReader environmentVariableReader)
+        {
+            return LoadPackageSources(Settings, ConfigurationConstants.AuditSources, _configurationDefaultAuditSources, environmentVariableReader);
         }
 
         /// <summary>
@@ -177,12 +186,12 @@ namespace NuGet.Configuration
         /// </summary>
         public static IEnumerable<PackageSource> LoadPackageSources(ISettings settings)
         {
-            return LoadPackageSources(settings, ConfigurationConstants.PackageSources, ConfigurationDefaults.Instance.DefaultPackageSources);
+            return LoadPackageSources(settings, ConfigurationConstants.PackageSources, ConfigurationDefaults.Instance.DefaultPackageSources, EnvironmentVariableWrapper.Instance);
         }
 
-        private static List<PackageSource> LoadPackageSources(ISettings settings, string sectionName, IEnumerable<PackageSource> defaultSources)
+        private static List<PackageSource> LoadPackageSources(ISettings settings, string sectionName, IEnumerable<PackageSource> defaultSources, IEnvironmentVariableReader environmentVariableReader)
         {
-            List<PackageSource> loadedPackageSources = GetPackageSourceFromSettings(settings, sectionName);
+            List<PackageSource> loadedPackageSources = GetPackageSourceFromSettings(settings, sectionName, environmentVariableReader);
 
             if (defaultSources != null && defaultSources.Any())
             {
@@ -220,7 +229,7 @@ namespace NuGet.Configuration
             loadedPackageSources.InsertRange(defaultSourcesInsertIndex, defaultPackageSourcesToBeAdded);
         }
 
-        internal static PackageSource ReadPackageSource(SourceItem setting, bool isEnabled, ISettings settings)
+        internal static PackageSource ReadPackageSource(SourceItem setting, bool isEnabled, ISettings settings, IEnvironmentVariableReader environmentVariableReader)
         {
             var name = setting.Key;
             var packageSource = new PackageSource(setting.GetValueAsPath(), name, isEnabled)
@@ -229,7 +238,7 @@ namespace NuGet.Configuration
                 MaxHttpRequestsPerSource = SettingsUtility.GetMaxHttpRequest(settings)
             };
 
-            var credentials = ReadCredential(name, settings);
+            var credentials = ReadCredential(name, settings, environmentVariableReader);
             if (credentials != null)
             {
                 packageSource.Credentials = credentials;
@@ -244,6 +253,7 @@ namespace NuGet.Configuration
 
             packageSource.ProtocolVersion = ReadProtocolVersion(setting);
             packageSource.AllowInsecureConnections = ReadAllowInsecureConnections(setting);
+            packageSource.DisableTLSCertificateValidation = ReadDisableTLSCertificateValidation(setting);
 
             return packageSource;
         }
@@ -256,6 +266,16 @@ namespace NuGet.Configuration
             }
 
             return PackageSource.DefaultProtocolVersion;
+        }
+
+        private static bool ReadDisableTLSCertificateValidation(SourceItem setting)
+        {
+            if (bool.TryParse(setting.DisableTLSCertificateValidation, out var disableTLSCertificateValidation))
+            {
+                return disableTLSCertificateValidation;
+            }
+
+            return PackageSource.DefaultDisableTLSCertificateValidation;
         }
 
         private static bool ReadAllowInsecureConnections(SourceItem setting)
@@ -290,9 +310,9 @@ namespace NuGet.Configuration
             }
         }
 
-        private static PackageSourceCredential? ReadCredential(string sourceName, ISettings settings)
+        private static PackageSourceCredential? ReadCredential(string sourceName, ISettings settings, IEnvironmentVariableReader environmentVariableReader)
         {
-            var environmentCredentials = ReadCredentialFromEnvironment(sourceName);
+            var environmentCredentials = ReadCredentialFromEnvironment(sourceName, environmentVariableReader);
 
             if (environmentCredentials != null)
             {
@@ -315,15 +335,15 @@ namespace NuGet.Configuration
             return null;
         }
 
-        private static PackageSourceCredential? ReadCredentialFromEnvironment(string sourceName)
+        private static PackageSourceCredential? ReadCredentialFromEnvironment(string sourceName, IEnvironmentVariableReader environmentVariableReader)
         {
-            var rawCredentials = Environment.GetEnvironmentVariable("NuGetPackageSourceCredentials_" + sourceName);
+            var rawCredentials = environmentVariableReader.GetEnvironmentVariable("NuGetPackageSourceCredentials_" + sourceName);
             if (string.IsNullOrEmpty(rawCredentials))
             {
                 return null;
             }
 
-            var match = Regex.Match(rawCredentials.Trim(), @"^Username=(?<user>.*?);\s*Password=(?<pass>.*?)(?:;ValidAuthenticationTypes=(?<authTypes>.*?))?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            var match = Regex.Match(rawCredentials!.Trim(), @"^Username=(?<user>.*?);\s*Password=(?<pass>.*?)(?:;ValidAuthenticationTypes=(?<authTypes>.*?))?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             if (!match.Success)
             {
                 return null;
@@ -339,12 +359,16 @@ namespace NuGet.Configuration
 
         public PackageSource? GetPackageSourceByName(string name)
         {
+            return GetPackageSourceByName(name, EnvironmentVariableWrapper.Instance);
+        }
+        internal PackageSource? GetPackageSourceByName(string name, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(name));
             }
 
-            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources);
+            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources, environmentVariableReader);
 
             foreach (var packageSource in packageSources)
             {
@@ -359,9 +383,13 @@ namespace NuGet.Configuration
 
         public HashSet<string> GetPackageSourceNamesMatchingNamePrefix(string namePrefix)
         {
+            return GetPackageSourceNamesMatchingNamePrefix(namePrefix, EnvironmentVariableWrapper.Instance);
+        }
+        internal HashSet<string> GetPackageSourceNamesMatchingNamePrefix(string namePrefix, IEnvironmentVariableReader environmentVariableReader)
+        {
             var names = new HashSet<string>();
 
-            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources);
+            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources, environmentVariableReader);
             foreach (PackageSource packageSource in packageSources)
             {
                 if (packageSource.Name.StartsWith(namePrefix, StringComparison.OrdinalIgnoreCase))
@@ -375,12 +403,17 @@ namespace NuGet.Configuration
 
         public PackageSource? GetPackageSourceBySource(string source)
         {
+            return GetPackageSourceBySource(source, EnvironmentVariableWrapper.Instance);
+        }
+
+        internal PackageSource? GetPackageSourceBySource(string source, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(source));
             }
 
-            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources);
+            List<PackageSource> packageSources = LoadPackageSources(Settings, ConfigurationConstants.PackageSources, _configurationDefaultSources, environmentVariableReader);
 
             foreach (var packageSource in packageSources)
             {
@@ -451,18 +484,6 @@ namespace NuGet.Configuration
                 OnPackageSourcesChanged();
                 isDirty = false;
             }
-        }
-
-        [Obsolete("DisablePackageSource(PackageSource source) is deprecated. Please use DisablePackageSource(string name) instead.")]
-        public void DisablePackageSource(PackageSource source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            var isDirty = false;
-            AddDisabledSource(source.Name, shouldSkipSave: false, isDirty: ref isDirty);
         }
 
         public void DisablePackageSource(string name)
@@ -548,6 +569,11 @@ namespace NuGet.Configuration
 
         public void UpdatePackageSource(PackageSource source, bool updateCredentials, bool updateEnabled)
         {
+            UpdatePackageSource(source, updateCredentials, updateEnabled, EnvironmentVariableWrapper.Instance);
+        }
+
+        internal void UpdatePackageSource(PackageSource source, bool updateCredentials, bool updateEnabled, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
@@ -572,10 +598,10 @@ namespace NuGet.Configuration
                 {
                     // get list of credentials for sources
                     var credentialsSection = Settings.GetSection(ConfigurationConstants.CredentialsSectionName);
-                    credentialsSettingsItem = credentialsSection?.Items.OfType<CredentialsItem>().Where(s => string.Equals(s.ElementName, sourceToUpdate.Key, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    credentialsSettingsItem = credentialsSection?.Items.OfType<CredentialsItem>().FirstOrDefault(s => string.Equals(s.ElementName, sourceToUpdate.Key, StringComparison.OrdinalIgnoreCase));
                 }
 
-                var oldPackageSource = ReadPackageSource(sourceToUpdate, disabledSourceItem == null, Settings);
+                var oldPackageSource = ReadPackageSource(sourceToUpdate, disabledSourceItem == null, Settings, environmentVariableReader);
                 var isDirty = false;
 
                 UpdatePackageSource(
@@ -603,7 +629,9 @@ namespace NuGet.Configuration
             if (string.Equals(newSource.Name, existingSource.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if ((!string.Equals(newSource.Source, existingSource.Source, StringComparison.OrdinalIgnoreCase) ||
-                    newSource.ProtocolVersion != existingSource.ProtocolVersion) && newSource.IsPersistable)
+                    newSource.ProtocolVersion != existingSource.ProtocolVersion ||
+                    newSource.AllowInsecureConnections != existingSource.AllowInsecureConnections ||
+                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation) && newSource.IsPersistable)
                 {
                     Settings.AddOrUpdate(ConfigurationConstants.PackageSources, newSource.AsSourceItem());
                     isDirty = true;
@@ -698,6 +726,11 @@ namespace NuGet.Configuration
 
         public void SavePackageSources(IEnumerable<PackageSource> sources)
         {
+            SavePackageSources(sources, EnvironmentVariableWrapper.Instance);
+        }
+
+        internal void SavePackageSources(IEnumerable<PackageSource> sources, IEnvironmentVariableReader environmentVariableReader)
+        {
             if (sources == null)
             {
                 throw new ArgumentNullException(nameof(sources));
@@ -740,7 +773,7 @@ namespace NuGet.Configuration
 
                 if (existingSettingsLookup.TryGetValue(source.Name, out existingSourceItem))
                 {
-                    var oldPackageSource = ReadPackageSource(existingSourceItem, existingSourceIsEnabled, Settings);
+                    var oldPackageSource = ReadPackageSource(existingSourceItem, existingSourceIsEnabled, Settings, environmentVariableReader);
 
                     existingCredentialsLookup?.TryGetValue(source.Name, out existingCredentialsItem);
 
@@ -861,17 +894,6 @@ namespace NuGet.Configuration
             // It doesn't matter what value it is.
             // As long as the package source name is persisted in the <disabledPackageSources> section, the source is disabled.
             return value == null;
-        }
-
-        [Obsolete("IsPackageSourceEnabled(PackageSource source) is deprecated. Please use IsPackageSourceEnabled(string name) instead.")]
-        public bool IsPackageSourceEnabled(PackageSource source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            return IsPackageSourceEnabled(source.Name);
         }
 
         /// <summary>

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using NuGet.Common;
@@ -143,8 +143,7 @@ namespace NuGet.Protocol
                 // This is sorted before it is written out
                 return packageReader.GetFiles()
                     .Where(file => IsAllowedLibraryFile(file))
-                    .ToList()
-                    .AsReadOnly();
+                    .ToImmutableArray();
             }
         }
 

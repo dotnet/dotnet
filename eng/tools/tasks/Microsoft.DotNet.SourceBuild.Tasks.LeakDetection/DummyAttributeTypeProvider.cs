@@ -1,17 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-#nullable enable
-
 namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 {
-
     // An empty ICustomAttributeTypeProvider implementation is necessary to read metadata attribute values.
     internal class DummyAttributeTypeProvider : ICustomAttributeTypeProvider<Type?>
     {

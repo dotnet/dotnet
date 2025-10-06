@@ -1,10 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
 
@@ -13,7 +12,7 @@ internal static class InsertMapper
     public static int? GetInsertionPoint(
         SyntaxNode documentRoot,
         SourceText sourceText,
-        LSP.Location focusArea)
+        LspLocation focusArea)
     {
         // If there's an specific focus area, or caret provided, we should try to insert as close as possible.
         // As long as the focused area is not empty.
@@ -34,7 +33,7 @@ internal static class InsertMapper
     private static bool TryGetFocusedInsertionPoint(
         SyntaxNode documentRoot,
         SourceText sourceText,
-        LSP.Location focusArea,
+        LspLocation focusArea,
         out int insertionPoint)
     {
         // If there's an specific focus area, or caret provided, we should try to insert as close as possible.
@@ -47,14 +46,14 @@ internal static class InsertMapper
         }
 
         // Verify that the focus area is within the document.
-        if (!focusArea.Range.Start.IsValid(sourceText))
+        if (!sourceText.IsValidPosition(focusArea.Range.Start))
         {
             insertionPoint = 0;
             return false;
         }
 
         // Ensure we don't insert in the middle of a node.
-        var node = documentRoot.FindNode(focusArea.Range.ToTextSpan(sourceText), includeWhitespace: true);
+        var node = documentRoot.FindNode(sourceText.GetTextSpan(focusArea.Range), includeWhitespace: true);
         if (node is null)
         {
             insertionPoint = 0;
@@ -68,7 +67,7 @@ internal static class InsertMapper
             var line = sourceText.Lines[focusArea.Range.Start.Line];
             if (line.GetFirstNonWhitespaceOffset() is null)
             {
-                insertionPoint = focusArea.Range.ToTextSpan(sourceText).Start;
+                insertionPoint = sourceText.GetTextSpan(focusArea.Range).Start;
                 return true;
             }
         }

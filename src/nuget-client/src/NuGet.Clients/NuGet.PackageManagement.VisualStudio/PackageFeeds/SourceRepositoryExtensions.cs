@@ -42,7 +42,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
 
-            var searchResults = await searchResource?.SearchAsync(
+            IEnumerable<IPackageSearchMetadata> searchResults = await searchResource?.SearchAsync(
                 searchToken.SearchString,
                 searchToken.SearchFilter,
                 searchToken.StartIndex,

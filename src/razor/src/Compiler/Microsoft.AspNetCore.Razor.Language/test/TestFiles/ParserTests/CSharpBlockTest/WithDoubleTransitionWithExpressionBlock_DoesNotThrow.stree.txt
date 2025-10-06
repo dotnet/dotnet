@@ -42,9 +42,9 @@
                                                                     LeftParenthesis;[(];
                                                                 CSharpCodeBlock - [17..20)::3
                                                                     CSharpExpressionLiteral - [17..20)::3 - [2+3] - Gen<Expr>
-                                                                        IntegerLiteral;[2];
-                                                                        Plus;[+];
-                                                                        IntegerLiteral;[3];
+                                                                        NumericLiteral;[2];
+                                                                        CSharpOperator;[+];
+                                                                        NumericLiteral;[3];
                                                                 RazorMetaCode - [20..21)::1 - Gen<None>
                                                                     RightParenthesis;[)];
                                         MarkupTextLiteral - [21..22)::1 - ['] - Gen<Markup>
@@ -69,9 +69,9 @@
                                                                     LeftParenthesis;[(];
                                                                 CSharpCodeBlock - [30..33)::3
                                                                     CSharpExpressionLiteral - [30..33)::3 - [2+3] - Gen<Expr>
-                                                                        IntegerLiteral;[2];
-                                                                        Plus;[+];
-                                                                        IntegerLiteral;[3];
+                                                                        NumericLiteral;[2];
+                                                                        CSharpOperator;[+];
+                                                                        NumericLiteral;[3];
                                                                 RazorMetaCode - [33..34)::1 - Gen<None>
                                                                     RightParenthesis;[)];
                                             MarkupBlock - [34..36)::2

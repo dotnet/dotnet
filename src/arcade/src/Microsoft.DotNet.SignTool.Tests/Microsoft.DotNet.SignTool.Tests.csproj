@@ -8,6 +8,7 @@
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,10 +22,19 @@
                       SkipGetTargetFrameworkProperties="true"
                       Private="false"
                       OutputItemType="_TarToolPath" />
+
+    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
+                      ReferenceOutputAssembly="false"
+                      SetTargetFramework="TargetFramework=$(NetToolCurrent)"
+                      SkipGetTargetFrameworkProperties="true"
+                      Private="false"
+                      OutputItemType="_PkgToolPath" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageDownload Include="Microsoft.Signed.Wix" Version="[$(MicrosoftSignedWixVersion)]" />
+    <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" />
+    <PackageDownload Include="sn" Version="[$(SNVersion)]" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,19 +42,42 @@
              CopyToOutputDirectory="Always" />
     <Content Include="$(NuGetPackageRoot)microsoft.signed.wix\$(MicrosoftSignedWixVersion)\tools\**"
              CopyToOutputDirectory="Always"
+             Link="tools\wix3\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\**"
+             CopyToOutputDirectory="Always"
              Link="tools\wix\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <Content Include="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe*"
+               CopyToOutputDirectory="PreserveNewest"
+               Link="tools\sn\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="$(NuGetPackageRoot)sn\$(SNVersion)\1033\*"
+               CopyToOutputDirectory="PreserveNewest"
+               Link="tools\sn\1033\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <Target Name="_CopyTarTool" AfterTargets="ResolveProjectReferences" >
+  <Target Name="_CopyTarTool" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
       <_TarToolPattern>@(_TarToolPath->'%(RootDir)%(Directory)')**\*.*</_TarToolPattern>
     </PropertyGroup>
     <ItemGroup>
-      <_TarToolFiles Include="$(_TarToolPattern)"/>
+      <_TarToolFiles Include="$(_TarToolPattern)" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="@(_TarToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\tar\%(RecursiveDir)%(Filename)%(Extension)"/>
+      <Content Include="@(_TarToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\tar\%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
   </Target>
 
+  <!-- Copy the tooling even on platforms that won't use it, since we might run these
+       tests in Helix, on another platform. -->
+  <Target Name="_CopyPkgTool" AfterTargets="ResolveProjectReferences">
+    <PropertyGroup>
+      <_PkgToolPattern>@(_PkgToolPath->'%(RootDir)%(Directory)')**\*.*</_PkgToolPattern>
+    </PropertyGroup>
+    <ItemGroup>
+      <_PkgToolFiles Include="$(_PkgToolPattern)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="@(_PkgToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\pkg\%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+  </Target>
 </Project>

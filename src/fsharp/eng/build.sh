@@ -20,12 +20,14 @@ usage()
   echo "  --rebuild                      Rebuild all projects"
   echo "  --pack                         Build nuget packages"
   echo "  --publish                      Publish build artifacts"
+  echo "  --sign                         Sign build artifacts"
   echo "  --help                         Print help and exit"
   echo ""
   echo "Test actions:"
   echo "  --testcoreclr                  Run unit tests on .NET Core (short: --test, -t)"
   echo "  --testCompilerComponentTests   Run FSharp.Compiler.ComponentTests on .NET Core"
   echo "  --testBenchmarks               Build and Run Benchmark suite"
+  echo "  --testScripting                Run FSharp.Private.ScriptingTests on .NET Core"
   echo ""
   echo "Advanced settings:"
   echo "  --ci                           Building in CI"
@@ -33,8 +35,10 @@ usage()
   echo "  --skipAnalyzers                Do not run analyzers during build operations"
   echo "  --skipBuild                    Do not run the build"
   echo "  --prepareMachine               Prepare machine for CI run, clean up processes after build"
-  echo "  --sourceBuild                  Simulate building for source-build"
-  echo "  --norealsig                    Build product with realsig- (default use realsig+)"
+  echo "  --sourceBuild                  Build the repository in source-only mode."
+  echo "  --productBuild                 Build the repository in product-build mode."
+  echo "  --fromVMR                      Set when building from within the VMR"
+  echo "  --buildnorealsig               Build product with realsig- (default use realsig+ where necessary)"
   echo "  --tfm                          Override the default target framework"
   echo ""
   echo "Command line arguments starting with '/p:' are passed through to MSBuild."
@@ -57,9 +61,11 @@ build=false
 rebuild=false
 pack=false
 publish=false
+sign=false
 test_core_clr=false
 test_compilercomponent_tests=false
 test_benchmarks=false
+test_scripting=false
 configuration="Debug"
 verbosity='minimal'
 binary_log=false
@@ -69,13 +75,15 @@ skip_analyzers=false
 skip_build=false
 prepare_machine=false
 source_build=false
-realsig=true
+product_build=false
+from_vmr=false
+buildnorealsig=true
+testbatch=""
 properties=""
-
 docker=false
 args=""
 
-tfm="net8.0" # This needs to be changed every time it's bumped by arcade/us.
+tfm="net10.0" # This needs to be changed every time it's bumped by arcade/us.
 
 BuildCategory=""
 BuildMessage=""
@@ -95,6 +103,11 @@ while [[ $# > 0 ]]; do
       ;;
     --configuration|-c)
       configuration=$2
+      args="$args $1"
+      shift
+      ;;
+    --testbatch)
+      testbatch=$2
       args="$args $1"
       shift
       ;;
@@ -127,6 +140,9 @@ while [[ $# > 0 ]]; do
     --publish)
       publish=true
       ;;
+    --sign)
+      sign=true
+      ;;
     --testcoreclr|--test|-t)
       test_core_clr=true
       ;;
@@ -135,6 +151,9 @@ while [[ $# > 0 ]]; do
       ;;
       --testbenchmarks)
       test_benchmarks=true
+      ;;
+    --testscripting)
+      test_scripting=true
       ;;
     --ci)
       ci=true
@@ -151,18 +170,25 @@ while [[ $# > 0 ]]; do
     --docker)
       docker=true
       ;;
-    --sourcebuild)
+    --sourcebuild|--source-build|-sb)
       source_build=true
+      product_build=true
       ;;
-    --norealsig)
-      realsig=false
+    --productbuild|--product-build|-pb)
+      product_build=true
+      ;;
+    --fromvmr|--from-vmr)
+      from_vmr=true
+      ;;
+    --buildnorealsig)
+      buildnorealsig=true
       ;;
     --tfm)
       tfm=$2
       shift
       ;;
     /p:*)
-      properties="$properties $1"
+      properties+=("$1")
       ;;
     *)
       echo "Invalid argument: $1"
@@ -177,12 +203,11 @@ done
 # Import Arcade functions
 . "$scriptroot/common/tools.sh"
 
-function TestUsingNUnit() {
+function Test() {
   BuildCategory="Test"
   BuildMessage="Error running tests"
   testproject=""
   targetframework=""
-  notestfilter=0
   while [[ $# > 0 ]]; do
     opt="$(echo "$1" | awk '{print tolower($0)}')"
     case "$opt" in
@@ -192,10 +217,6 @@ function TestUsingNUnit() {
         ;;
       --targetframework)
         targetframework=$2
-        shift
-        ;;
-      --notestfilter)
-        notestfilter=1
         shift
         ;;
       *)
@@ -211,15 +232,19 @@ function TestUsingNUnit() {
     exit 1
   fi
 
-  filterArgs=""
-  if [[ "${RunningAsPullRequest:-}" != "true" && $notestfilter == 0 ]]; then
-    filterArgs=" --filter TestCategory!=PullRequest"
-  fi
-
   projectname=$(basename -- "$testproject")
   projectname="${projectname%.*}"
-  testlogpath="$artifacts_dir/TestResults/$configuration/${projectname}_$targetframework.xml"
-  args="test \"$testproject\" --no-restore --no-build -c $configuration -f $targetframework --test-adapter-path . --logger \"nunit;LogFilePath=$testlogpath\"$filterArgs --blame --results-directory $artifacts_dir/TestResults/$configuration"
+  testbatchsuffix=""
+    if [[ "$testbatch" != "" ]]; then
+    testbatchsuffix="_batch$testbatch"
+  fi
+  testlogpath="$artifacts_dir/TestResults/$configuration/${projectname}_$targetframework$testbatchsuffix.xml"
+  args="test \"$testproject\" --no-build -c $configuration -f $targetframework --logger \"xunit;LogFilePath=$testlogpath\" --blame-hang-timeout 5minutes --results-directory $artifacts_dir/TestResults/$configuration"
+
+  if [[ "$testbatch" != "" ]]; then
+    args="$args --filter batch=$testbatch"
+  fi
+
   "$DOTNET_INSTALL_DIR/dotnet" $args || exit $?
 }
 
@@ -227,8 +252,6 @@ function BuildSolution {
   BUILDING_USING_DOTNET=false
   BuildCategory="Build"
   BuildMessage="Error preparing build"
-  local solution="FSharp.sln"
-  echo "$solution:"
 
   InitializeToolset
   local toolset_build_proj=$_InitializeToolset
@@ -238,7 +261,12 @@ function BuildSolution {
     bl="/bl:\"$log_dir/Build.binlog\""
   fi
 
-  local projects="$repo_root/$solution"
+  local projects="$repo_root/FSharp.sln"
+  if [[ "$product_build" = true ]]; then
+    projects="$repo_root/Microsoft.FSharp.Compiler.sln"
+  fi
+
+  echo "$projects:"
 
   # https://github.com/dotnet/roslyn/issues/23736
   local enable_analyzers=!$skip_analyzers
@@ -262,42 +290,32 @@ function BuildSolution {
   node_reuse=false
 
   # build bootstrap tools
-  # source_build=true means we are currently in the outer/wrapper source-build,
-  # and building bootstrap needs to wait. The source-build targets will run this
-  # script again without setting source_build=true when it is done setting up
-  # the build environment. See 'eng/SourceBuild.props'.
-  if [[ "$source_build" != true ]]; then
-    bootstrap_config=Proto
-    bootstrap_dir=$artifacts_dir/Bootstrap
-    if [[ "$force_bootstrap" == true ]]; then
-      rm -fr $bootstrap_dir
+  # source_build=In source build proto does no work, except cause sourcebuild in wrapper to build
+  bootstrap_dir=$artifacts_dir/Bootstrap
+  if [[ "$force_bootstrap" == true ]]; then
+    rm -fr $bootstrap_dir
+  fi
+  if [ ! -f "$bootstrap_dir/fslex/fslex.dll" ]; then
+    local bltools=""
+    if [[ "$bl" != "" ]]; then
+      bltools=$bl+".proto.binlog"
     fi
-    if [ ! -f "$bootstrap_dir/fslex.dll" ]; then
-      local bltools=""
-      if [[ "$bl" != "" ]]; then
-        bltools=$bl+".lex.binlog"
-      fi
-      BuildMessage="Error building tools"
-      MSBuild "$repo_root/buildtools/buildtools.proj" /restore "$bltools" /p:Configuration=$bootstrap_config
 
-      mkdir -p "$bootstrap_dir"
-      cp -pr $artifacts_dir/bin/fslex/$bootstrap_config/$tfm $bootstrap_dir/fslex
-      cp -pr $artifacts_dir/bin/fsyacc/$bootstrap_config/$tfm $bootstrap_dir/fsyacc
+    local blrestore=""
+    if [[ "$source_build" != "true" ]]; then
+      blrestore="/restore"
     fi
-    if [ ! -f "$bootstrap_dir/fsc.exe" ]; then
-      local bltools=""
-      if [[ "$bl" != "" ]]; then
-        bltools=$bl+".bootstrap.binlog"
-      fi
-      BuildMessage="Error building bootstrap"
-      MSBuild "$repo_root/Proto.sln" /restore "$bltools" /p:Configuration=$bootstrap_config
-      cp -pr $artifacts_dir/bin/fsc/$bootstrap_config/$tfm $bootstrap_dir/fsc
-    fi
+
+    BuildMessage="Error building tools"
+    local args=("publish" "$repo_root/proto.proj" "$blrestore" "$bltools" "/p:Configuration=Proto" "/p:DotNetBuild=$product_build" "/p:DotNetBuildSourceOnly=$source_build" "/p:DotNetBuildFromVMR=$from_vmr" ${properties[@]+"${properties[@]}"})
+    echo $args
+    "$DOTNET_INSTALL_DIR/dotnet" "${args[@]}"  #$args || exit $?
   fi
 
   if [[ "$skip_build" != true ]]; then
     # do real build
     BuildMessage="Error building solution"
+
     MSBuild $toolset_build_proj \
       $bl \
       /p:Configuration=$configuration \
@@ -308,13 +326,16 @@ function BuildSolution {
       /p:Rebuild=$rebuild \
       /p:Pack=$pack \
       /p:Publish=$publish \
+      /p:Sign=$sign \
       /p:UseRoslynAnalyzers=$enable_analyzers \
       /p:ContinuousIntegrationBuild=$ci \
       /p:QuietRestore=$quiet_restore \
       /p:QuietRestoreBinaryLog="$binary_log" \
-      /p:ArcadeBuildFromSource=$source_build \
-      /p:TestingLegacyInternalSignature=$realsig \
-      $properties
+      /p:BuildNoRealsig=$buildnorealsig \
+      /p:DotNetBuild=$product_build \
+      /p:DotNetBuildSourceOnly=$source_build \
+      /p:DotNetBuildFromVMR=$from_vmr \
+      ${properties[@]+"${properties[@]}"}
   fi
 }
 
@@ -335,23 +356,28 @@ BuildSolution
 
 if [[ "$test_core_clr" == true ]]; then
   coreclrtestframework=$tfm
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj" --targetframework $coreclrtestframework  --notestfilter 
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj" --targetframework $coreclrtestframework  --notestfilter 
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.UnitTests/FSharp.Compiler.UnitTests.fsproj" --targetframework $coreclrtestframework
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.Private.Scripting.UnitTests/FSharp.Compiler.Private.Scripting.UnitTests.fsproj" --targetframework $coreclrtestframework
-  TestUsingXUnit --testproject "$repo_root/tests/FSharp.Build.UnitTests/FSharp.Build.UnitTests.fsproj" --targetframework $coreclrtestframework
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Core.UnitTests/FSharp.Core.UnitTests.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Test.Utilities/FSharp.Test.Utilities.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Compiler.Private.Scripting.UnitTests/FSharp.Compiler.Private.Scripting.UnitTests.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Build.UnitTests/FSharp.Build.UnitTests.fsproj" --targetframework $coreclrtestframework
+  Test --testproject "$repo_root/tests/FSharp.Core.UnitTests/FSharp.Core.UnitTests.fsproj" --targetframework $coreclrtestframework
 fi
 
 if [[ "$test_compilercomponent_tests" == true ]]; then
   coreclrtestframework=$tfm
-  TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj" --targetframework $coreclrtestframework  --notestfilter 
+  Test --testproject "$repo_root/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj" --targetframework $coreclrtestframework
 fi
 
 if [[ "$test_benchmarks" == true ]]; then
   pushd "$repo_root/tests/benchmarks"
   ./SmokeTestBenchmarks.sh
   popd
+fi
+
+if [[ "$test_scripting" == true ]]; then
+  coreclrtestframework=$tfm
+  Test --testproject "$repo_root/tests/FSharp.Compiler.Private.Scripting.UnitTests/FSharp.Compiler.Private.Scripting.UnitTests.fsproj" --targetframework $coreclrtestframework
 fi
 
 ExitWithExitCode 0

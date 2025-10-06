@@ -1,9 +1,21 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+    NamespaceDeclaration -  - AspNetCoreGeneratedDocument
+        UsingDirective - (1:0,1 [20] ) - global::System
+        UsingDirective - (24:1,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [25] ) - global::System.Linq
+        UsingDirective - (95:3,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [38] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [48] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [51] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ConditionalAttributes_Runtime -  - 
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ConditionalAttributes - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_0 - href - ~/Foo - HtmlAttributeValueStyle.DoubleQuotes
+            DefaultTagHelperRuntime - 
+            FieldDeclaration -  - private - global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper - __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 CSharpCode - (2:0,2 [44] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (2:0,2 [44] ConditionalAttributes.cshtml) - CSharp - \n    var ch = true;\n    var cls = "bar";\n
                 HtmlContent - (46:3,0 [28] ConditionalAttributes.cshtml)
@@ -74,15 +86,17 @@
                         CSharpExpression - (276:9,34 [3] ConditionalAttributes.cshtml)
                             LazyIntermediateToken - (276:9,34 [3] ConditionalAttributes.cshtml) - CSharp - cls
                         LazyIntermediateToken - (279:9,37 [2] ConditionalAttributes.cshtml) - CSharp -  }
-                HtmlContent - (282:9,40 [40] ConditionalAttributes.cshtml)
+                HtmlContent - (282:9,40 [9] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (282:9,40 [1] ConditionalAttributes.cshtml) - Html -  
                     LazyIntermediateToken - (283:9,41 [2] ConditionalAttributes.cshtml) - Html - />
                     LazyIntermediateToken - (285:9,43 [2] ConditionalAttributes.cshtml) - Html - \n
                     LazyIntermediateToken - (287:10,0 [4] ConditionalAttributes.cshtml) - Html -     
-                    LazyIntermediateToken - (291:10,4 [2] ConditionalAttributes.cshtml) - Html - <a
-                    LazyIntermediateToken - (293:10,6 [13] ConditionalAttributes.cshtml) - Html -  href="~/Foo"
-                    LazyIntermediateToken - (306:10,19 [1] ConditionalAttributes.cshtml) - Html -  
-                    LazyIntermediateToken - (307:10,20 [2] ConditionalAttributes.cshtml) - Html - />
+                TagHelper - (291:10,4 [18] ConditionalAttributes.cshtml) - a - TagMode.SelfClosing
+                    DefaultTagHelperBody - 
+                    DefaultTagHelperCreate -  - Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper
+                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_0
+                    DefaultTagHelperExecute - 
+                HtmlContent - (309:10,22 [13] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (309:10,22 [2] ConditionalAttributes.cshtml) - Html - \n
                     LazyIntermediateToken - (311:11,0 [4] ConditionalAttributes.cshtml) - Html -     
                     LazyIntermediateToken - (315:11,4 [7] ConditionalAttributes.cshtml) - Html - <script
@@ -99,7 +113,7 @@
                 HtmlAttribute - (420:12,11 [68] ConditionalAttributes.cshtml) -  src=" - "
                     CSharpExpressionAttributeValue - (426:12,17 [61] ConditionalAttributes.cshtml) - 
                         LazyIntermediateToken - (427:12,18 [60] ConditionalAttributes.cshtml) - CSharp - Url.Content("~/Scripts/modernizr-2.0.6-development-only.js")
-                HtmlContent - (488:12,79 [152] ConditionalAttributes.cshtml)
+                HtmlContent - (488:12,79 [158] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (488:12,79 [23] ConditionalAttributes.cshtml) - Html -  type="text/javascript"
                     LazyIntermediateToken - (511:12,102 [1] ConditionalAttributes.cshtml) - Html - >
                     LazyIntermediateToken - (512:12,103 [9] ConditionalAttributes.cshtml) - Html - </script>
@@ -111,5 +125,19 @@
                     LazyIntermediateToken - (628:13,105 [1] ConditionalAttributes.cshtml) - Html - >
                     LazyIntermediateToken - (629:13,106 [9] ConditionalAttributes.cshtml) - Html - </script>
                     LazyIntermediateToken - (638:13,115 [2] ConditionalAttributes.cshtml) - Html - \n
-                CSharpCode - (640:14,0 [0] ConditionalAttributes.cshtml)
-                    LazyIntermediateToken - (640:14,0 [0] ConditionalAttributes.cshtml) - CSharp - 
+                    LazyIntermediateToken - (640:14,0 [4] ConditionalAttributes.cshtml) - Html -     
+                    LazyIntermediateToken - (644:14,4 [2] ConditionalAttributes.cshtml) - Html - <p
+                HtmlAttribute - (646:14,6 [14] ConditionalAttributes.cshtml) -  class=" - "
+                    CSharpExpressionAttributeValue - (654:14,14 [5] ConditionalAttributes.cshtml) - 
+                        LazyIntermediateToken - (655:14,15 [4] ConditionalAttributes.cshtml) - CSharp - null
+                HtmlContent - (660:14,20 [5] ConditionalAttributes.cshtml)
+                    LazyIntermediateToken - (660:14,20 [1] ConditionalAttributes.cshtml) - Html -  
+                    LazyIntermediateToken - (661:14,21 [2] ConditionalAttributes.cshtml) - Html - />
+                    LazyIntermediateToken - (663:14,23 [2] ConditionalAttributes.cshtml) - Html - \n
+                CSharpCode - (665:15,0 [0] ConditionalAttributes.cshtml)
+                    LazyIntermediateToken - (665:15,0 [0] ConditionalAttributes.cshtml) - CSharp - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 

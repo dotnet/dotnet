@@ -4,27 +4,5 @@ steps:
   inputs:
     targetType: "inline"
     script: |
-      ./eng/source-build/build.sh
+      ./eng/dotnet-build/build.sh --source-build
   condition: "always()"
-
-- task: PublishBuildArtifacts@1
-  displayName: Upload source-build log
-  condition: "or(failed(), eq(variables['System.debug'], 'true'))"
-  continueOnError: true
-  inputs:
-    PathToPublish: "artifacts/sb/log/source-build.binlog"
-    ArtifactName: "Source-build log"
-    ArtifactType: Container
-
-- task: ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-
-- task: PowerShell@2
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    targetType: "inline"
-    script: |
-      . $(Build.Repository.LocalPath)/scripts/utils/PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(System.JobDisplayName)"
-    failOnStderr: "true"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

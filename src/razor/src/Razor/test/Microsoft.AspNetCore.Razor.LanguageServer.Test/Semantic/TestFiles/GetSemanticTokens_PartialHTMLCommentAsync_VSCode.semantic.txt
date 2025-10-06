@@ -1,0 +1,3 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 razorTransition 0 [@]
+0 1 12 razorDirective 0 [addTagHelper]

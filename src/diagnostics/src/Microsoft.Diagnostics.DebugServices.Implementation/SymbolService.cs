@@ -7,11 +7,15 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.FileFormats;
 using Microsoft.FileFormats.ELF;
 using Microsoft.FileFormats.MachO;
@@ -32,7 +36,9 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// Symbol server URLs
         /// </summary>
         public const string MsdlSymbolServer = "https://msdl.microsoft.com/download/symbols/";
-        public const string SymwebSymbolServer = "https://symweb/";
+        public const string SymwebSymbolServer = "https://symweb.azurefd.net/";
+
+        private static string _symwebHost = new Uri(SymwebSymbolServer).Host;
 
         private readonly IHost _host;
         private string _defaultSymbolCache;
@@ -59,10 +65,14 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         public bool IsSymbolStoreEnabled => _symbolStore != null;
 
         /// <summary>
+        /// The default symbol server URL (normally msdl) when not overridden in AddSymbolServer.
+        /// </summary>
+        public string DefaultSymbolPath { get; set; } = MsdlSymbolServer;
+
+        /// <summary>
         /// The default symbol cache path:
-        ///
         /// * dbgeng on Windows uses the dbgeng symbol cache path: %PROGRAMDATA%\dbg\sym
-        /// * dotnet-dump on Windows uses the VS symbol cache path: %TEMPDIR%\SymbolCache
+        /// * VS or dotnet-dump on Windows use the VS symbol cache path: %TEMPDIR%\SymbolCache
         /// * dotnet-dump/lldb on Linux/MacOS uses: $HOME/.dotnet/symbolcache
         /// </summary>
         public string DefaultSymbolCache
@@ -76,8 +86,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                         _defaultSymbolCache = _host.HostType switch
                         {
                             HostType.DbgEng => Path.Combine(Environment.GetEnvironmentVariable("PROGRAMDATA"), "dbg", "sym"),
-                            HostType.DotnetDump => Path.Combine(Path.GetTempPath(), "SymbolCache"),
-                            _ => throw new NotSupportedException($"Host type not supported {_host.HostType}"),
+                            _ => Path.Combine(Path.GetTempPath(), "SymbolCache"),
                         };
                     }
                     else
@@ -117,7 +126,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         {
             string[] paths = symbolPath.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string path in paths.Reverse())
+            foreach (string path in paths.AsEnumerable().Reverse())
             {
                 string[] parts = path.Split(new char[] { '*' }, StringSplitOptions.None);
                 if (parts.Length > 0)
@@ -204,9 +213,20 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                     }
                     if (symbolServerPath != null)
                     {
-                        if (!AddSymbolServer(msdl: false, symweb: false, symbolServerPath.Trim()))
+                        symbolServerPath = symbolServerPath.Trim();
+                        if (IsSymweb(symbolServerPath))
                         {
-                            return false;
+                            if (!AddSymwebSymbolServer(includeInteractiveCredentials: false))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (!AddSymbolServer(symbolServerPath))
+                            {
+                                return false;
+                            }
                         }
                     }
                     foreach (string symbolCachePath in symbolCachePaths.Reverse<string>())
@@ -224,49 +244,91 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         }
 
         /// <summary>
+        /// Add the cloud symweb symbol server with authentication.
+        /// </summary>
+        /// <param name="includeInteractiveCredentials">specifies whether credentials requiring user interaction will be included in the default authentication flow</param>
+        /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
+        /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
+        /// <returns>if false, failure</returns>
+        public bool AddSymwebSymbolServer(
+            bool includeInteractiveCredentials = false,
+            int? timeoutInMinutes = null,
+            int? retryCount = null)
+        {
+            TokenCredential tokenCredential = new DefaultAzureCredential(includeInteractiveCredentials);
+            AccessToken accessToken = default;
+            async ValueTask<AuthenticationHeaderValue> authenticationFunc(CancellationToken token)
+            {
+                try
+                {
+                    if (accessToken.ExpiresOn <= DateTimeOffset.UtcNow.AddMinutes(2))
+                    {
+                        accessToken = await tokenCredential.GetTokenAsync(new TokenRequestContext(["api://af9e1c69-e5e9-4331-8cc5-cdf93d57bafa/.default"]), token).ConfigureAwait(false);
+                    }
+                    return new AuthenticationHeaderValue("Bearer", accessToken.Token);
+                }
+                catch (Exception ex) when (ex is CredentialUnavailableException or AuthenticationFailedException)
+                {
+                    Trace.TraceError($"AddSymwebSymbolServer: {ex}");
+                    return null;
+                }
+            }
+            return AddSymbolServer(SymwebSymbolServer, timeoutInMinutes, retryCount, authenticationFunc);
+        }
+
+        /// <summary>
+        /// Add symbol server to search path. The server URL can be the cloud symweb.
+        /// </summary>
+        /// <param name="accessToken">PAT or access token</param>
+        /// <param name="symbolServerPath">symbol server url (optional, uses <see cref="DefaultSymbolPath"/> if null)</param>
+        /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
+        /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
+        /// <returns>if false, failure</returns>
+        public bool AddAuthenticatedSymbolServer(
+            string accessToken,
+            string symbolServerPath = null,
+            int? timeoutInMinutes = null,
+            int? retryCount = null)
+        {
+            if (accessToken == null)
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+            AuthenticationHeaderValue authenticationValue = new("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($":{accessToken}")));
+            return AddSymbolServer(symbolServerPath, timeoutInMinutes, retryCount, (_) => new ValueTask<AuthenticationHeaderValue>(authenticationValue));
+        }
+
+        /// <summary>
         /// Add symbol server to search path.
         /// </summary>
-        /// <param name="msdl">if true, use the public Microsoft server</param>
-        /// <param name="symweb">if true, use symweb internal server and protocol (file.ptr)</param>
-        /// <param name="symbolServerPath">symbol server url (optional)</param>
-        /// <param name="authToken">PAT for secure symbol server (optional)</param>
+        /// <param name="symbolServerPath">symbol server url (optional, uses <see cref="DefaultSymbolPath"/> if null)</param>
         /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
         /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
         /// <returns>if false, failure</returns>
         public bool AddSymbolServer(
-            bool msdl,
-            bool symweb,
             string symbolServerPath = null,
-            string authToken = null,
             int? timeoutInMinutes = null,
             int? retryCount = null)
         {
-            bool internalServer = false;
+            return AddSymbolServer(symbolServerPath, timeoutInMinutes, retryCount, authenticationFunc: null);
+        }
 
+        /// <summary>
+        /// Add symbol server to search path.
+        /// </summary>
+        /// <param name="symbolServerPath">symbol server url (optional, uses <see cref="DefaultSymbolPath"/> if null)</param>
+        /// <param name="timeoutInMinutes">symbol server timeout in minutes (optional uses <see cref="DefaultTimeout"/> if null)</param>
+        /// <param name="retryCount">number of retries (optional uses <see cref="DefaultRetryCount"/> if null)</param>
+        /// <param name="authenticationFunc">function that returns the authentication value for a request</param>
+        /// <returns>if false, failure</returns>
+        public bool AddSymbolServer(
+            string symbolServerPath,
+            int? timeoutInMinutes,
+            int? retryCount,
+            Func<CancellationToken, ValueTask<AuthenticationHeaderValue>> authenticationFunc)
+        {
             // Add symbol server URL if exists
-            if (symbolServerPath == null)
-            {
-                if (msdl)
-                {
-                    symbolServerPath = MsdlSymbolServer;
-                }
-                else if (symweb)
-                {
-                    symbolServerPath = SymwebSymbolServer;
-                    internalServer = true;
-                }
-            }
-            else
-            {
-                // Use the internal symbol store for symweb
-                internalServer = symbolServerPath.Contains("symweb");
-            }
-
-            // Return error if symbol server path is null and msdl and symweb are false.
-            if (symbolServerPath == null)
-            {
-                return false;
-            }
+            symbolServerPath ??= DefaultSymbolPath;
 
             // Validate symbol server path
             if (!Uri.TryCreate(symbolServerPath.TrimEnd('/') + '/', UriKind.Absolute, out Uri uri))
@@ -285,17 +347,11 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 if (!IsDuplicateSymbolStore<HttpSymbolStore>(store, (httpSymbolStore) => uri.Equals(httpSymbolStore.Uri)))
                 {
                     // Create http symbol server store
-                    HttpSymbolStore httpSymbolStore;
-                    if (internalServer)
+                    HttpSymbolStore httpSymbolStore = new(Tracer.Instance, store, uri, authenticationFunc)
                     {
-                        httpSymbolStore = new SymwebHttpSymbolStore(Tracer.Instance, store, uri);
-                    }
-                    else
-                    {
-                        httpSymbolStore = new HttpSymbolStore(Tracer.Instance, store, uri, personalAccessToken: authToken);
-                    }
-                    httpSymbolStore.Timeout = TimeSpan.FromMinutes(timeoutInMinutes.GetValueOrDefault(DefaultTimeout));
-                    httpSymbolStore.RetryCount = retryCount.GetValueOrDefault(DefaultRetryCount);
+                        Timeout = TimeSpan.FromMinutes(timeoutInMinutes.GetValueOrDefault(DefaultTimeout)),
+                        RetryCount = retryCount.GetValueOrDefault(DefaultRetryCount)
+                    };
                     SetSymbolStore(httpSymbolStore);
                 }
             }
@@ -403,48 +459,6 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <param name="index">index to lookup on symbol server</param>
         /// <param name="file">the full path name of the file</param>
         public string DownloadFile(string index, string file) => DownloadFile(new SymbolStoreKey(index, file));
-
-        /// <summary>
-        /// Returns the metadata for the assembly
-        /// </summary>
-        /// <param name="imagePath">file name and path to module</param>
-        /// <param name="imageTimestamp">module timestamp</param>
-        /// <param name="imageSize">size of PE image</param>
-        /// <returns>metadata</returns>
-        public ImmutableArray<byte> GetMetadata(string imagePath, uint imageTimestamp, uint imageSize)
-        {
-            try
-            {
-                Stream peStream = null;
-                if (imagePath != null && File.Exists(imagePath))
-                {
-                    peStream = Utilities.TryOpenFile(imagePath);
-                }
-                else if (IsSymbolStoreEnabled)
-                {
-                    SymbolStoreKey key = PEFileKeyGenerator.GetKey(imagePath, imageTimestamp, imageSize);
-                    peStream = GetSymbolStoreFile(key)?.Stream;
-                }
-                if (peStream != null)
-                {
-                    using PEReader peReader = new(peStream, PEStreamOptions.Default);
-                    if (peReader.HasMetadata)
-                    {
-                        PEMemoryBlock metadataInfo = peReader.GetMetadata();
-                        return metadataInfo.GetContent();
-                    }
-                }
-            }
-            catch (Exception ex) when
-                (ex is UnauthorizedAccessException or
-                 BadImageFormatException or
-                 InvalidVirtualAddressException or
-                 IOException)
-            {
-                Trace.TraceError($"GetMetaData: {ex.Message}");
-            }
-            return ImmutableArray<byte>.Empty;
-        }
 
         /// <summary>
         /// Returns the portable PDB reader for the assembly path
@@ -831,7 +845,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                         // If the downloaded doesn't already exists on disk in the cache, then write it to a temporary location.
                         if (!File.Exists(downloadFilePath))
                         {
-                            downloadFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + "-" + Path.GetFileName(key.FullPathName));
+                            downloadFilePath = Path.Combine(_host.GetTempDirectory(), Path.GetRandomFileName() + "-" + Path.GetFileName(key.FullPathName));
                             using (Stream destinationStream = File.OpenWrite(downloadFilePath))
                             {
                                 file.Stream.CopyTo(destinationStream);
@@ -984,6 +998,23 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 }
             });
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Returns true if cloud symweb server
+        /// </summary>
+        /// <param name="server"></param>
+        private static bool IsSymweb(string server)
+        {
+            try
+            {
+                Uri uri = new(server);
+                return uri.Host.Equals(_symwebHost, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex) when (ex is UriFormatException or InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         /// <summary>

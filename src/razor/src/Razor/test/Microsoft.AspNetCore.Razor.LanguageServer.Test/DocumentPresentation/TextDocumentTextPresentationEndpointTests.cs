@@ -1,16 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,132 +21,83 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
     public async Task Handle_Html_MakesRequest()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+        TestCode code = "<[|d|]iv></div>";
+
+        var codeDocument = CreateCodeDocument(code.Text);
 
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentTextPresentationEndpoint(
-            documentMappingService,
-            clientConnection.Object,
-            FilePathService,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null, verifiable: true);
+        var endpoint = CreateEndpoint(clientConnection);
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
+        _ = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
-        clientConnection.Verify();
+        Mock.Get(clientConnection).Verify();
     }
 
     [Fact]
-    public async Task Handle_CSharp_MakesRequest()
+    public async Task Handle_CSharp_DoesNotMakeRequest()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("@counter");
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        TestCode code = "@[|c|]ounter";
+
+        var codeDocument = CreateCodeDocument(code.Text);
+
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var projectedRange = It.IsAny<LinePositionSpan>();
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp &&
-            s.TryMapToGeneratedDocumentRange(csharpDocument, It.IsAny<LinePositionSpan>(), out projectedRange) == true, MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentTextPresentationEndpoint(
-            documentMappingService,
-            clientConnection.Object,
-            FilePathService,
-            LoggerFactory);
+        var clientConnection = StrictMock.Of<IClientConnection>();
+        var endpoint = CreateEndpoint(clientConnection);
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
+        _ = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
-        clientConnection.Verify();
+        Mock.Get(clientConnection)
+            .VerifySendRequest<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, Times.Never);
     }
 
     [Fact]
     public async Task Handle_DocumentNotFound_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
+        TestCode code = "<[|d|]iv></div>";
+
+        var codeDocument = CreateCodeDocument(code.Text);
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentTextPresentationEndpoint(
-            documentMappingService,
-            clientConnection.Object,
-            FilePathService,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(clientConnection);
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -158,49 +107,12 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         Assert.Null(result);
     }
 
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        codeDocument.SetUnsupported();
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+    private TextDocumentTextPresentationEndpoint CreateEndpoint(IClientConnection clientConnection)
+        => new(StrictMock.Of<IDocumentMappingService>(), clientConnection, FilePathService, LoggerFactory);
 
-        var response = new WorkspaceEdit();
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentTextPresentationEndpoint(
-            documentMappingService,
-            clientConnection.Object,
-            FilePathService,
-            LoggerFactory);
-
-        var parameters = new TextPresentationParams()
+    private static IClientConnection CreateClientConnection(WorkspaceEdit? response, bool verifiable = false)
+        => TestMocks.CreateClientConnection(builder =>
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Text = "Hi there"
-        };
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
+            builder.SetupSendRequest<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, response, verifiable);
+        });
 }

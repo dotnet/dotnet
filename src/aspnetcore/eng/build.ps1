@@ -52,7 +52,7 @@ Run publishing.
 Debug or Release
 
 .PARAMETER Architecture
-The CPU architecture to build for (x64, x86, arm). Default=x64
+The CPU architecture to build for (x64, x86, arm64). Default=x64
 
 .PARAMETER Projects
 A list of projects to build. Globbing patterns are supported, such as "$(pwd)/**/*.csproj"
@@ -66,7 +66,7 @@ You can also use -NoBuildManaged to suppress this project type.
 
 .PARAMETER BuildNative
 Build native projects (C++).
-This is the default for x64 and x86 builds but useful when you want to build _only_ native projects.
+This is the default but useful when you want to build _only_ native projects.
 You can use -NoBuildNative to suppress this project type.
 
 .PARAMETER BuildNodeJS
@@ -98,6 +98,12 @@ Additional feed that can be used when downloading .NET runtimes and SDKs
 
 .PARAMETER RuntimeSourceFeedKey
 Key for feed that can be used when downloading .NET runtimes and SDKs
+
+.PARAMETER ProductBuild
+Build the repository in product mode (short: -pb).
+
+.PARAMETER fromVMR
+Set when building from within the VMR.
 
 .EXAMPLE
 Building both native and managed projects.
@@ -150,7 +156,7 @@ param(
     [ValidateSet('Debug', 'Release')]
     $Configuration,
 
-    [ValidateSet('x64', 'x86', 'arm', 'arm64')]
+    [ValidateSet('x64', 'x86', 'arm64')]
     $Architecture = 'x64',
 
     # A list of projects which should be built.
@@ -184,6 +190,7 @@ param(
     [Alias('v')]
     [string]$Verbosity = 'minimal',
     [switch]$DumpProcesses, # Capture all running processes and dump them to a file.
+    [string]$msbuildEngine = 'dotnet',
 
     # Other lifecycle targets
     [switch]$Help, # Show help
@@ -194,6 +201,13 @@ param(
     [string]$RuntimeSourceFeed,
     [Alias('DotNetRuntimeSourceFeedKey')]
     [string]$RuntimeSourceFeedKey,
+
+    # Product build
+    [Alias('pb')]
+    [switch]$ProductBuild,
+
+    # Intentionally lowercase as tools.ps1 depends on it
+    [switch]$fromVMR,
 
     # Capture the rest
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -235,6 +249,7 @@ if ($BuildManaged -or ($All -and (-not $NoBuildManaged))) {
         if ($node) {
             $nodeHome = Split-Path -Parent (Split-Path -Parent $node.Path)
             Write-Host -f Magenta "Building of C# project is enabled and has dependencies on NodeJS projects. Building of NodeJS projects is enabled since node is detected in $nodeHome."
+            Write-Host -f Magenta "Note that if you are running Source Build, building NodeJS projects will be disabled later on."
             $BuildNodeJS = $true
         }
         else {
@@ -247,6 +262,8 @@ if ($BuildManaged -or ($All -and (-not $NoBuildManaged))) {
         Write-Warning "Some managed projects depend on NodeJS projects. Building NodeJS is disabled so the managed projects will fallback to using the output from previous builds. The output may not be correct or up to date."
     }
 }
+
+$CommandLineArguments = $MSBuildArguments
 
 if ($NoBuildDeps) { $MSBuildArguments += "/p:BuildProjectReferences=false" }
 
@@ -271,6 +288,9 @@ $MSBuildArguments += "/p:Publish=$Publish"
 $MSBuildArguments += "/p:TargetArchitecture=$Architecture"
 $MSBuildArguments += "/p:TargetOsName=win"
 
+if ($ProductBuild) { $MSBuildArguments += "/p:DotNetBuild=$ProductBuild" }
+if ($fromVMR) { $MSBuildArguments += "/p:DotNetBuildFromVMR=$fromVMR" }
+
 if (-not $Configuration) {
     $Configuration = if ($CI) { 'Release' } else { 'Debug' }
 }
@@ -285,54 +305,58 @@ if ($RuntimeSourceFeed -or $RuntimeSourceFeedKey) {
     $ToolsetBuildArguments += $runtimeFeedArg
     $ToolsetBuildArguments += $runtimeFeedKeyArg
 }
+if ($ProductBuild) { $ToolsetBuildArguments += "/p:DotNetBuild=$ProductBuild" }
+if ($fromVMR) { $ToolsetBuildArguments += "/p:DotNetBuildFromVMR=$fromVMR" }
 
 # Split build categories between dotnet msbuild and desktop msbuild. Use desktop msbuild as little as possible.
-[string[]]$dotnetBuildArguments = $MSBuildArguments
+[string[]]$dotnetBuildArguments = ''
+[string[]]$MSBuildOnlyArguments = ''
+
 if ($All) { $dotnetBuildArguments += '/p:BuildAllProjects=true' }
 if ($Projects) {
     if ($BuildNative) {
-        $MSBuildArguments += "/p:ProjectToBuild=$Projects"
+        $MSBuildOnlyArguments += "/p:ProjectToBuild=$Projects"
     } else {
         $dotnetBuildArguments += "/p:ProjectToBuild=$Projects"
     }
 }
 
-if ($NoBuildInstallers) { $MSBuildArguments += "/p:BuildInstallers=false"; $BuildInstallers = $false }
-if ($BuildInstallers) { $MSBuildArguments += "/p:BuildInstallers=true" }
+if ($NoBuildInstallers) { $MSBuildOnlyArguments += "/p:BuildInstallers=false"; $BuildInstallers = $false }
+if ($BuildInstallers) { $MSBuildOnlyArguments += "/p:BuildInstallers=true" }
 
 # Build native projects by default unless -NoBuildNative was specified.
 $specifiedBuildNative = $BuildNative
 $BuildNative = $true
-if ($NoBuildNative) { $MSBuildArguments += "/p:BuildNative=false"; $BuildNative = $false }
-if ($BuildNative) { $MSBuildArguments += "/p:BuildNative=true"}
+if ($NoBuildNative) { $MSBuildOnlyArguments += "/p:BuildNative=false"; $BuildNative = $false }
+if ($BuildNative) { $MSBuildOnlyArguments += "/p:BuildNative=true"}
 
 if ($NoBuildJava) { $dotnetBuildArguments += "/p:BuildJava=false"; $BuildJava = $false }
 if ($BuildJava) { $dotnetBuildArguments += "/p:BuildJava=true" }
 if ($NoBuildManaged) { $dotnetBuildArguments += "/p:BuildManaged=false"; $BuildManaged = $false }
 if ($BuildManaged) { $dotnetBuildArguments += "/p:BuildManaged=true" }
-if ($NoBuildNodeJS) { $dotnetBuildArguments += "/p:BuildNodeJS=false"; $BuildNodeJS = $false }
-if ($BuildNodeJS) { $dotnetBuildArguments += "/p:BuildNodeJS=true" }
+if ($NoBuildNodeJS) { $dotnetBuildArguments += "/p:BuildNodeJSUnlessSourcebuild=false"; $BuildNodeJS = $false }
+if ($BuildNodeJS) { $dotnetBuildArguments += "/p:BuildNodeJSUnlessSourcebuild=true" }
 
 # Don't bother with two builds if just one will build everything. Ignore super-weird cases like
 # "-Projects ... -NoBuildJava -NoBuildManaged -NoBuildNodeJS". An empty `./build.ps1` command will build both
 # managed and native projects.
-$performDesktopBuild = ($BuildInstallers -and $Architecture -ne "arm") -or `
-    ($BuildNative -and -not $Architecture.StartsWith("arm", [System.StringComparison]::OrdinalIgnoreCase))
-$performDotnetBuild = $BuildJava -or $BuildManaged -or $BuildNodeJS -or `
+
+# If -msbuildEngine vs is explicitly passed in, use desktop msbuild only.
+# This is necessary for one-shot builds like within the VMR.
+
+$performDesktopBuild = $BuildInstallers -or $BuildNative -or $msbuildEngine -eq 'vs'
+$performDotnetBuild = $msBuildEngine -ne 'vs' -and ($BuildJava -or $BuildManaged -or $BuildNodeJS -or `
     ($All -and -not ($NoBuildJava -and $NoBuildManaged -and $NoBuildNodeJS)) -or `
-    ($Projects -and -not ($BuildInstallers -or $specifiedBuildNative))
+    ($Projects -and -not ($BuildInstallers -or $specifiedBuildNative)))
 
 # Initialize global variables need to be set before the import of Arcade is imported
 $restore = $RunRestore
 
-# Though VS Code may indicate $nodeReuse and $msbuildEngine are unused, tools.ps1 uses them.
+# Though VS Code may indicate $nodeReuse is unused, tools.ps1 uses them.
 
 # Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies
 $nodeReuse = $false
 $env:MSBUILDDISABLENODEREUSE=1
-
-# Use `dotnet msbuild` by default
-$msbuildEngine = 'dotnet'
 
 # Ensure passing neither -bl nor -nobl on CI avoids errors in tools.ps1. This is needed because both parameters are
 # $false by default i.e. they always exist. (We currently avoid binary logs but that is made visible in the YAML.)
@@ -410,12 +434,17 @@ if ($BinaryLog) {
     $bl = GetMSBuildBinaryLogCommandLineArgument($MSBuildArguments)
     if (-not $bl) {
         $dotnetBuildArguments += "/bl:" + (Join-Path $LogDir "Build.binlog")
-        $MSBuildArguments += "/bl:" + (Join-Path $LogDir "Build.native.binlog")
+
+        # When running both builds, use a different binary log path for the desktop msbuild.
+        if ($performDesktopBuild -and $performDotnetBuild) {
+            $MSBuildOnlyArguments += "/bl:" + (Join-Path $LogDir "Build.native.binlog")
+        }
+
         $ToolsetBuildArguments += "/bl:" + (Join-Path $LogDir "Build.repotasks.binlog")
     } else {
         # Use a different binary log path when running desktop msbuild if doing both builds.
         if ($performDesktopBuild -and $performDotnetBuild) {
-            $MSBuildArguments += "/bl:" + [System.IO.Path]::ChangeExtension($bl, "native.binlog")
+            $MSBuildOnlyArguments += "/bl:" + [System.IO.Path]::ChangeExtension($bl, "native.binlog")
         }
 
         $ToolsetBuildArguments += "/bl:" + [System.IO.Path]::ChangeExtension($bl, "repotasks.binlog")
@@ -465,7 +494,8 @@ try {
             /p:Restore=$RunRestore `
             /p:Build=true `
             /clp:NoSummary `
-            @ToolsetBuildArguments
+            @ToolsetBuildArguments `
+            @CommandLineArguments
     }
 
     if (-not $OnlyBuildRepoTasks) {
@@ -474,7 +504,12 @@ try {
             Remove-Item variable:global:_BuildTool -ErrorAction Ignore
             $msbuildEngine = 'vs'
 
-            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments
+            # When running with desktop msbuild only, append the dotnet build specific arguments.
+            if (-not $performDotnetBuild) {
+                $MSBuildOnlyArguments += $dotnetBuildArguments
+            }
+
+            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments @MSBuildOnlyArguments
         }
 
         if ($performDotnetBuild) {
@@ -482,7 +517,7 @@ try {
             Remove-Item variable:global:_BuildTool -ErrorAction Ignore
             $msbuildEngine = 'dotnet'
 
-            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @dotnetBuildArguments
+            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments @dotnetBuildArguments
         }
     }
 }

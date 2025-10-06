@@ -1,7 +1,7 @@
 SigFile
   (ParsedSigFileInput
      ("/root/NestedModule/NestedModuleWithBeginEndAndDecls.fsi",
-      QualifiedNameOfFile NestedModuleWithBeginEndAndDecls, [], [],
+      QualifiedNameOfFile NestedModuleWithBeginEndAndDecls, [],
       [SynModuleOrNamespaceSig
          ([X], false, DeclaredNamespace,
           [NestedModule
@@ -15,11 +15,11 @@ SigFile
                      LongIdent (SynLongIdent ([int], [], [None])),
                      SynValInfo ([], SynArgInfo ([], false, None)), false, false,
                      PreXmlDoc ((5,8), FSharp.Compiler.Xml.XmlDocCollector),
-                     None, None, (5,8--5,18), { LeadingKeyword = Val (5,8--5,11)
-                                                InlineKeyword = None
-                                                WithKeyword = None
-                                                EqualsRange = None }),
-                  (5,8--5,18));
+                     Single None, None, (5,8--5,18),
+                     { LeadingKeyword = Val (5,8--5,11)
+                       InlineKeyword = None
+                       WithKeyword = None
+                       EqualsRange = None }), (5,8--5,18));
                Types
                  ([SynTypeDefnSig
                      (SynComponentInfo
@@ -37,4 +37,5 @@ SigFile
                 EqualsRange = Some (3,9--3,10) })], PreXmlDocEmpty, [], None,
           (1,0--7,7), { LeadingKeyword = Namespace (1,0--1,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

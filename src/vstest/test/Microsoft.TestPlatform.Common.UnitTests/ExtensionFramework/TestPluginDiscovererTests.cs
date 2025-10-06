@@ -18,8 +18,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using MSTest.TestFramework.AssertExtensions;
-
 namespace TestPlatform.Common.UnitTests.ExtensionFramework;
 
 [TestClass]
@@ -130,9 +128,9 @@ public class TestPluginDiscovererTests
             typeof(TestPluginDiscovererTests).Assembly.Location,
         };
 
-        var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<FaultyTestExecutorPluginInformation, ITestExecutor>(pathToExtensions);
+        _ = TestPluginDiscoverer.GetTestExtensionsInformation<FaultyTestExecutorPluginInformation, ITestExecutor>(pathToExtensions);
 
-        Assert.That.DoesNotThrow(() => TestPluginDiscoverer.GetTestExtensionsInformation<FaultyTestExecutorPluginInformation, ITestExecutor>(pathToExtensions));
+        _ = TestPluginDiscoverer.GetTestExtensionsInformation<FaultyTestExecutorPluginInformation, ITestExecutor>(pathToExtensions);
     }
 
     #region Implementations

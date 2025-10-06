@@ -3,14 +3,14 @@ ImplFile
      ("/root/Expression/SynExprLetOrUseWithRecursiveBindingContainsTheRangeOfInKeyword.fs",
       false,
       QualifiedNameOfFile
-        SynExprLetOrUseWithRecursiveBindingContainsTheRangeOfInKeyword, [], [],
+        SynExprLetOrUseWithRecursiveBindingContainsTheRangeOfInKeyword, [],
       [SynModuleOrNamespace
          ([SynExprLetOrUseWithRecursiveBindingContainsTheRangeOfInKeyword],
           false, AnonModule,
           [Expr
              (Do
                 (LetOrUse
-                   (true, false,
+                   (true, false, true, false,
                     [SynBinding
                        (None, Normal, false, false, [],
                         PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
@@ -35,7 +35,11 @@ ImplFile
                                            InlineKeyword = None
                                            EqualsRange = Some (4,10--4,11) })],
                     Const (Unit, (5,4--5,6)), (3,4--5,6),
-                    { InKeyword = Some (4,15--4,17) }), (2,0--5,6)), (2,0--5,6))],
-          PreXmlDocEmpty, [], None, (2,0--6,0), { LeadingKeyword = None })],
-      (true, true), { ConditionalDirectives = []
-                      CodeComments = [] }, set []))
+                    { LetOrUseKeyword = (3,4--3,11)
+                      InKeyword = Some (4,15--4,17)
+                      EqualsRange = Some (3,14--3,15) }), (2,0--5,6)),
+              (2,0--5,6))], PreXmlDocEmpty, [], None, (2,0--6,0),
+          { LeadingKeyword = None })], (true, true),
+      { ConditionalDirectives = []
+        WarnDirectives = []
+        CodeComments = [] }, set []))

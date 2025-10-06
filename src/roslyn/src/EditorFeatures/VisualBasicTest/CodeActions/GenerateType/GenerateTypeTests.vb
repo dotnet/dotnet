@@ -8,7 +8,6 @@ Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.CodeStyle
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Editor.UnitTests
-Imports Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics.NamingStyles
 Imports Microsoft.CodeAnalysis.Editor.UnitTests.Extensions
 Imports Microsoft.CodeAnalysis.VisualBasic.CodeFixes.GenerateType
@@ -21,9 +20,7 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.UnitTests.Diagnostics.Genera
 
         ' TODO Requires Wpf due to IInlineRenameService dependency (https: //github.com/dotnet/roslyn/issues/46153)
         Protected Overrides Function GetComposition() As TestComposition
-            Return EditorTestCompositions.EditorFeaturesWpf _
-                .AddExcludedPartTypes(GetType(IDiagnosticUpdateSourceRegistrationService)) _
-                .AddParts(GetType(MockDiagnosticUpdateSourceRegistrationService))
+            Return EditorTestCompositions.EditorFeatures
         End Function
 
         Friend Overrides Function CreateDiagnosticProviderAndFixer(workspace As Workspace) As (DiagnosticAnalyzer, CodeFixProvider)
@@ -124,8 +121,7 @@ End Namespace",
     Friend Class Bar
     End Class
 End Namespace",
-index:=1,
-parseOptions:=Nothing) ' Namespaces not supported in script
+New TestParameters(index:=1, parseOptions:=Nothing)) ' Namespaces not supported in script
         End Function
 
         <Fact>
@@ -462,8 +458,7 @@ End Namespace",
         End Sub
     End Class
 End Namespace",
-index:=1,
-parseOptions:=Nothing) ' Namespaces not supported in script
+New TestParameters(index:=1, parseOptions:=Nothing)) ' Namespaces not supported in script
         End Function
 
         <Fact>
@@ -508,8 +503,7 @@ expectedContainers:=ImmutableArray.Create("Goo"),
 expectedDocumentName:="Bar.vb")
         End Function
 
-        <WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
-        <WpfFact>
+        <WpfFact, WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
         Public Async Function TestPreserveBanner1() As Task
             Await TestAddDocumentInRegularAndScriptAsync(
 "' I am a banner!
@@ -530,8 +524,7 @@ expectedContainers:=ImmutableArray(Of String).Empty,
 expectedDocumentName:="Bar.vb")
         End Function
 
-        <WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
-        <WpfFact>
+        <WpfFact, WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
         Public Async Function TestPreserveBanner2() As Task
             Await TestAddDocumentInRegularAndScriptAsync(
 "''' I am a doc comment!
@@ -552,8 +545,7 @@ expectedContainers:=ImmutableArray(Of String).Empty,
 expectedDocumentName:="Bar.vb")
         End Function
 
-        <WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
-        <WpfFact>
+        <WpfFact, WorkItem("https://github.com/dotnet/roslyn/issues/17361")>
         Public Async Function TestPreserveBanner3() As Task
             Await TestAddDocumentInRegularAndScriptAsync(
 "' I am a banner!
@@ -756,8 +748,7 @@ End Namespace",
     Friend Class Bar
     End Class
 End Namespace",
-index:=1,
-parseOptions:=Nothing) ' Namespaces not supported in script
+New TestParameters(index:=1, parseOptions:=Nothing)) ' Namespaces not supported in script
         End Function
 
         <Fact, WorkItem("http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/539736")>
@@ -1436,8 +1427,8 @@ Friend Class T
     End Sub
 End Class
 </text>.NormalizedValue,
-index:=1,
-options:=[Option](CodeStyleOptions2.PreferIntrinsicPredefinedTypeKeywordInDeclaration, False, NotificationOption2.Error))
+New TestParameters(index:=1,
+options:=[Option](CodeStyleOptions2.PreferIntrinsicPredefinedTypeKeywordInDeclaration, False, NotificationOption2.Error)))
         End Function
 
         <Fact, WorkItem("http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/869506")>
@@ -1851,8 +1842,7 @@ Friend Class D
         _i = i
     End Sub
 End Class
-",
-    index:=1, options:=options.FieldNamesAreCamelCaseWithUnderscorePrefix)
+", New TestParameters(index:=1, options:=options.FieldNamesAreCamelCaseWithUnderscorePrefix))
         End Function
 
         Public Class AddImportTestsWithAddImportDiagnosticProvider

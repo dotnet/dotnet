@@ -42,12 +42,12 @@ namespace NuGet.PackageManagement.VisualStudio
             var searchToken = continuationToken as FeedSearchContinuationToken ?? throw new InvalidOperationException(Strings.Exception_InvalidContinuationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            IPackageSearchMetadata[] searchItems = await GetMetadataForPackagesAndSortAsync(PerformLookup(_installedPackages.GetLatest(), searchToken), searchToken.SearchFilter.IncludePrerelease, cancellationToken);
+            IPackageSearchMetadata[] searchItems = await GetMetadataForPackagesAsync(PerformLookup(_installedPackages.GetLatest(), searchToken), searchToken.SearchFilter.IncludePrerelease, cancellationToken);
 
             return CreateResult(searchItems);
         }
 
-        internal async Task<IPackageSearchMetadata[]> GetMetadataForPackagesAndSortAsync<T>(T[] packages, bool includePrerelease, CancellationToken cancellationToken) where T : PackageIdentity
+        internal async Task<IPackageSearchMetadata[]> GetMetadataForPackagesAsync(PackageIdentity[] packages, bool includePrerelease, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -56,6 +56,11 @@ namespace NuGet.PackageManagement.VisualStudio
                 (p, t) => GetPackageMetadataAsync(p, includePrerelease, t),
                 cancellationToken);
 
+            return SortPackagesMetadata(items);
+        }
+
+        internal static IPackageSearchMetadata[] SortPackagesMetadata(IEnumerable<IPackageSearchMetadata> items)
+        {
             // The packages were originally sorted which is important because we skip based on that sort
             // however, the asynchronous execution has randomly reordered the set. So, we need to resort.
             return items.OrderBy(p => p.Identity.Id).ToArray();
@@ -83,7 +88,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return result;
         }
 
-        internal virtual async Task<IPackageSearchMetadata> GetPackageMetadataAsync<T>(T identity, bool includePrerelease, CancellationToken cancellationToken) where T : PackageIdentity
+        internal virtual async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

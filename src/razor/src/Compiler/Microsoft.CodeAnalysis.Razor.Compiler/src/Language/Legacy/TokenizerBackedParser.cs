@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
+internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposable
     where TTokenizer : Tokenizer
 {
     protected delegate void SpanContextConfigAction(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator);
     protected delegate void SpanContextConfigActionWithPreviousConfig(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? previousConfig);
 
     private readonly SyntaxListPool _pool = new SyntaxListPool();
-    private readonly TokenizerView<TTokenizer> _tokenizer;
+    protected readonly TokenizerView<TTokenizer> _tokenizer;
     private SyntaxListBuilder<SyntaxToken>? _tokenBuilder;
 
     protected SpanEditHandlerBuilder? editHandlerBuilder;
@@ -39,9 +39,9 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         return IsSpacingToken(token) || token.Kind == SyntaxKind.CSharpComment;
     };
 
-    protected static readonly Func<SyntaxToken, bool> IsSpacingTokenIncludingNewLinesAndComments = (token) =>
+    protected static readonly Func<SyntaxToken, bool> IsSpacingTokenIncludingNewLinesAndCommentsAndCSharpDirectives = (token) =>
     {
-        return IsSpacingTokenIncludingNewLines(token) || token.Kind == SyntaxKind.CSharpComment;
+        return IsSpacingTokenIncludingNewLines(token) || token.Kind is SyntaxKind.CSharpComment or SyntaxKind.CSharpDirective or SyntaxKind.CSharpDisabledText;
     };
 
     protected TokenizerBackedParser(LanguageCharacteristics<TTokenizer> language, ParserContext context)
@@ -52,7 +52,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var languageTokenizer = Language.CreateTokenizer(Context.Source);
         _tokenizer = new TokenizerView<TTokenizer>(languageTokenizer);
-        editHandlerBuilder = context.EnableSpanEditHandlers ? new SpanEditHandlerBuilder(LanguageTokenizeString) : null;
+        editHandlerBuilder = context.Options.EnableSpanEditHandlers ? new SpanEditHandlerBuilder(LanguageTokenizeString) : null;
     }
 
     protected SyntaxListPool Pool => _pool;
@@ -302,9 +302,10 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     protected void ReadWhile<TArg>(
         Func<SyntaxToken, TArg, bool> predicate,
         TArg arg,
-        ref PooledArrayBuilder<SyntaxToken> result)
+        ref PooledArrayBuilder<SyntaxToken> result,
+        bool expectsEmptyBuilder = true)
     {
-        Debug.Assert(result.Count == 0, "Expected empty builder.");
+        Debug.Assert(!expectsEmptyBuilder || result.Count == 0, "Expected empty builder.");
 
         if (!EnsureCurrent() || !predicate(CurrentToken, arg))
         {
@@ -707,8 +708,14 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         var prev = SpanContextConfig;
         SpanContextConfig = config == null
             ? null
-            : ((SpanEditHandlerBuilder? span, ref ISpanChunkGenerator? chunkGenerator) => config(span, ref chunkGenerator, prev));
+            : GetNewSpanContextConfigAction(config, prev);
         InitializeContext();
+
+        // Separated into it's own method to avoid closure allocations when not being called
+        static SpanContextConfigAction GetNewSpanContextConfigAction(SpanContextConfigActionWithPreviousConfig config, SpanContextConfigAction? prev)
+        {
+            return (span, ref chunkGenerator) => config(span, ref chunkGenerator, prev);
+        }
     }
 
     protected void InitializeContext()
@@ -719,5 +726,20 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     protected void SetAcceptedCharacters(AcceptedCharactersInternal? acceptedCharacters)
     {
         Context.CurrentAcceptedCharacters = acceptedCharacters ?? AcceptedCharactersInternal.None;
+    }
+
+    internal void StartingBlock()
+    {
+        _tokenizer.Tokenizer.StartingBlock();
+    }
+
+    internal void EndingBlock()
+    {
+        _tokenizer.Tokenizer.EndingBlock();
+    }
+
+    public void Dispose()
+    {
+        _tokenizer.Dispose();
     }
 }

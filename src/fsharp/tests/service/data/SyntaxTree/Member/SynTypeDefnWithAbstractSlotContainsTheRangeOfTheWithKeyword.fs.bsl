@@ -3,7 +3,7 @@ ImplFile
      ("/root/Member/SynTypeDefnWithAbstractSlotContainsTheRangeOfTheWithKeyword.fs",
       false,
       QualifiedNameOfFile
-        SynTypeDefnWithAbstractSlotContainsTheRangeOfTheWithKeyword, [], [],
+        SynTypeDefnWithAbstractSlotContainsTheRangeOfTheWithKeyword, [],
       [SynModuleOrNamespace
          ([SynTypeDefnWithAbstractSlotContainsTheRangeOfTheWithKeyword], false,
           AnonModule,
@@ -27,7 +27,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (3,4--3,42),
+                            Single None, None, (3,4--3,42),
                             { LeadingKeyword =
                                AbstractMember ((3,4--3,12), (3,13--3,19))
                               InlineKeyword = None
@@ -52,4 +52,5 @@ ImplFile
                     WithKeyword = None })], (2,0--3,42))], PreXmlDocEmpty, [],
           None, (2,0--4,0), { LeadingKeyword = None })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

@@ -7,9 +7,6 @@
 // The one implementation file is used because we keep the implementations of
 // structured formatting the same for fsi.exe and '%A' printing. However F# Interactive has
 // a richer feature set.
-
-#nowarn "52" // The value has been copied to ensure the original is not mutated by this operation
-
 #if COMPILER
 namespace FSharp.Compiler.Text
 #else
@@ -17,8 +14,14 @@ namespace FSharp.Compiler.Text
 namespace Microsoft.FSharp.Text.StructuredPrintfImpl
 #endif
 
+#nowarn "52" // The value has been copied to ensure the original is not mutated by this operation
+// 3261 and 3262 Nullness warnings - this waits for LKG update, since this file is included in fsharp.core and fsharp.compiler.service and goes via proto build.
+// Supporting all possible combinations of available library+compiler versions would complicate code in this source files too much at the moment.
+#nowarn "3261"
+#nowarn "3262"
+
 // Breakable block layout implementation.
-// This is a fresh implementation of pre-existing ideas.
+// This is a fresh implementation of preexisting ideas.
 
 open System
 open System.IO
@@ -29,6 +32,9 @@ open Microsoft.FSharp.Core
 open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
+#if COMPILER
+open Internal.Utilities.Library
+#endif
 
 [<StructuralEquality; NoComparison>]
 type TextTag =
@@ -255,6 +261,7 @@ module TaggedText =
     let keywordInline = tagKeyword "inline"
     let keywordModule = tagKeyword "module"
     let keywordNamespace = tagKeyword "namespace"
+    let keywordReturn = tagKeyword "return"
     let punctuationUnit = tagPunctuation "()"
 #endif
 
@@ -409,7 +416,7 @@ type FormatOptions =
         FloatingPointFormat: string
         AttributeProcessor: string -> (string * string) list -> bool -> unit
 #if COMPILER // This is the PrintIntercepts extensibility point currently revealed by fsi.exe's AddPrinter
-        PrintIntercepts: (IEnvironment -> obj -> Layout option) list
+        PrintIntercepts: (IEnvironment -> objnull -> Layout option) list
         StringLimit: int
 #endif
         FormatProvider: IFormatProvider
@@ -496,7 +503,7 @@ module ReflectUtils =
         // of an F# value.
         let GetValueInfoOfObject (bindingFlags: BindingFlags) (obj: obj) =
             match obj with
-            | null -> NullValue
+            | Null -> NullValue
             | _ ->
                 let reprty = obj.GetType()
 
@@ -563,7 +570,7 @@ module ReflectUtils =
             let obj = (box x)
 
             match obj with
-            | null ->
+            | Null ->
                 let isNullaryUnion =
                     match ty.GetCustomAttributes(typeof<CompilationRepresentationAttribute>, false) with
                     | [| :? CompilationRepresentationAttribute as attr |] ->
@@ -581,7 +588,7 @@ module ReflectUtils =
                     UnitValue
                 else
                     NullValue
-            | _ -> GetValueInfoOfObject bindingFlags obj
+            | NonNull obj -> GetValueInfoOfObject bindingFlags obj
 
 module Display =
     open ReflectUtils
@@ -841,8 +848,8 @@ module Display =
 
     let getListValueInfo bindingFlags (x: obj, ty: Type) =
         match x with
-        | null -> None
-        | _ ->
+        | Null -> None
+        | NonNull x ->
             match Value.GetValueInfo bindingFlags (x, ty) with
             | UnionCaseValue("Cons", recd) -> Some(unpackCons recd)
             | UnionCaseValue("Empty", [||]) -> None
@@ -936,7 +943,7 @@ module Display =
     //
     // Note: The layout code forces breaks based on leaf size and possible break points.
     //       It does not force leaf size based on width.
-    //       So long leaf-string width can not depend on their printing context...
+    //       So long leaf-string width cannot depend on their printing context...
     //
     // The suffix like "+[dd chars]" is 11 chars.
     //                  12345678901
@@ -998,7 +1005,7 @@ module Display =
         // Recursive descent
         let rec nestedObjL depthLim prec (x: obj, ty: Type) = objL ShowAll depthLim prec (x, ty)
 
-        and objL showMode depthLim prec (x: obj, ty: Type) =
+        and objL showMode depthLim prec (x: objnull, ty: Type) =
             let info = Value.GetValueInfo bindingFlags (x, ty)
 
             try
@@ -1006,8 +1013,8 @@ module Display =
                     wordL (tagPunctuation "...")
                 else
                     match x with
-                    | null -> reprL showMode (depthLim - 1) prec info x
-                    | _ ->
+                    | Null -> reprL showMode (depthLim - 1) prec info x
+                    | NonNull x ->
                         if (path.ContainsKey(x)) then
                             wordL (tagPunctuation "...")
                         else
@@ -1022,9 +1029,10 @@ module Display =
                                 else
                                     // Try the StructuredFormatDisplayAttribute extensibility attribute
                                     match ty.GetCustomAttributes(typeof<StructuredFormatDisplayAttribute>, true) with
-                                    | null
+                                    | Null
                                     | [||] -> None
-                                    | res -> structuredFormatObjectL showMode ty depthLim (res[0] :?> StructuredFormatDisplayAttribute) x
+                                    | NonNull res ->
+                                        structuredFormatObjectL showMode ty depthLim (res[0] :?> StructuredFormatDisplayAttribute) x
 
 #if COMPILER
                             // This is the PrintIntercepts extensibility point currently revealed by fsi.exe's AddPrinter
@@ -1058,7 +1066,7 @@ module Display =
         and structuredFormatObjectL showMode ty depthLim (attr: StructuredFormatDisplayAttribute) (obj: obj) =
             let txt = attr.Value
 
-            if isNull txt || txt.Length <= 1 then
+            if isNull (box txt) || txt.Length <= 1 then
                 None
             else
 
@@ -1142,9 +1150,9 @@ module Display =
                                         let openingBracketIndex = postTextMatch.Groups["prop"].Index - 1
                                         buildObjMessageL remainingPropertyText[openingBracketIndex..] newLayouts
 
-                                | remaingPropertyText ->
+                                | remainingPropertyText ->
                                     // make sure we don't have any stray brackets
-                                    let strayClosingMatch = illFormedBracketPatternLookup.IsMatch remaingPropertyText
+                                    let strayClosingMatch = illFormedBracketPatternLookup.IsMatch remainingPropertyText
 
                                     if strayClosingMatch then
                                         None
@@ -1156,7 +1164,7 @@ module Display =
                                                 List.rev (
                                                     (sepL (tagText preText)
                                                      ^^ alternativeObjL
-                                                     ^^ sepL (tagText (replaceEscapedBrackets (remaingPropertyText))))
+                                                     ^^ sepL (tagText (replaceEscapedBrackets (remainingPropertyText))))
                                                     :: layouts
                                                 )
                                             )
@@ -1326,9 +1334,6 @@ module Display =
 
                 if
                     word = "map"
-                    && (match v with
-                        | null -> false
-                        | _ -> true)
                     && tyv.IsGenericType
                     && tyv.GetGenericTypeDefinition() = typedefof<KeyValuePair<int, int>>
                 then
@@ -1523,7 +1528,7 @@ module Display =
 
     let leafFormatter (opts: FormatOptions) (obj: obj) =
         match obj with
-        | null -> tagKeyword "null"
+        | Null -> tagKeyword "null"
         | :? double as d ->
             let s = d.ToString(opts.FloatingPointFormat, opts.FormatProvider)
 
@@ -1587,7 +1592,7 @@ module Display =
 
                     match text with
                     | null -> ""
-                    | _ -> text
+                    | text -> text
                 with e ->
                     // If a .ToString() call throws an exception, catch it and use the message as the result.
                     // This may be informative, e.g. division by zero etc...

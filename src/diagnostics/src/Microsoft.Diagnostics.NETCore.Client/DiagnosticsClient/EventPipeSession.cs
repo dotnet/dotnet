@@ -13,6 +13,17 @@ namespace Microsoft.Diagnostics.NETCore.Client
 {
     public class EventPipeSession : IDisposable
     {
+        //! This is CoreCLR specific keywords for native ETW events (ending up in event pipe).
+        //! The keywords below seems to correspond to:
+        //!  GCKeyword                          (0x00000001)
+        //!  LoaderKeyword                      (0x00000008)
+        //!  JitKeyword                         (0x00000010)
+        //!  NgenKeyword                        (0x00000020)
+        //!  unused_keyword                     (0x00000100)
+        //!  JittedMethodILToNativeMapKeyword   (0x00020000)
+        //!  ThreadTransferKeyword              (0x80000000)
+        internal const long DefaultRundownKeyword = 0x80020139;
+
         private ulong _sessionId;
         private IpcEndpoint _endpoint;
         private bool _disposedValue; // To detect redundant calls
@@ -84,10 +95,26 @@ namespace Microsoft.Diagnostics.NETCore.Client
         private static IpcMessage CreateStartMessage(EventPipeSessionConfiguration config)
         {
             // To keep backward compatibility with older runtimes we only use newer serialization format when needed
-            // V3 has added support to disable the stacktraces
-            bool shouldUseV3 = !config.RequestStackwalk;
-            EventPipeCommandId command = shouldUseV3 ? EventPipeCommandId.CollectTracing3 : EventPipeCommandId.CollectTracing2;
-            byte[] payload = shouldUseV3 ? config.SerializeV3() : config.SerializeV2();
+            EventPipeCommandId command;
+            byte[] payload;
+            if (config.RundownKeyword != DefaultRundownKeyword && config.RundownKeyword != 0)
+            {
+                // V4 has added support to specify rundown keyword
+                command = EventPipeCommandId.CollectTracing4;
+                payload = config.SerializeV4();
+            }
+            else if (!config.RequestStackwalk)
+            {
+                // V3 has added support to disable the stacktraces
+                command = EventPipeCommandId.CollectTracing3;
+                payload = config.SerializeV3();
+            }
+            else
+            {
+                command = EventPipeCommandId.CollectTracing2;
+                payload = config.SerializeV2();
+            }
+
             return new IpcMessage(DiagnosticsServerCommandSet.EventPipe, (byte)command, payload);
         }
 
@@ -137,15 +164,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         protected virtual void Dispose(bool disposing)
         {
-            // If session being disposed hasn't been stopped, attempt to stop it first
-            if (!_stopped)
-            {
-                try
-                {
-                    Stop();
-                }
-                catch { } // swallow any exceptions that may be thrown from Stop.
-            }
+            // Do not call Stop() here. Trying to do so now might block indefinitely if the runtime is unresponsive and we don't want blocking behavior in Dispose().
+            // If the caller wants to ensure that all rundown events are captured they should call Stop() first, then process the EventStream until it is complete, then call Dispose().
 
             if (!_disposedValue)
             {

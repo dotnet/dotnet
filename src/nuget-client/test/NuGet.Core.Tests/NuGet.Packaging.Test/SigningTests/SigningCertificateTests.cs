@@ -1,17 +1,16 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography;
-using System.Text;
-using NuGet.Common;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Test.Utility.Signing;
 using Xunit;
-using BcEssCertId = Org.BouncyCastle.Asn1.Ess.EssCertID;
-using BcPolicyInformation = Org.BouncyCastle.Asn1.X509.PolicyInformation;
-using BcSigningCertificate = Org.BouncyCastle.Asn1.Ess.SigningCertificate;
+using PolicyInformation = NuGet.Packaging.Signing.PolicyInformation;
 using SigningCertificate = NuGet.Packaging.Signing.SigningCertificate;
+using TestEssCertId = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.EssCertId;
+using TestPolicyInformation = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.PolicyInformation;
+using TestSigningCertificate = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.SigningCertificate;
 
 namespace NuGet.Packaging.Test
 {
@@ -27,63 +26,73 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithPolicyInformation_ReturnsSigningCertificate()
         {
-            var bcEssCertId = CreateBcEssCertId();
-            var bcPolicyInfo = new BcPolicyInformation(new DerObjectIdentifier(Oids.AnyPolicy));
-            var bcSigningCertificate = new BcSigningCertificate(
-                new DerSequence(new DerSequence(bcEssCertId), new DerSequence(bcPolicyInfo)));
-            var bytes = bcSigningCertificate.GetDerEncoded();
+            TestEssCertId essCertId = CreateEssCertId();
+            TestPolicyInformation testPolicyInfo = new(new Oid(Oids.AnyPolicy));
+            TestSigningCertificate testSigningCertificate = TestSigningCertificate.Create(
+                new[] { essCertId },
+                testPolicyInfo);
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            var signingCertificate = SigningCertificate.Read(bytes);
+            testSigningCertificate.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+
+            SigningCertificate signingCertificate = SigningCertificate.Read(bytes);
 
             Assert.Equal(1, signingCertificate.Certificates.Count);
             Assert.Equal(1, signingCertificate.Policies.Count);
 
-            var policyInfo = signingCertificate.Policies[0];
+            PolicyInformation policyInfo = signingCertificate.Policies[0];
 
-            Assert.Equal(bcPolicyInfo.PolicyIdentifier.ToString(), policyInfo.PolicyIdentifier.Value);
+            Assert.Equal(testPolicyInfo.PolicyIdentifier.Value, policyInfo.PolicyIdentifier.Value);
             Assert.Null(policyInfo.PolicyQualifiers);
         }
 
         [Fact]
         public void Read_WithMultipleEssCertIds_ReturnsSigningCertificate()
         {
-            var bcEssCertId1 = CreateBcEssCertId();
-            var bcEssCertId2 = CreateBcEssCertId();
-            var bcEssCertId3 = CreateBcEssCertId();
-            var bcSigningCertificate = new BcSigningCertificate(
-                new DerSequence(new DerSequence(bcEssCertId1, bcEssCertId2, bcEssCertId3)));
-            var bytes = bcSigningCertificate.GetDerEncoded();
+            TestEssCertId essCertId1 = CreateEssCertId();
+            TestEssCertId essCertId2 = CreateEssCertId();
+            TestEssCertId essCertId3 = CreateEssCertId();
+            TestSigningCertificate testSigningCertificate = TestSigningCertificate.Create(
+                new[] { essCertId1, essCertId2, essCertId3 });
 
-            var signingCertificate = SigningCertificate.Read(bytes);
+            AsnWriter writer = new(AsnEncodingRules.DER);
+
+            testSigningCertificate.Encode(writer);
+
+            byte[] bytes = writer.Encode();
+
+            SigningCertificate signingCertificate = SigningCertificate.Read(bytes);
 
             Assert.Equal(3, signingCertificate.Certificates.Count);
             Assert.Null(signingCertificate.Policies);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertId1.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                essCertId1.CertificateHash,
                 signingCertificate.Certificates[0].CertificateHash);
             Assert.Null(signingCertificate.Certificates[0].IssuerSerial);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertId2.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                essCertId2.CertificateHash,
                 signingCertificate.Certificates[1].CertificateHash);
             Assert.Null(signingCertificate.Certificates[1].IssuerSerial);
 
-            SigningTestUtility.VerifyByteArrays(
-                bcEssCertId3.GetCertHash(),
+            SigningTestUtility.VerifyByteSequences(
+                essCertId3.CertificateHash,
                 signingCertificate.Certificates[2].CertificateHash);
             Assert.Null(signingCertificate.Certificates[2].IssuerSerial);
         }
 
-        private static BcEssCertId CreateBcEssCertId()
+        private static TestEssCertId CreateEssCertId()
         {
             byte[] randomHash = new byte[20];
 
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randomHash);
 
-                return new BcEssCertId(randomHash);
+                return TestEssCertId.Create(randomHash);
             }
         }
     }

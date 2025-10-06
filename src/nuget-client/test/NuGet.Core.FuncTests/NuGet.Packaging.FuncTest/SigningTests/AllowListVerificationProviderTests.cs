@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
@@ -20,7 +19,7 @@ using Xunit;
 namespace NuGet.Packaging.FuncTest
 {
     [Collection(SigningTestCollection.Name)]
-    public class AllowListVerificationProviderTests : IDisposable
+    public class AllowListVerificationProviderTests
     {
         private const string _noMatchInAllowList = "The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.";
         private const string _noAllowList = "A list of trusted signers is required but none was found.";
@@ -31,12 +30,8 @@ namespace NuGet.Packaging.FuncTest
         public AllowListVerificationProviderTests(SigningTestFixture fixture)
         {
             _testFixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
-            _trustedRepoTestCert = SigningTestUtility.GenerateTrustedTestCertificate();
-        }
-
-        public void Dispose()
-        {
-            _trustedRepoTestCert.Dispose();
+            // Do not dispose this.  The fixture will dispose it.
+            _trustedRepoTestCert = fixture.TrustedRepositoryCertificate;
         }
 
         [CIOnlyFact]
@@ -1101,4 +1096,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

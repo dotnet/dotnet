@@ -22,7 +22,7 @@ namespace NuGet.Protocol
         [JsonConverter(typeof(MetadataFieldConverter))]
         public string Authors { get; private set; }
 
-        [JsonProperty(PropertyName = JsonProperties.DependencyGroups, ItemConverterType = typeof(PackageDependencyGroupConverter))]
+        [JsonProperty(PropertyName = JsonProperties.DependencyGroups)]
         public IEnumerable<PackageDependencyGroup> DependencySetsInternal { get; private set; }
 
         [JsonIgnore]
@@ -65,6 +65,7 @@ namespace NuGet.Protocol
         private IReadOnlyList<string> _ownersList;
 
         [JsonProperty(PropertyName = JsonProperties.Owners)]
+        [JsonConverter(typeof(MetadataStringOrArrayConverter))]
         public IReadOnlyList<string> OwnersList
         {
             get { return _ownersList; }
@@ -104,6 +105,9 @@ namespace NuGet.Protocol
         [JsonProperty(PropertyName = JsonProperties.ReadmeUrl)]
         [JsonConverter(typeof(SafeUriConverter))]
         public Uri ReadmeUrl { get; private set; }
+
+        [JsonIgnore]
+        public string ReadmeFileUrl { get; internal set; }
 
         [JsonIgnore]
         public Uri ReportAbuseUrl { get; set; }

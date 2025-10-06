@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Buffers;
@@ -12,8 +12,8 @@ using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
+using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -46,17 +46,10 @@ public class TagHelperSerializationBenchmark
         };
 
     private static ImmutableArray<TagHelperDescriptor> DeserializeTagHelpers_Json(TextReader reader)
-    {
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
-    }
+        => JsonDataConvert.DeserializeTagHelperArray(reader);
 
     private static void SerializeTagHelpers(TextWriter writer, ImmutableArray<TagHelperDescriptor> tagHelpers)
-    {
-        JsonDataConvert.SerializeData(writer,
-            w => w.WriteArray(tagHelpers, ObjectWriters.Write));
-    }
+        => JsonDataConvert.Serialize(tagHelpers, writer);
 
     [Benchmark(Description = "Serialize Tag Helpers (JSON)")]
     public void Serialize_Json()

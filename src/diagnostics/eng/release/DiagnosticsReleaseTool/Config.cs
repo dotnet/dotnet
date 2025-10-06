@@ -13,9 +13,10 @@ namespace DiagnosticsReleaseTool.Impl
         public DirectoryInfo StagingDirectory { get; }
         public string ReleaseName { get; }
         public string AccountName { get; }
-        public string AccountKey { get; }
+        public string ClientId { get; }
         public string ContainerName { get; }
-        public int SasValidDays { get; }
+        public string[] ReleaseProductAllowList { get; }
+        public string[] ReleaseRepoAllowList { get; }
 
         public Config(
             FileInfo toolManifest,
@@ -23,10 +24,11 @@ namespace DiagnosticsReleaseTool.Impl
             DirectoryInfo inputDropPath,
             DirectoryInfo stagingDirectory,
             string releaseName,
+            string[] releaseProductAllowList,
+            string[] releaseRepoAllowList,
             string accountName,
-            string accountKey,
-            string containerName,
-            int sasValidDays)
+            string clientId,
+            string containerName)
         {
             ToolManifest = toolManifest;
             ShouldVerifyManifest = verifyToolManifest;
@@ -34,9 +36,10 @@ namespace DiagnosticsReleaseTool.Impl
             StagingDirectory = stagingDirectory;
             ReleaseName = releaseName;
             AccountName = accountName;
-            AccountKey = accountKey;
+            ClientId = clientId;
             ContainerName = containerName;
-            SasValidDays = sasValidDays;
+            ReleaseProductAllowList = releaseProductAllowList;
+            ReleaseRepoAllowList = releaseRepoAllowList;
         }
     }
 }

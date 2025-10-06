@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
@@ -662,7 +661,7 @@ namespace NuGet.Protocol.Tests
             Assert.Equal(DateTimeOffset.Parse("2017-04-06T12:46:30.942Z"), latest.LastEdited.Value);
             Assert.Equal("PackageB:null|EntityFramework:6.1.3|PackageC:3.7.0.15|PackageD:3.14.15:null", latest.Dependencies);
             Assert.Equal(1, latest.DependencySets.Count());
-            Assert.Equal(VersionRange.All, latest.DependencySets.Single().Packages.Where(p => p.Id == "PackageB").Single().VersionRange);
+            Assert.Equal(VersionRange.All, latest.DependencySets.Single().Packages.Single(p => p.Id == "PackageB").VersionRange);
             Assert.Equal("any", latest.DependencySets.First().TargetFramework.GetShortFolderName());
         }
 

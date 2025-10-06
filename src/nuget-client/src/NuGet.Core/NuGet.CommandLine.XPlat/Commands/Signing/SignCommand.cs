@@ -99,7 +99,7 @@ namespace NuGet.CommandLine.XPlat
 
                     ValidatePackagePaths(packagePaths);
                     WarnIfNoTimestamper(logger, timestamper);
-                    ValidateCertificateInputs(path, fingerprint, subject, store, location);
+                    ValidateCertificateInputs(path, fingerprint, subject, store, location, logger);
                     ValidateAndCreateOutputDirectory(outputDirectory);
 
                     SigningSpecificationsV1 signingSpec = SigningSpecifications.V1;
@@ -209,7 +209,7 @@ namespace NuGet.CommandLine.XPlat
         }
 
         private static void ValidateCertificateInputs(CommandOption path, CommandOption fingerprint,
-                                                      CommandOption subject, CommandOption store, CommandOption location)
+                                                      CommandOption subject, CommandOption store, CommandOption location, ILogger logger)
         {
             if (string.IsNullOrEmpty(path.Value()) &&
                 string.IsNullOrEmpty(fingerprint.Value()) &&
@@ -224,13 +224,24 @@ namespace NuGet.CommandLine.XPlat
                  !string.IsNullOrEmpty(location.Value()) ||
                  !string.IsNullOrEmpty(store.Value())))
             {
-                // Thow if the user provided a path and any one of the other options
+                // Throw if the user provided a path and any one of the other options
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
             }
             else if (!string.IsNullOrEmpty(fingerprint.Value()) && !string.IsNullOrEmpty(subject.Value()))
             {
-                // Thow if the user provided a fingerprint and a subject
+                // Throw if the user provided a fingerprint and a subject
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
+            }
+            else if (fingerprint.Value() != null)
+            {
+                bool isValidFingerprint = CertificateUtility.TryDeduceHashAlgorithm(fingerprint.Value(), out HashAlgorithmName hashAlgorithmName);
+                bool isSHA1 = hashAlgorithmName == HashAlgorithmName.SHA1;
+                string message = string.Format(CultureInfo.CurrentCulture, Strings.SignCommandInvalidCertificateFingerprint, NuGetLogCode.NU3043);
+
+                if (!isValidFingerprint || isSHA1)
+                {
+                    throw new ArgumentException(message);
+                }
             }
         }
     }

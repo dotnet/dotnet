@@ -10,7 +10,7 @@
                 Whitespace;[ ];
                 Keyword;[foreach];
                 LeftParenthesis;[(];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[foo];
                 Whitespace;[ ];

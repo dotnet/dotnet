@@ -151,6 +151,102 @@
     <value>The project '{0}' is unsupported</value>
   </data>
   <data name="ProjectMigrateErrorMessage" xml:space="preserve">
+    <value>Project is not eligible for migration as it's not project.json based.</value>
+  </data>
+  <data name="ProjectJsonMigrateErrorMessage" xml:space="preserve">
     <value>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information.</value>
+  </data>
+  <data name="PackageRestoreConsent" xml:space="preserve">
+    <value>Allow NuGet to download missing packages</value>
+  </data>
+  <data name="packageRestoreAutomatic" xml:space="preserve">
+    <value>Automatically check for missing packages during build in Visual Studio</value>
+  </data>
+  <data name="skipBindingRedirects" xml:space="preserve">
+    <value>Skip applying binding redirects</value>
+  </data>
+  <data name="showPackageManagementChooser" xml:space="preserve">
+    <value>Prompt for format selection on first package install</value>
+  </data>
+  <data name="PackagesConfig" xml:space="preserve">
+    <value>Packages.config</value>
+  </data>
+  <data name="PackageReference" xml:space="preserve">
+    <value>PackageReference</value>
+  </data>
+  <data name="defaultPackageManagementFormat" xml:space="preserve">
+    <value>Default package management format</value>
+  </data>
+  <data name="clearLocalResources" xml:space="preserve">
+    <value>Clear NuGet local resources</value>
+  </data>
+  <data name="PackageRestore" xml:space="preserve">
+    <value>Package Restore</value>
+  </data>
+  <data name="BindingRedirects" xml:space="preserve">
+    <value>Binding Redirects</value>
+  </data>
+  <data name="PackageManagement" xml:space="preserve">
+    <value>Package Management</value>
+  </data>
+  <data name="SettingsStoredInNuGetConfiguration" xml:space="preserve">
+    <value>These settings are stored in %NuGet.Config% files</value>
+    <comment>Do not translate % % or what is between them</comment>
+  </data>
+  <data name="Text_ConfigurationFiles_Priority" xml:space="preserve">
+    <value>Configuration files are listed in order from highest to lowest priority.</value>
+  </data>
+  <data name="Text_ConfigurationFiles_CommonLink" xml:space="preserve">
+    <value>Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/)</value>
+    <comment>Please leave the [ and ] brackets in place and do translate the words between them. Do not translate the URL inside ( ).</comment>
+  </data>
+  <data name="Text_FilePath_Header" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="Text_PackageSourceName_Header" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Text_PackageSourceUrl_Header" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Text_PackageSourceEnabled_Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Text_HttpSource_Warning" xml:space="preserve">
+    <value>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</value>
+  </data>
+  <data name="Text_PackageSources_MachineWide" xml:space="preserve">
+    <value>Machine-wide package sources</value>
+  </data>
+  <data name="Text_PackageSources_NotMachineWide" xml:space="preserve">
+    <value>Package sources</value>
+  </data>
+  <data name="Error_PackageSourceName_Missing" xml:space="preserve">
+    <value>A name must be provided.</value>
+  </data>
+  <data name="Error_PackageSourceUri_Missing" xml:space="preserve">
+    <value>A source must be provided.</value>
+  </data>
+  <data name="Error_PackageSourceUriHostname_Missing" xml:space="preserve">
+    <value>A hostname must be provided after '://'.</value>
+  </data>
+  <data name="Text_HttpSource_Error" xml:space="preserve">
+    <value>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) for more information.</value>
+  </data>
+  <data name="Text_Watermark_ExamplePackageIdPattern" xml:space="preserve">
+    <value>Contoso.Contracts or System.*</value>
+    <comment>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</comment>
+  </data>
+  <data name="Text_PackageSourceMappingPattern_Header" xml:space="preserve">
+    <value>Package pattern</value>
+  </data>
+  <data name="Error_PackageSourceMappingPattern_Missing" xml:space="preserve">
+    <value>A package pattern must be provided.</value>
+  </data>
+  <data name="Error_PackageSourceMappingSource_Missing" xml:space="preserve">
+    <value>At least one source must be selected.</value>
+  </data>
+  <data name="Text_AllowInsecureConnections_Header" xml:space="preserve">
+    <value>Allow Insecure Connections</value>
   </data>
 </root>

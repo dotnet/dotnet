@@ -31,7 +31,7 @@ internal class ComponentPageDirective
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.AddDirective(Directive, FileKinds.Component, FileKinds.ComponentImport);
+        builder.AddDirective(Directive, RazorFileKind.Component, RazorFileKind.ComponentImport);
         builder.Features.Add(new ComponentPageDirectivePass());
         return builder;
     }

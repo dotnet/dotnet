@@ -161,21 +161,6 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
-    public void TestPlatformShouldBeCompatibleWithOldTestHost(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var assemblyPaths = GetAssetFullPath("SampleProjectWithOldTestHost.dll");
-        var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-
-        InvokeVsTest(arguments);
-
-        ValidateSummaryStatus(1, 0, 0);
-        ExitCodeEquals(0);
-    }
-
-    [TestMethod]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void WorkingDirectoryIsSourceDirectory(RunnerInfo runnerInfo)
@@ -217,7 +202,7 @@ public class ExecutionTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         var errorMessage = "Process is terminated due to StackOverflowException.";
-        if (runnerInfo.TargetFramework.StartsWith("netcoreapp"))
+        if (!runnerInfo.TargetFramework.StartsWith("net4"))
         {
             errorMessage = "Test host process crashed : Stack overflow.";
         }
@@ -247,7 +232,7 @@ public class ExecutionTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         var errorFirstLine =
-            runnerInfo.TargetFramework.StartsWith("netcoreapp")
+            !runnerInfo.TargetFramework.StartsWith("net4")
             ? "Test host standard error line: Unhandled exception. System.InvalidOperationException: Operation is not valid due to the current state of the object."
             : "Test host standard error line: Unhandled Exception: System.InvalidOperationException: Operation is not valid due to the current state of the object.";
         FileAssert.Contains(diagLogFilePath, errorFirstLine);
@@ -433,7 +418,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for netcoreapp3.1 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
@@ -458,7 +443,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for netcoreapp3.1 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
@@ -482,7 +467,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for netcoreapp3.1 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
@@ -505,12 +490,12 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for netcoreapp3.1 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var xunitAssemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject.dll");
-        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(xunitAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll"));
+        var testAssemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject.dll");
+        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(testAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll"));
 
         string assemblyPaths = string.Join(" ", allDllsMatchingTestPattern.Select(s => s.AddDoubleQuote()));
         InvokeVsTestForExecution(assemblyPaths, testAdapterPath: string.Empty, FrameworkArgValue, string.Empty);

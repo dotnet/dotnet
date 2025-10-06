@@ -47,13 +47,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(runConfigurationDictionary, runSettingsArgs, additionalArgs, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -82,13 +81,12 @@ public class RunsettingsTests : AcceptanceTestBase
         // Pass non parallel
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(null, runSettingsArgs, additionalArgs, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -96,9 +94,6 @@ public class RunsettingsTests : AcceptanceTestBase
     /// <summary>
     /// Command line switches should have high precedence if runsetting file and command line switch specified
     /// </summary>
-    /// <param name="runnerFramework"></param>
-    /// <param name="targetFramework"></param>
-    /// <param name="targetRuntime"></param>
     [TestMethod]
     [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
@@ -170,13 +165,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(null, runSettingsArgs, null, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -206,13 +200,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(runConfigurationDictionary, runSettingsArgs, null, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -314,6 +307,7 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore("Ignore until we have new host available with CUIT removed.")]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
     public void LegacySettingsWithScripts(RunnerInfo runnerInfo)
@@ -360,6 +354,7 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore("Ignore until we have new host available with CUIT removed.")]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
     public void LegacySettingsWithDeploymentItem(RunnerInfo runnerInfo)
@@ -397,6 +392,7 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore("Ignore until we have new host available with CUIT removed.")]
     [TestCategory("Windows")]
     [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
     public void LegacySettingsTestTimeout(RunnerInfo runnerInfo)
@@ -424,6 +420,7 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore("Ignore until we have new host available with CUIT removed.")]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
     public void LegacySettingsAssemblyResolution(RunnerInfo runnerInfo)
@@ -514,7 +511,7 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var projectName = "ProjectFileRunSettingsTestProject.csproj";
         var projectPath = GetIsolatedTestAsset(projectName);
-        InvokeDotnetTest($@"{projectPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
+        InvokeDotnetTest($@"{projectPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
         ValidateSummaryStatus(0, 1, 0);
 
         // make sure that we can revert the project settings back by providing a config from command line
@@ -522,7 +519,7 @@ public class RunsettingsTests : AcceptanceTestBase
         // are honored by dotnet test, instead of just using the default, which would produce the same
         // result
         var settingsPath = GetProjectAssetFullPath(projectName, "inconclusive.runsettings");
-        InvokeDotnetTest($@"{projectPath} --settings {settingsPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
+        InvokeDotnetTest($@"{projectPath} --settings {settingsPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
         ValidateSummaryStatus(0, 0, 1);
     }
 

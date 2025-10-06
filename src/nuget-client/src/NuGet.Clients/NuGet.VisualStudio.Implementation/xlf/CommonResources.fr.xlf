@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../CommonResources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Value cannot be null or an empty string.</source>
+        <target state="translated">La valeur ne peut pas être Null ni être une chaîne vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Between">
+        <source>Value must be between {0} and {1}.</source>
+        <target state="translated">La valeur doit être comprise entre {0} et {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Enum_Member">
+        <source>Value must be a value from the "{0}" enumeration.</source>
+        <target state="translated">La valeur doit provenir de l’énumération « {0} ».</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThan">
+        <source>Value must be greater than {0}.</source>
+        <target state="translated">La valeur doit être supérieure à {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">La valeur doit être supérieure ou égale à {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_LessThan">
+        <source>Value must be less than {0}.</source>
+        <target state="translated">La valeur doit être inférieure à {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_LessThanOrEqualTo">
+        <source>Value must be less than or equal to {0}.</source>
+        <target state="translated">La valeur doit être inférieure ou égale à {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
+        <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
+        <target state="translated">La valeur ne peut pas être une chaîne vide. Elle doit être Null ou être une chaîne non vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnsureImportedMessage">
+        <source>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</source>
+        <target state="translated">Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

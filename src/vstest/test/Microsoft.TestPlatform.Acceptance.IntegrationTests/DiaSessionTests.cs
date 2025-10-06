@@ -20,7 +20,7 @@ public class DiaSessionTests : AcceptanceTestBase
 #if NETFRAMEWORK
             "net462";
 #else
-            "netcoreapp3.1";
+            "net8.0";
 #endif
         return currentTargetFrameWork;
     }
@@ -130,17 +130,17 @@ public class DiaSessionTests : AcceptanceTestBase
         }
         else
         {
-            if (max == 23)
+            if (max == 22)
             {
                 Assert.AreEqual(min + 1, max, "Incorrect min line number");
             }
-            else if (max == 27)
+            else if (max == 26)
             {
                 Assert.AreEqual(min + 1, max, "Incorrect min line number");
             }
             else
             {
-                Assert.Fail($"Incorrect min/max line number. Expected Max to be 23 or 27. And Min to be 22 or 26. But Min was {min}, and Max was {max}.");
+                Assert.Fail($"Incorrect min/max line number. Expected Max to be 22 or 26. And Min to be 21 or 25. But Min was {min}, and Max was {max}.");
             }
         }
     }

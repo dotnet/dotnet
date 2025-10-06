@@ -1,6 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <!-- $(NetFrameworkRunnerTargetFramework); should be added here, but it causes duplicates in tfm names and nuget restore fails -->
+    <TargetFrameworks>$(TestHostAllTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -14,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building from source or inside the VMR as it relies on a VS license. -->
+    <!-- Don't produce this package when building the .NET product as it relies on a VS license. -->
     <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
@@ -24,12 +25,6 @@
       This package contains the full set of binaries for the Visual Studio Test Platform (vstest).
       It provides a modern, cross platform testing engine that powers the testing on .NET Core as well.
       It integrates with popular test frameworks like MSTest(v1 and v2), xUnit and Nunit with support for extensibility.
-
-      The package supports running Coded UI tests.
-      While running Coded UI tests, you must ensure that the package version matches the major version of Visual Studio used to build the test binaries.
-      For example, if your Coded UI test project was built using Visual Studio 2019 (version 16.x), you must use test platform version 16.x.
-      Coded UI test is deprecated (https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#test-tools) and
-      Visual Studio 2019 (Test Platform version 16.x) will be the last version with Coded UI test functionality.
     </PackageDescription>
     <!-- Override default license -->
     <PackageLicenseFile>LICENSE_VS.txt</PackageLicenseFile>
@@ -41,31 +36,47 @@
     <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--
+    Runner dependencies are copied to the output package, and target only .NET Framework.
+  -->
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
     <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj" />
-    <ProjectReference Include="..\..\testhost\testhost.csproj" />
-    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+
     <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
     <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    
+    <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
+    This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
+    prevents us from having to lookup the correct .NET runtime. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"  SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"/>
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
-    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
     <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+  <!--
+    Testhost needs to be built for all versions of .NET Framework, and for the lowest supported version of .NET.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+  </ItemGroup>
+  
+  <!-- 
+    We copy files from these packages, we want to update them as much as we can, so we are using the runner TFM
+    which is most likely higher than what is the minimum supported .NET Framework.
+  -->
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)')) ">
     <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
-    <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.CodeCoverage.Instrumentation.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
@@ -79,22 +90,19 @@
     <PackageReference Include="Microsoft.VisualStudio.Enterprise.AspNetHelper" Version="$(MicrosoftVisualStudioEnterpriseAspNetHelper)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.QualityTools" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.VisualStudio.QualityTools.DataCollectors" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.TestPlatform.Extensions" Version="$(MicrosoftInternalTestPlatformExtensions)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.TraceDataCollector" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.VisualStudio.CUIT" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(MicrosoftVSSDKBuildToolsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness" Version="$(MicrosoftFakesVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.VisualStudio.Telemetry" Version="$(MicrosoftVSTelemetryVersion)" PrivateAssets="All" GeneratePathProperty="true"  />
+    <PackageReference Include="Microsoft.VisualStudio.Telemetry" Version="$(MicrosoftVSTelemetryVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities.Internal" Version="$(MicrosoftVSUtilitiesInternalVersion)" PrivateAssets="All" GeneratePathProperty="true" />
   </ItemGroup>
 
-  <Target Name="CopyFiles" AfterTargets="Build" Condition=" '$(TargetFramework)' == 'net472' ">
+  <Target Name="CopyFiles" AfterTargets="Build" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)'))">
     <ItemGroup>
-      <MicrosoftCodeCoverageInstrumentationFiles Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\runtimes\win\native\*"></MicrosoftCodeCoverageInstrumentationFiles>
       <MicrosoftCodeCoverageIOFiles Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIOFiles>
-      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net451\*"></MicrosoftExtensionsDependencyModelFiles>
+      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net461\*"></MicrosoftExtensionsDependencyModelFiles>
       <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
       <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>
       <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>
@@ -106,10 +114,8 @@
       <MicrosoftInternalIntellitraceFiles Include="$(PkgMicrosoft_Internal_Intellitrace)\tools\net451\**\*"></MicrosoftInternalIntellitraceFiles>
       <MicrosoftInternalIntellitraceExtensionsFiles Include="$(PkgMicrosoft_Internal_Intellitrace_Extensions)\tools\net451\**\*"></MicrosoftInternalIntellitraceExtensionsFiles>
       <MicrosoftVisualStudioQualityToolsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsFiles>
-      <MicrosoftVisualStudioQualityToolsDataCollectorsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools_DataCollectors)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsDataCollectorsFiles>
       <MicrosoftInternalTestPlatformExtensionsFiles Include="$(PkgMicrosoft_Internal_TestPlatform_Extensions)\tools\net451\**\*"></MicrosoftInternalTestPlatformExtensionsFiles>
-      <MicrosoftInternalCodeCoverageFiles Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\any\any\**\*"></MicrosoftInternalCodeCoverageFiles>
-      <MicrosoftVisualStudioCUITFiles Include="$(PkgMicrosoft_VisualStudio_CUIT)\tools\net451\**\*"></MicrosoftVisualStudioCUITFiles>
+      <MicrosoftInternalCodeCoverageFiles Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\MS.TP\**\*"></MicrosoftInternalCodeCoverageFiles>
       <MicrosoftVSSDKBuildToolsFiles Include="$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\**\*"></MicrosoftVSSDKBuildToolsFiles>
       <MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles Include="$(PkgMicrosoft_QualityTools_Testing_Fakes_TestRunnerHarness)\contentFiles\**\*"></MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles>
       <MicrosoftInternalTestPlatformRemoteFiles Include="$(PkgMicrosoft_Internal_TestPlatform_Remote)\tools\netstandard\**\*"></MicrosoftInternalTestPlatformRemoteFiles>
@@ -117,7 +123,6 @@
       <MicrosoftVisualStudioUtilitiesInternalFiles Include="$(PkgMicrosoft_VisualStudio_Utilities_Internal)\lib\net45\**\*"></MicrosoftVisualStudioUtilitiesInternalFiles>
     </ItemGroup>
 
-    <Copy SourceFiles="@(MicrosoftCodeCoverageInstrumentationFiles)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Instrumentation\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftCodeCoverageIOFiles)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftExtensionsDependencyModelFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbingFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -130,10 +135,8 @@
     <Copy SourceFiles="@(MicrosoftInternalIntellitraceFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalIntellitraceExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsDataCollectorsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools.DataCollectors\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalTestPlatformExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalCodeCoverageFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.CodeCoverage\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(MicrosoftVisualStudioCUITFiles)" DestinationFolder="$(OutDir)\Microsoft.VisualStudio.CUIT" />
     <Copy SourceFiles="@(MicrosoftVSSDKBuildToolsFiles)" DestinationFolder="$(OutDir)\Microsoft.VSSDK.BuildTools" />
     <Copy SourceFiles="@(MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles)" DestinationFiles="$(OutDir)\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioTelemetryFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />

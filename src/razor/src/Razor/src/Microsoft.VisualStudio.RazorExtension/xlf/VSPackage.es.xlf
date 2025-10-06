@@ -48,7 +48,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
+        <source>Auto insert closing tag</source>
         <target state="translated">Insertar automáticamente etiqueta de cierre</target>
         <note />
       </trans-unit>
@@ -58,7 +58,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
+        <source>Auto insert attribute quotes</source>
         <target state="translated">Insertar automáticamente comillas de atributo</target>
         <note />
       </trans-unit>
@@ -68,7 +68,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
+        <source>Code/functions block open brace on next line</source>
         <target state="translated">Bloquear llave de apertura de código o funciones en la línea siguiente</target>
         <note />
       </trans-unit>
@@ -78,18 +78,28 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
+        <source>Background for C# code</source>
         <target state="translated">Fondo de código de C#</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
         <target state="translated">Si es true, al presionar el espacio se confirmarán sugerencias para los elementos y componentes HTML</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
+        <source>Commit elements with space</source>
         <target state="translated">Confirmar elementos con espacio</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">Si es true, se habilitará la aplicación de formato al pegar contenido</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Dar formato al pegar</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -98,7 +108,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
+        <source>Format on type</source>
         <target state="translated">Dar formato al escribir</target>
         <note />
       </trans-unit>
@@ -113,8 +123,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDescription">
-        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
-        <target state="translated">Establece el nivel de registro que se mostrará en la categoría Salida del registrador de Razor de la Ventana de salida.</target>
+        <source>Sets the level of logging to show in the Razor Logger Output category of the Output Window.</source>
+        <target state="translated">Establece el nivel de registro que se va a mostrar en la categoría de salida del registrador de Razor del Ventana de salida.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDisplayName">

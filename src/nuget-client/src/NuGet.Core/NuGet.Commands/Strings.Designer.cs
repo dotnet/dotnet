@@ -19,7 +19,7 @@ namespace NuGet.Commands {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -223,47 +223,47 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs.
+        ///   Looks up a localized string similar to The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011.
         /// </summary>
-        internal static string Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed {
+        internal static string Error_CentralPackageManagement_FloatingVersionsNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_FloatingVersionsNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Centrally defined floating package versions are not allowed..
+        ///   Looks up a localized string similar to The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs.
         /// </summary>
-        internal static string Error_CentralPackageVersions_FloatingVersionsAreNotAllowed {
+        internal static string Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_FloatingVersionsAreNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The PackageReference items {0} do not have corresponding PackageVersion..
+        ///   Looks up a localized string similar to The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted.
         /// </summary>
-        internal static string Error_CentralPackageVersions_MissingPackageVersion {
+        internal static string Error_CentralPackageManagement_MissingPackageVersion {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_MissingPackageVersion", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_MissingPackageVersion", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled..
+        ///   Looks up a localized string similar to The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted.
         /// </summary>
-        internal static string Error_CentralPackageVersions_VersionOverrideDisabled {
+        internal static string Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_VersionOverrideDisabled", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}..
+        ///   Looks up a localized string similar to The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride.
         /// </summary>
-        internal static string Error_CentralPackageVersions_VersionsNotAllowed {
+        internal static string Error_CentralPackageManagement_VersionOverrideNotAllowed {
             get {
-                return ResourceManager.GetString("Error_CentralPackageVersions_VersionsNotAllowed", resourceCulture);
+                return ResourceManager.GetString("Error_CentralPackageManagement_VersionOverrideNotAllowed", resourceCulture);
             }
         }
         
@@ -381,6 +381,33 @@ namespace NuGet.Commands {
         internal static string Error_EmptySourceFileProjectDirectory {
             get {
                 return ResourceManager.GetString("Error_EmptySourceFileProjectDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSource_Single {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSource_Single_Short {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSources_Multiple {
+            get {
+                return ResourceManager.GetString("Error_HttpSources_Multiple", resourceCulture);
             }
         }
         
@@ -682,6 +709,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following PackageReference item(s) do not have a version specified: {0}.
+        /// </summary>
+        internal static string Error_PackageReference_NoVersion {
+            get {
+                return ResourceManager.GetString("Error_PackageReference_NoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Package content hash validation failed for {0}. The package is different than the last restore..
         /// </summary>
         internal static string Error_PackageValidationFailed {
@@ -714,6 +750,15 @@ namespace NuGet.Commands {
         internal static string Error_ProjectDoesNotExist {
             get {
                 return ResourceManager.GetString("Error_ProjectDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The project.json project type is deprecated. Migrate to PackageReference..
+        /// </summary>
+        internal static string Error_ProjectJson_Deprecated {
+            get {
+                return ResourceManager.GetString("Error_ProjectJson_Deprecated", resourceCulture);
             }
         }
         
@@ -768,6 +813,24 @@ namespace NuGet.Commands {
         internal static string Error_RestoreInLockedMode {
             get {
                 return ResourceManager.GetString("Error_RestoreInLockedMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary..
+        /// </summary>
+        internal static string Error_RestorePruningDirectPackageReference {
+            get {
+                return ResourceManager.GetString("Error_RestorePruningDirectPackageReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A ProjectReference cannot be pruned, {0}..
+        /// </summary>
+        internal static string Error_RestorePruningProjectReference {
+            get {
+                return ResourceManager.GetString("Error_RestorePruningProjectReference", resourceCulture);
             }
         }
         
@@ -984,6 +1047,24 @@ namespace NuGet.Commands {
         internal static string FoundVersionsInSourceWithoutMatch {
             get {
                 return ResourceManager.GetString("FoundVersionsInSourceWithoutMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} value: `{1}` is invalid. Valid example: `{2}`.
+        /// </summary>
+        internal static string Invalid_AttributeValue {
+            get {
+                return ResourceManager.GetString("Invalid_AttributeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more invalid frameworks were detected..
+        /// </summary>
+        internal static string Invalid_Framework {
+            get {
+                return ResourceManager.GetString("Invalid_Framework", resourceCulture);
             }
         }
         
@@ -1583,15 +1664,6 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping compatibility checks of the ridless graph for DotnetToolReference project type. This graph is not used. .
-        /// </summary>
-        internal static string Log_SkippingCompatibiilityCheckOnRidlessGraphForDotnetToolReferenceProject {
-            get {
-                return ResourceManager.GetString("Log_SkippingCompatibiilityCheckOnRidlessGraphForDotnetToolReferenceProject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Skipping the lock file regeneration for &apos;{0}&apos;..
         /// </summary>
         internal static string Log_SkippingPackagesLockFileGeneration {
@@ -1840,6 +1912,15 @@ namespace NuGet.Commands {
         internal static string ResolverRequest_ToStringFormat {
             get {
                 return ResourceManager.GetString("ResolverRequest_ToStringFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pruning the package &apos;{0}&apos; as a dependency of &apos;{1}&apos;. The maximum prunable version is &apos;{2}&apos;.
+        /// </summary>
+        internal static string RestoreDebugPruningPackageReference {
+            get {
+                return ResourceManager.GetString("RestoreDebugPruningPackageReference", resourceCulture);
             }
         }
         
@@ -2321,6 +2402,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Content hash: {0}.
+        /// </summary>
+        internal static string VerifyCommand_ContentHash {
+            get {
+                return ResourceManager.GetString("VerifyCommand_ContentHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Package signature validation failed..
         /// </summary>
         internal static string VerifyCommand_Failed {
@@ -2429,11 +2519,20 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Audit source &apos;{0}&apos; did not provide any vulnerability data..
+        /// </summary>
+        internal static string Warning_AuditSourceWithoutVulnerabilityData {
+            get {
+                return ResourceManager.GetString("Warning_AuditSourceWithoutVulnerabilityData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}.
         /// </summary>
-        internal static string Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping {
+        internal static string Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping {
             get {
-                return ResourceManager.GetString("Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping", resourceCulture);
+                return ResourceManager.GetString("Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping", resourceCulture);
             }
         }
         
@@ -2465,17 +2564,27 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}
-        ///Non-HTTPS access will be removed in a future version. Consider migrating to &apos;HTTPS&apos; sources..
+        ///   Looks up a localized string similar to The following is a &apos;Non-HTTPS&apos; source: {0}
+        ///NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
-        internal static string Warning_HttpServerUsage_MultipleSources {
+        internal static string Warning_List_HttpSource {
             get {
-                return ResourceManager.GetString("Warning_HttpServerUsage_MultipleSources", resourceCulture);
+                return ResourceManager.GetString("Warning_List_HttpSource", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved..
+        ///   Looks up a localized string similar to The following are &apos;Non-HTTPS&apos; sources: {0}
+        ///NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Warning_List_HttpSources {
+            get {
+                return ResourceManager.GetString("Warning_List_HttpSources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. {3} was resolved instead..
         /// </summary>
         internal static string Warning_MinVersionDoesNotExist {
             get {
@@ -2484,20 +2593,11 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not provide an inclusive lower bound for dependency {1}. An approximate best match of {2} was resolved..
+        ///   Looks up a localized string similar to {0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead..
         /// </summary>
         internal static string Warning_MinVersionNonInclusive {
             get {
                 return ResourceManager.GetString("Warning_MinVersionNonInclusive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to NuGetAudit is enabled, but no package sources contain known vulnerability data..
-        /// </summary>
-        internal static string Warning_NoVulnerabilityData {
-            get {
-                return ResourceManager.GetString("Warning_NoVulnerabilityData", resourceCulture);
             }
         }
         

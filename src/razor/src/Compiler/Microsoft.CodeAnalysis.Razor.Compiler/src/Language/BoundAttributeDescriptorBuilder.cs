@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -35,29 +34,69 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
 
     [AllowNull]
     private TagHelperDescriptorBuilder _parent;
-    [AllowNull]
-    private string _kind;
+    private BoundAttributeFlags _flags;
+    private TypeNameObject _typeNameObject;
+    private TypeNameObject _indexerTypeNameObject;
     private DocumentationObject _documentationObject;
-    private MetadataHolder _metadata;
+    private MetadataObject? _metadataObject;
+    private bool _caseSensitiveSet;
 
     private BoundAttributeDescriptorBuilder()
     {
     }
 
-    internal BoundAttributeDescriptorBuilder(TagHelperDescriptorBuilder parent, string kind)
+    internal BoundAttributeDescriptorBuilder(TagHelperDescriptorBuilder parent)
     {
         _parent = parent;
-        _kind = kind;
     }
 
     [AllowNull]
     public string Name { get; set; }
-    public string? TypeName { get; set; }
-    public bool IsEnum { get; set; }
-    public bool IsDictionary { get; set; }
+    public string? PropertyName { get; set; }
+
+    public string? TypeName
+    {
+        get => _typeNameObject.FullName;
+        set => _typeNameObject = TypeNameObject.From(value);
+    }
+
+    public bool IsEnum
+    {
+        get => _flags.IsFlagSet(BoundAttributeFlags.IsEnum);
+        set => _flags.UpdateFlag(BoundAttributeFlags.IsEnum, value);
+    }
+
+    public bool IsDictionary
+    {
+        get => _flags.IsFlagSet(BoundAttributeFlags.HasIndexer);
+        set => _flags.UpdateFlag(BoundAttributeFlags.HasIndexer, value);
+    }
+
     public string? IndexerAttributeNamePrefix { get; set; }
-    public string? IndexerValueTypeName { get; set; }
-    internal bool IsEditorRequired { get; set; }
+
+    public string? IndexerValueTypeName
+    {
+        get => _indexerTypeNameObject.FullName;
+        set => _indexerTypeNameObject = TypeNameObject.From(value);
+    }
+
+    internal bool IsEditorRequired
+    {
+        get => _flags.IsFlagSet(BoundAttributeFlags.IsEditorRequired);
+        set => _flags.UpdateFlag(BoundAttributeFlags.IsEditorRequired, value);
+    }
+
+    public bool IsDirectiveAttribute
+    {
+        get => _flags.IsFlagSet(BoundAttributeFlags.IsDirectiveAttribute);
+        set => _flags.UpdateFlag(BoundAttributeFlags.IsDirectiveAttribute, value);
+    }
+
+    public bool IsWeaklyTyped
+    {
+        get => _flags.IsFlagSet(BoundAttributeFlags.IsWeaklyTyped);
+        set => _flags.UpdateFlag(BoundAttributeFlags.IsWeaklyTyped, value);
+    }
 
     public string? Documentation
     {
@@ -67,14 +106,24 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
 
     public string? DisplayName { get; set; }
 
-    public IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
+    public string? ContainingType { get; set; }
 
-    public void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
+    public void SetMetadata(MetadataObject metadataObject)
+    {
+        _metadataObject = metadataObject;
+    }
 
-    public bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
-        => _metadata.TryGetMetadataValue(key, out value);
+    public MetadataObject MetadataObject => _metadataObject ?? MetadataObject.None;
 
-    internal bool CaseSensitive => _parent.CaseSensitive;
+    internal bool CaseSensitive
+    {
+        get => _caseSensitiveSet ? _flags.IsFlagSet(BoundAttributeFlags.CaseSensitive) : _parent.CaseSensitive;
+        set
+        {
+            _flags.UpdateFlag(BoundAttributeFlags.CaseSensitive, value);
+            _caseSensitiveSet = true;
+        }
+    }
 
     private TagHelperObjectBuilderCollection<BoundAttributeParameterDescriptor, BoundAttributeParameterDescriptorBuilder> Parameters { get; }
         = new(BoundAttributeParameterDescriptorBuilder.Pool);
@@ -86,7 +135,7 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
             throw new ArgumentNullException(nameof(configure));
         }
 
-        var builder = BoundAttributeParameterDescriptorBuilder.GetInstance(this, _kind);
+        var builder = BoundAttributeParameterDescriptorBuilder.GetInstance(this);
         configure(builder);
         Parameters.Add(builder);
     }
@@ -104,19 +153,17 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
     private protected override BoundAttributeDescriptor BuildCore(ImmutableArray<RazorDiagnostic> diagnostics)
     {
         return new BoundAttributeDescriptor(
-            _kind,
+            _flags,
             Name ?? string.Empty,
-            TypeName ?? string.Empty,
-            IsEnum,
-            IsDictionary,
+            PropertyName ?? string.Empty,
+            _typeNameObject,
             IndexerAttributeNamePrefix,
-            IndexerValueTypeName,
+            _indexerTypeNameObject,
             _documentationObject,
             GetDisplayName(),
-            CaseSensitive,
-            IsEditorRequired,
+            ContainingType,
             Parameters.ToImmutable(),
-            _metadata.GetMetadataCollection(),
+            _metadataObject ?? MetadataObject.None,
             diagnostics);
     }
 
@@ -127,15 +174,8 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
             return DisplayName;
         }
 
-        if (!_parent.TryGetMetadataValue(TagHelperMetadata.Common.TypeName, out var parentTypeName))
-        {
-            parentTypeName = null;
-        }
-
-        if (!TryGetMetadataValue(TagHelperMetadata.Common.PropertyName, out var propertyName))
-        {
-            propertyName = null;
-        }
+        var parentTypeName = _parent.TypeName;
+        var propertyName = PropertyName;
 
         if (TypeName != null &&
             propertyName != null &&
@@ -153,16 +193,12 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
         return Name ?? string.Empty;
     }
 
-    private bool IsDirectiveAttribute()
-        => TryGetMetadataValue(ComponentMetadata.Common.DirectiveAttribute, out var value) &&
-           value == bool.TrueString;
-
     private protected override void CollectDiagnostics(ref PooledHashSet<RazorDiagnostic> diagnostics)
     {
         // data-* attributes are explicitly not implemented by user agents and are not intended for use on
         // the server; therefore it's invalid for TagHelpers to bind to them.
         const string DataDashPrefix = "data-";
-        var isDirectiveAttribute = IsDirectiveAttribute();
+        var isDirectiveAttribute = IsDirectiveAttribute;
 
         if (Name.IsNullOrWhiteSpace())
         {

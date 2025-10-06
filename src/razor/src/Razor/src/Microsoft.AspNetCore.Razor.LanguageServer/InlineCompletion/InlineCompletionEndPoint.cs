@@ -1,7 +1,6 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -10,45 +9,36 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
 [RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
 internal sealed class InlineCompletionEndpoint(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
-    IAdhocWorkspaceFactory adhocWorkspaceFactory,
-    IRazorLoggerFactory loggerFactory)
+    RazorLSPOptionsMonitor optionsMonitor,
+    ILoggerFactory loggerFactory)
     : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
 {
-    private static readonly ImmutableHashSet<string> s_cSharpKeywords = ImmutableHashSet.Create(
-        "~", "Attribute", "checked", "class", "ctor", "cw", "do", "else", "enum", "equals", "Exception", "for", "foreach", "forr",
-        "if", "indexer", "interface", "invoke", "iterator", "iterindex", "lock", "mbox", "namespace", "#if", "#region", "prop",
-        "propfull", "propg", "sim", "struct", "svm", "switch", "try", "tryf", "unchecked", "unsafe", "using", "while");
-
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    private readonly IAdhocWorkspaceFactory _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
-    private readonly ILogger _logger = loggerFactory.CreateLogger<InlineCompletionEndpoint>();
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<InlineCompletionEndpoint>();
 
     public bool MutatesSolutionState => false;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.InlineCompletionOptions = new VSInternalInlineCompletionOptions()
-        {
-            Pattern = new Regex(string.Join("|", s_cSharpKeywords))
-        };
+        serverCapabilities.InlineCompletionOptions = new VSInternalInlineCompletionOptions().EnableInlineCompletion();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(VSInternalInlineCompletionRequest request)
@@ -58,12 +48,9 @@ internal sealed class InlineCompletionEndpoint(
 
     public async Task<VSInternalInlineCompletionList?> HandleRequestAsync(VSInternalInlineCompletionRequest request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgHelper.ThrowIfNull(request);
 
-        _logger.LogInformation("Starting request for {textDocumentUri} at {position}.", request.TextDocument.Uri, request.Position);
+        _logger.LogInformation($"Starting request for {request.TextDocument.DocumentUri} at {request.Position}.");
 
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
@@ -72,22 +59,16 @@ internal sealed class InlineCompletionEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (codeDocument.IsUnsupported())
-        {
-            return null;
-        }
+        var sourceText = codeDocument.Source.Text;
+        var hostDocumentIndex = sourceText.GetPosition(request.Position);
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
-        var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
-
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
 
         // Map to the location in the C# document.
         if (languageKind != RazorLanguageKind.CSharp ||
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
+            !_documentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
-            _logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogInformation($"Unsupported location for {request.TextDocument.DocumentUri}.");
             return null;
         }
 
@@ -107,24 +88,27 @@ internal sealed class InlineCompletionEndpoint(
             cancellationToken).ConfigureAwait(false);
         if (list is null || !list.Items.Any())
         {
-            _logger.LogInformation("Did not get any inline completions from delegation.");
+            _logger.LogInformation($"Did not get any inline completions from delegation.");
             return null;
         }
 
-        var items = new List<VSInternalInlineCompletionItem>();
+        using var items = new PooledArrayBuilder<VSInternalInlineCompletionItem>(list.Items.Length);
         foreach (var item in list.Items)
         {
-            var containsSnippet = item.TextFormat == InsertTextFormat.Snippet;
-            var range = item.Range ?? new Range { Start = projectedPosition, End = projectedPosition };
+            var range = item.Range ?? projectedPosition.ToZeroWidthRange();
 
-            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
+            if (!_documentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), range, out var rangeInRazorDoc))
             {
-                _logger.LogWarning("Could not remap projected range {range} to razor document", range);
+                _logger.LogWarning($"Could not remap projected range {range} to razor document");
                 continue;
             }
 
-            using var formattingContext = FormattingContext.Create(request.TextDocument.Uri, documentContext.Snapshot, codeDocument, request.Options, _adhocWorkspaceFactory);
-            if (!TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
+            var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+            var formattingContext = FormattingContext.Create(
+                documentContext.Snapshot,
+                codeDocument,
+                options);
+            if (!SnippetFormatter.TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
             {
                 continue;
             }
@@ -141,59 +125,15 @@ internal sealed class InlineCompletionEndpoint(
 
         if (items.Count == 0)
         {
-            _logger.LogInformation("Could not format / map the items from delegation.");
+            _logger.LogInformation($"Could not format / map the items from delegation.");
             return null;
         }
 
-        _logger.LogInformation("Returning {itemsCount} items.", items.Count);
+        _logger.LogInformation($"Returning {items.Count} items.");
         return new VSInternalInlineCompletionList
         {
             Items = items.ToArray()
         };
-    }
-
-    private static bool TryGetSnippetWithAdjustedIndentation(FormattingContext formattingContext, string snippetText, int hostDocumentIndex, [NotNullWhen(true)] out string? newSnippetText)
-    {
-        newSnippetText = null;
-        if (!formattingContext.TryGetFormattingSpan(hostDocumentIndex, out var formattingSpan))
-        {
-            return false;
-        }
-
-        // Take the amount of indentation razor and html are adding, then remove the amount of C# indentation that is 'hidden'.
-        // This should give us the desired base indentation that must be applied to each line.
-        var razorAndHtmlContributionsToIndentation = formattingSpan.RazorIndentationLevel + formattingSpan.HtmlIndentationLevel;
-        var amountToAddToCSharpIndentation = razorAndHtmlContributionsToIndentation - formattingSpan.MinCSharpIndentLevel;
-
-        var snippetSourceText = SourceText.From(snippetText);
-        List<TextChange> indentationChanges = new();
-        // Adjust each line, skipping the first since it must start at the snippet keyword.
-        foreach (var line in snippetSourceText.Lines.Skip(1))
-        {
-            var lineText = snippetSourceText.GetSubText(line.Span);
-            if (lineText.Length == 0)
-            {
-                // We just have an empty line, nothing to do.
-                continue;
-            }
-
-            // Get the indentation of the line in the C# document based on what options the C# document was generated with.
-            var csharpLineIndentationSize = line.GetIndentationSize(formattingContext.Options.TabSize);
-            var csharpIndentationLevel = csharpLineIndentationSize / formattingContext.Options.TabSize;
-
-            // Get the new indentation level based on the context in the razor document.
-            var newIndentationLevel = csharpIndentationLevel + amountToAddToCSharpIndentation;
-            var newIndentationString = formattingContext.GetIndentationLevelString(newIndentationLevel);
-
-            // Replace the current indentation with the new indentation.
-            var spanToReplace = new TextSpan(line.Start, line.GetFirstNonWhitespaceOffset() ?? line.Span.End);
-            var textChange = new TextChange(spanToReplace, newIndentationString);
-            indentationChanges.Add(textChange);
-        }
-
-        var newSnippetSourceText = snippetSourceText.WithChanges(indentationChanges);
-        newSnippetText = newSnippetSourceText.ToString();
-        return true;
     }
 }
 

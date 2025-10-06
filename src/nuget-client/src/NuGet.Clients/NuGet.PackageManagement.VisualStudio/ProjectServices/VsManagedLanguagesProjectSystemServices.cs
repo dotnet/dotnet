@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,9 +42,6 @@ namespace NuGet.PackageManagement.VisualStudio
         public bool NominatesOnSolutionLoad { get; private set; } = false;
 
         #region INuGetProjectServices
-
-        [Obsolete]
-        public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
 
         public IProjectSystemCapabilities Capabilities => this;
 
@@ -204,9 +202,14 @@ namespace NuGet.PackageManagement.VisualStudio
         private static LibraryDependency ToPackageLibraryDependency(PackageReference reference, bool isCpvmEnabled)
         {
             // Get warning suppressions
-            IList<NuGetLogCode> noWarn = MSBuildStringUtility.GetNuGetLogCodes(GetReferenceMetadataValue(reference, ProjectItemProperties.NoWarn));
+            ImmutableArray<NuGetLogCode> noWarn = MSBuildStringUtility.GetNuGetLogCodes(GetReferenceMetadataValue(reference, ProjectItemProperties.NoWarn));
 
-            var dependency = new LibraryDependency(noWarn)
+            (var includeType, var suppressParent) = MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(
+                GetReferenceMetadataValue(reference, ProjectItemProperties.IncludeAssets),
+                GetReferenceMetadataValue(reference, ProjectItemProperties.ExcludeAssets),
+                GetReferenceMetadataValue(reference, ProjectItemProperties.PrivateAssets));
+
+            var dependency = new LibraryDependency()
             {
                 AutoReferenced = MSBuildStringUtility.IsTrue(GetReferenceMetadataValue(reference, ProjectItemProperties.IsImplicitlyDefined)),
                 GeneratePathProperty = MSBuildStringUtility.IsTrue(GetReferenceMetadataValue(reference, ProjectItemProperties.GeneratePathProperty)),
@@ -216,13 +219,10 @@ namespace NuGet.PackageManagement.VisualStudio
                     name: reference.Name,
                     versionRange: ToVersionRange(reference.Version, isCpvmEnabled),
                     typeConstraint: LibraryDependencyTarget.Package),
+                NoWarn = noWarn,
+                IncludeType = includeType,
+                SuppressParent = suppressParent,
             };
-
-            MSBuildRestoreUtility.ApplyIncludeFlags(
-                dependency,
-                GetReferenceMetadataValue(reference, ProjectItemProperties.IncludeAssets),
-                GetReferenceMetadataValue(reference, ProjectItemProperties.ExcludeAssets),
-                GetReferenceMetadataValue(reference, ProjectItemProperties.PrivateAssets));
 
             return dependency;
         }
@@ -338,6 +338,33 @@ namespace NuGet.PackageManagement.VisualStudio
             // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             return MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.ManagePackageVersionsCentrally));
 #pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        public async Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+        {
+            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+            return GetItems(_vsProjectAdapter, itemTypeName, metadataNames);
+        }
+
+        internal static IReadOnlyList<(string id, string[] metadata)> GetItems(IVsProjectAdapter projectAdapter, string itemTypeName, params string[] metadataNames)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string ItemId, string[] ItemMetadata)> items = projectAdapter.GetBuildItemInformation(itemTypeName, metadataNames);
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext())
+            {
+                return Array.Empty<(string, string[])>();
+            }
+
+            List<(string, string[])> result = items is ICollection<(string, string[])> itemCollection ? new(itemCollection.Count) : new();
+
+            do
+            {
+                result.Add(enumerator.Current);
+            } while (enumerator.MoveNext());
+
+            return result;
         }
 
         private class ProjectReference

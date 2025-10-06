@@ -15,16 +15,18 @@ open System.Runtime.CompilerServices
 open System.Runtime.InteropServices
 open Internal.Utilities.Library
 open Internal.Utilities.Library.Extras
+open System.Threading.Tasks
 open System.Collections.Concurrent
 
 /// Represents the style being used to format errors
-[<RequireQualifiedAccess>]
+[<RequireQualifiedAccess; NoComparison; NoEquality>]
 type DiagnosticStyle =
     | Default
     | Emacs
     | Test
     | VisualStudio
     | Gcc
+    | Rich
 
 /// Thrown when we want to add some range information to a .NET exception
 exception WrappedError of exn * range with
@@ -69,10 +71,11 @@ exception StopProcessingExn of exn option with
         | StopProcessingExn(Some exn) -> "StopProcessingExn, originally (" + exn.ToString() + ")"
         | _ -> "StopProcessingExn"
 
+[<return: Struct>]
 let (|StopProcessing|_|) exn =
     match exn with
-    | StopProcessingExn _ -> Some()
-    | _ -> None
+    | StopProcessingExn _ -> ValueSome()
+    | _ -> ValueNone
 
 let StopProcessing<'T> = StopProcessingExn None
 
@@ -106,7 +109,7 @@ exception LibraryUseOnly of range: range
 
 exception Deprecated of message: string * range: range
 
-exception Experimental of message: string * range: range
+exception Experimental of message: string option * diagnosticId: string option * urlFormat: string option * range: range
 
 exception PossibleUnverifiableCode of range: range
 
@@ -130,6 +133,14 @@ exception DiagnosticWithSuggestions of number: int * message: string * range: ra
 
 /// A diagnostic that is raised when enabled manually, or by default with a language feature
 exception DiagnosticEnabledWithLanguageFeature of number: int * message: string * range: range * enabledByLangFeature: bool
+
+/// A diagnostic that is raised when a diagnostic is obsolete
+exception ObsoleteDiagnostic of
+    isError: bool *
+    diagnosticId: string option *
+    message: string option *
+    urlFormat: string option *
+    range: range
 
 /// The F# compiler code currently uses 'Error(...)' in many places to create
 /// an DiagnosticWithText as an exception even if it's a warning.
@@ -175,7 +186,7 @@ let rec AttachRange m (exn: exn) =
     else
         match exn with
         // Strip TargetInvocationException wrappers
-        | :? TargetInvocationException -> AttachRange m exn.InnerException
+        | :? TargetInvocationException as e when isNotNull e.InnerException -> AttachRange m !!exn.InnerException
         | UnresolvedReferenceNoRange a -> UnresolvedReferenceError(a, m)
         | UnresolvedPathReferenceNoRange(a, p) -> UnresolvedPathReference(a, p, m)
         | :? NotSupportedException -> exn
@@ -219,6 +230,20 @@ type BuildPhase =
     | IlGen
     | Output
     | Interactive // An error seen during interactive execution
+
+    override this.ToString() =
+        match this with
+        | DefaultPhase -> nameof DefaultPhase
+        | Compile -> nameof Compile
+        | Parameter -> nameof Parameter
+        | Parse -> nameof Parse
+        | TypeCheck -> nameof TypeCheck
+        | CodeGen -> nameof CodeGen
+        | Optimize -> nameof Optimize
+        | IlxGen -> nameof IlxGen
+        | IlGen -> nameof IlGen
+        | Output -> nameof Output
+        | Interactive -> nameof Interactive
 
 /// Literal build phase subcategory strings.
 module BuildPhaseSubcategory =
@@ -336,6 +361,9 @@ type DiagnosticsLogger(nameForDebugging: string) =
 
     member x.CheckForErrors() = (x.ErrorCount > 0)
 
+    abstract CheckForRealErrorsIgnoringWarnings: bool
+    default x.CheckForRealErrorsIgnoringWarnings = x.CheckForErrors()
+
     member _.DebugDisplay() =
         sprintf "DiagnosticsLogger(%s)" nameForDebugging
 
@@ -377,29 +405,19 @@ type CapturingDiagnosticsLogger(nm, ?eagerFormat) =
         let errors = diagnostics.ToArray()
         errors |> Array.iter diagnosticsLogger.DiagnosticSink
 
+let buildPhase = AsyncLocal<BuildPhase voption>()
+let diagnosticsLogger = AsyncLocal<DiagnosticsLogger voption>()
+
 /// Type holds thread-static globals for use by the compiler.
 type internal DiagnosticsThreadStatics =
-    [<ThreadStatic; DefaultValue>]
-    static val mutable private buildPhase: BuildPhase
-
-    [<ThreadStatic; DefaultValue>]
-    static val mutable private diagnosticsLogger: DiagnosticsLogger
-
-    static member BuildPhaseUnchecked = DiagnosticsThreadStatics.buildPhase
 
     static member BuildPhase
-        with get () =
-            match box DiagnosticsThreadStatics.buildPhase with
-            | Null -> BuildPhase.DefaultPhase
-            | _ -> DiagnosticsThreadStatics.buildPhase
-        and set v = DiagnosticsThreadStatics.buildPhase <- v
+        with get () = buildPhase.Value |> ValueOption.defaultValue BuildPhase.DefaultPhase
+        and set v = buildPhase.Value <- ValueSome v
 
     static member DiagnosticsLogger
-        with get () =
-            match box DiagnosticsThreadStatics.diagnosticsLogger with
-            | Null -> AssertFalseDiagnosticsLogger
-            | _ -> DiagnosticsThreadStatics.diagnosticsLogger
-        and set v = DiagnosticsThreadStatics.diagnosticsLogger <- v
+        with get () = diagnosticsLogger.Value |> ValueOption.defaultValue AssertFalseDiagnosticsLogger
+        and set v = diagnosticsLogger.Value <- ValueSome v
 
 [<AutoOpen>]
 module DiagnosticsLoggerExtensions =
@@ -418,8 +436,7 @@ module DiagnosticsLoggerExtensions =
         try
             if not tryAndDetectDev15 then
                 let preserveStackTrace =
-                    typeof<Exception>
-                        .GetMethod("InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic)
+                    !!typeof<Exception>.GetMethod("InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic)
 
                 preserveStackTrace.Invoke(exn, null) |> ignore
         with _ ->
@@ -430,6 +447,7 @@ module DiagnosticsLoggerExtensions =
     type DiagnosticsLogger with
 
         member x.EmitDiagnostic(exn, severity) =
+
             match exn with
             | InternalError(s, _)
             | InternalException(_, s, _)
@@ -501,16 +519,15 @@ module DiagnosticsLoggerExtensions =
 
 /// NOTE: The change will be undone when the returned "unwind" object disposes
 let UseBuildPhase (phase: BuildPhase) =
-    let oldBuildPhase = DiagnosticsThreadStatics.BuildPhaseUnchecked
+    let oldBuildPhase = buildPhase.Value
     DiagnosticsThreadStatics.BuildPhase <- phase
 
     { new IDisposable with
-        member x.Dispose() =
-            DiagnosticsThreadStatics.BuildPhase <- oldBuildPhase
+        member x.Dispose() = buildPhase.Value <- oldBuildPhase
     }
 
 /// NOTE: The change will be undone when the returned "unwind" object disposes
-let UseTransformedDiagnosticsLogger (transformer: DiagnosticsLogger -> #DiagnosticsLogger) =
+let UseTransformedDiagnosticsLogger (transformer: DiagnosticsLogger -> DiagnosticsLogger) =
     let oldLogger = DiagnosticsThreadStatics.DiagnosticsLogger
     DiagnosticsThreadStatics.DiagnosticsLogger <- transformer oldLogger
 
@@ -534,6 +551,8 @@ let SetThreadDiagnosticsLoggerNoUnwind diagnosticsLogger =
 type CompilationGlobalsScope(diagnosticsLogger: DiagnosticsLogger, buildPhase: BuildPhase) =
     let unwindEL = UseDiagnosticsLogger diagnosticsLogger
     let unwindBP = UseBuildPhase buildPhase
+
+    new() = new CompilationGlobalsScope(DiagnosticsThreadStatics.DiagnosticsLogger, DiagnosticsThreadStatics.BuildPhase)
 
     member _.DiagnosticsLogger = diagnosticsLogger
     member _.BuildPhase = buildPhase
@@ -784,8 +803,7 @@ let NewlineifyErrorString (message: string) =
 /// fixes given string by replacing all control chars with spaces.
 /// NOTE: newlines are recognized and replaced with stringThatIsAProxyForANewlineInFlatErrors (ASCII 29, the 'group separator'),
 /// which is decoded by the IDE with 'NewlineifyErrorString' back into newlines, so that multi-line errors can be displayed in QuickInfo
-let NormalizeErrorString (text: string MaybeNull) =
-    let text = nullArgCheck "text" text
+let NormalizeErrorString (text: string) =
     let text = text.Trim()
 
     let buf = System.Text.StringBuilder()
@@ -825,29 +843,91 @@ let internal languageFeatureError (langVersion: LanguageVersion) (langFeature: L
     let suggestedVersionStr = LanguageVersion.GetFeatureVersionString langFeature
     Error(FSComp.SR.chkFeatureNotLanguageSupported (featureStr, currentVersionStr, suggestedVersionStr), m)
 
-let private tryLanguageFeatureErrorAux (langVersion: LanguageVersion) (langFeature: LanguageFeature) (m: range) =
+let internal tryLanguageFeatureErrorOption (langVersion: LanguageVersion) (langFeature: LanguageFeature) (m: range) =
     if not (langVersion.SupportsFeature langFeature) then
         Some(languageFeatureError langVersion langFeature m)
     else
         None
 
 let internal checkLanguageFeatureError langVersion langFeature m =
-    match tryLanguageFeatureErrorAux langVersion langFeature m with
+    match tryLanguageFeatureErrorOption langVersion langFeature m with
     | Some e -> error e
     | None -> ()
 
-let internal checkLanguageFeatureAndRecover langVersion langFeature m =
-    match tryLanguageFeatureErrorAux langVersion langFeature m with
-    | Some e -> errorR e
-    | None -> ()
+let internal tryCheckLanguageFeatureAndRecover langVersion langFeature m =
+    match tryLanguageFeatureErrorOption langVersion langFeature m with
+    | Some e ->
+        errorR e
+        false
+    | None -> true
 
-let internal tryLanguageFeatureErrorOption langVersion langFeature m =
-    tryLanguageFeatureErrorAux langVersion langFeature m
+let internal checkLanguageFeatureAndRecover langVersion langFeature m =
+    tryCheckLanguageFeatureAndRecover langVersion langFeature m |> ignore
 
 let internal languageFeatureNotSupportedInLibraryError (langFeature: LanguageFeature) (m: range) =
     let featureStr = LanguageVersion.GetFeatureString langFeature
     let suggestedVersionStr = LanguageVersion.GetFeatureVersionString langFeature
     error (Error(FSComp.SR.chkFeatureNotSupportedInLibrary (featureStr, suggestedVersionStr), m))
+
+module StackGuardMetrics =
+
+    let meter = FSharp.Compiler.Diagnostics.Metrics.Meter
+
+    let jumpCounter =
+        meter.CreateCounter<int64>(
+            "stackguard-jumps",
+            description = "Tracks the number of times the stack guard has jumped to a new thread"
+        )
+
+    let countJump memberName location =
+        let tags =
+            let mutable tags = TagList()
+            tags.Add(Activity.Tags.callerMemberName, memberName)
+            tags.Add("source", location)
+            tags
+
+        jumpCounter.Add(1L, &tags)
+
+    // Used by the self-listener.
+    let jumpsByFunctionName = ConcurrentDictionary<_, int64 ref>()
+
+    let Listen () =
+        let listener = new Metrics.MeterListener()
+
+        listener.EnableMeasurementEvents jumpCounter
+
+        listener.SetMeasurementEventCallback(fun _ v tags _ ->
+            let memberName = nonNull tags[0].Value :?> string
+            let source = nonNull tags[1].Value :?> string
+            let counter = jumpsByFunctionName.GetOrAdd((memberName, source), fun _ -> ref 0L)
+            Interlocked.Add(counter, v) |> ignore)
+
+        listener.Start()
+        listener :> IDisposable
+
+    let StatsToString () =
+        let headers = [ "caller"; "source"; "jumps" ]
+
+        let data =
+            [
+                for kvp in jumpsByFunctionName do
+                    let (memberName, source) = kvp.Key
+                    [ memberName; source; string kvp.Value.Value ]
+            ]
+
+        if List.isEmpty data then
+            ""
+        else
+            $"StackGuard jumps:\n{Metrics.printTable headers data}"
+
+    let CaptureStatsAndWriteToConsole () =
+        let listener = Listen()
+
+        { new IDisposable with
+            member _.Dispose() =
+                listener.Dispose()
+                StatsToString() |> printfn "%s"
+        }
 
 /// Guard against depth of expression nesting, by moving to new stack when a maximum depth is reached
 type StackGuard(maxDepth: int, name: string) =
@@ -862,31 +942,19 @@ type StackGuard(maxDepth: int, name: string) =
             [<CallerFilePath; Optional; DefaultParameterValue("")>] path: string,
             [<CallerLineNumber; Optional; DefaultParameterValue(0)>] line: int
         ) =
-        use _ =
-            Activity.start
-                "DiagnosticsLogger.StackGuard.Guard"
-                [|
-                    Activity.Tags.stackGuardName, name
-                    Activity.Tags.stackGuardCurrentDepth, string depth
-                    Activity.Tags.stackGuardMaxDepth, string maxDepth
-                    Activity.Tags.callerMemberName, memberName
-                    Activity.Tags.callerFilePath, path
-                    Activity.Tags.callerLineNumber, string line
-                |]
 
         depth <- depth + 1
 
         try
             if depth % maxDepth = 0 then
-                let diagnosticsLogger = DiagnosticsThreadStatics.DiagnosticsLogger
-                let buildPhase = DiagnosticsThreadStatics.BuildPhase
-                let ct = Cancellable.Token
+
+                let fileName = System.IO.Path.GetFileName(path)
+
+                StackGuardMetrics.countJump memberName $"{fileName}:{line}"
 
                 async {
                     do! Async.SwitchToNewThread()
                     Thread.CurrentThread.Name <- $"F# Extra Compilation Thread for {name} (depth {depth})"
-                    use _scope = new CompilationGlobalsScope(diagnosticsLogger, buildPhase)
-                    use _token = Cancellable.UsingToken ct
                     return f ()
                 }
                 |> Async.RunImmediate
@@ -894,6 +962,10 @@ type StackGuard(maxDepth: int, name: string) =
                 f ()
         finally
             depth <- depth - 1
+
+    [<DebuggerHidden; DebuggerStepThrough>]
+    member x.GuardCancellable(original: Cancellable<'T>) =
+        Cancellable(fun ct -> x.Guard(fun () -> Cancellable.run ct original))
 
     static member val DefaultDepth =
 #if DEBUG
@@ -905,16 +977,68 @@ type StackGuard(maxDepth: int, name: string) =
     static member GetDepthOption(name: string) =
         GetEnvInteger ("FSHARP_" + name + "StackGuardDepth") StackGuard.DefaultDepth
 
-type CaptureDiagnosticsConcurrently() =
-    let target = DiagnosticsThreadStatics.DiagnosticsLogger
-    let loggers = ResizeArray()
+// UseMultipleDiagnosticLoggers in ParseAndCheckProject.fs provides similar functionality.
+// We should probably adapt and reuse that code.
+module MultipleDiagnosticsLoggers =
+    let Parallel computations =
+        let computationsWithLoggers, diagnosticsReady =
+            [
+                for i, computation in computations |> Seq.indexed do
+                    let diagnosticsReady = TaskCompletionSource<_>()
 
-    member _.GetLoggerForTask(name) : DiagnosticsLogger =
-        let logger = CapturingDiagnosticsLogger(name)
-        loggers.Add logger
-        logger
+                    let logger = CapturingDiagnosticsLogger($"CaptureDiagnosticsConcurrently {i}")
 
-    interface IDisposable with
-        member _.Dispose() =
-            for logger in loggers do
-                logger.CommitDelayedDiagnostics target
+                    // Inject capturing logger into the computation. Signal the TaskCompletionSource when done.
+                    let computationsWithLoggers =
+                        async {
+                            SetThreadDiagnosticsLoggerNoUnwind logger
+
+                            try
+                                return! computation
+                            finally
+                                diagnosticsReady.SetResult logger
+                        }
+
+                    computationsWithLoggers, diagnosticsReady
+            ]
+            |> List.unzip
+
+        // Commit diagnostics from computations as soon as it is possible, preserving the order.
+        let replayDiagnostics =
+            backgroundTask {
+                let target = DiagnosticsThreadStatics.DiagnosticsLogger
+
+                for tcs in diagnosticsReady do
+                    let! finishedLogger = tcs.Task
+                    finishedLogger.CommitDelayedDiagnostics target
+            }
+
+        async {
+            try
+                // We want to restore the current diagnostics context when finished.
+                use _ = new CompilationGlobalsScope()
+                let! results = Async.Parallel computationsWithLoggers
+                do! replayDiagnostics |> Async.AwaitTask
+                return results
+            finally
+                // When any of the computation throws, Async.Parallel may not start some remaining computations at all.
+                // We set dummy results for them to allow the task to finish and to not lose any already emitted diagnostics.
+                if not replayDiagnostics.IsCompleted then
+                    let emptyLogger = CapturingDiagnosticsLogger("empty")
+
+                    for tcs in diagnosticsReady do
+                        tcs.TrySetResult(emptyLogger) |> ignore
+
+                    replayDiagnostics.Wait()
+        }
+
+    let Sequential computations =
+        async {
+            let results = ResizeArray()
+
+            for computation in computations do
+                let! result = computation
+                results.Add result
+
+            return results.ToArray()
+        }

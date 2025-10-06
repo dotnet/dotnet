@@ -55,7 +55,7 @@ module AsyncHelpers =
         )
         // Note: It is ok to use "NoDirectCancel" here because the started computations use the same
         //       cancellation token and will register a cancelled result if cancellation occurs.
-        // Note: It is ok to use "NoDirectTimeout" here because the child compuation above looks after the timeout.
+        // Note: It is ok to use "NoDirectTimeout" here because the child computation above looks after the timeout.
         resultCell.AwaitResult_NoDirectCancelOrTimeout
 
 [<Sealed>]
@@ -340,10 +340,11 @@ type Mailbox<'Msg>(cancellationSupported: bool, isThrowExceptionAfterDisposed: b
                     inboxStore.Clear()
 
                 arrivals.Clear()
-                isDisposed <- true)
+                isDisposed <- true
 
-            if isNotNull pulse then
-                (pulse :> IDisposable).Dispose()
+                if isNotNull pulse then
+                    (pulse :> IDisposable).Dispose()
+                    pulse <- null)
 
 #if DEBUG
     member x.UnsafeContents = (x.inbox, arrivals, pulse, savedCont) |> box

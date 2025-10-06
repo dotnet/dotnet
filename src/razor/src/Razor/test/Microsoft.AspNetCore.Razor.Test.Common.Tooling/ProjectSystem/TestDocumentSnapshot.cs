@@ -1,111 +1,120 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
-internal class TestDocumentSnapshot : DocumentSnapshot
+internal sealed class TestDocumentSnapshot : IDocumentSnapshot
 {
-    private RazorCodeDocument? _codeDocument;
+    public DocumentSnapshot RealSnapshot { get; }
+
+    private readonly RazorCodeDocument? _codeDocument;
+
+    private TestDocumentSnapshot(TestProjectSnapshot project, DocumentState state, RazorCodeDocument? codeDocument = null)
+    {
+        RealSnapshot = new DocumentSnapshot(project.RealSnapshot, state);
+        _codeDocument = codeDocument;
+    }
 
     public static TestDocumentSnapshot Create(string filePath)
-        => Create(filePath, string.Empty);
-
-    public static TestDocumentSnapshot Create(string filePath, VersionStamp version)
-        => Create(filePath, string.Empty, version);
+        => Create(filePath, text: string.Empty, ProjectWorkspaceState.Default);
 
     public static TestDocumentSnapshot Create(string filePath, string text)
-        => Create(filePath, text, VersionStamp.Default);
+        => Create(filePath, text, ProjectWorkspaceState.Default);
 
-    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, ProjectWorkspaceState? projectWorkspaceState = null)
-        => Create(filePath, text, version, TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState));
-
-    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, TestProjectSnapshot projectSnapshot)
+    public static TestDocumentSnapshot Create(string filePath, string text, ProjectWorkspaceState projectWorkspaceState)
     {
-        var targetPath = Path.GetDirectoryName(projectSnapshot.FilePath) is string projectDirectory && filePath.StartsWith(projectDirectory)
-            ? filePath[projectDirectory.Length..]
-            : filePath;
+        var project = TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState);
+        var hostDocument = TestHostDocument.Create(project.HostProject, filePath);
 
-        var hostDocument = new HostDocument(filePath, targetPath);
         var sourceText = SourceText.From(text);
-        var documentState = new DocumentState(
-            hostDocument,
-            SourceText.From(text),
-            version,
-            () => Task.FromResult(TextAndVersion.Create(sourceText, version)));
-        var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
 
-        return testDocument;
+        var documentState = DocumentState.Create(hostDocument, sourceText);
+
+        return new TestDocumentSnapshot(project, documentState);
     }
 
-    internal static TestDocumentSnapshot Create(ProjectSnapshot projectSnapshot, string filePath, string text = "", VersionStamp? version = null)
-    {
-        version ??= VersionStamp.Default;
+    public static TestDocumentSnapshot Create(string filePath, RazorCodeDocument codeDocument)
+        => Create(filePath, codeDocument, ProjectWorkspaceState.Create([.. codeDocument.GetTagHelpers() ?? []]));
 
-        var targetPath = FilePathNormalizer.Normalize(filePath);
-        var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
-        if (targetPath.StartsWith(projectDirectory))
+    public static TestDocumentSnapshot Create(string filePath, RazorCodeDocument codeDocument, ProjectWorkspaceState projectWorkspaceState)
+    {
+        var project = TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState);
+        var hostDocument = TestHostDocument.Create(project.HostProject, filePath);
+
+        hostDocument = hostDocument with { FileKind = codeDocument.FileKind };
+
+        var sourceText = codeDocument.Source.Text;
+
+        var documentState = DocumentState.Create(hostDocument, sourceText);
+
+        return new TestDocumentSnapshot(project, documentState, codeDocument);
+    }
+
+    public HostDocument HostDocument => RealSnapshot.HostDocument;
+
+    public RazorFileKind FileKind => RealSnapshot.FileKind;
+    public string FilePath => RealSnapshot.FilePath;
+    public string TargetPath => RealSnapshot.TargetPath;
+    public IProjectSnapshot Project => RealSnapshot.Project;
+    public int Version => RealSnapshot.Version;
+
+    public ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(CancellationToken cancellationToken)
+    {
+        return _codeDocument is null
+            ? RealSnapshot.GetGeneratedOutputAsync(cancellationToken)
+            : new(_codeDocument);
+    }
+
+    public ValueTask<SourceText> GetTextAsync(CancellationToken cancellationToken)
+    {
+        return _codeDocument is null
+            ? RealSnapshot.GetTextAsync(cancellationToken)
+            : new(_codeDocument.Source.Text);
+    }
+
+    public ValueTask<VersionStamp> GetTextVersionAsync(CancellationToken cancellationToken)
+        => RealSnapshot.GetTextVersionAsync(cancellationToken);
+
+    public ValueTask<SyntaxTree> GetCSharpSyntaxTreeAsync(CancellationToken cancellationToken)
+    {
+        return _codeDocument is null
+            ? RealSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken)
+            : new(_codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken));
+    }
+
+    public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
+    {
+        if (_codeDocument is { } codeDocument)
         {
-            targetPath = targetPath[projectDirectory.Length..];
+            result = codeDocument;
+            return true;
         }
 
-        var hostDocument = new HostDocument(filePath, targetPath);
-        var sourceText = SourceText.From(text);
-        var documentState = new DocumentState(
-            hostDocument,
-            SourceText.From(text),
-            version,
-            () => Task.FromResult(TextAndVersion.Create(sourceText, version.Value)));
-        var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
-
-        return testDocument;
+        return RealSnapshot.TryGetGeneratedOutput(out result);
     }
 
-    public TestDocumentSnapshot(ProjectSnapshot projectSnapshot, DocumentState documentState)
-        : base(projectSnapshot, documentState)
+    public bool TryGetText([NotNullWhen(true)] out SourceText? result)
     {
-    }
-
-    public HostDocument HostDocument => State.HostDocument;
-
-    public override Task<RazorCodeDocument> GetGeneratedOutputAsync()
-    {
-        if (_codeDocument is null)
+        if (_codeDocument is { } codeDocument)
         {
-            throw new ArgumentNullException(nameof(_codeDocument));
+            result = codeDocument.Source.Text;
+            return true;
         }
 
-        return Task.FromResult(_codeDocument);
+        return RealSnapshot.TryGetText(out result);
     }
 
-    public override bool TryGetGeneratedOutput(out RazorCodeDocument result)
-    {
-        if (_codeDocument is null)
-        {
-            throw new InvalidOperationException($"You must call {nameof(With)} to set the code document for this document snapshot.");
-        }
+    public bool TryGetTextVersion(out VersionStamp result)
+        => RealSnapshot.TryGetTextVersion(out result);
 
-        result = _codeDocument;
-        return true;
-    }
-
-    public TestDocumentSnapshot With(RazorCodeDocument codeDocument)
-    {
-        if (codeDocument is null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        _codeDocument = codeDocument;
-        return this;
-    }
+    public IDocumentSnapshot WithText(SourceText text)
+        => RealSnapshot.WithText(text);
 }

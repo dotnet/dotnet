@@ -1,0 +1,145 @@
+{
+    "version": 3,
+    "targets": {
+        "net9.0": {
+            "System.Private.Uri/4.3.2": {
+                "type": "package",
+                "dependencies": {
+                    "Microsoft.NETCore.Platforms": "1.1.1",
+                    "Microsoft.NETCore.Targets": "1.1.3"
+                },
+                "compile": {
+                    "ref/netstandard/_._": {}
+                }
+            }
+        },
+        "net9.0/win-x64": {
+            "System.Private.Uri/4.3.0": {
+                "type": "package",
+                "dependencies": {
+                    "Microsoft.NETCore.Platforms": "1.1.1",
+                    "Microsoft.NETCore.Targets": "1.1.3"
+                },
+                "compile": {
+                    "ref/netstandard/_._": {}
+                }
+            }
+        }
+    },
+    "libraries": {
+        "System.Private.Uri/4.3.2": {
+            "sha512": "o1+7RJnu3Ik3PazR7Z7tJhjPdE000Eq2KGLLWhqJJKXj04wrS8lwb1OFtDF9jzXXADhUuZNJZlPc98uwwqmpFA==",
+            "type": "package",
+            "path": "system.private.uri/4.3.2",
+            "files": [
+                ".nupkg.metadata",
+                ".signature.p7s",
+                "ThirdPartyNotices.txt",
+                "dotnet_library_license.txt",
+                "ref/netstandard/_._",
+                "system.private.uri.4.3.2.nupkg.sha512",
+                "system.private.uri.nuspec"
+            ]
+        }
+    },
+    "projectFileDependencyGroups": {
+        "net9.0": [
+            "System.Private.Uri >= 4.3.2"
+        ]
+    },
+    "packageFolders": {
+        "C:\\Users\\nyenework\\.nuget\\packages\\": {},
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    },
+    "project": {
+        "version": "1.0.0",
+        "restore": {
+            "projectUniqueName": "N:\\trash\\app\\app.csproj",
+            "projectName": "app",
+            "projectPath": "N:\\trash\\app\\app.csproj",
+            "packagesPath": "C:\\Users\\nyenework\\.nuget\\packages\\",
+            "outputPath": "N:\\trash\\app\\obj\\",
+            "projectStyle": "PackageReference",
+            "fallbackFolders": [
+                "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+            ],
+            "configFilePaths": [
+                "C:\\Users\\nyenework\\AppData\\Roaming\\NuGet\\NuGet.Config",
+                "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+                "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+            ],
+            "originalTargetFrameworks": [
+                "net9.0"
+            ],
+            "sources": {
+                "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+                "C:\\Program Files\\dotnet\\library-packs": {},
+                "https://api.nuget.org/v3/index.json": {}
+            },
+            "frameworks": {
+                "net9.0": {
+                    "targetAlias": "net9.0",
+                    "projectReferences": {}
+                }
+            },
+            "warningProperties": {
+                "warnAsError": [
+                    "NU1605"
+                ]
+            },
+            "restoreAuditProperties": {
+                "enableAudit": "true",
+                "auditLevel": "low",
+                "auditMode": "all"
+            },
+            "SdkAnalysisLevel": "9.0.100"
+        },
+        "frameworks": {
+            "net9.0": {
+                "targetAlias": "net9.0",
+                "dependencies": {
+                    "System.Private.Uri": {
+                        "target": "Package",
+                        "version": "[4.3.2, )"
+                    }
+                },
+                "imports": [
+                    "net461",
+                    "net462",
+                    "net47",
+                    "net471",
+                    "net472",
+                    "net48",
+                    "net481"
+                ],
+                "assetTargetFallback": true,
+                "warn": true,
+                "downloadDependencies": [
+                    {
+                        "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+                        "version": "[9.0.0-preview.7.24406.2, 9.0.0-preview.7.24406.2]"
+                    },
+                    {
+                        "name": "Microsoft.NETCore.App.Runtime.win-x64",
+                        "version": "[9.0.0-preview.7.24405.7, 9.0.0-preview.7.24405.7]"
+                    },
+                    {
+                        "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+                        "version": "[9.0.0-preview.7.24405.2, 9.0.0-preview.7.24405.2]"
+                    }
+                ],
+                "frameworkReferences": {
+                    "Microsoft.NETCore.App": {
+                        "privateAssets": "all"
+                    }
+                },
+                "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+            }
+        },
+        "runtimes": {
+            "win-x64": {
+                "#import": []
+            }
+        }
+    }
+}

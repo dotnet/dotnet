@@ -2,7 +2,7 @@ SigFile
   (ParsedSigFileInput
      ("/root/SignatureType/RangeOfSynTypeDefnSigObjectModelShouldEndAtLastMember.fsi",
       QualifiedNameOfFile RangeOfSynTypeDefnSigObjectModelShouldEndAtLastMember,
-      [], [],
+      [],
       [SynModuleOrNamespaceSig
          ([X], false, DeclaredNamespace,
           [Types
@@ -24,7 +24,7 @@ SigFile
                            ([[SynArgInfo ([], false, None)]],
                             SynArgInfo ([], false, None)), false, false,
                          PreXmlDoc ((6,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, None, (6,4--6,30),
+                         Single None, None, (6,4--6,30),
                          { LeadingKeyword = Member (6,4--6,10)
                            InlineKeyword = None
                            WithKeyword = None
@@ -41,4 +41,5 @@ SigFile
                     WithKeyword = None })], (3,0--6,30))], PreXmlDocEmpty, [],
           None, (2,0--6,30), { LeadingKeyword = Namespace (2,0--2,9) })],
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

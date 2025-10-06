@@ -148,7 +148,7 @@ public class PerfAnalyzer
     /// The task name.
     /// </param>
     /// <returns>
-    /// The <see cref="IDictionary"/>.
+    /// The <see cref="IDictionary{TKey,TValue}"/>.
     /// </returns>
     public IDictionary<string, string> GetEventDataByTaskName(string taskName)
     {

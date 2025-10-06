@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Roslyn.Utilities;
@@ -141,11 +142,11 @@ internal abstract class AbstractOptionsSerializationService : IOptionsSerializat
                 var key = reader.ReadString();
                 var value = (ReportDiagnostic)reader.ReadInt32();
 
-                specificDiagnosticOptionsList.Add(KeyValuePairUtil.Create(key, value));
+                specificDiagnosticOptionsList.Add(KeyValuePair.Create(key, value));
             }
         }
 
-        var specificDiagnosticOptions = specificDiagnosticOptionsList ?? SpecializedCollections.EmptyEnumerable<KeyValuePair<string, ReportDiagnostic>>();
+        var specificDiagnosticOptions = specificDiagnosticOptionsList ?? [];
 
         var concurrentBuild = reader.ReadBoolean();
         var deterministic = reader.ReadBoolean();
@@ -158,7 +159,7 @@ internal abstract class AbstractOptionsSerializationService : IOptionsSerializat
         var xmlReferenceResolver = XmlFileResolver.Default;
         var sourceReferenceResolver = SourceFileResolver.Default;
         var assemblyIdentityComparer = DesktopAssemblyIdentityComparer.Default;
-        var strongNameProvider = new DesktopStrongNameProvider();
+        var strongNameProvider = new DesktopStrongNameProvider([], Path.GetTempPath());
 
         return (
             outputKind,
@@ -227,11 +228,11 @@ internal abstract class AbstractOptionsSerializationService : IOptionsSerializat
                 var key = reader.ReadString();
                 var value = reader.ReadString();
 
-                featuresList.Add(KeyValuePairUtil.Create(key, value));
+                featuresList.Add(KeyValuePair.Create(key, value));
             }
         }
 
-        var features = featuresList ?? SpecializedCollections.EmptyEnumerable<KeyValuePair<string, string>>();
+        var features = featuresList ?? [];
         return (kind, documentationMode, features);
     }
 }

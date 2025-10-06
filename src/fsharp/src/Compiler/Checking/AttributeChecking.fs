@@ -24,10 +24,7 @@ open FSharp.Compiler.TypeProviders
 open FSharp.Core.CompilerServices
 #endif
 
-exception ObsoleteWarning of string * range
-exception ObsoleteError of string * range
-
-let fail() = failwith "This custom attribute has an argument that can not yet be converted using this API"
+let fail() = failwith "This custom attribute has an argument that cannot yet be converted using this API"
 
 let rec private evalILAttribElem elem = 
     match elem with 
@@ -90,7 +87,8 @@ type AttribInfo =
          match x with 
          | FSAttribInfo(_g, Attrib(tcref, _, _, _, _, _, _)) -> tcref
          | ILAttribInfo (g, amap, scoref, a, m) -> 
-             let ty = RescopeAndImportILType scoref amap m [] a.Method.DeclaringType
+             // We are skipping nullness check here because this reference is an attribute usage, nullness does not apply.
+             let ty = RescopeAndImportILTypeSkipNullness scoref amap m [] a.Method.DeclaringType
              tcrefOfAppTy g ty
 
     member x.ConstructorArguments = 
@@ -102,9 +100,10 @@ type AttribInfo =
                     let obj = evalFSharpAttribArg g evaluatedExpr
                     ty, obj) 
          | ILAttribInfo (_g, amap, scoref, cattr, m) -> 
-              let parms, _args = decodeILAttribData cattr 
-              [ for argTy, arg in Seq.zip cattr.Method.FormalArgTypes parms ->
-                    let ty = RescopeAndImportILType scoref amap m [] argTy
+              let params_, _args = decodeILAttribData cattr 
+              [ for argTy, arg in Seq.zip cattr.Method.FormalArgTypes params_ ->
+                    // We are skipping nullness check here because this reference is an attribute usage, nullness does not apply.
+                    let ty = RescopeAndImportILTypeSkipNullness scoref amap m [] argTy
                     let obj = evalILAttribElem arg
                     ty, obj ]
 
@@ -117,9 +116,10 @@ type AttribInfo =
                     let obj = evalFSharpAttribArg g evaluatedExpr
                     ty, nm, isField, obj) 
          | ILAttribInfo (_g, amap, scoref, cattr, m) -> 
-              let _parms, namedArgs = decodeILAttribData cattr 
+              let _params_, namedArgs = decodeILAttribData cattr 
               [ for nm, argTy, isProp, arg in namedArgs ->
-                    let ty = RescopeAndImportILType scoref amap m [] argTy
+                    // We are skipping nullness check here because this reference is an attribute usage, nullness does not apply.
+                    let ty = RescopeAndImportILTypeSkipNullness scoref amap m [] argTy
                     let obj = evalILAttribElem arg
                     let isField = not isProp 
                     ty, nm, isField, obj ]
@@ -149,10 +149,11 @@ let GetAttribInfosOfEntity g amap m (tcref:TyconRef) =
         tcref.Attribs |> List.map (fun a -> FSAttribInfo (g, a))
 
 
-let GetAttribInfosOfMethod amap m minfo = 
+let rec GetAttribInfosOfMethod amap m minfo = 
     match minfo with 
     | ILMeth (g, ilminfo, _) -> ilminfo.RawMetadata.CustomAttrs  |> AttribInfosOfIL g amap ilminfo.MetadataScope m
     | FSMeth (g, _, vref, _) -> vref.Attribs |> AttribInfosOfFS g 
+    | MethInfoWithModifiedReturnType(mi,_) -> GetAttribInfosOfMethod amap m mi
     | DefaultStructCtor _ -> []
 #if !NO_TYPEPROVIDERS
     // TODO: provided attributes
@@ -183,11 +184,12 @@ let GetAttribInfosOfEvent amap m einfo =
 
 /// Analyze three cases for attributes declared on methods: IL-declared attributes, F#-declared attributes and
 /// provided attributes.
-let BindMethInfoAttributes m minfo f1 f2 f3 = 
+let rec BindMethInfoAttributes m minfo f1 f2 f3 = 
     ignore m; ignore f3
     match minfo with 
     | ILMeth (_, x, _) -> f1 x.RawMetadata.CustomAttrs 
     | FSMeth (_, _, vref, _) -> f2 vref.Attribs
+    | MethInfoWithModifiedReturnType(mi,_) -> BindMethInfoAttributes m mi f1 f2 f3
     | DefaultStructCtor _ -> f2 []
 #if !NO_TYPEPROVIDERS
     | ProvidedMeth (_, mi, _, _) -> f3 (mi.PApply((fun st -> (st :> IProvidedCustomAttributeProvider)), m))
@@ -229,40 +231,181 @@ let MethInfoHasAttribute g m attribSpec minfo  =
                     (fun _ -> Some ())
         |> Option.isSome
 
-
 let private CheckCompilerFeatureRequiredAttribute (g: TcGlobals) cattrs msg m =
     // In some cases C# will generate both ObsoleteAttribute and CompilerFeatureRequiredAttribute.
-    // Specifically, when default constructor is generated for class with any reqired members in them.
+    // Specifically, when default constructor is generated for class with any required members in them.
     // ObsoleteAttribute should be ignored if CompilerFeatureRequiredAttribute is present, and its name is "RequiredMembers".
     let (AttribInfo(tref,_)) = g.attrib_CompilerFeatureRequiredAttribute
     match TryDecodeILAttribute tref cattrs with
     | Some([ILAttribElem.String (Some featureName) ], _) when featureName = "RequiredMembers" ->
         CompleteD
     | _ ->
-        ErrorD (ObsoleteError(msg, m))
+        ErrorD (ObsoleteDiagnostic(true, None, msg, None, m))
+        
+let private extractILAttribValueFrom name namedArgs   =
+    match namedArgs with 
+    | ExtractILAttributeNamedArg name (AttribElemStringArg v) -> Some v 
+    | _ -> None
 
-/// Check IL attributes for 'ObsoleteAttribute', returning errors and warnings as data
-let private CheckILAttributes (g: TcGlobals) isByrefLikeTyconRef cattrs m =
-    let (AttribInfo(tref,_)) = g.attrib_SystemObsolete
+let private extractILAttributeInfo namedArgs =
+    let diagnosticId = extractILAttribValueFrom "DiagnosticId" namedArgs
+    let urlFormat = extractILAttribValueFrom "UrlFormat" namedArgs
+    (diagnosticId, urlFormat)
+
+let private CheckILExperimentalAttributes (g: TcGlobals) cattrs m =
+    let (AttribInfo(tref,_)) = g.attrib_IlExperimentalAttribute
     match TryDecodeILAttribute tref cattrs with
-    | Some ([ILAttribElem.String (Some msg) ], _) when not isByrefLikeTyconRef ->
-            WarnD(ObsoleteWarning(msg, m))
-    | Some ([ILAttribElem.String (Some msg); ILAttribElem.Bool isError ], _) when not isByrefLikeTyconRef ->
-        if isError then
-            if g.langVersion.SupportsFeature(LanguageFeature.RequiredPropertiesSupport) then
-                CheckCompilerFeatureRequiredAttribute g cattrs msg m
-            else
-                ErrorD (ObsoleteError(msg, m))
-        else
-            WarnD (ObsoleteWarning(msg, m))
-    | Some ([ILAttribElem.String None ], _) when not isByrefLikeTyconRef ->
-        WarnD(ObsoleteWarning("", m))
-    | Some _ when not isByrefLikeTyconRef ->
-        WarnD(ObsoleteWarning("", m))
-    | _ ->
-        CompleteD
+    // [Experimental("DiagnosticId")]
+    // [Experimental(diagnosticId: "DiagnosticId")]
+    // [Experimental("DiagnosticId", UrlFormat = "UrlFormat")]
+    // [Experimental(diagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")]
+    // Constructors deciding on DiagnosticId and UrlFormat properties.
+    | Some ([ attribElement ], namedArgs) ->
+        let diagnosticId = 
+            match attribElement with 
+            | ILAttribElem.String (Some msg) -> Some msg
+            | ILAttribElem.String None
+            | _ -> None
 
-let langVersionPrefix = "--langversion:preview"
+        let message = extractILAttribValueFrom "Message" namedArgs
+        let urlFormat = extractILAttribValueFrom "UrlFormat" namedArgs
+
+        WarnD(Experimental(message, diagnosticId, urlFormat, m))
+    // Empty constructor or only UrlFormat property are not allowed.
+    | Some _
+    | None -> CompleteD
+
+let private CheckILObsoleteAttributes (g: TcGlobals) isByrefLikeTyconRef cattrs m =
+    if isByrefLikeTyconRef then
+        CompleteD
+    else
+        let (AttribInfo(tref,_)) = g.attrib_SystemObsolete
+        match TryDecodeILAttribute tref cattrs with
+        // [Obsolete]
+        // [Obsolete("Message")]
+        // [Obsolete("Message", true)]
+        // [Obsolete("Message", DiagnosticId = "DiagnosticId")]
+        // [Obsolete("Message", DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")]
+        // [Obsolete(DiagnosticId = "DiagnosticId")]
+        // [Obsolete(DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")]
+        // [Obsolete("Message", true, DiagnosticId = "DiagnosticId")]
+        // [Obsolete("Message", true, DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")]
+        // Constructors deciding on IsError and Message properties.
+        | Some ([ attribElement ], namedArgs) ->
+            let diagnosticId, urlFormat = extractILAttributeInfo namedArgs
+            let msg = 
+                match attribElement with 
+                | ILAttribElem.String (Some msg) -> Some msg
+                | ILAttribElem.String None
+                | _ -> None
+
+            WarnD (ObsoleteDiagnostic(false, diagnosticId, msg, urlFormat, m))
+        | Some ([ILAttribElem.String msg; ILAttribElem.Bool isError ], namedArgs) ->
+            let diagnosticId, urlFormat = extractILAttributeInfo namedArgs
+            if isError then
+                if g.langVersion.SupportsFeature(LanguageFeature.RequiredPropertiesSupport) then
+                    CheckCompilerFeatureRequiredAttribute g cattrs msg m
+                else
+                    ErrorD (ObsoleteDiagnostic(true, diagnosticId, msg, urlFormat, m))
+            else
+                WarnD (ObsoleteDiagnostic(false, diagnosticId, msg, urlFormat, m))
+        // Only DiagnosticId, UrlFormat
+        | Some (_, namedArgs) ->
+            let diagnosticId, urlFormat = extractILAttributeInfo namedArgs
+            WarnD(ObsoleteDiagnostic(false, diagnosticId, None, urlFormat, m))
+        // No arguments
+        | None -> CompleteD
+
+/// Check IL attributes for Experimental, warnings as data
+let private CheckILAttributes (g: TcGlobals) isByrefLikeTyconRef cattrs m =
+    trackErrors {
+        do! CheckILObsoleteAttributes g isByrefLikeTyconRef cattrs m
+        do! CheckILExperimentalAttributes g cattrs m
+    }
+
+let private extractObsoleteAttributeInfo namedArgs =
+    let extractILAttribValueFrom name namedArgs   =
+        match namedArgs with 
+        | ExtractAttribNamedArg name (AttribStringArg v) -> Some v 
+        | _ -> None
+    let diagnosticId = extractILAttribValueFrom "DiagnosticId" namedArgs
+    let urlFormat = extractILAttribValueFrom "UrlFormat" namedArgs
+    (diagnosticId, urlFormat)
+
+let private CheckObsoleteAttributes g attribs m =
+    trackErrors {
+        match TryFindFSharpAttribute g g.attrib_SystemObsolete attribs with
+        // [<Obsolete>]
+        // [<Obsolete("Message")>]
+        // [<Obsolete("Message", true)>]
+        // [<Obsolete("Message", DiagnosticId = "DiagnosticId")>]
+        // [<Obsolete("Message", DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")>]
+        // [<Obsolete(DiagnosticId = "DiagnosticId")>]
+        // [<Obsolete(DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")>]
+        // [<Obsolete("Message", true, DiagnosticId = "DiagnosticId")>]
+        // [<Obsolete("Message", true, DiagnosticId = "DiagnosticId", UrlFormat = "UrlFormat")>]
+        // Constructors deciding on IsError and Message properties.
+        | Some(Attrib(unnamedArgs= [ AttribStringArg s ]; propVal= namedArgs)) ->
+            let diagnosticId, urlFormat = extractObsoleteAttributeInfo namedArgs
+            do! WarnD(ObsoleteDiagnostic(false, diagnosticId, Some s, urlFormat, m))
+        | Some(Attrib(unnamedArgs= [ AttribStringArg s; AttribBoolArg(isError) ]; propVal= namedArgs)) -> 
+            let diagnosticId, urlFormat = extractObsoleteAttributeInfo namedArgs
+            if isError then
+                do! ErrorD (ObsoleteDiagnostic(true, diagnosticId, Some s, urlFormat, m))
+            else
+                do! WarnD (ObsoleteDiagnostic(false, diagnosticId, Some s, urlFormat, m))
+        // Only DiagnosticId, UrlFormat
+        | Some(Attrib(propVal= namedArgs)) ->
+            let diagnosticId, urlFormat = extractObsoleteAttributeInfo namedArgs
+            do! WarnD(ObsoleteDiagnostic(false, diagnosticId, None, urlFormat, m))
+        | None ->  ()
+    }
+    
+let private CheckCompilerMessageAttribute g attribs m =
+    trackErrors {
+        match TryFindFSharpAttribute g g.attrib_CompilerMessageAttribute attribs with
+        | Some(Attrib(unnamedArgs= [ AttribStringArg s ; AttribInt32Arg n ]; propVal= namedArgs)) ->
+            let msg = UserCompilerMessage(s, n, m)
+            let isError = 
+                match namedArgs with 
+                | ExtractAttribNamedArg "IsError" (AttribBoolArg v) -> v 
+                | _ -> false 
+            // If we are using a compiler that supports nameof then error 3501 is always suppressed.
+            // See attribute on FSharp.Core 'nameof'
+            if n = 3501 then
+                ()
+            elif isError && (not g.compilingFSharpCore || n <> 1204) then
+                do! ErrorD msg 
+            else
+                do! WarnD msg
+        | _ -> 
+            ()
+    }
+    
+let private CheckFSharpExperimentalAttribute g attribs m =
+    trackErrors {
+        match TryFindFSharpAttribute g g.attrib_ExperimentalAttribute attribs with
+        // [<Experimental("Message")>]
+        | Some(Attrib(unnamedArgs= [ AttribStringArg(s) ])) ->
+            let isExperimentalAttributeDisabled (s:string) =
+                if g.compilingFSharpCore then
+                    true
+                else
+                    g.langVersion.IsPreviewEnabled && (s.IndexOf("--langversion:preview", StringComparison.OrdinalIgnoreCase) >= 0)
+            if not (isExperimentalAttributeDisabled s) then
+                do! WarnD(Experimental(Some s, None, None, m))
+        // Empty constructor is not allowed.
+        | Some _
+        | _ -> ()
+    }
+    
+let private CheckUnverifiableAttribute g attribs m  =
+    trackErrors {
+        match TryFindFSharpAttribute g g.attrib_UnverifiableAttribute attribs with
+        | Some _ -> 
+            do! WarnD(PossibleUnverifiableCode(m))
+        | _ -> ()
+    }
 
 /// Check F# attributes for 'ObsoleteAttribute', 'CompilerMessageAttribute' and 'ExperimentalAttribute',
 /// returning errors and warnings as data
@@ -270,56 +413,10 @@ let CheckFSharpAttributes (g:TcGlobals) attribs m =
     if isNil attribs then CompleteD
     else
         trackErrors {
-            match TryFindFSharpAttribute g g.attrib_SystemObsolete attribs with
-            | Some(Attrib(_, _, [ AttribStringArg s ], _, _, _, _)) ->
-                do! WarnD(ObsoleteWarning(s, m))
-            | Some(Attrib(_, _, [ AttribStringArg s; AttribBoolArg(isError) ], _, _, _, _)) -> 
-                if isError then 
-                    do! ErrorD (ObsoleteError(s, m))
-                else 
-                    do! WarnD (ObsoleteWarning(s, m))
-            | Some _ -> 
-                do! WarnD(ObsoleteWarning("", m))
-            | None -> 
-                ()
-            
-            match TryFindFSharpAttribute g g.attrib_CompilerMessageAttribute attribs with
-            | Some(Attrib(_, _, [ AttribStringArg s ; AttribInt32Arg n ], namedArgs, _, _, _)) ->
-                let msg = UserCompilerMessage(s, n, m)
-                let isError = 
-                    match namedArgs with 
-                    | ExtractAttribNamedArg "IsError" (AttribBoolArg v) -> v 
-                    | _ -> false 
-                // If we are using a compiler that supports nameof then error 3501 is always suppressed.
-                // See attribute on FSharp.Core 'nameof'
-                if n = 3501 then
-                    ()
-                elif isError && (not g.compilingFSharpCore || n <> 1204) then
-                    do! ErrorD msg 
-                else
-                    do! WarnD msg
-            | _ -> 
-                ()
-
-            match TryFindFSharpAttribute g g.attrib_ExperimentalAttribute attribs with
-            | Some(Attrib(_, _, [ AttribStringArg(s) ], _, _, _, _)) ->
-                let isExperimentalAttributeDisabled (s:string) =
-                    if g.compilingFSharpCore then
-                        true
-                    else
-                        g.langVersion.IsPreviewEnabled && (s.IndexOf(langVersionPrefix, StringComparison.OrdinalIgnoreCase) >= 0)
-                if not (isExperimentalAttributeDisabled s) then
-                    do! WarnD(Experimental(s, m))
-            | Some _ ->
-                do! WarnD(Experimental(FSComp.SR.experimentalConstruct (), m))
-            | _ ->
-                ()
-
-            match TryFindFSharpAttribute g g.attrib_UnverifiableAttribute attribs with
-            | Some _ -> 
-                do! WarnD(PossibleUnverifiableCode(m))
-            | _ ->  
-                ()
+            do! CheckObsoleteAttributes g attribs m
+            do! CheckCompilerMessageAttribute g attribs m
+            do! CheckFSharpExperimentalAttribute g attribs m
+            do! CheckUnverifiableAttribute g attribs m
         }
 
 #if !NO_TYPEPROVIDERS
@@ -327,16 +424,16 @@ let CheckFSharpAttributes (g:TcGlobals) attribs m =
 let private CheckProvidedAttributes (g: TcGlobals) m (provAttribs: Tainted<IProvidedCustomAttributeProvider>)  = 
     let (AttribInfo(tref, _)) = g.attrib_SystemObsolete
     match provAttribs.PUntaint((fun a -> a.GetAttributeConstructorArgs(provAttribs.TypeProvider.PUntaintNoFailure(id), tref.FullName)), m) with
-    | Some ([ Some (:? string as msg) ], _) -> WarnD(ObsoleteWarning(msg, m))
+    | Some ([ Some (:? string as msg) ], _) -> WarnD(ObsoleteDiagnostic(false, None, Some msg, None, m))
     | Some ([ Some (:? string as msg); Some (:?bool as isError) ], _) ->
         if isError then 
-            ErrorD (ObsoleteError(msg, m))
+            ErrorD (ObsoleteDiagnostic(true, None, Some msg, None, m))
         else 
-            WarnD (ObsoleteWarning(msg, m))
+            WarnD (ObsoleteDiagnostic(false, None, Some msg, None, m))
     | Some ([ None ], _) -> 
-        WarnD(ObsoleteWarning("", m))
+        WarnD(ObsoleteDiagnostic(false, None, None, None, m))
     | Some _ -> 
-        WarnD(ObsoleteWarning("", m))
+        WarnD(ObsoleteDiagnostic(false, None, None, None, m))
     | None -> 
         CompleteD
 #endif
@@ -344,7 +441,17 @@ let private CheckProvidedAttributes (g: TcGlobals) m (provAttribs: Tainted<IProv
 /// Indicate if a list of IL attributes contains 'ObsoleteAttribute'. Used to suppress the item in intellisense.
 let CheckILAttributesForUnseen (g: TcGlobals) cattrs _m = 
     let (AttribInfo(tref, _)) = g.attrib_SystemObsolete
-    Option.isSome (TryDecodeILAttribute tref cattrs)
+    let hasObsolete = Option.isSome (TryDecodeILAttribute tref cattrs)
+    if hasObsolete then
+        // Exclude types marked with IsByRefLikeAttribute from being considered obsolete,
+        // even if ObsoleteAttribute is present. This avoids improper suppression of types 
+        // like Span and ReadOnlySpan in completion lists due to their dual attributes.
+        match g.attrib_IsByRefLikeAttribute_opt with
+        | Some (AttribInfo(isByRefLikeTref, _)) ->
+            not (Option.isSome (TryDecodeILAttribute isByRefLikeTref cattrs))
+        | None -> true
+    else
+        false
 
 /// Checks the attributes for CompilerMessageAttribute, which has an IsHidden argument that allows
 /// items to be suppressed from intellisense.
@@ -363,8 +470,13 @@ let CheckFSharpAttributesForHidden g attribs =
      | _ -> false)
 
 /// Indicate if a list of F# attributes contains 'ObsoleteAttribute'. Used to suppress the item in intellisense.
-let CheckFSharpAttributesForObsolete g attribs = 
-    not (isNil attribs) && (HasFSharpAttribute g g.attrib_SystemObsolete attribs)
+let CheckFSharpAttributesForObsolete (g:TcGlobals) attribs = 
+    not (isNil attribs) && 
+    (HasFSharpAttribute g g.attrib_SystemObsolete attribs) &&
+    // Exclude types marked with IsByRefLikeAttribute from being considered obsolete,
+    // even if ObsoleteAttribute is present. This avoids improper suppression of types 
+    // like Span and ReadOnlySpan in completion lists due to their dual attributes.
+    not (HasFSharpAttributeOpt g g.attrib_IsByRefLikeAttribute_opt attribs)
 
 /// Indicate if a list of F# attributes contains 'ObsoleteAttribute'. Used to suppress the item in intellisense.
 /// Also check the attributes for CompilerMessageAttribute, which has an IsHidden argument that allows
@@ -377,7 +489,7 @@ let CheckFSharpAttributesForUnseen g attribs _m =
 #if !NO_TYPEPROVIDERS
 /// Indicate if a list of provided attributes contains 'ObsoleteAttribute'. Used to suppress the item in intellisense.
 let CheckProvidedAttributesForUnseen (provAttribs: Tainted<IProvidedCustomAttributeProvider>) m = 
-    provAttribs.PUntaint((fun a -> a.GetAttributeConstructorArgs(provAttribs.TypeProvider.PUntaintNoFailure(id), typeof<ObsoleteAttribute>.FullName).IsSome), m)
+    provAttribs.PUntaint((fun a -> a.GetAttributeConstructorArgs(provAttribs.TypeProvider.PUntaintNoFailure(id), !! typeof<ObsoleteAttribute>.FullName).IsSome), m)
 #endif
 
 /// Check the attributes associated with a property, returning warnings and errors as data.
@@ -412,7 +524,27 @@ let CheckEntityAttributes g (tcref: TyconRef) m =
         CheckFSharpAttributes g tcref.Attribs m
         
 let CheckILEventAttributes g (tcref: TyconRef) cattrs m  =    
-    CheckILAttributes g (isByrefLikeTyconRef g m tcref) cattrs m 
+    CheckILAttributes g (isByrefLikeTyconRef g m tcref) cattrs m
+
+let CheckUnitOfMeasureAttributes g (measure: Measure) = 
+    let checkAttribs tm m =
+        let attribs =
+            ListMeasureConOccsWithNonZeroExponents g true tm
+            |> List.map fst
+            |> List.map(_.Attribs)
+            |> List.concat
+
+        CheckFSharpAttributes g attribs m |> CommitOperationResult
+                
+    match measure with
+    | Measure.Const(range = m) -> checkAttribs measure m
+    | Measure.Inv ms -> checkAttribs measure ms.Range
+    | Measure.One(m) -> checkAttribs measure m
+    | Measure.RationalPower(measure = ms1) -> checkAttribs measure ms1.Range
+    | Measure.Prod(measure1= ms1; measure2= ms2) ->
+        checkAttribs ms1 ms1.Range
+        checkAttribs ms2 ms2.Range
+    | Measure.Var(typar) -> checkAttribs measure typar.Range
 
 /// Check the attributes associated with a method, returning warnings and errors as data.
 let CheckMethInfoAttributes g m tyargsOpt (minfo: MethInfo) =
@@ -461,9 +593,9 @@ let MethInfoIsUnseen g (m: range) (ty: TType) minfo =
 
     let isUnseenByHidingAttribute () = 
 #if !NO_TYPEPROVIDERS
-        not (isObjTy g ty) &&
+        not (isObjTyAnyNullness g ty) &&
         isAppTy g ty &&
-        isObjTy g minfo.ApparentEnclosingType &&
+        isObjTyAnyNullness g minfo.ApparentEnclosingType &&
         let tcref = tcrefOfAppTy g ty 
         match tcref.TypeReprInfo with 
         | TProvidedTypeRepr info -> 
@@ -476,7 +608,7 @@ let MethInfoIsUnseen g (m: range) (ty: TType) minfo =
         // just to look at the attributes on IL methods.
         if tcref.IsILTycon then 
                 tcref.ILTyconRawMetadata.CustomAttrs.AsArray()
-                |> Array.exists (fun attr -> attr.Method.DeclaringType.TypeSpec.Name = typeof<TypeProviderEditorHideMethodsAttribute>.FullName)
+                |> Array.exists (fun attr -> attr.Method.DeclaringType.TypeSpec.Name = !! typeof<TypeProviderEditorHideMethodsAttribute>.FullName)
         else 
             false
 #else
@@ -537,7 +669,7 @@ let IsSecurityAttribute (g: TcGlobals) amap (casmap : IDictionary<Stamp, bool>) 
             match casmap.TryGetValue tcs with
             | true, c -> c
             | _ ->
-                let exists = ExistsInEntireHierarchyOfType (fun t -> typeEquiv g t (mkAppTy attr.TyconRef [])) g amap m AllowMultiIntfInstantiations.Yes (mkAppTy tcref [])          
+                let exists = ExistsInEntireHierarchyOfType (fun t -> typeEquiv g t (mkWoNullAppTy attr.TyconRef [])) g amap m AllowMultiIntfInstantiations.Yes (mkWoNullAppTy tcref [])          
                 casmap[tcs] <- exists
                 exists
         | ValueNone -> false  

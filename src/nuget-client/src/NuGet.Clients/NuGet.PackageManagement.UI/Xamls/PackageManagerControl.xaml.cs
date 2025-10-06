@@ -12,9 +12,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft;
+using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.ServiceHub.Framework;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -29,6 +32,7 @@ using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 using NuGet.VisualStudio.Telemetry;
+using Hyperlink = System.Windows.Documents.Hyperlink;
 using Resx = NuGet.PackageManagement.UI;
 using Task = System.Threading.Tasks.Task;
 
@@ -58,7 +62,6 @@ namespace NuGet.PackageManagement.UI
         private bool _isRefreshRequired;
         private bool _isExecutingAction; // Signifies where an action is being executed. Should be updated in a coordinated fashion with IsEnabled
         private RestartRequestBar _restartBar;
-        private PRMigratorBar _migratorBar;
         private bool _missingPackageStatus;
         private bool _loadedAndInitialized = false;
         private bool _recommendPackages = false;
@@ -66,6 +69,17 @@ namespace NuGet.PackageManagement.UI
         private IServiceBroker _serviceBroker;
         private bool _disposed = false;
         private IPackageVulnerabilityService _packageVulnerabilityService;
+        private INuGetPackageFileService _nugetPackageFileService;
+        private bool _isReadmeTabEnabled;
+
+        private SearchControl SearchControl
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return ((IVsWindowSearchHostPrivate)_windowSearchHost).SearchControl as SearchControl;
+            }
+        }
 
         private PackageManagerInstalledTabData _installedTabTelemetryData;
 
@@ -74,27 +88,34 @@ namespace NuGet.PackageManagement.UI
             InitializeComponent();
         }
 
-        public static async ValueTask<PackageManagerControl> CreateAsync(PackageManagerModel model, INuGetUILogger uiLogger)
+        public static async ValueTask<PackageManagerControl> CreateAsync(PackageManagerModel model, INuGetUILogger uiLogger, CancellationToken cancellationToken)
         {
             Assumes.NotNull(model);
 
             var packageManagerControl = new PackageManagerControl();
-            await packageManagerControl.InitializeAsync(model, uiLogger);
+            await packageManagerControl.InitializeAsync(model, uiLogger, cancellationToken);
             return packageManagerControl;
         }
 
-        private async ValueTask InitializeAsync(PackageManagerModel model, INuGetUILogger uiLogger)
+        private async ValueTask InitializeAsync(PackageManagerModel model, INuGetUILogger uiLogger, CancellationToken cancellationToken)
         {
-            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             _sinceLastRefresh = Stopwatch.StartNew();
 
             _installedTabTelemetryData = new PackageManagerInstalledTabData();
 
             Model = model;
             _uiLogger = uiLogger;
-            Settings = await ServiceLocator.GetComponentModelServiceAsync<ISettings>();
 
+            await TaskScheduler.Default;
+            Settings = await ServiceLocator.GetComponentModelServiceAsync<ISettings>();
             _windowSearchHostFactory = await ServiceLocator.GetGlobalServiceAsync<SVsWindowSearchHostFactory, IVsWindowSearchHostFactory>();
+            var nuGetFeatureFlagService = await ServiceLocator.GetComponentModelServiceAsync<INuGetFeatureFlagService>();
+            var editorOptionsFactoryService = await ServiceLocator.GetComponentModelServiceAsync<IEditorOptionsFactoryService>();
+            NuGetExperimentationService = await ServiceLocator.GetComponentModelServiceAsync<INuGetExperimentationService>();
+            ISourceRepositoryProvider sourceRepositoryProvider = await ServiceLocator.GetComponentModelServiceAsync<ISourceRepositoryProvider>();
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
             _serviceBroker = model.Context.ServiceBroker;
 
             if (Model.IsSolution)
@@ -120,6 +141,12 @@ namespace NuGet.PackageManagement.UI
                 _windowSearchHost = _windowSearchHostFactory.CreateWindowSearchHost(_topPanel.SearchControlParent);
                 _windowSearchHost.SetupSearch(this);
                 _windowSearchHost.IsVisible = true;
+
+                if (SearchControl is SearchControl searchControl)
+                {
+                    // Use Fluent UI style for the search control.
+                    searchControl.SetResourceReference(FrameworkElement.StyleProperty, SearchControl.ToolBarStyleKey);
+                }
             }
 
             AddRestoreBar();
@@ -140,13 +167,22 @@ namespace NuGet.PackageManagement.UI
             _settingsKey = await GetSettingsKeyAsync(CancellationToken.None);
             UserSettings settings = LoadSettings();
             InitializeFilterList(settings);
+
+            _nugetPackageFileService?.Dispose();
+            _nugetPackageFileService = await _serviceBroker.GetProxyAsync<INuGetPackageFileService>(NuGetServices.PackageFileService, CancellationToken.None);
+            _isReadmeTabEnabled = await nuGetFeatureFlagService.IsFeatureEnabledAsync(NuGetFeatureFlagConstants.RenderReadmeInPMUI);
+            if (_isReadmeTabEnabled)
+            {
+                _isReadmeTabEnabled = _packageDetail._packageDetailsTabControl.PackageReadmeControl.Initialize(editorOptionsFactoryService);
+            }
+
+            _packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.Initialize(_detailModel, _nugetPackageFileService, _topPanel.Filter, settings.SelectedPackageMetadataTab, _isReadmeTabEnabled);
+
             await InitPackageSourcesAsync(settings, CancellationToken.None);
             ApplySettings(settings, Settings);
             _initialized = true;
 
             await IsCentralPackageManagementEnabledAsync(CancellationToken.None);
-
-            NuGetExperimentationService = await ServiceLocator.GetComponentModelServiceAsync<INuGetExperimentationService>();
 
             // UI is initialized. Start the first search
             _packageList.CheckBoxesEnabled = _topPanel.Filter == ItemFilter.UpdatesAvailable;
@@ -161,7 +197,6 @@ namespace NuGet.PackageManagement.UI
                 controller.PackageManagerControl = this;
             }
 
-            ISourceRepositoryProvider sourceRepositoryProvider = await ServiceLocator.GetComponentModelServiceAsync<ISourceRepositoryProvider>();
             var sourceRepositories = sourceRepositoryProvider.GetRepositories();
             _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, _uiLogger);
 
@@ -200,6 +235,8 @@ namespace NuGet.PackageManagement.UI
         public ISettings Settings { get; private set; }
 
         public ItemFilter ActiveFilter { get => _topPanel.Filter; set => _topPanel.SelectFilter(value); }
+
+        public bool IsReadmeTabEnabled => _isReadmeTabEnabled;
 
         public bool IsSolution => Model.IsSolution;
 
@@ -304,6 +341,28 @@ namespace NuGet.PackageManagement.UI
             else
             {
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.ActionsExecuted, RefreshOperationStatus.NoOp);
+            }
+        }
+
+        /// <summary>
+        /// Handles Hyperlink controls inside this DetailControl class associated with
+        /// <see cref="PackageManagerControlCommands.OpenExternalLink" />
+        /// </summary>
+        /// <param name="sender">A Hyperlink control</param>
+        /// <param name="e">Command arguments</param>
+        private void ExecuteOpenExternalLink(object sender, ExecutedRoutedEventArgs e)
+        {
+            var hyperlink = e.OriginalSource as Hyperlink;
+            if (hyperlink != null && hyperlink.NavigateUri != null)
+            {
+                Model.UIController.LaunchExternalLink(hyperlink.NavigateUri);
+                e.Handled = true;
+
+                if (e.Parameter is not null and HyperlinkType hyperlinkType)
+                {
+                    var evt = NavigatedTelemetryEvent.CreateWithExternalLink(hyperlinkType, UIUtility.ToContractsItemFilter(ActiveFilter), Model.IsSolution);
+                    TelemetryActivity.EmitTelemetryEvent(evt);
+                }
             }
         }
 
@@ -655,7 +714,8 @@ namespace NuGet.PackageManagement.UI
                 FileConflictAction = _detailModel.Options.SelectedFileConflictAction.Action,
                 IncludePrerelease = _topPanel.CheckboxPrerelease.IsChecked == true,
                 SelectedFilter = _topPanel.Filter,
-                OptionsExpanded = _packageDetail._optionsControl.IsExpanded
+                OptionsExpanded = _packageDetail._optionsControl.IsExpanded,
+                SelectedPackageMetadataTab = PackageDetailsTabViewModel.ConvertFromTabType(_packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.SelectedTab)
             };
             _packageDetail._solutionView.SaveSettings(settings);
 
@@ -727,15 +787,6 @@ namespace NuGet.PackageManagement.UI
                 Model.Context.PackageRestoreManager.PackagesMissingStatusChanged
                     -= PackageRestoreManager_PackagesMissingStatusChanged;
             }
-        }
-
-        private void AddMigratorBar()
-        {
-            _migratorBar = new PRMigratorBar(Model);
-
-            DockPanel.SetDock(_migratorBar, Dock.Top);
-
-            _root.Children.Insert(0, _migratorBar);
         }
 
         private void PackageRestoreManager_PackagesMissingStatusChanged(object sender, PackagesMissingStatusEventArgs e)
@@ -876,8 +927,6 @@ namespace NuGet.PackageManagement.UI
         internal async Task SearchPackagesAndRefreshUpdateCountAsync(string searchText, bool useCachedPackageMetadata, IVsSearchCallback pSearchCallback, IVsSearchTask searchTask)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            var sw = Stopwatch.StartNew();
-            ItemFilter filterToRender = _topPanel.Filter;
 
             var loadContext = new PackageLoadContext(Model.IsSolution, Model.Context);
 
@@ -1003,24 +1052,17 @@ namespace NuGet.PackageManagement.UI
             int deprecatedPackagesCount = 0;
             PackageCollection installedPackageCollection = null;
 
-            // Transitive dependencies are only displayed in Project-level PM UI.
-            if (Model.IsSolution)
-            {
-                installedPackageCollection = await loadContext.GetInstalledPackagesAsync();
-            }
-            else
-            {
-                IInstalledAndTransitivePackages installedAndTransitivePackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(loadContext.ServiceBroker, loadContext.Projects, includeTransitiveOrigins: true, token);
-                installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
-                PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages.Where(p => p.TransitiveOrigins.Any()));
-                IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => _packageVulnerabilityService.GetVulnerabilityInfoAsync(p, token)));
+            IInstalledAndTransitivePackages installedAndTransitivePackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(loadContext.ServiceBroker, loadContext.Projects, includeTransitiveOrigins: true, token);
+            installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
+            PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages.Where(p => p.TransitiveOrigins.Any()));
+            //Use ShutdownToken to ensure the operation is canceled if it's still running when VS shuts down.
+            IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => _packageVulnerabilityService.GetVulnerabilityInfoAsync(p, VsShellUtilities.ShutdownToken)));
 
-                foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
+            foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
+            {
+                if (vulnerabilityInfo != null && vulnerabilityInfo.Any())
                 {
-                    if (vulnerabilityInfo != null && vulnerabilityInfo.Any())
-                    {
-                        vulnerablePackagesCount++;
-                    }
+                    vulnerablePackagesCount++;
                 }
             }
 
@@ -1105,9 +1147,8 @@ namespace NuGet.PackageManagement.UI
         internal async Task UpdateDetailPaneAsync(CancellationToken cancellationToken)
         {
             PackageItemViewModel selectedItem = _packageList.SelectedItem;
-            IReadOnlyCollection<PackageSourceContextInfo> packageSources = SelectedSource.PackageSources;
             int selectedIndex = _packageList.SelectedIndex;
-            int recommendedCount = _packageList.PackageItems.Where(item => item.Recommended == true).Count();
+            int recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
 
             if (selectedItem == null)
             {
@@ -1137,8 +1178,8 @@ namespace NuGet.PackageManagement.UI
         {
             var operationId = _packageList.OperationId;
             var selectedIndex = _packageList.SelectedIndex;
-            var recommendedCount = _packageList.PackageItems.Where(item => item.Recommended == true).Count();
-            var hasDeprecationAlternative = selectedPackage.DeprecationMetadata?.AlternatePackage != null;
+            var recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
+            var hasDeprecationAlternative = selectedPackage.AlternatePackage != null;
 
             if (_topPanel.Filter == ItemFilter.All
                 && operationId.HasValue
@@ -1254,6 +1295,7 @@ namespace NuGet.PackageManagement.UI
 
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 {
+                    await _packageDetail._packageDetailsTabControl.PackageDetailsTabViewModel.ReadmePreviewViewModel.ItemFilterChangedAsync(ActiveFilter);
                     await RunAndEmitRefreshAsync(async () =>
                     {
                         await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -1268,7 +1310,7 @@ namespace NuGet.PackageManagement.UI
         /// <summary>
         /// Refreshes the control after packages are installed or uninstalled.
         /// </summary>
-        private async ValueTask RefreshAsync()
+        private async ValueTask RefreshAsync(bool clearCache = false)
         {
             if (_topPanel.Filter != ItemFilter.All)
             {
@@ -1282,7 +1324,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.Projects,
                     CancellationToken.None);
-                _packageList.UpdatePackageStatus(installedPackages.ToArray());
+                await _packageList.UpdatePackageStatusAsync(installedPackages.ToArray(), clearCache);
 
                 await RefreshInstalledAndUpdatesTabsAsync();
             }
@@ -1555,6 +1597,7 @@ namespace NuGet.PackageManagement.UI
             _refreshCts?.Dispose();
             _cancelSelectionChangedSource?.Dispose();
 
+            _packageDetail.Cleanup();
             _detailModel.Dispose();
             _packageList.SelectionChanged -= PackageList_SelectionChanged;
 
@@ -1608,7 +1651,7 @@ namespace NuGet.PackageManagement.UI
                     _isExecutingAction = false;
                     if (_isRefreshRequired)
                     {
-                        await RunAndEmitRefreshAsync(async () => await RefreshAsync(), RefreshOperationSource.ExecuteAction, GetTimeSinceLastRefreshAndRestart(), sw);
+                        await RunAndEmitRefreshAsync(async () => await RefreshAsync(clearCache: true), RefreshOperationSource.ExecuteAction, GetTimeSinceLastRefreshAndRestart(), sw);
                         _isRefreshRequired = false;
                     }
 
@@ -1732,6 +1775,7 @@ namespace NuGet.PackageManagement.UI
 
         private async Task ExecuteRestartSearchCommandAsync()
         {
+            _packageVulnerabilityService?.ResetVulnerabilityData();
             await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
             await RefreshConsolidatablePackagesCountAsync();
         }
@@ -1821,6 +1865,7 @@ namespace NuGet.PackageManagement.UI
 
             if (disposing)
             {
+                _nugetPackageFileService.Dispose();
                 CleanUp();
             }
 

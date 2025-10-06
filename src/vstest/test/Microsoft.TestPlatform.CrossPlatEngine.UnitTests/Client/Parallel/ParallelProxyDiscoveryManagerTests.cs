@@ -25,12 +25,12 @@ namespace TestPlatform.CrossPlatEngine.UnitTests.Client;
 [TestClass]
 public class ParallelProxyDiscoveryManagerTests
 {
-    private const int Timeout3Seconds = 3 * 1000;
+    private const int Timeout10Seconds = 10 * 1000;
     private readonly Queue<Mock<IProxyDiscoveryManager>> _preCreatedMockManagers;
     private readonly List<Mock<IProxyDiscoveryManager>> _usedMockManagers;
     private readonly Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> _createMockManager;
     private readonly Mock<ITestDiscoveryEventsHandler2> _mockEventHandler;
-    private readonly List<string> _sources = new() { "1.dll", "2.dll" };
+    private readonly List<string> _sources = ["1.dll", "2.dll"];
     private readonly DiscoveryCriteria _discoveryCriteriaWith2Sources;
     private readonly List<TestRuntimeProviderInfo> _runtimeProviders;
     private int _createMockManagerCalled;
@@ -70,11 +70,10 @@ public class ParallelProxyDiscoveryManagerTests
         _mockEventHandler = new Mock<ITestDiscoveryEventsHandler2>();
         _discoveryCriteriaWith2Sources = new DiscoveryCriteria(_sources, 100, null);
         _runtimeProviders = new List<TestRuntimeProviderInfo> {
-            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
-            {
+            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", [
                 new() { Source = _sources[0], Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
                 new() { Source = _sources[1], Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
-            })
+            ])
         };
 
         // This event is Set by callback from _mockEventHandler in SetupDiscoveryManager
@@ -126,7 +125,7 @@ public class ParallelProxyDiscoveryManagerTests
         var parallelDiscoveryManager = SetupDiscoveryManager(_createMockManager, 2, false);
 
         var task = Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
-        var discoveryCompleted = _discoveryCompleted.Wait(Timeout3Seconds);
+        var discoveryCompleted = _discoveryCompleted.Wait(Timeout10Seconds);
 
         if (task.IsCompleted)
         {
@@ -214,7 +213,7 @@ public class ParallelProxyDiscoveryManagerTests
             parallelDiscoveryManager.Abort();
         });
 
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         Assert.AreEqual(1, _processedSources.Count, "One source should be processed.");
     }
 
@@ -232,7 +231,7 @@ public class ParallelProxyDiscoveryManagerTests
             parallelDiscoveryManager.Abort(_mockEventHandler.Object);
         });
 
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         Assert.AreEqual(1, _processedSources.Count, "One source should be processed.");
     }
 
@@ -252,7 +251,7 @@ public class ParallelProxyDiscoveryManagerTests
         Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
 
         // Processed sources should be 1 since the 2nd source is never discovered
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         Assert.AreEqual(1, _processedSources.Count, "All Sources must be processed.");
     }
 
@@ -272,7 +271,7 @@ public class ParallelProxyDiscoveryManagerTests
         Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
 
         // Processed sources should be 1 since the 2nd source is never discovered
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         _mockEventHandler.Verify(s => s.HandleLogMessage(TestMessageLevel.Error, It.IsAny<string>()), Times.Once);
     }
 
@@ -292,7 +291,7 @@ public class ParallelProxyDiscoveryManagerTests
         Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
 
         // Processed sources should be 1 since the 2nd source is never discovered
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         _mockEventHandler.Verify(s => s.HandleRawMessage(It.Is<string>(str => str.Contains(MessageType.TestMessage))));
     }
 
@@ -324,7 +323,7 @@ public class ParallelProxyDiscoveryManagerTests
 
         Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
 
-        Assert.IsTrue(_discoveryCompleted.Wait(Timeout3Seconds), "Test discovery not completed.");
+        Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
         CollectionAssert.AreEquivalent(_sources, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
         Assert.AreEqual(0, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered).Count);

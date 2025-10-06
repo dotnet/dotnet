@@ -2,9 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Globalization;
 using System.IO;
 using NuGet.Common;
+
+#if NET5_0_OR_GREATER
+using System.Globalization;
+#endif
 
 namespace NuGet.Packaging.Signing
 {

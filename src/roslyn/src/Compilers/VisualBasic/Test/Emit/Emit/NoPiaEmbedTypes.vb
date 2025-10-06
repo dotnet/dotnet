@@ -2,20 +2,18 @@
 ' The .NET Foundation licenses this file to you under the MIT license.
 ' See the LICENSE file in the project root for more information.
 
+Imports System.Collections.Immutable
+Imports System.IO
+Imports System.Reflection
+Imports System.Reflection.Metadata
+Imports Basic.Reference.Assemblies
+Imports Microsoft.CodeAnalysis.Collections
+Imports Microsoft.CodeAnalysis.Emit
 Imports Microsoft.CodeAnalysis.Test.Utilities
 Imports Microsoft.CodeAnalysis.VisualBasic.Symbols
 Imports Microsoft.CodeAnalysis.VisualBasic.Symbols.Metadata.PE
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Microsoft.CodeAnalysis.VisualBasic.UnitTests.Emit
 Imports Roslyn.Test.Utilities
-Imports System.IO
-Imports System.Reflection
-Imports System.Xml.Linq
-Imports Xunit
-Imports System.Reflection.Metadata
-Imports Microsoft.CodeAnalysis.Emit
-Imports System.Collections.Immutable
-Imports Roslyn.Test.Utilities.TestMetadata
 
 Namespace Microsoft.CodeAnalysis.VisualBasic.UnitTests
 
@@ -1743,7 +1741,7 @@ End Structure
                                                        End Sub
             Dim compilation1 = CreateEmptyCompilationWithReferences(
                 sources1,
-                references:={Net40.mscorlib, Net40.System, compilation0.EmitToImageReference(embedInteropTypes:=True)})
+                references:={Net40.References.mscorlib, Net40.References.System, compilation0.EmitToImageReference(embedInteropTypes:=True)})
             verifier = CompileAndVerify(compilation1, symbolValidator:=validator)
             AssertTheseDiagnostics(verifier, (<errors/>))
             verifier.VerifyIL("S.F", <![CDATA[
@@ -1763,7 +1761,7 @@ End Structure
 ]]>)
             compilation1 = CreateEmptyCompilationWithReferences(
                 sources1,
-                references:={Net451.mscorlib, Net451.System, compilation0.EmitToImageReference(embedInteropTypes:=True)})
+                references:={NetFramework.mscorlib, NetFramework.System, compilation0.EmitToImageReference(embedInteropTypes:=True)})
             verifier = CompileAndVerify(compilation1, symbolValidator:=validator)
             AssertTheseDiagnostics(verifier, (<errors/>))
             verifier.VerifyIL("S.F", <![CDATA[
@@ -2674,7 +2672,7 @@ namespace System.Runtime.InteropServices
     }
 }
 ]]>
-            Dim dispIdDefinition = CreateCSharpCompilation(dispId, assemblyName:="DispId", referencedAssemblies:=TargetFrameworkUtil.GetReferences(TargetFramework.DesktopLatestExtended, Nothing)).EmitToImageReference(aliases:=ImmutableArray.Create("dispId"))
+            Dim dispIdDefinition = CreateCSharpCompilation(dispId, assemblyName:="DispId", referencedAssemblies:=TargetFrameworkUtil.GetReferences(TargetFramework.Mscorlib461Extended, Nothing)).EmitToImageReference(aliases:=ImmutableArray.Create("dispId"))
 
             Dim pia = <![CDATA[
 extern alias dispId;
@@ -2694,7 +2692,7 @@ public interface I
 }
 ]]>
 
-            Dim piaCompilation = CreateCSharpCompilation(pia, assemblyName:="Pia", referencedAssemblies:=TargetFrameworkUtil.GetReferences(TargetFramework.DesktopLatestExtended, {dispIdDefinition})).
+            Dim piaCompilation = CreateCSharpCompilation(pia, assemblyName:="Pia", referencedAssemblies:=TargetFrameworkUtil.GetReferences(TargetFramework.Mscorlib461Extended, {dispIdDefinition})).
                 EmitToImageReference(embedInteropTypes:=True)
 
             Dim sources1 = <compilation name="1">
@@ -2715,7 +2713,7 @@ End Structure
                                                            Assert.Equal("System.Runtime.InteropServices.DispIdAttribute(124)", attr.ToString())
                                                        End Sub
 
-            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation}, targetFramework:=TargetFramework.DesktopLatestExtended)
+            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation}, targetFramework:=TargetFramework.Mscorlib461Extended)
 
             Dim verifier = CompileAndVerify(compilation1.AddReferences(dispIdDefinition), symbolValidator:=validator)
             AssertTheseDiagnostics(verifier, (<errors/>))
@@ -2731,7 +2729,7 @@ BC30652: Reference required to assembly 'DispId, Version=0.0.0.0, Culture=neutra
         <WorkItem("https://github.com/dotnet/roslyn/issues/70338")>
         Public Sub DispIdAttribute_03()
 
-            Dim empty = CreateCompilation("", targetFramework:=TargetFramework.DesktopLatestExtended).EmitToImageReference()
+            Dim empty = CreateCompilation("", targetFramework:=TargetFramework.Mscorlib461Extended).EmitToImageReference()
 
             Dim pia = <compilation name="0">
                           <file name="a.vb"><![CDATA[
@@ -2747,7 +2745,7 @@ End Interface
 ]]></file>
                       </compilation>
 
-            Dim piaCompilation = CreateCompilation(pia, references:={empty}, targetFramework:=TargetFramework.DesktopLatestExtended)
+            Dim piaCompilation = CreateCompilation(pia, references:={empty}, targetFramework:=TargetFramework.Mscorlib461Extended)
 
             piaCompilation.AssertTheseDiagnostics(
 <expected><![CDATA[
@@ -2774,7 +2772,7 @@ End Structure
                                                            Assert.Empty(method.GetAttributes())
                                                        End Sub
 
-            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation.ToMetadataReference(embedInteropTypes:=True)}, targetFramework:=TargetFramework.DesktopLatestExtended)
+            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation.ToMetadataReference(embedInteropTypes:=True)}, targetFramework:=TargetFramework.Mscorlib461Extended)
 
             CompileAndVerify(compilation1, symbolValidator:=validator)
 
@@ -2799,7 +2797,7 @@ End Interface
 ]]></file>
                       </compilation>
 
-            Dim piaCompilation = CreateCompilation(pia, targetFramework:=TargetFramework.DesktopLatestExtended)
+            Dim piaCompilation = CreateCompilation(pia, targetFramework:=TargetFramework.Mscorlib461Extended)
 
             piaCompilation.AssertTheseDiagnostics(
 <expected><![CDATA[
@@ -2826,7 +2824,7 @@ End Structure
                                                            Assert.Empty(method.GetAttributes())
                                                        End Sub
 
-            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation.ToMetadataReference(embedInteropTypes:=True)}, targetFramework:=TargetFramework.DesktopLatestExtended)
+            Dim compilation1 = CreateCompilation(sources1, references:={piaCompilation.ToMetadataReference(embedInteropTypes:=True)}, targetFramework:=TargetFramework.Mscorlib461Extended)
 
             CompileAndVerify(compilation1, symbolValidator:=validator)
         End Sub

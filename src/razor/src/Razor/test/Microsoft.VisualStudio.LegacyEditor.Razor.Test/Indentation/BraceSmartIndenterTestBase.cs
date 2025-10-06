@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
@@ -84,11 +84,10 @@ public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : VisualSt
 
         var content = initialSnapshot.Content;
         var sourceDocument = TestRazorSourceDocument.Create(content);
-        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.Create(opt =>
-        {
-            opt.Directives.Add(FunctionsDirective.Directive);
-            opt.EnableSpanEditHandlers = true;
-        }));
+        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument,
+            RazorParserOptions.Default
+                .WithDirectives(FunctionsDirective.Directive)
+                .WithFlags(enableSpanEditHandlers: true));
 
         var codeDocument = TestRazorCodeDocument.Create(content);
         codeDocument.SetSyntaxTree(syntaxTree);

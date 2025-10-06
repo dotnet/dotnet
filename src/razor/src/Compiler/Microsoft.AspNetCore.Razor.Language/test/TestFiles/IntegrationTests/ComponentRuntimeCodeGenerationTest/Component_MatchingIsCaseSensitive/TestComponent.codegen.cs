@@ -21,8 +21,32 @@ namespace Test
             __builder.CloseComponent();
             __builder.AddMarkupContent(1, "\r\n<mycomponent></mycomponent>\r\n");
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddComponentParameter(3, "intproperty", "1");
-            __builder.AddComponentParameter(4, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (3,14)-(3,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+IntProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+#nullable restore
+#line (3,27)-(3,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+1
+
+#line default
+#line hidden
+#nullable disable
+            ));
+            __builder.AddComponentParameter(4, nameof(global::Test.MyComponent.
+#nullable restore
+#line (3,30)-(3,42) "x:\dir\subdir\Test\TestComponent.cshtml"
+BoolProperty
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
 #line (3,44)-(3,48) "x:\dir\subdir\Test\TestComponent.cshtml"
 true

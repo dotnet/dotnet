@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.DotNet.Arcade.Sdk" DefaultTargets="Build">
+
+  <PropertyGroup>
+    <ProjectRoot>$(MSBuildThisFileDirectory)../../</ProjectRoot>
+    <ArcadeDir Condition="'$(SOURCE_BUILT_SDK_DIR_ARCADE)' != ''">$(SOURCE_BUILT_SDK_DIR_ARCADE)/tools/</ArcadeDir>
+    <ArcadeDir Condition="'$(ArcadeDir)' == ''">$(NuGetPackageRoot)/microsoft.dotnet.arcade.sdk/$(ARCADE_VERSION)/tools/</ArcadeDir>
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+    <VersionPrefix>1.0.0</VersionPrefix>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <!-- Construct a set of properties for the build. Only pass properties that have been set.-->
+    <ItemGroup>
+      <_CommonProperties Include="Configuration=$(Configuration)" />
+      <_CommonProperties Include="DotNetBuildFromVMR=$(DotNetBuildFromVMR)" Condition="'$(DotNetBuildFromVMR)' != ''" />
+      <_CommonProperties Include="DotNetBuild=$(DotNetBuild)" Condition="'$(DotNetBuild)' != ''" />
+      <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
+
+      <!-- NuGet typically uses an auto-incremented AzDO variable to set the preview iteration version on its builds. (e.g. 7.0.0-preview.20, where 20 is the
+           number. This is not an approach that .NET uses for its builds, which use a date-varying number. However, the exact suffix is not that
+           important as long as it can be used as part of the assembly version, and does not overlap with NuGet's existing packages or assemblies.
+           One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
+           See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
+      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(_PatchNumber)' != ''" />
+    </ItemGroup>
+
+    <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
+         NuGet.client uses package source mapping. If this repo onboards to arcade, this would no longer be needed. -->
+    <MSBuild Projects="$(ArcadeDir)/Build.proj"
+             Properties="@(_CommonProperties);Projects=$(MSBuildThisFileDirectory)Noop.proj;_ImportOrUseTooling=false;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false;RestoreBuildTaskFeed=true"
+             Targets="Execute" />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Restore;@(_CommonProperties)"
+             Targets="RestoreXPlat" />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Build;@(_CommonProperties)"
+             Targets="BuildXPlat" />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Pack;@(_CommonProperties)"
+             Targets="PackXPlat" />
+
+    <ItemGroup>
+      <_PublishProperties Include="PublishToSymbolServer=false" />
+      <_PublishProperties Include="AssetsLocalStorageDir=$(SourceBuiltAssetsDir)" />
+      <_PublishProperties Include="ShippingPackagesLocalStorageDir=$(SourceBuiltShippingPackagesDir)" />
+      <_PublishProperties Include="NonShippingPackagesLocalStorageDir=$(SourceBuiltNonShippingPackagesDir)" />
+      <_PublishProperties Include="AssetManifestsLocalStorageDir=$(SourceBuiltAssetManifestsDir)" />
+    </ItemGroup>
+
+    <MSBuild Projects="$(ArcadeDir)Publish.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties)"
+             Targets="Publish"
+             Condition="'$(DotNetBuildFromVMR)' == 'true'" />
+  </Target>
+
+</Project>

@@ -21,7 +21,6 @@ public class IntermediateNodeWriter :
     IntermediateNodeVisitor,
     IExtensionIntermediateNodeVisitor<SectionIntermediateNode>,
     IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>
-
 {
     private readonly TextWriter _writer;
 
@@ -40,17 +39,17 @@ public class IntermediateNodeWriter :
     public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
     {
         var entries = new List<string>()
-            {
-                string.Join(" ", node.Modifiers),
-                node.ClassName,
-                node.BaseType,
-                string.Join(", ", node.Interfaces ?? Array.Empty<string>())
-            };
+        {
+            string.Join(" ", node.Modifiers),
+            node.Name,
+            node.BaseType is { } baseType ? $"{baseType.BaseType.Content}{baseType.GreaterThan?.Content}{baseType.ModelType?.Content}{baseType.LessThan?.Content}" : "",
+            string.Join(", ", node.Interfaces.Select(i => i.Content))
+        };
 
         // Avoid adding the type parameters to the baseline if they aren't present.
-        if (node.TypeParameters != null && node.TypeParameters.Count > 0)
+        if (!node.TypeParameters.IsDefaultOrEmpty)
         {
-            entries.Add(string.Join(", ", node.TypeParameters.Select(p => p.ParameterName)));
+            entries.Add(string.Join(", ", node.TypeParameters.Select(p => p.Name.Content)));
         }
 
         WriteContentNode(node, entries.ToArray());
@@ -68,7 +67,14 @@ public class IntermediateNodeWriter :
 
     public override void VisitToken(IntermediateToken node)
     {
-        WriteContentNode(node, node.Kind.ToString(), node.Content);
+        var kind = node switch
+        {
+            CSharpIntermediateToken => "CSharp",
+            HtmlIntermediateToken => "Html",
+            _ => "Unknown"
+        };
+
+        WriteContentNode(node, kind, node.Content);
     }
 
     public override void VisitMalformedDirective(MalformedDirectiveIntermediateNode node)
@@ -88,7 +94,7 @@ public class IntermediateNodeWriter :
 
     public override void VisitFieldDeclaration(FieldDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, string.Join(" ", node.Modifiers), node.FieldType, node.FieldName);
+        WriteContentNode(node, string.Join(" ", node.Modifiers), node.Type, node.Name);
     }
 
     public override void VisitHtmlAttribute(HtmlAttributeIntermediateNode node)
@@ -103,12 +109,12 @@ public class IntermediateNodeWriter :
 
     public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, node.Content);
+        WriteContentNode(node, node.Name);
     }
 
     public override void VisitMethodDeclaration(MethodDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, string.Join(" ", node.Modifiers), node.ReturnType, node.MethodName);
+        WriteContentNode(node, string.Join(" ", node.Modifiers), node.ReturnType, node.Name);
     }
 
     public override void VisitUsingDirective(UsingDirectiveIntermediateNode node)
@@ -178,12 +184,17 @@ public class IntermediateNodeWriter :
 
     public override void VisitReferenceCapture(ReferenceCaptureIntermediateNode node)
     {
-        WriteContentNode(node, node.IdentifierToken?.Content);
+        WriteContentNode(node, node.IdentifierToken.Content);
     }
 
     public override void VisitSetKey(SetKeyIntermediateNode node)
     {
-        WriteContentNode(node, node.KeyValueToken?.Content);
+        WriteContentNode(node, node.KeyValueToken.Content);
+    }
+
+    public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
+    {
+        WriteContentNode(node, node.Type.Content, node.Name, node.ExpressionBody);
     }
 
     void IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>.VisitExtension(RouteAttributeExtensionNode node)
@@ -279,9 +290,14 @@ public class IntermediateNodeWriter :
     protected void WriteName(IntermediateNode node)
     {
         var typeName = node.GetType().Name;
+
         if (typeName.EndsWith("IntermediateNode", StringComparison.Ordinal))
         {
             _writer.Write(typeName[..^"IntermediateNode".Length]);
+        }
+        else if (node is IntermediateToken token)
+        {
+            _writer.Write(token.IsLazy ? "LazyIntermediateToken" : "IntermediateToken");
         }
         else
         {
@@ -323,9 +339,9 @@ public class IntermediateNodeWriter :
         if (node.HasDiagnostics)
         {
             _writer.Write("| ");
-            for (var i = 0; i < node.Diagnostics.Count; i++)
+
+            foreach (var diagnostic in node.Diagnostics)
             {
-                var diagnostic = node.Diagnostics[i];
                 _writer.Write("{");
                 WriteSourceRange(diagnostic.Span);
                 _writer.Write(": ");
@@ -351,6 +367,7 @@ public class IntermediateNodeWriter :
                     var stringHash = stringHashBuilder.ToString();
                     _writer.Write(stringHash);
                 }
+
                 _writer.Write("} ");
             }
         }

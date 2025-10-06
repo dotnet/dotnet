@@ -64,6 +64,14 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
     [Parameter] public bool Virtualize { get; set; }
 
     /// <summary>
+    /// This is applicable only when using <see cref="Virtualize"/>. It defines how many additional items will be rendered
+    /// before and after the visible region to reduce rendering frequency during scrolling. While higher values can improve
+    /// scroll smoothness by rendering more items off-screen, they can also increase initial load times. Finding a balance
+    /// based on your data set size and user experience requirements is recommended. The default value is 3.
+    /// </summary>
+    [Parameter] public int OverscanCount { get; set; } = 3;
+
+    /// <summary>
     /// This is applicable only when using <see cref="Virtualize"/>. It defines an expected height in pixels for
     /// each row, allowing the virtualization mechanism to fetch the correct number of items to match the display
     /// size and to ensure accurate scrolling.
@@ -95,6 +103,11 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
     /// Gets or sets a collection of additional attributes that will be applied to the created element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    /// <summary>
+    /// Optional. A callback to be invoked for each rendered row to specify a CSS class.
+    /// </summary>
+    [Parameter] public Func<TGridItem, string?>? RowClass { get; set; }
 
     [Inject] private IServiceProvider Services { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
@@ -138,6 +151,11 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
 
     // If the PaginationState mutates, it raises this event. We use it to trigger a re-render.
     private readonly EventCallbackSubscriber<PaginationState> _currentPageItemsChanged;
+
+    // If the QuickGrid is disposed while the JS module is being loaded, we need to avoid calling JS methods
+    private bool _wasDisposed;
+
+    private bool _firstRefreshDataAsync = true;
 
     /// <summary>
     /// Constructs an instance of <see cref="QuickGrid{TGridItem}"/>.
@@ -193,6 +211,12 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
         if (firstRender)
         {
             _jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Microsoft.AspNetCore.Components.QuickGrid/QuickGrid.razor.js");
+            if (_wasDisposed)
+            {
+                // If the component has been disposed while JS module was being loaded, we don't need to continue
+                await _jsModule.DisposeAsync();
+                return;
+            }
             _jsEventDisposable = await _jsModule.InvokeAsync<IJSObjectReference>("init", _tableReference);
         }
 
@@ -265,6 +289,16 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
     }
 
     /// <summary>
+    /// Closes the <see cref="ColumnBase{TGridItem}.ColumnOptions"/> UI that was previously displayed.
+    /// </summary>
+    public Task HideColumnOptionsAsync()
+    {
+        _displayOptionsForColumn = null;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Instructs the grid to re-fetch and render the current data from the supplied data source
     /// (either <see cref="Items"/> or <see cref="ItemsProvider"/>).
     /// </summary>
@@ -279,6 +313,13 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
     // because in that case there's going to be a re-render anyway.
     private async Task RefreshDataCoreAsync()
     {
+        // First render of Virtualize component will handle the data load itself.
+        if (_firstRefreshDataAsync && Virtualize)
+        {
+            _firstRefreshDataAsync = false;
+            return;
+        }
+
         // Move into a "loading" state, cancelling any earlier-but-still-pending load
         _pendingDataLoadCancellationTokenSource?.Cancel();
         var thisLoadCts = _pendingDataLoadCancellationTokenSource = new CancellationTokenSource();
@@ -411,6 +452,7 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
+        _wasDisposed = true;
         _currentPageItemsChanged.Dispose();
 
         try
@@ -431,10 +473,5 @@ public partial class QuickGrid<TGridItem> : IAsyncDisposable
             // The JS side may routinely be gone already if the reason we're disposing is that
             // the client disconnected. This is not an error.
         }
-    }
-
-    private void CloseColumnOptions()
-    {
-        _displayOptionsForColumn = null;
     }
 }

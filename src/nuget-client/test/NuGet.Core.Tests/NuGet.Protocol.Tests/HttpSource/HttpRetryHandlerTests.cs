@@ -12,9 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NuGet.Common;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.Protocol.Tests
 {
@@ -24,6 +26,12 @@ namespace NuGet.Protocol.Tests
         private const string TestUrl = "https://local.test/test.json";
         private static readonly TimeSpan SmallTimeout = TimeSpan.FromMilliseconds(50);
         private static readonly TimeSpan LargeTimeout = TimeSpan.FromSeconds(5);
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public HttpRetryHandlerTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         // Add an additional header and verify that it was send in the request.
         [Fact]
@@ -40,7 +48,7 @@ namespace NuGet.Protocol.Tests
 
                 var id = Guid.NewGuid().ToString();
                 request.AddHeaders.Add(new KeyValuePair<string, IEnumerable<string>>(ProtocolConstants.SessionId, new[] { id }));
-                var log = new TestLogger();
+                var log = new TestLogger(_testOutputHelper);
 
                 // Act
                 using (var actualResponse = await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -76,7 +84,7 @@ namespace NuGet.Protocol.Tests
             var request = new HttpRetryHandlerRequest(
                 httpClient,
                 () => new HttpRequestMessage(HttpMethod.Get, TestUrl));
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             var actualResponse = await retryHandler.SendAsync(request, log, CancellationToken.None);
@@ -118,7 +126,7 @@ namespace NuGet.Protocol.Tests
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -133,8 +141,6 @@ namespace NuGet.Protocol.Tests
         public async Task HttpRetryHandler_CancelsRequestAfterTimeout()
         {
             // Arrange
-            TimeSpan retryDelay = TimeSpan.Zero;
-
             TestEnvironmentVariableReader testEnvironmentVariableReader = GetEnhancedHttpRetryEnvironmentVariables();
             var requestToken = CancellationToken.None;
             Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler = async (requestMessage, token) =>
@@ -150,14 +156,14 @@ namespace NuGet.Protocol.Tests
             var request = new HttpRetryHandlerRequest(httpClient, () => new HttpRequestMessage(HttpMethod.Get, TestUrl))
             {
                 MaxTries = 1,
-                RequestTimeout = SmallTimeout,
-                RetryDelay = retryDelay
+                RequestTimeout = TimeSpan.FromSeconds(1),
+                RetryDelay = TimeSpan.Zero
             };
 
             // Act
             Func<Task> actionAsync = () => retryHandler.SendAsync(
                 request,
-                new TestLogger(),
+                new TestLogger(_testOutputHelper),
                 CancellationToken.None);
 
             // Assert
@@ -192,7 +198,7 @@ namespace NuGet.Protocol.Tests
             // Act
             Func<Task> actionAsync = () => retryHandler.SendAsync(
                 request,
-                new TestLogger(),
+                new TestLogger(_testOutputHelper),
                 CancellationToken.None);
 
             // Assert
@@ -204,25 +210,25 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             TimeSpan retryDelay = SmallTimeout;
+            int maxTries = MaxTries;
 
-            TestEnvironmentVariableReader testEnvironmentVariableReader = GetEnhancedHttpRetryEnvironmentVariables();
             Func<HttpRequestMessage, HttpResponseMessage> handler = requestMessage =>
             {
                 return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             };
 
-            var minTime = GetRetryMinTime(MaxTries, SmallTimeout);
+            var minTime = GetRetryMinTime(maxTries, retryDelay);
 
-            var retryHandler = new HttpRetryHandler(testEnvironmentVariableReader);
+            var retryHandler = new HttpRetryHandler(new EnvironmentVariableWrapper());
             var testHandler = new HttpRetryTestHandler(handler);
             var httpClient = new HttpClient(testHandler);
             var request = new HttpRetryHandlerRequest(httpClient, () => new HttpRequestMessage(HttpMethod.Get, TestUrl))
             {
-                MaxTries = MaxTries,
+                MaxTries = maxTries,
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             var timer = new Stopwatch();
@@ -265,7 +271,7 @@ namespace NuGet.Protocol.Tests
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -300,7 +306,7 @@ namespace NuGet.Protocol.Tests
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (var response = await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -335,7 +341,7 @@ namespace NuGet.Protocol.Tests
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (var response = await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -373,7 +379,7 @@ namespace NuGet.Protocol.Tests
                 DownloadTimeout = TimeSpan.FromMilliseconds(expectedMilliseconds)
             };
             var destinationStream = new MemoryStream();
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (var response = await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -426,7 +432,7 @@ namespace NuGet.Protocol.Tests
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (var response = await retryHandler.SendAsync(request, log, CancellationToken.None))
@@ -475,7 +481,7 @@ namespace NuGet.Protocol.Tests
                 // so set this to a value that will cause test timeout if the correct value is not honored.
                 RetryDelay = TimeSpan.FromMilliseconds(int.MaxValue) // = about 24 days
             };
-            var log = new TestLogger();
+            var log = new TestLogger(_testOutputHelper);
 
             // Act
             using (CancellationTokenSource cts = new CancellationTokenSource(millisecondsDelay: 60 * 1000))
@@ -507,7 +513,7 @@ namespace NuGet.Protocol.Tests
             var httpRetryHandlerRequest = new HttpRetryHandlerRequest(client, () => new HttpRequestMessage(HttpMethod.Get, TestUrl));
             TestEnvironmentVariableReader environmentVariables = GetEnhancedHttpRetryEnvironmentVariables(retry429: retry429);
             var httpRetryHandler = new HttpRetryHandler(environmentVariables);
-            var logger = new TestLogger();
+            var logger = new TestLogger(_testOutputHelper);
 
             // Act
             var response = await httpRetryHandler.SendAsync(httpRetryHandlerRequest, logger, CancellationToken.None);
@@ -525,19 +531,23 @@ namespace NuGet.Protocol.Tests
             }
 
             string expectedMessagePrefix = "  " + tooManyRequestsStatusCode.ToString() + " " + TestUrl;
-            logger.Messages.Where(m => m.StartsWith(expectedMessagePrefix, StringComparison.Ordinal)).Count().Should().Be(retry429 ? 2 : 1);
+            logger.Messages.Count(m => m.StartsWith(expectedMessagePrefix, StringComparison.Ordinal)).Should().Be(retry429 ? 2 : 1);
         }
 
         private static TimeSpan GetRetryMinTime(int tries, TimeSpan retryDelay)
         {
-            return TimeSpan.FromTicks((tries - 1) * retryDelay.Ticks);
+            int retryCount = 0;
+            for (int i = 1; i < tries; i++)
+            {
+                retryCount = (int)(retryCount + Math.Pow(2, i));
+            }
+            return TimeSpan.FromTicks(retryCount * retryDelay.Ticks);
         }
 
         private static TestEnvironmentVariableReader GetEnhancedHttpRetryEnvironmentVariables(bool? isEnabled = true, int? retryCount = MaxTries, int? delayMilliseconds = 0, bool? retry429 = true)
         => new TestEnvironmentVariableReader(
             new Dictionary<string, string>()
             {
-                [EnhancedHttpRetryHelper.IsEnabledEnvironmentVariableName] = isEnabled?.ToString(),
                 [EnhancedHttpRetryHelper.RetryCountEnvironmentVariableName] = retryCount?.ToString(),
                 [EnhancedHttpRetryHelper.DelayInMillisecondsEnvironmentVariableName] = delayMilliseconds?.ToString(),
                 [EnhancedHttpRetryHelper.Retry429EnvironmentVariableName] = retry429?.ToString(),

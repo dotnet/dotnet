@@ -124,7 +124,7 @@ Running any of the above will build the latest changes and run tests against the
 
 ## Using your custom compiler to build this repository
 
-By removing all the subfolders called `Proto` under `artifacts` and running the `build` script again, the proto compiler will include your changes.
+By removing all the subfolders called `Bootstrap` or `Proto` under `artifacts` and running the `build` script again, the proto compiler will include your changes.
 
 Once the "proto" compiler is built, it won't be built again, so you may want to perform those steps again to ensure your changes don't break building the compiler itself.
 
@@ -136,7 +136,7 @@ To use your custom build of `Fsc`, add the `DotnetFscCompilerPath` property to y
 
 ```xml
 <PropertyGroup>
-    <DotnetFscCompilerPath>D:\Git\fsharp\artifacts\bin\fsc\Debug\net8.0\fsc.dll</DotnetFscCompilerPath>
+    <DotnetFscCompilerPath>D:\Git\fsharp\artifacts\bin\fsc\Debug\net10.0\fsc.dll</DotnetFscCompilerPath>
 </PropertyGroup>
 ```
 
@@ -166,6 +166,12 @@ If your changes involve modifying the list of language keywords in any way, (e.g
 ```shell
 dotnet build src\Compiler /t:UpdateXlf
 ```
+or
+```shell
+cd src/Compiler
+dotnet build -t:UpdateXlf
+```
+
 If you are on a Mac, you can run this command from the root of the repository:
 
 ```shell
@@ -204,6 +210,33 @@ Linux/macOS:
 export TEST_UPDATE_BSL=1
 ```
 
+## Retain Test run built artifacts
+
+When investigating tests issues it is sometimes useful to examine the artifacts built when running tests.  Those built using the newer test framework are usually,
+built in the %TEMP%\FSharp.Test.Utilities subdirectory.
+
+To tell the test framework to not cleanup these files use the: FSHARP_RETAIN_TESTBUILDS environment variable
+
+Windows:
+
+CMD:
+
+```shell
+set FSHARP_RETAIN_TESTBUILDS=1
+```
+
+PowerShell:
+
+```shell
+$env:FSHARP_RETAIN_TESTBUILDS=1
+```
+
+Linux/macOS:
+
+```shell
+export FSHARP_RETAIN_TESTBUILDS=1
+```
+
 Next, run a build script build (debug or release, desktop or coreclr, depending which baselines you need to update), and test as described [above](#Testing-from-the-command-line). For example:
 
 `./Build.cmd -c Release -testCoreClr` to update Release CoreCLR baselines.
@@ -214,6 +247,56 @@ or
 
 > **Note**
 > Please note, that by default, **Release** version of IL baseline tests will be running in CI, so when updating baseline (.bsl) files, make sure to add `-c Release` flag to the build command.
+
+
+### Parallel execution of tests
+
+Tests utilizing xUnit framework by default run in parallel. If your tests depend on some shared state or are time-critical, you can add the module to predefined `NotThreadSafeResourceCollection` to prevent parallel execution.
+For example:
+```fsharp
+[<Collection(nameof NotThreadSafeResourceCollection)>]
+module TimeCritical =
+```
+
+For stress testing async code you can use a custom `FSharp.Test.StressAttribute`.
+For example, applied to a single xUnit test case:
+```fsharp
+[<Theory; Stress(Count = 1000)>]
+```
+it will start it many times at the same time, and execute in parallel.
+
+
+
+
+### Updating FCS surface area baselines
+
+```bash
+$env:TEST_UPDATE_BSL=1
+dotnet test tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj --filter "SurfaceAreaTest" /p:BUILDING_USING_DOTNET=true
+dotnet test tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj --filter "SurfaceAreaTest" /p:BUILDING_USING_DOTNET=true
+dotnet test tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj --filter "SurfaceAreaTest" -c Release /p:BUILDING_USING_DOTNET=true
+dotnet test tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj --filter "SurfaceAreaTest" -c Release /p:BUILDING_USING_DOTNET=true
+```
+
+### Updating ILVerify baselines
+
+These are IL baseline tests for the core assemblies of the compiler (FSharp.Core and FSharp.Compiler.Service). The baselines are located in the `tests/ILVerify` folder and look like:
+
+```
+ilverify_FSharp.Compiler.Service_Debug_net10.0.bsl
+ilverify_FSharp.Compiler.Service_Debug_netstandard2.0.bsl
+ilverify_FSharp.Compiler.Service_Release_net10.0.bsl
+ilverify_FSharp.Compiler.Service_Release_netstandard2.0.bsl
+ilverify_FSharp.Core_Debug_netstandard2.0.bsl
+ilverify_FSharp.Core_Debug_netstandard2.1.bsl
+ilverify_FSharp.Core_Release_netstandard2.0.bsl
+ilverify_FSharp.Core_Release_netstandard2.1.bsl
+```
+
+If you want to update them, either
+
+1. Run the [ilverify.ps1]([url](https://github.com/dotnet/fsharp/blob/main/tests/ILVerify/ilverify.ps1)) script in PowerShell. The script will create `.actual` files. If the differences make sense, replace the original baselines with the actual files.
+2. Set the `TEST_UPDATE_BSL` to `1` (please refer to "Updating baselines in tests" section in this file) **and** run `ilverify.ps1` - this will automatically replace baselines. After that, please carefully review the change and push it to your branch if it makes sense.
 
 ## Automated Source Code Formatting
 
@@ -246,6 +329,7 @@ Then, use the **f5** or **ctrl+f5** keyboard shortcuts to test your tooling chan
 Alternatively, you can do this entirely via the command line if you prefer that:
 
 ```shell
+Build.cmd -c Release -deployExtensions
 devenv.exe /rootsuffix RoslynDev
 ```
 
@@ -331,4 +415,4 @@ See the "Debugging The Compiler" section of this [article](https://medium.com/@w
 
 If you are behind a proxy server, NuGet client tool must be configured to use it:
 
-See the Nuget config file documention for use with a proxy server [https://learn.microsoft.com/nuget/reference/nuget-config-file](https://learn.microsoft.com/nuget/reference/nuget-config-file)
+See the Nuget config file documentation for use with a proxy server [https://learn.microsoft.com/nuget/reference/nuget-config-file](https://learn.microsoft.com/nuget/reference/nuget-config-file)

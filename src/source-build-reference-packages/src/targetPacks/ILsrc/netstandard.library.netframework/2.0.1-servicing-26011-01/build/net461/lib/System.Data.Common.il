@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -286,6 +286,10 @@
 }
 .assembly /*20000001*/ System.Data.Common
 {
+  .custom instance void [mscorlib/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
+                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000002:0A000028*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000012*/::.ctor() /* 0A000028 */ = ( 01 00 00 00 ) 
   .custom /*0C000003:0A000038*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*0100001D*/::.ctor(int32) /* 0A000038 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000004:0A000039*/ instance void [mscorlib/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*0100001E*/::.ctor() /* 0A000039 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -956,7 +960,7 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FE53FE8F000
+// Image base: 0x00007FFB91577000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -7574,1828 +7578,2282 @@
     IL_000a:  /* 2A   |                  */ ret
   } // end of method SR::get_ResourceType
 
-  .property /*17000001*/ class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
+  .property /*17000001*/ callconv(8) class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/
           ResourceManager()
   {
     .get class [mscorlib/*23000001*/]System.Resources.ResourceManager/*01000004*/ System.SR/*02000003*/::get_ResourceManager() /* 06000001 */
   } // end of property SR::ResourceManager
-  .property /*17000002*/ string ADP_CollectionIndexString()
+  .property /*17000002*/ callconv(8) string
+          ADP_CollectionIndexString()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionIndexString() /* 06000008 */
   } // end of property SR::ADP_CollectionIndexString
-  .property /*17000003*/ string ADP_CollectionInvalidType()
+  .property /*17000003*/ callconv(8) string
+          ADP_CollectionInvalidType()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionInvalidType() /* 06000009 */
   } // end of property SR::ADP_CollectionInvalidType
-  .property /*17000004*/ string ADP_CollectionIsNotParent()
+  .property /*17000004*/ callconv(8) string
+          ADP_CollectionIsNotParent()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionIsNotParent() /* 0600000A */
   } // end of property SR::ADP_CollectionIsNotParent
-  .property /*17000005*/ string ADP_CollectionNullValue()
+  .property /*17000005*/ callconv(8) string
+          ADP_CollectionNullValue()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionNullValue() /* 0600000B */
   } // end of property SR::ADP_CollectionNullValue
-  .property /*17000006*/ string ADP_CollectionRemoveInvalidObject()
+  .property /*17000006*/ callconv(8) string
+          ADP_CollectionRemoveInvalidObject()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionRemoveInvalidObject() /* 0600000C */
   } // end of property SR::ADP_CollectionRemoveInvalidObject
-  .property /*17000007*/ string ADP_CollectionUniqueValue()
+  .property /*17000007*/ callconv(8) string
+          ADP_CollectionUniqueValue()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionUniqueValue() /* 0600000D */
   } // end of property SR::ADP_CollectionUniqueValue
-  .property /*17000008*/ string ADP_ConnectionStateMsg_Closed()
+  .property /*17000008*/ callconv(8) string
+          ADP_ConnectionStateMsg_Closed()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg_Closed() /* 0600000E */
   } // end of property SR::ADP_ConnectionStateMsg_Closed
-  .property /*17000009*/ string ADP_ConnectionStateMsg_Connecting()
+  .property /*17000009*/ callconv(8) string
+          ADP_ConnectionStateMsg_Connecting()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg_Connecting() /* 0600000F */
   } // end of property SR::ADP_ConnectionStateMsg_Connecting
-  .property /*1700000A*/ string ADP_ConnectionStateMsg_Open()
+  .property /*1700000A*/ callconv(8) string
+          ADP_ConnectionStateMsg_Open()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg_Open() /* 06000010 */
   } // end of property SR::ADP_ConnectionStateMsg_Open
-  .property /*1700000B*/ string ADP_ConnectionStateMsg_OpenExecuting()
+  .property /*1700000B*/ callconv(8) string
+          ADP_ConnectionStateMsg_OpenExecuting()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg_OpenExecuting() /* 06000011 */
   } // end of property SR::ADP_ConnectionStateMsg_OpenExecuting
-  .property /*1700000C*/ string ADP_ConnectionStateMsg_OpenFetching()
+  .property /*1700000C*/ callconv(8) string
+          ADP_ConnectionStateMsg_OpenFetching()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg_OpenFetching() /* 06000012 */
   } // end of property SR::ADP_ConnectionStateMsg_OpenFetching
-  .property /*1700000D*/ string ADP_ConnectionStateMsg()
+  .property /*1700000D*/ callconv(8) string
+          ADP_ConnectionStateMsg()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStateMsg() /* 06000013 */
   } // end of property SR::ADP_ConnectionStateMsg
-  .property /*1700000E*/ string ADP_ConnectionStringSyntax()
+  .property /*1700000E*/ callconv(8) string
+          ADP_ConnectionStringSyntax()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionStringSyntax() /* 06000014 */
   } // end of property SR::ADP_ConnectionStringSyntax
-  .property /*1700000F*/ string ADP_DataReaderClosed()
+  .property /*1700000F*/ callconv(8) string
+          ADP_DataReaderClosed()
   {
     .get string System.SR/*02000003*/::get_ADP_DataReaderClosed() /* 06000015 */
   } // end of property SR::ADP_DataReaderClosed
-  .property /*17000010*/ string ADP_EmptyString()
+  .property /*17000010*/ callconv(8) string
+          ADP_EmptyString()
   {
     .get string System.SR/*02000003*/::get_ADP_EmptyString() /* 06000016 */
   } // end of property SR::ADP_EmptyString
-  .property /*17000011*/ string ADP_InvalidEnumerationValue()
+  .property /*17000011*/ callconv(8) string
+          ADP_InvalidEnumerationValue()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidEnumerationValue() /* 06000017 */
   } // end of property SR::ADP_InvalidEnumerationValue
-  .property /*17000012*/ string ADP_InvalidKey()
+  .property /*17000012*/ callconv(8) string
+          ADP_InvalidKey()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidKey() /* 06000018 */
   } // end of property SR::ADP_InvalidKey
-  .property /*17000013*/ string ADP_InvalidValue()
+  .property /*17000013*/ callconv(8) string
+          ADP_InvalidValue()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidValue() /* 06000019 */
   } // end of property SR::ADP_InvalidValue
-  .property /*17000014*/ string Xml_SimpleTypeNotSupported()
+  .property /*17000014*/ callconv(8) string
+          Xml_SimpleTypeNotSupported()
   {
     .get string System.SR/*02000003*/::get_Xml_SimpleTypeNotSupported() /* 0600001A */
   } // end of property SR::Xml_SimpleTypeNotSupported
-  .property /*17000015*/ string Xml_MissingAttribute()
+  .property /*17000015*/ callconv(8) string
+          Xml_MissingAttribute()
   {
     .get string System.SR/*02000003*/::get_Xml_MissingAttribute() /* 0600001B */
   } // end of property SR::Xml_MissingAttribute
-  .property /*17000016*/ string Xml_ValueOutOfRange()
+  .property /*17000016*/ callconv(8) string
+          Xml_ValueOutOfRange()
   {
     .get string System.SR/*02000003*/::get_Xml_ValueOutOfRange() /* 0600001C */
   } // end of property SR::Xml_ValueOutOfRange
-  .property /*17000017*/ string Xml_AttributeValues()
+  .property /*17000017*/ callconv(8) string
+          Xml_AttributeValues()
   {
     .get string System.SR/*02000003*/::get_Xml_AttributeValues() /* 0600001D */
   } // end of property SR::Xml_AttributeValues
-  .property /*17000018*/ string Xml_RelationParentNameMissing()
+  .property /*17000018*/ callconv(8) string
+          Xml_RelationParentNameMissing()
   {
     .get string System.SR/*02000003*/::get_Xml_RelationParentNameMissing() /* 0600001E */
   } // end of property SR::Xml_RelationParentNameMissing
-  .property /*17000019*/ string Xml_RelationChildNameMissing()
+  .property /*17000019*/ callconv(8) string
+          Xml_RelationChildNameMissing()
   {
     .get string System.SR/*02000003*/::get_Xml_RelationChildNameMissing() /* 0600001F */
   } // end of property SR::Xml_RelationChildNameMissing
-  .property /*1700001A*/ string Xml_RelationTableKeyMissing()
+  .property /*1700001A*/ callconv(8) string
+          Xml_RelationTableKeyMissing()
   {
     .get string System.SR/*02000003*/::get_Xml_RelationTableKeyMissing() /* 06000020 */
   } // end of property SR::Xml_RelationTableKeyMissing
-  .property /*1700001B*/ string Xml_RelationChildKeyMissing()
+  .property /*1700001B*/ callconv(8) string
+          Xml_RelationChildKeyMissing()
   {
     .get string System.SR/*02000003*/::get_Xml_RelationChildKeyMissing() /* 06000021 */
   } // end of property SR::Xml_RelationChildKeyMissing
-  .property /*1700001C*/ string Xml_UndefinedDatatype()
+  .property /*1700001C*/ callconv(8) string
+          Xml_UndefinedDatatype()
   {
     .get string System.SR/*02000003*/::get_Xml_UndefinedDatatype() /* 06000022 */
   } // end of property SR::Xml_UndefinedDatatype
-  .property /*1700001D*/ string Xml_DatatypeNotDefined()
+  .property /*1700001D*/ callconv(8) string
+          Xml_DatatypeNotDefined()
   {
     .get string System.SR/*02000003*/::get_Xml_DatatypeNotDefined() /* 06000023 */
   } // end of property SR::Xml_DatatypeNotDefined
-  .property /*1700001E*/ string Xml_InvalidField()
+  .property /*1700001E*/ callconv(8) string
+          Xml_InvalidField()
   {
     .get string System.SR/*02000003*/::get_Xml_InvalidField() /* 06000024 */
   } // end of property SR::Xml_InvalidField
-  .property /*1700001F*/ string Xml_InvalidSelector()
+  .property /*1700001F*/ callconv(8) string
+          Xml_InvalidSelector()
   {
     .get string System.SR/*02000003*/::get_Xml_InvalidSelector() /* 06000025 */
   } // end of property SR::Xml_InvalidSelector
-  .property /*17000020*/ string Xml_InvalidKey()
+  .property /*17000020*/ callconv(8) string
+          Xml_InvalidKey()
   {
     .get string System.SR/*02000003*/::get_Xml_InvalidKey() /* 06000026 */
   } // end of property SR::Xml_InvalidKey
-  .property /*17000021*/ string Xml_DuplicateConstraint()
+  .property /*17000021*/ callconv(8) string
+          Xml_DuplicateConstraint()
   {
     .get string System.SR/*02000003*/::get_Xml_DuplicateConstraint() /* 06000027 */
   } // end of property SR::Xml_DuplicateConstraint
-  .property /*17000022*/ string Xml_CannotConvert()
+  .property /*17000022*/ callconv(8) string
+          Xml_CannotConvert()
   {
     .get string System.SR/*02000003*/::get_Xml_CannotConvert() /* 06000028 */
   } // end of property SR::Xml_CannotConvert
-  .property /*17000023*/ string Xml_MissingRefer()
+  .property /*17000023*/ callconv(8) string
+          Xml_MissingRefer()
   {
     .get string System.SR/*02000003*/::get_Xml_MissingRefer() /* 06000029 */
   } // end of property SR::Xml_MissingRefer
-  .property /*17000024*/ string Xml_MismatchKeyLength()
+  .property /*17000024*/ callconv(8) string
+          Xml_MismatchKeyLength()
   {
     .get string System.SR/*02000003*/::get_Xml_MismatchKeyLength() /* 0600002A */
   } // end of property SR::Xml_MismatchKeyLength
-  .property /*17000025*/ string Xml_CircularComplexType()
+  .property /*17000025*/ callconv(8) string
+          Xml_CircularComplexType()
   {
     .get string System.SR/*02000003*/::get_Xml_CircularComplexType() /* 0600002B */
   } // end of property SR::Xml_CircularComplexType
-  .property /*17000026*/ string Xml_CannotInstantiateAbstract()
+  .property /*17000026*/ callconv(8) string
+          Xml_CannotInstantiateAbstract()
   {
     .get string System.SR/*02000003*/::get_Xml_CannotInstantiateAbstract() /* 0600002C */
   } // end of property SR::Xml_CannotInstantiateAbstract
-  .property /*17000027*/ string Xml_MultipleTargetConverterError()
+  .property /*17000027*/ callconv(8) string
+          Xml_MultipleTargetConverterError()
   {
     .get string System.SR/*02000003*/::get_Xml_MultipleTargetConverterError() /* 0600002D */
   } // end of property SR::Xml_MultipleTargetConverterError
-  .property /*17000028*/ string Xml_MultipleTargetConverterEmpty()
+  .property /*17000028*/ callconv(8) string
+          Xml_MultipleTargetConverterEmpty()
   {
     .get string System.SR/*02000003*/::get_Xml_MultipleTargetConverterEmpty() /* 0600002E */
   } // end of property SR::Xml_MultipleTargetConverterEmpty
-  .property /*17000029*/ string Xml_MergeDuplicateDeclaration()
+  .property /*17000029*/ callconv(8) string
+          Xml_MergeDuplicateDeclaration()
   {
     .get string System.SR/*02000003*/::get_Xml_MergeDuplicateDeclaration() /* 0600002F */
   } // end of property SR::Xml_MergeDuplicateDeclaration
-  .property /*1700002A*/ string Xml_MissingTable()
+  .property /*1700002A*/ callconv(8) string
+          Xml_MissingTable()
   {
     .get string System.SR/*02000003*/::get_Xml_MissingTable() /* 06000030 */
   } // end of property SR::Xml_MissingTable
-  .property /*1700002B*/ string Xml_MissingSQL()
+  .property /*1700002B*/ callconv(8) string
+          Xml_MissingSQL()
   {
     .get string System.SR/*02000003*/::get_Xml_MissingSQL() /* 06000031 */
   } // end of property SR::Xml_MissingSQL
-  .property /*1700002C*/ string Xml_ColumnConflict()
+  .property /*1700002C*/ callconv(8) string
+          Xml_ColumnConflict()
   {
     .get string System.SR/*02000003*/::get_Xml_ColumnConflict() /* 06000032 */
   } // end of property SR::Xml_ColumnConflict
-  .property /*1700002D*/ string Xml_InvalidPrefix()
+  .property /*1700002D*/ callconv(8) string
+          Xml_InvalidPrefix()
   {
     .get string System.SR/*02000003*/::get_Xml_InvalidPrefix() /* 06000033 */
   } // end of property SR::Xml_InvalidPrefix
-  .property /*1700002E*/ string Xml_NestedCircular()
+  .property /*1700002E*/ callconv(8) string
+          Xml_NestedCircular()
   {
     .get string System.SR/*02000003*/::get_Xml_NestedCircular() /* 06000034 */
   } // end of property SR::Xml_NestedCircular
-  .property /*1700002F*/ string Xml_FoundEntity()
+  .property /*1700002F*/ callconv(8) string
+          Xml_FoundEntity()
   {
     .get string System.SR/*02000003*/::get_Xml_FoundEntity() /* 06000035 */
   } // end of property SR::Xml_FoundEntity
-  .property /*17000030*/ string Xml_PolymorphismNotSupported()
+  .property /*17000030*/ callconv(8) string
+          Xml_PolymorphismNotSupported()
   {
     .get string System.SR/*02000003*/::get_Xml_PolymorphismNotSupported() /* 06000036 */
   } // end of property SR::Xml_PolymorphismNotSupported
-  .property /*17000031*/ string Xml_CanNotDeserializeObjectType()
+  .property /*17000031*/ callconv(8) string
+          Xml_CanNotDeserializeObjectType()
   {
     .get string System.SR/*02000003*/::get_Xml_CanNotDeserializeObjectType() /* 06000037 */
   } // end of property SR::Xml_CanNotDeserializeObjectType
-  .property /*17000032*/ string Xml_DataTableInferenceNotSupported()
+  .property /*17000032*/ callconv(8) string
+          Xml_DataTableInferenceNotSupported()
   {
     .get string System.SR/*02000003*/::get_Xml_DataTableInferenceNotSupported() /* 06000038 */
   } // end of property SR::Xml_DataTableInferenceNotSupported
-  .property /*17000033*/ string Xml_MultipleParentRows()
+  .property /*17000033*/ callconv(8) string
+          Xml_MultipleParentRows()
   {
     .get string System.SR/*02000003*/::get_Xml_MultipleParentRows() /* 06000039 */
   } // end of property SR::Xml_MultipleParentRows
-  .property /*17000034*/ string Xml_IsDataSetAttributeMissingInSchema()
+  .property /*17000034*/ callconv(8) string
+          Xml_IsDataSetAttributeMissingInSchema()
   {
     .get string System.SR/*02000003*/::get_Xml_IsDataSetAttributeMissingInSchema() /* 0600003A */
   } // end of property SR::Xml_IsDataSetAttributeMissingInSchema
-  .property /*17000035*/ string Xml_TooManyIsDataSetAtributeInSchema()
+  .property /*17000035*/ callconv(8) string
+          Xml_TooManyIsDataSetAtributeInSchema()
   {
     .get string System.SR/*02000003*/::get_Xml_TooManyIsDataSetAtributeInSchema() /* 0600003B */
   } // end of property SR::Xml_TooManyIsDataSetAtributeInSchema
-  .property /*17000036*/ string Xml_DynamicWithoutXmlSerializable()
+  .property /*17000036*/ callconv(8) string
+          Xml_DynamicWithoutXmlSerializable()
   {
     .get string System.SR/*02000003*/::get_Xml_DynamicWithoutXmlSerializable() /* 0600003C */
   } // end of property SR::Xml_DynamicWithoutXmlSerializable
-  .property /*17000037*/ string Expr_NYI()
+  .property /*17000037*/ callconv(8) string
+          Expr_NYI()
   {
     .get string System.SR/*02000003*/::get_Expr_NYI() /* 0600003D */
   } // end of property SR::Expr_NYI
-  .property /*17000038*/ string Expr_MissingOperand()
+  .property /*17000038*/ callconv(8) string
+          Expr_MissingOperand()
   {
     .get string System.SR/*02000003*/::get_Expr_MissingOperand() /* 0600003E */
   } // end of property SR::Expr_MissingOperand
-  .property /*17000039*/ string Expr_TypeMismatch()
+  .property /*17000039*/ callconv(8) string
+          Expr_TypeMismatch()
   {
     .get string System.SR/*02000003*/::get_Expr_TypeMismatch() /* 0600003F */
   } // end of property SR::Expr_TypeMismatch
-  .property /*1700003A*/ string Expr_ExpressionTooComplex()
+  .property /*1700003A*/ callconv(8) string
+          Expr_ExpressionTooComplex()
   {
     .get string System.SR/*02000003*/::get_Expr_ExpressionTooComplex() /* 06000040 */
   } // end of property SR::Expr_ExpressionTooComplex
-  .property /*1700003B*/ string Expr_UnboundName()
+  .property /*1700003B*/ callconv(8) string
+          Expr_UnboundName()
   {
     .get string System.SR/*02000003*/::get_Expr_UnboundName() /* 06000041 */
   } // end of property SR::Expr_UnboundName
-  .property /*1700003C*/ string Expr_InvalidString()
+  .property /*1700003C*/ callconv(8) string
+          Expr_InvalidString()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidString() /* 06000042 */
   } // end of property SR::Expr_InvalidString
-  .property /*1700003D*/ string Expr_UndefinedFunction()
+  .property /*1700003D*/ callconv(8) string
+          Expr_UndefinedFunction()
   {
     .get string System.SR/*02000003*/::get_Expr_UndefinedFunction() /* 06000043 */
   } // end of property SR::Expr_UndefinedFunction
-  .property /*1700003E*/ string Expr_Syntax()
+  .property /*1700003E*/ callconv(8) string
+          Expr_Syntax()
   {
     .get string System.SR/*02000003*/::get_Expr_Syntax() /* 06000044 */
   } // end of property SR::Expr_Syntax
-  .property /*1700003F*/ string Expr_FunctionArgumentCount()
+  .property /*1700003F*/ callconv(8) string
+          Expr_FunctionArgumentCount()
   {
     .get string System.SR/*02000003*/::get_Expr_FunctionArgumentCount() /* 06000045 */
   } // end of property SR::Expr_FunctionArgumentCount
-  .property /*17000040*/ string Expr_MissingRightParen()
+  .property /*17000040*/ callconv(8) string
+          Expr_MissingRightParen()
   {
     .get string System.SR/*02000003*/::get_Expr_MissingRightParen() /* 06000046 */
   } // end of property SR::Expr_MissingRightParen
-  .property /*17000041*/ string Expr_UnknownToken()
+  .property /*17000041*/ callconv(8) string
+          Expr_UnknownToken()
   {
     .get string System.SR/*02000003*/::get_Expr_UnknownToken() /* 06000047 */
   } // end of property SR::Expr_UnknownToken
-  .property /*17000042*/ string Expr_UnknownToken1()
+  .property /*17000042*/ callconv(8) string
+          Expr_UnknownToken1()
   {
     .get string System.SR/*02000003*/::get_Expr_UnknownToken1() /* 06000048 */
   } // end of property SR::Expr_UnknownToken1
-  .property /*17000043*/ string Expr_DatatypeConvertion()
+  .property /*17000043*/ callconv(8) string
+          Expr_DatatypeConvertion()
   {
     .get string System.SR/*02000003*/::get_Expr_DatatypeConvertion() /* 06000049 */
   } // end of property SR::Expr_DatatypeConvertion
-  .property /*17000044*/ string Expr_DatavalueConvertion()
+  .property /*17000044*/ callconv(8) string
+          Expr_DatavalueConvertion()
   {
     .get string System.SR/*02000003*/::get_Expr_DatavalueConvertion() /* 0600004A */
   } // end of property SR::Expr_DatavalueConvertion
-  .property /*17000045*/ string Expr_InvalidName()
+  .property /*17000045*/ callconv(8) string
+          Expr_InvalidName()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidName() /* 0600004B */
   } // end of property SR::Expr_InvalidName
-  .property /*17000046*/ string Expr_InvalidDate()
+  .property /*17000046*/ callconv(8) string
+          Expr_InvalidDate()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidDate() /* 0600004C */
   } // end of property SR::Expr_InvalidDate
-  .property /*17000047*/ string Expr_NonConstantArgument()
+  .property /*17000047*/ callconv(8) string
+          Expr_NonConstantArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_NonConstantArgument() /* 0600004D */
   } // end of property SR::Expr_NonConstantArgument
-  .property /*17000048*/ string Expr_InvalidPattern()
+  .property /*17000048*/ callconv(8) string
+          Expr_InvalidPattern()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidPattern() /* 0600004E */
   } // end of property SR::Expr_InvalidPattern
-  .property /*17000049*/ string Expr_InWithoutParentheses()
+  .property /*17000049*/ callconv(8) string
+          Expr_InWithoutParentheses()
   {
     .get string System.SR/*02000003*/::get_Expr_InWithoutParentheses() /* 0600004F */
   } // end of property SR::Expr_InWithoutParentheses
-  .property /*1700004A*/ string Expr_ArgumentType()
+  .property /*1700004A*/ callconv(8) string
+          Expr_ArgumentType()
   {
     .get string System.SR/*02000003*/::get_Expr_ArgumentType() /* 06000050 */
   } // end of property SR::Expr_ArgumentType
-  .property /*1700004B*/ string Expr_ArgumentTypeInteger()
+  .property /*1700004B*/ callconv(8) string
+          Expr_ArgumentTypeInteger()
   {
     .get string System.SR/*02000003*/::get_Expr_ArgumentTypeInteger() /* 06000051 */
   } // end of property SR::Expr_ArgumentTypeInteger
-  .property /*1700004C*/ string Expr_TypeMismatchInBinop()
+  .property /*1700004C*/ callconv(8) string
+          Expr_TypeMismatchInBinop()
   {
     .get string System.SR/*02000003*/::get_Expr_TypeMismatchInBinop() /* 06000052 */
   } // end of property SR::Expr_TypeMismatchInBinop
-  .property /*1700004D*/ string Expr_AmbiguousBinop()
+  .property /*1700004D*/ callconv(8) string
+          Expr_AmbiguousBinop()
   {
     .get string System.SR/*02000003*/::get_Expr_AmbiguousBinop() /* 06000053 */
   } // end of property SR::Expr_AmbiguousBinop
-  .property /*1700004E*/ string Expr_InWithoutList()
+  .property /*1700004E*/ callconv(8) string
+          Expr_InWithoutList()
   {
     .get string System.SR/*02000003*/::get_Expr_InWithoutList() /* 06000054 */
   } // end of property SR::Expr_InWithoutList
-  .property /*1700004F*/ string Expr_UnsupportedOperator()
+  .property /*1700004F*/ callconv(8) string
+          Expr_UnsupportedOperator()
   {
     .get string System.SR/*02000003*/::get_Expr_UnsupportedOperator() /* 06000055 */
   } // end of property SR::Expr_UnsupportedOperator
-  .property /*17000050*/ string Expr_InvalidNameBracketing()
+  .property /*17000050*/ callconv(8) string
+          Expr_InvalidNameBracketing()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidNameBracketing() /* 06000056 */
   } // end of property SR::Expr_InvalidNameBracketing
-  .property /*17000051*/ string Expr_MissingOperandBefore()
+  .property /*17000051*/ callconv(8) string
+          Expr_MissingOperandBefore()
   {
     .get string System.SR/*02000003*/::get_Expr_MissingOperandBefore() /* 06000057 */
   } // end of property SR::Expr_MissingOperandBefore
-  .property /*17000052*/ string Expr_TooManyRightParentheses()
+  .property /*17000052*/ callconv(8) string
+          Expr_TooManyRightParentheses()
   {
     .get string System.SR/*02000003*/::get_Expr_TooManyRightParentheses() /* 06000058 */
   } // end of property SR::Expr_TooManyRightParentheses
-  .property /*17000053*/ string Expr_UnresolvedRelation()
+  .property /*17000053*/ callconv(8) string
+          Expr_UnresolvedRelation()
   {
     .get string System.SR/*02000003*/::get_Expr_UnresolvedRelation() /* 06000059 */
   } // end of property SR::Expr_UnresolvedRelation
-  .property /*17000054*/ string Expr_AggregateArgument()
+  .property /*17000054*/ callconv(8) string
+          Expr_AggregateArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_AggregateArgument() /* 0600005A */
   } // end of property SR::Expr_AggregateArgument
-  .property /*17000055*/ string Expr_AggregateUnbound()
+  .property /*17000055*/ callconv(8) string
+          Expr_AggregateUnbound()
   {
     .get string System.SR/*02000003*/::get_Expr_AggregateUnbound() /* 0600005B */
   } // end of property SR::Expr_AggregateUnbound
-  .property /*17000056*/ string Expr_EvalNoContext()
+  .property /*17000056*/ callconv(8) string
+          Expr_EvalNoContext()
   {
     .get string System.SR/*02000003*/::get_Expr_EvalNoContext() /* 0600005C */
   } // end of property SR::Expr_EvalNoContext
-  .property /*17000057*/ string Expr_ExpressionUnbound()
+  .property /*17000057*/ callconv(8) string
+          Expr_ExpressionUnbound()
   {
     .get string System.SR/*02000003*/::get_Expr_ExpressionUnbound() /* 0600005D */
   } // end of property SR::Expr_ExpressionUnbound
-  .property /*17000058*/ string Expr_ComputeNotAggregate()
+  .property /*17000058*/ callconv(8) string
+          Expr_ComputeNotAggregate()
   {
     .get string System.SR/*02000003*/::get_Expr_ComputeNotAggregate() /* 0600005E */
   } // end of property SR::Expr_ComputeNotAggregate
-  .property /*17000059*/ string Expr_FilterConvertion()
+  .property /*17000059*/ callconv(8) string
+          Expr_FilterConvertion()
   {
     .get string System.SR/*02000003*/::get_Expr_FilterConvertion() /* 0600005F */
   } // end of property SR::Expr_FilterConvertion
-  .property /*1700005A*/ string Expr_InvalidType()
+  .property /*1700005A*/ callconv(8) string
+          Expr_InvalidType()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidType() /* 06000060 */
   } // end of property SR::Expr_InvalidType
-  .property /*1700005B*/ string Expr_LookupArgument()
+  .property /*1700005B*/ callconv(8) string
+          Expr_LookupArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_LookupArgument() /* 06000061 */
   } // end of property SR::Expr_LookupArgument
-  .property /*1700005C*/ string Expr_InvokeArgument()
+  .property /*1700005C*/ callconv(8) string
+          Expr_InvokeArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_InvokeArgument() /* 06000062 */
   } // end of property SR::Expr_InvokeArgument
-  .property /*1700005D*/ string Expr_ArgumentOutofRange()
+  .property /*1700005D*/ callconv(8) string
+          Expr_ArgumentOutofRange()
   {
     .get string System.SR/*02000003*/::get_Expr_ArgumentOutofRange() /* 06000063 */
   } // end of property SR::Expr_ArgumentOutofRange
-  .property /*1700005E*/ string Expr_IsSyntax()
+  .property /*1700005E*/ callconv(8) string
+          Expr_IsSyntax()
   {
     .get string System.SR/*02000003*/::get_Expr_IsSyntax() /* 06000064 */
   } // end of property SR::Expr_IsSyntax
-  .property /*1700005F*/ string Expr_Overflow()
+  .property /*1700005F*/ callconv(8) string
+          Expr_Overflow()
   {
     .get string System.SR/*02000003*/::get_Expr_Overflow() /* 06000065 */
   } // end of property SR::Expr_Overflow
-  .property /*17000060*/ string Expr_BindFailure()
+  .property /*17000060*/ callconv(8) string
+          Expr_BindFailure()
   {
     .get string System.SR/*02000003*/::get_Expr_BindFailure() /* 06000066 */
   } // end of property SR::Expr_BindFailure
-  .property /*17000061*/ string Expr_InvalidHoursArgument()
+  .property /*17000061*/ callconv(8) string
+          Expr_InvalidHoursArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidHoursArgument() /* 06000067 */
   } // end of property SR::Expr_InvalidHoursArgument
-  .property /*17000062*/ string Expr_InvalidMinutesArgument()
+  .property /*17000062*/ callconv(8) string
+          Expr_InvalidMinutesArgument()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidMinutesArgument() /* 06000068 */
   } // end of property SR::Expr_InvalidMinutesArgument
-  .property /*17000063*/ string Expr_InvalidTimeZoneRange()
+  .property /*17000063*/ callconv(8) string
+          Expr_InvalidTimeZoneRange()
   {
     .get string System.SR/*02000003*/::get_Expr_InvalidTimeZoneRange() /* 06000069 */
   } // end of property SR::Expr_InvalidTimeZoneRange
-  .property /*17000064*/ string Expr_MismatchKindandTimeSpan()
+  .property /*17000064*/ callconv(8) string
+          Expr_MismatchKindandTimeSpan()
   {
     .get string System.SR/*02000003*/::get_Expr_MismatchKindandTimeSpan() /* 0600006A */
   } // end of property SR::Expr_MismatchKindandTimeSpan
-  .property /*17000065*/ string Expr_UnsupportedType()
+  .property /*17000065*/ callconv(8) string
+          Expr_UnsupportedType()
   {
     .get string System.SR/*02000003*/::get_Expr_UnsupportedType() /* 0600006B */
   } // end of property SR::Expr_UnsupportedType
-  .property /*17000066*/ string Data_EnforceConstraints()
+  .property /*17000066*/ callconv(8) string
+          Data_EnforceConstraints()
   {
     .get string System.SR/*02000003*/::get_Data_EnforceConstraints() /* 0600006C */
   } // end of property SR::Data_EnforceConstraints
-  .property /*17000067*/ string Data_CannotModifyCollection()
+  .property /*17000067*/ callconv(8) string
+          Data_CannotModifyCollection()
   {
     .get string System.SR/*02000003*/::get_Data_CannotModifyCollection() /* 0600006D */
   } // end of property SR::Data_CannotModifyCollection
-  .property /*17000068*/ string Data_CaseInsensitiveNameConflict()
+  .property /*17000068*/ callconv(8) string
+          Data_CaseInsensitiveNameConflict()
   {
     .get string System.SR/*02000003*/::get_Data_CaseInsensitiveNameConflict() /* 0600006E */
   } // end of property SR::Data_CaseInsensitiveNameConflict
-  .property /*17000069*/ string Data_NamespaceNameConflict()
+  .property /*17000069*/ callconv(8) string
+          Data_NamespaceNameConflict()
   {
     .get string System.SR/*02000003*/::get_Data_NamespaceNameConflict() /* 0600006F */
   } // end of property SR::Data_NamespaceNameConflict
-  .property /*1700006A*/ string Data_InvalidOffsetLength()
+  .property /*1700006A*/ callconv(8) string
+          Data_InvalidOffsetLength()
   {
     .get string System.SR/*02000003*/::get_Data_InvalidOffsetLength() /* 06000070 */
   } // end of property SR::Data_InvalidOffsetLength
-  .property /*1700006B*/ string Data_ArgumentOutOfRange()
+  .property /*1700006B*/ callconv(8) string
+          Data_ArgumentOutOfRange()
   {
     .get string System.SR/*02000003*/::get_Data_ArgumentOutOfRange() /* 06000071 */
   } // end of property SR::Data_ArgumentOutOfRange
-  .property /*1700006C*/ string Data_ArgumentNull()
+  .property /*1700006C*/ callconv(8) string
+          Data_ArgumentNull()
   {
     .get string System.SR/*02000003*/::get_Data_ArgumentNull() /* 06000072 */
   } // end of property SR::Data_ArgumentNull
-  .property /*1700006D*/ string Data_ArgumentContainsNull()
+  .property /*1700006D*/ callconv(8) string
+          Data_ArgumentContainsNull()
   {
     .get string System.SR/*02000003*/::get_Data_ArgumentContainsNull() /* 06000073 */
   } // end of property SR::Data_ArgumentContainsNull
-  .property /*1700006E*/ string DataColumns_OutOfRange()
+  .property /*1700006E*/ callconv(8) string
+          DataColumns_OutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataColumns_OutOfRange() /* 06000074 */
   } // end of property SR::DataColumns_OutOfRange
-  .property /*1700006F*/ string DataColumns_Add1()
+  .property /*1700006F*/ callconv(8) string
+          DataColumns_Add1()
   {
     .get string System.SR/*02000003*/::get_DataColumns_Add1() /* 06000075 */
   } // end of property SR::DataColumns_Add1
-  .property /*17000070*/ string DataColumns_Add2()
+  .property /*17000070*/ callconv(8) string
+          DataColumns_Add2()
   {
     .get string System.SR/*02000003*/::get_DataColumns_Add2() /* 06000076 */
   } // end of property SR::DataColumns_Add2
-  .property /*17000071*/ string DataColumns_Add3()
+  .property /*17000071*/ callconv(8) string
+          DataColumns_Add3()
   {
     .get string System.SR/*02000003*/::get_DataColumns_Add3() /* 06000077 */
   } // end of property SR::DataColumns_Add3
-  .property /*17000072*/ string DataColumns_Add4()
+  .property /*17000072*/ callconv(8) string
+          DataColumns_Add4()
   {
     .get string System.SR/*02000003*/::get_DataColumns_Add4() /* 06000078 */
   } // end of property SR::DataColumns_Add4
-  .property /*17000073*/ string DataColumns_AddDuplicate()
+  .property /*17000073*/ callconv(8) string
+          DataColumns_AddDuplicate()
   {
     .get string System.SR/*02000003*/::get_DataColumns_AddDuplicate() /* 06000079 */
   } // end of property SR::DataColumns_AddDuplicate
-  .property /*17000074*/ string DataColumns_AddDuplicate2()
+  .property /*17000074*/ callconv(8) string
+          DataColumns_AddDuplicate2()
   {
     .get string System.SR/*02000003*/::get_DataColumns_AddDuplicate2() /* 0600007A */
   } // end of property SR::DataColumns_AddDuplicate2
-  .property /*17000075*/ string DataColumns_AddDuplicate3()
+  .property /*17000075*/ callconv(8) string
+          DataColumns_AddDuplicate3()
   {
     .get string System.SR/*02000003*/::get_DataColumns_AddDuplicate3() /* 0600007B */
   } // end of property SR::DataColumns_AddDuplicate3
-  .property /*17000076*/ string DataColumns_Remove()
+  .property /*17000076*/ callconv(8) string
+          DataColumns_Remove()
   {
     .get string System.SR/*02000003*/::get_DataColumns_Remove() /* 0600007C */
   } // end of property SR::DataColumns_Remove
-  .property /*17000077*/ string DataColumns_RemovePrimaryKey()
+  .property /*17000077*/ callconv(8) string
+          DataColumns_RemovePrimaryKey()
   {
     .get string System.SR/*02000003*/::get_DataColumns_RemovePrimaryKey() /* 0600007D */
   } // end of property SR::DataColumns_RemovePrimaryKey
-  .property /*17000078*/ string DataColumns_RemoveChildKey()
+  .property /*17000078*/ callconv(8) string
+          DataColumns_RemoveChildKey()
   {
     .get string System.SR/*02000003*/::get_DataColumns_RemoveChildKey() /* 0600007E */
   } // end of property SR::DataColumns_RemoveChildKey
-  .property /*17000079*/ string DataColumns_RemoveConstraint()
+  .property /*17000079*/ callconv(8) string
+          DataColumns_RemoveConstraint()
   {
     .get string System.SR/*02000003*/::get_DataColumns_RemoveConstraint() /* 0600007F */
   } // end of property SR::DataColumns_RemoveConstraint
-  .property /*1700007A*/ string DataColumn_AutoIncrementAndExpression()
+  .property /*1700007A*/ callconv(8) string
+          DataColumn_AutoIncrementAndExpression()
   {
     .get string System.SR/*02000003*/::get_DataColumn_AutoIncrementAndExpression() /* 06000080 */
   } // end of property SR::DataColumn_AutoIncrementAndExpression
-  .property /*1700007B*/ string DataColumn_AutoIncrementAndDefaultValue()
+  .property /*1700007B*/ callconv(8) string
+          DataColumn_AutoIncrementAndDefaultValue()
   {
     .get string System.SR/*02000003*/::get_DataColumn_AutoIncrementAndDefaultValue() /* 06000081 */
   } // end of property SR::DataColumn_AutoIncrementAndDefaultValue
-  .property /*1700007C*/ string DataColumn_DefaultValueAndAutoIncrement()
+  .property /*1700007C*/ callconv(8) string
+          DataColumn_DefaultValueAndAutoIncrement()
   {
     .get string System.SR/*02000003*/::get_DataColumn_DefaultValueAndAutoIncrement() /* 06000082 */
   } // end of property SR::DataColumn_DefaultValueAndAutoIncrement
-  .property /*1700007D*/ string DataColumn_AutoIncrementSeed()
+  .property /*1700007D*/ callconv(8) string
+          DataColumn_AutoIncrementSeed()
   {
     .get string System.SR/*02000003*/::get_DataColumn_AutoIncrementSeed() /* 06000083 */
   } // end of property SR::DataColumn_AutoIncrementSeed
-  .property /*1700007E*/ string DataColumn_NameRequired()
+  .property /*1700007E*/ callconv(8) string
+          DataColumn_NameRequired()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NameRequired() /* 06000084 */
   } // end of property SR::DataColumn_NameRequired
-  .property /*1700007F*/ string DataColumn_ChangeDataType()
+  .property /*1700007F*/ callconv(8) string
+          DataColumn_ChangeDataType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ChangeDataType() /* 06000085 */
   } // end of property SR::DataColumn_ChangeDataType
-  .property /*17000080*/ string DataColumn_NullDataType()
+  .property /*17000080*/ callconv(8) string
+          DataColumn_NullDataType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NullDataType() /* 06000086 */
   } // end of property SR::DataColumn_NullDataType
-  .property /*17000081*/ string DataColumn_DefaultValueDataType()
+  .property /*17000081*/ callconv(8) string
+          DataColumn_DefaultValueDataType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_DefaultValueDataType() /* 06000087 */
   } // end of property SR::DataColumn_DefaultValueDataType
-  .property /*17000082*/ string DataColumn_DefaultValueDataType1()
+  .property /*17000082*/ callconv(8) string
+          DataColumn_DefaultValueDataType1()
   {
     .get string System.SR/*02000003*/::get_DataColumn_DefaultValueDataType1() /* 06000088 */
   } // end of property SR::DataColumn_DefaultValueDataType1
-  .property /*17000083*/ string DataColumn_DefaultValueColumnDataType()
+  .property /*17000083*/ callconv(8) string
+          DataColumn_DefaultValueColumnDataType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_DefaultValueColumnDataType() /* 06000089 */
   } // end of property SR::DataColumn_DefaultValueColumnDataType
-  .property /*17000084*/ string DataColumn_ReadOnlyAndExpression()
+  .property /*17000084*/ callconv(8) string
+          DataColumn_ReadOnlyAndExpression()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ReadOnlyAndExpression() /* 0600008A */
   } // end of property SR::DataColumn_ReadOnlyAndExpression
-  .property /*17000085*/ string DataColumn_UniqueAndExpression()
+  .property /*17000085*/ callconv(8) string
+          DataColumn_UniqueAndExpression()
   {
     .get string System.SR/*02000003*/::get_DataColumn_UniqueAndExpression() /* 0600008B */
   } // end of property SR::DataColumn_UniqueAndExpression
-  .property /*17000086*/ string DataColumn_ExpressionAndUnique()
+  .property /*17000086*/ callconv(8) string
+          DataColumn_ExpressionAndUnique()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExpressionAndUnique() /* 0600008C */
   } // end of property SR::DataColumn_ExpressionAndUnique
-  .property /*17000087*/ string DataColumn_ExpressionAndReadOnly()
+  .property /*17000087*/ callconv(8) string
+          DataColumn_ExpressionAndReadOnly()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExpressionAndReadOnly() /* 0600008D */
   } // end of property SR::DataColumn_ExpressionAndReadOnly
-  .property /*17000088*/ string DataColumn_ExpressionAndConstraint()
+  .property /*17000088*/ callconv(8) string
+          DataColumn_ExpressionAndConstraint()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExpressionAndConstraint() /* 0600008E */
   } // end of property SR::DataColumn_ExpressionAndConstraint
-  .property /*17000089*/ string DataColumn_ExpressionInConstraint()
+  .property /*17000089*/ callconv(8) string
+          DataColumn_ExpressionInConstraint()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExpressionInConstraint() /* 0600008F */
   } // end of property SR::DataColumn_ExpressionInConstraint
-  .property /*1700008A*/ string DataColumn_ExpressionCircular()
+  .property /*1700008A*/ callconv(8) string
+          DataColumn_ExpressionCircular()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExpressionCircular() /* 06000090 */
   } // end of property SR::DataColumn_ExpressionCircular
-  .property /*1700008B*/ string DataColumn_NullKeyValues()
+  .property /*1700008B*/ callconv(8) string
+          DataColumn_NullKeyValues()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NullKeyValues() /* 06000091 */
   } // end of property SR::DataColumn_NullKeyValues
-  .property /*1700008C*/ string DataColumn_NullValues()
+  .property /*1700008C*/ callconv(8) string
+          DataColumn_NullValues()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NullValues() /* 06000092 */
   } // end of property SR::DataColumn_NullValues
-  .property /*1700008D*/ string DataColumn_ReadOnly()
+  .property /*1700008D*/ callconv(8) string
+          DataColumn_ReadOnly()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ReadOnly() /* 06000093 */
   } // end of property SR::DataColumn_ReadOnly
-  .property /*1700008E*/ string DataColumn_NonUniqueValues()
+  .property /*1700008E*/ callconv(8) string
+          DataColumn_NonUniqueValues()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NonUniqueValues() /* 06000094 */
   } // end of property SR::DataColumn_NonUniqueValues
-  .property /*1700008F*/ string DataColumn_NotInTheTable()
+  .property /*1700008F*/ callconv(8) string
+          DataColumn_NotInTheTable()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NotInTheTable() /* 06000095 */
   } // end of property SR::DataColumn_NotInTheTable
-  .property /*17000090*/ string DataColumn_NotInAnyTable()
+  .property /*17000090*/ callconv(8) string
+          DataColumn_NotInAnyTable()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NotInAnyTable() /* 06000096 */
   } // end of property SR::DataColumn_NotInAnyTable
-  .property /*17000091*/ string DataColumn_SetFailed()
+  .property /*17000091*/ callconv(8) string
+          DataColumn_SetFailed()
   {
     .get string System.SR/*02000003*/::get_DataColumn_SetFailed() /* 06000097 */
   } // end of property SR::DataColumn_SetFailed
-  .property /*17000092*/ string DataColumn_CannotSetToNull()
+  .property /*17000092*/ callconv(8) string
+          DataColumn_CannotSetToNull()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSetToNull() /* 06000098 */
   } // end of property SR::DataColumn_CannotSetToNull
-  .property /*17000093*/ string DataColumn_LongerThanMaxLength()
+  .property /*17000093*/ callconv(8) string
+          DataColumn_LongerThanMaxLength()
   {
     .get string System.SR/*02000003*/::get_DataColumn_LongerThanMaxLength() /* 06000099 */
   } // end of property SR::DataColumn_LongerThanMaxLength
-  .property /*17000094*/ string DataColumn_HasToBeStringType()
+  .property /*17000094*/ callconv(8) string
+          DataColumn_HasToBeStringType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_HasToBeStringType() /* 0600009A */
   } // end of property SR::DataColumn_HasToBeStringType
-  .property /*17000095*/ string DataColumn_CannotSetMaxLength()
+  .property /*17000095*/ callconv(8) string
+          DataColumn_CannotSetMaxLength()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSetMaxLength() /* 0600009B */
   } // end of property SR::DataColumn_CannotSetMaxLength
-  .property /*17000096*/ string DataColumn_CannotSetMaxLength2()
+  .property /*17000096*/ callconv(8) string
+          DataColumn_CannotSetMaxLength2()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSetMaxLength2() /* 0600009C */
   } // end of property SR::DataColumn_CannotSetMaxLength2
-  .property /*17000097*/ string DataColumn_CannotSimpleContentType()
+  .property /*17000097*/ callconv(8) string
+          DataColumn_CannotSimpleContentType()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSimpleContentType() /* 0600009D */
   } // end of property SR::DataColumn_CannotSimpleContentType
-  .property /*17000098*/ string DataColumn_CannotSimpleContent()
+  .property /*17000098*/ callconv(8) string
+          DataColumn_CannotSimpleContent()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSimpleContent() /* 0600009E */
   } // end of property SR::DataColumn_CannotSimpleContent
-  .property /*17000099*/ string DataColumn_ExceedMaxLength()
+  .property /*17000099*/ callconv(8) string
+          DataColumn_ExceedMaxLength()
   {
     .get string System.SR/*02000003*/::get_DataColumn_ExceedMaxLength() /* 0600009F */
   } // end of property SR::DataColumn_ExceedMaxLength
-  .property /*1700009A*/ string DataColumn_NotAllowDBNull()
+  .property /*1700009A*/ callconv(8) string
+          DataColumn_NotAllowDBNull()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NotAllowDBNull() /* 060000A0 */
   } // end of property SR::DataColumn_NotAllowDBNull
-  .property /*1700009B*/ string DataColumn_CannotChangeNamespace()
+  .property /*1700009B*/ callconv(8) string
+          DataColumn_CannotChangeNamespace()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotChangeNamespace() /* 060000A1 */
   } // end of property SR::DataColumn_CannotChangeNamespace
-  .property /*1700009C*/ string DataColumn_AutoIncrementCannotSetIfHasData()
+  .property /*1700009C*/ callconv(8) string
+          DataColumn_AutoIncrementCannotSetIfHasData()
   {
     .get string System.SR/*02000003*/::get_DataColumn_AutoIncrementCannotSetIfHasData() /* 060000A2 */
   } // end of property SR::DataColumn_AutoIncrementCannotSetIfHasData
-  .property /*1700009D*/ string DataColumn_NotInTheUnderlyingTable()
+  .property /*1700009D*/ callconv(8) string
+          DataColumn_NotInTheUnderlyingTable()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NotInTheUnderlyingTable() /* 060000A3 */
   } // end of property SR::DataColumn_NotInTheUnderlyingTable
-  .property /*1700009E*/ string DataColumn_InvalidDataColumnMapping()
+  .property /*1700009E*/ callconv(8) string
+          DataColumn_InvalidDataColumnMapping()
   {
     .get string System.SR/*02000003*/::get_DataColumn_InvalidDataColumnMapping() /* 060000A4 */
   } // end of property SR::DataColumn_InvalidDataColumnMapping
-  .property /*1700009F*/ string DataColumn_CannotSetDateTimeModeForNonDateTimeColumns()
+  .property /*1700009F*/ callconv(8) string
+          DataColumn_CannotSetDateTimeModeForNonDateTimeColumns()
   {
     .get string System.SR/*02000003*/::get_DataColumn_CannotSetDateTimeModeForNonDateTimeColumns() /* 060000A5 */
   } // end of property SR::DataColumn_CannotSetDateTimeModeForNonDateTimeColumns
-  .property /*170000A0*/ string DataColumn_DateTimeMode()
+  .property /*170000A0*/ callconv(8) string
+          DataColumn_DateTimeMode()
   {
     .get string System.SR/*02000003*/::get_DataColumn_DateTimeMode() /* 060000A6 */
   } // end of property SR::DataColumn_DateTimeMode
-  .property /*170000A1*/ string DataColumn_INullableUDTwithoutStaticNull()
+  .property /*170000A1*/ callconv(8) string
+          DataColumn_INullableUDTwithoutStaticNull()
   {
     .get string System.SR/*02000003*/::get_DataColumn_INullableUDTwithoutStaticNull() /* 060000A7 */
   } // end of property SR::DataColumn_INullableUDTwithoutStaticNull
-  .property /*170000A2*/ string DataColumn_UDTImplementsIChangeTrackingButnotIRevertible()
+  .property /*170000A2*/ callconv(8) string
+          DataColumn_UDTImplementsIChangeTrackingButnotIRevertible()
   {
     .get string System.SR/*02000003*/::get_DataColumn_UDTImplementsIChangeTrackingButnotIRevertible() /* 060000A8 */
   } // end of property SR::DataColumn_UDTImplementsIChangeTrackingButnotIRevertible
-  .property /*170000A3*/ string DataColumn_SetAddedAndModifiedCalledOnNonUnchanged()
+  .property /*170000A3*/ callconv(8) string
+          DataColumn_SetAddedAndModifiedCalledOnNonUnchanged()
   {
     .get string System.SR/*02000003*/::get_DataColumn_SetAddedAndModifiedCalledOnNonUnchanged() /* 060000A9 */
   } // end of property SR::DataColumn_SetAddedAndModifiedCalledOnNonUnchanged
-  .property /*170000A4*/ string DataColumn_OrdinalExceedMaximun()
+  .property /*170000A4*/ callconv(8) string
+          DataColumn_OrdinalExceedMaximun()
   {
     .get string System.SR/*02000003*/::get_DataColumn_OrdinalExceedMaximun() /* 060000AA */
   } // end of property SR::DataColumn_OrdinalExceedMaximun
-  .property /*170000A5*/ string DataColumn_NullableTypesNotSupported()
+  .property /*170000A5*/ callconv(8) string
+          DataColumn_NullableTypesNotSupported()
   {
     .get string System.SR/*02000003*/::get_DataColumn_NullableTypesNotSupported() /* 060000AB */
   } // end of property SR::DataColumn_NullableTypesNotSupported
-  .property /*170000A6*/ string DataConstraint_NoName()
+  .property /*170000A6*/ callconv(8) string
+          DataConstraint_NoName()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_NoName() /* 060000AC */
   } // end of property SR::DataConstraint_NoName
-  .property /*170000A7*/ string DataConstraint_Violation()
+  .property /*170000A7*/ callconv(8) string
+          DataConstraint_Violation()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_Violation() /* 060000AD */
   } // end of property SR::DataConstraint_Violation
-  .property /*170000A8*/ string DataConstraint_ViolationValue()
+  .property /*170000A8*/ callconv(8) string
+          DataConstraint_ViolationValue()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_ViolationValue() /* 060000AE */
   } // end of property SR::DataConstraint_ViolationValue
-  .property /*170000A9*/ string DataConstraint_NotInTheTable()
+  .property /*170000A9*/ callconv(8) string
+          DataConstraint_NotInTheTable()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_NotInTheTable() /* 060000AF */
   } // end of property SR::DataConstraint_NotInTheTable
-  .property /*170000AA*/ string DataConstraint_OutOfRange()
+  .property /*170000AA*/ callconv(8) string
+          DataConstraint_OutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_OutOfRange() /* 060000B0 */
   } // end of property SR::DataConstraint_OutOfRange
-  .property /*170000AB*/ string DataConstraint_Duplicate()
+  .property /*170000AB*/ callconv(8) string
+          DataConstraint_Duplicate()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_Duplicate() /* 060000B1 */
   } // end of property SR::DataConstraint_Duplicate
-  .property /*170000AC*/ string DataConstraint_DuplicateName()
+  .property /*170000AC*/ callconv(8) string
+          DataConstraint_DuplicateName()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_DuplicateName() /* 060000B2 */
   } // end of property SR::DataConstraint_DuplicateName
-  .property /*170000AD*/ string DataConstraint_UniqueViolation()
+  .property /*170000AD*/ callconv(8) string
+          DataConstraint_UniqueViolation()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_UniqueViolation() /* 060000B3 */
   } // end of property SR::DataConstraint_UniqueViolation
-  .property /*170000AE*/ string DataConstraint_ForeignTable()
+  .property /*170000AE*/ callconv(8) string
+          DataConstraint_ForeignTable()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_ForeignTable() /* 060000B4 */
   } // end of property SR::DataConstraint_ForeignTable
-  .property /*170000AF*/ string DataConstraint_ParentValues()
+  .property /*170000AF*/ callconv(8) string
+          DataConstraint_ParentValues()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_ParentValues() /* 060000B5 */
   } // end of property SR::DataConstraint_ParentValues
-  .property /*170000B0*/ string DataConstraint_AddFailed()
+  .property /*170000B0*/ callconv(8) string
+          DataConstraint_AddFailed()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_AddFailed() /* 060000B6 */
   } // end of property SR::DataConstraint_AddFailed
-  .property /*170000B1*/ string DataConstraint_RemoveFailed()
+  .property /*170000B1*/ callconv(8) string
+          DataConstraint_RemoveFailed()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_RemoveFailed() /* 060000B7 */
   } // end of property SR::DataConstraint_RemoveFailed
-  .property /*170000B2*/ string DataConstraint_NeededForForeignKeyConstraint()
+  .property /*170000B2*/ callconv(8) string
+          DataConstraint_NeededForForeignKeyConstraint()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_NeededForForeignKeyConstraint() /* 060000B8 */
   } // end of property SR::DataConstraint_NeededForForeignKeyConstraint
-  .property /*170000B3*/ string DataConstraint_CascadeDelete()
+  .property /*170000B3*/ callconv(8) string
+          DataConstraint_CascadeDelete()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_CascadeDelete() /* 060000B9 */
   } // end of property SR::DataConstraint_CascadeDelete
-  .property /*170000B4*/ string DataConstraint_CascadeUpdate()
+  .property /*170000B4*/ callconv(8) string
+          DataConstraint_CascadeUpdate()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_CascadeUpdate() /* 060000BA */
   } // end of property SR::DataConstraint_CascadeUpdate
-  .property /*170000B5*/ string DataConstraint_ClearParentTable()
+  .property /*170000B5*/ callconv(8) string
+          DataConstraint_ClearParentTable()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_ClearParentTable() /* 060000BB */
   } // end of property SR::DataConstraint_ClearParentTable
-  .property /*170000B6*/ string DataConstraint_ForeignKeyViolation()
+  .property /*170000B6*/ callconv(8) string
+          DataConstraint_ForeignKeyViolation()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_ForeignKeyViolation() /* 060000BC */
   } // end of property SR::DataConstraint_ForeignKeyViolation
-  .property /*170000B7*/ string DataConstraint_BadObjectPropertyAccess()
+  .property /*170000B7*/ callconv(8) string
+          DataConstraint_BadObjectPropertyAccess()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_BadObjectPropertyAccess() /* 060000BD */
   } // end of property SR::DataConstraint_BadObjectPropertyAccess
-  .property /*170000B8*/ string DataConstraint_RemoveParentRow()
+  .property /*170000B8*/ callconv(8) string
+          DataConstraint_RemoveParentRow()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_RemoveParentRow() /* 060000BE */
   } // end of property SR::DataConstraint_RemoveParentRow
-  .property /*170000B9*/ string DataConstraint_AddPrimaryKeyConstraint()
+  .property /*170000B9*/ callconv(8) string
+          DataConstraint_AddPrimaryKeyConstraint()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_AddPrimaryKeyConstraint() /* 060000BF */
   } // end of property SR::DataConstraint_AddPrimaryKeyConstraint
-  .property /*170000BA*/ string DataConstraint_CantAddConstraintToMultipleNestedTable()
+  .property /*170000BA*/ callconv(8) string
+          DataConstraint_CantAddConstraintToMultipleNestedTable()
   {
     .get string System.SR/*02000003*/::get_DataConstraint_CantAddConstraintToMultipleNestedTable() /* 060000C0 */
   } // end of property SR::DataConstraint_CantAddConstraintToMultipleNestedTable
-  .property /*170000BB*/ string DataKey_TableMismatch()
+  .property /*170000BB*/ callconv(8) string
+          DataKey_TableMismatch()
   {
     .get string System.SR/*02000003*/::get_DataKey_TableMismatch() /* 060000C1 */
   } // end of property SR::DataKey_TableMismatch
-  .property /*170000BC*/ string DataKey_NoColumns()
+  .property /*170000BC*/ callconv(8) string
+          DataKey_NoColumns()
   {
     .get string System.SR/*02000003*/::get_DataKey_NoColumns() /* 060000C2 */
   } // end of property SR::DataKey_NoColumns
-  .property /*170000BD*/ string DataKey_TooManyColumns()
+  .property /*170000BD*/ callconv(8) string
+          DataKey_TooManyColumns()
   {
     .get string System.SR/*02000003*/::get_DataKey_TooManyColumns() /* 060000C3 */
   } // end of property SR::DataKey_TooManyColumns
-  .property /*170000BE*/ string DataKey_DuplicateColumns()
+  .property /*170000BE*/ callconv(8) string
+          DataKey_DuplicateColumns()
   {
     .get string System.SR/*02000003*/::get_DataKey_DuplicateColumns() /* 060000C4 */
   } // end of property SR::DataKey_DuplicateColumns
-  .property /*170000BF*/ string DataKey_RemovePrimaryKey()
+  .property /*170000BF*/ callconv(8) string
+          DataKey_RemovePrimaryKey()
   {
     .get string System.SR/*02000003*/::get_DataKey_RemovePrimaryKey() /* 060000C5 */
   } // end of property SR::DataKey_RemovePrimaryKey
-  .property /*170000C0*/ string DataKey_RemovePrimaryKey1()
+  .property /*170000C0*/ callconv(8) string
+          DataKey_RemovePrimaryKey1()
   {
     .get string System.SR/*02000003*/::get_DataKey_RemovePrimaryKey1() /* 060000C6 */
   } // end of property SR::DataKey_RemovePrimaryKey1
-  .property /*170000C1*/ string DataRelation_ColumnsTypeMismatch()
+  .property /*170000C1*/ callconv(8) string
+          DataRelation_ColumnsTypeMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ColumnsTypeMismatch() /* 060000C7 */
   } // end of property SR::DataRelation_ColumnsTypeMismatch
-  .property /*170000C2*/ string DataRelation_KeyColumnsIdentical()
+  .property /*170000C2*/ callconv(8) string
+          DataRelation_KeyColumnsIdentical()
   {
     .get string System.SR/*02000003*/::get_DataRelation_KeyColumnsIdentical() /* 060000C8 */
   } // end of property SR::DataRelation_KeyColumnsIdentical
-  .property /*170000C3*/ string DataRelation_KeyLengthMismatch()
+  .property /*170000C3*/ callconv(8) string
+          DataRelation_KeyLengthMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_KeyLengthMismatch() /* 060000C9 */
   } // end of property SR::DataRelation_KeyLengthMismatch
-  .property /*170000C4*/ string DataRelation_KeyZeroLength()
+  .property /*170000C4*/ callconv(8) string
+          DataRelation_KeyZeroLength()
   {
     .get string System.SR/*02000003*/::get_DataRelation_KeyZeroLength() /* 060000CA */
   } // end of property SR::DataRelation_KeyZeroLength
-  .property /*170000C5*/ string DataRelation_ForeignRow()
+  .property /*170000C5*/ callconv(8) string
+          DataRelation_ForeignRow()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ForeignRow() /* 060000CB */
   } // end of property SR::DataRelation_ForeignRow
-  .property /*170000C6*/ string DataRelation_NoName()
+  .property /*170000C6*/ callconv(8) string
+          DataRelation_NoName()
   {
     .get string System.SR/*02000003*/::get_DataRelation_NoName() /* 060000CC */
   } // end of property SR::DataRelation_NoName
-  .property /*170000C7*/ string DataRelation_ForeignTable()
+  .property /*170000C7*/ callconv(8) string
+          DataRelation_ForeignTable()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ForeignTable() /* 060000CD */
   } // end of property SR::DataRelation_ForeignTable
-  .property /*170000C8*/ string DataRelation_ForeignDataSet()
+  .property /*170000C8*/ callconv(8) string
+          DataRelation_ForeignDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ForeignDataSet() /* 060000CE */
   } // end of property SR::DataRelation_ForeignDataSet
-  .property /*170000C9*/ string DataRelation_GetParentRowTableMismatch()
+  .property /*170000C9*/ callconv(8) string
+          DataRelation_GetParentRowTableMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_GetParentRowTableMismatch() /* 060000CF */
   } // end of property SR::DataRelation_GetParentRowTableMismatch
-  .property /*170000CA*/ string DataRelation_SetParentRowTableMismatch()
+  .property /*170000CA*/ callconv(8) string
+          DataRelation_SetParentRowTableMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_SetParentRowTableMismatch() /* 060000D0 */
   } // end of property SR::DataRelation_SetParentRowTableMismatch
-  .property /*170000CB*/ string DataRelation_DataSetMismatch()
+  .property /*170000CB*/ callconv(8) string
+          DataRelation_DataSetMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_DataSetMismatch() /* 060000D1 */
   } // end of property SR::DataRelation_DataSetMismatch
-  .property /*170000CC*/ string DataRelation_TablesInDifferentSets()
+  .property /*170000CC*/ callconv(8) string
+          DataRelation_TablesInDifferentSets()
   {
     .get string System.SR/*02000003*/::get_DataRelation_TablesInDifferentSets() /* 060000D2 */
   } // end of property SR::DataRelation_TablesInDifferentSets
-  .property /*170000CD*/ string DataRelation_AlreadyExists()
+  .property /*170000CD*/ callconv(8) string
+          DataRelation_AlreadyExists()
   {
     .get string System.SR/*02000003*/::get_DataRelation_AlreadyExists() /* 060000D3 */
   } // end of property SR::DataRelation_AlreadyExists
-  .property /*170000CE*/ string DataRelation_DoesNotExist()
+  .property /*170000CE*/ callconv(8) string
+          DataRelation_DoesNotExist()
   {
     .get string System.SR/*02000003*/::get_DataRelation_DoesNotExist() /* 060000D4 */
   } // end of property SR::DataRelation_DoesNotExist
-  .property /*170000CF*/ string DataRelation_AlreadyInOtherDataSet()
+  .property /*170000CF*/ callconv(8) string
+          DataRelation_AlreadyInOtherDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRelation_AlreadyInOtherDataSet() /* 060000D5 */
   } // end of property SR::DataRelation_AlreadyInOtherDataSet
-  .property /*170000D0*/ string DataRelation_AlreadyInTheDataSet()
+  .property /*170000D0*/ callconv(8) string
+          DataRelation_AlreadyInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRelation_AlreadyInTheDataSet() /* 060000D6 */
   } // end of property SR::DataRelation_AlreadyInTheDataSet
-  .property /*170000D1*/ string DataRelation_DuplicateName()
+  .property /*170000D1*/ callconv(8) string
+          DataRelation_DuplicateName()
   {
     .get string System.SR/*02000003*/::get_DataRelation_DuplicateName() /* 060000D7 */
   } // end of property SR::DataRelation_DuplicateName
-  .property /*170000D2*/ string DataRelation_NotInTheDataSet()
+  .property /*170000D2*/ callconv(8) string
+          DataRelation_NotInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRelation_NotInTheDataSet() /* 060000D8 */
   } // end of property SR::DataRelation_NotInTheDataSet
-  .property /*170000D3*/ string DataRelation_OutOfRange()
+  .property /*170000D3*/ callconv(8) string
+          DataRelation_OutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataRelation_OutOfRange() /* 060000D9 */
   } // end of property SR::DataRelation_OutOfRange
-  .property /*170000D4*/ string DataRelation_TableNull()
+  .property /*170000D4*/ callconv(8) string
+          DataRelation_TableNull()
   {
     .get string System.SR/*02000003*/::get_DataRelation_TableNull() /* 060000DA */
   } // end of property SR::DataRelation_TableNull
-  .property /*170000D5*/ string DataRelation_TableWasRemoved()
+  .property /*170000D5*/ callconv(8) string
+          DataRelation_TableWasRemoved()
   {
     .get string System.SR/*02000003*/::get_DataRelation_TableWasRemoved() /* 060000DB */
   } // end of property SR::DataRelation_TableWasRemoved
-  .property /*170000D6*/ string DataRelation_ChildTableMismatch()
+  .property /*170000D6*/ callconv(8) string
+          DataRelation_ChildTableMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ChildTableMismatch() /* 060000DC */
   } // end of property SR::DataRelation_ChildTableMismatch
-  .property /*170000D7*/ string DataRelation_ParentTableMismatch()
+  .property /*170000D7*/ callconv(8) string
+          DataRelation_ParentTableMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ParentTableMismatch() /* 060000DD */
   } // end of property SR::DataRelation_ParentTableMismatch
-  .property /*170000D8*/ string DataRelation_RelationNestedReadOnly()
+  .property /*170000D8*/ callconv(8) string
+          DataRelation_RelationNestedReadOnly()
   {
     .get string System.SR/*02000003*/::get_DataRelation_RelationNestedReadOnly() /* 060000DE */
   } // end of property SR::DataRelation_RelationNestedReadOnly
-  .property /*170000D9*/ string DataRelation_TableCantBeNestedInTwoTables()
+  .property /*170000D9*/ callconv(8) string
+          DataRelation_TableCantBeNestedInTwoTables()
   {
     .get string System.SR/*02000003*/::get_DataRelation_TableCantBeNestedInTwoTables() /* 060000DF */
   } // end of property SR::DataRelation_TableCantBeNestedInTwoTables
-  .property /*170000DA*/ string DataRelation_LoopInNestedRelations()
+  .property /*170000DA*/ callconv(8) string
+          DataRelation_LoopInNestedRelations()
   {
     .get string System.SR/*02000003*/::get_DataRelation_LoopInNestedRelations() /* 060000E0 */
   } // end of property SR::DataRelation_LoopInNestedRelations
-  .property /*170000DB*/ string DataRelation_CaseLocaleMismatch()
+  .property /*170000DB*/ callconv(8) string
+          DataRelation_CaseLocaleMismatch()
   {
     .get string System.SR/*02000003*/::get_DataRelation_CaseLocaleMismatch() /* 060000E1 */
   } // end of property SR::DataRelation_CaseLocaleMismatch
-  .property /*170000DC*/ string DataRelation_ParentOrChildColumnsDoNotHaveDataSet()
+  .property /*170000DC*/ callconv(8) string
+          DataRelation_ParentOrChildColumnsDoNotHaveDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRelation_ParentOrChildColumnsDoNotHaveDataSet() /* 060000E2 */
   } // end of property SR::DataRelation_ParentOrChildColumnsDoNotHaveDataSet
-  .property /*170000DD*/ string DataRelation_InValidNestedRelation()
+  .property /*170000DD*/ callconv(8) string
+          DataRelation_InValidNestedRelation()
   {
     .get string System.SR/*02000003*/::get_DataRelation_InValidNestedRelation() /* 060000E3 */
   } // end of property SR::DataRelation_InValidNestedRelation
-  .property /*170000DE*/ string DataRelation_InValidNamespaceInNestedRelation()
+  .property /*170000DE*/ callconv(8) string
+          DataRelation_InValidNamespaceInNestedRelation()
   {
     .get string System.SR/*02000003*/::get_DataRelation_InValidNamespaceInNestedRelation() /* 060000E4 */
   } // end of property SR::DataRelation_InValidNamespaceInNestedRelation
-  .property /*170000DF*/ string DataRow_NotInTheDataSet()
+  .property /*170000DF*/ callconv(8) string
+          DataRow_NotInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRow_NotInTheDataSet() /* 060000E5 */
   } // end of property SR::DataRow_NotInTheDataSet
-  .property /*170000E0*/ string DataRow_NotInTheTable()
+  .property /*170000E0*/ callconv(8) string
+          DataRow_NotInTheTable()
   {
     .get string System.SR/*02000003*/::get_DataRow_NotInTheTable() /* 060000E6 */
   } // end of property SR::DataRow_NotInTheTable
-  .property /*170000E1*/ string DataRow_ParentRowNotInTheDataSet()
+  .property /*170000E1*/ callconv(8) string
+          DataRow_ParentRowNotInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataRow_ParentRowNotInTheDataSet() /* 060000E7 */
   } // end of property SR::DataRow_ParentRowNotInTheDataSet
-  .property /*170000E2*/ string DataRow_EditInRowChanging()
+  .property /*170000E2*/ callconv(8) string
+          DataRow_EditInRowChanging()
   {
     .get string System.SR/*02000003*/::get_DataRow_EditInRowChanging() /* 060000E8 */
   } // end of property SR::DataRow_EditInRowChanging
-  .property /*170000E3*/ string DataRow_EndEditInRowChanging()
+  .property /*170000E3*/ callconv(8) string
+          DataRow_EndEditInRowChanging()
   {
     .get string System.SR/*02000003*/::get_DataRow_EndEditInRowChanging() /* 060000E9 */
   } // end of property SR::DataRow_EndEditInRowChanging
-  .property /*170000E4*/ string DataRow_BeginEditInRowChanging()
+  .property /*170000E4*/ callconv(8) string
+          DataRow_BeginEditInRowChanging()
   {
     .get string System.SR/*02000003*/::get_DataRow_BeginEditInRowChanging() /* 060000EA */
   } // end of property SR::DataRow_BeginEditInRowChanging
-  .property /*170000E5*/ string DataRow_CancelEditInRowChanging()
+  .property /*170000E5*/ callconv(8) string
+          DataRow_CancelEditInRowChanging()
   {
     .get string System.SR/*02000003*/::get_DataRow_CancelEditInRowChanging() /* 060000EB */
   } // end of property SR::DataRow_CancelEditInRowChanging
-  .property /*170000E6*/ string DataRow_DeleteInRowDeleting()
+  .property /*170000E6*/ callconv(8) string
+          DataRow_DeleteInRowDeleting()
   {
     .get string System.SR/*02000003*/::get_DataRow_DeleteInRowDeleting() /* 060000EC */
   } // end of property SR::DataRow_DeleteInRowDeleting
-  .property /*170000E7*/ string DataRow_ValuesArrayLength()
+  .property /*170000E7*/ callconv(8) string
+          DataRow_ValuesArrayLength()
   {
     .get string System.SR/*02000003*/::get_DataRow_ValuesArrayLength() /* 060000ED */
   } // end of property SR::DataRow_ValuesArrayLength
-  .property /*170000E8*/ string DataRow_NoCurrentData()
+  .property /*170000E8*/ callconv(8) string
+          DataRow_NoCurrentData()
   {
     .get string System.SR/*02000003*/::get_DataRow_NoCurrentData() /* 060000EE */
   } // end of property SR::DataRow_NoCurrentData
-  .property /*170000E9*/ string DataRow_NoOriginalData()
+  .property /*170000E9*/ callconv(8) string
+          DataRow_NoOriginalData()
   {
     .get string System.SR/*02000003*/::get_DataRow_NoOriginalData() /* 060000EF */
   } // end of property SR::DataRow_NoOriginalData
-  .property /*170000EA*/ string DataRow_NoProposedData()
+  .property /*170000EA*/ callconv(8) string
+          DataRow_NoProposedData()
   {
     .get string System.SR/*02000003*/::get_DataRow_NoProposedData() /* 060000F0 */
   } // end of property SR::DataRow_NoProposedData
-  .property /*170000EB*/ string DataRow_RemovedFromTheTable()
+  .property /*170000EB*/ callconv(8) string
+          DataRow_RemovedFromTheTable()
   {
     .get string System.SR/*02000003*/::get_DataRow_RemovedFromTheTable() /* 060000F1 */
   } // end of property SR::DataRow_RemovedFromTheTable
-  .property /*170000EC*/ string DataRow_DeletedRowInaccessible()
+  .property /*170000EC*/ callconv(8) string
+          DataRow_DeletedRowInaccessible()
   {
     .get string System.SR/*02000003*/::get_DataRow_DeletedRowInaccessible() /* 060000F2 */
   } // end of property SR::DataRow_DeletedRowInaccessible
-  .property /*170000ED*/ string DataRow_InvalidVersion()
+  .property /*170000ED*/ callconv(8) string
+          DataRow_InvalidVersion()
   {
     .get string System.SR/*02000003*/::get_DataRow_InvalidVersion() /* 060000F3 */
   } // end of property SR::DataRow_InvalidVersion
-  .property /*170000EE*/ string DataRow_OutOfRange()
+  .property /*170000EE*/ callconv(8) string
+          DataRow_OutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataRow_OutOfRange() /* 060000F4 */
   } // end of property SR::DataRow_OutOfRange
-  .property /*170000EF*/ string DataRow_RowInsertOutOfRange()
+  .property /*170000EF*/ callconv(8) string
+          DataRow_RowInsertOutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataRow_RowInsertOutOfRange() /* 060000F5 */
   } // end of property SR::DataRow_RowInsertOutOfRange
-  .property /*170000F0*/ string DataRow_RowInsertMissing()
+  .property /*170000F0*/ callconv(8) string
+          DataRow_RowInsertMissing()
   {
     .get string System.SR/*02000003*/::get_DataRow_RowInsertMissing() /* 060000F6 */
   } // end of property SR::DataRow_RowInsertMissing
-  .property /*170000F1*/ string DataRow_RowOutOfRange()
+  .property /*170000F1*/ callconv(8) string
+          DataRow_RowOutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataRow_RowOutOfRange() /* 060000F7 */
   } // end of property SR::DataRow_RowOutOfRange
-  .property /*170000F2*/ string DataRow_AlreadyInOtherCollection()
+  .property /*170000F2*/ callconv(8) string
+          DataRow_AlreadyInOtherCollection()
   {
     .get string System.SR/*02000003*/::get_DataRow_AlreadyInOtherCollection() /* 060000F8 */
   } // end of property SR::DataRow_AlreadyInOtherCollection
-  .property /*170000F3*/ string DataRow_AlreadyInTheCollection()
+  .property /*170000F3*/ callconv(8) string
+          DataRow_AlreadyInTheCollection()
   {
     .get string System.SR/*02000003*/::get_DataRow_AlreadyInTheCollection() /* 060000F9 */
   } // end of property SR::DataRow_AlreadyInTheCollection
-  .property /*170000F4*/ string DataRow_AlreadyDeleted()
+  .property /*170000F4*/ callconv(8) string
+          DataRow_AlreadyDeleted()
   {
     .get string System.SR/*02000003*/::get_DataRow_AlreadyDeleted() /* 060000FA */
   } // end of property SR::DataRow_AlreadyDeleted
-  .property /*170000F5*/ string DataRow_Empty()
+  .property /*170000F5*/ callconv(8) string
+          DataRow_Empty()
   {
     .get string System.SR/*02000003*/::get_DataRow_Empty() /* 060000FB */
   } // end of property SR::DataRow_Empty
-  .property /*170000F6*/ string DataRow_AlreadyRemoved()
+  .property /*170000F6*/ callconv(8) string
+          DataRow_AlreadyRemoved()
   {
     .get string System.SR/*02000003*/::get_DataRow_AlreadyRemoved() /* 060000FC */
   } // end of property SR::DataRow_AlreadyRemoved
-  .property /*170000F7*/ string DataRow_MultipleParents()
+  .property /*170000F7*/ callconv(8) string
+          DataRow_MultipleParents()
   {
     .get string System.SR/*02000003*/::get_DataRow_MultipleParents() /* 060000FD */
   } // end of property SR::DataRow_MultipleParents
-  .property /*170000F8*/ string DataRow_InvalidRowBitPattern()
+  .property /*170000F8*/ callconv(8) string
+          DataRow_InvalidRowBitPattern()
   {
     .get string System.SR/*02000003*/::get_DataRow_InvalidRowBitPattern() /* 060000FE */
   } // end of property SR::DataRow_InvalidRowBitPattern
-  .property /*170000F9*/ string DataSet_SetNameToEmpty()
+  .property /*170000F9*/ callconv(8) string
+          DataSet_SetNameToEmpty()
   {
     .get string System.SR/*02000003*/::get_DataSet_SetNameToEmpty() /* 060000FF */
   } // end of property SR::DataSet_SetNameToEmpty
-  .property /*170000FA*/ string DataSet_SetDataSetNameConflicting()
+  .property /*170000FA*/ callconv(8) string
+          DataSet_SetDataSetNameConflicting()
   {
     .get string System.SR/*02000003*/::get_DataSet_SetDataSetNameConflicting() /* 06000100 */
   } // end of property SR::DataSet_SetDataSetNameConflicting
-  .property /*170000FB*/ string DataSet_UnsupportedSchema()
+  .property /*170000FB*/ callconv(8) string
+          DataSet_UnsupportedSchema()
   {
     .get string System.SR/*02000003*/::get_DataSet_UnsupportedSchema() /* 06000101 */
   } // end of property SR::DataSet_UnsupportedSchema
-  .property /*170000FC*/ string DataSet_CannotChangeCaseLocale()
+  .property /*170000FC*/ callconv(8) string
+          DataSet_CannotChangeCaseLocale()
   {
     .get string System.SR/*02000003*/::get_DataSet_CannotChangeCaseLocale() /* 06000102 */
   } // end of property SR::DataSet_CannotChangeCaseLocale
-  .property /*170000FD*/ string DataSet_CannotChangeSchemaSerializationMode()
+  .property /*170000FD*/ callconv(8) string
+          DataSet_CannotChangeSchemaSerializationMode()
   {
     .get string System.SR/*02000003*/::get_DataSet_CannotChangeSchemaSerializationMode() /* 06000103 */
   } // end of property SR::DataSet_CannotChangeSchemaSerializationMode
-  .property /*170000FE*/ string DataTable_ForeignPrimaryKey()
+  .property /*170000FE*/ callconv(8) string
+          DataTable_ForeignPrimaryKey()
   {
     .get string System.SR/*02000003*/::get_DataTable_ForeignPrimaryKey() /* 06000104 */
   } // end of property SR::DataTable_ForeignPrimaryKey
-  .property /*170000FF*/ string DataTable_CannotAddToSimpleContent()
+  .property /*170000FF*/ callconv(8) string
+          DataTable_CannotAddToSimpleContent()
   {
     .get string System.SR/*02000003*/::get_DataTable_CannotAddToSimpleContent() /* 06000105 */
   } // end of property SR::DataTable_CannotAddToSimpleContent
-  .property /*17000100*/ string DataTable_NoName()
+  .property /*17000100*/ callconv(8) string
+          DataTable_NoName()
   {
     .get string System.SR/*02000003*/::get_DataTable_NoName() /* 06000106 */
   } // end of property SR::DataTable_NoName
-  .property /*17000101*/ string DataTable_MultipleSimpleContentColumns()
+  .property /*17000101*/ callconv(8) string
+          DataTable_MultipleSimpleContentColumns()
   {
     .get string System.SR/*02000003*/::get_DataTable_MultipleSimpleContentColumns() /* 06000107 */
   } // end of property SR::DataTable_MultipleSimpleContentColumns
-  .property /*17000102*/ string DataTable_MissingPrimaryKey()
+  .property /*17000102*/ callconv(8) string
+          DataTable_MissingPrimaryKey()
   {
     .get string System.SR/*02000003*/::get_DataTable_MissingPrimaryKey() /* 06000108 */
   } // end of property SR::DataTable_MissingPrimaryKey
-  .property /*17000103*/ string DataTable_InvalidSortString()
+  .property /*17000103*/ callconv(8) string
+          DataTable_InvalidSortString()
   {
     .get string System.SR/*02000003*/::get_DataTable_InvalidSortString() /* 06000109 */
   } // end of property SR::DataTable_InvalidSortString
-  .property /*17000104*/ string DataTable_CanNotSerializeDataTableHierarchy()
+  .property /*17000104*/ callconv(8) string
+          DataTable_CanNotSerializeDataTableHierarchy()
   {
     .get string System.SR/*02000003*/::get_DataTable_CanNotSerializeDataTableHierarchy() /* 0600010A */
   } // end of property SR::DataTable_CanNotSerializeDataTableHierarchy
-  .property /*17000105*/ string DataTable_CanNotRemoteDataTable()
+  .property /*17000105*/ callconv(8) string
+          DataTable_CanNotRemoteDataTable()
   {
     .get string System.SR/*02000003*/::get_DataTable_CanNotRemoteDataTable() /* 0600010B */
   } // end of property SR::DataTable_CanNotRemoteDataTable
-  .property /*17000106*/ string DataTable_CanNotSetRemotingFormat()
+  .property /*17000106*/ callconv(8) string
+          DataTable_CanNotSetRemotingFormat()
   {
     .get string System.SR/*02000003*/::get_DataTable_CanNotSetRemotingFormat() /* 0600010C */
   } // end of property SR::DataTable_CanNotSetRemotingFormat
-  .property /*17000107*/ string DataTable_CanNotSerializeDataTableWithEmptyName()
+  .property /*17000107*/ callconv(8) string
+          DataTable_CanNotSerializeDataTableWithEmptyName()
   {
     .get string System.SR/*02000003*/::get_DataTable_CanNotSerializeDataTableWithEmptyName() /* 0600010D */
   } // end of property SR::DataTable_CanNotSerializeDataTableWithEmptyName
-  .property /*17000108*/ string DataTable_DuplicateName()
+  .property /*17000108*/ callconv(8) string
+          DataTable_DuplicateName()
   {
     .get string System.SR/*02000003*/::get_DataTable_DuplicateName() /* 0600010E */
   } // end of property SR::DataTable_DuplicateName
-  .property /*17000109*/ string DataTable_DuplicateName2()
+  .property /*17000109*/ callconv(8) string
+          DataTable_DuplicateName2()
   {
     .get string System.SR/*02000003*/::get_DataTable_DuplicateName2() /* 0600010F */
   } // end of property SR::DataTable_DuplicateName2
-  .property /*1700010A*/ string DataTable_SelfnestedDatasetConflictingName()
+  .property /*1700010A*/ callconv(8) string
+          DataTable_SelfnestedDatasetConflictingName()
   {
     .get string System.SR/*02000003*/::get_DataTable_SelfnestedDatasetConflictingName() /* 06000110 */
   } // end of property SR::DataTable_SelfnestedDatasetConflictingName
-  .property /*1700010B*/ string DataTable_DatasetConflictingName()
+  .property /*1700010B*/ callconv(8) string
+          DataTable_DatasetConflictingName()
   {
     .get string System.SR/*02000003*/::get_DataTable_DatasetConflictingName() /* 06000111 */
   } // end of property SR::DataTable_DatasetConflictingName
-  .property /*1700010C*/ string DataTable_AlreadyInOtherDataSet()
+  .property /*1700010C*/ callconv(8) string
+          DataTable_AlreadyInOtherDataSet()
   {
     .get string System.SR/*02000003*/::get_DataTable_AlreadyInOtherDataSet() /* 06000112 */
   } // end of property SR::DataTable_AlreadyInOtherDataSet
-  .property /*1700010D*/ string DataTable_AlreadyInTheDataSet()
+  .property /*1700010D*/ callconv(8) string
+          DataTable_AlreadyInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataTable_AlreadyInTheDataSet() /* 06000113 */
   } // end of property SR::DataTable_AlreadyInTheDataSet
-  .property /*1700010E*/ string DataTable_NotInTheDataSet()
+  .property /*1700010E*/ callconv(8) string
+          DataTable_NotInTheDataSet()
   {
     .get string System.SR/*02000003*/::get_DataTable_NotInTheDataSet() /* 06000114 */
   } // end of property SR::DataTable_NotInTheDataSet
-  .property /*1700010F*/ string DataTable_OutOfRange()
+  .property /*1700010F*/ callconv(8) string
+          DataTable_OutOfRange()
   {
     .get string System.SR/*02000003*/::get_DataTable_OutOfRange() /* 06000115 */
   } // end of property SR::DataTable_OutOfRange
-  .property /*17000110*/ string DataTable_InRelation()
+  .property /*17000110*/ callconv(8) string
+          DataTable_InRelation()
   {
     .get string System.SR/*02000003*/::get_DataTable_InRelation() /* 06000116 */
   } // end of property SR::DataTable_InRelation
-  .property /*17000111*/ string DataTable_InConstraint()
+  .property /*17000111*/ callconv(8) string
+          DataTable_InConstraint()
   {
     .get string System.SR/*02000003*/::get_DataTable_InConstraint() /* 06000117 */
   } // end of property SR::DataTable_InConstraint
-  .property /*17000112*/ string DataTable_TableNotFound()
+  .property /*17000112*/ callconv(8) string
+          DataTable_TableNotFound()
   {
     .get string System.SR/*02000003*/::get_DataTable_TableNotFound() /* 06000118 */
   } // end of property SR::DataTable_TableNotFound
-  .property /*17000113*/ string DataMerge_MissingDefinition()
+  .property /*17000113*/ callconv(8) string
+          DataMerge_MissingDefinition()
   {
     .get string System.SR/*02000003*/::get_DataMerge_MissingDefinition() /* 06000119 */
   } // end of property SR::DataMerge_MissingDefinition
-  .property /*17000114*/ string DataMerge_MissingConstraint()
+  .property /*17000114*/ callconv(8) string
+          DataMerge_MissingConstraint()
   {
     .get string System.SR/*02000003*/::get_DataMerge_MissingConstraint() /* 0600011A */
   } // end of property SR::DataMerge_MissingConstraint
-  .property /*17000115*/ string DataMerge_DataTypeMismatch()
+  .property /*17000115*/ callconv(8) string
+          DataMerge_DataTypeMismatch()
   {
     .get string System.SR/*02000003*/::get_DataMerge_DataTypeMismatch() /* 0600011B */
   } // end of property SR::DataMerge_DataTypeMismatch
-  .property /*17000116*/ string DataMerge_PrimaryKeyMismatch()
+  .property /*17000116*/ callconv(8) string
+          DataMerge_PrimaryKeyMismatch()
   {
     .get string System.SR/*02000003*/::get_DataMerge_PrimaryKeyMismatch() /* 0600011C */
   } // end of property SR::DataMerge_PrimaryKeyMismatch
-  .property /*17000117*/ string DataMerge_PrimaryKeyColumnsMismatch()
+  .property /*17000117*/ callconv(8) string
+          DataMerge_PrimaryKeyColumnsMismatch()
   {
     .get string System.SR/*02000003*/::get_DataMerge_PrimaryKeyColumnsMismatch() /* 0600011D */
   } // end of property SR::DataMerge_PrimaryKeyColumnsMismatch
-  .property /*17000118*/ string DataMerge_ReltionKeyColumnsMismatch()
+  .property /*17000118*/ callconv(8) string
+          DataMerge_ReltionKeyColumnsMismatch()
   {
     .get string System.SR/*02000003*/::get_DataMerge_ReltionKeyColumnsMismatch() /* 0600011E */
   } // end of property SR::DataMerge_ReltionKeyColumnsMismatch
-  .property /*17000119*/ string DataMerge_MissingColumnDefinition()
+  .property /*17000119*/ callconv(8) string
+          DataMerge_MissingColumnDefinition()
   {
     .get string System.SR/*02000003*/::get_DataMerge_MissingColumnDefinition() /* 0600011F */
   } // end of property SR::DataMerge_MissingColumnDefinition
-  .property /*1700011A*/ string DataIndex_RecordStateRange()
+  .property /*1700011A*/ callconv(8) string
+          DataIndex_RecordStateRange()
   {
     .get string System.SR/*02000003*/::get_DataIndex_RecordStateRange() /* 06000120 */
   } // end of property SR::DataIndex_RecordStateRange
-  .property /*1700011B*/ string DataIndex_FindWithoutSortOrder()
+  .property /*1700011B*/ callconv(8) string
+          DataIndex_FindWithoutSortOrder()
   {
     .get string System.SR/*02000003*/::get_DataIndex_FindWithoutSortOrder() /* 06000121 */
   } // end of property SR::DataIndex_FindWithoutSortOrder
-  .property /*1700011C*/ string DataIndex_KeyLength()
+  .property /*1700011C*/ callconv(8) string
+          DataIndex_KeyLength()
   {
     .get string System.SR/*02000003*/::get_DataIndex_KeyLength() /* 06000122 */
   } // end of property SR::DataIndex_KeyLength
-  .property /*1700011D*/ string DataStorage_AggregateException()
+  .property /*1700011D*/ callconv(8) string
+          DataStorage_AggregateException()
   {
     .get string System.SR/*02000003*/::get_DataStorage_AggregateException() /* 06000123 */
   } // end of property SR::DataStorage_AggregateException
-  .property /*1700011E*/ string DataStorage_InvalidStorageType()
+  .property /*1700011E*/ callconv(8) string
+          DataStorage_InvalidStorageType()
   {
     .get string System.SR/*02000003*/::get_DataStorage_InvalidStorageType() /* 06000124 */
   } // end of property SR::DataStorage_InvalidStorageType
-  .property /*1700011F*/ string DataStorage_ProblematicChars()
+  .property /*1700011F*/ callconv(8) string
+          DataStorage_ProblematicChars()
   {
     .get string System.SR/*02000003*/::get_DataStorage_ProblematicChars() /* 06000125 */
   } // end of property SR::DataStorage_ProblematicChars
-  .property /*17000120*/ string DataStorage_SetInvalidDataType()
+  .property /*17000120*/ callconv(8) string
+          DataStorage_SetInvalidDataType()
   {
     .get string System.SR/*02000003*/::get_DataStorage_SetInvalidDataType() /* 06000126 */
   } // end of property SR::DataStorage_SetInvalidDataType
-  .property /*17000121*/ string DataStorage_IComparableNotDefined()
+  .property /*17000121*/ callconv(8) string
+          DataStorage_IComparableNotDefined()
   {
     .get string System.SR/*02000003*/::get_DataStorage_IComparableNotDefined() /* 06000127 */
   } // end of property SR::DataStorage_IComparableNotDefined
-  .property /*17000122*/ string DataView_SetFailed()
+  .property /*17000122*/ callconv(8) string
+          DataView_SetFailed()
   {
     .get string System.SR/*02000003*/::get_DataView_SetFailed() /* 06000128 */
   } // end of property SR::DataView_SetFailed
-  .property /*17000123*/ string DataView_SetDataSetFailed()
+  .property /*17000123*/ callconv(8) string
+          DataView_SetDataSetFailed()
   {
     .get string System.SR/*02000003*/::get_DataView_SetDataSetFailed() /* 06000129 */
   } // end of property SR::DataView_SetDataSetFailed
-  .property /*17000124*/ string DataView_SetRowStateFilter()
+  .property /*17000124*/ callconv(8) string
+          DataView_SetRowStateFilter()
   {
     .get string System.SR/*02000003*/::get_DataView_SetRowStateFilter() /* 0600012A */
   } // end of property SR::DataView_SetRowStateFilter
-  .property /*17000125*/ string DataView_SetTable()
+  .property /*17000125*/ callconv(8) string
+          DataView_SetTable()
   {
     .get string System.SR/*02000003*/::get_DataView_SetTable() /* 0600012B */
   } // end of property SR::DataView_SetTable
-  .property /*17000126*/ string DataView_CanNotSetDataSet()
+  .property /*17000126*/ callconv(8) string
+          DataView_CanNotSetDataSet()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotSetDataSet() /* 0600012C */
   } // end of property SR::DataView_CanNotSetDataSet
-  .property /*17000127*/ string DataView_CanNotUseDataViewManager()
+  .property /*17000127*/ callconv(8) string
+          DataView_CanNotUseDataViewManager()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotUseDataViewManager() /* 0600012D */
   } // end of property SR::DataView_CanNotUseDataViewManager
-  .property /*17000128*/ string DataView_CanNotSetTable()
+  .property /*17000128*/ callconv(8) string
+          DataView_CanNotSetTable()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotSetTable() /* 0600012E */
   } // end of property SR::DataView_CanNotSetTable
-  .property /*17000129*/ string DataView_CanNotUse()
+  .property /*17000129*/ callconv(8) string
+          DataView_CanNotUse()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotUse() /* 0600012F */
   } // end of property SR::DataView_CanNotUse
-  .property /*1700012A*/ string DataView_CanNotBindTable()
+  .property /*1700012A*/ callconv(8) string
+          DataView_CanNotBindTable()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotBindTable() /* 06000130 */
   } // end of property SR::DataView_CanNotBindTable
-  .property /*1700012B*/ string DataView_SetIListObject()
+  .property /*1700012B*/ callconv(8) string
+          DataView_SetIListObject()
   {
     .get string System.SR/*02000003*/::get_DataView_SetIListObject() /* 06000131 */
   } // end of property SR::DataView_SetIListObject
-  .property /*1700012C*/ string DataView_AddNewNotAllowNull()
+  .property /*1700012C*/ callconv(8) string
+          DataView_AddNewNotAllowNull()
   {
     .get string System.SR/*02000003*/::get_DataView_AddNewNotAllowNull() /* 06000132 */
   } // end of property SR::DataView_AddNewNotAllowNull
-  .property /*1700012D*/ string DataView_NotOpen()
+  .property /*1700012D*/ callconv(8) string
+          DataView_NotOpen()
   {
     .get string System.SR/*02000003*/::get_DataView_NotOpen() /* 06000133 */
   } // end of property SR::DataView_NotOpen
-  .property /*1700012E*/ string DataView_CreateChildView()
+  .property /*1700012E*/ callconv(8) string
+          DataView_CreateChildView()
   {
     .get string System.SR/*02000003*/::get_DataView_CreateChildView() /* 06000134 */
   } // end of property SR::DataView_CreateChildView
-  .property /*1700012F*/ string DataView_CanNotDelete()
+  .property /*1700012F*/ callconv(8) string
+          DataView_CanNotDelete()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotDelete() /* 06000135 */
   } // end of property SR::DataView_CanNotDelete
-  .property /*17000130*/ string DataView_CanNotEdit()
+  .property /*17000130*/ callconv(8) string
+          DataView_CanNotEdit()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotEdit() /* 06000136 */
   } // end of property SR::DataView_CanNotEdit
-  .property /*17000131*/ string DataView_GetElementIndex()
+  .property /*17000131*/ callconv(8) string
+          DataView_GetElementIndex()
   {
     .get string System.SR/*02000003*/::get_DataView_GetElementIndex() /* 06000137 */
   } // end of property SR::DataView_GetElementIndex
-  .property /*17000132*/ string DataView_AddExternalObject()
+  .property /*17000132*/ callconv(8) string
+          DataView_AddExternalObject()
   {
     .get string System.SR/*02000003*/::get_DataView_AddExternalObject() /* 06000138 */
   } // end of property SR::DataView_AddExternalObject
-  .property /*17000133*/ string DataView_CanNotClear()
+  .property /*17000133*/ callconv(8) string
+          DataView_CanNotClear()
   {
     .get string System.SR/*02000003*/::get_DataView_CanNotClear() /* 06000139 */
   } // end of property SR::DataView_CanNotClear
-  .property /*17000134*/ string DataView_InsertExternalObject()
+  .property /*17000134*/ callconv(8) string
+          DataView_InsertExternalObject()
   {
     .get string System.SR/*02000003*/::get_DataView_InsertExternalObject() /* 0600013A */
   } // end of property SR::DataView_InsertExternalObject
-  .property /*17000135*/ string DataView_RemoveExternalObject()
+  .property /*17000135*/ callconv(8) string
+          DataView_RemoveExternalObject()
   {
     .get string System.SR/*02000003*/::get_DataView_RemoveExternalObject() /* 0600013B */
   } // end of property SR::DataView_RemoveExternalObject
-  .property /*17000136*/ string DataROWView_PropertyNotFound()
+  .property /*17000136*/ callconv(8) string
+          DataROWView_PropertyNotFound()
   {
     .get string System.SR/*02000003*/::get_DataROWView_PropertyNotFound() /* 0600013C */
   } // end of property SR::DataROWView_PropertyNotFound
-  .property /*17000137*/ string Range_Argument()
+  .property /*17000137*/ callconv(8) string
+          Range_Argument()
   {
     .get string System.SR/*02000003*/::get_Range_Argument() /* 0600013D */
   } // end of property SR::Range_Argument
-  .property /*17000138*/ string Range_NullRange()
+  .property /*17000138*/ callconv(8) string
+          Range_NullRange()
   {
     .get string System.SR/*02000003*/::get_Range_NullRange() /* 0600013E */
   } // end of property SR::Range_NullRange
-  .property /*17000139*/ string RecordManager_MinimumCapacity()
+  .property /*17000139*/ callconv(8) string
+          RecordManager_MinimumCapacity()
   {
     .get string System.SR/*02000003*/::get_RecordManager_MinimumCapacity() /* 0600013F */
   } // end of property SR::RecordManager_MinimumCapacity
-  .property /*1700013A*/ string SqlConvert_ConvertFailed()
+  .property /*1700013A*/ callconv(8) string
+          SqlConvert_ConvertFailed()
   {
     .get string System.SR/*02000003*/::get_SqlConvert_ConvertFailed() /* 06000140 */
   } // end of property SR::SqlConvert_ConvertFailed
-  .property /*1700013B*/ string DataSet_DefaultDataException()
+  .property /*1700013B*/ callconv(8) string
+          DataSet_DefaultDataException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultDataException() /* 06000141 */
   } // end of property SR::DataSet_DefaultDataException
-  .property /*1700013C*/ string DataSet_DefaultConstraintException()
+  .property /*1700013C*/ callconv(8) string
+          DataSet_DefaultConstraintException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultConstraintException() /* 06000142 */
   } // end of property SR::DataSet_DefaultConstraintException
-  .property /*1700013D*/ string DataSet_DefaultDeletedRowInaccessibleException()
+  .property /*1700013D*/ callconv(8) string
+          DataSet_DefaultDeletedRowInaccessibleException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultDeletedRowInaccessibleException() /* 06000143 */
   } // end of property SR::DataSet_DefaultDeletedRowInaccessibleException
-  .property /*1700013E*/ string DataSet_DefaultDuplicateNameException()
+  .property /*1700013E*/ callconv(8) string
+          DataSet_DefaultDuplicateNameException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultDuplicateNameException() /* 06000144 */
   } // end of property SR::DataSet_DefaultDuplicateNameException
-  .property /*1700013F*/ string DataSet_DefaultInRowChangingEventException()
+  .property /*1700013F*/ callconv(8) string
+          DataSet_DefaultInRowChangingEventException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultInRowChangingEventException() /* 06000145 */
   } // end of property SR::DataSet_DefaultInRowChangingEventException
-  .property /*17000140*/ string DataSet_DefaultInvalidConstraintException()
+  .property /*17000140*/ callconv(8) string
+          DataSet_DefaultInvalidConstraintException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultInvalidConstraintException() /* 06000146 */
   } // end of property SR::DataSet_DefaultInvalidConstraintException
-  .property /*17000141*/ string DataSet_DefaultMissingPrimaryKeyException()
+  .property /*17000141*/ callconv(8) string
+          DataSet_DefaultMissingPrimaryKeyException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultMissingPrimaryKeyException() /* 06000147 */
   } // end of property SR::DataSet_DefaultMissingPrimaryKeyException
-  .property /*17000142*/ string DataSet_DefaultNoNullAllowedException()
+  .property /*17000142*/ callconv(8) string
+          DataSet_DefaultNoNullAllowedException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultNoNullAllowedException() /* 06000148 */
   } // end of property SR::DataSet_DefaultNoNullAllowedException
-  .property /*17000143*/ string DataSet_DefaultReadOnlyException()
+  .property /*17000143*/ callconv(8) string
+          DataSet_DefaultReadOnlyException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultReadOnlyException() /* 06000149 */
   } // end of property SR::DataSet_DefaultReadOnlyException
-  .property /*17000144*/ string DataSet_DefaultRowNotInTableException()
+  .property /*17000144*/ callconv(8) string
+          DataSet_DefaultRowNotInTableException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultRowNotInTableException() /* 0600014A */
   } // end of property SR::DataSet_DefaultRowNotInTableException
-  .property /*17000145*/ string DataSet_DefaultVersionNotFoundException()
+  .property /*17000145*/ callconv(8) string
+          DataSet_DefaultVersionNotFoundException()
   {
     .get string System.SR/*02000003*/::get_DataSet_DefaultVersionNotFoundException() /* 0600014B */
   } // end of property SR::DataSet_DefaultVersionNotFoundException
-  .property /*17000146*/ string Load_ReadOnlyDataModified()
+  .property /*17000146*/ callconv(8) string
+          Load_ReadOnlyDataModified()
   {
     .get string System.SR/*02000003*/::get_Load_ReadOnlyDataModified() /* 0600014C */
   } // end of property SR::Load_ReadOnlyDataModified
-  .property /*17000147*/ string DataTableReader_InvalidDataTableReader()
+  .property /*17000147*/ callconv(8) string
+          DataTableReader_InvalidDataTableReader()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_InvalidDataTableReader() /* 0600014D */
   } // end of property SR::DataTableReader_InvalidDataTableReader
-  .property /*17000148*/ string DataTableReader_SchemaInvalidDataTableReader()
+  .property /*17000148*/ callconv(8) string
+          DataTableReader_SchemaInvalidDataTableReader()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_SchemaInvalidDataTableReader() /* 0600014E */
   } // end of property SR::DataTableReader_SchemaInvalidDataTableReader
-  .property /*17000149*/ string DataTableReader_CannotCreateDataReaderOnEmptyDataSet()
+  .property /*17000149*/ callconv(8) string
+          DataTableReader_CannotCreateDataReaderOnEmptyDataSet()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_CannotCreateDataReaderOnEmptyDataSet() /* 0600014F */
   } // end of property SR::DataTableReader_CannotCreateDataReaderOnEmptyDataSet
-  .property /*1700014A*/ string DataTableReader_DataTableReaderArgumentIsEmpty()
+  .property /*1700014A*/ callconv(8) string
+          DataTableReader_DataTableReaderArgumentIsEmpty()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_DataTableReaderArgumentIsEmpty() /* 06000150 */
   } // end of property SR::DataTableReader_DataTableReaderArgumentIsEmpty
-  .property /*1700014B*/ string DataTableReader_ArgumentContainsNullValue()
+  .property /*1700014B*/ callconv(8) string
+          DataTableReader_ArgumentContainsNullValue()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_ArgumentContainsNullValue() /* 06000151 */
   } // end of property SR::DataTableReader_ArgumentContainsNullValue
-  .property /*1700014C*/ string DataTableReader_InvalidRowInDataTableReader()
+  .property /*1700014C*/ callconv(8) string
+          DataTableReader_InvalidRowInDataTableReader()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_InvalidRowInDataTableReader() /* 06000152 */
   } // end of property SR::DataTableReader_InvalidRowInDataTableReader
-  .property /*1700014D*/ string DataTableReader_DataTableCleared()
+  .property /*1700014D*/ callconv(8) string
+          DataTableReader_DataTableCleared()
   {
     .get string System.SR/*02000003*/::get_DataTableReader_DataTableCleared() /* 06000153 */
   } // end of property SR::DataTableReader_DataTableCleared
-  .property /*1700014E*/ string RbTree_InvalidState()
+  .property /*1700014E*/ callconv(8) string
+          RbTree_InvalidState()
   {
     .get string System.SR/*02000003*/::get_RbTree_InvalidState() /* 06000154 */
   } // end of property SR::RbTree_InvalidState
-  .property /*1700014F*/ string RbTree_EnumerationBroken()
+  .property /*1700014F*/ callconv(8) string
+          RbTree_EnumerationBroken()
   {
     .get string System.SR/*02000003*/::get_RbTree_EnumerationBroken() /* 06000155 */
   } // end of property SR::RbTree_EnumerationBroken
-  .property /*17000150*/ string NamedSimpleType_InvalidDuplicateNamedSimpleTypeDelaration()
+  .property /*17000150*/ callconv(8) string
+          NamedSimpleType_InvalidDuplicateNamedSimpleTypeDelaration()
   {
     .get string System.SR/*02000003*/::get_NamedSimpleType_InvalidDuplicateNamedSimpleTypeDelaration() /* 06000156 */
   } // end of property SR::NamedSimpleType_InvalidDuplicateNamedSimpleTypeDelaration
-  .property /*17000151*/ string DataDom_Foliation()
+  .property /*17000151*/ callconv(8) string
+          DataDom_Foliation()
   {
     .get string System.SR/*02000003*/::get_DataDom_Foliation() /* 06000157 */
   } // end of property SR::DataDom_Foliation
-  .property /*17000152*/ string DataDom_TableNameChange()
+  .property /*17000152*/ callconv(8) string
+          DataDom_TableNameChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_TableNameChange() /* 06000158 */
   } // end of property SR::DataDom_TableNameChange
-  .property /*17000153*/ string DataDom_TableNamespaceChange()
+  .property /*17000153*/ callconv(8) string
+          DataDom_TableNamespaceChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_TableNamespaceChange() /* 06000159 */
   } // end of property SR::DataDom_TableNamespaceChange
-  .property /*17000154*/ string DataDom_ColumnNameChange()
+  .property /*17000154*/ callconv(8) string
+          DataDom_ColumnNameChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_ColumnNameChange() /* 0600015A */
   } // end of property SR::DataDom_ColumnNameChange
-  .property /*17000155*/ string DataDom_ColumnNamespaceChange()
+  .property /*17000155*/ callconv(8) string
+          DataDom_ColumnNamespaceChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_ColumnNamespaceChange() /* 0600015B */
   } // end of property SR::DataDom_ColumnNamespaceChange
-  .property /*17000156*/ string DataDom_ColumnMappingChange()
+  .property /*17000156*/ callconv(8) string
+          DataDom_ColumnMappingChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_ColumnMappingChange() /* 0600015C */
   } // end of property SR::DataDom_ColumnMappingChange
-  .property /*17000157*/ string DataDom_TableColumnsChange()
+  .property /*17000157*/ callconv(8) string
+          DataDom_TableColumnsChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_TableColumnsChange() /* 0600015D */
   } // end of property SR::DataDom_TableColumnsChange
-  .property /*17000158*/ string DataDom_DataSetTablesChange()
+  .property /*17000158*/ callconv(8) string
+          DataDom_DataSetTablesChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_DataSetTablesChange() /* 0600015E */
   } // end of property SR::DataDom_DataSetTablesChange
-  .property /*17000159*/ string DataDom_DataSetNestedRelationsChange()
+  .property /*17000159*/ callconv(8) string
+          DataDom_DataSetNestedRelationsChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_DataSetNestedRelationsChange() /* 0600015F */
   } // end of property SR::DataDom_DataSetNestedRelationsChange
-  .property /*1700015A*/ string DataDom_DataSetNull()
+  .property /*1700015A*/ callconv(8) string
+          DataDom_DataSetNull()
   {
     .get string System.SR/*02000003*/::get_DataDom_DataSetNull() /* 06000160 */
   } // end of property SR::DataDom_DataSetNull
-  .property /*1700015B*/ string DataDom_DataSetNameChange()
+  .property /*1700015B*/ callconv(8) string
+          DataDom_DataSetNameChange()
   {
     .get string System.SR/*02000003*/::get_DataDom_DataSetNameChange() /* 06000161 */
   } // end of property SR::DataDom_DataSetNameChange
-  .property /*1700015C*/ string DataDom_CloneNode()
+  .property /*1700015C*/ callconv(8) string
+          DataDom_CloneNode()
   {
     .get string System.SR/*02000003*/::get_DataDom_CloneNode() /* 06000162 */
   } // end of property SR::DataDom_CloneNode
-  .property /*1700015D*/ string DataDom_MultipleLoad()
+  .property /*1700015D*/ callconv(8) string
+          DataDom_MultipleLoad()
   {
     .get string System.SR/*02000003*/::get_DataDom_MultipleLoad() /* 06000163 */
   } // end of property SR::DataDom_MultipleLoad
-  .property /*1700015E*/ string DataDom_MultipleDataSet()
+  .property /*1700015E*/ callconv(8) string
+          DataDom_MultipleDataSet()
   {
     .get string System.SR/*02000003*/::get_DataDom_MultipleDataSet() /* 06000164 */
   } // end of property SR::DataDom_MultipleDataSet
-  .property /*1700015F*/ string DataDom_NotSupport_GetElementById()
+  .property /*1700015F*/ callconv(8) string
+          DataDom_NotSupport_GetElementById()
   {
     .get string System.SR/*02000003*/::get_DataDom_NotSupport_GetElementById() /* 06000165 */
   } // end of property SR::DataDom_NotSupport_GetElementById
-  .property /*17000160*/ string DataDom_NotSupport_EntRef()
+  .property /*17000160*/ callconv(8) string
+          DataDom_NotSupport_EntRef()
   {
     .get string System.SR/*02000003*/::get_DataDom_NotSupport_EntRef() /* 06000166 */
   } // end of property SR::DataDom_NotSupport_EntRef
-  .property /*17000161*/ string DataDom_NotSupport_Clear()
+  .property /*17000161*/ callconv(8) string
+          DataDom_NotSupport_Clear()
   {
     .get string System.SR/*02000003*/::get_DataDom_NotSupport_Clear() /* 06000167 */
   } // end of property SR::DataDom_NotSupport_Clear
-  .property /*17000162*/ string ADP_EmptyArray()
+  .property /*17000162*/ callconv(8) string
+          ADP_EmptyArray()
   {
     .get string System.SR/*02000003*/::get_ADP_EmptyArray() /* 06000168 */
   } // end of property SR::ADP_EmptyArray
-  .property /*17000163*/ string SQL_WrongType()
+  .property /*17000163*/ callconv(8) string
+          SQL_WrongType()
   {
     .get string System.SR/*02000003*/::get_SQL_WrongType() /* 06000169 */
   } // end of property SR::SQL_WrongType
-  .property /*17000164*/ string ADP_InvalidConnectionOptionValue()
+  .property /*17000164*/ callconv(8) string
+          ADP_InvalidConnectionOptionValue()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidConnectionOptionValue() /* 0600016A */
   } // end of property SR::ADP_InvalidConnectionOptionValue
-  .property /*17000165*/ string ADP_KeywordNotSupported()
+  .property /*17000165*/ callconv(8) string
+          ADP_KeywordNotSupported()
   {
     .get string System.SR/*02000003*/::get_ADP_KeywordNotSupported() /* 0600016B */
   } // end of property SR::ADP_KeywordNotSupported
-  .property /*17000166*/ string ADP_InternalProviderError()
+  .property /*17000166*/ callconv(8) string
+          ADP_InternalProviderError()
   {
     .get string System.SR/*02000003*/::get_ADP_InternalProviderError() /* 0600016C */
   } // end of property SR::ADP_InternalProviderError
-  .property /*17000167*/ string ADP_NoQuoteChange()
+  .property /*17000167*/ callconv(8) string
+          ADP_NoQuoteChange()
   {
     .get string System.SR/*02000003*/::get_ADP_NoQuoteChange() /* 0600016D */
   } // end of property SR::ADP_NoQuoteChange
-  .property /*17000168*/ string ADP_MissingSourceCommand()
+  .property /*17000168*/ callconv(8) string
+          ADP_MissingSourceCommand()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingSourceCommand() /* 0600016E */
   } // end of property SR::ADP_MissingSourceCommand
-  .property /*17000169*/ string ADP_MissingSourceCommandConnection()
+  .property /*17000169*/ callconv(8) string
+          ADP_MissingSourceCommandConnection()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingSourceCommandConnection() /* 0600016F */
   } // end of property SR::ADP_MissingSourceCommandConnection
-  .property /*1700016A*/ string ADP_InvalidMultipartName()
+  .property /*1700016A*/ callconv(8) string
+          ADP_InvalidMultipartName()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidMultipartName() /* 06000170 */
   } // end of property SR::ADP_InvalidMultipartName
-  .property /*1700016B*/ string ADP_InvalidMultipartNameQuoteUsage()
+  .property /*1700016B*/ callconv(8) string
+          ADP_InvalidMultipartNameQuoteUsage()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidMultipartNameQuoteUsage() /* 06000171 */
   } // end of property SR::ADP_InvalidMultipartNameQuoteUsage
-  .property /*1700016C*/ string ADP_InvalidMultipartNameToManyParts()
+  .property /*1700016C*/ callconv(8) string
+          ADP_InvalidMultipartNameToManyParts()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidMultipartNameToManyParts() /* 06000172 */
   } // end of property SR::ADP_InvalidMultipartNameToManyParts
-  .property /*1700016D*/ string ADP_ColumnSchemaExpression()
+  .property /*1700016D*/ callconv(8) string
+          ADP_ColumnSchemaExpression()
   {
     .get string System.SR/*02000003*/::get_ADP_ColumnSchemaExpression() /* 06000173 */
   } // end of property SR::ADP_ColumnSchemaExpression
-  .property /*1700016E*/ string ADP_ColumnSchemaMismatch()
+  .property /*1700016E*/ callconv(8) string
+          ADP_ColumnSchemaMismatch()
   {
     .get string System.SR/*02000003*/::get_ADP_ColumnSchemaMismatch() /* 06000174 */
   } // end of property SR::ADP_ColumnSchemaMismatch
-  .property /*1700016F*/ string ADP_ColumnSchemaMissing1()
+  .property /*1700016F*/ callconv(8) string
+          ADP_ColumnSchemaMissing1()
   {
     .get string System.SR/*02000003*/::get_ADP_ColumnSchemaMissing1() /* 06000175 */
   } // end of property SR::ADP_ColumnSchemaMissing1
-  .property /*17000170*/ string ADP_ColumnSchemaMissing2()
+  .property /*17000170*/ callconv(8) string
+          ADP_ColumnSchemaMissing2()
   {
     .get string System.SR/*02000003*/::get_ADP_ColumnSchemaMissing2() /* 06000176 */
   } // end of property SR::ADP_ColumnSchemaMissing2
-  .property /*17000171*/ string ADP_InvalidSourceColumn()
+  .property /*17000171*/ callconv(8) string
+          ADP_InvalidSourceColumn()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidSourceColumn() /* 06000177 */
   } // end of property SR::ADP_InvalidSourceColumn
-  .property /*17000172*/ string ADP_MissingColumnMapping()
+  .property /*17000172*/ callconv(8) string
+          ADP_MissingColumnMapping()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingColumnMapping() /* 06000178 */
   } // end of property SR::ADP_MissingColumnMapping
-  .property /*17000173*/ string ADP_NotSupportedEnumerationValue()
+  .property /*17000173*/ callconv(8) string
+          ADP_NotSupportedEnumerationValue()
   {
     .get string System.SR/*02000003*/::get_ADP_NotSupportedEnumerationValue() /* 06000179 */
   } // end of property SR::ADP_NotSupportedEnumerationValue
-  .property /*17000174*/ string ADP_MissingTableSchema()
+  .property /*17000174*/ callconv(8) string
+          ADP_MissingTableSchema()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingTableSchema() /* 0600017A */
   } // end of property SR::ADP_MissingTableSchema
-  .property /*17000175*/ string ADP_InvalidSourceTable()
+  .property /*17000175*/ callconv(8) string
+          ADP_InvalidSourceTable()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidSourceTable() /* 0600017B */
   } // end of property SR::ADP_InvalidSourceTable
-  .property /*17000176*/ string ADP_MissingTableMapping()
+  .property /*17000176*/ callconv(8) string
+          ADP_MissingTableMapping()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingTableMapping() /* 0600017C */
   } // end of property SR::ADP_MissingTableMapping
-  .property /*17000177*/ string ADP_ConnectionRequired_Insert()
+  .property /*17000177*/ callconv(8) string
+          ADP_ConnectionRequired_Insert()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionRequired_Insert() /* 0600017D */
   } // end of property SR::ADP_ConnectionRequired_Insert
-  .property /*17000178*/ string ADP_ConnectionRequired_Update()
+  .property /*17000178*/ callconv(8) string
+          ADP_ConnectionRequired_Update()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionRequired_Update() /* 0600017E */
   } // end of property SR::ADP_ConnectionRequired_Update
-  .property /*17000179*/ string ADP_ConnectionRequired_Delete()
+  .property /*17000179*/ callconv(8) string
+          ADP_ConnectionRequired_Delete()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionRequired_Delete() /* 0600017F */
   } // end of property SR::ADP_ConnectionRequired_Delete
-  .property /*1700017A*/ string ADP_ConnectionRequired_Batch()
+  .property /*1700017A*/ callconv(8) string
+          ADP_ConnectionRequired_Batch()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionRequired_Batch() /* 06000180 */
   } // end of property SR::ADP_ConnectionRequired_Batch
-  .property /*1700017B*/ string ADP_ConnectionRequired_Clone()
+  .property /*1700017B*/ callconv(8) string
+          ADP_ConnectionRequired_Clone()
   {
     .get string System.SR/*02000003*/::get_ADP_ConnectionRequired_Clone() /* 06000181 */
   } // end of property SR::ADP_ConnectionRequired_Clone
-  .property /*1700017C*/ string ADP_OpenConnectionRequired_Insert()
+  .property /*1700017C*/ callconv(8) string
+          ADP_OpenConnectionRequired_Insert()
   {
     .get string System.SR/*02000003*/::get_ADP_OpenConnectionRequired_Insert() /* 06000182 */
   } // end of property SR::ADP_OpenConnectionRequired_Insert
-  .property /*1700017D*/ string ADP_OpenConnectionRequired_Update()
+  .property /*1700017D*/ callconv(8) string
+          ADP_OpenConnectionRequired_Update()
   {
     .get string System.SR/*02000003*/::get_ADP_OpenConnectionRequired_Update() /* 06000183 */
   } // end of property SR::ADP_OpenConnectionRequired_Update
-  .property /*1700017E*/ string ADP_OpenConnectionRequired_Delete()
+  .property /*1700017E*/ callconv(8) string
+          ADP_OpenConnectionRequired_Delete()
   {
     .get string System.SR/*02000003*/::get_ADP_OpenConnectionRequired_Delete() /* 06000184 */
   } // end of property SR::ADP_OpenConnectionRequired_Delete
-  .property /*1700017F*/ string ADP_OpenConnectionRequired_Clone()
+  .property /*1700017F*/ callconv(8) string
+          ADP_OpenConnectionRequired_Clone()
   {
     .get string System.SR/*02000003*/::get_ADP_OpenConnectionRequired_Clone() /* 06000185 */
   } // end of property SR::ADP_OpenConnectionRequired_Clone
-  .property /*17000180*/ string ADP_MissingSelectCommand()
+  .property /*17000180*/ callconv(8) string
+          ADP_MissingSelectCommand()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingSelectCommand() /* 06000186 */
   } // end of property SR::ADP_MissingSelectCommand
-  .property /*17000181*/ string ADP_UnwantedStatementType()
+  .property /*17000181*/ callconv(8) string
+          ADP_UnwantedStatementType()
   {
     .get string System.SR/*02000003*/::get_ADP_UnwantedStatementType() /* 06000187 */
   } // end of property SR::ADP_UnwantedStatementType
-  .property /*17000182*/ string ADP_FillSchemaRequiresSourceTableName()
+  .property /*17000182*/ callconv(8) string
+          ADP_FillSchemaRequiresSourceTableName()
   {
     .get string System.SR/*02000003*/::get_ADP_FillSchemaRequiresSourceTableName() /* 06000188 */
   } // end of property SR::ADP_FillSchemaRequiresSourceTableName
-  .property /*17000183*/ string ADP_FillRequiresSourceTableName()
+  .property /*17000183*/ callconv(8) string
+          ADP_FillRequiresSourceTableName()
   {
     .get string System.SR/*02000003*/::get_ADP_FillRequiresSourceTableName() /* 06000189 */
   } // end of property SR::ADP_FillRequiresSourceTableName
-  .property /*17000184*/ string ADP_FillChapterAutoIncrement()
+  .property /*17000184*/ callconv(8) string
+          ADP_FillChapterAutoIncrement()
   {
     .get string System.SR/*02000003*/::get_ADP_FillChapterAutoIncrement() /* 0600018A */
   } // end of property SR::ADP_FillChapterAutoIncrement
-  .property /*17000185*/ string ADP_MissingDataReaderFieldType()
+  .property /*17000185*/ callconv(8) string
+          ADP_MissingDataReaderFieldType()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingDataReaderFieldType() /* 0600018B */
   } // end of property SR::ADP_MissingDataReaderFieldType
-  .property /*17000186*/ string ADP_OnlyOneTableForStartRecordOrMaxRecords()
+  .property /*17000186*/ callconv(8) string
+          ADP_OnlyOneTableForStartRecordOrMaxRecords()
   {
     .get string System.SR/*02000003*/::get_ADP_OnlyOneTableForStartRecordOrMaxRecords() /* 0600018C */
   } // end of property SR::ADP_OnlyOneTableForStartRecordOrMaxRecords
-  .property /*17000187*/ string ADP_UpdateRequiresSourceTable()
+  .property /*17000187*/ callconv(8) string
+          ADP_UpdateRequiresSourceTable()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresSourceTable() /* 0600018D */
   } // end of property SR::ADP_UpdateRequiresSourceTable
-  .property /*17000188*/ string ADP_UpdateRequiresSourceTableName()
+  .property /*17000188*/ callconv(8) string
+          ADP_UpdateRequiresSourceTableName()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresSourceTableName() /* 0600018E */
   } // end of property SR::ADP_UpdateRequiresSourceTableName
-  .property /*17000189*/ string ADP_UpdateRequiresCommandClone()
+  .property /*17000189*/ callconv(8) string
+          ADP_UpdateRequiresCommandClone()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresCommandClone() /* 0600018F */
   } // end of property SR::ADP_UpdateRequiresCommandClone
-  .property /*1700018A*/ string ADP_UpdateRequiresCommandSelect()
+  .property /*1700018A*/ callconv(8) string
+          ADP_UpdateRequiresCommandSelect()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresCommandSelect() /* 06000190 */
   } // end of property SR::ADP_UpdateRequiresCommandSelect
-  .property /*1700018B*/ string ADP_UpdateRequiresCommandInsert()
+  .property /*1700018B*/ callconv(8) string
+          ADP_UpdateRequiresCommandInsert()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresCommandInsert() /* 06000191 */
   } // end of property SR::ADP_UpdateRequiresCommandInsert
-  .property /*1700018C*/ string ADP_UpdateRequiresCommandUpdate()
+  .property /*1700018C*/ callconv(8) string
+          ADP_UpdateRequiresCommandUpdate()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresCommandUpdate() /* 06000192 */
   } // end of property SR::ADP_UpdateRequiresCommandUpdate
-  .property /*1700018D*/ string ADP_UpdateRequiresCommandDelete()
+  .property /*1700018D*/ callconv(8) string
+          ADP_UpdateRequiresCommandDelete()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateRequiresCommandDelete() /* 06000193 */
   } // end of property SR::ADP_UpdateRequiresCommandDelete
-  .property /*1700018E*/ string ADP_UpdateMismatchRowTable()
+  .property /*1700018E*/ callconv(8) string
+          ADP_UpdateMismatchRowTable()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateMismatchRowTable() /* 06000194 */
   } // end of property SR::ADP_UpdateMismatchRowTable
-  .property /*1700018F*/ string ADP_RowUpdatedErrors()
+  .property /*1700018F*/ callconv(8) string
+          ADP_RowUpdatedErrors()
   {
     .get string System.SR/*02000003*/::get_ADP_RowUpdatedErrors() /* 06000195 */
   } // end of property SR::ADP_RowUpdatedErrors
-  .property /*17000190*/ string ADP_RowUpdatingErrors()
+  .property /*17000190*/ callconv(8) string
+          ADP_RowUpdatingErrors()
   {
     .get string System.SR/*02000003*/::get_ADP_RowUpdatingErrors() /* 06000196 */
   } // end of property SR::ADP_RowUpdatingErrors
-  .property /*17000191*/ string ADP_ResultsNotAllowedDuringBatch()
+  .property /*17000191*/ callconv(8) string
+          ADP_ResultsNotAllowedDuringBatch()
   {
     .get string System.SR/*02000003*/::get_ADP_ResultsNotAllowedDuringBatch() /* 06000197 */
   } // end of property SR::ADP_ResultsNotAllowedDuringBatch
-  .property /*17000192*/ string ADP_UpdateConcurrencyViolation_Update()
+  .property /*17000192*/ callconv(8) string
+          ADP_UpdateConcurrencyViolation_Update()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateConcurrencyViolation_Update() /* 06000198 */
   } // end of property SR::ADP_UpdateConcurrencyViolation_Update
-  .property /*17000193*/ string ADP_UpdateConcurrencyViolation_Delete()
+  .property /*17000193*/ callconv(8) string
+          ADP_UpdateConcurrencyViolation_Delete()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateConcurrencyViolation_Delete() /* 06000199 */
   } // end of property SR::ADP_UpdateConcurrencyViolation_Delete
-  .property /*17000194*/ string ADP_UpdateConcurrencyViolation_Batch()
+  .property /*17000194*/ callconv(8) string
+          ADP_UpdateConcurrencyViolation_Batch()
   {
     .get string System.SR/*02000003*/::get_ADP_UpdateConcurrencyViolation_Batch() /* 0600019A */
   } // end of property SR::ADP_UpdateConcurrencyViolation_Batch
-  .property /*17000195*/ string ADP_InvalidSourceBufferIndex()
+  .property /*17000195*/ callconv(8) string
+          ADP_InvalidSourceBufferIndex()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidSourceBufferIndex() /* 0600019B */
   } // end of property SR::ADP_InvalidSourceBufferIndex
-  .property /*17000196*/ string ADP_InvalidDestinationBufferIndex()
+  .property /*17000196*/ callconv(8) string
+          ADP_InvalidDestinationBufferIndex()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidDestinationBufferIndex() /* 0600019C */
   } // end of property SR::ADP_InvalidDestinationBufferIndex
-  .property /*17000197*/ string ADP_StreamClosed()
+  .property /*17000197*/ callconv(8) string
+          ADP_StreamClosed()
   {
     .get string System.SR/*02000003*/::get_ADP_StreamClosed() /* 0600019D */
   } // end of property SR::ADP_StreamClosed
-  .property /*17000198*/ string ADP_InvalidSeekOrigin()
+  .property /*17000198*/ callconv(8) string
+          ADP_InvalidSeekOrigin()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidSeekOrigin() /* 0600019E */
   } // end of property SR::ADP_InvalidSeekOrigin
-  .property /*17000199*/ string ADP_DynamicSQLJoinUnsupported()
+  .property /*17000199*/ callconv(8) string
+          ADP_DynamicSQLJoinUnsupported()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLJoinUnsupported() /* 0600019F */
   } // end of property SR::ADP_DynamicSQLJoinUnsupported
-  .property /*1700019A*/ string ADP_DynamicSQLNoTableInfo()
+  .property /*1700019A*/ callconv(8) string
+          ADP_DynamicSQLNoTableInfo()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNoTableInfo() /* 060001A0 */
   } // end of property SR::ADP_DynamicSQLNoTableInfo
-  .property /*1700019B*/ string ADP_DynamicSQLNoKeyInfoDelete()
+  .property /*1700019B*/ callconv(8) string
+          ADP_DynamicSQLNoKeyInfoDelete()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNoKeyInfoDelete() /* 060001A1 */
   } // end of property SR::ADP_DynamicSQLNoKeyInfoDelete
-  .property /*1700019C*/ string ADP_DynamicSQLNoKeyInfoUpdate()
+  .property /*1700019C*/ callconv(8) string
+          ADP_DynamicSQLNoKeyInfoUpdate()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNoKeyInfoUpdate() /* 060001A2 */
   } // end of property SR::ADP_DynamicSQLNoKeyInfoUpdate
-  .property /*1700019D*/ string ADP_DynamicSQLNoKeyInfoRowVersionDelete()
+  .property /*1700019D*/ callconv(8) string
+          ADP_DynamicSQLNoKeyInfoRowVersionDelete()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNoKeyInfoRowVersionDelete() /* 060001A3 */
   } // end of property SR::ADP_DynamicSQLNoKeyInfoRowVersionDelete
-  .property /*1700019E*/ string ADP_DynamicSQLNoKeyInfoRowVersionUpdate()
+  .property /*1700019E*/ callconv(8) string
+          ADP_DynamicSQLNoKeyInfoRowVersionUpdate()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNoKeyInfoRowVersionUpdate() /* 060001A4 */
   } // end of property SR::ADP_DynamicSQLNoKeyInfoRowVersionUpdate
-  .property /*1700019F*/ string ADP_DynamicSQLNestedQuote()
+  .property /*1700019F*/ callconv(8) string
+          ADP_DynamicSQLNestedQuote()
   {
     .get string System.SR/*02000003*/::get_ADP_DynamicSQLNestedQuote() /* 060001A5 */
   } // end of property SR::ADP_DynamicSQLNestedQuote
-  .property /*170001A0*/ string SQL_InvalidBufferSizeOrIndex()
+  .property /*170001A0*/ callconv(8) string
+          SQL_InvalidBufferSizeOrIndex()
   {
     .get string System.SR/*02000003*/::get_SQL_InvalidBufferSizeOrIndex() /* 060001A6 */
   } // end of property SR::SQL_InvalidBufferSizeOrIndex
-  .property /*170001A1*/ string SQL_InvalidDataLength()
+  .property /*170001A1*/ callconv(8) string
+          SQL_InvalidDataLength()
   {
     .get string System.SR/*02000003*/::get_SQL_InvalidDataLength() /* 060001A7 */
   } // end of property SR::SQL_InvalidDataLength
-  .property /*170001A2*/ string SqlMisc_NullString()
+  .property /*170001A2*/ callconv(8) string
+          SqlMisc_NullString()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_NullString() /* 060001A8 */
   } // end of property SR::SqlMisc_NullString
-  .property /*170001A3*/ string SqlMisc_MessageString()
+  .property /*170001A3*/ callconv(8) string
+          SqlMisc_MessageString()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_MessageString() /* 060001A9 */
   } // end of property SR::SqlMisc_MessageString
-  .property /*170001A4*/ string SqlMisc_ArithOverflowMessage()
+  .property /*170001A4*/ callconv(8) string
+          SqlMisc_ArithOverflowMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_ArithOverflowMessage() /* 060001AA */
   } // end of property SR::SqlMisc_ArithOverflowMessage
-  .property /*170001A5*/ string SqlMisc_DivideByZeroMessage()
+  .property /*170001A5*/ callconv(8) string
+          SqlMisc_DivideByZeroMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_DivideByZeroMessage() /* 060001AB */
   } // end of property SR::SqlMisc_DivideByZeroMessage
-  .property /*170001A6*/ string SqlMisc_NullValueMessage()
+  .property /*170001A6*/ callconv(8) string
+          SqlMisc_NullValueMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_NullValueMessage() /* 060001AC */
   } // end of property SR::SqlMisc_NullValueMessage
-  .property /*170001A7*/ string SqlMisc_TruncationMessage()
+  .property /*170001A7*/ callconv(8) string
+          SqlMisc_TruncationMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_TruncationMessage() /* 060001AD */
   } // end of property SR::SqlMisc_TruncationMessage
-  .property /*170001A8*/ string SqlMisc_DateTimeOverflowMessage()
+  .property /*170001A8*/ callconv(8) string
+          SqlMisc_DateTimeOverflowMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_DateTimeOverflowMessage() /* 060001AE */
   } // end of property SR::SqlMisc_DateTimeOverflowMessage
-  .property /*170001A9*/ string SqlMisc_ConcatDiffCollationMessage()
+  .property /*170001A9*/ callconv(8) string
+          SqlMisc_ConcatDiffCollationMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_ConcatDiffCollationMessage() /* 060001AF */
   } // end of property SR::SqlMisc_ConcatDiffCollationMessage
-  .property /*170001AA*/ string SqlMisc_CompareDiffCollationMessage()
+  .property /*170001AA*/ callconv(8) string
+          SqlMisc_CompareDiffCollationMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_CompareDiffCollationMessage() /* 060001B0 */
   } // end of property SR::SqlMisc_CompareDiffCollationMessage
-  .property /*170001AB*/ string SqlMisc_InvalidFlagMessage()
+  .property /*170001AB*/ callconv(8) string
+          SqlMisc_InvalidFlagMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidFlagMessage() /* 060001B1 */
   } // end of property SR::SqlMisc_InvalidFlagMessage
-  .property /*170001AC*/ string SqlMisc_NumeToDecOverflowMessage()
+  .property /*170001AC*/ callconv(8) string
+          SqlMisc_NumeToDecOverflowMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_NumeToDecOverflowMessage() /* 060001B2 */
   } // end of property SR::SqlMisc_NumeToDecOverflowMessage
-  .property /*170001AD*/ string SqlMisc_ConversionOverflowMessage()
+  .property /*170001AD*/ callconv(8) string
+          SqlMisc_ConversionOverflowMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_ConversionOverflowMessage() /* 060001B3 */
   } // end of property SR::SqlMisc_ConversionOverflowMessage
-  .property /*170001AE*/ string SqlMisc_InvalidDateTimeMessage()
+  .property /*170001AE*/ callconv(8) string
+          SqlMisc_InvalidDateTimeMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidDateTimeMessage() /* 060001B4 */
   } // end of property SR::SqlMisc_InvalidDateTimeMessage
-  .property /*170001AF*/ string SqlMisc_TimeZoneSpecifiedMessage()
+  .property /*170001AF*/ callconv(8) string
+          SqlMisc_TimeZoneSpecifiedMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_TimeZoneSpecifiedMessage() /* 060001B5 */
   } // end of property SR::SqlMisc_TimeZoneSpecifiedMessage
-  .property /*170001B0*/ string SqlMisc_InvalidArraySizeMessage()
+  .property /*170001B0*/ callconv(8) string
+          SqlMisc_InvalidArraySizeMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidArraySizeMessage() /* 060001B6 */
   } // end of property SR::SqlMisc_InvalidArraySizeMessage
-  .property /*170001B1*/ string SqlMisc_InvalidPrecScaleMessage()
+  .property /*170001B1*/ callconv(8) string
+          SqlMisc_InvalidPrecScaleMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidPrecScaleMessage() /* 060001B7 */
   } // end of property SR::SqlMisc_InvalidPrecScaleMessage
-  .property /*170001B2*/ string SqlMisc_FormatMessage()
+  .property /*170001B2*/ callconv(8) string
+          SqlMisc_FormatMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_FormatMessage() /* 060001B8 */
   } // end of property SR::SqlMisc_FormatMessage
-  .property /*170001B3*/ string SqlMisc_SqlTypeMessage()
+  .property /*170001B3*/ callconv(8) string
+          SqlMisc_SqlTypeMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_SqlTypeMessage() /* 060001B9 */
   } // end of property SR::SqlMisc_SqlTypeMessage
-  .property /*170001B4*/ string SqlMisc_NoBufferMessage()
+  .property /*170001B4*/ callconv(8) string
+          SqlMisc_NoBufferMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_NoBufferMessage() /* 060001BA */
   } // end of property SR::SqlMisc_NoBufferMessage
-  .property /*170001B5*/ string SqlMisc_BufferInsufficientMessage()
+  .property /*170001B5*/ callconv(8) string
+          SqlMisc_BufferInsufficientMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_BufferInsufficientMessage() /* 060001BB */
   } // end of property SR::SqlMisc_BufferInsufficientMessage
-  .property /*170001B6*/ string SqlMisc_WriteNonZeroOffsetOnNullMessage()
+  .property /*170001B6*/ callconv(8) string
+          SqlMisc_WriteNonZeroOffsetOnNullMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_WriteNonZeroOffsetOnNullMessage() /* 060001BC */
   } // end of property SR::SqlMisc_WriteNonZeroOffsetOnNullMessage
-  .property /*170001B7*/ string SqlMisc_WriteOffsetLargerThanLenMessage()
+  .property /*170001B7*/ callconv(8) string
+          SqlMisc_WriteOffsetLargerThanLenMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_WriteOffsetLargerThanLenMessage() /* 060001BD */
   } // end of property SR::SqlMisc_WriteOffsetLargerThanLenMessage
-  .property /*170001B8*/ string SqlMisc_NotFilledMessage()
+  .property /*170001B8*/ callconv(8) string
+          SqlMisc_NotFilledMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_NotFilledMessage() /* 060001BE */
   } // end of property SR::SqlMisc_NotFilledMessage
-  .property /*170001B9*/ string SqlMisc_AlreadyFilledMessage()
+  .property /*170001B9*/ callconv(8) string
+          SqlMisc_AlreadyFilledMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_AlreadyFilledMessage() /* 060001BF */
   } // end of property SR::SqlMisc_AlreadyFilledMessage
-  .property /*170001BA*/ string SqlMisc_ClosedXmlReaderMessage()
+  .property /*170001BA*/ callconv(8) string
+          SqlMisc_ClosedXmlReaderMessage()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_ClosedXmlReaderMessage() /* 060001C0 */
   } // end of property SR::SqlMisc_ClosedXmlReaderMessage
-  .property /*170001BB*/ string SqlMisc_InvalidOpStreamClosed()
+  .property /*170001BB*/ callconv(8) string
+          SqlMisc_InvalidOpStreamClosed()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidOpStreamClosed() /* 060001C1 */
   } // end of property SR::SqlMisc_InvalidOpStreamClosed
-  .property /*170001BC*/ string SqlMisc_InvalidOpStreamNonWritable()
+  .property /*170001BC*/ callconv(8) string
+          SqlMisc_InvalidOpStreamNonWritable()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidOpStreamNonWritable() /* 060001C2 */
   } // end of property SR::SqlMisc_InvalidOpStreamNonWritable
-  .property /*170001BD*/ string SqlMisc_InvalidOpStreamNonReadable()
+  .property /*170001BD*/ callconv(8) string
+          SqlMisc_InvalidOpStreamNonReadable()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidOpStreamNonReadable() /* 060001C3 */
   } // end of property SR::SqlMisc_InvalidOpStreamNonReadable
-  .property /*170001BE*/ string SqlMisc_InvalidOpStreamNonSeekable()
+  .property /*170001BE*/ callconv(8) string
+          SqlMisc_InvalidOpStreamNonSeekable()
   {
     .get string System.SR/*02000003*/::get_SqlMisc_InvalidOpStreamNonSeekable() /* 060001C4 */
   } // end of property SR::SqlMisc_InvalidOpStreamNonSeekable
-  .property /*170001BF*/ string ADP_DBConcurrencyExceptionMessage()
+  .property /*170001BF*/ callconv(8) string
+          ADP_DBConcurrencyExceptionMessage()
   {
     .get string System.SR/*02000003*/::get_ADP_DBConcurrencyExceptionMessage() /* 060001C5 */
   } // end of property SR::ADP_DBConcurrencyExceptionMessage
-  .property /*170001C0*/ string ADP_InvalidMaxRecords()
+  .property /*170001C0*/ callconv(8) string
+          ADP_InvalidMaxRecords()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidMaxRecords() /* 060001C6 */
   } // end of property SR::ADP_InvalidMaxRecords
-  .property /*170001C1*/ string ADP_CollectionIndexInt32()
+  .property /*170001C1*/ callconv(8) string
+          ADP_CollectionIndexInt32()
   {
     .get string System.SR/*02000003*/::get_ADP_CollectionIndexInt32() /* 060001C7 */
   } // end of property SR::ADP_CollectionIndexInt32
-  .property /*170001C2*/ string ADP_MissingTableMappingDestination()
+  .property /*170001C2*/ callconv(8) string
+          ADP_MissingTableMappingDestination()
   {
     .get string System.SR/*02000003*/::get_ADP_MissingTableMappingDestination() /* 060001C8 */
   } // end of property SR::ADP_MissingTableMappingDestination
-  .property /*170001C3*/ string ADP_InvalidStartRecord()
+  .property /*170001C3*/ callconv(8) string
+          ADP_InvalidStartRecord()
   {
     .get string System.SR/*02000003*/::get_ADP_InvalidStartRecord() /* 060001C9 */
   } // end of property SR::ADP_InvalidStartRecord
-  .property /*170001C4*/ string DataDom_EnforceConstraintsShouldBeOff()
+  .property /*170001C4*/ callconv(8) string
+          DataDom_EnforceConstraintsShouldBeOff()
   {
     .get string System.SR/*02000003*/::get_DataDom_EnforceConstraintsShouldBeOff() /* 060001CA */
   } // end of property SR::DataDom_EnforceConstraintsShouldBeOff
-  .property /*170001C5*/ string DataColumns_RemoveExpression()
+  .property /*170001C5*/ callconv(8) string
+          DataColumns_RemoveExpression()
   {
     .get string System.SR/*02000003*/::get_DataColumns_RemoveExpression() /* 060001CB */
   } // end of property SR::DataColumns_RemoveExpression
-  .property /*170001C6*/ string DataRow_RowInsertTwice()
+  .property /*170001C6*/ callconv(8) string
+          DataRow_RowInsertTwice()
   {
     .get string System.SR/*02000003*/::get_DataRow_RowInsertTwice() /* 060001CC */
   } // end of property SR::DataRow_RowInsertTwice
-  .property /*170001C7*/ string Xml_ElementTypeNotFound()
+  .property /*170001C7*/ callconv(8) string
+          Xml_ElementTypeNotFound()
   {
     .get string System.SR/*02000003*/::get_Xml_ElementTypeNotFound() /* 060001CD */
   } // end of property SR::Xml_ElementTypeNotFound
-  .property /*170001C8*/ class [mscorlib/*23000001*/]System.Type/*01000005*/
+  .property /*170001C8*/ callconv(8) class [mscorlib/*23000001*/]System.Type/*01000005*/
           ResourceType()
   {
     .get class [mscorlib/*23000001*/]System.Type/*01000005*/ System.SR/*02000003*/::get_ResourceType() /* 060001CE */
@@ -10541,137 +10999,146 @@
     IL_0006:  /* 2A   |                  */ ret
   } // end of method DbColumn::.ctor
 
-  .property /*170001C9*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001C9*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           AllowDBNull()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_AllowDBNull() /* 060001CF */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_AllowDBNull(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001D0 */
   } // end of property DbColumn::AllowDBNull
-  .property /*170001CA*/ instance string BaseCatalogName()
+  .property /*170001CA*/ instance callconv(8) string
+          BaseCatalogName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_BaseCatalogName() /* 060001D1 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_BaseCatalogName(string) /* 060001D2 */
   } // end of property DbColumn::BaseCatalogName
-  .property /*170001CB*/ instance string BaseColumnName()
+  .property /*170001CB*/ instance callconv(8) string
+          BaseColumnName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_BaseColumnName() /* 060001D3 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_BaseColumnName(string) /* 060001D4 */
   } // end of property DbColumn::BaseColumnName
-  .property /*170001CC*/ instance string BaseSchemaName()
+  .property /*170001CC*/ instance callconv(8) string
+          BaseSchemaName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_BaseSchemaName() /* 060001D5 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_BaseSchemaName(string) /* 060001D6 */
   } // end of property DbColumn::BaseSchemaName
-  .property /*170001CD*/ instance string BaseServerName()
+  .property /*170001CD*/ instance callconv(8) string
+          BaseServerName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_BaseServerName() /* 060001D7 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_BaseServerName(string) /* 060001D8 */
   } // end of property DbColumn::BaseServerName
-  .property /*170001CE*/ instance string BaseTableName()
+  .property /*170001CE*/ instance callconv(8) string
+          BaseTableName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_BaseTableName() /* 060001D9 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_BaseTableName(string) /* 060001DA */
   } // end of property DbColumn::BaseTableName
-  .property /*170001CF*/ instance string ColumnName()
+  .property /*170001CF*/ instance callconv(8) string
+          ColumnName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_ColumnName() /* 060001DB */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_ColumnName(string) /* 060001DC */
   } // end of property DbColumn::ColumnName
-  .property /*170001D0*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
+  .property /*170001D0*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
           ColumnOrdinal()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32> System.Data.Common.DbColumn/*02000004*/::get_ColumnOrdinal() /* 060001DD */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_ColumnOrdinal(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>) /* 060001DE */
   } // end of property DbColumn::ColumnOrdinal
-  .property /*170001D1*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
+  .property /*170001D1*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
           ColumnSize()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32> System.Data.Common.DbColumn/*02000004*/::get_ColumnSize() /* 060001DF */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_ColumnSize(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>) /* 060001E0 */
   } // end of property DbColumn::ColumnSize
-  .property /*170001D2*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D2*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsAliased()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsAliased() /* 060001E1 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsAliased(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001E2 */
   } // end of property DbColumn::IsAliased
-  .property /*170001D3*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D3*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsAutoIncrement()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsAutoIncrement() /* 060001E3 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsAutoIncrement(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001E4 */
   } // end of property DbColumn::IsAutoIncrement
-  .property /*170001D4*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D4*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsExpression()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsExpression() /* 060001E5 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsExpression(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001E6 */
   } // end of property DbColumn::IsExpression
-  .property /*170001D5*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D5*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsHidden()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsHidden() /* 060001E7 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsHidden(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001E8 */
   } // end of property DbColumn::IsHidden
-  .property /*170001D6*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D6*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsIdentity()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsIdentity() /* 060001E9 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsIdentity(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001EA */
   } // end of property DbColumn::IsIdentity
-  .property /*170001D7*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D7*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsKey()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsKey() /* 060001EB */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsKey(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001EC */
   } // end of property DbColumn::IsKey
-  .property /*170001D8*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D8*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsLong()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsLong() /* 060001ED */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsLong(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001EE */
   } // end of property DbColumn::IsLong
-  .property /*170001D9*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001D9*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsReadOnly()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsReadOnly() /* 060001EF */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsReadOnly(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001F0 */
   } // end of property DbColumn::IsReadOnly
-  .property /*170001DA*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
+  .property /*170001DA*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>
           IsUnique()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool> System.Data.Common.DbColumn/*02000004*/::get_IsUnique() /* 060001F1 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_IsUnique(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<bool>) /* 060001F2 */
   } // end of property DbColumn::IsUnique
-  .property /*170001DB*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
+  .property /*170001DB*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
           NumericPrecision()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32> System.Data.Common.DbColumn/*02000004*/::get_NumericPrecision() /* 060001F3 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_NumericPrecision(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>) /* 060001F4 */
   } // end of property DbColumn::NumericPrecision
-  .property /*170001DC*/ instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
+  .property /*170001DC*/ instance callconv(8) valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>
           NumericScale()
   {
     .get instance valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32> System.Data.Common.DbColumn/*02000004*/::get_NumericScale() /* 060001F5 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_NumericScale(valuetype [mscorlib/*23000001*/]System.Nullable`1/*0100000C*/<int32>) /* 060001F6 */
   } // end of property DbColumn::NumericScale
-  .property /*170001DD*/ instance string UdtAssemblyQualifiedName()
+  .property /*170001DD*/ instance callconv(8) string
+          UdtAssemblyQualifiedName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_UdtAssemblyQualifiedName() /* 060001F7 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_UdtAssemblyQualifiedName(string) /* 060001F8 */
   } // end of property DbColumn::UdtAssemblyQualifiedName
-  .property /*170001DE*/ instance class [mscorlib/*23000001*/]System.Type/*01000005*/
+  .property /*170001DE*/ instance callconv(8) class [mscorlib/*23000001*/]System.Type/*01000005*/
           DataType()
   {
     .get instance class [mscorlib/*23000001*/]System.Type/*01000005*/ System.Data.Common.DbColumn/*02000004*/::get_DataType() /* 060001F9 */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_DataType(class [mscorlib/*23000001*/]System.Type/*01000005*/) /* 060001FA */
   } // end of property DbColumn::DataType
-  .property /*170001DF*/ instance string DataTypeName()
+  .property /*170001DF*/ instance callconv(8) string
+          DataTypeName()
   {
     .get instance string System.Data.Common.DbColumn/*02000004*/::get_DataTypeName() /* 060001FB */
     .set instance void System.Data.Common.DbColumn/*02000004*/::set_DataTypeName(string) /* 060001FC */
   } // end of property DbColumn::DataTypeName
-  .property /*170001E0*/ instance object Item(string)
+  .property /*170001E0*/ instance callconv(8) object
+          Item(string)
   {
     .get instance object System.Data.Common.DbColumn/*02000004*/::get_Item(string) /* 060001FD */
   } // end of property DbColumn::Item

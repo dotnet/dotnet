@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">Zestaw „{0}” znajduje się bezpośrednio w folderze „lib”. Zaleca się umieszczanie zestawów w folderze określonej struktury. Przenieś ten zestaw do folderu określonej struktury.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">Zestaw „{0}” nie znajduje się w folderze „lib” i dlatego nie zostanie dodany jako odwołanie podczas instalacji pakietu w projekcie. Przenieś go do folderu „lib”, jeśli konieczne jest tworzenie do niego odwołania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">- Znaleziono co najmniej jeden plik {0} w: „{1}”, ale nie znaleziono: „{2}”.</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">Wartość „{0}” elementu {1} jest wartością przykładową i należy ją usunąć. Zamień ją na odpowiednią wartość lub usuń ją, a następnie ponownie skompiluj pakiet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">- Dodaj zestawy lib lub ref dla:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">- Dodaj grupę zależności dla:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">platforma docelowa</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">do pliku nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">Niektóre platformy docelowe zadeklarowane w grupie zależności w pliku nuspec i folderze lib/ref mają zgodne dopasowania, ale nie mają dokładnych dopasowań w drugiej lokalizacji. O ile nie jest to zamierzone, zapoznaj się z poniższą listą akcji:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">Niektóre platformy docelowe zadeklarowane w grupie zależności w pliku nuspec i folderze lib/ref nie mają dokładnych dopasowań w drugiej lokalizacji. Zapoznaj się z poniższą listą akcji:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">Za długa ścieżka lub nazwa pliku „{0}” albo jedno i drugie. Pakiet może nie działać bez obsługi długich ścieżek. Skróć ścieżkę lub nazwę pliku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">Element „PackageIconUrl”/„iconUrl” jest przestarzały. Rozważ użycie w zastępstwie elementu „PackageIcon”/„icon”. Więcej informacji znajdziesz na stronie https://aka.ms/deprecateIconUrl</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">Nazwa folderu „{0}” w folderze „lib” nie jest rozpoznawana jako prawidłowa nazwa platformy ani obsługiwany identyfikator kultury. Zmień tę nazwę na prawidłową nazwę platformy lub identyfikator kultury.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">Plik w lokalizacji „{0}” używa symbolu dla pustego katalogu „_._”, ale znajduje się w katalogu zawierającym inne pliki. Usuń ten plik z katalogów, które zawierają inne pliki.</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">Stabilna wersja pakietu nie może zawierać zależności wersji wstępnej. Zmodyfikuj specyfikację wersji zależności „{0}” lub zaktualizuj pole wersji w pakiecie nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Następujące grupy zależności wymagają kropek w wersji struktury: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Następujące spakowane foldery plików wymagają kropek w wersji struktury: {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Następujące grupy zestawów platformy wymagają kropek w wersji struktury: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Następujące grupy odwołań wymagają kropek w wersji struktury: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">W co najmniej jednym specyfikatorze struktury docelowej w pakiecie brakuje wymaganych kropek w numerach wersji struktury. Jest to wymagane od struktury .NET50. Zmień nazwy tak, aby zawierały odpowiednie kropki (np. „net50” na „net5.0”).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">Pakiet w wersji „{0}” korzysta z rozwiązania SemVer 2.0.0 lub składników rozwiązania SemVer 1.0.0, które nie są obsługiwane w starszych wersjach klientów. Zmień wersję pakietu na ciąg rozwiązania SemVer 1.0.0. Jeśli wersja zawiera etykietę wydania, musi rozpoczynać się od litery. Jeśli pakiet nie jest przeznaczony dla starszych wersji klientów, możesz zignorować ten komunikat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">Element „licenseUrl” zostanie wycofany. Rozważ użycie w zamian elementu „license”.</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">Zestaw „lib\{0}” zostanie zignorowany podczas instalowania pakietu po migracji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">Elementy zawartości „content” nie będą dostępne, gdy pakiet zostanie zainstalowany po migracji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">Skrypt install.ps1 zostanie zignorowany podczas instalowania pakietu po migracji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">Plik przekształcenia XDT „{0}” nie zostanie zastosowany podczas instalowania pakietu po migracji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">Program NuGet zignoruje plik „{0}”, ponieważ nie znajduje się on bezpośrednio w folderze „tools”. Umieść plik bezpośrednio w folderze „tools”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">Plik przekształcenia „{0}” znajduje się poza folderem „content”, dlatego nie zostanie on przekształcony podczas instalacji tego pakietu. Przenieś go do folderu „content”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">W pakiecie {0} brakuje pliku readme. Przejdź do https://aka.ms/nuget/authoring-best-practices/readme, aby dowiedzieć się, dlaczego odczyty pakietów są ważne.</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">Ten pakiet nie zawiera folderu lib/ ani ref/ i dlatego będzie traktowany jako zgodny ze wszystkimi platformami. Ponieważ znaleziono pliki specyficzne dla środowiska w katalogu build/ elementu {0}, rozważ utworzenie następujących pustych plików, aby poprawnie zawęzić zgodność pakietu:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">Plik symbolu zastępczego pustego folderu „{0}” znajduje się w niepustym folderze i należy go usunąć.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">Znaleziono odwołania w pliku nuspec, ale niektóre zestawy odwołań nie zostały odnalezione w pliku nuspec i folderze ref. Dodaj następujące zestawy odwołań:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">- Dodaj element {0} do grupy odwołań {1} w pliku nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">- Dodaj element {0} do elementu odwołań w pliku nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">- Dodaj element {0} do katalogu ref/{1}/</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">Plik skryptu „{0}” znajduje się poza folderem „tools”, dlatego nie zostanie on wykonany podczas instalacji tego pakietu. Przenieś go do folderu „tools”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">Bieżący zestaw narzędzi nie rozpoznaje identyfikatora licencji „{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">Plik skryptu „{0}” nie został rozpoznany przez program NuGet, dlatego nie zostanie on wykonany podczas instalacji tego pakietu. Zmień jego nazwę na install.ps1, uninstall.ps1 lub init.ps1, a następnie umieść go bezpośrednio w katalogu „tools”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">Wersja zależności „{0}” nie jest określona. Określ wersję zależności, a następnie ponownie skompiluj pakiet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">Plik w lokalizacji „{0}” używa jako folderu platformy przestarzałego folderu „WinRT”. Zastąp nazwę „WinRT” lub „WinRT45” nazwą „NetCore45”.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

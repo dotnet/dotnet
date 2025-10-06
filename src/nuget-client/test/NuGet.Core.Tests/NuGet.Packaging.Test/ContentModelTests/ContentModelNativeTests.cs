@@ -1,16 +1,15 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using NuGet.Client;
 using NuGet.ContentModel;
 using NuGet.Frameworks;
 using NuGet.RuntimeModel;
 using Xunit;
 
-namespace NuGet.Client.Test
+namespace NuGet.Packaging.Test.ContentModelTests
 {
     public class ContentModelNativeTests
     {

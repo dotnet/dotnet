@@ -1,0 +1,87 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      artifacts:
+        publish:
+          artifacts: true
+          logs: true
+          manifests: true
+      enableMicrobuild: true
+      enablePublishTestResults: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+      publishAssetsImmediately: true
+      helixRepo: dotnet/scenario-tests
+      jobs:
+      - job: Windows
+        pool:
+          vmImage: 'windows-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _BuildArgs: ''
+            Release:
+              _BuildConfig: Release
+              _BuildArgs: ''
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine
+          displayName: Build and Test
+
+      - job: MacOS
+        displayName: 'MacOS'
+        pool:
+          vmImage: 'macOS-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+            Release:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test
+
+      - job: Linux
+        displayName: 'Linux'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+            Release:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test

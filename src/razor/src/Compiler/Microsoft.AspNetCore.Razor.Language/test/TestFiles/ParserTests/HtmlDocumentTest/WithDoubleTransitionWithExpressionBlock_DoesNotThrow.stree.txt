@@ -33,9 +33,9 @@
                                                 LeftParenthesis;[(];
                                             CSharpCodeBlock - [16..19)::3
                                                 CSharpExpressionLiteral - [16..19)::3 - [2+3] - Gen<Expr>
-                                                    IntegerLiteral;[2];
-                                                    Plus;[+];
-                                                    IntegerLiteral;[3];
+                                                    NumericLiteral;[2];
+                                                    CSharpOperator;[+];
+                                                    NumericLiteral;[3];
                                             RazorMetaCode - [19..20)::1 - Gen<None>
                                                 RightParenthesis;[)];
                     MarkupTextLiteral - [20..21)::1 - ['] - Gen<Markup>
@@ -60,9 +60,9 @@
                                                 LeftParenthesis;[(];
                                             CSharpCodeBlock - [29..32)::3
                                                 CSharpExpressionLiteral - [29..32)::3 - [2+3] - Gen<Expr>
-                                                    IntegerLiteral;[2];
-                                                    Plus;[+];
-                                                    IntegerLiteral;[3];
+                                                    NumericLiteral;[2];
+                                                    CSharpOperator;[+];
+                                                    NumericLiteral;[3];
                                             RazorMetaCode - [32..33)::1 - Gen<None>
                                                 RightParenthesis;[)];
                         MarkupBlock - [33..35)::2

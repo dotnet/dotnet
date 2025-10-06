@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-#if IS_CORECLR
-using System.Runtime.InteropServices;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
@@ -31,7 +28,6 @@ using NuGet.ProjectManagement;
 using NuGet.Shared;
 using static NuGet.Shared.XmlUtility;
 using System.Globalization;
-using System.Collections;
 #endif
 
 namespace NuGet.Build.Tasks
@@ -114,11 +110,10 @@ namespace NuGet.Build.Tasks
         {
             ProjectStyle.DotnetCliTool,
             ProjectStyle.PackageReference,
-            ProjectStyle.Standalone,
             ProjectStyle.ProjectJson
         };
 
-        public static Task<bool> RestoreAsync(
+        public static Task<List<RestoreSummary>> RestoreAsync(
             DependencyGraphSpec dependencyGraphSpec,
             bool interactive,
             bool recursive,
@@ -135,7 +130,7 @@ namespace NuGet.Build.Tasks
             return RestoreAsync(dependencyGraphSpec, interactive, recursive, noCache, ignoreFailedSources, disableParallel, force, forceEvaluate, hideWarningsAndErrors, restorePC, cleanupAssetsForUnsupportedProjects: false, log, cancellationToken);
         }
 
-        public static async Task<bool> RestoreAsync(
+        public static async Task<List<RestoreSummary>> RestoreAsync(
             DependencyGraphSpec dependencyGraphSpec,
             bool interactive,
             bool recursive,
@@ -169,8 +164,7 @@ namespace NuGet.Build.Tasks
 
                 // Set user agent string used for network calls
 #if IS_CORECLR
-                UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet .NET Core MSBuild Task")
-                    .WithOSDescription(RuntimeInformation.OSDescription));
+                UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet .NET Core MSBuild Task"));
 #else
                 // OS description is set by default on Desktop
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet Desktop MSBuild Task"));
@@ -294,7 +288,7 @@ namespace NuGet.Build.Tasks
                 {
                     RestoreSummary.Log(log, restoreSummaries);
                 }
-                return restoreSummaries.All(x => x.Success);
+                return restoreSummaries;
             }
             finally
             {
@@ -337,7 +331,7 @@ namespace NuGet.Build.Tasks
         /// <param name="log">An <see cref="NuGet.Common.ILogger"/> object used to log messages.</param>
         /// <returns>A <see cref="Tuple{ProjectStyle, Boolean}"/> containing the project style and a value indicating if the project is using a style that is compatible with PackageReference.
         /// If the value of <paramref name="restoreProjectStyle"/> is not empty and could not be parsed, <code>null</code> is returned.</returns>
-        public static (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string PackagesConfigFilePath) GetProjectRestoreStyle(ProjectStyle? restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName, Common.ILogger log)
+        public static (ProjectStyle ProjectStyle, string PackagesConfigFilePath) GetProjectRestoreStyle(ProjectStyle? restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName, Common.ILogger log)
         {
             ProjectStyle projectStyle;
             string packagesConfigFilePath = null;
@@ -368,9 +362,7 @@ namespace NuGet.Build.Tasks
                 projectStyle = ProjectStyle.Unknown;
             }
 
-            bool isPackageReferenceCompatibleProjectStyle = projectStyle == ProjectStyle.PackageReference || projectStyle == ProjectStyle.DotnetToolReference;
-
-            return (projectStyle, isPackageReferenceCompatibleProjectStyle, packagesConfigFilePath);
+            return (projectStyle, packagesConfigFilePath);
         }
 
 
@@ -385,7 +377,7 @@ namespace NuGet.Build.Tasks
         /// <param name="log">An <see cref="NuGet.Common.ILogger"/> object used to log messages.</param>
         /// <returns>A <see cref="Tuple{ProjectStyle, Boolean}"/> containing the project style and a value indicating if the project is using a style that is compatible with PackageReference.
         /// If the value of <paramref name="restoreProjectStyle"/> is not empty and could not be parsed, <code>null</code> is returned.</returns>
-        public static (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string PackagesConfigFilePath) GetProjectRestoreStyle(string restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName, Common.ILogger log)
+        public static (ProjectStyle ProjectStyle, string PackagesConfigFilePath) GetProjectRestoreStyle(string restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName, Common.ILogger log)
         {
             return GetProjectRestoreStyle(GetProjectRestoreStyleFromProjectProperty(restoreProjectStyle), hasPackageReferenceItems, projectJsonPath, projectDirectory, projectName, log);
         }
@@ -456,7 +448,7 @@ namespace NuGet.Build.Tasks
                         value ??= new();
                         packageReferenceToProjects.Add(packageReference, value);
                     }
-                    value.Add(pcRestoreMetadata.PackagesConfigPath);
+                    value.Add(packageSpec.FilePath);
                 }
                 restoreAuditProperties.Add(packageSpec.FilePath, packageSpec.RestoreMetadata.RestoreAuditProperties);
             }
@@ -743,7 +735,7 @@ namespace NuGet.Build.Tasks
         /// <summary>
         /// Gets the path to a packages.config for the specified project if one exists.
         /// </summary>
-        /// <param name="projectFullPath">The full path to the project directory.</param>
+        /// <param name="projectDirectory">The full path to the project directory.</param>
         /// <param name="projectName">The name of the project file.</param>
         /// <returns>The path to the packages.config file if one exists, otherwise <see langword="null" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="projectDirectory" /> -or- <paramref name="projectName" /> is <see langword="null" />.</exception>

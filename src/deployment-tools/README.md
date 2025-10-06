@@ -13,7 +13,7 @@ all supported platforms, as well as the sources to .NET deployment tools.
 
 ## Tools documentation
 
-* [dotnet-mage](Documentation/dotnet-mage/README.md) usage patterns for dotnet-mage tool (formerly Mage.NET)
+* [dotnet-mage](docs/dotnet-mage/README.md) usage patterns for dotnet-mage tool (formerly Mage.NET)
 
 ## What is .NET?
 
@@ -40,17 +40,9 @@ To build the whole repo:
 
 `build`
 
-To build just specific subsets, i.e. `clickonce`:
-
-`build -subset clickonce`
-
 After you've built binaries, you can create packages, by running the following:
 
 `build -pack`
-
-## Localization
-
-You can turn on localized builds via the `/p:LocalizedBuild=true` command line argument.
 
 ## Reporting security issues and security bugs
 

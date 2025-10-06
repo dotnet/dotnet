@@ -889,6 +889,82 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void LoadPackageSources_ReadsSourcesWithNullDisableTLSCertificateVerificationFromPackageSourceSections_LoadsDefault()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: null);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultDisableTLSCertificateValidation, loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Fact]
+        public void LoadPackageSources_ReadsSourcesWithInvalidDisableTLSCertificateVerificationFromPackageSourceSections_LoadsDefault()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: "invalidValue");
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultDisableTLSCertificateValidation, loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        [InlineData("false")]
+        [InlineData("fALSE")]
+        public void LoadPackageSources_ReadsSourcesWithNotNullDisableTLSCertificateVerificationFromPackageSourceSections_LoadsValue(string disableTLSCertificateValidation)
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: disableTLSCertificateValidation);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(bool.Parse(disableTLSCertificateValidation), loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Fact]
         public void DisablePackageSourceAddEntryToSettings()
         {
             // Arrange
@@ -1310,6 +1386,82 @@ namespace NuGet.Configuration.Test
             AssertPackageSource(values[0], "one", "onesource", true);
             AssertPackageSource(values[1], "TWO", "twosource", false);
             AssertPackageSource(values[2], "three", "threesource", true);
+        }
+
+        [Fact]
+        public void UpdatePackageSource_ShouldUpdateAllowInsecureConnections()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="default-http" value="http://api.nuget.org/v3/index.json" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("default-http")!;
+
+            // Act
+            source.AllowInsecureConnections = true;
+            packageSourceProvider.UpdatePackageSource(source, false, false);
+
+            // Assert
+            settings = new Settings(directory);
+            var packageSourcesSection = settings.GetSection("packageSources");
+            packageSourcesSection.Should().NotBeNull();
+            packageSourcesSection!.Items.Count.Should().Be(1);
+            packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
+
+            var children = packageSourcesSection.Items.Cast<SourceItem>().ToList();
+            var parsedSource = children[0];
+            parsedSource.Key.Should().Be("default-http");
+            parsedSource.AllowInsecureConnections.Should().Be("True");
+        }
+
+        [Fact]
+        public void UpdatePackageSource_ShouldUpdateDisableTLSCertificateValidation()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="default-http" value="http://api.nuget.org/v3/index.json" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("default-http")!;
+
+            // Act
+            source.DisableTLSCertificateValidation = true;
+            packageSourceProvider.UpdatePackageSource(source, false, false);
+
+            // Assert
+            settings = new Settings(directory);
+            var packageSourcesSection = settings.GetSection("packageSources");
+            packageSourcesSection.Should().NotBeNull();
+            packageSourcesSection!.Items.Count.Should().Be(1);
+            packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
+
+            var children = packageSourcesSection.Items.Cast<SourceItem>().ToList();
+            var parsedSource = children[0];
+            parsedSource.Key.Should().Be("default-http");
+            parsedSource.DisableTLSCertificateValidation.Should().Be("True");
         }
 
         // Test that a source added in a high priority config file is not

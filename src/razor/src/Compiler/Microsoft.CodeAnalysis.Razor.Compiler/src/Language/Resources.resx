@@ -195,7 +195,7 @@
     <value>The '{0}' directive expects a type name.</value>
   </data>
   <data name="DirectiveMustAppearAtStartOfLine" xml:space="preserve">
-    <value>The '{0}` directive must appear at the start of the line.</value>
+    <value>The '{0}' directive must appear at the start of the line.</value>
   </data>
   <data name="DirectiveTokensMustBeSeparatedByWhitespace" xml:space="preserve">
     <value>The '{0}' directives value(s) must be separated by whitespace.</value>
@@ -212,11 +212,14 @@
   <data name="ErrorComponent_Newline" xml:space="preserve">
     <value>line break</value>
   </data>
+  <data name="FeatureAlreadyInitialized" xml:space="preserve">
+    <value>The feature is already initialized.</value>
+  </data>
   <data name="FeatureDependencyMissing" xml:space="preserve">
     <value>The '{0}' feature requires a '{1}' provided by the '{2}'.</value>
   </data>
   <data name="FeatureMustBeInitialized" xml:space="preserve">
-    <value>The feature must be initialized by setting the '{0}' property.</value>
+    <value>The feature must be initialized.</value>
   </data>
   <data name="FunctionsDirective_Description" xml:space="preserve">
     <value>Specify a C# code block.</value>
@@ -373,13 +376,16 @@
   <data name="ParserContext_NoCurrentBlock" xml:space="preserve">
     <value>Cannot finish span, there is no current block. Call StartBlock at least once before finishing a span</value>
   </data>
+  <data name="PhaseAlreadyInitialized" xml:space="preserve">
+    <value>The phase is already initialized.</value>
+  </data>
   <data name="PhaseDependencyMissing" xml:space="preserve">
     <value>The '{0}' phase requires a '{1}' provided by the '{2}'.</value>
   </data>
   <data name="PhaseMustBeInitialized" xml:space="preserve">
-    <value>The phase must be initialized by setting the '{0}' property.</value>
+    <value>The phase must be initialized.</value>
   </data>
-  <data name="RazorProject_PathMustStartWithForwardSlash" xml:space="preserve">
+  <data name="RazorProjectFileSystem_PathMustStartWithForwardSlash" xml:space="preserve">
     <value>Path must begin with a forward slash '/'.</value>
   </data>
   <data name="RemoveTagHelperDirective_Description" xml:space="preserve">
@@ -499,6 +505,9 @@
   <data name="TagHelpersParseTreeRewriter_FoundMalformedTagHelper" xml:space="preserve">
     <value>Found a malformed '{0}' tag helper. Tag helpers must have a start and end tag or be self closing.</value>
   </data>
+  <data name="TagHelpersParseTreeRewriter_VoidElement" xml:space="preserve">
+    <value>Component or tag helper '{0}' must be self-closing because it's named like an HTML void element. To use child content, qualify such components with their namespace or use prefixes with such tag helpers.</value>
+  </data>
   <data name="TagHelpersParseTreeRewriter_MissingCloseAngle" xml:space="preserve">
     <value>Missing close angle for tag helper '{0}'.</value>
   </data>
@@ -597,5 +606,17 @@
   </data>
   <data name="UsingDirective_Description" xml:space="preserve">
     <value>Adds the C# using directive to the generated view.</value>
+  </data>
+  <data name="Define_and_undef_cannot_be_used_in_razor_markup" xml:space="preserve">
+    <value>'#define' and '#undef' cannot be used in razor markup.</value>
+  </data>
+  <data name="Directives_must_be_at_the_start_of_the_line" xml:space="preserve">
+    <value>C# preprocessor directives must be at the start of the line, except for whitespace.</value>
+  </data>
+  <data name="Possible_preprocessor_directive_is_misplaced" xml:space="preserve">
+    <value>Possible C# preprocessor directive is misplaced. C# preprocessor directives must be at the start of the line, except for whitespace.</value>
+  </data>
+  <data name="Parent_has_not_been_set" xml:space="preserve">
+    <value>Parent has not been set.</value>
   </data>
 </root>

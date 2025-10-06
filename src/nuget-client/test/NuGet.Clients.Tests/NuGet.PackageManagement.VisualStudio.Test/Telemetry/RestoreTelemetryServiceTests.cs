@@ -7,6 +7,7 @@ using Moq;
 using NuGet.Common;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
+using NuGet.VisualStudio.Telemetry;
 using Test.Utility;
 using Xunit;
 

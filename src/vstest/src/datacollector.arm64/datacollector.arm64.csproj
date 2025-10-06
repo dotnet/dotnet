@@ -9,16 +9,17 @@
 
   <PropertyGroup>
     <AssemblyName>datacollector.arm64</AssemblyName>
-    <TargetFrameworks>$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'WINDOWS_NT' ">$(TargetFrameworks);net472;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'WINDOWS_NT' ">$(TargetFrameworks);$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);net7.0;net6.0;</TargetFrameworks>
-    <RuntimeIdentifier Condition="$(TargetFramework.StartsWith('net4'))">win10-arm64</RuntimeIdentifier>
+    <TargetFrameworks>$(RunnerTargetFrameworks)</TargetFrameworks>
+    <RuntimeIdentifier Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">win10-arm64</RuntimeIdentifier>
     <!-- Setting both RuntimeIdentifier and PlatformTarget ends up building as AnyCPU and selecting the default x86 architecture, irregardles of RuntimeIdentifier,
     so order here matters. -->
-    <PlatformTarget Condition=" $(TargetFramework.StartsWith('net4')) AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
+    <PlatformTarget Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <OutputType>Exe</OutputType>
-    <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
+    <!--
+      Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1.
+      We don't want the exe because we will start datacollector via dotnet exec datacollector.dll, because we don't know on which
+      OS or architecture we will be running. So there is no point in shipping the exe.
+    -->
     <UseAppHost>false</UseAppHost>
     <RollForward>Major</RollForward>
     <IsTestProject>false</IsTestProject>
@@ -52,7 +53,7 @@
     <AdditionalFiles Include="..\datacollector\PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />

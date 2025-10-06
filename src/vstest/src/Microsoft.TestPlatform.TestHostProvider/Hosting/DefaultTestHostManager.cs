@@ -58,7 +58,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private readonly IEnvironment _environment;
     private readonly IDotnetHostHelper _dotnetHostHelper;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
-
+    private bool _disableAppDomain;
     private Architecture _architecture;
     private Framework? _targetFramework;
     private ITestHostLauncher? _customTestHostLauncher;
@@ -66,8 +66,9 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private StringBuilder? _testHostProcessStdError;
     private StringBuilder? _testHostProcessStdOut;
     private IMessageLogger? _messageLogger;
+    private bool _captureOutput;
     private bool _hostExitedEventRaised;
-    private TestHostManagerCallbacks? _testhostManagerCallbacks;
+    private TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTestHostManager"/> class.
@@ -88,6 +89,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     /// <param name="processHelper">Process helper instance.</param>
     /// <param name="fileHelper">File helper instance.</param>
     /// <param name="environment">Instance of platform environment.</param>
+    /// <param name="environmentVariableHelper">The environment helper.</param>
     /// <param name="dotnetHostHelper">Instance of dotnet host helper.</param>
     internal DefaultTestHostManager(
         IProcessHelper processHelper,
@@ -124,7 +126,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?> ExitCallBack => process =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ExitCallBack");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
         TestHostManagerCallbacks.ExitCallBack(_processHelper, process, _testHostProcessStdError, OnHostExited);
     };
 
@@ -134,18 +136,18 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?, string?> ErrorReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ErrorReceivedCallback");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ErrorReceivedCallback");
-        _testhostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before ErrorReceivedCallback");
+        _testHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
     };
 
     /// <summary>
-    /// Gets callback to read from process error stream
+    /// Gets callback to read from process standard stream
     /// </summary>
     private Action<object?, string?> OutputReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdOut is not null, "LaunchTestHostAsync must have been called before OutputReceivedCallback");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
-        _testhostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
+        _testHostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
     };
 
     /// <inheritdoc/>
@@ -192,16 +194,16 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         if (!_fileHelper.Exists(testhostProcessPath))
         {
             // We assume that we could not find testhost.exe in the root folder so we are going to lookup in the
-            // TestHostNetFramework folder (assuming we are currently running under netcoreapp3.1) or in dotnet SDK
+            // TestHostNetFramework folder (assuming we are currently running under .NET) or in dotnet SDK
             // context.
             testHostProcessName = Path.Combine("TestHostNetFramework", originalTestHostProcessName);
             testhostProcessPath = Path.Combine(currentWorkingDirectory, "..", testHostProcessName);
         }
 
-        if (!Shared)
+        if (_disableAppDomain)
         {
-            // Not sharing the host which means we need to pass the test assembly path as argument
-            // so that the test host can create an appdomain on startup (Main method) and set appbase
+            // When host appdomains are disabled (in that case host is not shared) we need to pass the test assembly path as argument
+            // so that the test host can create one appdomain on startup (Main method) and set appbase.
             argumentsString += " --testsourcepath " + sources.FirstOrDefault()?.AddDoubleQuote();
         }
 
@@ -371,12 +373,20 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
 
         _messageLogger = logger;
-        _testhostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
+        _captureOutput = runConfiguration.CaptureStandardOutput;
+        var forwardOutput = runConfiguration.ForwardStandardOutput;
+        _testHostManagerCallbacks = new TestHostManagerCallbacks(forwardOutput, logger);
         _architecture = runConfiguration.TargetPlatform;
         _targetFramework = runConfiguration.TargetFramework;
         _testHostProcess = null;
 
-        Shared = !runConfiguration.DisableAppDomain;
+        _disableAppDomain = runConfiguration.DisableAppDomain;
+        // If appdomains are disabled the host cannot be shared, because sharing means loading multiple assemblies
+        // into the same process, and without appdomains we cannot safely do that.
+        //
+        // The OPPOSITE is not true though, disabling testhost sharing does not mean that we should not load the
+        // dll into a separate appdomain in the host. It just means that we wish to run each dll in separate exe.
+        Shared = !_disableAppDomain && !runConfiguration.DisableSharedTestHost;
         _hostExitedEventRaised = false;
 
         IsInitialized = true;
@@ -528,6 +538,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         {
             EqtTrace.Verbose("DefaultTestHostManager: Starting process '{0}' with command line '{1}'", testHostStartInfo.FileName, testHostStartInfo.Arguments);
             cancellationToken.ThrowIfCancellationRequested();
+            var outputCallback = _captureOutput ? OutputReceivedCallback : null;
             _testHostProcess = _processHelper.LaunchProcess(
                 testHostStartInfo.FileName!,
                 testHostStartInfo.Arguments,
@@ -535,7 +546,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                OutputReceivedCallback) as Process;
+                outputCallback) as Process;
         }
         else
         {

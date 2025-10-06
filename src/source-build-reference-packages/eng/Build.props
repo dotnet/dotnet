@@ -9,110 +9,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
-    <!--
-      All new projects must be added to DependencyPackageProjects. This will ensure that they get built first
-      and in order of inclusion. The resulting packages from these projects will get added the source-build
-      package cache when building with source-build to prevent prebuilts.
-
-      All newly added packages should be grouped together at the end of the list separated by empty lines.
-      The reason this is important is that when previous source-built artifacts are updated, the entries
-      for the new projects it includes can be removed. New PRs may miss that cut and if they are not grouped
-      at the bottom, this management becomes more difficult.
-
-      Format:
-      <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
-    -->
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.Common.4.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.CSharp.4.6.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Logging.Abstractions.6.0.4.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.8.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.MetadataLoadContext.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Composition.Runtime.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Composition.Hosting.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Composition.AttributedModel.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Composition.Convention.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Composition.TypedParts.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\System.Composition.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.IO.Pipelines.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Encoding.CodePages.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Threading.Channels.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Win32.SystemEvents.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Drawing.Common.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.MetadataLoadContext.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Diagnostics.EventLog.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.ProtectedData.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Configuration.ConfigurationManager.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.NET.StringTools.17.8.3.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Framework.17.8.3.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.17.8.3.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Utilities.Core.17.8.3.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Tasks.Core.17.8.3.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\targetPacks\ILsrc\**\8.0.0\Microsoft.AspNetCore.App.Ref.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.7.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.7.1.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.8.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.8.1.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
-    <!-- Building an empty project triggers building the Arcade Tools.proj which is needed before BuildDependencyPackageProjects -->
-    <ProjectToBuild Include="$(RepoRoot)\eng\NoOp.csproj" />
-  </ItemGroup>
-
-  <Target Name="BuildDependencyPackageProjects"
-          AfterTargets="Execute"
-          Condition="'$(BuildDependencyPackageProjects)' == 'true'"
-          Outputs="%(DependencyPackageProjects.Identity)">
-    <MSBuild Condition="'@(DependencyPackageProjects)' != ''"
-             Projects="@(DependencyPackageProjects)"
-             Targets="Restore;Build;Pack" />
-
-    <Copy Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
-          SourceFiles="@(DependencyPackageProjects->'$(ArtifactsShippingPackagesDir)%(FileName).nupkg')"
-          DestinationFolder="$(LocalNuGetPackageCacheDirectory)" />
-  </Target>
-
-  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true' and '$(Test)' != 'true'">
-    <TargetingPackageProject Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" />
-    <ProjectToBuild Include="@(TargetingPackageProject)" />
-
-    <TextOnlyPackageProject Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" />
-    <ProjectToBuild Include="@(TextOnlyPackageProject)" />
-
-    <ReferencePackageProject Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" />
-    <ProjectToBuild Include="@(ReferencePackageProject)" />
-
-    <ProjectToBuild Remove="@(DependencyPackageProjects)" />
+    <!-- The ordering ensures the correct dependency order between package types. -->
+    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\targetPacks.proj" BuildInParallel="false"/>
+    <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\textOnlyPackages.proj" BuildInParallel="false" />
+    <ProjectToBuild Include="$(RepoRoot)src\referencePackages\referencePackages.proj" BuildInParallel="false" />
+    <ProjectToBuild Include="$(RepoRoot)src\externalPackages\externalPackages.proj" BuildInParallel="false" />
   </ItemGroup>
 
   <!--

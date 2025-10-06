@@ -14,7 +14,7 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class VsixVerifier : ArchiveVerifier
+    public class VsixVerifier : ZipVerifier
     {
         public VsixVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, fileExtension: ".vsix")
         {
@@ -22,15 +22,7 @@ namespace Microsoft.SignCheck.Verification
         }
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-        {
-            var svr = new SignatureVerificationResult(path, parent, virtualPath);
-            string fullPath = svr.FullPath;
-            svr.IsSigned = IsSigned(fullPath, svr);
-            svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, svr.IsSigned);
-            VerifyContent(svr);
-
-            return svr;
-        }
+            => VerifySupportedFileType(path, parent, virtualPath);
 
         private bool TryGetTimestamp(PackageDigitalSignature packageSignature, out Timestamp timestamp)
         {
@@ -119,7 +111,7 @@ namespace Microsoft.SignCheck.Verification
             return isValidTimestampSignature;
         }
 
-        private bool IsSigned(string path, SignatureVerificationResult result)
+        protected override bool IsSigned(string path, SignatureVerificationResult result)
         {
             PackageDigitalSignature packageSignature = null;
 

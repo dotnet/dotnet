@@ -24,7 +24,6 @@ namespace System.IO
         // which means we take advantage of adaptive buffering code.
         // The performance using UnicodeEncoding is acceptable.
         private const int DefaultBufferSize = 1024;   // char[]
-        private const int DefaultFileStreamBufferSize = 4096;
         private const int MinBufferSize = 128;
 
         // Bit bucket - Null has no backing store. Non closable.
@@ -77,7 +76,7 @@ namespace System.IO
         {
         }
 
-        public StreamWriter(Stream stream, Encoding encoding)
+        public StreamWriter(Stream stream, Encoding? encoding)
             : this(stream, encoding, DefaultBufferSize, false)
         {
         }
@@ -86,7 +85,7 @@ namespace System.IO
         // character encoding is set by encoding and the buffer size,
         // in number of 16-bit characters, is set by bufferSize.
         //
-        public StreamWriter(Stream stream, Encoding encoding, int bufferSize)
+        public StreamWriter(Stream stream, Encoding? encoding, int bufferSize)
             : this(stream, encoding, bufferSize, false)
         {
         }
@@ -140,13 +139,13 @@ namespace System.IO
         {
         }
 
-        public StreamWriter(string path, bool append, Encoding encoding)
+        public StreamWriter(string path, bool append, Encoding? encoding)
             : this(path, append, encoding, DefaultBufferSize)
         {
         }
 
-        public StreamWriter(string path, bool append, Encoding encoding, int bufferSize) :
-            this(ValidateArgsAndOpenPath(path, append, encoding, bufferSize), encoding, bufferSize, leaveOpen: false)
+        public StreamWriter(string path, bool append, Encoding? encoding, int bufferSize) :
+            this(ValidateArgsAndOpenPath(path, append, bufferSize), encoding, bufferSize, leaveOpen: false)
         {
         }
 
@@ -155,8 +154,8 @@ namespace System.IO
         {
         }
 
-        public StreamWriter(string path, Encoding encoding, FileStreamOptions options)
-            : this(ValidateArgsAndOpenPath(path, encoding, options), encoding, DefaultFileStreamBufferSize)
+        public StreamWriter(string path, Encoding? encoding, FileStreamOptions options)
+            : this(ValidateArgsAndOpenPath(path, options), encoding, DefaultBufferSize)
         {
         }
 
@@ -169,10 +168,9 @@ namespace System.IO
             _charBuffer = Array.Empty<char>();
         }
 
-        private static FileStream ValidateArgsAndOpenPath(string path, Encoding encoding, FileStreamOptions options)
+        private static FileStream ValidateArgsAndOpenPath(string path, FileStreamOptions options)
         {
             ArgumentException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(encoding);
             ArgumentNullException.ThrowIfNull(options);
             if ((options.Access & FileAccess.Write) == 0)
             {
@@ -182,13 +180,16 @@ namespace System.IO
             return new FileStream(path, options);
         }
 
-        private static FileStream ValidateArgsAndOpenPath(string path, bool append, Encoding encoding, int bufferSize)
+        private static FileStream ValidateArgsAndOpenPath(string path, bool append, int bufferSize)
         {
             ArgumentException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(encoding);
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bufferSize);
 
-            return new FileStream(path, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read, DefaultFileStreamBufferSize);
+            if (bufferSize != -1)
+            {
+                ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bufferSize);
+            }
+
+            return new FileStream(path, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read, FileStream.DefaultBufferSize);
         }
 
         public override void Close()
@@ -307,7 +308,7 @@ namespace System.IO
             else
             {
                 int maxBytesForCharPos = _encoding.GetMaxByteCount(_charPos);
-                byteBuffer = maxBytesForCharPos <= 1024 ? // arbitrary threshold
+                byteBuffer = (uint)maxBytesForCharPos <= 1024 ? // arbitrary threshold
                     stackalloc byte[1024] :
                     (_byteBuffer = new byte[_encoding.GetMaxByteCount(_charBuffer.Length)]);
             }
@@ -502,8 +503,8 @@ namespace System.IO
 
         private void WriteFormatHelper(string format, ReadOnlySpan<object?> args, bool appendNewLine)
         {
-            int estimatedLength = (format?.Length ?? 0) + args.Length * 8;
-            var vsb = estimatedLength <= 256 ?
+            int estimatedLength = checked((format?.Length ?? 0) + args.Length * 8);
+            var vsb = (uint)estimatedLength <= 256 ?
                 new ValueStringBuilder(stackalloc char[256]) :
                 new ValueStringBuilder(estimatedLength);
 
@@ -568,6 +569,23 @@ namespace System.IO
             }
         }
 
+        /// <summary>
+        /// Writes a formatted string to the stream, using the same semantics as <see cref="string.Format(string, ReadOnlySpan{object?})"/>.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="arg">An object span that contains zero or more objects to format and write.</param>
+        public override void Write([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, params ReadOnlySpan<object?> arg)
+        {
+            if (GetType() == typeof(StreamWriter))
+            {
+                WriteFormatHelper(format, arg, appendNewLine: false);
+            }
+            else
+            {
+                base.Write(format, arg);
+            }
+        }
+
         public override void WriteLine([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, object? arg0)
         {
             if (GetType() == typeof(StreamWriter))
@@ -611,6 +629,23 @@ namespace System.IO
             if (GetType() == typeof(StreamWriter))
             {
                 ArgumentNullException.ThrowIfNull(arg);
+                WriteFormatHelper(format, arg, appendNewLine: true);
+            }
+            else
+            {
+                base.WriteLine(format, arg);
+            }
+        }
+
+        /// <summary>
+        /// Writes out a formatted string and a new line to the stream, using the same semantics as <see cref="string.Format(string, ReadOnlySpan{object?})"/>.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="arg">An object span that contains zero or more objects to format and write.</param>
+        public override void WriteLine([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, params ReadOnlySpan<object?> arg)
+        {
+            if (GetType() == typeof(StreamWriter))
+            {
                 WriteFormatHelper(format, arg, appendNewLine: true);
             }
             else

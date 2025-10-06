@@ -1,5 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
 
 namespace System.Windows.Forms.Design.Tests;
 
@@ -24,14 +26,18 @@ public sealed class LabelDesignerTests
     }
 
     [Fact]
-    public void SelectionRules_WithDefaultLabel_ShouldThrowNullReferenceException()
+    public void SelectionRules_WithDefaultLabel_ShouldReturnExpectedValue()
     {
         using LabelDesigner labelDesigner = new();
         using Label label = new();
         labelDesigner.Initialize(label);
 
-        Action action = () => _ = labelDesigner.SelectionRules;
+        SelectionRules selectionRules;
+        using (new NoAssertContext())
+        {
+            selectionRules = labelDesigner.SelectionRules;
+        }
 
-        action.Should().ThrowExactly<NullReferenceException>();
+        selectionRules.Should().Be(SelectionRules.AllSizeable | SelectionRules.Moveable | SelectionRules.Visible);
     }
 }

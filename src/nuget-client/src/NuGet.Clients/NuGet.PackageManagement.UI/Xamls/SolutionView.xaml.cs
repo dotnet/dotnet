@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -38,20 +37,6 @@ namespace NuGet.PackageManagement.UI
         {
             InitializeComponent();
 
-            // Change ItemContainerStyle of the _versions combobox so that
-            // for a null value, a separator is generated.
-            var dataTrigger = new DataTrigger();
-            dataTrigger.Binding = new Binding();
-            dataTrigger.Value = null;
-            dataTrigger.Setters.Add(new Setter(TemplateProperty, FindResource("SeparatorControlTemplate")));
-
-            // make sure the separator can't be selected thru keyboard navigation.
-            dataTrigger.Setters.Add(new Setter(IsEnabledProperty, false));
-
-            var style = new Style(typeof(ComboBoxItem), _versions.ItemContainerStyle);
-            style.Triggers.Add(dataTrigger);
-            _versions.ItemContainerStyle = style;
-
             _projectList.SizeChanged += ListView_SizeChanged;
             ((GridView)_projectList.View).Columns.CollectionChanged += Columns_CollectionChanged;
 
@@ -64,7 +49,8 @@ namespace NuGet.PackageManagement.UI
             {
                 _projectColumnHeader,
                 _installedVersionColumnHeader,
-                _requestedVersionColumn
+                _requestedVersionColumn,
+                _packageLevelColumnHeader
             };
 
             SortByColumn(_projectColumnHeader);
@@ -240,15 +226,29 @@ namespace NuGet.PackageManagement.UI
             // adjust the width of the "project" column so that it takes
             // up all remaining width.
             var gridView = (GridView)_projectList.View;
-            var width = _projectList.ActualWidth - 3 * SystemParameters.VerticalScrollBarWidth;
+            var width = _projectList.ActualWidth - 8;
+
+            // If there are more than 7 projects the scrollbar will be visible
+            if (_projectList.Items.Count > 7)
+            {
+                width = _projectList.ActualWidth - 3 * 8;
+            }
+
             foreach (var column in gridView.Columns)
             {
                 var header = (GridViewColumnHeader)column.Header;
+                if (header.Name == "_installedVersionColumnHeader" && header.ActualWidth < 86)
+                {
+                    width -= 38;
+                }
                 width -= header.ActualWidth;
             }
 
             var newWidth = _projectColumnHeader.ActualWidth + width;
-            _projectColumn.Width = newWidth;
+            if (newWidth > 0)
+            {
+                _projectColumn.SetValue(Canvas.WidthProperty, newWidth);
+            }
 
             // this width adjustment is only done once.
             _projectList.SizeChanged -= ListView_SizeChanged;
@@ -261,9 +261,20 @@ namespace NuGet.PackageManagement.UI
             string columnName = (sizeChangedEventArgs.Source as GridViewColumnHeader)?.Name;
 
             //"Installed" is a bit wider and can clip when the sorting indicator is applied.
+            if (columnName == "_packageLevelColumnHeader")
+            {
+                columnMinWidth = 96;
+            }
             if (columnName == "_installedVersionColumnHeader")
             {
-                columnMinWidth = 64;
+                if (_warningIndicatorInstalledHeader.Visibility == Visibility.Visible)
+                {
+                    columnMinWidth = 84;
+                }
+                else
+                {
+                    columnMinWidth = 68;
+                }
             }
             if (sizeChangedEventArgs.NewSize.Width <= columnMinWidth)
             {
@@ -348,6 +359,21 @@ namespace NuGet.PackageManagement.UI
                 default:
                     base.OnPreviewKeyDown(e);
                     break;
+            }
+        }
+
+        private void WarningIndicatorInstalledHeader_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // adjust the width of the "installed" and "project" column depending on the visibility of the warning indicator.
+            if (_warningIndicatorInstalledHeader.Visibility == Visibility.Visible)
+            {
+                _installedVersionColumnHeader.Column.Width = 84;
+                _projectColumn.Width -= 16;
+            }
+            else
+            {
+                _installedVersionColumnHeader.Column.Width = 68;
+                _projectColumn.Width += 16;
             }
         }
     }

@@ -1,76 +1,74 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
 public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_SimpleComponent_ReturnsResult()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
 
-        var componentCodeDocument = TestRazorCodeDocument.Create("<div></div>");
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/MyTagHelper.razor");
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject.Key, hostDocument2, EmptyTextLoader.Instance);
+        });
+
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        builder.Metadata(TypeNameIdentifier("MyTagHelper"));
-        var tagHelperDescriptor = builder.Build();
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("MyTagHelper", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.MyTagHelper",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "MyTagHelper");
 
-        var uri = new Uri("file://path/test.razor");
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.UpdateProjectWorkspaceState(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+        });
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
+        var uri = new Uri(hostDocument1.FilePath);
 
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
-            MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.OpenDocument(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
+        });
 
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
+        Assert.True(documentContextFactory.TryCreate(uri, projectContext: null, out var documentContext));
 
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var endpoint = CreateEndpoint(documentContextFactory);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
-                droppedUri
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris = [droppedUri]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -78,60 +76,67 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("<MyTagHelper />", result!.DocumentChanges!.Value.First[0].Edits[0].NewText);
+        Assert.NotNull(result.DocumentChanges);
+
+        var documentChanges = result.DocumentChanges.GetValueOrDefault();
+        Assert.True(documentChanges.TryGetFirst(out var documentEdits));
+
+        Assert.Equal("<MyTagHelper />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_SimpleComponentWithChildFile_ReturnsResult()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
 
-        var componentCodeDocument = TestRazorCodeDocument.Create("<div></div>");
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/MyTagHelper.razor");
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject.Key, hostDocument2, EmptyTextLoader.Instance);
+        });
+
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        builder.Metadata(TypeNameIdentifier("MyTagHelper"));
-        var tagHelperDescriptor = builder.Build();
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("MyTagHelper", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.MyTagHelper",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "MyTagHelper");
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.UpdateProjectWorkspaceState(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+        });
 
-        var uri = new Uri("file://path/test.razor");
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
-            MockBehavior.Strict);
+        var uri = new Uri(hostDocument1.FilePath);
 
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.OpenDocument(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
+        });
 
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
+        Assert.True(documentContextFactory.TryCreate(uri, null, out var documentContext));
+
+        var endpoint = CreateEndpoint(documentContextFactory);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris =
+            [
                 new Uri("file:///c:/path/MyTagHelper.razor.cs"),
                 new Uri("file:///c:/path/MyTagHelper.razor.css"),
                 droppedUri,
-            }
+            ]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -139,64 +144,68 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("<MyTagHelper />", result!.DocumentChanges!.Value.First[0].Edits[0].NewText);
+        Assert.NotNull(result.DocumentChanges);
+
+        var documentChanges = result.DocumentChanges.GetValueOrDefault();
+        Assert.True(documentChanges.TryGetFirst(out var documentEdits));
+
+        Assert.Equal("<MyTagHelper />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_ComponentWithRequiredAttribute_ReturnsResult()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
 
-        var componentCodeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        builder.Metadata(TypeNameIdentifier("MyTagHelper"));
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/fetchdata.razor");
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject.Key, hostDocument2, EmptyTextLoader.Instance);
+        });
+
+        var droppedUri = new Uri("file:///c:/path/fetchdata.razor");
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("FetchData", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.FetchData",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "FetchData");
         builder.BindAttribute(b =>
         {
             b.IsEditorRequired = true;
             b.Name = "MyAttribute";
         });
         builder.BindAttribute(b => b.Name = "MyNonRequiredAttribute");
-        var tagHelperDescriptor = builder.Build();
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.UpdateProjectWorkspaceState(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+        });
 
-        var uri = new Uri("file://path/test.razor");
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
-            MockBehavior.Strict);
+        var uri = new Uri(hostDocument1.FilePath);
 
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.OpenDocument(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
+        });
 
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
+        Assert.True(documentContextFactory.TryCreate(uri, null, out var documentContext));
+
+        var endpoint = CreateEndpoint(documentContextFactory);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
-                droppedUri
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris = [droppedUri]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -204,62 +213,35 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("<MyTagHelper MyAttribute=\"\" />", result!.DocumentChanges!.Value.First[0].Edits[0].NewText);
+        Assert.NotNull(result.DocumentChanges);
+
+        var documentChanges = result.DocumentChanges.GetValueOrDefault();
+        Assert.True(documentChanges.TryGetFirst(out var documentEdits));
+
+        Assert.Equal("<FetchData MyAttribute=\"\" />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [Fact]
     public async Task Handle_NoTypeNameIdentifier_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-
-        var componentCodeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        var tagHelperDescriptor = builder.Build();
-
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
-
+        var codeDocument = CreateCodeDocument("<div></div>");
         var uri = new Uri("file://path/test.razor");
+        var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
+
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
-            MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
-                droppedUri
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris = [droppedUri]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -273,50 +255,27 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
     public async Task Handle_MultipleUris_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var codeDocument = CreateCodeDocument("<div></div>");
 
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris =
+            [
                 new Uri("file:///c:/path/SomeOtherFile.cs"),
                 new Uri("file:///c:/path/Bar.Foo"),
                 new Uri("file:///c:/path/MyTagHelper.razor"),
-            }
+            ]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -330,49 +289,23 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
     public async Task Handle_NotComponent_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var codeDocument = CreateCodeDocument("<div></div>");
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.cshtml");
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
-                droppedUri
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris = [droppedUri]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -382,61 +315,55 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         Assert.Null(result);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_ComponentWithNestedFiles_ReturnsResult()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create(@"<FetchData\>");
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/fetchdata.razor");
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.AddProject(hostProject);
+            updater.AddDocument(hostProject.Key, hostDocument1, EmptyTextLoader.Instance);
+            updater.AddDocument(hostProject.Key, hostDocument2, EmptyTextLoader.Instance);
+        });
 
         var droppedUri1 = new Uri("file:///c:/path/fetchdata.razor.cs");
         var droppedUri2 = new Uri("file:///c:/path/fetchdata.razor");
-        var builder = TagHelperDescriptorBuilder.Create("FetchData", "MyAssembly");
-        builder.SetMetadata(TypeNameIdentifier("FetchData"));
-        var tagHelperDescriptor = builder.Build();
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("FetchData", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.FetchData",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "FetchData");
 
-        var uri = new Uri("file://path/index.razor");
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
-            MockBehavior.Strict);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.UpdateProjectWorkspaceState(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+        });
 
-        var response = (WorkspaceEdit?)null;
+        var uri = new Uri(hostDocument1.FilePath);
 
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.OpenDocument(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
+        });
 
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
+        Assert.True(documentContextFactory.TryCreate(uri, projectContext: null, out var documentContext));
+
+        var endpoint = CreateEndpoint(documentContextFactory);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
-            Uris = new[]
-            {
-                droppedUri1,
-                droppedUri2,
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
+            Uris = [droppedUri1, droppedUri2]
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -444,53 +371,32 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("<FetchData />", result!.DocumentChanges!.Value.First[0].Edits[0].NewText);
+        Assert.NotNull(result.DocumentChanges);
+
+        var documentChanges = result.DocumentChanges.GetValueOrDefault();
+        Assert.True(documentChanges.TryGetFirst(out var documentEdits));
+
+        Assert.Equal("<FetchData />", ((TextEdit)documentEdits[0].Edits[0]).NewText);
     }
 
     [Fact]
     public async Task Handle_CSharp_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("@counter");
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var codeDocument = CreateCodeDocument("@counter");
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var projectedRange = It.IsAny<LinePositionSpan>();
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp &&
-            s.TryMapToGeneratedDocumentRange(csharpDocument, It.IsAny<LinePositionSpan>(), out projectedRange) == true, MockBehavior.Strict);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
-
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -504,94 +410,21 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
     public async Task Handle_DocumentNotFound_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
+        var codeDocument = CreateCodeDocument("<div></div>");
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
-        var requestContext = CreateRazorRequestContext(documentContext);
 
-        // Act
-        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedCodeDocument_ReturnsNull()
-    {
-        // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
-        codeDocument.SetUnsupported();
-        var uri = new Uri("file://path/test.razor");
-        var documentContext = CreateDocumentContext(uri, codeDocument);
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
-
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
-        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-
-        var response = new WorkspaceEdit();
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
-
-        var parameters = new UriPresentationParams()
-        {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            }
-        };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -605,43 +438,21 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
     public async Task Handle_NoUris_ReturnsNull()
     {
         // Arrange
-        var codeDocument = TestRazorCodeDocument.Create("<div></div>");
+        var codeDocument = CreateCodeDocument("<div></div>");
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
-            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
-        var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
-        var response = (WorkspaceEdit?)null;
-
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var endpoint = new TextDocumentUriPresentationEndpoint(
-            documentMappingService,
-            searchEngine,
-            clientConnection.Object,
-            FilePathService,
-            documentContextFactory,
-            LoggerFactory);
+        var clientConnection = CreateClientConnection(response: null);
+        var endpoint = CreateEndpoint(documentContextFactory, clientConnection);
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = uri
-            },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            }
+            TextDocument = new() { DocumentUri = new(uri) },
+            Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
+
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -650,4 +461,22 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         // Assert
         Assert.Null(result);
     }
+
+    private TextDocumentUriPresentationEndpoint CreateEndpoint(
+        IDocumentContextFactory documentContextFactory,
+        IClientConnection? clientConnection = null)
+    {
+        return new TextDocumentUriPresentationEndpoint(
+            StrictMock.Of<IDocumentMappingService>(),
+            clientConnection ?? StrictMock.Of<IClientConnection>(),
+            FilePathService,
+            documentContextFactory,
+            LoggerFactory);
+    }
+
+    private static IClientConnection CreateClientConnection(WorkspaceEdit? response)
+        => TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorUriPresentationEndpoint, response);
+        });
 }

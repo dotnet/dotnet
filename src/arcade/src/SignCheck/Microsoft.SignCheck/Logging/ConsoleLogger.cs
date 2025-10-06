@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Microsoft.SignCheck.Verification;
 
 namespace Microsoft.SignCheck.Logging
 {
@@ -56,6 +57,16 @@ namespace Microsoft.SignCheck.Logging
             {
                 WriteError(Verbosity, String.Format(message, values));
             }
+        }
+
+        public void WriteStartResult(SignatureVerificationResult result, string outcome)
+        {
+            throw new NotImplementedException("ConsoleLogger does not support WriteStartResult.");
+        }
+
+        public void WriteEndResult()
+        {
+            throw new NotImplementedException("ConsoleLogger does not support WriteEndResult.");
         }
 
         public void WriteLine()

@@ -2,53 +2,55 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.CommandLine.Help;
 using System.CommandLine.Invocation;
+using System.Linq;
 
 namespace System.CommandLine.Parsing
 {
     internal sealed class ParseOperation
     {
-        private readonly List<CliToken> _tokens;
-        private readonly CliConfiguration _configuration;
+        private readonly List<Token> _tokens;
+        private readonly ParserConfiguration _configuration;
         private readonly string? _rawInput;
         private readonly SymbolResultTree _symbolResultTree;
         private readonly CommandResult _rootCommandResult;
 
         private int _index;
         private CommandResult _innermostCommandResult;
-        private bool _isHelpRequested;
         private bool _isTerminatingDirectiveSpecified;
-        private CliAction? _primaryAction;
-        private List<CliAction>? _preActions;
+        private CommandLineAction? _primaryAction;
+        private List<CommandLineAction>? _preActions;
+        private readonly Command _rootCommand;
 
         public ParseOperation(
-            List<CliToken> tokens,
-            CliConfiguration configuration,
+            List<Token> tokens,
+            Command rootCommand,
+            ParserConfiguration configuration,
             List<string>? tokenizeErrors,
             string? rawInput)
         {
             _tokens = tokens;
             _configuration = configuration;
+            _rootCommand = rootCommand;
             _rawInput = rawInput;
-            _symbolResultTree = new(_configuration.RootCommand, tokenizeErrors);
+            _symbolResultTree = new(_rootCommand, tokenizeErrors);
             _innermostCommandResult = _rootCommandResult = new CommandResult(
-                _configuration.RootCommand,
+                _rootCommand,
                 CurrentToken,
                 _symbolResultTree);
-            _symbolResultTree.Add(_configuration.RootCommand, _rootCommandResult);
+            _symbolResultTree.Add(_rootCommand, _rootCommandResult);
 
             Advance();
         }
 
-        private CliToken CurrentToken => _tokens[_index];
+        private Token CurrentToken => _tokens[_index];
 
         private void Advance() => _index++;
 
-        private bool More(out CliTokenType currentTokenType)
+        private bool More(out TokenType currentTokenType)
         {
             bool result = _index < _tokens.Count;
-            currentTokenType = result ? _tokens[_index].Type : (CliTokenType)(-1);
+            currentTokenType = result ? _tokens[_index].Type : (TokenType)(-1);
             return result;
         }
 
@@ -58,20 +60,9 @@ namespace System.CommandLine.Parsing
 
             ParseCommandChildren();
 
-            if (!_isHelpRequested)
-            {
-                Validate();
-            }
+            ValidateAndAddDefaultResults();
 
-            if (_primaryAction is null)
-            {
-                if (_symbolResultTree.ErrorCount > 0)
-                {
-                    _primaryAction = new ParseErrorAction();
-                }
-            }
-
-            return new (
+            return new(
                 _configuration,
                 _rootCommandResult,
                 _innermostCommandResult,
@@ -85,7 +76,7 @@ namespace System.CommandLine.Parsing
 
         private void ParseSubcommand()
         {
-            CliCommand command = (CliCommand)CurrentToken.Symbol!;
+            Command command = (Command)CurrentToken.Symbol!;
 
             _innermostCommandResult = new CommandResult(
                 command,
@@ -105,17 +96,17 @@ namespace System.CommandLine.Parsing
             int currentArgumentCount = 0;
             int currentArgumentIndex = 0;
 
-            while (More(out CliTokenType currentTokenType))
+            while (More(out TokenType currentTokenType))
             {
-                if (currentTokenType == CliTokenType.Command)
+                if (currentTokenType == TokenType.Command)
                 {
                     ParseSubcommand();
                 }
-                else if (currentTokenType == CliTokenType.Option)
+                else if (currentTokenType == TokenType.Option)
                 {
                     ParseOption();
                 }
-                else if (currentTokenType == CliTokenType.Argument)
+                else if (currentTokenType == TokenType.Argument)
                 {
                     ParseCommandArguments(ref currentArgumentCount, ref currentArgumentIndex);
                 }
@@ -129,11 +120,11 @@ namespace System.CommandLine.Parsing
 
         private void ParseCommandArguments(ref int currentArgumentCount, ref int currentArgumentIndex)
         {
-            while (More(out CliTokenType currentTokenType) && currentTokenType == CliTokenType.Argument)
+            while (More(out TokenType currentTokenType) && currentTokenType == TokenType.Argument)
             {
                 while (_innermostCommandResult.Command.HasArguments && currentArgumentIndex < _innermostCommandResult.Command.Arguments.Count)
                 {
-                    CliArgument argument = _innermostCommandResult.Command.Arguments[currentArgumentIndex];
+                    Argument argument = _innermostCommandResult.Command.Arguments[currentArgumentIndex];
 
                     if (currentArgumentCount < argument.Arity.MaximumNumberOfValues)
                     {
@@ -181,7 +172,7 @@ namespace System.CommandLine.Parsing
 
         private void ParseOption()
         {
-            CliOption option = (CliOption)CurrentToken.Symbol!;
+            Option option = (Option)CurrentToken.Symbol!;
             OptionResult optionResult;
 
             if (!_symbolResultTree.TryGetValue(option, out SymbolResult? symbolResult))
@@ -191,11 +182,6 @@ namespace System.CommandLine.Parsing
                     // directives have a precedence over --help and --version
                     if (!_isTerminatingDirectiveSpecified)
                     {
-                        if (option is HelpOption)
-                        {
-                            _isHelpRequested = true;
-                        }
-
                         if (option.Action.Terminating)
                         {
                             _primaryAction = option.Action;
@@ -234,7 +220,7 @@ namespace System.CommandLine.Parsing
             var contiguousTokens = 0;
             int argumentCount = 0;
 
-            while (More(out CliTokenType currentTokenType) && currentTokenType == CliTokenType.Argument)
+            while (More(out TokenType currentTokenType) && currentTokenType == TokenType.Argument)
             {
                 if (argumentCount >= argument.Arity.MaximumNumberOfValues)
                 {
@@ -292,9 +278,9 @@ namespace System.CommandLine.Parsing
 
         private void ParseDirectives()
         {
-            while (More(out CliTokenType currentTokenType) && currentTokenType == CliTokenType.Directive)
+            while (More(out TokenType currentTokenType) && currentTokenType == TokenType.Directive)
             {
-                if (_configuration.HasDirectives)
+                if (_rootCommand is RootCommand { Directives.Count: > 0 })
                 {
                     ParseDirective(); // kept in separate method to avoid JIT
                 }
@@ -306,7 +292,7 @@ namespace System.CommandLine.Parsing
             {
                 var token = CurrentToken;
 
-                if (token.Symbol is not CliDirective directive)
+                if (token.Symbol is not Directive directive)
                 {
                     AddCurrentTokenToUnmatched();
                     return;
@@ -346,7 +332,7 @@ namespace System.CommandLine.Parsing
             }
         }
 
-        private void AddPreAction(CliAction action)
+        private void AddPreAction(CommandLineAction action)
         {
             if (_preActions is null)
             {
@@ -358,7 +344,7 @@ namespace System.CommandLine.Parsing
 
         private void AddCurrentTokenToUnmatched()
         {
-            if (CurrentToken.Type == CliTokenType.DoubleDash)
+            if (CurrentToken.Type == TokenType.DoubleDash)
             {
                 return;
             }
@@ -366,18 +352,88 @@ namespace System.CommandLine.Parsing
             _symbolResultTree.AddUnmatchedToken(CurrentToken, _innermostCommandResult, _rootCommandResult);
         }
 
-        private void Validate()
+        private void ValidateAndAddDefaultResults()
         {
-            // Only the inner most command goes through complete validation,
+            // Only the innermost command goes through complete validation,
             // for other commands only a subset of options is checked.
-            _innermostCommandResult.Validate(completeValidation: true);
+            _innermostCommandResult.Validate(isInnermostCommand: true);
 
             CommandResult? currentResult = _innermostCommandResult.Parent as CommandResult;
             while (currentResult is not null)
             {
-                currentResult.Validate(completeValidation: false);
+                currentResult.Validate(isInnermostCommand: false);
 
                 currentResult = currentResult.Parent as CommandResult;
+            }
+
+            if (_primaryAction is null)
+            {
+                if (_innermostCommandResult is { Command: { Action: null, HasSubcommands: true } })
+                {
+                    _symbolResultTree.InsertFirstError(
+                        new ParseError(LocalizationResources.RequiredCommandWasNotProvided(), _innermostCommandResult));
+                }
+
+                if (_innermostCommandResult is { Command.Action.ClearsParseErrors: true } &&
+                    _symbolResultTree.Errors is not null)
+                {
+                    var errorsNotUnderInnermostCommand = _symbolResultTree
+                                                         .Errors
+                                                         .Where(e => e.SymbolResult != _innermostCommandResult)
+                                                         .ToList();
+
+                    _symbolResultTree.Errors = errorsNotUnderInnermostCommand;
+                }
+                else if (_symbolResultTree.ErrorCount > 0)
+                {
+                    _primaryAction = new ParseErrorAction();
+                }
+            }
+            else
+            {
+                if (_symbolResultTree.ErrorCount > 0 &&
+                    _primaryAction.ClearsParseErrors &&
+                    _symbolResultTree.Errors is not null)
+                {
+                    foreach (var kvp in _symbolResultTree)
+                    {
+                        var symbol = kvp.Key;
+                        if (symbol is Option { Action: { } optionAction } option)
+                        {
+                            if (_primaryAction == optionAction)
+                            {
+                                var errorsForPrimarySymbol = _symbolResultTree
+                                                             .Errors
+                                                             .Where(e => e.SymbolResult is OptionResult r && r.Option == option)
+                                                             .ToList();
+
+                                _symbolResultTree.Errors = errorsForPrimarySymbol;
+
+                                return;
+                            }
+                        }
+
+                        if (symbol is Command { Action: { } commandAction } command)
+                        {
+                            if (_primaryAction == commandAction)
+                            {
+                                var errorsForPrimarySymbol = _symbolResultTree
+                                                             .Errors
+                                                             .Where(e => e.SymbolResult is CommandResult r && r.Command == command)
+                                                             .ToList();
+
+                                _symbolResultTree.Errors = errorsForPrimarySymbol;
+
+                                return;
+                            }
+                        }
+                    }
+
+                    if (_symbolResultTree.ErrorCount > 0)
+                    {
+                        _symbolResultTree.Errors?.Clear();
+                    }
+                }
             }
         }
     }

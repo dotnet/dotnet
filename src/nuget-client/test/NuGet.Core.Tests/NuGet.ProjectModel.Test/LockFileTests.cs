@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
 
@@ -32,8 +32,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -53,7 +52,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -99,8 +98,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -120,7 +118,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -170,8 +168,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -191,7 +188,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -256,8 +253,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -277,7 +273,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -379,8 +375,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -400,7 +395,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -466,8 +461,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -487,7 +481,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -551,8 +545,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -572,7 +565,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -666,8 +659,7 @@ namespace NuGet.ProjectModel.Test
                     new TargetFrameworkInformation
                     {
                         FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
-                        Dependencies = new[]
-                        {
+                        Dependencies = [
                             new LibraryDependency
                             {
                                 LibraryRange = new LibraryRange(
@@ -687,7 +679,7 @@ namespace NuGet.ProjectModel.Test
                                     LibraryDependencyTarget.Package),
                                 SuppressParent = LibraryIncludeFlags.All
                             }
-                        }
+                        ]
                     }
                 })
                     {
@@ -855,13 +847,12 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(lockFile_1_2.GetHashCode(), lockFile_11_22.GetHashCode());
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void LockFile_GetTarget_WithNuGetFramework_ReturnsCorrectLockFileTarget(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void LockFile_GetTarget_WithNuGetFramework_ReturnsCorrectLockFileTarget()
         {
             // Arrange
             var expectedJson = ResourceTestUtility.GetResource("NuGet.ProjectModel.Test.compiler.resources.sample.assets.json", typeof(LockFileTests));
-            var lockFile = Parse(expectedJson, Path.GetTempPath(), environmentVariableReader);
+            var lockFile = Parse(expectedJson, Path.GetTempPath());
             NuGetFramework nuGetFramework = NuGetFramework.ParseComponents(".NETCoreApp,Version=v5.0", "Windows,Version=7.0");
 
             // Act
@@ -871,13 +862,12 @@ namespace NuGet.ProjectModel.Test
             target.TargetFramework.Should().Be(nuGetFramework);
         }
 
-        [Theory]
-        [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
-        public void LockFile_GetTarget_WithAlias_ReturnsCorrectLockFileTarget(IEnvironmentVariableReader environmentVariableReader)
+        [Fact]
+        public void LockFile_GetTarget_WithAlias_ReturnsCorrectLockFileTarget()
         {
             // Arrange
             var expectedJson = ResourceTestUtility.GetResource("NuGet.ProjectModel.Test.compiler.resources.sample.assets.json", typeof(LockFileTests));
-            var lockFile = Parse(expectedJson, Path.GetTempPath(), environmentVariableReader);
+            var lockFile = Parse(expectedJson, Path.GetTempPath());
             NuGetFramework nuGetFramework = NuGetFramework.ParseComponents(".NETCoreApp,Version=v5.0", "Windows,Version=7.0");
 
             // Act
@@ -887,13 +877,13 @@ namespace NuGet.ProjectModel.Test
             target.TargetFramework.Should().Be(nuGetFramework);
         }
 
-        private LockFile Parse(string lockFileContent, string path, IEnvironmentVariableReader environmentVariableReader)
+        private LockFile Parse(string lockFileContent, string path)
         {
             var reader = new LockFileFormat();
             byte[] byteArray = Encoding.UTF8.GetBytes(lockFileContent);
             using (var stream = new MemoryStream(byteArray))
             {
-                return reader.Read(stream, NullLogger.Instance, path, environmentVariableReader, true);
+                return reader.Read(stream, NullLogger.Instance, path);
             }
         }
     }

@@ -4,7 +4,7 @@
 using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 
-namespace System.Windows.Forms.TestUtilities;
+namespace System.Private.Windows.TestUtilities;
 
 public static class CommonTestHelper
 {
@@ -51,9 +51,9 @@ public static class CommonTestHelper
     public static TheoryData<IntPtr> GetIntPtrTheoryData()
         => new()
         {
-            (IntPtr)(-1),
+            -1,
             IntPtr.Zero,
-            (IntPtr)1
+            1
         };
 
     public static TheoryData<Color> GetColorTheoryData()
@@ -126,7 +126,10 @@ public static class CommonTestHelper
     public static TheoryData<EventArgs?> GetEventArgsTheoryData()
         => new()
         {
-            null,
+            // Cast is important. This calls Add(TheoryDataRow<T>) method.
+            // Without the cast, this will pass a null TheoryDataRow<EventArgs> to the method.
+            // With the cast, implicit conversion from null EventArgs to TheoryDataRow<EventArgs> is used.
+            (EventArgs?)null,
             new EventArgs()
         };
 

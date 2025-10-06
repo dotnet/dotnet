@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // however, be more than one.  We'll check for that first, since applicable candidates are
             // always better than inapplicable candidates.
 
-            if (HadAmbiguousBestMethods(diagnostics, symbols, location))
+            if (HadAmbiguousBestMethods(binder.Compilation, diagnostics, symbols, location))
             {
                 return;
             }
@@ -243,7 +243,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // (Obviously, there can't be a LessDerived cycle, since we break type hierarchy cycles during
             // symbol table construction.)
 
-            if (HadAmbiguousWorseMethods(diagnostics, symbols, location, queryClause != null, receiver, name))
+            if (HadAmbiguousWorseMethods(binder.Compilation, diagnostics, symbols, location, queryClause != null, receiver, name))
             {
                 return;
             }
@@ -308,7 +308,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Otherwise, if there is any such method that has a bad argument conversion or out/ref mismatch
             // then the first such method found is the best bad method.
 
-            if (HadBadArguments(diagnostics, binder, name, arguments, symbols, location, binder.Flags, isMethodGroupConversion))
+            if (HadBadArguments(diagnostics, binder, name, receiver, arguments, symbols, location, binder.Flags, isMethodGroupConversion))
             {
                 return;
             }
@@ -519,8 +519,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 else
                                 {
                                     Debug.Assert(firstSupported.Member is MethodSymbol { Name: "Add" });
-                                    int argumentOffset = arguments.IsExtensionMethodInvocation ? 1 : 0;
-                                    diagnostics.Add(ErrorCode.ERR_CollectionExpressionMissingAdd, location, arguments.Arguments[argumentOffset].Type, firstSupported.Member);
+                                    diagnostics.Add(ErrorCode.ERR_CollectionExpressionMissingAdd, location, receiver.Type);
                                 }
                             }
                             else
@@ -896,7 +895,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // to required formal parameter 'y'.
 
             TMember badMember = bad.Member;
-            ImmutableArray<ParameterSymbol> parameters = badMember.GetParameters();
+            ImmutableArray<ParameterSymbol> parameters = badMember.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
             int badParamIndex = bad.Result.BadParameter;
             string badParamName;
             if (badParamIndex == parameters.Length)
@@ -947,7 +946,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             };
 
             int argCount = arguments.Arguments.Count;
-            if (arguments.IsExtensionMethodInvocation)
+            if (arguments.IncludesReceiverAsArgument)
             {
                 argCount--;
             }
@@ -1081,6 +1080,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             Binder binder,
             string name,
+            BoundExpression receiver,
             AnalyzedArguments arguments,
             ImmutableArray<Symbol> symbols,
             Location location,
@@ -1114,8 +1114,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // ErrorCode.ERR_BadArgTypesForCollectionAdd or ErrorCode.ERR_InitializerAddHasParamModifiers
                 // as there is no explicit call to Add method.
 
-                int argumentOffset = arguments.IsExtensionMethodInvocation ? 1 : 0;
-                var parameters = method.GetParameters();
+                int argumentOffset = arguments.IncludesReceiverAsArgument ? 1 : 0;
+                var parameters = method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
 
                 for (int i = argumentOffset; i < parameters.Length; i++)
                 {
@@ -1129,8 +1129,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (flags.Includes(BinderFlags.CollectionExpressionConversionValidation))
                 {
-                    Debug.Assert(arguments.Arguments.Count == argumentOffset + 1);
-                    diagnostics.Add(ErrorCode.ERR_CollectionExpressionMissingAdd, location, arguments.Arguments[argumentOffset].Type, method);
+                    diagnostics.Add(ErrorCode.ERR_CollectionExpressionMissingAdd, location, receiver.Type);
                 }
                 else
                 {
@@ -1157,6 +1156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TMember method,
             int arg)
         {
+            // Tracked by https://github.com/dotnet/roslyn/issues/78830 : diagnostic quality, consider adjusting or removing the argument index for displaying in diagnostic
             BoundExpression argument = arguments.Argument(arg);
             if (argument.HasAnyErrors)
             {
@@ -1170,7 +1170,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Early out: if the bad argument is an __arglist parameter then simply report that:
 
-            if (method.GetIsVararg() && parm == method.GetParameterCount())
+            var parameters = method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
+            if (method.GetIsVararg() && parm == parameters.Length)
             {
                 // NOTE: No SymbolDistinguisher required, since one of the arguments is "__arglist".
 
@@ -1185,12 +1186,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            ParameterSymbol parameter = method.GetParameters()[parm];
-            bool isLastParameter = method.GetParameterCount() == parm + 1; // This is used to later decide if we need to try to unwrap a params collection
+            ParameterSymbol parameter = parameters[parm];
+            bool isLastParameter = parameters.Length == parm + 1; // This is used to later decide if we need to try to unwrap a params collection
             RefKind refArg = arguments.RefKind(arg);
             RefKind refParameter = parameter.RefKind;
 
-            if (arguments.IsExtensionMethodThisArgument(arg))
+            if (arguments.IsExtensionMethodReceiverArgument(arg))
             {
                 Debug.Assert(refArg == RefKind.None);
                 if (refParameter == RefKind.Ref || refParameter == RefKind.In)
@@ -1231,6 +1232,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                         Conversions.ReportDelegateOrFunctionPointerMethodGroupDiagnostics(binder, ((BoundUnconvertedAddressOfOperator)argument).Operand, parameterType, diagnostics))
                 {
                     // a diagnostic has been reported by ReportDelegateOrFunctionPointerMethodGroupDiagnostics
+                }
+                else if (argument.Kind == BoundKind.UnconvertedCollectionExpression)
+                {
+                    binder.GenerateImplicitConversionErrorForCollectionExpression((BoundUnconvertedCollectionExpression)argument, parameterType, diagnostics);
                 }
                 else
                 {
@@ -1298,7 +1303,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(argument.Kind != BoundKind.DiscardExpression || argument.HasExpressionType());
                 Debug.Assert(argument.Display != null);
 
-                if (arguments.IsExtensionMethodThisArgument(arg))
+                if (arguments.IsExtensionMethodReceiverArgument(arg))
                 {
                     Debug.Assert((arg == 0) && (parm == arg));
                     Debug.Assert(!badArg.Result.ConversionForArg(parm).IsImplicit);
@@ -1383,7 +1388,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private bool HadAmbiguousWorseMethods(BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location, bool isQuery, BoundExpression receiver, string name)
+        private bool HadAmbiguousWorseMethods(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location, bool isQuery, BoundExpression receiver, string name)
         {
             MemberResolutionResult<TMember> worseResult1;
             MemberResolutionResult<TMember> worseResult2;
@@ -1409,8 +1414,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // error CS0121: The call is ambiguous between the following methods or properties: 'P.W(A)' and 'P.W(B)'
                 diagnostics.Add(
                     CreateAmbiguousCallDiagnosticInfo(
-                        worseResult1.LeastOverriddenMember.OriginalDefinition,
-                        worseResult2.LeastOverriddenMember.OriginalDefinition,
+                        compilation,
+                        worseResult1.LeastOverriddenMember.ConstructedFrom(),
+                        worseResult2.LeastOverriddenMember.ConstructedFrom(),
                         symbols),
                     location);
             }
@@ -1447,7 +1453,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return count;
         }
 
-        private bool HadAmbiguousBestMethods(BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location)
+        private bool HadAmbiguousBestMethods(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location)
         {
             MemberResolutionResult<TMember> validResult1;
             MemberResolutionResult<TMember> validResult2;
@@ -1458,12 +1464,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
+            Debug.Assert(false, "Add tests if this is triggered. https://github.com/dotnet/roslyn/issues/80507");
+
             // error CS0121: The call is ambiguous between the following methods or properties:
             // 'P.Ambiguous(object, string)' and 'P.Ambiguous(string, object)'
             diagnostics.Add(
                 CreateAmbiguousCallDiagnosticInfo(
-                    validResult1.LeastOverriddenMember.OriginalDefinition,
-                    validResult2.LeastOverriddenMember.OriginalDefinition,
+                    compilation,
+                    validResult1.LeastOverriddenMember.ConstructedFrom(),
+                    validResult2.LeastOverriddenMember.ConstructedFrom(),
                     symbols),
                 location);
 
@@ -1499,20 +1508,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             return count;
         }
 
-        private static DiagnosticInfoWithSymbols CreateAmbiguousCallDiagnosticInfo(Symbol first, Symbol second, ImmutableArray<Symbol> symbols)
+        private static DiagnosticInfoWithSymbols CreateAmbiguousCallDiagnosticInfo(CSharpCompilation compilation, Symbol first, Symbol second, ImmutableArray<Symbol> symbols)
         {
-            var arguments = (first.ContainingNamespace != second.ContainingNamespace) ?
-                new object[]
-                    {
-                            new FormattedSymbol(first, SymbolDisplayFormat.CSharpErrorMessageFormat),
-                            new FormattedSymbol(second, SymbolDisplayFormat.CSharpErrorMessageFormat)
-                    } :
-                new object[]
-                    {
-                            first,
-                            second
-                    };
-            return new DiagnosticInfoWithSymbols(ErrorCode.ERR_AmbigCall, arguments, symbols);
+            var distinguisher = new SymbolDistinguisher(compilation, first, second);
+            return new DiagnosticInfoWithSymbols(ErrorCode.ERR_AmbigCall, [distinguisher.First, distinguisher.Second], symbols);
         }
 
         [Conditional("DEBUG")]

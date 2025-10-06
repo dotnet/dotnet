@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
@@ -29,7 +29,7 @@ public class TagHelperCompletionBenchmark
     [Benchmark]
     public object GetAttributeCompletions()
     {
-        var tagHelperCompletionService = new LspTagHelperCompletionService();
+        var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new AttributeCompletionContext(
             TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
             existingCompletions: [],
@@ -46,7 +46,7 @@ public class TagHelperCompletionBenchmark
     [Benchmark]
     public object GetElementCompletions()
     {
-        var tagHelperCompletionService = new LspTagHelperCompletionService();
+        var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new ElementCompletionContext(
             TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
             existingCompletions: s_existingElementCompletions,

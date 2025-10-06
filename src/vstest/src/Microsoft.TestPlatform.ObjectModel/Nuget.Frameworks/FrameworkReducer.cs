@@ -442,7 +442,7 @@ namespace NuGetClone.Frameworks
             if (!_mappings.TryGetPortableFrameworks(pcl.Profile, includeOptional, out IEnumerable<NuGetFramework>? frameworks))
             {
                 Debug.Fail("Unable to get portable frameworks from: " + pcl.ToString());
-                frameworks = Enumerable.Empty<NuGetFramework>();
+                frameworks = [];
             }
 
             return frameworks;

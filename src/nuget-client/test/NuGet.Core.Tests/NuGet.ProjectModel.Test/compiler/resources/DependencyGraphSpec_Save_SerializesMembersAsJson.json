@@ -8,17 +8,20 @@
   "projects": {
     "a": {
       "restore": {
-        "projectUniqueName": "a"
+        "projectUniqueName": "a",
+        "UsingMicrosoftNETSdk": false
       }
     },
     "b": {
       "restore": {
-        "projectUniqueName": "b"
+        "projectUniqueName": "b",
+        "UsingMicrosoftNETSdk": false
       }
     },
     "c": {
       "restore": {
-        "projectUniqueName": "c"
+        "projectUniqueName": "c",
+        "UsingMicrosoftNETSdk": false
       }
     }
   }

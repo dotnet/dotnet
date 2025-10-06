@@ -1,12 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using Xunit;
-using NuGet.Commands;
 using System;
-using Moq;
+using System.Collections.Generic;
 using System.Reflection;
+using Moq;
+using NuGet.Commands;
+using Xunit;
 
 namespace NuGet.CommandLine.Test
 {

@@ -106,7 +106,7 @@ public class DataCollectionTests : AcceptanceTestBase
         string runSettings = GetRunsettingsFilePath(TempDirectory.Path);
         string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
         var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("AttachmentProcessorDataCollector.dll", "netstandard2.0"));
-        var arguments = PrepareArguments(new string[] { assemblyPath, secondAssemblyPath }, null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        var arguments = PrepareArguments([assemblyPath, secondAssemblyPath], null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /TestAdapterPath:{extensionsPath}");
 
         XElement runSettingsXml = XElement.Load(runSettings);

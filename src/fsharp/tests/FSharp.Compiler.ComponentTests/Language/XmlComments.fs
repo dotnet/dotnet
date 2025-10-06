@@ -210,7 +210,7 @@ module M =
         Fsx"""
         type Thing = Inner of s: string
         /// <summary> A function with an extracted inner value</summary>
-        /// <param name="inner"> The innver value to unwrap</param>
+        /// <param name="inner"> The inner value to unwrap</param>
         let doer ((Inner s) as inner) = ignore s; ignore inner
         """
          |> withXmlCommentChecking
@@ -242,3 +242,19 @@ module M =
          |> withXmlCommentChecking
          |> compile
          |> withDiagnostics [ ]
+
+    // regression test for #18433
+    [<Fact>]
+    let OverrideXmlCommentsWithSameRange () =
+        Fs"""
+        module A
+        # 1
+        /// A is int
+        type A = {a: int}
+        # 1
+        /// B is int
+        type B = {b: int}
+        """
+        |> withXmlCommentChecking
+        |> compile
+        |> shouldSucceed

@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class HtmlAttributeIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public CSharpExpressionIntermediateNode AttributeNameExpression { get; set; }
 
@@ -21,6 +21,8 @@ public sealed class HtmlAttributeIntermediateNode : IntermediateNode
     public string Suffix { get; set; }
 
     public string EventUpdatesAttributeName { get; set; }
+
+    public string OriginalAttributeName { get; set; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

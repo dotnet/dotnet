@@ -1,132 +1,152 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public static class DocumentIntermediateNodeExtensions
 {
-    public static ClassDeclarationIntermediateNode FindPrimaryClass(this DocumentIntermediateNode node)
+    public static ClassDeclarationIntermediateNode? FindPrimaryClass(this DocumentIntermediateNode node)
     {
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
-        return FindWithAnnotation<ClassDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryClass);
+        return FindNode<ClassDeclarationIntermediateNode>(node, static n => n.IsPrimaryClass);
     }
 
-    public static MethodDeclarationIntermediateNode FindPrimaryMethod(this DocumentIntermediateNode node)
+    public static MethodDeclarationIntermediateNode? FindPrimaryMethod(this DocumentIntermediateNode node)
     {
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
-        return FindWithAnnotation<MethodDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryMethod);
+        return FindNode<MethodDeclarationIntermediateNode>(node, static n => n.IsPrimaryMethod);
     }
 
-    public static NamespaceDeclarationIntermediateNode FindPrimaryNamespace(this DocumentIntermediateNode node)
+    public static NamespaceDeclarationIntermediateNode? FindPrimaryNamespace(this DocumentIntermediateNode node)
     {
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
+        ArgHelper.ThrowIfNull(node);
 
-        return FindWithAnnotation<NamespaceDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryNamespace);
+        return FindNode<NamespaceDeclarationIntermediateNode>(node, static n => n.IsPrimaryNamespace);
     }
 
-    public static IReadOnlyList<IntermediateNodeReference> FindDirectiveReferences(this DocumentIntermediateNode node, DirectiveDescriptor directive)
+    private static T? FindNode<T>(IntermediateNode node, Func<T, bool> predicate)
+        where T : IntermediateNode
     {
-        if (node == null)
+        using var stack = new PooledArrayBuilder<IntermediateNode>();
+        stack.Push(node);
+
+        while (stack.Count > 0)
         {
-            throw new ArgumentNullException(nameof(node));
-        }
+            node = stack.Pop();
 
-        if (directive == null)
-        {
-            throw new ArgumentNullException(nameof(directive));
-        }
-
-        var visitor = new DirectiveVisitor(directive);
-        visitor.Visit(node);
-        return visitor.Directives;
-    }
-
-    public static IReadOnlyList<IntermediateNodeReference> FindDescendantReferences<TNode>(this DocumentIntermediateNode document)
-        where TNode : IntermediateNode
-    {
-        if (document == null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        var visitor = new ReferenceVisitor<TNode>();
-        visitor.Visit(document);
-        return visitor.References;
-    }
-
-    private static T FindWithAnnotation<T>(IntermediateNode node, object annotation) where T : IntermediateNode
-    {
-        if (node is T target && object.ReferenceEquals(target.Annotations[annotation], annotation))
-        {
-            return target;
-        }
-
-        for (var i = 0; i < node.Children.Count; i++)
-        {
-            var result = FindWithAnnotation<T>(node.Children[i], annotation);
-            if (result != null)
+            if (node is T target && predicate(target))
             {
-                return result;
+                return target;
+            }
+
+            // Push in reverse order so we process in original order.
+            var children = node.Children;
+            for (var i = children.Count - 1; i >= 0; i--)
+            {
+                stack.Push(children[i]);
             }
         }
 
         return null;
     }
 
-    private class DirectiveVisitor : IntermediateNodeWalker
+    public static ImmutableArray<IntermediateNodeReference<DirectiveIntermediateNode>> FindDirectiveReferences(
+        this DocumentIntermediateNode node, DirectiveDescriptor directive)
     {
-        private readonly DirectiveDescriptor _directive;
+        ArgHelper.ThrowIfNull(node);
+        ArgHelper.ThrowIfNull(directive);
 
-        public DirectiveVisitor(DirectiveDescriptor directive)
+        using var results = new PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>>();
+        node.CollectDirectiveReferences(directive, ref results.AsRef());
+
+        return results.ToImmutableAndClear();
+    }
+
+    internal static void CollectDirectiveReferences(
+        this DocumentIntermediateNode document,
+        DirectiveDescriptor directive,
+        ref PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>> references)
+    {
+        using var stack = new PooledArrayBuilder<(IntermediateNode node, IntermediateNode parent)>();
+
+        stack.Push((document, null!));
+
+        while (stack.Count > 0)
         {
-            _directive = directive;
-        }
+            var (node, parent) = stack.Pop();
 
-        public List<IntermediateNodeReference> Directives = new List<IntermediateNodeReference>();
-
-        public override void VisitDirective(DirectiveIntermediateNode node)
-        {
-            if (_directive == node.Directive)
+            if (node is DirectiveIntermediateNode directiveNode &&
+                directiveNode.Directive == directive)
             {
-                Directives.Add(new IntermediateNodeReference(Parent, node));
+                references.Add(new(directiveNode, parent));
             }
 
-            base.VisitDirective(node);
+            var children = node.Children;
+
+            // Push children on the stack in reverse order so they are processed in the original order.
+            for (var i = children.Count - 1; i >= 0; i--)
+            {
+                stack.Push((children[i], node));
+            }
         }
     }
 
-    private class ReferenceVisitor<TNode> : IntermediateNodeWalker
+    public static ImmutableArray<IntermediateNodeReference<TNode>> FindDescendantReferences<TNode>(this DocumentIntermediateNode document)
         where TNode : IntermediateNode
     {
-        public List<IntermediateNodeReference> References = new List<IntermediateNodeReference>();
+        ArgHelper.ThrowIfNull(document);
 
-        public override void VisitDefault(IntermediateNode node)
+        using var results = new PooledArrayBuilder<IntermediateNodeReference<TNode>>();
+        document.CollectDescendantReferences(ref results.AsRef());
+
+        return results.ToImmutableAndClear();
+    }
+
+    internal static void CollectDescendantReferences<TNode>(
+        this DocumentIntermediateNode document,
+        ref PooledArrayBuilder<IntermediateNodeReference<TNode>> references)
+        where TNode : IntermediateNode
+    {
+        // Use a post-order traversal because references are used to replace nodes, and thus
+        // change the parent nodes.
+        //
+        // This ensures that we always operate on the leaf nodes first.
+
+        using var stack = new PooledArrayBuilder<(IntermediateNode node, IntermediateNode parent, bool visited)>();
+
+        stack.Push((document, null!, false));
+
+        while (stack.Count > 0)
         {
-            base.VisitDefault(node);
+            // Pop the top of the stack and see if this node has been visited.
+            var (node, parent, visited) = stack.Pop();
 
-            // Use a post-order traversal because references are used to replace nodes, and thus
-            // change the parent nodes.
-            //
-            // This ensures that we always operate on the leaf nodes first.
-            if (node is TNode)
+            if (visited)
             {
-                References.Add(new IntermediateNodeReference(Parent, node));
+                // We've already visited the children, so process this node.
+                if (node is TNode typedNode && parent != null)
+                {
+                    references.Add(new(typedNode, parent));
+                }
+            }
+            else
+            {
+                // Push back on the stack and mark as visited.
+                stack.Push((node, parent, true));
+
+                var children = node.Children;
+
+                // Push the children in reverse order so they are processed in the original order.
+                for (var i = children.Count - 1; i >= 0; i--)
+                {
+                    stack.Push((children[i], node, false));
+                }
             }
         }
     }

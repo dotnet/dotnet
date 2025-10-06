@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
 
+// Because of shared fsi session.
+[<FSharp.Test.RunTestCasesInSequence>]
 module Language.BooleanReturningAndReturnTypeDirectedPartialActivePatternTests
 
 open Xunit
@@ -10,17 +12,18 @@ let fsiSession = getSessionForEval [||] LangVersion.Preview
 
 let runCode = evalInSharedSession fsiSession
 
+// ...existing code...
 [<Fact>]
 let ``Partial struct active pattern returns ValueOption`1 without [<return:Struct>]`` () =
     FSharp "let (|P1|_|) x = ValueNone"
-    |> withLangVersionPreview
+    |> withLangVersion10
     |> typecheck
     |> shouldSucceed
 
 [<Fact>]
 let ``Partial struct active pattern returns bool`` () =
     FSharp "let (|P1|_|) x = false"
-    |> withLangVersionPreview
+    |> withLangVersion10
     |> typecheck
     |> shouldSucceed
     
@@ -30,7 +33,6 @@ let ``Single case active pattern returning bool should success`` () =
 let (|IsA|) x = x = "A"
 let (IsA r) = "A"
     """
-    |> withLangVersionPreview
     |> typecheck
     |> shouldSucceed
     
@@ -54,7 +56,6 @@ match "x" with
 | EqualTo "x" -> ()
 | _ -> fail "with argument"
         """
-    |> withLangVersionPreview
     |> runCode
     |> shouldSucceed
 
@@ -69,13 +70,14 @@ let (|OddVOption|_|) x = if x % 2 = 1 then ValueSome() else ValueNone
     |> typecheck
     |> shouldFail
     |> withDiagnostics [
-        (Error 3350, Line 1, Col 5, Line 1, Col 20, "Feature 'Boolean-returning and return-type-directed partial active patterns' is not available in F# 8.0. Please use language version 'PREVIEW' or greater.")
-        (Error 3350, Line 2, Col 5, Line 2, Col 23, "Feature 'Boolean-returning and return-type-directed partial active patterns' is not available in F# 8.0. Please use language version 'PREVIEW' or greater.")
+        (Error 3350, Line 1, Col 6, Line 1, Col 17, "Feature 'Boolean-returning and return-type-directed partial active patterns' is not available in F# 8.0. Please use language version 9.0 or greater.")
+        (Error 3350, Line 2, Col 6, Line 2, Col 20, "Feature 'Boolean-returning and return-type-directed partial active patterns' is not available in F# 8.0. Please use language version 9.0 or greater.")
     ]
 
 [<Fact>]
-let ``Can not receive result from bool active pattern`` () =
-    FSharp """let (|IsA|_|) x = x = "A"
+let ``Cannot receive result from bool active pattern`` () =
+    FSharp """#nowarn "20"
+let (|IsA|_|) x = x = "A"
 
 match "A" with 
 | IsA result -> "A" 
@@ -89,29 +91,12 @@ match "A" with
 | IsA "to match return value" -> "Matched"
 | _ -> "not Matched"
 """
-    |> withLangVersionPreview
     |> typecheck
     |> shouldFail
     |> withDiagnostics [
-        (Error 1, Line 4, Col 3, Line 4, Col 13,
-         "This expression was expected to have type
-    'string -> bool'    
-but here has type
-    'bool'    ")
-        (Error 39, Line 4, Col 7, Line 4, Col 13,
-         "The value or constructor 'result' is not defined. Maybe you want one of the following:
+        (Error 3868, Line 5, Col 3, Line 5, Col 13, "This active pattern does not expect any arguments, i.e., it should be used like 'IsA' instead of 'IsA x'.")
+        (Error 3868, Line 9, Col 3, Line 9, Col 13, "This active pattern does not expect any arguments, i.e., it should be used like 'IsA' instead of 'IsA x'.")
+        (Error 0039, Line 9, Col 17, Line 9, Col 23, "The value or constructor 'result' is not defined. Maybe you want one of the following:
    Result")
-        (Error 1, Line 8, Col 3, Line 8, Col 13,
-         "This expression was expected to have type
-    'string -> bool'    
-but here has type
-    'bool'    ")
-        (Error 39, Line 8, Col 7, Line 8, Col 13,
-         "The value or constructor 'result' is not defined. Maybe you want one of the following:
-   Result")
-        (Error 1, Line 12, Col 3, Line 12, Col 30,
-         "This expression was expected to have type
-    'string -> bool'    
-but here has type
-    'bool'    ")
+        (Error 3868, Line 13, Col 3, Line 13, Col 30, "This active pattern does not expect any arguments, i.e., it should be used like 'IsA' instead of 'IsA x'.")
     ]

@@ -103,11 +103,5 @@ namespace NuGet.LibraryModel
             return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    EqualityUtility.EqualsWithNullCheck(VersionRange, other.VersionRange);
         }
-
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
-        public DownloadDependency Clone()
-        {
-            return this;
-        }
     }
 }

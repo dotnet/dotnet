@@ -40,13 +40,21 @@ namespace __Blazor.Test.TestComponent
         public static void CreateGrid_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.Grid<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Items", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.Grid<TItem>.
+#nullable restore
+#line (1,7)-(1,12) "x:\dir\subdir\Test\TestComponent.cshtml"
+Items
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }
         public static void CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
         {
-        __builder.OpenComponent<global::Test.Column<System.Object>>(seq);
+        __builder.OpenComponent<global::Test.Column<object>>(seq);
         __builder.CloseComponent();
         }
     }

@@ -10,12 +10,34 @@ public static class AppContextSwitchNames
     /// <summary>
     ///  The switch that controls whether or not the <see cref="BinaryFormatter"/> is enabled.
     /// </summary>
-    public static string EnableUnsafeBinaryFormatterSerialization { get; }
+    public const string EnableUnsafeBinaryFormatterSerialization
         = "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization";
 
     /// <summary>
-    ///  Switch that controls <see cref="AppContext"/> switch caching.
+    ///  Switch that controls <see cref="AppContext"/> switch caching. This switch is set to
+    ///  <see langword="true" /> in our test assemblies.
     /// </summary>
-    public static string LocalAppContext_DisableCaching { get; }
+    public const string LocalAppContext_DisableCaching
         = "TestSwitch.LocalAppContext.DisableCaching";
+
+    /// <summary>
+    ///  The switch that controls whether or not the <see cref="BinaryFormatter"/> is enabled in the
+    ///  Clipboard or drag-and-drop operations.
+    /// </summary>
+    public const string ClipboardDragDropEnableUnsafeBinaryFormatterSerializationSwitchName
+        = "Windows.ClipboardDragDrop.EnableUnsafeBinaryFormatterSerialization";
+
+    /// <summary>
+    ///  The switch that controls whether or not the System.Windows.Forms.BinaryFormat.Deserializer
+    ///  is enabled in the Clipboard or drag-and-drop operations.
+    /// </summary>
+    public const string ClipboardDragDropEnableNrbfSerializationSwitchName
+        = "Windows.ClipboardDragDrop.EnableNrbfSerialization";
+
+    /// <summary>
+    ///  When set to true, prevents the async capable drag/drop operations from being performed in a
+    ///  synchronous manner.
+    /// </summary>
+    public const string DragDropDisableSyncOverAsyncSwitchName
+        = "Windows.DragDrop.DisableSyncOverAsync";
 }

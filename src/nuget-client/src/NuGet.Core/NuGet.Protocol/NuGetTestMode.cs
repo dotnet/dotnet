@@ -20,7 +20,9 @@ namespace NuGet.Protocol.Core.Types
 
         private static bool FromEnvironmentVariable()
         {
+#pragma warning disable RS0030 // Do not use banned APIs
             var testMode = Environment.GetEnvironmentVariable(_testModeEnvironmentVariableName);
+#pragma warning restore RS0030 // Do not use banned APIs
             if (String.IsNullOrEmpty(testMode))
             {
                 return false;

@@ -1,82 +1,57 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
-
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+
+namespace Microsoft.AspNetCore.Razor.Language;
 
 internal static class RazorSyntaxTreeExtensions
 {
-    public static IReadOnlyList<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
+    public static ImmutableArray<RazorDirectiveSyntax> GetSectionDirectives(this RazorSyntaxTree syntaxTree)
+        => GetDirectives(syntaxTree, static d => d.IsSectionDirective());
+
+    public static ImmutableArray<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
+        => GetDirectives(syntaxTree, static d => d.IsCodeBlockDirective());
+
+    public static ImmutableArray<RazorDirectiveSyntax> GetUsingDirectives(this RazorSyntaxTree syntaxTree)
+        => GetDirectives(syntaxTree, static d => d.IsUsingDirective());
+
+    public static ImmutableArray<RazorDirectiveSyntax> GetDirectives(
+        this RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool>? predicate = null)
     {
-        if (syntaxTree is null)
-        {
-            throw new ArgumentNullException(nameof(syntaxTree));
-        }
+        using var builder = new PooledArrayBuilder<RazorDirectiveSyntax>();
+        builder.AddRange(EnumerateDirectives(syntaxTree, predicate));
 
-        // We want all nodes of type RazorDirectiveSyntax which will contain code.
-        // Since code block directives occur at the top-level, we don't need to dive deeper into unrelated nodes.
-        var codeBlockDirectives = syntaxTree.Root
-            .DescendantNodes(node => node is RazorDocumentSyntax || node is MarkupBlockSyntax || node is CSharpCodeBlockSyntax)
-            .OfType<RazorDirectiveSyntax>()
-            .Where(directive => directive.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock)
-            .ToList();
-
-        return codeBlockDirectives;
+        return builder.ToImmutable();
     }
 
-    public static IReadOnlyList<CSharpStatementSyntax> GetCSharpStatements(this RazorSyntaxTree syntaxTree)
+    public static IEnumerable<RazorDirectiveSyntax> EnumerateSectionDirectives(this RazorSyntaxTree syntaxTree)
+        => EnumerateDirectives(syntaxTree, static d => d.IsSectionDirective());
+
+    public static IEnumerable<RazorDirectiveSyntax> EnumerateCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
+        => EnumerateDirectives(syntaxTree, static d => d.IsCodeBlockDirective());
+
+    public static IEnumerable<RazorDirectiveSyntax> EnumerateUsingDirectives(this RazorSyntaxTree syntaxTree)
+        => EnumerateDirectives(syntaxTree, static d => d.IsUsingDirective());
+
+    public static IEnumerable<RazorDirectiveSyntax> EnumerateDirectives(
+        this RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool>? predicate = null)
     {
-        if (syntaxTree is null)
+        foreach (var node in syntaxTree.Root.DescendantNodes(MayContainDirectives))
         {
-            throw new ArgumentNullException(nameof(syntaxTree));
+            if (node is RazorDirectiveSyntax directive && (predicate == null || predicate(directive)))
+            {
+                yield return directive;
+            }
         }
 
-        // We want all nodes that represent Razor C# statements, @{ ... }.
-        var statements = syntaxTree.Root.DescendantNodes().OfType<CSharpStatementSyntax>().ToList();
-        return statements;
-    }
-
-    public static SyntaxNode? FindInnermostNode(
-        this RazorSyntaxTree syntaxTree,
-        SourceText sourceText,
-        Position position,
-        ILogger logger,
-        bool includeWhitespace = false)
-    {
-        if (syntaxTree is null)
+        static bool MayContainDirectives(SyntaxNode node)
         {
-            throw new ArgumentNullException(nameof(syntaxTree));
+            return node is RazorDocumentSyntax or MarkupBlockSyntax or CSharpCodeBlockSyntax;
         }
-
-        if (sourceText is null)
-        {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        if (position is null)
-        {
-            throw new ArgumentNullException(nameof(position));
-        }
-
-        if (logger is null)
-        {
-            throw new ArgumentNullException(nameof(logger));
-        }
-
-        if (!position.TryGetAbsoluteIndex(sourceText, logger, out var absoluteIndex))
-        {
-            return default;
-        }
-
-        return syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace);
     }
 }

@@ -21,11 +21,11 @@
     <None Include="$(ArtifactsBinDir)\Windows_NT.x64.$(Configuration)\PDB\sos.pdb" Pack="true" Visible="false">
       <PackagePath>$(SOSPackagePathPrefix)/win-x64</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildX64Package)' != 'true'">
     <None Include="$(ArtifactsBinDir)\Windows_NT.x86.$(Configuration)\PDB\sos.pdb" Pack="true" Visible="false">
       <PackagePath>$(SOSPackagePathPrefix)/win-x86</PackagePath>
-    </None>
-    <None Include="$(ArtifactsBinDir)\Windows_NT.arm.$(Configuration)\PDB\sos.pdb" Pack="true" Visible="false">
-      <PackagePath>$(SOSPackagePathPrefix)/win-arm</PackagePath>
     </None>
     <None Include="$(ArtifactsBinDir)\Windows_NT.arm64.$(Configuration)\PDB\sos.pdb" Pack="true" Visible="false">
       <PackagePath>$(SOSPackagePathPrefix)/win-arm64</PackagePath>

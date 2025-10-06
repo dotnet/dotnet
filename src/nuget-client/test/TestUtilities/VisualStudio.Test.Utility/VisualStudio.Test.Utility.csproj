@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NETFXTargetFramework)</TargetFrameworks>
+    <SkipShared>true</SkipShared>
+    <TestProject>false</TestProject>
+    <NoWarn>$(NoWarn);VSTHRD001;VSTHRD002;VSTHRD110</NoWarn>
+    <Description>A collection of test utilities for Visual Studio NuGet extensions.</Description>
+    <SkipAnalyzers>true</SkipAnalyzers>
+    <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
+  </ItemGroup>
+
+ <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\Microsoft.Internal.NuGet.Testing.SignedPackages\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj" />
+    <ProjectReference Include="..\Test.Utility\Test.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Security" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+</Project>

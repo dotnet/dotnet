@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Globalization;
 using System.Threading.Tasks;
@@ -19,12 +19,10 @@ internal class RazorRequestExecutionQueue : RequestExecutionQueue<RazorRequestCo
         _capabilitiesManager = languageServer.GetLspServices().GetRequiredService<CapabilitiesManager>();
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks", Justification = "<Pending>")]
-    public override Task WrapStartRequestTaskAsync(Task nonMutatingRequestTask, bool rethrowExceptions)
+    protected internal override void BeforeRequest<TRequest>(TRequest request)
     {
+        // Update the locale for this request to the desired LSP locale.
         CultureInfo.CurrentUICulture = GetCultureForRequest();
-
-        return nonMutatingRequestTask;
     }
 
     private CultureInfo GetCultureForRequest()
@@ -68,12 +66,12 @@ internal class RazorRequestExecutionQueue : RequestExecutionQueue<RazorRequestCo
     }
 
     // Internal for testing
-    internal TestAccessor GetTestAccessor()
+    internal new TestAccessor GetTestAccessor()
     {
         return new TestAccessor(this);
     }
 
-    internal class TestAccessor
+    internal new class TestAccessor
     {
         private RazorRequestExecutionQueue _queue;
 

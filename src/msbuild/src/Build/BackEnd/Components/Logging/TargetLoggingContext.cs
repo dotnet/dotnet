@@ -1,12 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Shared;
 using TaskItem = Microsoft.Build.Execution.ProjectItemInstance.TaskItem;
 
 #nullable disable
@@ -18,10 +16,6 @@ namespace Microsoft.Build.BackEnd.Logging
     /// </summary>
     internal class TargetLoggingContext : BuildLoggingContext
     {
-        /// <summary>
-        /// Should target outputs be logged also.
-        /// </summary>
-        private static bool s_enableTargetOutputLogging = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBUILDTARGETOUTPUTLOGGING"));
 
         /// <summary>
         /// The project to which this target is attached.
@@ -37,13 +31,22 @@ namespace Microsoft.Build.BackEnd.Logging
         /// Creates a new target logging context from an existing project context and target.
         /// </summary>
         internal TargetLoggingContext(ProjectLoggingContext projectLoggingContext, string projectFullPath, ProjectTargetInstance target, string parentTargetName, TargetBuiltReason buildReason)
-            : base(projectLoggingContext)
+            : base(projectLoggingContext, CreateInitialContext(projectLoggingContext, projectFullPath, target, parentTargetName, buildReason))
         {
             _projectLoggingContext = projectLoggingContext;
             _target = target;
-
-            this.BuildEventContext = LoggingService.LogTargetStarted(projectLoggingContext.BuildEventContext, target.Name, projectFullPath, target.Location.File, parentTargetName, buildReason);
             this.IsValid = true;
+        }
+
+        private static BuildEventContext CreateInitialContext(ProjectLoggingContext projectLoggingContext,
+            string projectFullPath, ProjectTargetInstance target, string parentTargetName,
+            TargetBuiltReason buildReason)
+        {
+            BuildEventContext buildEventContext = projectLoggingContext.LoggingService.LogTargetStarted(
+                projectLoggingContext.BuildEventContext, target.Name, projectFullPath, target.Location.File,
+                parentTargetName, buildReason);
+
+            return buildEventContext;
         }
 
         /// <summary>
@@ -53,15 +56,6 @@ namespace Microsoft.Build.BackEnd.Logging
             : base(loggingService, outOfProcContext, true)
         {
             this.IsValid = true;
-        }
-
-        /// <summary>
-        /// Should target outputs be logged also.
-        /// </summary>
-        internal static bool EnableTargetOutputLogging
-        {
-            get { return s_enableTargetOutputLogging; }
-            set { s_enableTargetOutputLogging = value; }
         }
 
         /// <summary>
@@ -91,12 +85,14 @@ namespace Microsoft.Build.BackEnd.Logging
         /// </summary>
         internal void LogTargetBatchFinished(string projectFullPath, bool success, IEnumerable<TaskItem> targetOutputs)
         {
-            ErrorUtilities.VerifyThrow(IsValid, "Should be valid");
+            this.CheckValidity();
 
             TargetOutputItemsInstanceEnumeratorProxy targetOutputWrapper = null;
 
             // Only log target outputs if we are going to log a target finished event and the environment variable is set and the target outputs are not null
-            if (!LoggingService.OnlyLogCriticalEvents && s_enableTargetOutputLogging && targetOutputs != null)
+            if (!LoggingService.OnlyLogCriticalEvents
+                && (LoggingService.EnableTargetOutputLogging || Traits.Instance.EnableTargetOutputLogging)
+                && targetOutputs != null)
             {
                 targetOutputWrapper = new TargetOutputItemsInstanceEnumeratorProxy(targetOutputs);
             }
@@ -108,11 +104,11 @@ namespace Microsoft.Build.BackEnd.Logging
         /// <summary>
         /// Log that a task is about to start
         /// </summary>
-        internal TaskLoggingContext LogTaskBatchStarted(string projectFullPath, ProjectTargetInstanceChild task)
+        internal TaskLoggingContext LogTaskBatchStarted(string projectFullPath, ProjectTargetInstanceChild task, string taskAssemblyLocation)
         {
-            ErrorUtilities.VerifyThrow(IsValid, "Should be valid");
+            this.CheckValidity();
 
-            return new TaskLoggingContext(this, projectFullPath, task);
+            return new TaskLoggingContext(this, projectFullPath, task, taskAssemblyLocation);
         }
 
         /// <summary>

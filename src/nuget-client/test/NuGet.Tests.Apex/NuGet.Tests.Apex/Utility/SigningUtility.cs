@@ -5,7 +5,7 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Test.Utility.Signing;
+using Microsoft.Internal.NuGet.Testing.SignedPackages;
 
 namespace NuGet.Tests.Apex
 {

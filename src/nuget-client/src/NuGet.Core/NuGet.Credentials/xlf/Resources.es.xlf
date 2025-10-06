@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../Resources.resx">
+    <body>
+      <trans-unit id="PluginException_Abort_Format">
+        <source>Credential plugin {0} handles this request, but is unable to provide credentials. {1}</source>
+        <target state="translated">El complemento de credencial {0} administra esta solicitud, pero no puede proporcionar credenciales. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Exception_Format">
+        <source>Credential plugin {0} encountered exception {1}.</source>
+        <target state="translated">El complemento de credencial {0} encontró la excepción {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_InvalidResponse_Format">
+        <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
+        <target state="translated">El complemento de credencial {0} devolvió {1}, pero la carga no era válida (nombre de usuario = {2}, contraseña = {3}, authTypes = {4}, mensaje = {5}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_NotStarted_Format">
+        <source>Credential plugin {0} failed to start.</source>
+        <target state="translated">No se pudo iniciar el complemento de credencial {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_PathNotFound_Format">
+        <source>Credential plugin {0} not found at any of the following locations {1}.</source>
+        <target state="translated">No se encontró el complemento de credencial {0} en ninguna de las siguientes ubicaciones {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Timeout_Format">
+        <source>Credential plugin {0} timed out after {1} seconds.</source>
+        <target state="translated">Se agotó el tiempo de espera del complemento de credencial {0} después de {1} segundos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnexpectedStatus_Format">
+        <source>Credential plugin {0} exited with unexpected error {1}.</source>
+        <target state="translated">El complemento de credencial {0} se cerró de forma inesperada con el error {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnreadableResponse_Format">
+        <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
+        <target state="translated">El complemento de credencial {0} devolvió {1} con una carga no ilegible.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
+        <source>The credential plugin model used by '{0}' is deprecated. Please contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
+        <target state="translated">El modelo de complemento de credencial que "{0}" utiliza está en desuso. Póngase en contacto con el proveedor del complemento para obtener una alternativa. Puede encontrar más información sobre el modelo de complemento recomendado en "{1}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_InvalidCredentialResponse">
+        <source>Could not create credential response object because the response was invalid.</source>
+        <target state="translated">No se pudo crear el objeto de respuesta de credencial porque la respuesta no era válida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_MalformedResponse">
+        <source>Credential provider gave an invalid response.</source>
+        <target state="translated">El Proveedor de credenciales proporcionó una respuesta no válida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
+        <source>Using {0} as a credential provider plugin.</source>
+        <target state="translated">Se usa {0} como complemento del proveedor de credenciales.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
+      <trans-unit id="SecurePluginWarning_UseInteractiveOption">
+        <source>The plugin credential provider could not acquire credentials. Authentication may require manual action. Consider re-running the command with --interactive for `dotnet`, /p:NuGetInteractive="true" for MSBuild or removing the -NonInteractive switch for `NuGet`</source>
+        <target state="translated">El proveedor de credenciales del complemento no pudo adquirir las credenciales. La autenticación puede requerir una acción manual. Considere la posibilidad de volver a ejecutar el comando con --interactive para "dotnet", /p:NuGetInteractive="true" para MSBuild o de quitar el modificador -NonInteractive para "NuGet".</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

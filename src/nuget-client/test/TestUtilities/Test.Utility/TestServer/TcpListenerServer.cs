@@ -4,15 +4,20 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.TestServer;
 
 namespace NuGet.Test.Server
 {
     public class TcpListenerServer : ITestServer
     {
+        private X509Certificate2 _tlsCertificate;
         public async Task<T> ExecuteAsync<T>(Func<string, Task<T>> action)
         {
             Func<TcpListener, CancellationToken, Task> startServer;
@@ -24,6 +29,10 @@ namespace NuGet.Test.Server
 
                 case TestServerMode.SlowResponseBody:
                     startServer = StartSlowResponseBody;
+                    break;
+                case TestServerMode.InvalidTLSCertificate:
+                    startServer = StartInvalidTlsCertificateServer;
+                    _tlsCertificate = GenerateSelfSignedCertificate();
                     break;
 
                 default:
@@ -39,7 +48,16 @@ namespace NuGet.Test.Server
                     var tcpListener = new TcpListener(IPAddress.Loopback, port);
                     tcpListener.Start();
                     var serverTask = startServer(tcpListener, serverCts.Token);
-                    var address = $"http://localhost:{port}/";
+                    string address;
+
+                    if (Mode == TestServerMode.InvalidTLSCertificate)
+                    {
+                        address = $"https://localhost:{port}/";
+                    }
+                    else
+                    {
+                        address = $"http://localhost:{port}/";
+                    }
 
                     // execute the caller's action
                     var result = await action(address);
@@ -51,6 +69,54 @@ namespace NuGet.Test.Server
                     return result;
                 },
                 CancellationToken.None);
+        }
+
+        public TcpListenerServer()
+        { }
+
+        private static X509Certificate2 GenerateSelfSignedCertificate()
+        {
+            using (var rsa = RSA.Create(2048))
+            {
+                var request = new CertificateRequest("cn=test", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                var start = DateTime.UtcNow;
+                var end = DateTime.UtcNow.AddYears(1);
+                var cert = request.CreateSelfSigned(start, end);
+                var certBytes = cert.Export(X509ContentType.Pfx, "password");
+
+#if NET9_0_OR_GREATER
+                return X509CertificateLoader.LoadPkcs12(certBytes, "password", X509KeyStorageFlags.Exportable);
+#else
+                return new X509Certificate2(certBytes, "password", X509KeyStorageFlags.Exportable);
+#endif
+            }
+        }
+
+        private async Task StartInvalidTlsCertificateServer(TcpListener tcpListener, CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                using (var client = await Task.Run(tcpListener.AcceptTcpClientAsync, token))
+                using (var sslStream = new SslStream(client.GetStream(), false))
+                {
+                    sslStream.AuthenticateAsServer(_tlsCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+                    using (var reader = new StreamReader(sslStream, Encoding.ASCII, false, 128))
+                    using (var writer = new StreamWriter(sslStream, Encoding.ASCII, 128, false))
+                    {
+                        while (!string.IsNullOrEmpty(reader.ReadLine()))
+                        {
+                        }
+
+                        string content = "{}";
+                        writer.WriteLine("HTTP/1.1 200 OK");
+                        writer.WriteLine($"Date: {DateTimeOffset.UtcNow:R}");
+                        writer.WriteLine($"Content-Length: {content.Length}");
+                        writer.WriteLine("Content-Type: application/json");
+                        writer.WriteLine();
+                        writer.WriteLine(content);
+                    }
+                }
+            }
         }
 
         public TestServerMode Mode { get; set; } = TestServerMode.ServerProtocolViolation;

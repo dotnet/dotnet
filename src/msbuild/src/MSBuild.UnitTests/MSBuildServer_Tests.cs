@@ -11,7 +11,6 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Experimental;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Shared;
-using Microsoft.Build.Shared.Debugging;
 using Microsoft.Build.UnitTests;
 using Microsoft.Build.UnitTests.Shared;
 #if NETFRAMEWORK
@@ -68,7 +67,7 @@ namespace Microsoft.Build.Engine.UnitTests
         <ProcessIdTask>
             <Output PropertyName=""PID"" TaskParameter=""Pid"" />
         </ProcessIdTask>
-        <Message Text=""Server ID is $(PID)"" Importance=""High"" />
+        <Message Text=""[Work around Github issue #9667 with --interactive]Server ID is $(PID)"" Importance=""High"" />
     </Target>
 </Project>";
         private static string sleepingTaskContentsFormat = @$"
@@ -192,7 +191,7 @@ namespace Microsoft.Build.Engine.UnitTests
 
             string? dir = Path.GetDirectoryName(markerFile.Path);
             using var watcher = new System.IO.FileSystemWatcher(dir!);
-            ManualResetEvent mre = new ManualResetEvent(false);
+            using ManualResetEvent mre = new ManualResetEvent(false);
             watcher.Created += (o, e) =>
             {
                 _output.WriteLine($"The marker file {markerFile.Path} was created. The build task has been started.");
@@ -286,7 +285,7 @@ namespace Microsoft.Build.Engine.UnitTests
         }
 
         [Fact]
-        public void ServerShouldNotStartWhenBuildIsInteractive()
+        public void ServerShouldStartWhenBuildIsInteractive()
         {
             TransientTestFile project = _env.CreateFile("testProject.proj", printPidContents);
             _env.SetEnvironmentVariable("MSBUILDUSESERVER", "1");
@@ -296,7 +295,14 @@ namespace Microsoft.Build.Engine.UnitTests
             int pidOfServerProcess = ParseNumber(output, "Server ID is ");
 
             success.ShouldBeTrue();
-            pidOfInitialProcess.ShouldBe(pidOfServerProcess, "We started a server node even when build is interactive.");
+
+            var serverProcess = Process.GetProcessById(pidOfServerProcess);
+
+            serverProcess.HasExited.ShouldBeFalse();
+
+            pidOfInitialProcess.ShouldNotBe(pidOfServerProcess, "We failed to start a server node when interactive is true.");
+            bool serverIsDown = MSBuildClient.ShutdownServer(CancellationToken.None);
+            serverIsDown.ShouldBeTrue();
         }
 
         [Fact]
@@ -313,8 +319,8 @@ namespace Microsoft.Build.Engine.UnitTests
         <ProcessIdTask>
             <Output PropertyName=""PID"" TaskParameter=""Pid"" />
         </ProcessIdTask>
-        <Message Text=""Server ID is $(PID)"" Importance=""High"" />
-		<Message Text="":MSBuildStartupDirectory:$(MSBuildStartupDirectory):"" Importance=""high"" />
+        <Message Text=""[Work around Github issue #9667 with --interactive]Server ID is $(PID)"" Importance=""High"" />
+		<Message Text=""[Work around Github issue #9667 with --interactive]:MSBuildStartupDirectory:$(MSBuildStartupDirectory):"" Importance=""high"" />
 	</Target>
 </Project>";
 

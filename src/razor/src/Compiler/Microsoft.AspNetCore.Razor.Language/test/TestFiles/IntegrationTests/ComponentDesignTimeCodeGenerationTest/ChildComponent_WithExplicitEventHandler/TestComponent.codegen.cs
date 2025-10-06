@@ -24,7 +24,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __o = new global::System.Action<System.EventArgs>(
+            __o = new global::System.Action<global::System.EventArgs>(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                        Increment

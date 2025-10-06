@@ -9,7 +9,7 @@ The feature is available for both `dotnet new` and Visual Studio.
 
 The symbol binds value from external sources. 
 By default, the following sources are available:
-- host parameters - parameters defined at certain host. For .NET SDK the following parameters are defined: `HostIdentifier: dotnetcli`, `GlobalJsonExists: true/false`.  Binding syntax is `host:<param name>`, example: `host:HostIdentifier`. 
+- host parameters - parameters defined at certain host. For .NET SDK the following parameters are defined: `HostIdentifier: dotnetcli`, `GlobalJsonExists: true/false`, `WorkingDirectory: <dotnet_new_context_directory>`.  Binding syntax is `host:<param name>`, example: `host:HostIdentifier`. 
 - environment variables - allows to bind environment variables. Binding syntax is `env:<environment variable name>`, example: `env:MYENVVAR`.
 
 It is also possible to bind the parameter without the prefix as a fallback behavior: `HostIdentifier`, `MYENVVAR`.
@@ -37,6 +37,10 @@ The higher value indicates higher priority.
    "HostIdentifier": {
       "type": "bind",
       "binding": "host:HostIdentifier"
+    },
+   "WorkingDirectory": {
+      "type": "bind",
+      "binding": "host:WorkingDirectory"
     }
 }
 ```  
@@ -80,7 +84,7 @@ Example - binds `DefaultNamespace` symbol to `RootNamespace` of the project:
 
 Visual Studio supports binding to host parameters, environment variables and MSBuild properties.
 In addition to that, there is additional `context` source supporting:
-- `context:cratesolutiondirectory` - indicates whether a solution directory is to be created as a result of project creation (Place solution and project in same directory is UNCHECKED in NPD).
+- `context:createsolutiondirectory` - indicates whether a solution directory is to be created as a result of project creation (Place solution and project in same directory is UNCHECKED in NPD).
 - `context:isexclusive` - indicates whether the template instantiation is a result of a new project being created (true) vs result of adding to an existing solution (false).
 - `context:solutionname` - the name of the solution, which may be different from the project name.
 

@@ -3,9 +3,15 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using Microsoft.SignCheck.Logging;
+#if NET
+using System.Reflection.PortableExecutable;
+#endif
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -14,15 +20,20 @@ namespace Microsoft.SignCheck.Verification
     /// </summary>
     public class AuthentiCodeVerifier : FileVerifier
     {
-
+        ISecurityInfoProvider _securityInfoProvider = new AuthentiCodeSecurityInfoProvider();
         protected bool FinalizeResult
         {
             get;
             set;
         } = true;
 
-        public AuthentiCodeVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, fileExtension)
+        public AuthentiCodeVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension, ISecurityInfoProvider securityInfoProvider = null)
+            : base(log, exclusions, options, fileExtension)
         {
+            if (securityInfoProvider != null)
+            {
+                _securityInfoProvider = securityInfoProvider;
+            }
         }
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
@@ -42,23 +53,15 @@ namespace Microsoft.SignCheck.Verification
         protected SignatureVerificationResult VerifyAuthentiCode(string path, string parent, string virtualPath)
         {
             var svr = new SignatureVerificationResult(path, parent, virtualPath);
-            uint hresult = AuthentiCode.IsSigned(path);
-            svr.IsAuthentiCodeSigned = hresult == 0;
+            svr.IsAuthentiCodeSigned = AuthentiCode.IsSigned(path, svr, _securityInfoProvider);
             svr.IsSigned = svr.IsAuthentiCodeSigned;
-
-            // Log non-zero HRESULTs
-            if (hresult != 0)
-            {
-                string errorMessage = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-                svr.AddDetail(DetailKeys.Error, String.Format(SignCheckResources.ErrorHResult, hresult, errorMessage));
-            }
 
             // TODO: Should only check if there is a signature, even if it's invalid
             if (VerifyAuthenticodeTimestamps)
             {
                 try
                 {
-                    svr.Timestamps = AuthentiCode.GetTimestamps(path).ToList();
+                    svr.Timestamps = AuthentiCode.GetTimestamps(path, _securityInfoProvider).ToList();
 
                     foreach (Timestamp timestamp in svr.Timestamps)
                     {
@@ -80,6 +83,50 @@ namespace Microsoft.SignCheck.Verification
             svr.AddDetail(DetailKeys.AuthentiCode, SignCheckResources.DetailSignedAuthentiCode, svr.IsAuthentiCodeSigned);
 
             return svr;
+        }
+    }
+
+    public class AuthentiCodeSecurityInfoProvider : ISecurityInfoProvider
+    {
+        public SignedCms ReadSecurityInfo(string path)
+        {
+#if NET
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (PEReader peReader = new PEReader(fs))
+            {
+                var securityDirectory = peReader.PEHeaders.PEHeader.CertificateTableDirectory;
+                if (securityDirectory.RelativeVirtualAddress != 0 && securityDirectory.Size != 0)
+                {
+                    int securityHeaderSize = 8; // 4(length of cert) + 2(cert revision) + 2(cert type)
+                    if (securityDirectory.Size <= securityHeaderSize)
+                    {
+                        // No security entry - just the header
+                        return null;
+                    }
+
+                    // Skip the header
+                    fs.Position = securityDirectory.RelativeVirtualAddress + securityHeaderSize;
+                    byte[] securityEntry = new byte[securityDirectory.Size - securityHeaderSize];
+
+                    // Ensure the stream has enough data to read
+                    if (fs.Length < fs.Position + securityEntry.Length)
+                    {
+                        throw new CryptographicException($"File '{path}' is too small to contain a valid security entry.");
+                    }
+
+                    // Read the security entry
+                    fs.ReadExactly(securityEntry);
+
+                    // Decode the security entry
+                    var signedCms = new SignedCms();
+                    signedCms.Decode(securityEntry);
+                    return signedCms;
+                }
+            }
+            return null;
+#else
+            throw new NotSupportedException("Not supported on .NET Framework");
+#endif
         }
     }
 }

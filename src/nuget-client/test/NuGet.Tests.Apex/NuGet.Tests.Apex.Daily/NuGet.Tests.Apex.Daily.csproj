@@ -28,9 +28,6 @@
     <Reference Include="$(PkgMicrosoft_Test_Apex_VisualStudio)\lib\net46\*.dll" Exclude="$(PkgMicrosoft_Test_Apex_VisualStudio)\lib\net46\Microsoft.Test.Apex.PrismIntegration.dll;&#xD;&#xA;                        $(PkgMicrosoft_Test_Apex_VisualStudio)\lib\net46\Microsoft.Test.Apex.RemoteCodeInjector.dll;&#xD;&#xA;                        $(PkgMicrosoft_Test_Apex_VisualStudio)\lib\net46\Microsoft.Test.Apex.RemoteCodeInjector.x64.dll" Name="%(Filename)" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Contracts\NuGet.VisualStudio.Contracts.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />

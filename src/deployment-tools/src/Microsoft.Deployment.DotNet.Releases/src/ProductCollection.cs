@@ -19,7 +19,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The default URL of the releases index file.
         /// </summary>
-        public static readonly Uri ReleasesIndexDefaultUrl = new Uri("https://dotnetcli.azureedge.net/dotnet/release-metadata/releases-index.json");
+        public static readonly Uri ReleasesIndexDefaultUrl = new Uri("https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json");
 
         /// <summary>
         /// Creates a new <see cref="ProductCollection"/> instance.

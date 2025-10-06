@@ -276,16 +276,16 @@ namespace NuGet.CommandLine
 
             if (packageRestoreInputs.RestoringWithSolutionFile)
             {
-                Dictionary<string, string> configToProjectPath = GetPackagesConfigToProjectPath(packageRestoreInputs);
+                Dictionary<string, HashSet<string>> configToProjectPath = GetPackagesConfigToProjectsPath(packageRestoreInputs);
                 Dictionary<PackageReference, List<string>> packageReferenceToProjects = new(PackageReferenceComparer.Instance);
 
-                foreach (string configFile in packageRestoreInputs.PackagesConfigFiles)
+                foreach (string configFile in packageRestoreInputs.PackagesConfigFiles.Distinct())
                 {
                     foreach (PackageReference packageReference in GetInstalledPackageReferences(configFile))
                     {
-                        if (!configToProjectPath.TryGetValue(configFile, out string projectPath))
+                        if (!configToProjectPath.TryGetValue(configFile, out HashSet<string> projectPath))
                         {
-                            projectPath = configFile;
+                            projectPath = new HashSet<string> { configFile };
                         }
 
                         if (!packageReferenceToProjects.TryGetValue(packageReference, out List<string> value))
@@ -293,7 +293,7 @@ namespace NuGet.CommandLine
                             value ??= new();
                             packageReferenceToProjects.Add(packageReference, value);
                         }
-                        value.Add(projectPath);
+                        value.AddRange(projectPath);
                     }
                 }
 
@@ -372,8 +372,11 @@ namespace NuGet.CommandLine
 
                 using SourceCacheContext cacheContext = new();
 
+                var auditSources = GetAuditSources();
+
                 var auditUtility = new AuditChecker(
                     repositories,
+                    auditSources,
                     cacheContext,
                     Console);
 
@@ -469,17 +472,43 @@ namespace NuGet.CommandLine
             }
         }
 
-        private static Dictionary<string, string> GetPackagesConfigToProjectPath(PackageRestoreInputs packageRestoreInputs)
+        private List<SourceRepository> GetAuditSources()
         {
-            Dictionary<string, string> configToProjectPath = new();
+            IReadOnlyList<PackageSource> auditSources = SourceProvider.LoadAuditSources();
+
+            List<SourceRepository> auditRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource source = auditSources[i];
+                if (source.IsEnabled)
+                {
+                    SourceRepository repository = Repository.Factory.GetCoreV3(source);
+                    auditRepositories.Add(repository);
+                }
+            }
+
+            return auditRepositories;
+        }
+
+        private Dictionary<string, HashSet<string>> GetPackagesConfigToProjectsPath(PackageRestoreInputs packageRestoreInputs)
+        {
+            Dictionary<string, HashSet<string>> configToProjectPath = new();
             foreach (PackageSpec project in packageRestoreInputs.ProjectReferenceLookup.Projects)
             {
                 if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackagesConfig)
                 {
-                    configToProjectPath.Add(((PackagesConfigProjectRestoreMetadata)project.RestoreMetadata).PackagesConfigPath, project.FilePath);
+                    var packagesConfig = ((PackagesConfigProjectRestoreMetadata)project.RestoreMetadata).PackagesConfigPath;
+
+                    if (configToProjectPath.TryGetValue(packagesConfig, out HashSet<string> existingValue))
+                    {
+                        existingValue.Add(project.FilePath);
+                    }
+                    else
+                    {
+                        configToProjectPath.Add(packagesConfig, new HashSet<string> { project.FilePath });
+                    }
                 }
             }
-
             return configToProjectPath;
         }
 
@@ -652,8 +681,8 @@ namespace NuGet.CommandLine
                     Console.LogDebug(ex.ToString());
 
                     // Check for packages.config but no project.json files
-                    if (projectsWithPotentialP2PReferences.Where(HasPackagesConfigFile).Any()
-                        && !projectsWithPotentialP2PReferences.Where(HasProjectJsonFile).Any())
+                    if (projectsWithPotentialP2PReferences.Any(HasPackagesConfigFile)
+                        && !projectsWithPotentialP2PReferences.Any(HasProjectJsonFile))
                     {
                         // warn to let the user know that NETCore will be skipped
                         Console.LogWarning(LocalizedResourceManager.GetString("Warning_ReadingProjectsFailed"));
@@ -805,8 +834,7 @@ namespace NuGet.CommandLine
             {
                 packageRestoreInputs.RestoreV3Context.Inputs.Add(projectFilePath);
             }
-            else if (projectFileName.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)
-                || projectFileName.EndsWith(".slnf", StringComparison.OrdinalIgnoreCase))
+            else if (projectFileName.IsSolutionFile())
             {
                 ProcessSolutionFile(projectFilePath, packageRestoreInputs);
             }
@@ -830,9 +858,7 @@ namespace NuGet.CommandLine
             var topLevelFiles = Directory.GetFiles(directory, "*.*", SearchOption.TopDirectoryOnly);
 
             //  Solution files
-            var solutionFiles = topLevelFiles.Where(file =>
-                file.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
-                    .ToArray();
+            var solutionFiles = topLevelFiles.Where(file => file.IsSolutionFile()).ToArray();
 
             if (solutionFiles.Length > 0)
             {
@@ -881,25 +907,6 @@ namespace NuGet.CommandLine
                     directory);
 
             throw new InvalidOperationException(noInputs);
-        }
-
-        private static bool IsSolutionOrProjectFile(string fileName)
-        {
-            if (!string.IsNullOrEmpty(fileName))
-            {
-                var extension = Path.GetExtension(fileName);
-                var lastFourCharacters = string.Empty;
-                var length = extension.Length;
-
-                if (length >= 4)
-                {
-                    lastFourCharacters = extension.Substring(length - 4);
-                }
-
-                return (string.Equals(extension, ".sln", StringComparison.OrdinalIgnoreCase)
-                        || string.Equals(lastFourCharacters, "proj", StringComparison.OrdinalIgnoreCase));
-            }
-            return false;
         }
 
         /// <summary>
@@ -969,6 +976,16 @@ namespace NuGet.CommandLine
 
         private void ProcessSolutionFile(string solutionFileFullPath, PackageRestoreInputs restoreInputs)
         {
+            var msBuildToolset = MsBuildDirectory.Value;
+            if (Path.GetExtension(solutionFileFullPath).Equals(".slnx", StringComparison.OrdinalIgnoreCase)
+                && msBuildToolset.ParsedVersion < new Version(17, 13))
+            {
+                throw new InvalidOperationException(string.Format(
+                    CultureInfo.InvariantCulture,
+                    LocalizedResourceManager.GetString(nameof(NuGetResources.Error_UnsupportedMsBuildForSlnx)),
+                    msBuildToolset.Version));
+            }
+
             restoreInputs.DirectoryOfSolutionFile = Path.GetDirectoryName(solutionFileFullPath);
             restoreInputs.NameOfSolutionFile = Path.GetFileNameWithoutExtension(solutionFileFullPath);
 

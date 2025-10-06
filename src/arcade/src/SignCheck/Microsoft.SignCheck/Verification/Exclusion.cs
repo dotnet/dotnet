@@ -18,6 +18,10 @@ namespace Microsoft.SignCheck.Verification
         private const int FilePatternsIndex = 0;
         private const int ParentFilesIndex = 1;
         private const int CommentIndex = 2;
+        private Dictionary<string, HashSet<string>> _fileExcludedCache = new();
+        private Dictionary<string, HashSet<string>> _fileNotExcludedCache = new();
+        private Dictionary<string, HashSet<string>> _parentExcludedCache = new();
+        private Dictionary<string, HashSet<string>> _parentNotExcludedCache = new();
 
         /// <summary>
         /// Creates a new <see cref="Exclusion"/>.
@@ -65,7 +69,33 @@ namespace Microsoft.SignCheck.Verification
         {
             get
             {
-                return GetExclusionPart(ParentFilesIndex).Split('|');
+                return GetExclusionPart(ParentFilesIndex)
+                    .Split('|')
+                    .Select(e => e.Trim())
+                    .Select(e => !string.IsNullOrEmpty(e) ? $"{e}*" : e)
+                    .ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the exclusion contains file patterns.
+        /// </summary>
+        public bool HasFilePatterns
+        {
+            get
+            {
+                return FilePatterns.Length != 0 && !FilePatterns.All(fp => String.IsNullOrEmpty(fp));
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the exclusion contains parent patterns.
+        /// </summary>
+        public bool HasParentFiles
+        {
+            get
+            {
+                return ParentFiles.Length != 0 && !ParentFiles.All(pf => String.IsNullOrEmpty(pf));
             }
         }
 
@@ -88,5 +118,65 @@ namespace Microsoft.SignCheck.Verification
 
             return defaultValue;
         }
+
+        public bool TryGetIsFileExcluded(string exclusionsClassification, IEnumerable<string> values, out bool isExcluded)
+            => TryGetIsExcluded(_fileExcludedCache, _fileNotExcludedCache, exclusionsClassification, values, out isExcluded); 
+
+        public bool TryGetIsParentExcluded(string exclusionsClassification, string parent, out bool isExcluded)
+            => TryGetIsExcluded(_parentExcludedCache, _parentNotExcludedCache, exclusionsClassification, new[] { parent }, out isExcluded);
+
+        public void AddToFileCache(string exclusionsClassification, IEnumerable<string> values, bool isExcluded)
+        {
+            Dictionary<string, HashSet<string>> cache = isExcluded ? _fileExcludedCache : _fileNotExcludedCache;
+            AddToCache(cache, exclusionsClassification, values);
+        }
+
+        public void AddToParentCache(string exclusionsClassification, string parent, bool isExcluded)
+        {
+            Dictionary<string, HashSet<string>> cache = isExcluded ? _parentExcludedCache : _parentNotExcludedCache;
+            AddToCache(cache, exclusionsClassification, new[] { parent });
+        }
+
+        private bool TryGetIsExcluded(
+            Dictionary<string, HashSet<string>> excludedCache,
+            Dictionary<string, HashSet<string>> notExcludedCache,
+            string exclusionClassification,
+            IEnumerable<string> values,
+            out bool isExcluded)
+        {
+            if (IsInCache(excludedCache, exclusionClassification, values))
+            {
+                isExcluded = true;
+                return true;
+            }
+
+            if (IsInCache(notExcludedCache, exclusionClassification, values))
+            {
+                isExcluded = false;
+                return true;
+            }
+
+            isExcluded = false;
+            return false;
+        }
+
+        private void AddToCache(Dictionary<string, HashSet<string>> cache, string key, IEnumerable<string> values)
+        {
+            if (!cache.ContainsKey(key))
+            {
+                cache[key] = new HashSet<string>();
+            }
+
+            foreach (var value in values)
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    cache[key].Add(value);
+                }
+            }
+        }
+
+        private bool IsInCache(Dictionary<string, HashSet<string>> cache, string key, IEnumerable<string> values)
+            => cache.TryGetValue(key, out var cachedValues) && values.Any(cachedValues.Contains);
     }
 }

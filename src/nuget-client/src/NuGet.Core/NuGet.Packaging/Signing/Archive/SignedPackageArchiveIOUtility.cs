@@ -234,7 +234,6 @@ namespace NuGet.Packaging.Signing
             };
 
             var endOfCentralDirectoryRecord = EndOfCentralDirectoryRecord.Read(reader);
-            var endOfCentralDirectoryRecordPosition = endOfCentralDirectoryRecord.OffsetFromStart;
 
             reader.BaseStream.Seek(endOfCentralDirectoryRecord.OffsetOfStartOfCentralDirectory, SeekOrigin.Begin);
 
@@ -285,7 +284,6 @@ namespace NuGet.Packaging.Signing
             }
 
             var lastCentralDirectoryRecord = centralDirectoryRecords.Last();
-            var endOfCentralDirectoryPosition = lastCentralDirectoryRecord.Position + lastCentralDirectoryRecord.HeaderSize;
             var endOfLocalFileHeadersPosition = centralDirectoryRecords.Min(record => record.Position);
 
             UpdateLocalFileHeadersTotalSize(centralDirectoryRecords, endOfLocalFileHeadersPosition);
@@ -342,7 +340,6 @@ namespace NuGet.Packaging.Signing
             }
 
             var endOfCentralDirectoryRecord = EndOfCentralDirectoryRecord.Read(reader);
-            var endOfCentralDirectoryRecordPosition = endOfCentralDirectoryRecord.OffsetFromStart;
 
             reader.BaseStream.Seek(endOfCentralDirectoryRecord.OffsetOfStartOfCentralDirectory, SeekOrigin.Begin);
 
@@ -510,7 +507,7 @@ namespace NuGet.Packaging.Signing
 
         /// <summary>
         /// Writes the signature data into the zip using the writer.
-        /// The reader is used to read the exisiting zip. 
+        /// The reader is used to read the exisiting zip.
         /// </summary>
         /// <param name="signatureStream">MemoryStream of the signature to be inserted into the zip.</param>
         /// <param name="reader">BinaryReader to be used to read the existing zip data.</param>
@@ -756,43 +753,6 @@ namespace NuGet.Packaging.Signing
 
             // read and write the rest of the data
             ReadAndWriteUntilPosition(reader, writer, reader.BaseStream.Length);
-        }
-
-        private static bool CurrentStreamPositionMatchesByteSignature(BinaryReader reader, byte[] byteSignature)
-        {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-
-            if (byteSignature == null || byteSignature.Length == 0)
-            {
-                throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(byteSignature));
-            }
-
-            var stream = reader.BaseStream;
-
-            if (stream.Length < byteSignature.Length)
-            {
-                return false;
-            }
-
-            var startingOffset = stream.Position;
-
-            for (var i = 0; i < byteSignature.Length; ++i)
-            {
-                var b = stream.ReadByte();
-
-                if (b != byteSignature[i])
-                {
-                    stream.Seek(offset: startingOffset, origin: SeekOrigin.Begin);
-                    return false;
-                }
-            }
-
-            stream.Seek(offset: startingOffset, origin: SeekOrigin.Begin);
-
-            return true;
         }
 
         /// <summary>

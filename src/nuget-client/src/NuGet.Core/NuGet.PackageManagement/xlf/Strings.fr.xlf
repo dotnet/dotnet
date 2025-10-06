@@ -1,0 +1,523 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddedPackageToFolder">
+        <source>Added package '{0}' to folder '{1}'</source>
+        <target state="translated">Package '{0}' ajouté au dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToFolderFromSource">
+        <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
+        <target state="translated">Package '{0}' ajouté au dossier '{1}' à partir de la source '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToPackagesConfig">
+        <source>Added package '{0}' to '{1}'</source>
+        <target state="translated">Package '{0}' ajouté à '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageToFolder">
+        <source>Adding package '{0}' to folder '{1}'</source>
+        <target state="translated">Ajout du package '{0}' au dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyDependencies">
+        <source>Adding package '{0}', which only has dependencies, to project '{1}'.</source>
+        <target state="translated">Ajout du package '{0}', qui a uniquement des dépendances, au projet '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyToolsGroup">
+        <source>Adding package '{0}', which only has tools group, to project '{1}'</source>
+        <target state="translated">Ajout du package '{0}', qui a uniquement un groupe d'outils, au projet '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">L'argument ne peut pas être null ou vide</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfo">
+        <source>Attempting to gather dependency information for package '{0}' with respect to project '{1}', targeting '{2}'</source>
+        <target state="translated">Tentative de collecte d'informations de dépendance pour le package '{0}' du projet '{1}', ciblant '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfoForMultiplePackages">
+        <source>Attempting to gather dependency information for multiple packages with respect to project '{0}', targeting '{1}'</source>
+        <target state="translated">Tentative de collecte d'informations de dépendance pour plusieurs packages du projet '{0}', ciblant '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependencies">
+        <source>Attempting to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">Tentative de résolution de dépendances pour le package '{0}' avec DependencyBehavior '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependenciesForMultiplePackages">
+        <source>Attempting to resolve dependencies for multiple packages.</source>
+        <target state="translated">Tentative de résolution de dépendances pour plusieurs packages.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">Ficher « {0} » ajouté.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToFolder">
+        <source>Added file '{0}' to folder '{1}'.</source>
+        <target state="translated">Fichier « {0} » ajouté au dossier « {1} ».</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'.</source>
+        <target state="translated">Fichier « {0} » supprimé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'.</source>
+        <target state="translated">Fichier '{0}' supprimé du dossier '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">Dossier « {0} » supprimé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfo">
+        <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
+        <target state="translated">&gt;&gt; {0} sont ajoutés à partir de « {1} »{2}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfoPrefix">
+        <source>For adding package '{0}' to project '{1}' that targets '{2}'.</source>
+        <target state="translated">Pour l'ajout du package '{0}' au projet '{1}' qui cible '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyDoesNotHaveValidVersion">
+        <source>Dependency '{0}' has invalid version specification.</source>
+        <target state="translated">La dépendance '{0}' contient une spécification de version non valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadResourceNotFound">
+        <source>Cannot download packages from '{0}'.</source>
+        <target state="translated">Impossible de télécharger des packages de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadStreamNotAvailable">
+        <source>Package stream for '{0}' cannot be found at '{1}'.</source>
+        <target state="translated">Le flux de packages pour '{0}' est introuvable dans '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorLoadingPackagesConfig">
+        <source>An error occurred while reading file '{0}': {1}</source>
+        <target state="translated">Une erreur s'est produite pendant la lecture du fichier '{0}' : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingPackagesConfig">
+        <source>An error occurred while writing file '{0}': {1}</source>
+        <target state="translated">Une erreur s'est produite lors de l'écriture du fichier « {0} » : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DirectoryDoesNotExist">
+        <source>Directory {0} does not exist.</source>
+        <target state="translated">Le répertoire {0} n'existe pas.</target>
+        <note>{0} is the directory name.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileDoesNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">Le fichier {0} n'existe pas.</target>
+        <note>{0} is the filename.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser une source HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">Entrée de restauration non valide où la propriété RestorePackagesWithLockFile a la valeur false, alors qu'un fichier de verrouillage des packages est présent sur {0}.</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">La validation du code de hachage de contenu de package a échoué pour {0}. Le package est différent de celui de la dernière restauration.</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedModePackagesConfig">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Run restore without using restore locked mode to update the lock file.</source>
+        <target state="translated">Le fichier de verrouillage des packages n'est pas cohérent avec les dépendances de projet, la restauration ne peut donc pas être exécutée en mode verrouillé. Exécutez la restauration sans utiliser le mode verrouillé pour mettre à jour le fichier de verrouillage.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">Une erreur s’est produite lors de l’obtention des données de vulnérabilité du package : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionWhenTryingToAddSource">
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
+        <target state="translated">Exception « {0} » levée lors de la tentative d'ajout de la source « {1} ». Vérifiez que toutes vos sources de package en ligne sont disponibles.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictMessage">
+        <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
+        <target state="translated">Le fichier « {0} » existe déjà dans le projet « {1} ». Voulez-vous le remplacer ?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundPackageInPackagesFolder">
+        <source>Found package '{0} {1}' in '{2}'.</source>
+        <target state="translated">Package '{0} {1}' trouvé dans '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GatherTotalTime">
+        <source>Gathering dependency information took {0}</source>
+        <target state="translated">La collecte des informations de dépendance a pris {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Info_OverwritingExistingFile">
+        <source>Overwriting existing file '{0}'..</source>
+        <target state="translated">Remplacement du fichier existant '{0}'...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProjectName">
+        <source>Unable to determine the project name for '{0}'.</source>
+        <target state="translated">Impossible de déterminer le nom du projet pour '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageTypesNotSupported">
+        <source>Package '{0}' has multiple package types, which is not supported.</source>
+        <target state="translated">Le package '{0}' a plusieurs types de package, ce qui n'est pas pris en charge.</target>
+        <note>{0} is replaced with the package identity.</note>
+      </trans-unit>
+      <trans-unit id="NewerVersionAlreadyReferenced">
+        <source>Already referencing a newer version of '{0}'..</source>
+        <target state="translated">Fait déjà référence à une version plus récente de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoLatestVersionFound">
+        <source>No latest version found for '{0}' for the given source repositories and resolution context</source>
+        <target state="translated">Aucune version récente n'a été trouvée pour '{0}' concernant les dépôts sources et le contexte de résolution spécifiés</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageUpdates">
+        <source>No package updates are available from the current package source for project '{0}'.</source>
+        <target state="translated">Aucune mise à jour de package n'est disponible à partir de la source de package actuelle pour le projet '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesInProject">
+        <source>No packages were found in packages.config for project '{0}'.</source>
+        <target state="translated">Packages introuvables dans packages.config pour le projet '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoUpdatesAvailable">
+        <source>There are no new updates available.</source>
+        <target state="translated">Aucune nouvelle mise à jour n'est disponible.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NugetActionsTotalTime">
+        <source>Executing nuget actions took {0}</source>
+        <target state="translated">L'exécution des actions de nuget a pris {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInFolder">
+        <source>Package '{0}' already exists in folder '{1}'</source>
+        <target state="translated">Le package '{0}' existe déjà dans le dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInPackagesConfig">
+        <source>Package '{0}' already exists in '{1}'</source>
+        <target state="translated">Le package '{0}' existe déjà dans '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInProject">
+        <source>Package '{0}' already exists in project '{1}'</source>
+        <target state="translated">Le package '{0}' existe déjà dans le projet '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCancelledFromSource">
+        <source>Getting package '{0}' from source '{1}' was cancelled.</source>
+        <target state="translated">L'obtention du package '{0}' à partir de la source '{1}' a été annulée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCouldNotBeInstalled">
+        <source>Package '{0}' could not be installed</source>
+        <target state="translated">Le package '{0}' n'a pas pu être installé</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInFolder">
+        <source>Package '{0}' does not exist in folder '{1}'</source>
+        <target state="translated">Le package '{0}' n'existe pas dans le dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInProject">
+        <source>Package '{0}' does not exist in project '{1}'</source>
+        <target state="translated">Le package '{0}' n'existe pas dans le projet '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExisttInPackagesConfig">
+        <source>Package '{0}' does not exists in '{1}'</source>
+        <target state="translated">Le package '{0}' n'existe pas dans '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependent">
+        <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
+        <target state="translated">Impossible de désinstaller « {0} » car « {1} » en dépend.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependents">
+        <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
+        <target state="translated">Impossible de désinstaller « {0} » car « {1} » en dépendent.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Package '{0}' is not found</source>
+        <target state="translated">Package '{0}' introuvable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundInPrimarySources">
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Le package « {0} » est introuvable dans la ou les sources principales suivantes : « {1} ». Vérifiez que toutes vos sources de package en ligne sont disponibles (OU) que l'ID de package et la version sont spécifiés correctement.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundOnSource">
+        <source>Package '{0}' is not found on source '{1}'.</source>
+        <target state="translated">Le package '{0}' est introuvable dans la source '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternMatchFound">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'</source>
+        <target state="translated">Des correspondances de mappage de source de paquet ont été trouvées pour le paquet ID '{0}' sont : '{1}'.</target>
+        <note>{0} - package id
+{1} - sources ids</note>
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternNoMatchFound">
+        <source>Package source mapping match not found for package ID '{0}'</source>
+        <target state="translated">Une correspondance de mappage de source de paquet n'a pas été trouvée pour l'ID de paquet '{0}'.</target>
+        <note>{0} - package id</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">Le flux de packages doit pouvoir faire l'objet d'une recherche</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageToBeUninstalledCouldNotBeFound">
+        <source>Package '{0}' to be uninstalled could not be found in project '{1}'</source>
+        <target state="translated">Le package '{0}' à désinstaller est introuvable dans le projet '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersionConflict">
+        <source>Unable to resolve '{0}'. An additional constraint '{1}' defined in {2} prevents this operation.</source>
+        <target state="translated">Impossible de résoudre '{0}'. Une contrainte '{1}' supplémentaire définie dans {2} empêche cette opération.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersions">
+        <source>Applying constraint '{0}' defined in '{1}'.</source>
+        <target state="translated">Application de la contrainte '{0}' définie dans '{1}'.</target>
+        <note>{0} is the package constraint.
+{1} is the 'packages.config'</note>
+      </trans-unit>
+      <trans-unit id="PackagesCouldNotBeInstalled">
+        <source>Packages could not be installed</source>
+        <target state="translated">Impossible d'installer les packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ParameterCannotBeZeroOrNegative">
+        <source>Parameter cannot be zero or negative</source>
+        <target state="translated">Le paramètre ne peut pas être zéro ou une valeur négative</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">Échec de l'opération, car les détails du projet {0} n'ont pas pu être chargés.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}' ne peut pas avoir la valeur null.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromFolder">
+        <source>Removed package '{0}' from folder '{1}'</source>
+        <target state="translated">Package '{0}' supprimé du dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromPackagesConfig">
+        <source>Removed package '{0}' from '{1}'</source>
+        <target state="translated">Package '{0}' supprimé de '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovingPackageFromFolder">
+        <source>Removing package '{0}' from folder '{1}'</source>
+        <target state="translated">Suppression du package '{0}' du dossier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolutionSuccessfulNoAction">
+        <source>Resolution was successful but resulted in no action</source>
+        <target state="translated">La résolution a réussi, mais elle n'a donné lieu à aucune action</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToInstallPackage">
+        <source>Resolved actions to install package '{0}'</source>
+        <target state="translated">Actions résolues pour installer le package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToUninstallPackage">
+        <source>Resolved actions to uninstall package '{0}'</source>
+        <target state="translated">Actions résolues pour désinstaller le package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallOrUpdateMultiplePackages">
+        <source>Resolving actions install multiple packages</source>
+        <target state="translated">Actions en cours de résolution pour installer plusieurs packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallPackage">
+        <source>Resolving actions to install package '{0}'</source>
+        <target state="translated">Actions en cours de résolution pour installer le package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToUninstallPackage">
+        <source>Resolving actions to uninstall package '{0}'</source>
+        <target state="translated">Actions en cours de résolution pour désinstaller le package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreFailedRollingBack">
+        <source>Package restore failed. Rolling back package changes for '{0}'.</source>
+        <target state="translated">Échec de la restauration du package. Restauration des modifications du package pour '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackage">
+        <source>Restoring NuGet package {0}.</source>
+        <target state="translated">Restauration du package NuGet {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RetrievingPackageStart">
+        <source>Retrieving package '{0} {1}' from '{2}'.</source>
+        <target state="translated">Récupération du package '{0} {1}' dans '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureVerificationMultiple">
+        <source>Signed package validation failed with multiple errors:{0}</source>
+        <target state="translated">La validation du package signé a échoué avec plusieurs erreurs :{0}</target>
+        <note>0 - new line separated list of errors</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotAvailable">
+        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <target state="translated">La solution n'est ni ouverte, ni enregistrée. Vérifiez que vous disposez d'une solution ouverte et enregistrée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionManagerNotAvailableForUninstall">
+        <source>Uninstall is not supported when SolutionManager is not available</source>
+        <target state="translated">La désinstallation n'est pas prise en charge lorsque SolutionManager n'est pas disponible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyInstalled">
+        <source>Successfully installed '{0}' to {1}</source>
+        <target state="translated">Installation réussie de « {0} » sur {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyUninstalled">
+        <source>Successfully uninstalled '{0}' from {1}</source>
+        <target state="translated">Désinstallation réussie de « {0} » de {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleItems">
+        <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
+        <target state="translated">Impossible d’installer le package « {0} ». Vous essayez d’installer ce package dans un projet ciblant « {1} », mais le package ne contient aucun fichier de contenu ou référence d’assembly compatible avec cette infrastructure. Pour plus d’informations, contactez le créateur du package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPathInLookupOrList">
+        <source>Either should have value in {0} for {1} or {2} &amp; {3}.</source>
+        <target state="translated">L'un(e) ou l'autre doit avoir une valeur dans {0} pour {1} ou {2} et {3}.</target>
+        <note>0 - Lookup table
+1 - Project Path
+2 - Package ID
+3 - Package Sources</note>
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfo">
+        <source>Unable to gather dependency information for package '{0}'</source>
+        <target state="translated">Impossible de collecter des informations de dépendance pour le package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfoForMultiplePackages">
+        <source>Unable to gather dependency information for multiple packages</source>
+        <target state="translated">Impossible de collecter des informations de dépendance pour plusieurs packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherPackageFromSource">
+        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
+        <target state="translated">Impossible de recueillir le package « {0} » à partir de la source « {1} ». Vérifiez que toutes vos sources de package en ligne sont disponibles. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfo">
+        <source>Unable to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">Impossible de résoudre des dépendances pour le package '{0}' avec DependencyBehavior '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfoForMultiplePackages">
+        <source>Unable to resolve dependencies for multiple packages</source>
+        <target state="translated">Impossible de résoudre des dépendances pour plusieurs packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">Package '{0}' introuvable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackageSpecificVersion">
+        <source>Unable to find version '{1}' of package '{0}'.</source>
+        <target state="translated">Impossible de trouver la version « {1} » du package « {0} ».</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPackageType">
+        <source>Package '{0}' has a package type '{1}' that is not supported by project '{2}'.</source>
+        <target state="translated">Le package '{0}' a un type de package '{1}' non pris en charge par le projet '{2}'.</target>
+        <note>{0} is the package identity.
+{1} is the unsupported package type.
+{2} is the project name.</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">La source d’audit « {0} » n’a fourni aucune donnée de vulnérabilité.</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">Le répertoire « {0} » n'est pas vide. Ignoré...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ErrorFindingRepository">
+        <source>Error finding repository for '{0}': {1}</source>
+        <target state="translated">Erreur lors de la recherche du dépôt pour '{0}' : {1}</target>
+        <note>0 - package source
+1 - exception message</note>
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">« {0} » existe déjà. Ignoré...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileModified">
+        <source>Skipping '{0}' because it was modified.</source>
+        <target state="translated">« {0} » a été ignoré car il a été modifié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">Le package '{0}' {1} présente une vulnérabilité de gravité {2} connue, {3}.</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_RollingBack">
+        <source>Install failed. Rolling back...</source>
+        <target state="translated">Échec de l’installation. Restauration...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XdtError">
+        <source>An error occurred while applying transformation to '{0}' in project '{1}'</source>
+        <target state="translated">Une erreur s'est produite lors de l'application de la transformation à '{0}' dans le projet '{1}'</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

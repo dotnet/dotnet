@@ -12,11 +12,19 @@ using NuGet.Protocol;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.Test
 {
     public class FeedPackagePruningTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public FeedPackagePruningTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public async Task FeedPackagePruning_GivenThatAV3FeedPrunesAPackageDuringRestoreVerifyRestoreRecoversAsync()
         {
@@ -66,16 +74,16 @@ namespace NuGet.CommandLine.Test
                 server.Start();
 
                 var feedUrl = server.Uri + "index.json";
-
+                pathContext.Settings.AddSource(feedUrl, feedUrl, allowInsecureConnectionsValue: "true");
                 // Restore x 2.0.0 and populate the http cache
-                var r = Util.Restore(pathContext, projectA.ProjectPath, 0, "-Source", feedUrl);
+                var r = Util.Restore(pathContext, projectA.ProjectPath, 0, _testOutputHelper, "-Source", feedUrl);
 
                 // Delete x 1.0.0
                 File.Delete(LocalFolderUtility.GetPackageV2(serverRepoPath, packageX100.Identity, testLogger).Path);
 
                 // Act
                 // Restore x 1.0.0
-                r = Util.Restore(pathContext, projectB.ProjectPath, 0, "-Source", feedUrl);
+                r = Util.Restore(pathContext, projectB.ProjectPath, 0, _testOutputHelper, "-Source", feedUrl);
 
                 var xLib = projectB.AssetsFile.Libraries.SingleOrDefault(e => e.Name == "x");
 
@@ -90,78 +98,64 @@ namespace NuGet.CommandLine.Test
             JObject indexJson,
             string repositoryPath)
         {
-            try
+            var path = server.GetRequestUrlAbsolutePath(request);
+            var parts = request.Url.AbsolutePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (path == "/index.json")
             {
-                var path = server.GetRequestUrlAbsolutePath(request);
-                var parts = request.Url.AbsolutePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                return new Action<HttpListenerResponse>(response =>
+                {
+                    response.StatusCode = 200;
+                    response.ContentType = "text/javascript";
+                    MockServer.SetResponseContent(response, indexJson.ToString());
+                });
+            }
+            else if (path.StartsWith("/flat/") && path.EndsWith("/index.json"))
+            {
+                return new Action<HttpListenerResponse>(response =>
+                {
+                    response.ContentType = "text/javascript";
 
-                if (path == "/index.json")
+                    var versionsJson = JObject.Parse(@"{ ""versions"": [] }");
+                    var array = versionsJson["versions"] as JArray;
+
+                    var id = parts[parts.Length - 2];
+
+                    foreach (var pkg in LocalFolderUtility.GetPackagesV2(repositoryPath, id, new TestLogger()))
+                    {
+                        array.Add(pkg.Identity.Version.ToNormalizedString());
+                    }
+
+                    MockServer.SetResponseContent(response, versionsJson.ToString());
+                });
+            }
+            else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
+            {
+                var file = new FileInfo(Path.Combine(repositoryPath, parts.Last()));
+
+                if (file.Exists)
                 {
                     return new Action<HttpListenerResponse>(response =>
                     {
-                        response.StatusCode = 200;
-                        response.ContentType = "text/javascript";
-                        MockServer.SetResponseContent(response, indexJson.ToString());
-                    });
-                }
-                else if (path.StartsWith("/flat/") && path.EndsWith("/index.json"))
-                {
-                    return new Action<HttpListenerResponse>(response =>
-                    {
-                        response.ContentType = "text/javascript";
-
-                        var versionsJson = JObject.Parse(@"{ ""versions"": [] }");
-                        var array = versionsJson["versions"] as JArray;
-
-                        var id = parts[parts.Length - 2];
-
-                        foreach (var pkg in LocalFolderUtility.GetPackagesV2(repositoryPath, id, new TestLogger()))
+                        response.ContentType = "application/zip";
+                        using (var stream = file.OpenRead())
                         {
-                            array.Add(pkg.Identity.Version.ToNormalizedString());
+                            var content = stream.ReadAllBytes();
+                            MockServer.SetResponseContent(response, content);
                         }
-
-                        MockServer.SetResponseContent(response, versionsJson.ToString());
                     });
                 }
-                else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
+                else
                 {
-                    var file = new FileInfo(Path.Combine(repositoryPath, parts.Last()));
-
-                    if (file.Exists)
-                    {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.ContentType = "application/zip";
-                            using (var stream = file.OpenRead())
-                            {
-                                var content = stream.ReadAllBytes();
-                                MockServer.SetResponseContent(response, content);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.StatusCode = 404;
-                        });
-                    }
+                    return new Action<HttpListenerResponse>(response => { response.StatusCode = 404; });
                 }
-                else if (path == "/nuget")
-                {
-                    return new Action<HttpListenerResponse>(response =>
-                    {
-                        response.StatusCode = 200;
-                    });
-                }
-
-                throw new Exception("This test needs to be updated to support: " + path);
             }
-            catch (Exception)
+            else if (path == "/nuget")
             {
-                // Debug here
-                throw;
+                return new Action<HttpListenerResponse>(response => { response.StatusCode = 200; });
             }
+
+            throw new Exception("This test needs to be updated to support: " + path);
         }
     }
 }

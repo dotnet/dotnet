@@ -1,18 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
-
-#nullable disable
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(new DesignTimeHelperResponseRewriter(), testOutput)
+public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
     public async Task RewriteAsync_NotCSharp_Noops()
@@ -27,6 +23,7 @@ public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Equal(2, rewrittenCompletionList.Items.Length);
     }
 
@@ -43,6 +40,7 @@ public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         var item = Assert.Single(rewrittenCompletionList.Items);
         Assert.Equal("DateTime", item.Label);
     }
@@ -60,6 +58,7 @@ public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         Assert.Equal(2, rewrittenCompletionList.Items.Length);
     }
 
@@ -76,16 +75,14 @@ public class DesignTimeHelperResponseRewriterTest(ITestOutputHelper testOutput)
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
+        Assert.NotNull(rewrittenCompletionList);
         var item = Assert.Single(rewrittenCompletionList.Items);
         Assert.Equal("__helper", item.Label);
     }
 
-    private static VSInternalCompletionList GenerateCompletionList(params string[] itemLabels)
-    {
-        var items = itemLabels.Select(label => new VSInternalCompletionItem() { Label = label }).ToArray();
-        return new VSInternalCompletionList()
+    private static RazorVSInternalCompletionList GenerateCompletionList(params string[] itemLabels)
+        => new()
         {
-            Items = items
+            Items = [.. itemLabels.Select(label => new VSInternalCompletionItem() { Label = label })]
         };
-    }
 }

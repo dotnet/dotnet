@@ -41,25 +41,6 @@ module internal PervasiveAutoOpens =
     /// Returns true if the list contains exactly 1 element. Otherwise false.
     val inline isSingleton: l: 'a list -> bool
 
-    /// Returns true if the argument is non-null.
-    val inline isNotNull: x: 'T -> bool when 'T: null
-
-    /// Indicates that a type may be null. 'MaybeNull<string>' is used internally in the F# compiler as
-    /// replacement for 'string?' to align with FS-1060.
-    type 'T MaybeNull when 'T: null and 'T: not struct = 'T
-
-    /// Asserts the argument is non-null and raises an exception if it is
-    val inline (|NonNullQuick|): 'T MaybeNull -> 'T
-
-    /// Match on the nullness of an argument.
-    val inline (|Null|NonNull|): 'T MaybeNull -> Choice<unit, 'T>
-
-    /// Asserts the argument is non-null and raises an exception if it is
-    val inline nonNull: x: 'T MaybeNull -> 'T
-
-    /// Checks the argument is non-null
-    val inline nullArgCheck: paramName: string -> x: 'T MaybeNull -> 'T
-
     val inline (===): x: 'a -> y: 'a -> bool when 'a: not struct
 
     /// Per the docs the threshold for the Large Object Heap is 85000 bytes: https://learn.microsoft.com/dotnet/standard/garbage-collection/large-object-heap#how-an-object-ends-up-on-the-large-object-heap-and-how-gc-handles-them
@@ -105,9 +86,9 @@ type DelayInitArrayMap<'T, 'TDictKey, 'TDictValue> =
 
 module internal Order =
 
-    val orderBy: p: ('T -> 'U) -> IComparer<'T> when 'U: comparison
+    val orderBy: p: ('T -> 'U) -> IComparer<'T> when 'U: comparison and 'T: not null and 'T: not struct
 
-    val orderOn: p: ('T -> 'U) -> pxOrder: IComparer<'U> -> IComparer<'T>
+    val orderOn: p: ('T -> 'U) -> pxOrder: IComparer<'U> -> IComparer<'T> when 'T: not null and 'T: not struct
 
     val toFunction: pxOrder: IComparer<'U> -> x: 'U -> y: 'U -> int
 
@@ -240,6 +221,12 @@ module internal List =
 
     val prependIfSome: x: 'a option -> l: 'a list -> 'a list
 
+    val vMapFold<'T, 'State, 'Result> :
+        mapping: ('State -> 'T -> struct ('Result * 'State)) ->
+        state: 'State ->
+        list: 'T list ->
+            struct ('Result list * 'State)
+
 module internal ResizeArray =
 
     /// Split a ResizeArray into an array of smaller chunks.
@@ -254,12 +241,6 @@ module internal ResizeArray =
 
 module internal Span =
     val inline exists: predicate: ('T -> bool) -> span: Span<'T> -> bool
-
-module internal ValueOptionInternal =
-
-    val inline ofOption: x: 'a option -> 'a voption
-
-    val inline bind: f: ('a -> 'b voption) -> x: 'a voption -> 'b voption
 
 module internal String =
 
@@ -298,7 +279,7 @@ module internal String =
 
     val (|StartsWith|_|): pattern: string -> value: string -> unit option
 
-    val (|Contains|_|): pattern: string -> value: string -> unit option
+    val (|Contains|_|): pattern: string -> value: string | null -> unit option
 
     val getLines: str: string -> string[]
 
@@ -320,9 +301,7 @@ module internal Lazy =
     val force: x: Lazy<'T> -> 'T
 
 /// Represents a permission active at this point in execution
-type internal ExecutionToken =
-    interface
-    end
+type internal ExecutionToken = interface end
 
 /// Represents a token that indicates execution on the compilation thread, i.e.
 ///   - we have full access to the (partially mutable) TAST and TcImports data structures
@@ -395,7 +374,7 @@ module internal ResultOrException =
     val otherwise: f: (unit -> ResultOrException<'a>) -> x: ResultOrException<'a> -> ResultOrException<'a>
 
 /// Generates unique stamps
-type internal UniqueStampGenerator<'T when 'T: equality> =
+type internal UniqueStampGenerator<'T when 'T: equality and 'T: not null> =
 
     new: unit -> UniqueStampGenerator<'T>
 
@@ -404,15 +383,16 @@ type internal UniqueStampGenerator<'T when 'T: equality> =
     member Table: ICollection<'T>
 
 /// Memoize tables (all entries cached, never collected unless whole table is collected)
-type internal MemoizationTable<'T, 'U> =
+type internal MemoizationTable<'T, 'U when 'T: not null> =
 
     new:
-        compute: ('T -> 'U) * keyComparer: IEqualityComparer<'T> * ?canMemoize: ('T -> bool) -> MemoizationTable<'T, 'U>
+        name: string * compute: ('T -> 'U) * keyComparer: IEqualityComparer<'T> * ?canMemoize: ('T -> bool) ->
+            MemoizationTable<'T, 'U>
 
     member Apply: x: 'T -> 'U
 
 /// A thread-safe lookup table which is assigning an auto-increment stamp with each insert
-type internal StampedDictionary<'T, 'U> =
+type internal StampedDictionary<'T, 'U when 'T: not null> =
 
     new: keyComparer: IEqualityComparer<'T> -> StampedDictionary<'T, 'U>
 
@@ -445,7 +425,11 @@ type internal LazyWithContext<'T, 'ctxt> =
 
 /// Intern tables to save space.
 module internal Tables =
+#if NET8_0_OR_GREATER
+    val memoize: f: ('a -> 'b) -> ('a -> 'b) when 'a: equality and 'a: not null
+#else
     val memoize: f: ('a -> 'b) -> ('a -> 'b) when 'a: equality
+#endif
 
 /// Interface that defines methods for comparing objects using partial equality relation
 type internal IPartialEqualityComparer<'T> =
@@ -454,7 +438,9 @@ type internal IPartialEqualityComparer<'T> =
 
 /// Interface that defines methods for comparing objects using partial equality relation
 module internal IPartialEqualityComparer =
-    val On: f: ('a -> 'b) -> c: IPartialEqualityComparer<'b> -> IPartialEqualityComparer<'a>
+    val On:
+        f: ('a -> 'b) -> c: IPartialEqualityComparer<'b> -> IPartialEqualityComparer<'a>
+            when 'a: not null and 'a: not struct
 
     /// Like Seq.distinctBy but only filters out duplicates for some of the elements
     val partialDistinctBy: per: IPartialEqualityComparer<'T> -> seq: 'T list -> 'T list
@@ -567,6 +553,8 @@ module internal MultiMap =
     val empty: MultiMap<'a, 'b> when 'a: comparison
 
     val initBy: f: ('a -> 'b) -> xs: seq<'a> -> MultiMap<'b, 'a> when 'b: comparison
+
+    val ofList: xs: ('a * 'b) list -> MultiMap<'a, 'b> when 'a: comparison
 
 type internal LayeredMap<'Key, 'Value when 'Key: comparison> = Map<'Key, 'Value>
 

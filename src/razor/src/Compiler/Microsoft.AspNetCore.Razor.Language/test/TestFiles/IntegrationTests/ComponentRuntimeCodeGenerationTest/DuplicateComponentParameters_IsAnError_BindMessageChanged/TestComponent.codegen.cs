@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddComponentParameter(1, "MessageChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.String>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.String>(this, 
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,14)-(1,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+MessageChanged
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.String>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.String>(this, 
 #nullable restore
 #line (1,32)-(1,41) "x:\dir\subdir\Test\TestComponent.cshtml"
 (s) => {}
@@ -27,7 +35,15 @@ namespace Test
 #line hidden
 #nullable disable
             )));
-            __builder.AddComponentParameter(2, "Message", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,50)-(1,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+Message
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
 #nullable restore
 #line (1,60)-(1,67) "x:\dir\subdir\Test\TestComponent.cshtml"
 message
@@ -36,8 +52,8 @@ message
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(3, "MessageChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.String>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.String>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => message = __value, message))));
-            __builder.AddComponentParameter(4, "MessageExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Action<System.String>>>(() => message));
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.MessageChanged), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.String>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.String>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => message = __value, message))));
+            __builder.AddComponentParameter(4, nameof(global::Test.MyComponent.MessageExpression), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<global::System.Action<global::System.String>>>(() => message));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

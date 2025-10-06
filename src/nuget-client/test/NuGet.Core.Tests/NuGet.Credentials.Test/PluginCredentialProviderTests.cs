@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -569,10 +571,14 @@ namespace NuGet.Credentials.Test
         [Fact]
         public void SetsIdBasedOnTypeAndFilename()
         {
-            var mockLogger = new Mock<Common.ILogger>();
-            var provider = new PluginCredentialProvider(mockLogger.Object, @"c:\some\path\provider.exe", 5, "Normal");
+            FileInfo providerFileInfo = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? new FileInfo(@"c:\some\path\provider.exe")
+                : new FileInfo("/some/path/provider");
 
-            Assert.StartsWith("PluginCredentialProvider_provider.exe_", provider.Id);
+            var mockLogger = new Mock<Common.ILogger>();
+            var provider = new PluginCredentialProvider(mockLogger.Object, providerFileInfo.FullName, 5, "Normal");
+
+            Assert.StartsWith($"PluginCredentialProvider_{providerFileInfo.Name}_", provider.Id);
         }
 
         [Fact]

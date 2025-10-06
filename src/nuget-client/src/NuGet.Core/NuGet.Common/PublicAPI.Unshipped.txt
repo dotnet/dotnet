@@ -1,3 +1,4 @@
 #nullable enable
-const NuGet.Common.NuGetEventSource.Keywords.Restore = (System.Diagnostics.Tracing.EventKeywords)32 -> System.Diagnostics.Tracing.EventKeywords
-static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>!
+NuGet.Common.NuGetLogCode.NU1015 = 1015 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1016 = 1016 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1017 = 1017 -> NuGet.Common.NuGetLogCode

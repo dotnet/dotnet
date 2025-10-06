@@ -4,6 +4,7 @@
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+
 internal static class ProtocolVersioning
 {
     public const int HighestSupportedVersion = Version7;

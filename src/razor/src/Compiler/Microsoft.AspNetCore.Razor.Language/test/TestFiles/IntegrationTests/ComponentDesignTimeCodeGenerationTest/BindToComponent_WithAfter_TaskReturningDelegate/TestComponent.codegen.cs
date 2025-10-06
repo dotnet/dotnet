@@ -33,7 +33,7 @@ namespace Test
 #line hidden
 #nullable disable
             );
-            __o = new global::System.Func<System.Int32, System.Threading.Tasks.Task>(
+            __o = new global::System.Func<global::System.Int32, global::System.Threading.Tasks.Task>(
             async  __value => { ParentValue = __value; await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"

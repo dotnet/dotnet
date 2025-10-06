@@ -12,6 +12,8 @@ For a new copy of the project, run:
 git clone https://github.com/dotnet/razor.git
 ```
 
+> On a windows based machine, you might to allow for [long paths](https://stackoverflow.com/questions/22575662/filename-too-long-in-git-for-windows): `git config --global core.longpaths true` in order to clone/build the repo, successfully.
+
 ## Install pre-requisites
 
 ### Windows
@@ -21,6 +23,7 @@ Building Razor on Windows requires:
 - Windows 10, version 1803 or newer
 - At least 10 GB of disk space and a good internet connection (our build scripts download a lot of tools and dependencies)
 - Git. <https://git-scm.org>
+- [LongPaths](LongPaths.md) to be enabled
 
 ### macOS/Linux
 
@@ -53,7 +56,11 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
    > You can do so by running the `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` command
    > in PowerShell. For more information on execution policies, you can read the [execution policy docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
 
-2. Use the `.\startvs.cmd Razor.sln` script to open Visual Studio with the Razor solution. This script first sets the required
+2. Use the
+   ```ps1
+   .\startvs.cmd
+   ```
+   script to open Visual Studio with the Razor solution. This script first sets the required
    environment variables. In addition, the following switches can be specified:
 
    - `-chooseVS`: When specified, displays a list of the installed Visual Studio instances and prompts to

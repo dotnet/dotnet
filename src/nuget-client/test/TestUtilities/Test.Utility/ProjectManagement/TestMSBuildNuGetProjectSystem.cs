@@ -15,12 +15,11 @@ namespace Test.Utility
     public class TestMSBuildNuGetProjectSystem : IMSBuildProjectSystem
     {
         private const string TestProjectName = "TestProjectName";
-        private const string TestProjectFileName = "Test.csproj";
 
         public Dictionary<string, string> References { get; }
         public HashSet<string> FrameworkReferences { get; }
         public HashSet<string> Files { get; }
-        private HashSet<string> FilesInProcessing { get; set; }
+        private HashSet<string> _filesInProcessing;
         public HashSet<string> ProcessedFiles { get; private set; }
         public HashSet<string> Imports { get; }
         public int BindingRedirectsCallCount { get; private set; }
@@ -183,22 +182,22 @@ namespace Test.Utility
 
         public void RegisterProcessedFiles(IEnumerable<string> files)
         {
-            if (FilesInProcessing == null)
+            if (_filesInProcessing == null)
             {
-                FilesInProcessing = new HashSet<string>(files);
+                _filesInProcessing = new HashSet<string>(files);
             }
 
             foreach (var file in files)
             {
-                FilesInProcessing.Add(file);
+                _filesInProcessing.Add(file);
             }
         }
 
         public Task EndProcessingAsync()
         {
             ++BatchCount;
-            ProcessedFiles = FilesInProcessing;
-            FilesInProcessing = null;
+            ProcessedFiles = _filesInProcessing;
+            _filesInProcessing = null;
 
             return Task.CompletedTask;
         }

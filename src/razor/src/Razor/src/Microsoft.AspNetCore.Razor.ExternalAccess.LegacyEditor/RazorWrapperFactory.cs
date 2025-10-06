@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.LegacyEditor.Razor;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
@@ -55,27 +55,7 @@ internal static partial class RazorWrapperFactory
             builder.Add(createWrapper(item));
         }
 
-        return builder.DrainToImmutable();
-    }
-
-    private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IReadOnlyList<TInner> list, Func<TInner, TResult> createWrapper)
-        where TInner : class
-        where TResult : class
-    {
-        var count = list.Count;
-        if (count == 0)
-        {
-            return ImmutableArray<TResult>.Empty;
-        }
-
-        using var builder = new PooledArrayBuilder<TResult>(capacity: count);
-
-        for (var i = 0; i < count; i++)
-        {
-            builder.Add(createWrapper(list[i]));
-        }
-
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IEnumerable<TInner> items, Func<TInner, TResult> createWrapper)
@@ -89,7 +69,7 @@ internal static partial class RazorWrapperFactory
             builder.Add(createWrapper(item));
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private static ImmutableArray<TResult> InitializeArrayWithWrappedItems<TInner, TResult>(

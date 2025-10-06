@@ -141,10 +141,10 @@ namespace ILCompiler
             switch (_targetKind)
             {
                 case TargetKind.CanonicalEntrypoint:
-                    return factory.CanonicalEntrypoint(TargetMethod, TargetMethodIsUnboxingThunk);
+                    return factory.AddressTakenMethodEntrypoint(TargetMethod, TargetMethodIsUnboxingThunk);
 
                 case TargetKind.ExactCallableAddress:
-                    return factory.ExactCallableAddress(TargetMethod, TargetMethodIsUnboxingThunk);
+                    return factory.ExactCallableAddressTakenAddress(TargetMethod, TargetMethodIsUnboxingThunk);
 
                 case TargetKind.InterfaceDispatch:
                     return factory.InterfaceDispatchCell(TargetMethod);
@@ -221,14 +221,14 @@ namespace ILCompiler
 
                 if (!closed)
                 {
-                    initMethod = systemDelegate.GetKnownMethod("InitializeOpenStaticThunk", null);
+                    initMethod = systemDelegate.GetKnownMethod("InitializeOpenStaticThunk"u8, null);
                     invokeThunk = delegateInfo.Thunks[DelegateThunkKind.OpenStaticThunk];
                 }
                 else
                 {
                     // Closed delegate to a static method (i.e. delegate to an extension method that locks the first parameter)
                     invokeThunk = delegateInfo.Thunks[DelegateThunkKind.ClosedStaticThunk];
-                    initMethod = systemDelegate.GetKnownMethod("InitializeClosedStaticThunk", null);
+                    initMethod = systemDelegate.GetKnownMethod("InitializeClosedStaticThunk"u8, null);
                 }
 
                 var instantiatedDelegateType = delegateType as InstantiatedType;
@@ -248,14 +248,14 @@ namespace ILCompiler
                 if (!closed)
                     throw new NotImplementedException("Open instance delegates");
 
-                string initializeMethodName = "InitializeClosedInstance";
+                ReadOnlySpan<byte> initializeMethodName = "InitializeClosedInstance"u8;
                 MethodDesc targetCanonMethod = targetMethod.GetCanonMethodTarget(CanonicalFormKind.Specific);
                 TargetKind kind;
                 if (targetMethod.HasInstantiation)
                 {
                     if (followVirtualDispatch && targetMethod.IsVirtual)
                     {
-                        initializeMethodName = "InitializeClosedInstanceWithGVMResolution";
+                        initializeMethodName = "InitializeClosedInstanceWithGVMResolution"u8;
                         kind = TargetKind.MethodHandle;
                     }
                     else
@@ -266,7 +266,7 @@ namespace ILCompiler
                             // checks for the fat function pointer case (function pointer + instantiation argument in a single
                             // pointer) and injects an invocation thunk to unwrap the fat function pointer as part of
                             // the invocation if necessary.
-                            initializeMethodName = "InitializeClosedInstanceSlow";
+                            initializeMethodName = "InitializeClosedInstanceSlow"u8;
                         }
 
                         kind = TargetKind.ExactCallableAddress;
@@ -279,7 +279,7 @@ namespace ILCompiler
                         if (targetMethod.OwningType.IsInterface)
                         {
                             kind = TargetKind.InterfaceDispatch;
-                            initializeMethodName = "InitializeClosedInstanceToInterface";
+                            initializeMethodName = "InitializeClosedInstanceToInterface"u8;
                         }
                         else
                         {
@@ -306,20 +306,20 @@ namespace ILCompiler
 
         public void AppendMangledName(NameMangler nameMangler, Utf8StringBuilder sb)
         {
-            sb.Append("__DelegateCtor_");
+            sb.Append("__DelegateCtor_"u8);
             if (TargetNeedsVTableLookup)
-                sb.Append("FromVtbl_");
+                sb.Append("FromVtbl_"u8);
             Constructor.AppendMangledName(nameMangler, sb);
-            sb.Append("__");
+            sb.Append("__"u8);
             sb.Append(nameMangler.GetMangledMethodName(_targetMethod));
             if (_constrainedType != null)
             {
-                sb.Append("__");
+                sb.Append("__"u8);
                 nameMangler.GetMangledTypeName(_constrainedType);
             }
             if (Thunk != null)
             {
-                sb.Append("__");
+                sb.Append("__"u8);
                 Thunk.AppendMangledName(nameMangler, sb);
             }
         }
@@ -347,7 +347,7 @@ namespace ILCompiler
             if (compare != 0)
                 return compare;
 
-            compare = comparer.Compare(TargetMethod, other.TargetMethod);
+            compare = comparer.Compare(_targetMethod, other._targetMethod);
             if (compare != 0)
                 return compare;
 

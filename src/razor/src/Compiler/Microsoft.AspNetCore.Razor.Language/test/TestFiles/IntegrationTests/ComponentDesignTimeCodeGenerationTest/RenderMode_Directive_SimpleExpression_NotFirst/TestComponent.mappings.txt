@@ -9,8 +9,8 @@ Generated Location: (1107:31,1 [55] )
     public int Count { get; set; }
 |
 
-Source Location: (80:5,14 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1828:50,14 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (80:5,14 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (1828:50,14 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 

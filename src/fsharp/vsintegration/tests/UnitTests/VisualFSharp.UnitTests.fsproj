@@ -7,16 +7,20 @@
     <PlatformTarget>x86</PlatformTarget>
     <OutputType>Library</OutputType>
     <NoWarn>$(NoWarn);44;58;75;3005</NoWarn>
+    <TolerateUnusedBindings>true</TolerateUnusedBindings>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <UsePackageTargetFallbackHack>true</UsePackageTargetFallbackHack>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <UnitTestType>nunit</UnitTestType>
+    <UnitTestType>xunit</UnitTestType>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="$(FSharpTestsRoot)\FSharp.Test.Utilities\XunitSetup.fs">
+        <Link>XunitSetup.fs</Link>
+    </Compile>
+    <Compile Include="$(FSharpSourcesRoot)\Compiler\Utilities\NullnessShims.fs" />
     <Compile Include="AssemblyResolver.fs" />
     <Compile Include="$(FSharpSourcesRoot)\Compiler\Utilities\InternalCollections.fsi">
       <Link>Internal.Utilities.Collections.fsi</Link>
@@ -68,7 +72,7 @@
       <Pattern1>{{FSCoreVersion}}</Pattern1>
       <Replacement1>$(FSCoreVersion)</Replacement1>
     </NoneSubstituteText>
-    <None Include="app.runsettings" />
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(FSharpSourcesRoot)\fsc\fscProject\fsc.fsproj" />
@@ -78,6 +82,7 @@
     <ProjectReference Include="..\..\src\FSharp.Editor\FSharp.Editor.fsproj" />
     <ProjectReference Include="..\..\src\FSharp.LanguageService\FSharp.LanguageService.fsproj" />
     <ProjectReference Include="..\..\src\FSharp.ProjectSystem.FSharp\FSharp.ProjectSystem.FSharp.fsproj" />
+    <ProjectReference Include="..\..\..\tests\FSharp.Test.Utilities\FSharp.Test.Utilities.fsproj" />
   </ItemGroup>
 
   <!-- assemblies used during tests -->

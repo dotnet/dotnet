@@ -48,7 +48,7 @@ namespace Microsoft.SignCheck.Verification.Jar
         /// <returns></returns>
         public static string GetHashDigest(string input, string algorithmName)
         {
-            using (HashAlgorithm hashAlgorithm = HashAlgorithm.Create(algorithmName))
+            using (HashAlgorithm hashAlgorithm = Utils.CreateHashAlgorithm(algorithmName))
             {
                 byte[] hashValue = hashAlgorithm.ComputeHash(new UTF8Encoding().GetBytes(input.ToCharArray()));
                 return Convert.ToBase64String(hashValue);

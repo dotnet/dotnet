@@ -20,6 +20,7 @@ namespace Microsoft.DotNet.Helix.Client
         Task<Models.JobCreationResult> NewAsync(
             Models.JobCreationRequest body,
             string idempotencyKey,
+            bool? returnSas = default,
             CancellationToken cancellationToken = default
         );
 
@@ -30,6 +31,11 @@ namespace Microsoft.DotNet.Helix.Client
             string name = default,
             string source = default,
             string type = default,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<Models.JobResultsUri> ResultsAsync(
+            string job,
             CancellationToken cancellationToken = default
         );
 
@@ -77,6 +83,7 @@ namespace Microsoft.DotNet.Helix.Client
         public async Task<Models.JobCreationResult> NewAsync(
             Models.JobCreationRequest body,
             string idempotencyKey,
+            bool? returnSas = default,
             CancellationToken cancellationToken = default
         )
         {
@@ -116,6 +123,11 @@ namespace Microsoft.DotNet.Helix.Client
                 if (!string.IsNullOrEmpty(idempotencyKey))
                 {
                     _req.Headers.Add("Idempotency-Key", idempotencyKey);
+                }
+
+                if (returnSas != default(bool?))
+                {
+                    _req.Headers.Add("return-sas", returnSas.ToString());
                 }
 
                 if (body != default(Models.JobCreationRequest))
@@ -263,6 +275,81 @@ namespace Microsoft.DotNet.Helix.Client
                 Client.Deserialize<Models.ApiError>(content)
                 );
             HandleFailedListRequest(ex);
+            HandleFailedRequest(ex);
+            Client.OnFailedRequest(ex);
+            throw ex;
+        }
+
+        partial void HandleFailedResultsRequest(RestApiException ex);
+
+        public async Task<Models.JobResultsUri> ResultsAsync(
+            string job,
+            CancellationToken cancellationToken = default
+        )
+        {
+
+            if (string.IsNullOrEmpty(job))
+            {
+                throw new ArgumentNullException(nameof(job));
+            }
+
+            const string apiVersion = "2019-06-17";
+
+            var _baseUri = Client.Options.BaseUri;
+            var _url = new RequestUriBuilder();
+            _url.Reset(_baseUri);
+            _url.AppendPath(
+                "/api/jobs/{job}/results".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+                false);
+
+            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+            using (var _req = Client.Pipeline.CreateRequest())
+            {
+                _req.Uri = _url;
+                _req.Method = RequestMethod.Get;
+
+                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+                {
+                    if (_res.Status < 200 || _res.Status >= 300)
+                    {
+                        await OnResultsFailed(_req, _res).ConfigureAwait(false);
+                    }
+
+                    if (_res.ContentStream == null)
+                    {
+                        await OnResultsFailed(_req, _res).ConfigureAwait(false);
+                    }
+
+                    using (var _reader = new StreamReader(_res.ContentStream))
+                    {
+                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                        var _body = Client.Deserialize<Models.JobResultsUri>(_content);
+                        return _body;
+                    }
+                }
+            }
+        }
+
+        internal async Task OnResultsFailed(Request req, Response res)
+        {
+            string content = null;
+            if (res.ContentStream != null)
+            {
+                using (var reader = new StreamReader(res.ContentStream))
+                {
+                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
+                }
+            }
+
+            var ex = new RestApiException<Models.ApiError>(
+                req,
+                res,
+                content,
+                Client.Deserialize<Models.ApiError>(content)
+                );
+            HandleFailedResultsRequest(ex);
             HandleFailedRequest(ex);
             Client.OnFailedRequest(ex);
             throw ex;

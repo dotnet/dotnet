@@ -1,26 +1,24 @@
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <PropertyGroup>
-    <MajorVersion>9</MajorVersion>
+    <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
+    <SkipPackagePublishingVersionChecks>true</SkipPackagePublishingVersionChecks>
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
+  <!-- External package versions -->
   <PropertyGroup>
-    <!-- Arcade dependencies -->
-    <MicrosoftDotNetBuildTasksPackagingPackageVersion>1.0.0-beta.20113.5</MicrosoftDotNetBuildTasksPackagingPackageVersion>
-    <!-- MSBuild dependencies -->
-    <MicrosoftBuildVersion>15.6.82</MicrosoftBuildVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildUtilitiesCoreVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
+    <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
+    <MSBuildLocatorReleaseVersion>1.8.1</MSBuildLocatorReleaseVersion>
+    <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <!-- NuGet dependencies -->
-    <NuGetPackagingVersion>6.7.0</NuGetPackagingVersion>
-    <!-- Runtime dependencies -->
-    <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
-    <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
-    <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>9.0.100-preview.3.24161.5</MicrosoftDotNetGenAPITaskPackageVersion>
+    <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>

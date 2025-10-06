@@ -358,7 +358,7 @@ public class SocketCommunicationManagerTests : IDisposable
     {
         for (int i = 0; i < 10; i++)
         {
-            socket.Send(new byte[2] { 0x1, 0x0 });
+            socket.Send([0x1, 0x0]);
         }
     }
 

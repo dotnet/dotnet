@@ -1,12 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
@@ -16,21 +16,19 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 [Export(typeof(IVisualStudioDocumentTrackerFactory))]
 [method: ImportingConstructor]
 internal sealed class VisualStudioDocumentTrackerFactory(
-    ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext,
-    IProjectSnapshotManager projectManager,
+    ProjectSnapshotManager projectManager,
     IWorkspaceEditorSettings workspaceEditorSettings,
     IProjectPathProvider projectPathProvider,
     ITextDocumentFactoryService textDocumentFactory,
     IImportDocumentManager importDocumentManager,
     IProjectEngineFactoryProvider projectEngineFactoryProvider) : IVisualStudioDocumentTrackerFactory
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
     private readonly IProjectPathProvider _projectPathProvider = projectPathProvider;
     private readonly IImportDocumentManager _importDocumentManager = importDocumentManager;
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
+    private readonly ProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings = workspaceEditorSettings;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
 
@@ -54,7 +52,7 @@ internal sealed class VisualStudioDocumentTrackerFactory(
 
         var filePath = textDocument.FilePath;
         var tracker = new VisualStudioDocumentTracker(
-            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
+            _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
 
         return tracker;
     }

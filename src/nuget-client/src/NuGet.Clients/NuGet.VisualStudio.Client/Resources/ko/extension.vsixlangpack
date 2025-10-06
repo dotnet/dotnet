@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>NuGet 패키지 관리자</LocalizedName>
+  <LocalizedDescription>VS 프로젝트에서 패키지를 설치, 업그레이드, 구성 및 제거하는 프로세스를 자동화하는 도구 모음입니다.</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

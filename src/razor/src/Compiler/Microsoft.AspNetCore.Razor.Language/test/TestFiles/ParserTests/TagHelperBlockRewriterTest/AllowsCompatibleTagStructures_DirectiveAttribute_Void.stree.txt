@@ -4,7 +4,7 @@
             MarkupStartTag - [0..24)::24 - [<input @onclick="@test">] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[input];
-                MarkupMiscAttributeContent - [6..23)::17
+                MarkupMiscAttributeContent - [6..15)::9
                     MarkupTextLiteral - [6..7)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
                     CSharpCodeBlock - [7..15)::8
@@ -15,6 +15,7 @@
                                 CSharpCodeBlock - [8..15)::7
                                     CSharpExpressionLiteral - [8..15)::7 - [onclick] - Gen<Expr>
                                         Identifier;[onclick];
+                MarkupMiscAttributeContent - [15..23)::8
                     MarkupTextLiteral - [15..17)::2 - [="] - Gen<Markup>
                         Equals;[=];
                         DoubleQuote;["];

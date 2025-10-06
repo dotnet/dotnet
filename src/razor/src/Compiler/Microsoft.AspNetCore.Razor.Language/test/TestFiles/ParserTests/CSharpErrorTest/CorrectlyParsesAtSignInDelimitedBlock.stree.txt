@@ -16,10 +16,9 @@
                             StringLiteral;["description"];
                             RightBracket;[]];
                             Whitespace;[ ];
-                            NullCoalesce;[??];
+                            CSharpOperator;[??];
                             Whitespace;[ ];
-                            Transition;[@];
-                            Identifier;[photo];
+                            Identifier;[@photo];
                             Dot;[.];
                             Identifier;[Description];
                     RazorMetaCode - [46..47)::1 - Gen<None>

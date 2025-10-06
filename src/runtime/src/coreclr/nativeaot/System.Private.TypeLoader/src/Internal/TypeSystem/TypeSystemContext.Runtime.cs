@@ -188,10 +188,6 @@ namespace Internal.TypeSystem
             {
                 returnedType = CanonType;
             }
-            else if (rtth.Equals(UniversalCanonType.RuntimeTypeHandle))
-            {
-                returnedType = UniversalCanonType;
-            }
             else if (RuntimeAugments.IsGenericTypeDefinition(rtth))
             {
                 unsafe
@@ -291,7 +287,7 @@ namespace Internal.TypeSystem
                 _typeDefinition = typeDefinition;
                 _instantiation = instantiation;
 
-                _hashCode = instantiation.ComputeGenericInstanceHashCode(typeDefinition.GetHashCode());
+                _hashCode = VersionResilientHashCode.GenericInstanceHashCode(typeDefinition.GetHashCode(), _instantiation);
             }
 
             public bool Equals(GenericTypeInstanceKey other)
@@ -335,7 +331,7 @@ namespace Internal.TypeSystem
                 _owningType = owningType;
                 _methodNameAndSignature = nameAndSignature;
 
-                _hashCode = TypeHashingAlgorithms.ComputeMethodHashCode(owningType.GetHashCode(), TypeHashingAlgorithms.ComputeNameHashCode(nameAndSignature.Name));
+                _hashCode = owningType.GetHashCode() ^ VersionResilientHashCode.NameHashCode(nameAndSignature.Name);
             }
 
             public class RuntimeMethodKeyHashtable : LockFreeReaderHashtable<RuntimeMethodKey, MethodDesc>
@@ -417,7 +413,7 @@ namespace Internal.TypeSystem
                         // Instantiated Types always get their methods through GetMethodForInstantiatedType
                         if (key._owningType is InstantiatedType)
                         {
-                            MethodDesc typicalMethod = key._owningType.Context.ResolveRuntimeMethod(key._unboxingStub, (DefType)key._owningType.GetTypeDefinition(), key._methodNameAndSignature, IntPtr.Zero, false);
+                            MethodDesc typicalMethod = key._owningType.Context.ResolveRuntimeMethod(key._unboxingStub, (DefType)key._owningType.GetTypeDefinition(), key._methodNameAndSignature);
                             return typicalMethod.Context.GetMethodForInstantiatedType(typicalMethod, (InstantiatedType)key._owningType);
                         }
                     }
@@ -434,18 +430,10 @@ namespace Internal.TypeSystem
 
         private RuntimeMethodKey.RuntimeMethodKeyHashtable _runtimeMethods;
 
-        internal MethodDesc ResolveRuntimeMethod(bool unboxingStub, DefType owningType, MethodNameAndSignature nameAndSignature, IntPtr functionPointer, bool usgFunctionPointer)
+        internal MethodDesc ResolveRuntimeMethod(bool unboxingStub, DefType owningType, MethodNameAndSignature nameAndSignature)
         {
             _runtimeMethods ??= new RuntimeMethodKey.RuntimeMethodKeyHashtable();
-
-            MethodDesc retVal = _runtimeMethods.GetOrCreateValue(new RuntimeMethodKey(unboxingStub, owningType, nameAndSignature));
-
-            if (functionPointer != IntPtr.Zero)
-            {
-                retVal.SetFunctionPointer(functionPointer, usgFunctionPointer);
-            }
-
-            return retVal;
+            return _runtimeMethods.GetOrCreateValue(new RuntimeMethodKey(unboxingStub, owningType, nameAndSignature));
         }
 
         private LowLevelDictionary<GenericTypeInstanceKey, DefType> _genericTypeInstances;
@@ -479,9 +467,9 @@ namespace Internal.TypeSystem
         /// <summary>
         /// Find a method based on owner type and nativelayout name, method instantiation, and signature.
         /// </summary>
-        public MethodDesc ResolveGenericMethodInstantiation(bool unboxingStub, DefType owningType, MethodNameAndSignature nameAndSignature, Instantiation methodInstantiation, IntPtr functionPointer, bool usgFunctionPointer)
+        public MethodDesc ResolveGenericMethodInstantiation(bool unboxingStub, DefType owningType, MethodNameAndSignature nameAndSignature, Instantiation methodInstantiation)
         {
-            var uninstantiatedMethod = ResolveRuntimeMethod(unboxingStub, owningType, nameAndSignature, IntPtr.Zero, false);
+            var uninstantiatedMethod = ResolveRuntimeMethod(unboxingStub, owningType, nameAndSignature);
 
             MethodDesc returnedMethod;
             if (methodInstantiation.IsNull || (methodInstantiation.Length == 0))
@@ -492,12 +480,6 @@ namespace Internal.TypeSystem
             {
                 returnedMethod = GetInstantiatedMethod(uninstantiatedMethod, methodInstantiation);
             }
-
-            if (functionPointer != IntPtr.Zero)
-            {
-                returnedMethod.SetFunctionPointer(functionPointer, usgFunctionPointer);
-            }
-
             return returnedMethod;
         }
 
@@ -529,7 +511,7 @@ namespace Internal.TypeSystem
             }
         }
 
-        private LowLevelList<TypeDesc> _typesToFlushTypeSystemStateFrom;
+        private ArrayBuilder<TypeDesc> _typesToFlushTypeSystemStateFrom;
 
         /// <summary>
         /// Register the types that will get their attached TypeSystemState flushed if the
@@ -537,7 +519,6 @@ namespace Internal.TypeSystem
         /// </summary>
         internal void RegisterTypeForTypeSystemStateFlushing(TypeDesc type)
         {
-            _typesToFlushTypeSystemStateFrom ??= new LowLevelList<TypeDesc>();
             _typesToFlushTypeSystemStateFrom.Add(type);
         }
 
@@ -547,14 +528,11 @@ namespace Internal.TypeSystem
         /// </summary>
         internal void FlushTypeBuilderStates()
         {
-            if (_typesToFlushTypeSystemStateFrom != null)
+            for (int i = 0; i < _typesToFlushTypeSystemStateFrom.Count; i++)
             {
-                for (int i = 0; i < _typesToFlushTypeSystemStateFrom.Count; i++)
-                {
-                    _typesToFlushTypeSystemStateFrom[i].TypeBuilderState = null;
-                }
+                _typesToFlushTypeSystemStateFrom[i].TypeBuilderState = null;
             }
-            _typesToFlushTypeSystemStateFrom = null;
+            _typesToFlushTypeSystemStateFrom = default;
         }
     }
 

@@ -8,13 +8,23 @@
 // Assertion checking infrastructure
 // ---------------------------------------------------------------------------
 
-
 #ifndef CHECK_H_
 #define CHECK_H_
 
-#include "static_assert.h"
 #include "daccess.h"
 #include "unreachable.h"
+
+// Use the C++ detection idiom (https://isocpp.org/blog/2017/09/detection-idiom-a-stopgap-for-concepts-simon-brand)
+template <class... > struct make_void { using type = void; };
+template <class... T> using void_t = typename make_void<T...>::type;
+
+// Macros for creating type traits to check if a member exists
+#define DEFINE_MEMBER_EXISTENCE_CHECK(Member) \
+template<typename T, typename = void> \
+struct has_##Member : std::false_type {}; \
+\
+template<typename T> \
+struct has_##Member<T, void_t<decltype(std::declval<T>().Member)>> : std::true_type {};
 
 #ifdef _DEBUG
 
@@ -111,7 +121,7 @@ public: // !!! NOTE: Called from macros only!!!
 #ifdef _DEBUG
               , m_condition (NULL)
               , m_file(NULL)
-              , m_line(NULL)
+              , m_line(0)
               , m_pCount(NULL)
 #endif
     {}
@@ -150,7 +160,6 @@ public: // !!! NOTE: Called from macros only!!!
     static LPCSTR AllocateDynamicMessage(const SString &s);
 #endif
 };
-
 
 //--------------------------------------------------------------------------------
 // These CHECK macros are the correct way to propagate an assertion.  These
@@ -282,19 +291,34 @@ do                                                                  \
 
 #if CHECK_INVARIANTS
 
+DEFINE_MEMBER_EXISTENCE_CHECK(Invariant);
+DEFINE_MEMBER_EXISTENCE_CHECK(InternalInvariant);
+
+template <typename TYPENAME>
+typename std::enable_if<has_Invariant<TYPENAME>::value, CHECK>::type CheckInvariantOnly(TYPENAME &obj)
+{
+    CHECK(obj.Invariant());
+    CHECK_OK;
+}
+
+template <typename TYPENAME>
+typename std::enable_if<!has_Invariant<TYPENAME>::value, CHECK>::type CheckInvariantOnly(TYPENAME &obj) { CHECK_OK; }
+
+template <typename TYPENAME>
+typename std::enable_if<has_InternalInvariant<TYPENAME>::value, CHECK>::type CheckInternalInvariantOnly(TYPENAME &obj)
+{
+    CHECK(obj.InternalInvariant());
+    CHECK_OK;
+}
+
+template <typename TYPENAME>
+typename std::enable_if<!has_InternalInvariant<TYPENAME>::value, CHECK>::type CheckInternalInvariantOnly(TYPENAME &obj) { CHECK_OK; }
+
 template <typename TYPENAME>
 CHECK CheckInvariant(TYPENAME &obj)
 {
-#if defined(_MSC_VER) || defined(__llvm__)
-    __if_exists(TYPENAME::Invariant)
-    {
-        CHECK(obj.Invariant());
-    }
-    __if_exists(TYPENAME::InternalInvariant)
-    {
-        CHECK(obj.InternalInvariant());
-    }
-#endif
+    CheckInvariantOnly(obj);
+    CheckInternalInvariantOnly(obj);
 
     CHECK_OK;
 }
@@ -331,8 +355,9 @@ enum IsNullOK
 };
 
 #if CHECK_INVARIANTS
+DEFINE_MEMBER_EXISTENCE_CHECK(Check);
 template <typename TYPENAME>
-CHECK CheckPointer(TYPENAME *o, IsNullOK ok = NULL_NOT_OK)
+typename std::enable_if<has_Check<TYPENAME>::value, CHECK>::type CheckPointer(TYPENAME *o, IsNullOK ok = NULL_NOT_OK)
 {
     if (o == NULL)
     {
@@ -340,29 +365,35 @@ CHECK CheckPointer(TYPENAME *o, IsNullOK ok = NULL_NOT_OK)
     }
     else
     {
-#if defined(_MSC_VER) || defined(__llvm__)
-        __if_exists(TYPENAME::Check)
-        {
-            CHECK(o->Check());
-        }
-#endif
+        CHECK(o->Check());
     }
 
     CHECK_OK;
 }
 
 template <typename TYPENAME>
-CHECK CheckValue(TYPENAME &val)
+typename std::enable_if<!has_Check<TYPENAME>::value, CHECK>::type CheckPointer(TYPENAME *o, IsNullOK ok = NULL_NOT_OK)
 {
-#if defined(_MSC_VER) || defined(__llvm__)
-    __if_exists(TYPENAME::Check)
+    if (o == NULL)
     {
-        CHECK(val.Check());
+        CHECK_MSG(ok, "Illegal null pointer");
     }
-#endif
 
+    CHECK_OK;
+}
+
+template <typename TYPENAME>
+typename std::enable_if<has_Check<TYPENAME>::value, CHECK>::type CheckValue(TYPENAME &val)
+{
+    CHECK(val.Check());
     CHECK(CheckInvariant(val));
+    CHECK_OK;
+}
 
+template <typename TYPENAME>
+typename std::enable_if<!has_Check<TYPENAME>::value, CHECK>::type CheckValue(TYPENAME &val)
+{
+    CHECK(CheckInvariant(val));
     CHECK_OK;
 }
 #else // CHECK_INVARIANTS
@@ -478,7 +509,7 @@ CHECK CheckValue(TYPENAME &val)
 // in a free build they are passed through to the compiler to use in optimization.
 //--------------------------------------------------------------------------------
 
-#if defined(_PREFAST_) || defined(_PREFIX_) || defined(__clang_analyzer__)
+#if defined(__clang_analyzer__)
 #define COMPILER_ASSUME_MSG(_condition, _message) if (!(_condition)) __UNREACHABLE();
 #define COMPILER_ASSUME_MSGF(_condition, args) if (!(_condition)) __UNREACHABLE();
 #else
@@ -500,37 +531,9 @@ CHECK CheckValue(TYPENAME &val)
 
 #endif // DACCESS_COMPILE
 
-#endif // _PREFAST_ || _PREFIX_
-
+#endif
 
 #define COMPILER_ASSUME(_condition) \
-    COMPILER_ASSUME_MSG(_condition, "")
-
-
-//--------------------------------------------------------------------------------
-// PREFIX_ASSUME_MSG and PREFAST_ASSUME_MSG are just another name
-// for COMPILER_ASSUME_MSG
-// In a checked build these turn into asserts; in a free build
-// they are passed through to the compiler to use in optimization;
-//  via an __assume(_condition) optimization hint.
-//--------------------------------------------------------------------------------
-
-#define PREFIX_ASSUME_MSG(_condition, _message) \
-    COMPILER_ASSUME_MSG(_condition, _message)
-
-#define PREFIX_ASSUME_MSGF(_condition, args) \
-    COMPILER_ASSUME_MSGF(_condition, args)
-
-#define PREFIX_ASSUME(_condition) \
-    COMPILER_ASSUME_MSG(_condition, "")
-
-#define PREFAST_ASSUME_MSG(_condition, _message) \
-    COMPILER_ASSUME_MSG(_condition, _message)
-
-#define PREFAST_ASSUME_MSGF(_condition, args) \
-    COMPILER_ASSUME_MSGF(_condition, args)
-
-#define PREFAST_ASSUME(_condition) \
     COMPILER_ASSUME_MSG(_condition, "")
 
 //--------------------------------------------------------------------------------
@@ -543,18 +546,17 @@ CHECK CheckValue(TYPENAME &val)
 #define UNREACHABLE() \
     UNREACHABLE_MSG("")
 
-#ifdef __llvm__
+#define UNREACHABLE_RET() \
+  do {                    \
+    UNREACHABLE();        \
+    return 0;             \
+  } while (0)
 
-// LLVM complains if a function does not return what it says.
-#define UNREACHABLE_RET() do { UNREACHABLE(); return 0; } while (0)
-#define UNREACHABLE_MSG_RET(_message) UNREACHABLE_MSG(_message); return 0;
-
-#else // __llvm__
-
-#define UNREACHABLE_RET() UNREACHABLE()
-#define UNREACHABLE_MSG_RET(_message) UNREACHABLE_MSG(_message)
-
-#endif // __llvm__ else
+#define UNREACHABLE_MSG_RET(_message) \
+  do {                                \
+    UNREACHABLE_MSG(_message);        \
+    return 0;                         \
+  } while (0)
 
 #ifdef _DEBUG_IMPL
 
@@ -572,7 +574,6 @@ CHECK CheckValue(TYPENAME &val)
 #define UNREACHABLE_MSG(_message) __UNREACHABLE()
 
 #endif
-
 
 //--------------------------------------------------------------------------------
 // STRESS_CHECK represents a check which is included in a free build
@@ -622,14 +623,15 @@ CHECK CheckValue(TYPENAME &val)
 
 #define CCHECK_END                                                              \
         } EX_CATCH {                                                            \
-            if (___result.IsInAssert())                                            \
+            if (___result.IsInAssert())                                         \
             {                                                                   \
                 ___exception = TRUE;                                            \
                 ___transient = GET_EXCEPTION()->IsTransient();                  \
             }                                                                   \
             else                                                                \
                 EX_RETHROW;                                                     \
-        } EX_END_CATCH(RethrowTerminalExceptions);                              \
+            RethrowTerminalExceptions();                                          \
+        } EX_END_CATCH                                                          \
                                                                                 \
         if (___exception)                                                       \
         {                                                                       \
@@ -671,8 +673,6 @@ CHECK CheckValue(TYPENAME &val)
 
 #endif
 
-
-
 //--------------------------------------------------------------------------------
 // Common base level checks
 //--------------------------------------------------------------------------------
@@ -697,7 +697,9 @@ CHECK CheckOverflow(UINT64 value1, UINT64 value2);
 #ifdef __APPLE__
 CHECK CheckOverflow(SIZE_T value1, SIZE_T value2);
 #endif
+#ifndef __wasm__
 CHECK CheckOverflow(PTR_CVOID address, UINT offset);
+#endif
 #if defined(_MSC_VER)
 CHECK CheckOverflow(const void *address, ULONG offset);
 #endif

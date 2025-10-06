@@ -1,4 +1,5 @@
 <Project>
+
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
@@ -6,14 +7,12 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateResxSource>true</GenerateResxSource>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
     
     <IncludeSymbols Condition="'$(DebugType)' != 'embedded' and '$(UsingMicrosoftNoTargetsSdk)' != 'true'">true</IncludeSymbols>
+
+    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
-  
-  <!--
-    Workaround for https://github.com/dotnet/sdk/issues/2232: GenerateDepsFile throws ArgumentException.
-  -->
-  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
-    <GenerateDependencyFile>false</GenerateDependencyFile>
-  </PropertyGroup>
+
 </Project>

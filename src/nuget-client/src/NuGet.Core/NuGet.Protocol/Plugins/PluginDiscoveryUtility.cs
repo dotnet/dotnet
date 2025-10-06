@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using NuGet.Common;
 
 namespace NuGet.Protocol.Plugins
@@ -22,7 +21,7 @@ namespace NuGet.Protocol.Plugins
         public static string GetInternalPlugins()
         {
             return InternalPluginDiscoveryRoot?.Value ??
-                GetNuGetPluginsDirectoryRelativeToNuGetAssembly(typeof(PluginDiscoveryUtility).GetTypeInfo().Assembly.Location); // NuGet.*.dll
+                GetNuGetPluginsDirectoryRelativeToNuGetAssembly(typeof(PluginDiscoveryUtility).Assembly.Location); // NuGet.*.dll
         }
 
         /// <summary>

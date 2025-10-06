@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -26,23 +26,31 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 /// <item><description><see cref="IDisposable.Dispose"/></description></item>
 /// </list>
 /// </remarks>
-[IdeSettings(MinVersion = VisualStudioVersion.VS2022, RootSuffix = "RoslynDev", MaxAttempts = 2)]
+[IdeSettings(MinVersion = VisualStudioVersion.VS18, RootSuffix = "RoslynDev", MaxAttempts = 2)]
 public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 {
     protected CancellationToken ControlledHangMitigatingCancellationToken => HangMitigatingCancellationToken;
 
+    protected virtual bool AllowDebugFails => false;
+
     public override async Task InitializeAsync()
     {
+        // Not sure why the module initializer doesn't seem to work for integration tests
+        ThrowingTraceListener.Initialize();
+
         await base.InitializeAsync();
     }
 
     public override void Dispose()
     {
-        var fails = ThrowingTraceListener.Fails;
-        Assert.False(fails.Length > 0, $"""
-            Expected 0 Debug.Fail calls. Actual:
-            {string.Join(Environment.NewLine, fails)}
-            """);
+        if (!AllowDebugFails)
+        {
+            var fails = ThrowingTraceListener.Fails;
+            Assert.False(fails.Length > 0, $"""
+                Expected 0 Debug.Fail calls. Actual:
+                {string.Join(Environment.NewLine, fails)}
+                """);
+        }
 
         base.Dispose();
     }

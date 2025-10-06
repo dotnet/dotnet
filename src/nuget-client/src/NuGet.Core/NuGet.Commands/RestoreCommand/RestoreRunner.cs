@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
-using NuGet.ProjectModel;
 
 namespace NuGet.Commands
 {
@@ -100,9 +99,20 @@ namespace NuGet.Commands
         /// <summary>
         /// Execute and commit restore requests.
         /// </summary>
-        public static async Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommit(
+        public static Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommit(
             IEnumerable<RestoreSummaryRequest> restoreRequests,
             RestoreArgs restoreContext)
+        {
+            return RunWithoutCommitAsync(restoreRequests, restoreContext, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Execute and commit restore requests.
+        /// </summary>
+        public static async Task<IReadOnlyList<RestoreResultPair>> RunWithoutCommitAsync(
+            IEnumerable<RestoreSummaryRequest> restoreRequests,
+            RestoreArgs restoreContext,
+            CancellationToken cancellationToken)
         {
             var maxTasks = GetMaxTaskCount(restoreContext);
 
@@ -230,40 +240,8 @@ namespace NuGet.Commands
         private static async Task<RestoreSummary> ExecuteAndCommitAsync(RestoreSummaryRequest summaryRequest, IRestoreProgressReporter progressReporter, CancellationToken token)
         {
             RestoreResultPair result = await ExecuteAsync(summaryRequest, token);
-            bool isNoOp = result.Result is NoOpRestoreResult;
-            IReadOnlyList<string> filesToBeUpdated = isNoOp ? null : GetFilesToBeUpdated(result);
-            RestoreSummary summary = null;
-            try
-            {
-                if (!isNoOp)
-                {
-                    progressReporter?.StartProjectUpdate(summaryRequest.Request.Project.FilePath, filesToBeUpdated);
-                }
 
-                summary = await CommitAsync(result, token);
-
-            }
-            finally
-            {
-                if (!isNoOp)
-                {
-                    progressReporter?.EndProjectUpdate(summaryRequest.Request.Project.FilePath, filesToBeUpdated);
-                }
-            }
-            return summary;
-
-            static IReadOnlyList<string> GetFilesToBeUpdated(RestoreResultPair result)
-            {
-                List<string> filesToBeUpdated = new(3); // We know that we have 3 files.
-                filesToBeUpdated.Add(result.Result.LockFilePath);
-
-                foreach (MSBuildOutputFile msbuildOutputFile in result.Result.MSBuildOutputFiles)
-                {
-                    filesToBeUpdated.Add(msbuildOutputFile.Path);
-                }
-
-                return filesToBeUpdated.AsReadOnly();
-            }
+            return await CommitAsync(result, progressReporter, token);
         }
 
         private static async Task<RestoreResultPair> ExecuteAsync(RestoreSummaryRequest summaryRequest, CancellationToken token)
@@ -286,18 +264,43 @@ namespace NuGet.Commands
             return new RestoreResultPair(summaryRequest, result);
         }
 
-        public static async Task<RestoreSummary> CommitAsync(RestoreResultPair restoreResult, CancellationToken token)
+        public static Task<RestoreSummary> CommitAsync(RestoreResultPair restoreResult, CancellationToken token) => CommitAsync(restoreResult, progressReporter: null, token);
+
+        private static async Task<RestoreSummary> CommitAsync(RestoreResultPair restoreResult, IRestoreProgressReporter progressReporter, CancellationToken token)
         {
+            if (restoreResult == null)
+            {
+                throw new ArgumentNullException(nameof(restoreResult));
+            }
+
             var summaryRequest = restoreResult.SummaryRequest;
             var result = restoreResult.Result;
 
             var log = summaryRequest.Request.Log;
 
-            // Commit the result
-            log.LogVerbose(Strings.Log_Committing);
-            if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStart(summaryRequest.InputPath);
-            await result.CommitAsync(log, token);
-            if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStop(summaryRequest.InputPath);
+            bool isNoOp = result is NoOpRestoreResult;
+
+            IReadOnlyList<string> filesToBeUpdated = result.GetDirtyFiles();
+            try
+            {
+                if (!isNoOp && filesToBeUpdated?.Count > 0)
+                {
+                    progressReporter?.StartProjectUpdate(summaryRequest.InputPath, filesToBeUpdated);
+                }
+
+                // Commit the result
+                log.LogVerbose(Strings.Log_Committing);
+                if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStart(summaryRequest.InputPath);
+                await result.CommitAsync(log, token);
+                if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStop(summaryRequest.InputPath);
+            }
+            finally
+            {
+                if (!isNoOp && filesToBeUpdated?.Count > 0)
+                {
+                    progressReporter?.EndProjectUpdate(summaryRequest.InputPath, filesToBeUpdated);
+                }
+            }
 
             if (result.Success)
             {
@@ -307,9 +310,7 @@ namespace NuGet.Commands
                     result is NoOpRestoreResult ? LogLevel.Information : LogLevel.Minimal,
                     string.Format(
                         CultureInfo.CurrentCulture,
-                        summaryRequest.Request.ProjectStyle == ProjectStyle.DotnetToolReference ?
-                            Strings.Log_RestoreCompleteDotnetTool :
-                            Strings.Log_RestoreComplete,
+                        Strings.Log_RestoreComplete,
                         summaryRequest.InputPath,
                         DatetimeUtility.ToReadableTimeFormat(result.ElapsedTime)));
             }
@@ -317,8 +318,6 @@ namespace NuGet.Commands
             {
                 log.LogMinimal(string.Format(
                     CultureInfo.CurrentCulture,
-                    summaryRequest.Request.ProjectStyle == ProjectStyle.DotnetToolReference ?
-                    Strings.Log_RestoreFailedDotnetTool :
                     Strings.Log_RestoreFailed,
                     summaryRequest.InputPath,
                     DatetimeUtility.ToReadableTimeFormat(result.ElapsedTime)));

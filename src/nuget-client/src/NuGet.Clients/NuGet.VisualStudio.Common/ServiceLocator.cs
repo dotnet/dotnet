@@ -42,34 +42,7 @@ namespace NuGet.VisualStudio
                 }
             }
 
-            // VS Threading Rule #1
-            // Access to ServiceProvider and a lot of casts are performed in this method,
-            // and so this method can RPC into main thread. Switch to main thread explictly, since method has STA requirement
-            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            // This is a fallback, primarily hit in tests.
-            return Package.GetGlobalService(typeof(TService)) as TInterface;
-        }
-
-        /// <summary>
-        /// Fetches a service from the service provider in a free threaded fashion (ie. no UI thread transitions).
-        /// </summary>
-        /// <typeparam name="TService">Service type</typeparam>
-        /// <typeparam name="TInterface">Service interface</typeparam>
-        /// <returns>The service if available, null otherwise.</returns>
-        public static async Task<TInterface> GetGlobalServiceFreeThreadedAsync<TService, TInterface>() where TInterface : class
-        {
-            if (PackageServiceProvider != null)
-            {
-                TInterface service = await PackageServiceProvider.GetFreeThreadedServiceAsync<TService, TInterface>();
-
-                if (service != null)
-                {
-                    return service;
-                }
-            }
-
-            return await AsyncServiceProvider.GlobalProvider.GetServiceAsync<TService, TInterface>();
+            return await AsyncServiceProvider.GlobalProvider.GetServiceAsync<TService, TInterface>(throwOnFailure: false);
         }
 
         /// <summary>
@@ -96,7 +69,7 @@ namespace NuGet.VisualStudio
 
         public static async Task<IComponentModel> GetComponentModelAsync()
         {
-            return await GetGlobalServiceFreeThreadedAsync<SComponentModel, IComponentModel>();
+            return await GetGlobalServiceAsync<SComponentModel, IComponentModel>();
         }
 
         public static async Task<IServiceProvider> GetServiceProviderAsync()

@@ -34,8 +34,10 @@ namespace NuGetConsole
             {
                 // HACK: Short cut to set the Powershell execution policy for this process to RemoteSigned.
                 // This is so that we can initialize the PowerShell host and load our modules successfully.
+#pragma warning disable RS0030 // Do not use banned APIs
                 Environment.SetEnvironmentVariable(
                     "PSExecutionPolicyPreference", "RemoteSigned", EnvironmentVariableTarget.Process);
+#pragma warning restore RS0030 // Do not use banned APIs
             }
             catch (SecurityException)
             {

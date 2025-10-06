@@ -127,6 +127,12 @@
     <value>The pack options package type must be a string or array of strings in '{0}'.</value>
     <comment>{0} is the project.json file name.</comment>
   </data>
+  <data name="Invalid_AttributeValue" xml:space="preserve">
+    <value>The {0} value: `{1}` is invalid. Valid example: `{2}`</value>
+    <comment>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</comment>
+  </data>
   <data name="Log_ErrorReadingLockFile" xml:space="preserve">
     <value>Error loading lock file '{0}' : {1}</value>
   </data>

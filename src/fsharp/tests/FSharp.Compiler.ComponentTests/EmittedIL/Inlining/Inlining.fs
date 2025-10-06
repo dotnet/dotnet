@@ -14,34 +14,45 @@ module Inlining =
         |> withEmbeddedPdb
         |> withEmbedAllSource
         |> ignoreWarnings
+        |> compile
         |> verifyILBaseline
 
-    // SOURCE=Match01.fs SCFLAGS="-a --optimize+" COMPILE_ONLY=1 POSTCMD="..\\CompareIL.cmd Match01.dll"	# Match01.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"Match01_RealInternalSignatureOn.fs"|])>]
-    let ``Match01_RealInternalSignatureOn_fs`` compilation =
+    let withRealInternalSignature realSig compilation =
         compilation
-        |> withRealInternalSignatureOn
-        |> verifyCompilation
+        |> withOptions [if realSig then "--realsig+" else "--realsig-" ]
 
     // SOURCE=Match01.fs SCFLAGS="-a --optimize+" COMPILE_ONLY=1 POSTCMD="..\\CompareIL.cmd Match01.dll"	# Match01.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"Match01_RealInternalSignatureOff.fs"|])>]
-    let ``Match01_RealInternalSignatureOff_fs`` compilation =
+    [<Theory; FileInlineData("Match01.fs", Realsig=BooleanOptions.Both)>]
+    let ``Match01_fs`` compilation =
         compilation
-        |> withRealInternalSignatureOff
+        |> getCompilation
         |> verifyCompilation
 
     // SOURCE=Match02.fs SCFLAGS="-a --optimize+" COMPILE_ONLY=1 POSTCMD="..\\CompareIL.cmd Match02.dll"	# Match02.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"Match02.fs"|])>]
+    [<Theory; FileInlineData("Match02.fs")>]
     let ``Match02_fs`` compilation =
         compilation
+        |> getCompilation
         |> verifyCompilation
 
     // SOURCE=StructUnion01.fs SCFLAGS="-a --optimize+" COMPILE_ONLY=1 POSTCMD="..\\CompareIL.cmd StructUnion01.dll"	# StructUnion01.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"StructUnion01.fs"|])>]
+    [<Theory; FileInlineData("StructUnion01.fs")>]
     let ``StructUnion01_fs`` compilation =
         compilation
+        |> getCompilation
         |> verifyCompilation
 
+    [<Theory; FileInlineData("FSharpDelegateBetaReduction.fs", Realsig=BooleanOptions.True, Optimize=BooleanOptions.Both)>]
+    let ``FSharpDelegateBetaReduction_fs`` compilation =
+        compilation
+        |> getCompilation
+        |> withOptions [ "--test:EmitFeeFeeAs100001" ]
+        |> asExe
+        |> withEmbeddedPdb
+        |> withEmbedAllSource
+        |> ignoreWarnings
+        |> compile
+        |> verifyILBaseline
 
     [<Fact>]
     let ``List contains inlining`` () =
@@ -138,4 +149,83 @@ let found = data |> List.contains nan
     IL_002e:  br.s       IL_0000
   }"""]
 #endif
+
+    [<InlineData(true)>]        // RealSig
+    [<InlineData(false)>]       // Regular
+    [<Theory>]
+    let ``Inlining field with private module`` (realSig) =
+        Fsx """
+module private PrivateModule =
+    let moduleValue = 1
+
+    let inline getModuleValue () =
+        moduleValue
+
+[<EntryPoint>]
+let main argv =
+    //   [FS1118] Failed to inline the value 'getModuleValue' marked 'inline', perhaps because a recursive value was marked 'inline'
+    //   (fixed by making PrivateModule internal instead of private)
+    PrivateModule.getModuleValue () |> ignore
+    0
+            """
+        |> withOptimize
+        |> withRealInternalSignature realSig
+        |> asExe
+        |> compileAndRun
+        |> shouldSucceed
+
+    [<InlineData(true)>]        // RealSig
+    [<InlineData(false)>]       // Regular
+    [<Theory>]
+    let ``Inlining field with private class`` (realSig) =
+        Fsx """
+type private FirstType () =
+    member this.FirstMethod () = ()
+
+type private SecondType () =
+    member this.SecondMethod () =
+        let inline callFirstMethod (first: FirstType) =
+            first.FirstMethod ()
+
+        callFirstMethod (FirstType())
+
+printfn $"{(SecondType ()).SecondMethod()}"
+            """
+        |> withOptimize
+        |> withRealInternalSignature realSig
+        |> asExe
+        |> compileAndRun
+        |> shouldSucceed
+
+    [<InlineData(true)>]        // RealSig
+    [<InlineData(false)>]       // Regular
+    [<Theory>]
+    let ``Inlining deep local functions field with private class`` (realSig) =
+        Fsx """
+type private FirstType () =
+    member this.FirstMethod () = ()
+
+type private SecondType () =
+    member this.SecondMethod () =
+        let inline callFirstMethod (first: FirstType) =
+            first.FirstMethod ()
+
+        let inline callFirstMethodDeeper (first: FirstType) =
+            callFirstMethod (first)
+
+        let inline callFirstMethodMoreDeeper (first: FirstType) =
+            callFirstMethodDeeper (first)
+
+        let inline callFirstMethodMostDeeply (first: FirstType) =
+            callFirstMethodMoreDeeper (first)
+
+        callFirstMethodMostDeeply (FirstType())
+
+printfn $"{(SecondType ()).SecondMethod()}"
+            """
+        |> withOptimize
+        |> withRealInternalSignature realSig
+        |> asExe
+        |> compileAndRun
+        |> shouldSucceed
 

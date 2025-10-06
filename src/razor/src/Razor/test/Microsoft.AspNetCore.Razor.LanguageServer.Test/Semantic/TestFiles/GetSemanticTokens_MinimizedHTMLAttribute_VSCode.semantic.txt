@@ -1,0 +1,6 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 markupTagDelimiter 0 [<]
+0 1 1 markupElement 0 [p]
+0 2 4 markupAttribute 0 [attr]
+0 5 1 markupTagDelimiter 0 [/]
+0 1 1 markupTagDelimiter 0 [>]

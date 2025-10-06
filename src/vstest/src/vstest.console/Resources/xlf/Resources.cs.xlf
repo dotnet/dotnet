@@ -84,14 +84,9 @@
       Zobrazí tuto zprávu o používání.</target>
         <note />
       </trans-unit>
-      <trans-unit id="CopyrightCommandLineTitle">
-        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="translated">Copyright (c) Microsoft Corporation. Všechna práva vyhrazena.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
-        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="translated">Microsoft (R) Test Execution Command Line Tool verze {0}</target>
+        <source>VSTest version {0}</source>
+        <target state="translated">Verze VSTest {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">

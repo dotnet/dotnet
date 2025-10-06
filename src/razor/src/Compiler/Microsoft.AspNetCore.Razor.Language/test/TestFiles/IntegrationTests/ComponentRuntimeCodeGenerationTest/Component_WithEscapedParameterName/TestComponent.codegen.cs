@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddComponentParameter(1, "class", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,14)-(1,19) 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+@class
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
 #line (1,21)-(1,22) "x:\dir\subdir\Test\TestComponent.cshtml"
 1
@@ -27,7 +35,15 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "Prop2", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,24)-(1,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+Prop2
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
 #line (1,31)-(1,32) "x:\dir\subdir\Test\TestComponent.cshtml"
 2

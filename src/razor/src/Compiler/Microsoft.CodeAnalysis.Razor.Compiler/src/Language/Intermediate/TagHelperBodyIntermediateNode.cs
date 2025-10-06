@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class TagHelperBodyIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

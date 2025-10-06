@@ -10,7 +10,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Basic.Reference.Assemblies;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -2829,7 +2831,7 @@ class Test
 ";
             #endregion
 
-            var comp1 = CreateEmptyCompilation(src1, new[] { TestMetadata.Net40.mscorlib });
+            var comp1 = CreateEmptyCompilation(src1, new[] { Net40.References.mscorlib });
             var comp2 = CreateCompilation(src2, new[] { new CSharpCompilationReference(comp1) });
 
             var typeSymbol = comp1.SourceModule.GlobalNamespace.GetMember<NamedTypeSymbol>("IGoo");

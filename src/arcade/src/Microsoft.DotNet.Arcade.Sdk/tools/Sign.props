@@ -6,35 +6,59 @@
     <EnableDefaultArtifacts>true</EnableDefaultArtifacts>
   </PropertyGroup>
 
-  <!-- Repo extension point to sign and/or publish. PublishFlatcontainer defaults to true for Artifact items. -->
+  <!-- Repo extension point to sign and/or publish. Artifacts are shipping and blobs by default. -->
   <ItemDefinitionGroup>
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
+      <!-- Possible values: Blob, Package, PDB -->
+      <!-- Currently unset, indicating that a repo hasn't started using this property. If it's set, then it
+           wins over PublishFlatContaner. If it is not set, then PublishFlatContainer wins.
+           After existing usage of PublishFlatContainer is no longer around, set to "Blob" -->
+      <Kind></Kind>
+      <IsShipping>true</IsShipping>
     </Artifact>
   </ItemDefinitionGroup>
 
   <ItemGroup>
     <!--
       This is intended to hold information about the certificates used for signing.
-      For now the only information required is whether or not the certificate can be
-      used for signing already signed files - DualSigningAllowed==true.
     -->
     <CertificatesSignInfo Include="3PartyDual" DualSigningAllowed="true" />
     <CertificatesSignInfo Include="3PartySHA2" DualSigningAllowed="true" />
+    <!-- This signing information indicates certificates that represent a sign and notarize operation. -->
+    <CertificatesSignInfo Include="MacDeveloperHardenWithNotarization" MacCertificate="MacDeveloperHarden" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperWithNotarization" MacCertificate="MacDeveloper" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperVNextWithNotarization" MacCertificate="MacDeveloperVNext" MacNotarizationAppName="dotnet" />
+    <CertificatesSignInfo Include="MacDeveloperVNextHardenWithNotarization" MacCertificate="MacDeveloperVNextHarden" MacNotarizationAppName="dotnet" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
-    <!-- List of container files that will be opened and checked for files that need to be signed. -->
-    <_DefaultItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
-    <_DefaultItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
-    <_DefaultItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
-    <!-- Sign wixpacks to correspond to msi/exe signing -->
-    <_ItemsToOnlySignPostBuild Include="$(ArtifactsPackagesDir)**\*.wixpack.zip" />
+  <!-- Only publish packages that contain this build's Target RID in the name.
+       PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(PostBuildSign)' != 'true' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)**/*.$(TargetRid).*.nupkg"/>
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/*.$(TargetRid).*.nupkg" />
+    <!--
+      Integration with Microsoft.DotNet.Build.Tasks.Installers: Publish packages of the following formats as well.
+      These are arch-specific Visual Studio insertion packages. As they're Windows-only, they only include architecture in the name:
+      - VS.Redist.Common.*.$(TargetArchitecture).*.nupkg
+      - VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg
+      
+      These packages are always non-shipping, so only look there.
+    -->
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.$(TargetArchitecture).*.nupkg" />
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)**/VS.Redist.Common.*.*_$(TargetArchitecture).*.nupkg" />
 
-    <!-- If PostBuildSign == true, these are added to ItemsToSignPostBuild, otherwise these are added to ItemsToSign -->
-    <ItemsToSign Include="@(_DefaultItemsToSign)" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="@(_DefaultItemsToSign->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
-    <ItemsToSignPostBuild Include="@(_ItemsToOnlySignPostBuild->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
+    <!-- Always sign all vsix packages and VS Build Packages. These may be arch specific or agnostic, but they likely won't have the RID included. -->
+    <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
+    <ItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
+  </ItemGroup>
+
+  <!-- PostBuildSign switch is kept for avoiding breaks in repos that use it to avoid signing. -->
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true' and '$(PostBuildSign)' != 'true' and '$(EnableDefaultRidSpecificArtifacts)' != 'true'">
+    <!-- List of container files that will be opened and checked for files that need to be signed. -->
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
+    <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
+    <ItemsToSign Include="$(VisualStudioBuildPackagesDir)**\*.nupkg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +67,9 @@
     <StrongNameSignInfo Include="SilverlightCert121" PublicKeyToken="7cec85d7bea7798e" CertificateName="Microsoft400" />
     <StrongNameSignInfo Include="StrongName" PublicKeyToken="b77a5c561934e089" CertificateName="Microsoft400" />
     <StrongNameSignInfo Include="StrongName" PublicKeyToken="b03f5f7f11d50a3a" CertificateName="Microsoft400" />
-    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\Open.snk" PublicKeyToken="cc7b13ffcd2ddd51" CertificateName="Microsoft400" />
+    <!-- Do not include specific key files if full assembly signing is not supported, as they will not be usable when we sign. -->
+    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\Open.snk" PublicKeyToken="cc7b13ffcd2ddd51" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
+    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\AspNetCore.snk" PublicKeyToken="adb9793829ddae60" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
 
     <!--
       Map of file extensions to default certificate name. Files with these extensions are
@@ -51,13 +77,38 @@
       a public key token.
       The certificate can be overriden using the StrongNameSignInfo or the FileSignInfo item group.
     -->
+    <FileExtensionSignInfo Include=".deb" CertificateName="LinuxSign" />
     <FileExtensionSignInfo Include=".jar" CertificateName="MicrosoftJARSHA2" />
-    <FileExtensionSignInfo Include=".js;.ps1;.psd1;.psm1;.psc1;.py" CertificateName="Microsoft400" />
-    <FileExtensionSignInfo Include=".dll;.exe;.mibc" CertificateName="Microsoft400" />
+    <FileExtensionSignInfo Include=".ps1;.psd1;.psm1;.psc1;.py" CertificateName="Microsoft400" />
+    <FileExtensionSignInfo Include=".dll;.exe;.mibc;.msi" CertificateName="Microsoft400" />
     <FileExtensionSignInfo Include=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Include=".vsix" CertificateName="VsixSHA2" />
     <FileExtensionSignInfo Include=".zip" CertificateName="None" />
     <FileExtensionSignInfo Include=".tgz" CertificateName="None" />
+    <FileExtensionSignInfo Include=".tar.gz" CertificateName="None" />
+    <!-- Note, RPMs can only be unpack/repacked on Linux. They can be signed on non-Linux -->
+    <FileExtensionSignInfo Include=".rpm" CertificateName="LinuxSign" />
+    <!-- Note, these can only be unpack/repacked on Mac. They can be signed on a non-Mac -->
+    <FileExtensionSignInfo Include=".pkg" CertificateName="MacDeveloper" />
+    <!-- .app bundles are technically directories, but the Microsoft.DotNet.MacOsPkg
+    tool packs these bundles into zips when unpacking .pkgs -->
+    <FileExtensionSignInfo Include=".app" CertificateName="MacDeveloper" />
+    <!-- Runtime hardening is required for notarization. -->
+    <FileExtensionSignInfo Include=".dylib" CertificateName="MacDeveloperHarden" />
+
+    <!-- Removing the default .js signing -->
+    <FileExtensionSignInfo Include=".js" CertificateName="BreakingSignatureChange" Condition="'$(NoSignJS)' != 'true'"/>
+    <FileExtensionSignInfo Include=".js" CertificateName="None" Condition="'$(NoSignJS)' == 'true'"/>
+
+    <!-- Explicitly use the azure linux cert for azl binaries -->
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
+    <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
+    <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
+
+    <!-- Explicitly use the "new" LinuxSign cert. -->
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.rpm" />
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.deb" />
+    <FileSignInfo Include="@(NewKeyLinuxPackage->'%(Filename)%(Extension)')" CertificateName="LinuxSign500207PGP" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400
@@ -75,9 +126,12 @@
     <!-- Control whether an empty ItemsToSign item group is allowed when calling SignToolTask. -->
     <AllowEmptySignList Condition="'$(PostBuildSign)' != 'true'">false</AllowEmptySignList>
     <AllowEmptySignList Condition="'$(PostBuildSign)' == 'true'">true</AllowEmptySignList>
-    <!-- Control whether an empty ItemsToSignPostBuild item group is allowed during publishing -->
-    <AllowEmptySignPostBuildList Condition="'$(PostBuildSign)' != 'true'">true</AllowEmptySignPostBuildList>
-    <AllowEmptySignPostBuildList Condition="'$(PostBuildSign)' == 'true'">false</AllowEmptySignPostBuildList>
+
+    <!-- Timeout in milliseconds for DotNet MicroBuild build command. '-1' is infinite. -->
+    <SignToolDotNetTimeout Condition="'$(SignToolDotNetTimeout)' == ''">-1</SignToolDotNetTimeout>
+
+    <!-- Verbosity for DotNet MicroBuild build command. -->
+    <SignToolMSBuildVerbosity Condition="'$(SignToolMSBuildVerbosity)' == ''">quiet</SignToolMSBuildVerbosity>
 
     <NETCORE_ENGINEERING_TELEMETRY>Signing</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
@@ -95,16 +149,7 @@
 
   <!-- Respect Artifact item repo extension point -->
   <ItemGroup Condition="'@(Artifact)' != ''">
-    <!-- Sign wixpacks to correspond to msi/exe signing -->
-    <_ItemsToOnlySignPostBuild Include="@(Artifact)"
-                               Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))" />
-
-    <!-- If PostBuildSign == true, these are added to ItemsToSignPostBuild, otherwise these are added to ItemsToSign -->
-    <ItemsToSign Include="@(Artifact)"
-                 Exclude="@(_ItemsToOnlySignPostBuild)"
-                 Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="@(Artifact->'%(Filename)%(Extension)')"
-                          Condition="'$(PostBuildSign)' == 'true'" />
+    <ItemsToSign Include="@(Artifact)" Condition="'$(PostBuildSign)' != 'true'" />
   </ItemGroup>
 
 </Project>

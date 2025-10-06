@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Threading;
 using NuGet.Common;
@@ -13,8 +15,9 @@ namespace NuGet.PackageManagement.VisualStudio
     internal class TelemetryOnceEmitter
     {
         private int _emittedFlag = 0;
+        private INuGetTelemetryService? _nuGetTelemetryService;
 
-        internal TelemetryOnceEmitter(string eventName)
+        internal TelemetryOnceEmitter(string eventName, INuGetTelemetryService? nuGetTelemetryService)
         {
             if (string.IsNullOrEmpty(eventName))
             {
@@ -22,6 +25,7 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             EventName = eventName;
+            _nuGetTelemetryService = nuGetTelemetryService;
         }
 
         internal string EventName { get; }
@@ -33,7 +37,7 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             if (Interlocked.CompareExchange(ref _emittedFlag, 1, 0) == 0)
             {
-                TelemetryActivity.EmitTelemetryEvent(new TelemetryEvent(EventName));
+                _nuGetTelemetryService?.EmitTelemetryEvent(new TelemetryEvent(EventName));
             }
         }
 

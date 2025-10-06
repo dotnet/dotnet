@@ -1,31 +1,30 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
+using System.Collections.Immutable;
+using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorDirectiveClassifierPhase : RazorEnginePhaseBase, IRazorDirectiveClassifierPhase
 {
-    public IRazorDirectiveClassifierPass[] Passes { get; private set; }
+    public ImmutableArray<IRazorDirectiveClassifierPass> Passes { get; private set; }
 
     protected override void OnInitialized()
     {
-        Passes = Engine.Features.OfType<IRazorDirectiveClassifierPass>().OrderBy(p => p.Order).ToArray();
+        Passes = Engine.GetFeatures<IRazorDirectiveClassifierPass>().OrderByAsArray(static x => x.Order);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument)
+    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        ThrowForMissingDocumentDependency(irDocument);
+        var documentNode = codeDocument.GetDocumentNode();
+        ThrowForMissingDocumentDependency(documentNode);
 
         foreach (var pass in Passes)
         {
-            pass.Execute(codeDocument, irDocument);
+            pass.Execute(codeDocument, documentNode);
         }
 
-        codeDocument.SetDocumentIntermediateNode(irDocument);
+        codeDocument.SetDocumentNode(documentNode);
     }
 }

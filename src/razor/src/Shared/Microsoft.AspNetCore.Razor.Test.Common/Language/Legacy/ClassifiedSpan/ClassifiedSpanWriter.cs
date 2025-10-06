@@ -33,6 +33,7 @@ internal class ClassifiedSpanWriter(TextWriter writer, RazorSyntaxTree syntaxTre
             Write($" (Accepts:{span.AcceptedCharacters})");
 #pragma warning restore CS0618 // Type or member is obsolete
         }
+
         WriteSeparator();
         Write($"Parent: {span.BlockKind} block at {span.BlockSpan}");
     }

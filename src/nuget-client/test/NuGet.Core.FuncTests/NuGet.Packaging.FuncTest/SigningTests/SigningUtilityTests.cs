@@ -1,10 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -30,7 +27,11 @@ namespace NuGet.Packaging.FuncTest
         [CIOnlyFact]
         public void Verify_WithValidInput_DoesNotThrow()
         {
+#if NET9_0_OR_GREATER
+            using (X509Certificate2 certificate = X509CertificateLoader.LoadCertificate(_testFixture.TrustedTestCertificate.Source.PublicCert.RawData))
+#else
             using (var certificate = new X509Certificate2(_testFixture.TrustedTestCertificate.Source.PublicCert.RawData))
+#endif
             using (var request = new AuthorSignPackageRequest(certificate, HashAlgorithmName.SHA256, HashAlgorithmName.SHA256))
             {
                 SigningUtility.Verify(request, NullLogger.Instance);
@@ -276,4 +277,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

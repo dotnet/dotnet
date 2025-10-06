@@ -58,32 +58,29 @@ namespace NuGet.Commands
                 {
                     frameworks.Add(new TargetFrameworkInformation
                     {
-                        FrameworkName = tf
+                        FrameworkName = tf,
+                        Dependencies = [new LibraryDependency()
+                            {
+                                LibraryRange = new LibraryRange(
+                                    libraryIdentity.Name,
+                                    new VersionRange(
+                                        minVersion: libraryIdentity.Version,
+                                        includeMinVersion: true,
+                                        maxVersion: libraryIdentity.Version,
+                                        includeMaxVersion: true),
+                                    LibraryDependencyTarget.Package),
+                                SuppressParent = LibraryIncludeFlags.All,
+                                AutoReferenced = true,
+                                IncludeType = LibraryIncludeFlags.None,
+                            }
+                        ]
                     });
-
                     originalTargetFrameworks.Add(tf.ToString());
                 }
 
                 // The package spec details what packages to restore
                 var packageSpec = new PackageSpec(frameworks)
                 {
-                    Dependencies = new List<LibraryDependency>
-                    {
-                        new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
-                        {
-                            LibraryRange = new LibraryRange(
-                                libraryIdentity.Name,
-                                new VersionRange(
-                                    minVersion: libraryIdentity.Version,
-                                    includeMinVersion: true,
-                                    maxVersion: libraryIdentity.Version,
-                                    includeMaxVersion: true),
-                                LibraryDependencyTarget.Package),
-                            SuppressParent = LibraryIncludeFlags.All,
-                            AutoReferenced = true,
-                            IncludeType = LibraryIncludeFlags.None,
-                        }
-                    },
                     RestoreMetadata = new ProjectRestoreMetadata
                     {
                         ProjectPath = projectFullPath,

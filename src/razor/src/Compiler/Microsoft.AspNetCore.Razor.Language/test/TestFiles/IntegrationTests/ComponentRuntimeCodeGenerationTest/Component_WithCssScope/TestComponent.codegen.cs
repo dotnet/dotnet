@@ -9,19 +9,19 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.Web
 
 #nullable disable
     ;
 #nullable restore
-#line (2,2)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,2)-(2,49) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.Rendering
 
-#line default
-#line hidden
 #nullable disable
     ;
+    #line default
+    #line hidden
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -57,7 +57,7 @@ myComponentReference
 #line default
 #line hidden
 #nullable disable
-                 = (Test.TemplatedComponent)__value;
+                 = (global::Test.TemplatedComponent)__value;
             }
             );
             __builder.CloseComponent();
@@ -142,10 +142,9 @@ i
         );
         __builder.AddAttribute(25, "TestCssScope");
         __builder.AddContent(26, "Something ");
-        __builder.AddContent(27, 
 #nullable restore
-#line (26,42)-(26,43) "x:\dir\subdir\Test\TestComponent.cshtml"
-i
+#line (26,42)-(26,43) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder.AddContent(27, i
 
 #line default
 #line hidden

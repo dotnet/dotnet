@@ -1,0 +1,79 @@
+# This is a workflow file that will be used to merge branches in the repository.
+# Permissions required: 
+#   Contents
+#     write
+#   Pull requests 
+#     write
+# More information on permissions: https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+# 
+# Event data: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_call received is equal to the caller event data. 
+# In order to understand which version of script needs to be used parameter script version introduced, which should be equal to the ref of referenced workflow file.
+# More information on the script_version:
+#   https://github.com/orgs/community/discussions/18601
+#   https://github.com/orgs/community/discussions/63863
+
+on:
+  workflow_call:
+    inputs:      
+      configuration_file_branch:
+        type: string
+        description: The branch to read the configuration file from.
+        required: false
+        default: 'main'
+      configuration_file_path:
+        type: string
+        description: The path to the configuration file.
+        required: false
+        default: 'github-merge-flow.jsonc'
+      script_version:
+        type: string
+        required: false
+        description: Optional parameter which allows the target repository to use different branch of this shared workflow.
+        default: 'main'
+
+jobs:
+  run-merge:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:  
+      - name: Enable git longpath
+        run: git config --global core.longpaths true
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          path: repository
+          fetch-depth: 0
+      - name: Checkout arcade repository
+        uses: actions/checkout@v4
+        with:
+          repository: dotnet/arcade
+          path: arcade-repository 
+          ref: ${{ inputs.script_version }}
+          sparse-checkout: |
+            .github
+      - name: Fetch repository name
+        id: fetch-repo-name
+        run: |
+          $repoName = "${{ github.repository }}"
+          $repoNameWithoutOwner = $repoName.Substring("${{ github.repository_owner }}".Length + 1)
+          "repository_name=$repoNameWithoutOwner" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Extract configuration values
+        id: extract-configuration-values
+        run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\read-configuration.ps1 -ConfigurationFileBranch ${{ inputs.configuration_file_branch }} -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -ConfigurationFilePath ${{inputs.configuration_file_path}}
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - run: Write-Host "Configuration required for running merge flow was not found or was not valid."
+        if: steps.extract-configuration-values.outputs.configurationFound != 'true'
+        name: Read configuration status
+
+      - run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\inter-branch-merge.ps1 -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -MergeToBranch ${{ steps.extract-configuration-values.outputs.mergeToBranch }} ${{ steps.extract-configuration-values.outputs.mergeSwitchArguments }}
+        if: steps.extract-configuration-values.outputs.configurationFound == 'true'
+        name: Merge branches
+        working-directory: ${{ github.workspace }}/repository
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

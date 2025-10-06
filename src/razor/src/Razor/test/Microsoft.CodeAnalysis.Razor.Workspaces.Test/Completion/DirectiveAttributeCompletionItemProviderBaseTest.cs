@@ -1,11 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
-
-#nullable disable
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper testOutput) : RazorToolingIntegrationTestBase(testOutput)
 {
-    internal override string FileKind => FileKinds.Component;
+    internal override RazorFileKind? FileKind => RazorFileKind.Component;
     internal override bool UseTwoPhaseCompilation => true;
 
     [Fact]
@@ -181,7 +179,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
         // Assert
         Assert.True(result);
         Assert.Equal("input", tagName);
-        Assert.Equal(new[] { "type", "@bind" }, attributes);
+        Assert.Equal<string>(["type", "@bind"], attributes);
     }
 
     [Fact]
@@ -227,15 +225,17 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
 
         // Assert
         Assert.True(result);
-        Assert.Equal(new[] { "type", "@bind:format", "something", "@bind" }, attributes);
+        Assert.Equal<string>(["type", "@bind:format", "something", "@bind"], attributes);
     }
 
     private RazorSyntaxNode GetNodeAt(string content, int index)
     {
         var result = CompileToCSharp(content, throwOnFailure: false);
-        var syntaxTree = result.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
+        var root = result.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);
+
+        Assert.NotNull(owner);
 
         return owner;
     }

@@ -26,7 +26,7 @@ if /i "%__Ninja%" == "1" (
     set __CmakeGenerator=Ninja
 ) else (
     if /i NOT "%__Arch%" == "wasm" (
-        if /i "%__VSVersion%" == "vs2022" (set __CmakeGenerator=%__CmakeGenerator% 17 2022)
+        if /i "%__VSVersion%" == "17.0" (set __CmakeGenerator=%__CmakeGenerator% 17 2022)
 
         if /i "%__Arch%" == "x64" (set __ExtraCmakeParams=%__ExtraCmakeParams% -A x64)
         if /i "%__Arch%" == "arm" (set __ExtraCmakeParams=%__ExtraCmakeParams% -A ARM)
@@ -45,24 +45,26 @@ if /i "%__Arch%" == "wasm" (
     )
     if /i "%__Os%" == "browser" (
         if "%EMSDK_PATH%" == "" (
-            if not exist "%__repoRoot%\src\mono\wasm\emsdk" (
+            if not exist "%__repoRoot%\src\mono\browser\emsdk" (
                 echo Error: Should set EMSDK_PATH environment variable pointing to emsdk root.
                 exit /B 1
             )
 
-            set "EMSDK_PATH=%__repoRoot%\src\mono\wasm\emsdk"
+            set "EMSDK_PATH=%__repoRoot%\src\mono\browser\emsdk"
         )
         :: replace backslash with forward slash and append last slash
         set "EMSDK_PATH=!EMSDK_PATH:\=/!"
         if not "!EMSDK_PATH:~-1!" == "/" set "EMSDK_PATH=!EMSDK_PATH!/"
 
-        set __ExtraCmakeParams=%__ExtraCmakeParams% "-DCMAKE_TOOLCHAIN_FILE=!EMSDK_PATH!/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+        set __ExtraCmakeParams=%__ExtraCmakeParams% "-DCMAKE_TOOLCHAIN_FILE=!EMSDK_PATH!/emscripten/cmake/Modules/Platform/Emscripten.cmake"
         set __UseEmcmake=1
     )
     if /i "%__Os%" == "wasi" (
+        set "__repoRoot=!__repoRoot:\=/!"
+        if not "!__repoRoot:~-1!" == "/" set "__repoRoot=!__repoRoot!/"
         if "%WASI_SDK_PATH%" == "" (
             if not exist "%__repoRoot%\src\mono\wasi\wasi-sdk" (
-                echo Error: Should set WASI_SDK_PATH environment variable pointing to emsdk root.
+                echo Error: Should set WASI_SDK_PATH environment variable pointing to WASI SDK root.
                 exit /B 1
             )
 
@@ -72,10 +74,37 @@ if /i "%__Arch%" == "wasm" (
         set "WASI_SDK_PATH=!WASI_SDK_PATH:\=/!"
         if not "!WASI_SDK_PATH:~-1!" == "/" set "WASI_SDK_PATH=!WASI_SDK_PATH!/"
         set __CmakeGenerator=Ninja
-        set __ExtraCmakeParams=%__ExtraCmakeParams% -DCLR_CMAKE_TARGET_OS=wasi -DCLR_CMAKE_TARGET_ARCH=wasm "-DWASI_SDK_PREFIX=!WASI_SDK_PATH!" "-DCMAKE_TOOLCHAIN_FILE=!WASI_SDK_PATH!/share/cmake/wasi-sdk.cmake" "-DCMAKE_SYSROOT=!WASI_SDK_PATH!/share/wasi-sysroot"
+        set __ExtraCmakeParams=%__ExtraCmakeParams% -DCLR_CMAKE_TARGET_OS=wasi -DCLR_CMAKE_TARGET_ARCH=wasm "-DWASI_SDK_PREFIX=!WASI_SDK_PATH!" "-DCMAKE_TOOLCHAIN_FILE=!WASI_SDK_PATH!/share/cmake/wasi-sdk-p2.cmake" "-DCMAKE_SYSROOT=!WASI_SDK_PATH!share/wasi-sysroot" "-DCMAKE_CROSSCOMPILING_EMULATOR=node --experimental-wasm-bigint --experimental-wasi-unstable-preview1"
     )
 ) else (
     set __ExtraCmakeParams=%__ExtraCmakeParams%  "-DCMAKE_SYSTEM_VERSION=10.0"
+)
+
+if /i "%__Os%" == "android" (
+    :: Keep in sync with $(AndroidApiLevelMin) in Directory.Build.props in the repository rooot
+    set __ANDROID_API_LEVEL=21
+    if "%ANDROID_NDK_ROOT%" == "" (
+        echo Error: You need to set the ANDROID_NDK_ROOT environment variable pointing to the Android NDK root.
+        exit /B 1
+    )
+
+    set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_BUILD=1" "-DANDROID_CPP_FEATURES='no-rtti exceptions'"
+    set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_PLATFORM=android-!__ANDROID_API_LEVEL!" "-DANDROID_NATIVE_API_LEVEL=!__ANDROID_API_LEVEL!"
+
+    if "%__Arch%" == "x64" (
+        set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_ABI=x86_64"
+    )
+    if "%__Arch%" == "x86" (
+        set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_ABI=x86"
+    )
+    if "%__Arch%" == "arm64" (
+        set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_ABI=arm64-v8a"
+    )
+    if "%__Arch%" == "arm" (
+        set __ExtraCmakeParams=!__ExtraCmakeParams! "-DANDROID_ABI=armeabi-v7a"
+    )
+
+    set __ExtraCmakeParams=!__ExtraCmakeParams! "-DCMAKE_TOOLCHAIN_FILE='%ANDROID_NDK_ROOT:\=/%/build/cmake/android.toolchain.cmake'" "-C %__repoRoot%/eng/native/tryrun.cmake"
 )
 
 :loop
@@ -101,19 +130,22 @@ if not "%__ConfigureOnly%" == "1" (
                 exit /B 0
             ) else (
                 echo The CMake command line differs from the last run. Running CMake again.
-                echo %__ExtraCmakeParams% > %__CmdLineOptionsUpToDateFile%
             )
-        ) else (
-            echo %__ExtraCmakeParams% > %__CmdLineOptionsUpToDateFile%
         )
     )
 )
 
 if /i "%__UseEmcmake%" == "1" (
-    call "!EMSDK_PATH!/emsdk_env.bat" > nul 2>&1 && emcmake "%CMakePath%" %__ExtraCmakeParams% --no-warn-unused-cli -G "%__CmakeGenerator%" -B %__IntermediatesDir% -S %__SourceDir%
+    call "!EMSDK_PATH!/emsdk_env.cmd" > nul 2>&1 && emcmake "%CMakePath%" %__ExtraCmakeParams% --no-warn-unused-cli -G "%__CmakeGenerator%" -B %__IntermediatesDir% -S %__SourceDir%
 ) else (
+    echo "%CMakePath% %__ExtraCmakeParams% --no-warn-unused-cli -G %__CmakeGenerator% -B %__IntermediatesDir% -S %__SourceDir%"
     "%CMakePath%" %__ExtraCmakeParams% --no-warn-unused-cli -G "%__CmakeGenerator%" -B %__IntermediatesDir% -S %__SourceDir%
 )
+
+if "%errorlevel%" == "0" (
+    echo %__ExtraCmakeParams% > %__CmdLineOptionsUpToDateFile%
+)
+
 endlocal
 exit /B %errorlevel%
 

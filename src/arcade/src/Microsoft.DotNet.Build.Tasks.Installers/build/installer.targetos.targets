@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <TargetRuntimeOS>$(InstallerRuntimeIdentifier.Substring(0, $(InstallerRuntimeIdentifier.LastIndexOf('-'))))</TargetRuntimeOS>
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(InstallerRuntimeIdentifier.Substring($(InstallerRuntimeIdentifier.LastIndexOf('-'))).TrimStart('-'))</TargetArchitecture>
+    <InstallerTargetArchitecture Condition="'$(InstallerTargetArchitecture)' == ''">$(TargetArchitecture)</InstallerTargetArchitecture>
+  </PropertyGroup>
+  
+  <Target Name="_GetTargetOSArchInfo">
+    <Error Condition="'$(InstallerRuntimeIdentifier)' == ''"
+           Text="An InstallerRuntimeIdentifier must be specified when building installers." />
+    <ItemGroup>
+      <CrossArchMsiToBuild Include="@(CrossArchSdkMsiInstallerArch)" Exclude="$(TargetArchitecture)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <_osSupportsWixBasedInstallers Condition="$([MSBuild]::IsOsPlatform(Windows)) and '$(TargetRuntimeOS)' == 'win'">true</_osSupportsWixBasedInstallers>
+
+      <_osArchSupportsWixBasedInstallers>$(_osSupportsWixBasedInstallers)</_osArchSupportsWixBasedInstallers>
+      <_osArchSupportsWixBasedInstallers Condition="'$(TargetArchitecture)' == 'arm'">false</_osArchSupportsWixBasedInstallers>
+    </PropertyGroup>
+  </Target>
+</Project>

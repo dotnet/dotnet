@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -8,7 +9,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal readonly record struct RazorCommitCharacter(string Character, bool Insert = true)
 {
-    public static ImmutableArray<RazorCommitCharacter> CreateArray(string[] characters, bool insert = true)
+    public static ImmutableArray<RazorCommitCharacter> CreateArray(ReadOnlySpan<string> characters, bool insert = true)
     {
         using var converted = new PooledArrayBuilder<RazorCommitCharacter>(capacity: characters.Length);
 
@@ -17,6 +18,6 @@ internal readonly record struct RazorCommitCharacter(string Character, bool Inse
             converted.Add(new(ch, insert));
         }
 
-        return converted.DrainToImmutable();
+        return converted.ToImmutableAndClear();
     }
 }

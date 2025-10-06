@@ -1,13 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,40 +14,15 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
 {
-    private readonly IRazorDocumentMappingService _mappingService;
+    private readonly IDocumentMappingService _mappingService;
 
     public RazorBreakpointSpanEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new RazorDocumentMappingService(
+        _mappingService = new LspDocumentMappingService(
             FilePathService,
             new TestDocumentContextFactory(),
             LoggerFactory);
-    }
-
-    [Fact]
-    public async Task Handle_UnsupportedDocument_ReturnsNull()
-    {
-        // Arrange
-        var documentPath = new Uri("C:/path/to/document.cshtml");
-        var codeDocument = CreateCodeDocument(@"
-<p>@DateTime.Now</p>");
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-
-        var diagnosticsEndpoint = new RazorBreakpointSpanEndpoint(_mappingService, LoggerFactory);
-        var request = new RazorBreakpointSpanParams()
-        {
-            Uri = documentPath,
-            Position = new Position(1, 0)
-        };
-        codeDocument.SetUnsupported();
-        var requestContext = CreateRazorRequestContext(documentContext);
-
-        // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
-
-        // Assert
-        Assert.Null(response);
     }
 
     [Fact]
@@ -64,13 +38,14 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
-        var expectedRange = new Range { Start = new Position(1, 5), End = new Position(1, 19) };
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Equal(expectedRange, response!.Range);
@@ -89,13 +64,14 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
-        var expectedRange = new Range { Start = new Position(1, 4), End = new Position(1, 16) };
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Equal(expectedRange, response!.Range);
@@ -107,20 +83,21 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
         var codeDocument = CreateCodeDocument(@"
-<p>@{var abc = 123;}</p>", FileKinds.Component);
+<p>@{var abc = 123;}</p>", RazorFileKind.Component);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
 
         var diagnosticsEndpoint = new RazorBreakpointSpanEndpoint(_mappingService, LoggerFactory);
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
-        var expectedRange = new Range { Start = new Position(1, 5), End = new Position(1, 19) };
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Equal(expectedRange, response!.Range);
@@ -132,20 +109,21 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
         var codeDocument = CreateCodeDocument(@"
-<p>@currentCount</p>", FileKinds.Component);
+<p>@currentCount</p>", RazorFileKind.Component);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
 
         var diagnosticsEndpoint = new RazorBreakpointSpanEndpoint(_mappingService, LoggerFactory);
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
-        var expectedRange = new Range { Start = new Position(1, 4), End = new Position(1, 16) };
+        var expectedRange = LspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Equal(expectedRange, response!.Range);
@@ -165,12 +143,13 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 1,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -189,12 +168,13 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -216,12 +196,13 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = LspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -243,22 +224,29 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(2, 0)
+            Position = LspFactory.CreatePosition(2, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string? fileKind = null)
+    private static RazorCodeDocument CreateCodeDocument(string text, RazorFileKind? fileKind = null)
     {
         var sourceDocument = TestRazorSourceDocument.Create(text);
-        var projectEngine = RazorProjectEngine.Create(builder => { });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind ?? FileKinds.Legacy, importSources: default, Array.Empty<TagHelperDescriptor>());
-        return codeDocument;
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+
+        return projectEngine.Process(sourceDocument, fileKind ?? RazorFileKind.Legacy, importSources: default, tagHelpers: []);
     }
 }

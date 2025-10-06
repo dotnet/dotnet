@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NuGet.LibraryModel;
@@ -87,21 +87,13 @@ namespace NuGet.ProjectModel.Test
             // Arrange
             var libraryA = new LockFileLibrary
             {
-                Files = new List<string>
-                {
-                    "path/a.txt",
-                    "path/b.txt"
-                }
+                Files = ImmutableArray.Create<string>("path/a.txt", "path/b.txt")
             };
 
             // different case
             var libraryB = new LockFileLibrary
             {
-                Files = new List<string>
-                {
-                    "path/a.txt",
-                    "PATH/b.txt"
-                }
+                Files = ImmutableArray.Create<string>("path/a.txt", "PATH/b.txt")
             };
 
             // Act & Assert
@@ -121,18 +113,14 @@ namespace NuGet.ProjectModel.Test
                 MSBuildProject = "MSBuildProject",
                 Sha512 = "FAKE-HASH",
                 Type = LibraryType.Package,
-                Files = new List<string>
-                {
-                    "file/a.txt",
-                    "file/b.txt"
-                }
+                Files = ImmutableArray.Create<string>("file/a.txt", "file/b.txt")
             };
 
             // Use Newtonsoft.Json to enumerate all properties.
             var originalSerialized = JsonConvert.SerializeObject(original, Formatting.Indented);
 
             // Act
-            var clone = original.Clone();
+            var clone = original with { Name = original.Name };
 
             // Assert
             var cloneSerialized = JsonConvert.SerializeObject(original, Formatting.Indented);
@@ -152,15 +140,11 @@ namespace NuGet.ProjectModel.Test
                 MSBuildProject = "MSBuildProject",
                 Sha512 = "FAKE-HASH",
                 Type = LibraryType.Package,
-                Files = new List<string>
-                {
-                    "file/a.txt",
-                    "file/b.txt"
-                }
+                Files = ImmutableArray.Create<string>("file/a.txt", "file/b.txt")
             };
 
             // Act
-            var clone = original.Clone();
+            var clone = original with { Name = original.Name };
 
             // Assert
             Assert.Equal(original, clone);
@@ -179,32 +163,17 @@ namespace NuGet.ProjectModel.Test
                 MSBuildProject = "MSBuildProject",
                 Sha512 = "FAKE-HASH",
                 Type = LibraryType.Package,
-                Files = new List<string>
-                {
-                    "file/a.txt",
-                    "file/b.txt"
-                }
+                Files = ImmutableArray.Create<string>("file/a.txt", "file/b.txt")
             };
 
             // Use Newtonsoft.Json to take a snapshot of all properties.
             var originalSerializedBefore = JsonConvert.SerializeObject(original, Formatting.Indented);
 
             // Act
-            var clone = original.Clone();
+            var clone = original with { Name = original.Name };
 
             // Assert
             Assert.NotSame(original, clone);
-
-            // Ensure that the clone is deep. Technically the properties that are read-only or value
-            // types do not need to be mutated, but this protects against future refactorings.
-            clone.Name += "Different";
-            clone.Version = new NuGetVersion("2.0.0");
-            clone.Path += "Different";
-            clone.IsServiceable = !clone.IsServiceable;
-            clone.MSBuildProject += "Different";
-            clone.Sha512 += "Different";
-            clone.Type += "Different";
-            clone.Files.Add("Different");
 
             var originalSerializedAfter = JsonConvert.SerializeObject(original, Formatting.Indented);
             Assert.Equal(originalSerializedBefore, originalSerializedAfter);
@@ -483,12 +452,12 @@ namespace NuGet.ProjectModel.Test
         {
             var leftSide = new LockFileLibrary()
             {
-                Files = left.Split(';')
+                Files = left.Split(';').ToImmutableArray()
             };
 
             var rightSide = new LockFileLibrary()
             {
-                Files = right.Split(';')
+                Files = right.Split(';').ToImmutableArray()
             };
 
             // Act & Assert

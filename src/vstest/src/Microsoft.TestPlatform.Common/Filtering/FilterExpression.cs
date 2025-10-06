@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Filtering;
 /// <summary>
 /// Represents an expression tree.
 /// Supports:
-///     Logical Operators:  &, |
+///     Logical Operators:  &amp;, |
 ///     Equality Operators: =, !=
 ///     Parenthesis (, ) for grouping.
 /// </summary>
@@ -41,7 +41,7 @@ internal class FilterExpression
     private readonly FilterExpression? _right;
 
     /// <summary>
-    /// If logical expression is using logical And ('&') operator.
+    /// If logical expression is using logical And ('&amp;') operator.
     /// </summary>
     private readonly bool _areJoinedByAnd;
 
@@ -122,7 +122,7 @@ internal class FilterExpression
         if (null == properties)
         {
             // if null, initialize to empty list so that invalid properties can be found.
-            properties = Enumerable.Empty<string>();
+            properties = [];
         }
 
         return IterateFilterExpression<string[]?>((current, result) =>
@@ -132,7 +132,7 @@ internal class FilterExpression
             {
                 var valid = current._condition.ValidForProperties(properties, propertyProvider);
                 // If it's not valid will add it to the function's return array.
-                return !valid ? new string[1] { current._condition.Name } : null;
+                return !valid ? [current._condition.Name] : null;
             }
 
             // Concatenate the children node's result to get their parent result.

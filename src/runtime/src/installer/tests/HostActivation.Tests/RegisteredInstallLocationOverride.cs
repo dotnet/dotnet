@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.DotNet.Cli.Build.Framework;
+using Microsoft.NET.HostModel;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Microsoft.DotNet.CoreSetup.Test.HostActivation
                 //   product must look into the 32-bit hive.
                 //   Without the redirection we would not be able to test that the product always looks
                 //   into 32-bit only.
-                // Per this page https://docs.microsoft.com/en-us/windows/desktop/WinProg64/shared-registry-keys
+                // Per this page https://learn.microsoft.com/windows/desktop/WinProg64/shared-registry-keys
                 // a user writable redirected key is for example HKCU\Software\Classes\Interface
                 // so we're going to use that one - it's not super clean as the key stores COM interfaces,
                 // but we should not corrupt anything by adding a special subkey even if it's left behind.
@@ -98,10 +99,13 @@ namespace Microsoft.DotNet.CoreSetup.Test.HostActivation
             }
             else
             {
-                if (File.Exists(PathValueOverride))
+                RetryUtil.RetryOnIOError(() =>
                 {
-                    File.Delete(PathValueOverride);
-                }
+                    if (File.Exists(PathValueOverride))
+                    {
+                        File.Delete(PathValueOverride);
+                    }
+                });
             }
 
             if (_testOnlyProductBehavior != null)

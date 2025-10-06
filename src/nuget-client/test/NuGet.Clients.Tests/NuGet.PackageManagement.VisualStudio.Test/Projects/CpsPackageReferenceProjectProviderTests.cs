@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Threading;
 using Moq;
 using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
@@ -24,7 +23,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Projects
 
         // As of October 2020, Service Fabric projects (sfproj) uses CPS, but does not support PackageReference. Make sure non-PR CPS projects do not use this project system.
         [Fact]
-        public async Task TryCreateNuGetProjectAsync_CpsProjectWithoutPackageReferencesCapability_ReturnsNull()
+        public async Task TryCreateNuGetProject_CpsProjectWithoutPackageReferencesCapability_ReturnsNull()
         {
             // Arrange
             var hierarchy = new Mock<IVsHierarchy>();
@@ -46,11 +45,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Projects
             var target = new CpsPackageReferenceProjectProvider(projectSystemCache.Object, scriptExecutor.Object);
 
             // Act
-            NuGetProject actual = await NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
-            {
-                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                return await target.TryCreateNuGetProjectAsync(projectAdapter.Object, ppc, forceProjectType: false);
-            });
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            NuGetProject actual = target.TryCreateNuGetProject(projectAdapter.Object, ppc, forceProjectType: false);
 
             // Assert
             Assert.Null(actual);

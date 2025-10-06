@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
+    <body>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">Vše</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Argument nesmí být null ani prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">Hodnota musí být větší nebo rovna {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigErrorDialogBoxTitle">
+        <source>NuGet operation failed</source>
+        <target state="translated">Operace NuGet selhala.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
+        <source>The default credentials credential provider failed to load.</source>
+        <target state="translated">Nepovedlo se načíst poskytovatele přihlašovacích údajů pro výchozí přihlašovací údaje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_ImportedProvider">
+        <source>Failed to load credential provider from assembly {0}.</source>
+        <target state="translated">Nepovedlo se načíst poskytovatele přihlašovacích údajů ze sestavení {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_PluginCredentialProvider">
+        <source>The plugin credential providers could not be loaded.</source>
+        <target state="translated">Poskytovatele pověření modulu plug-in se nepodařilo načíst.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioAccountProvider">
+        <source>The Visual Studio or VSTS account provider failed to load.</source>
+        <target state="translated">Nepovedlo se načíst poskytovatele účtů sady Visual Studio nebo VSTS.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioCredentialProvider">
+        <source>The Visual Studio credential provider failed to load.</source>
+        <target state="translated">Nepovedlo se načíst poskytovatele přihlašovacích údajů sady Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DTE_ProjectUnsupported">
+        <source>The project '{0}' is unsupported</source>
+        <target state="translated">Projekt {0} není podporovaný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddGacReference">
+        <source>Added reference '{0}' in the Global Assembly Cache to project '{1}'</source>
+        <target state="translated">Do projektu {1} byl přidaný odkaz {0} do globální mezipaměti sestavení.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToProject">
+        <source>Added file '{0}' to project '{1}'.</source>
+        <target state="translated">Do projektu {1} byl přidaný soubor {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedReferenceToProject">
+        <source>Added reference '{0}' to project:'{1}'. The Reference was Resolved To Package (resolvedToPackage):'{2}', where Reference Path from DTE(dteOriginalPath):'{3}' and Reference Path from package reference(assemblyFullPath):'{4}'.</source>
+        <target state="translated">Do projektu {1} se přidal odkaz {0}. Odkaz se přeložil na balíček (resolvedToPackage): {2}, kde Reference Path z DTE(dteOriginalPath): {3} a Reference Path z odkazu balíčku (assemblyFullPath): {4}</target>
+        <note>{0} is the reference name
+{1} is the project name
+{2} is boolean flag (true or false)
+{3} is the project full path
+{4} is the reference assembly full path</note>
+      </trans-unit>
+      <trans-unit id="Debug_RemoveReference">
+        <source>Removed reference '{0}' from project '{1}'</source>
+        <target state="translated">Z projektu {1} byl odebraný odkaz {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'</source>
+        <target state="translated">Odebraný soubor {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'</source>
+        <target state="translated">Ze složky {1} byl odebraný soubor {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">Byla odebrána složka {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateParentFolder">
+        <source>Failed to create parent folder for file '{0}' in project {1}.</source>
+        <target state="translated">Nepovedlo se vytvořit nadřazenou složku pro soubor {0} v projektu {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>File '{0}' does not exist on disk. </source>
+        <target state="translated">Soubor {0} na disku neexistuje. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidJson">
+        <source>'{0}' is an invalid json file.</source>
+        <target state="translated">{0} není platný soubor JSON.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleFrameworks">
+        <source>Failed to migrate project '{0}'. The project may only contain one target framework.</source>
+        <target state="translated">Nepovedlo se migrovat projekt {0}. Projekt může obsahovat jenom jednu cílovou architekturu.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Error_NuGetConfig_InvalidState">
+        <source>One or more NuGet.Config files contain an error.</source>
+        <target state="translated">Nejméně jeden soubor NuGet.Config obsahuje chybu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_InvalidSource">
+        <source>The source specified is invalid.</source>
+        <target state="translated">Zadaný zdroj není platný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueName">
+        <source>The name specified has already been added to the list of available package sources.</source>
+        <target state="translated">Zadaný název se už přidal do seznamu dostupných zdrojů balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources.</source>
+        <target state="translated">Zadaný zdroj se už přidal do seznamu dostupných zdrojů balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">Při získávání dat o ohrožení zabezpečení balíčku došlo k chybě: {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WhileLoadingConfigForBindingRedirects">
+        <source>Failed to load '{0}', while updating binding redirects. {1}</source>
+        <target state="translated">Při aktualizaci přesměrování vazeb se nepodařilo načíst konfiguraci {0}. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_InvalidContinuationToken">
+        <source>Invalid token</source>
+        <target state="translated">Neplatný token</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddFacadeReference">
+        <source>Failed to add reference to '{0}'. The package '{1}' tried to add a framework reference to '{0}'. This reference is not required to be explicitly added by a package.</source>
+        <target state="translated">Nepovedlo se přidat odkaz na {0}. Balíček {1} se pokusil přidat odkaz na architekturu do {0}. Balíček tento odkaz nemusí explicitně přidávat.</target>
+        <note>{0} is the framework facade reference name
+{1} is the package name</note>
+      </trans-unit>
+      <trans-unit id="FailedToAddGacReference">
+        <source>Failed to add reference. The package '{0}' tried to add a framework reference to '{1}' which was not found in the GAC. This is possibly a bug in the package. Please contact the package owners for assistance.</source>
+        <target state="translated">Nepovedlo se přidat odkaz. Balíček {0} se pokusil přidat odkaz na rozhraní do {1}, které se v GAC nenašlo. Jedná se pravděpodobně o chybu v balíčku. Požádejte prosím o pomoc vlastníky balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddReference">
+        <source>Failed to add reference to '{0}'.</source>
+        <target state="translated">Nepovedlo se přidat odkaz na {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToRemoveReference">
+        <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
+        <target state="translated">Hledání bez rozlišování velkých a malých písmen pro odkaz {0}, který se má odebrat, našlo víc než jednu shodu. Požadavek se nedá provést.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateBindingRedirects">
+        <source>Failed to update binding redirects for {0} : {1}</source>
+        <target state="translated">Nepovedlo se aktualizovat přesměrování vazeb pro {0}: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallingPackage">
+        <source>Installing NuGet package {0}.</source>
+        <target state="translated">Instaluje se balíček NuGet {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildPropertyNotFound">
+        <source>The {0} MSBuild property could not be found for project '{1}'.</source>
+        <target state="translated">Nepovedlo se najít vlastnost MSBuild {0} pro projekt {1}.</target>
+        <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="PathToExistingFileNotPresent">
+        <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
+        <target state="translated">Cesta {0} k existujícímu souboru se na disku nenašla. Nejde přidat do projektu {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">Operace se nepovedla, protože podrobnosti pro projekt {0} nešlo načíst.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectUpgradeAndRetargetErrorMessage">
+        <source>Some NuGet packages were installed using a target framework different from the current target framework and may need to be reinstalled. Visit https://docs.nuget.org/docs/workflows/reinstalling-packages for more information.  Packages affected: {0}</source>
+        <target state="translated">Některé balíčky NuGet jsou nainstalované s použitím jiné cílové architektury, než je aktuální verze, a pravděpodobně bude potřeba je přeinstalovat. Další informace najdete na webu https://docs.nuget.org/docs/workflows/reinstalling-packages. Ovlivněné balíčky: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectWithIdNotFound">
+        <source>A project with ID '{0}' was not found.</source>
+        <target state="translated">Projekt s ID {0} se nenašel.</target>
+        <note>{0} is the project's unique ID (ProjectGuid)</note>
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">Hodnota {0} nemůže být nulová.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">Řešení není uložené. Než začnete spravovat balíčky NuGet, řešení uložte.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink">
+        <source>migration document</source>
+        <target state="translated">dokumentu migrace</target>
+        <note>The text has the document hyperlink applied to it.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
+        <source>.</source>
+        <target state="translated">.</target>
+        <note>This test goes immediately after the document link.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
+        <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</source>
+        <target state="translated">Operace NuGet selhala, protože minimálně jeden balíček není kompatibilní s vaším projektem. Architektura projektu {0} ({1}) je zastaralá. Další informace o tom, jak migrovat projekty do podporované architektury, najdete v</target>
+        <note>This text goes immediately before the document link.
+{0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
+{1} is the short folder representation of the framework (e.g. "net45").</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_ProjectList">
+        <source>The following project(s) target the deprecated framework:</source>
+        <target state="translated">Cílem následujících projektů je zastaralá architektura:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGetCPSPackageInstallationService">
+        <source>Unable to get the project's package installation service for project '{0}'.</source>
+        <target state="translated">Nepovedlo se získat službu instalace balíčku projektu pro projekt {0}.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="UnresolvedItemDuringProjectClosureWalk">
+        <source>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</source>
+        <target state="translated">Nepovedlo se přeložit všechny položky odkazované v {0}. Obvykle je možné tuto zprávu ignorovat. Problém se dá vyřešit tak, že se řešení zcela obnoví a sestaví. Pokud je nepřeložená položka odkazem na projekt, může to mít za následek neúplný výsledek obnovení NuGet a chybějící odkazy na projekty. Pokud se chcete ujistit, že obnovení dokáže najít všechny projekty, ověřte, že se všechny projekty správně odkazují a že existují na disku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFeedType">
+        <source>The feed type '{0}' is unsupported.</source>
+        <target state="translated">Typ kanálu {0} se nepodporuje.</target>
+        <note>{0} is the ItemFilter type which correlates to the selected tab</note>
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Open">
+        <source>_Open</source>
+        <target state="translated">_Otevřít</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">Adresář {0} není prázdný. Přeskakuje se...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
+        <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
+        <target state="translated">Nepovedlo se odebrat adresáře balíčků označené k odstranění při restartování sady Visual Studio: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
+        <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
+        <target state="translated">Nepovedlo se odebrat adresář balíčků {0} označený k odstranění při restartování sady Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
+        <source>Failed to find match for removing reference '{0}'.</source>
+        <target state="translated">Nepovedlo se najít shodu pro odebrání odkazu {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
+        <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
+        <target state="translated">Nepovedlo se označit adresář balíčků {0} k odstranění při restartování sady Visual Studio: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">Soubor {0} již existuje. Bude přeskočen...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoExactMatchForReference">
+        <source>No exact match found for removing reference '{0}'. Trying No No exact match found for removing reference '{0}'. Trying case-insensitive search...-</source>
+        <target state="translated">Nenašla se přesná shoda pro odebrání odkazu {0}. Nenašla se přesná shoda pro odebrání odkazu {0}. Zkouší se hledání bez rozlišování velkých a malých písmen...</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

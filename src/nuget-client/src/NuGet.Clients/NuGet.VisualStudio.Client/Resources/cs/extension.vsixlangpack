@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>Správce balíčků NuGet</LocalizedName>
+  <LocalizedDescription>Kolekce nástrojů pro automatizaci procesu instalace, upgradu, konfigurace a odebrání balíčků z projektu VS.</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

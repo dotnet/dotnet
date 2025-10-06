@@ -21,9 +21,11 @@ namespace NuGet.PackageManagement.UI.Test
         [InlineData("1.0.0", "ANewPackage >= 1.0.0")]
         public void DeprecationAlternativePackage_WithAsterisk_ShowsNoVersionInfo(string versionRange, string expected)
         {
-            var model = new TestDetailControlModel(
-                Mock.Of<IServiceBroker>(),
-                Enumerable.Empty<IProjectContextInfo>());
+            var model = new PackageDetailControlModel(
+                serviceBroker: Mock.Of<IServiceBroker>(),
+                solutionManager: Mock.Of<INuGetSolutionManagerService>(),
+                projects: Enumerable.Empty<IProjectContextInfo>(),
+                uiController: Mock.Of<INuGetUI>());
 
             var metadata = new DetailedPackageMetadata()
             {

@@ -108,7 +108,7 @@ namespace ILCompiler
                     hash = SHA256.HashData(GetBytesFromString(literal));
                 }
 
-                mangledName += "_" + BitConverter.ToString(hash).Replace("-", "");
+                mangledName += "_" + Convert.ToHexString(hash);
             }
 
             return mangledName;
@@ -202,6 +202,8 @@ namespace ILCompiler
                                 containingType = containingType.ContainingType;
                             }
 
+                            name = prependAssemblyName + "_" + SanitizeName(name, true);
+
                             // If this is one of the well known types, use a shorter name
                             // We know this won't conflict because all the other types are
                             // prefixed by the assembly name.
@@ -230,10 +232,6 @@ namespace ILCompiler
                                             name = "String";
                                         break;
                                 }
-                            }
-                            else
-                            {
-                                name = prependAssemblyName + "_" + SanitizeName(name, true);
                             }
 
                             // Ensure that name is unique and update our tables accordingly.
@@ -344,7 +342,7 @@ namespace ILCompiler
 
             Utf8StringBuilder sb = new Utf8StringBuilder();
             sb.Append(GetMangledTypeName(method.OwningType));
-            sb.Append("__");
+            sb.Append("__"u8);
             sb.Append(GetUnqualifiedMangledMethodName(method));
             utf8MangledName = sb.ToUtf8String();
 
@@ -391,7 +389,7 @@ namespace ILCompiler
 
             for (int i = 0; i < signature.Length; i++)
             {
-                sb.Append("__");
+                sb.Append("__"u8);
                 string sigArgName = GetMangledTypeName(signature[i]);
                 sb.Append(sigArgName);
             }
@@ -423,7 +421,7 @@ namespace ILCompiler
                     {
                         foreach (var m in method.OwningType.GetMethods())
                         {
-                            string name = SanitizeName(m.Name);
+                            string name = SanitizeName(m.GetName());
 
                             name = DisambiguateName(name, deduplicator);
                             deduplicator.Add(name);
@@ -451,7 +449,7 @@ namespace ILCompiler
                 {
                     string instArgName = GetMangledTypeName(inst[i]);
                     if (i > 0)
-                        sb.Append("__");
+                        sb.Append("__"u8);
                     sb.Append(instArgName);
                 }
 
@@ -482,7 +480,7 @@ namespace ILCompiler
                 else
                 {
                     // Assume that Name is unique for all other methods
-                    utf8MangledName = new Utf8String(SanitizeName(method.Name));
+                    utf8MangledName = new Utf8String(SanitizeName(method.GetName()));
                 }
             }
 
@@ -519,7 +517,7 @@ namespace ILCompiler
                     {
                         foreach (var f in field.OwningType.GetFields())
                         {
-                            string name = SanitizeName(f.Name);
+                            string name = SanitizeName(f.GetName());
 
                             name = DisambiguateName(name, deduplicator);
                             deduplicator.Add(name);
@@ -535,7 +533,7 @@ namespace ILCompiler
             }
 
 
-            string mangledName = SanitizeName(field.Name);
+            string mangledName = SanitizeName(field.GetName());
 
             if (prependTypeName != null)
                 mangledName = prependTypeName + "__" + mangledName;

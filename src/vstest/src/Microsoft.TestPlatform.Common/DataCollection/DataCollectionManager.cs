@@ -79,6 +79,8 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <param name="messageSink">
     /// The message Sink.
     /// </param>
+    /// <param name="requestData">request data</param>
+    /// <param name="telemetryReporter">telemetry reporter</param>
     internal DataCollectionManager(IMessageSink messageSink, IRequestData requestData, ITelemetryReporter telemetryReporter) : this(new DataCollectionAttachmentManager(), messageSink, new DataCollectionTelemetryManager(requestData), telemetryReporter)
     {
     }
@@ -92,6 +94,8 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <param name="messageSink">
     /// The message Sink.
     /// </param>
+    /// <param name="dataCollectionTelemetryManager">telemetry manager</param>
+    /// <param name="telemetryReporter">telemetry reporter</param>
     /// <remarks>
     /// The constructor is not public because the factory method should be used to get instances of this class.
     /// </remarks>
@@ -136,6 +140,8 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <param name="messageSink">
     /// The message sink.
     /// </param>
+    /// <param name="requestData">request data</param>
+    /// <param name="telemetryReporter">telemetry reporter</param>
     /// <returns>
     /// The <see cref="DataCollectionManager"/>.
     /// </returns>

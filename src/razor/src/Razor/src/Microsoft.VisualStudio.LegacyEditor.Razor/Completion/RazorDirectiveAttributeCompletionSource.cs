@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Core.Imaging;
@@ -44,17 +43,14 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
     private readonly ICompletionBroker _completionBroker;
     private readonly IVisualStudioDescriptionFactory _descriptionFactory;
     private readonly JoinableTaskFactory _joinableTaskFactory;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
 
     public RazorDirectiveAttributeCompletionSource(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         IVisualStudioRazorParser parser,
         IRazorCompletionFactsService completionFactsService,
         ICompletionBroker completionBroker,
         IVisualStudioDescriptionFactory descriptionFactory,
         JoinableTaskFactory joinableTaskFactory)
     {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
         _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
         _completionBroker = completionBroker;
@@ -75,14 +71,14 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
                 return CompletionContext.Empty;
             }
 
-            var syntaxTree = codeDocument.GetSyntaxTree();
-            var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
+            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+            var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
             var absoluteIndex = triggerLocation.Position;
             var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
 #pragma warning disable CS0618 // Type or member is obsolete, will be removed in an upcoming change
             var owner = syntaxTree.Root.LocateOwner(queryableChange);
 #pragma warning restore CS0618 // Type or member is obsolete
-            var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
+            var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperContext);
             var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
             if (razorCompletionItems.Length == 0)
@@ -132,7 +128,7 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
                 completionItems.Add(completionItem);
                 completionItemKinds.Add(razorCompletionItem.Kind);
 
-                var completionDescription = razorCompletionItem.GetAttributeCompletionDescription();
+                var completionDescription = razorCompletionItem.DescriptionInfo as AggregateBoundAttributeDescription;
                 completionItem.Properties[DescriptionKey] = completionDescription;
             }
 

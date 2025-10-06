@@ -101,10 +101,12 @@ Add the following content to the config file (`vstest.console.exe.config` or `te
 </configuration>
 ```
 
-## Collect trace in VSTS CI (VSTest Task)
+## Collect trace in Azure DevOps CI (VSTest Task)
 
 Add a variable to the build definition named `System.Debug` with value `True`. This can
 be done while a new build is queued.
+
+![image](https://github.com/user-attachments/assets/893eee2d-0e20-4b1f-999b-a1a4f8862d12)
 
 This variable will ensure:
 
@@ -112,6 +114,10 @@ This variable will ensure:
 are errors in translating user inputs in the task to command line options of vstest.console.exe.
 * The task invokes `vstest.console.exe` with `/diag` option. The log files can be uploaded
 as artifacts for diagnosing errors.
+
+Logs can be downloaded by clicking the right hand `...` menu: 
+
+![image](https://github.com/user-attachments/assets/e8369817-f06a-41c1-b4ae-b042cdc4eaf9)
 
 ## Debug test platform components
 
@@ -139,3 +145,19 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 Starting test execution, please wait...
 Host debugging is enabled. Please attach debugger to testhost process to continue.
 ```
+
+## In Visual Studio
+
+Set test logging to trace: 
+
+![image](https://github.com/user-attachments/assets/0ee53d10-4f95-469a-91bd-8577d79b99bc)
+
+Run your tests. 
+
+Go to Output > Tests window: 
+
+Please provide all files from the listed folder, and complete content of the Tests window.
+
+![image](https://github.com/user-attachments/assets/c942642d-e10a-4bf3-9920-8ddd22d99ba8)
+
+

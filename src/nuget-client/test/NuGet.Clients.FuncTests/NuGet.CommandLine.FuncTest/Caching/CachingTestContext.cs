@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -50,7 +51,6 @@ namespace NuGet.CommandLine.Test.Caching
         public string GlobalPackagesPath { get; private set; }
         public string IsolatedHttpCachePath { get; private set; }
         public string InputPackagesPath { get; private set; }
-        public string ProjectJsonPath { get; private set; }
         public string ProjectPath { get; private set; }
         public string PackagesConfigPath { get; private set; }
         public string OutputPackagesPath { get; private set; }
@@ -229,7 +229,7 @@ namespace NuGet.CommandLine.Test.Caching
 
         private void InitializeFiles()
         {
-            WorkingPath = Path.Combine(TestDirectory, "working");
+            WorkingPath = Path.Combine(TestDirectory, "project");
             Directory.CreateDirectory(WorkingPath);
 
             GlobalPackagesPath = Path.Combine(TestDirectory, "globalPackagesFolder");
@@ -248,22 +248,21 @@ namespace NuGet.CommandLine.Test.Caching
             CurrentPackageAPath = PackageAVersionAPath;
 
             PackagesConfigPath = Path.Combine(WorkingPath, "packages.config");
-            ProjectJsonPath = Path.Combine(WorkingPath, "project.json");
             ProjectPath = Path.Combine(WorkingPath, "project.csproj");
 
             OutputPackagesPath = Path.Combine(WorkingPath, "packages");
-            CreateNuGetConfig(WorkingPath);
 
             Directory.CreateDirectory(OutputPackagesPath);
         }
 
-        private void CreateNuGetConfig(string workingDirectory)
+        internal void CreateNuGetConfig(string workingDirectory, string source)
         {
             string nugetConfigContent =
-                @"<?xml version='1.0' encoding='utf-8'?>
+                $@"<?xml version='1.0' encoding='utf-8'?>
 <configuration>
   <packageSources>
     <clear />
+    <add key=""http-feed"" value=""{source}"" allowInsecureConnections=""true""/>
   </packageSources>
   <packageSourceMapping>
     <clear />
@@ -313,25 +312,11 @@ namespace NuGet.CommandLine.Test.Caching
             File.WriteAllText(PackagesConfigPath, content);
         }
 
-        public void WriteProjectJson(PackageIdentity packageIdentity)
+        public void WriteProject(PackageIdentity packageIdentity)
         {
-            var content = $@"{{
-  ""dependencies"": {{
-    ""{packageIdentity.Id}"": ""{packageIdentity.Version}""
-  }},
-  ""frameworks"": {{
-    ""{PackageFramework.GetShortFolderName()}"": {{}}
-  }}
-}}";
-
-            File.WriteAllText(ProjectJsonPath, content);
-        }
-
-        public void WriteProject()
-        {
-            var content = Util.GetCSProjXML("project");
-
-            File.WriteAllText(ProjectPath, content);
+            var projectContext = SimpleTestProjectContext.CreateLegacyPackageReference("project", TestDirectory, PackageFramework);
+            projectContext.AddPackageToAllFrameworks(new SimpleTestPackageContext(packageIdentity));
+            projectContext.Save();
         }
 
         public async Task AddToGlobalPackagesFolderAsync(PackageIdentity identity, string packagePath)

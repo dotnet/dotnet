@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.Collections;
 
 namespace Roslyn.Utilities;
 
@@ -25,7 +26,7 @@ internal static class IReadOnlyDictionaryExtensions
         {
             case IEnumerable<T> enumerable: return enumerable;
             case T s: return SpecializedCollections.SingletonEnumerable(s);
-            default: return SpecializedCollections.EmptyEnumerable<T>();
+            default: return [];
         }
     }
 

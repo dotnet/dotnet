@@ -26,7 +26,7 @@ namespace NuGet.CommandLine.Test.Caching
                 tc.NoCache = caching.HasFlag(CachingType.NoCache);
                 tc.DirectDownload = caching.HasFlag(CachingType.DirectDownload);
                 tc.CurrentSource = server == ServerType.V2 ? tc.V2Source : tc.V3Source;
-
+                tc.CreateNuGetConfig(tc.WorkingPath, tc.CurrentSource);
                 tc.ClearHttpCache();
                 var validations = new List<CachingValidations>();
                 for (var i = 0; i < test.IterationCount; i++)

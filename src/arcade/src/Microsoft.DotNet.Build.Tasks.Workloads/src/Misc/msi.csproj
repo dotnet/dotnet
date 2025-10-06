@@ -13,14 +13,14 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <NoWarn>$(NoWarn);NU5128;NU5123</NoWarn>
     <PackageId>__PACKAGE_ID__</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl Condition="'$(_PackageProjectUrl)' != ''">$(_PackageProjectUrl)</PackageProjectUrl>
     <PackageType>DotnetPlatform</PackageType>
     <PackageVersion>__PACKAGE_VERSION__</PackageVersion>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

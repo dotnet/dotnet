@@ -24,7 +24,7 @@ public class DesignTimeDirectiveTargetExtensionTest
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -55,7 +55,7 @@ private void __RazorDirectiveTokenHelpers__() {
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -96,7 +96,7 @@ System.String __typeHelper = default!;
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -137,7 +137,7 @@ global::System.Object __typeHelper = nameof(System.Collections.Generic);
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -185,7 +185,7 @@ global::System.Object Foo = null!;
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -236,7 +236,7 @@ global::System.Object __typeHelper = ""Value"";
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {
@@ -276,7 +276,7 @@ global::System.Boolean __typeHelper = true;
         extension.WriteDesignTimeDirective(context, node);
 
         // Assert
-        var csharp = context.CodeWriter.GenerateCode();
+        var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
 @"#pragma warning disable 219
 private void __RazorDirectiveTokenHelpers__() {

@@ -14,7 +14,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
 {
     internal sealed class ListProfilesCommandHandler
     {
-        public static async Task<int> GetProfiles(IConsole console)
+        public static int GetProfiles()
         {
             try
             {
@@ -23,7 +23,6 @@ namespace Microsoft.Diagnostics.Tools.Trace
                     Console.Out.WriteLine($"\t{profile.Name,-16} - {profile.Description}");
                 }
 
-                await Task.FromResult(0).ConfigureAwait(false);
                 return 0;
             }
             catch (Exception ex)
@@ -33,58 +32,60 @@ namespace Microsoft.Diagnostics.Tools.Trace
             }
         }
 
-        public static Command ListProfilesCommand() =>
-            new(
+        public static Command ListProfilesCommand()
+        {
+            Command listProfilesCommand = new(
                 name: "list-profiles",
-                description: "Lists pre-built tracing profiles with a description of what providers and filters are in each profile")
-            {
-                Handler = CommandHandler.Create<IConsole>(GetProfiles),
-            };
+                description: "Lists pre-built tracing profiles with a description of what providers and filters are in each profile");
+
+            listProfilesCommand.SetAction((parseResult, ct) => Task.FromResult(GetProfiles()));
+            return listProfilesCommand;
+        }
 
         internal static IEnumerable<Profile> DotNETRuntimeProfiles { get; } = new[] {
             new Profile(
                 "cpu-sampling",
                 new EventPipeProvider[] {
-                    new EventPipeProvider("Microsoft-DotNETCore-SampleProfiler", EventLevel.Informational),
-                    new EventPipeProvider("Microsoft-Windows-DotNETRuntime", EventLevel.Informational, (long)ClrTraceEventParser.Keywords.Default)
+                    new("Microsoft-DotNETCore-SampleProfiler", EventLevel.Informational),
+                    new("Microsoft-Windows-DotNETRuntime", EventLevel.Informational, (long)ClrTraceEventParser.Keywords.Default)
                 },
                 "Useful for tracking CPU usage and general .NET runtime information. This is the default option if no profile or providers are specified."),
             new Profile(
                 "gc-verbose",
                 new EventPipeProvider[] {
-                    new EventPipeProvider(
+                    new(
                         name: "Microsoft-Windows-DotNETRuntime",
                         eventLevel: EventLevel.Verbose,
                         keywords: (long)ClrTraceEventParser.Keywords.GC |
                                   (long)ClrTraceEventParser.Keywords.GCHandle |
                                   (long)ClrTraceEventParser.Keywords.Exception
-                    ),
+                    )
                 },
                 "Tracks GC collections and samples object allocations."),
             new Profile(
                 "gc-collect",
                 new EventPipeProvider[] {
-                    new EventPipeProvider(
+                    new(
                         name: "Microsoft-Windows-DotNETRuntime",
                         eventLevel: EventLevel.Informational,
                         keywords: (long)ClrTraceEventParser.Keywords.GC
                     ),
-                    new EventPipeProvider(
+                    new(
                         name: "Microsoft-Windows-DotNETRuntimePrivate",
                         eventLevel: EventLevel.Informational,
                         keywords: (long)ClrTraceEventParser.Keywords.GC
                     )
                 },
-                "Tracks GC collections only at very low overhead.") { Rundown = false },
+                "Tracks GC collections only at very low overhead.") { RundownKeyword = (long)ClrTraceEventParser.Keywords.GC, RetryStrategy = RetryStrategy.DropKeywordDropRundown },
             new Profile(
                 "database",
                 new EventPipeProvider[] {
-                    new EventPipeProvider(
+                    new(
                         name: "System.Threading.Tasks.TplEventSource",
                         eventLevel: EventLevel.Informational,
                         keywords: (long)TplEtwProviderTraceEventParser.Keywords.TasksFlowActivityIds
                     ),
-                    new EventPipeProvider(
+                    new(
                         name: "Microsoft-Diagnostics-DiagnosticSource",
                         eventLevel: EventLevel.Verbose,
                         keywords:   (long)DiagnosticSourceKeywords.Messages |

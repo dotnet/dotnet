@@ -5,13 +5,19 @@
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 
 namespace Microsoft.DiaSymReader
 {
     /// <summary>
     /// Minimal implementation of IMetadataImport that implements APIs used by SymReader.
     /// </summary>
-    internal unsafe sealed class SymReaderMetadataAdapter : MetadataAdapterBase
+#if NET9_0_OR_GREATER
+    [GeneratedComClass]
+#endif
+    internal unsafe sealed partial class SymReaderMetadataAdapter : MetadataAdapterBase
     {
         private readonly ISymReaderMetadataProvider _metadataProvider;
 

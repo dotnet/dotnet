@@ -21,14 +21,14 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
-            if (node.TagHelper.IsFormNameTagHelper())
+            var node = reference.Node;
+            if (node.TagHelper.Kind == TagHelperKind.FormName)
             {
                 var parent = reference.Parent;
 
                 if (parent is not MarkupElementIntermediateNode { TagName: "form" })
                 {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateFormName_NotAForm(node.Source));
+                    node.AddDiagnostic(ComponentDiagnosticFactory.CreateFormName_NotAForm(node.Source));
                     reference.Replace(RewriteForErrorRecovery(node, parent));
                     continue;
                 }
@@ -70,17 +70,17 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
                     : new HtmlAttributeValueIntermediateNode();
                 result.Source = child.Source;
                 result.Children.AddRange(child.Children);
-                result.Diagnostics.AddRange(child.Diagnostics);
+                result.AddDiagnosticsFromNode(child);
                 return result;
             }));
-            replacement.Diagnostics.AddRange(node.Diagnostics);
+            replacement.AddDiagnosticsFromNode(node);
             return replacement;
         }
 
         static IntermediateNode RewriteCore(TagHelperDirectiveAttributeIntermediateNode node, IntermediateNode replacement)
         {
             replacement.Children.AddRange(node.Children);
-            replacement.Diagnostics.AddRange(node.Diagnostics);
+            replacement.AddDiagnosticsFromNode(node);
             return replacement;
         }
     }

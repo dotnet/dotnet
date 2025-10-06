@@ -1,0 +1,5 @@
+﻿Source Location: (29:2,9 [0] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
+||
+Generated Location: (3521:53,0 [0] )
+||
+

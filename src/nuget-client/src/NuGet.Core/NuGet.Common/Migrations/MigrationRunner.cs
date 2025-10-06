@@ -14,12 +14,17 @@ namespace NuGet.Common.Migrations
 
         public static void Run()
         {
-            string migrationsDirectory = GetMigrationsDirectory();
-
-            Run(migrationsDirectory);
+            Run(EnvironmentVariableWrapper.Instance);
         }
 
-        internal static void Run(string migrationsDirectory)
+        internal static void Run(IEnvironmentVariableReader environmentVariableReader)
+        {
+            string migrationsDirectory = GetMigrationsDirectory(environmentVariableReader);
+
+            Run(migrationsDirectory, environmentVariableReader);
+        }
+
+        internal static void Run(string migrationsDirectory, IEnvironmentVariableReader environmentVariableReader)
         {
             if (NuGetEventSource.IsEnabled) TraceEvents.RunStart();
 
@@ -45,7 +50,7 @@ namespace NuGet.Common.Migrations
                                 {
                                     migrationPerformed = true;
 
-                                    Migration1.Run();
+                                    Migration1.Run(environmentVariableReader);
                                     // Create file for the migration run, so that if an older version of NuGet is run, it doesn't try to run migrations again.
                                     File.WriteAllText(expectedMigrationFilename, string.Empty);
                                 }
@@ -81,14 +86,14 @@ namespace NuGet.Common.Migrations
             }
         }
 
-        internal static string GetMigrationsDirectory()
+        internal static string GetMigrationsDirectory(IEnvironmentVariableReader environmentVariableReader)
         {
             if (RuntimeEnvironmentHelper.IsWindows)
             {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NuGet", "Migrations");
             }
 
-            var XdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            var XdgDataHome = environmentVariableReader.GetEnvironmentVariable("XDG_DATA_HOME");
 
             return string.IsNullOrEmpty(XdgDataHome)
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "NuGet", "Migrations")

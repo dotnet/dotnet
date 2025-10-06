@@ -14,7 +14,6 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Build.Tasks.Pack.Test

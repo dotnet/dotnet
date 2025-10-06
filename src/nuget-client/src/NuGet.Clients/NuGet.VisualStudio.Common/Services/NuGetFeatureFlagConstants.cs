@@ -21,7 +21,7 @@ namespace NuGet.VisualStudio
 
         /// <summary>
         /// The environment variable used to override the enabled or disabled state of this feature.
-        /// Might be <see cref="null"/>.
+        /// Might be <c>null</c>.
         /// </summary>
         internal string EnvironmentVariable { get; }
 
@@ -32,5 +32,6 @@ namespace NuGet.VisualStudio
 
         public static readonly NuGetFeatureFlagConstants BulkRestoreCoordination = new("NuGet.BulkRestoreCoordination", "NUGET_BULK_RESTORE_COORDINATION", defaultState: true);
         public static readonly NuGetFeatureFlagConstants NuGetSolutionCacheInitilization = new("NuGet.SolutionCacheInitialization", "NUGET_SOLUTION_CACHE_INITIALIZATION", defaultState: true);
+        public static readonly NuGetFeatureFlagConstants RenderReadmeInPMUI = new("NuGet.RenderReadmeInPMUI", "NUGET_RENDER_README_IN_PMUI", defaultState: true);
     }
 }

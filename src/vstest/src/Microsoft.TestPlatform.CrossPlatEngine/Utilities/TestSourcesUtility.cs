@@ -45,7 +45,7 @@ internal class TestSourcesUtility
     internal static string? GetDefaultCodebasePath(Dictionary<string, IEnumerable<string>?> adapterSourceMap)
     {
         var source = GetSources(adapterSourceMap)?.FirstOrDefault();
-        return source != null ? Path.GetDirectoryName(source) : null;
+        return Path.GetDirectoryName(source);
     }
 
     /// <summary>
@@ -56,6 +56,6 @@ internal class TestSourcesUtility
     internal static string? GetDefaultCodebasePath(IEnumerable<TestCase> tests)
     {
         var source = GetSources(tests)?.FirstOrDefault();
-        return source != null ? Path.GetDirectoryName(source) : null;
+        return Path.GetDirectoryName(source);
     }
 }

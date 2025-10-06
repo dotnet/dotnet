@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/LeadingKeyword/MemberValKeyword.fs", false,
-      QualifiedNameOfFile MemberValKeyword, [], [],
+      QualifiedNameOfFile MemberValKeyword, [],
       [SynModuleOrNamespace
          ([MemberValKeyword], false, AnonModule,
           [Types
@@ -28,7 +28,8 @@ ImplFile
                            GetterOrSetterIsCompilerGenerated = false
                            MemberKind = PropertySet },
                          PreXmlDoc ((3,4), FSharp.Compiler.Xml.XmlDocCollector),
-                         None, Const (Int32 1, (3,25--3,26)), (3,4--3,26),
+                         GetSet (None, None, None),
+                         Const (Int32 1, (3,25--3,26)), (3,4--3,26),
                          { LeadingKeyword =
                             MemberVal ((3,4--3,10), (3,11--3,14))
                            WithKeyword = None
@@ -39,4 +40,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--3,26))],
           PreXmlDocEmpty, [], None, (2,0--4,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

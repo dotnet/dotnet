@@ -38,12 +38,6 @@
 "ShowBraceCompletion"=dword:00000001
 "ShowSmartIndent"=dword:00000001
 
-[$RootKey$\FeatureFlags\Razor\LSP\LegacyEditor]
-"Description"="Uses the legacy Razor editor when editing Razor (ASP.NET Core)."
-"Value"=dword:00000000
-"Title"="Use legacy Razor editor (requires restart)"
-"PreviewPaneChannels"="int.main"
-
 [$RootKey$\FeatureFlags\Razor\LSP\ShowAllCSharpCodeActions]
 "Description"="Show all C# code actions in Razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
 "Value"=dword:00000000
@@ -56,27 +50,15 @@
 "Title"="Experimental Razor project multi-targeting support (requires restart)"
 "PreviewPaneChannels"="*"
 
-[$RootKey$\FeatureFlags\Razor\LSP\UsePreciseSemanticTokenRanges]
-"Description"="Use precise semantic token ranges when requesting semantic token information on razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
-"Value"=dword:00000000
-"Title"="Use precise semantic token ranges when requesting semantic token information on Razor files (requires restart)"
-"PreviewPaneChannels"="*"
-"VisibleToInternalUsersOnlyChannels"="*"
-
 [$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
 "Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
-"Value"=dword:00000000
+"Value"=dword:00000001
 "Title"="Use Roslyn Cohost server for Razor (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
+"PreviewPaneChannels"="*"
 
-[$RootKey$\FeatureFlags\Razor\LSP\DisableRazorLanguageServer]
-"Description"="Disables the Razor Language Server so that only the Cohost server is active. This is probably a bad idea to turn on if you are not on the Razor Tooling team."
-"Value"=dword:00000000
-"Title"="Disable Razor Language Server (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
-
-[$RootKey$\FeatureFlags\Razor\LSP\ForceRuntimeCodeGeneration]
-"Description"="Enable combined design time/runtime code generation for Razor files"
-"Value"=dword:00000000
-"Title"="Force use of runtime code generation for Razor (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
+// CacheTag value should be changed when registration file changes
+// See https://devdiv.visualstudio.com/DevDiv/_wiki/wikis/DevDiv.wiki/39345/Manifest-Build-Deployment-and-Setup-Authoring-In-Depth?anchor=example-pkgdef-key for more infomation
+[$RootKey$\SettingsManifests\{13b72f58-279e-49e0-a56d-296be02f0805}]
+@="Microsoft.VisualStudio.RazorExtension.RazorPackage"
+"ManifestPath"="$PackageFolder$\UnifiedSettings\razor.registration.json"
+"CacheTag"=qword:91324F976E73CC56

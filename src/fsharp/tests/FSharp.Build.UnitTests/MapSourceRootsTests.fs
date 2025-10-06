@@ -9,6 +9,8 @@ open Xunit
 open System.Collections.Generic
 open FSharp.Test
 
+#nowarn "1182" //Unused arguments
+
 type MockEngine() =
     member val Errors = ResizeArray() with get
     member val Warnings = ResizeArray() with get
@@ -267,7 +269,7 @@ type MapSourceRootsTests() =
             SourceRoot(path3, [], [])
         |]
 
-        /// because this test isn't one to one we have to put the expecations in another structure
+        /// because this test isn't one to one we have to put the expectations in another structure
         let actualExpectations = [|
             SourceRoot(path1, [], [
                 "SourceControl", "git"

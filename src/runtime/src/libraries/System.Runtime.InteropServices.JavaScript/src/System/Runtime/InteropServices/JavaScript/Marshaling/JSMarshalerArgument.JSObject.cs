@@ -15,7 +15,7 @@ namespace System.Runtime.InteropServices.JavaScript
 #if !DEBUG
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public unsafe void ToManaged(out JSObject? value)
+        public void ToManaged(out JSObject? value)
         {
             if (slot.Type == MarshalerType.None)
             {
@@ -107,7 +107,7 @@ namespace System.Runtime.InteropServices.JavaScript
                 return;
             }
             slot.Length = value.Length;
-            int bytes = value.Length * Marshal.SizeOf(typeof(JSMarshalerArgument));
+            int bytes = value.Length * sizeof(JSMarshalerArgument);
             slot.Type = MarshalerType.Array;
             slot.ElementType = MarshalerType.JSObject;
             JSMarshalerArgument* payload = (JSMarshalerArgument*)Marshal.AllocHGlobal(bytes);

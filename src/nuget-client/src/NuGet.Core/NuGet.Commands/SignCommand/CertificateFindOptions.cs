@@ -1,12 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using NuGet.Commands.SignCommand;
-using NuGet.Common;
 
 namespace NuGet.Commands
 {
@@ -42,7 +39,7 @@ namespace NuGet.Commands
         public string SubjectName { get; set; }
 
         /// <summary>
-        /// The SHA-1 fingerprint of the certificate.
+        /// SHA256 or SHA384 or SHA512 fingerprint of the certificate.
         /// </summary>
         public string Fingerprint { get; set; }
 

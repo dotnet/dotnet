@@ -18,7 +18,6 @@ using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
 using NuGet.Resolver;
 using NuGet.VisualStudio;
-using NuGetConsole.Host.PowerShell;
 using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.PackageManagement.PowerShellCmdlets
@@ -215,7 +214,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                 }
                 else
                 {
-                    var identity = actions.Select(v => v.PackageIdentity).Where(p => p.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var identity = actions.Select(v => v.PackageIdentity).FirstOrDefault(p => p.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase));
                     NuGetPackageManager.SetDirectInstall(identity, projectContext);
                     await PackageManager.ExecuteNuGetProjectActionsAsync(project, actions, this, resolutionContext.SourceCacheContext, CancellationToken.None);
                     NuGetPackageManager.ClearDirectInstall(projectContext);

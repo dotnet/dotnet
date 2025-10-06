@@ -3,9 +3,7 @@ trigger:
   branches:
     include:
     - main
-    - release/6.0
-    - release/7.0
-    - release/8.0
+    - release/*.0
   paths:
     include:
     - '*'
@@ -24,12 +22,14 @@ pr: none
 
 variables:
 - template: /eng/common-variables.yml@self
+  parameters:
+    signType: real
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 
 resources:
   containers:
   - container: LinuxContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-fpm-amd64
   repositories:
   - repository: 1ESPipelineTemplates
     type: git
@@ -42,84 +42,15 @@ extends:
       name: $(DncEngInternalBuildPool)
       image: windows.vs2019.amd64
       os: windows
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
 
     stages:
-    - stage: build
-      displayName: Build
-      jobs:
-      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-        - template: /eng/common/templates-official/job/onelocbuild.yml@self
-          parameters:
-            MirrorRepo: arcade
-            LclSource: lclFilesFromPackage
-            LclPackageId: 'LCL-JUNO-PROD-ARCADE'
-      - template: /eng/common/templates-official/jobs/jobs.yml@self
-        parameters:
-          artifacts:
-            publish:
-              artifacts: true
-              logs: true
-              manifests: true
-          enableMicrobuild: true
-          enablePublishUsingPipelines: true
-          enableSourceIndex: true
-          enableSourceBuild: true
-          workspace:
-            clean: all
-          jobs:
-          - job: Windows_NT
-            timeoutInMinutes: 90
-            strategy:
-              matrix:
-                Build_Release:
-                  _BuildConfig: Release
-            preSteps:
-            - checkout: self
-              fetchDepth: 0
-              clean: true
-            steps:
-            - script: eng\common\cibuild.cmd
-                -configuration $(_BuildConfig)
-                -prepareMachine
-                $(_InternalBuildArgs)
-                /p:Test=false
-              displayName: Windows Build / Publish
-
-    - stage: ValidateSdk
-      displayName: Validate Arcade SDK
-      dependsOn: build
-      jobs:
-      - template: /eng/validate-sdk.yml@self
-        parameters:
-          buildArgs: -configuration $(_BuildConfig)
-            -prepareMachine
-            $(_InternalBuildArgs)
-            /p:Test=false
-
-    - template: /eng/common/templates-official/post-build/post-build.yml@self
+    - template: /eng/build.yml@self
       parameters:
-        publishingInfraVersion: 3
-        # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
-        enableSigningValidation: false
-        # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
-        # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
-        enableSourceLinkValidation: false
-        publishDependsOn:
-        - Validate
-        - ValidateSdk
-        # This is to enable SDL runs part of Post-Build Validation Stage 
-        SDLValidationParameters:
-          enable: true
-          publishGdn: true
-          continueOnError: false
-          params: ' -SourceToolsList @("policheck","credscan")
-          -TsaInstanceURL $(_TsaInstanceURL)
-          -TsaProjectName $(_TsaProjectName)
-          -TsaNotificationEmail $(_TsaNotificationEmail)
-          -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
-          -TsaBugAreaPath $(_TsaBugAreaPath)
-          -TsaIterationPath $(_TsaIterationPath)
-          -TsaRepositoryName "Arcade"
-          -TsaCodebaseName "Arcade"
-          -TsaPublish $True
-          -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)/eng/PoliCheckExclusions.xml")'
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+          oneLocEnabled: true
+        microbuildUseESRP: true

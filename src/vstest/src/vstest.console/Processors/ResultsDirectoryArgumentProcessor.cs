@@ -83,7 +83,7 @@ internal class ResultsDirectoryArgumentExecutor : IArgumentExecutor
     /// Default constructor.
     /// </summary>
     /// <param name="options"> The options. </param>
-    /// <param name="testPlatform">The test platform</param>
+    /// <param name="runSettingsManager">Runsettings manager.</param>
     public ResultsDirectoryArgumentExecutor(CommandLineOptions options, IRunSettingsProvider runSettingsManager)
     {
         ValidateArg.NotNull(options, nameof(options));

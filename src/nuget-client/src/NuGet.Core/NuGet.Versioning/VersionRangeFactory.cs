@@ -13,6 +13,12 @@ namespace NuGet.Versioning
     {
         // Static factory methods for creating version range objects.
 
+        // If dictionary exceeds this size, ParsedVersionRangeMapping will be cleared.
+        private const int ParsedVersionRangeMappingMaxEntries = 500;
+
+        // Cached mappings from (string value, bool allowFloating) => VersionRange. On cache hit, avoids allocations during TryParse.
+        private static Dictionary<(string, bool), VersionRange> ParsedVersionRangeMapping = new Dictionary<(string, bool), VersionRange>(ParsedVersionRangeMappingMaxEntries);
+
         /// <summary>
         /// A range that accepts all versions, prerelease and stable.
         /// </summary>
@@ -94,13 +100,26 @@ namespace NuGet.Versioning
         {
             versionRange = null;
 
-            var trimmedValue = value?.Trim();
+            if (value is null)
+            {
+                return false;
+            }
+
+            lock (ParsedVersionRangeMapping)
+            {
+                if (ParsedVersionRangeMapping.TryGetValue((value, allowFloating), out versionRange))
+                {
+                    return true;
+                }
+            }
+
+            var trimmedValue = value.Trim();
             if (string.IsNullOrEmpty(trimmedValue))
             {
                 return false;
             }
 
-            var charArray = trimmedValue!.ToCharArray();
+            var charArray = trimmedValue.ToCharArray();
 
             // * is the only 1 char range
             if (allowFloating
@@ -108,6 +127,9 @@ namespace NuGet.Versioning
                 && charArray[0] == '*')
             {
                 versionRange = new VersionRange(new NuGetVersion(0, 0, 0), true, null, true, FloatRange.Parse(trimmedValue), originalString: value);
+
+                UpdateCachedVersionRange(value, allowFloating, versionRange);
+
                 return true;
             }
 
@@ -267,7 +289,22 @@ namespace NuGet.Versioning
                 floatRange: floatRange,
                 originalString: value);
 
+            UpdateCachedVersionRange(value, allowFloating, versionRange);
+
             return true;
+        }
+
+        private static void UpdateCachedVersionRange(string value, bool allowFloating, VersionRange versionRange)
+        {
+            lock (ParsedVersionRangeMapping)
+            {
+                if (ParsedVersionRangeMapping.Count >= ParsedVersionRangeMappingMaxEntries)
+                {
+                    ParsedVersionRangeMapping.Clear();
+                }
+
+                ParsedVersionRangeMapping[(value, allowFloating)] = versionRange;
+            }
         }
 
         /// <summary>

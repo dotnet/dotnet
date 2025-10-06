@@ -20,14 +20,13 @@
                             Whitespace;[ ];
                             LeftBrace;[{];
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[val];
                             Whitespace;[ ];
                             Assign;[=];
                             Whitespace;[ ];
-                            Transition;[@];
-                            Identifier;[x];
+                            Identifier;[@x];
                             Semicolon;[;];
                             Whitespace;[ ];
                             Keyword;[if];
@@ -35,9 +34,9 @@
                             LeftParenthesis;[(];
                             Identifier;[val];
                             Whitespace;[ ];
-                            NotEqual;[!=];
+                            CSharpOperator;[!=];
                             Whitespace;[ ];
-                            IntegerLiteral;[3];
+                            NumericLiteral;[3];
                             RightParenthesis;[)];
                             Whitespace;[ ];
                             LeftBrace;[{];

@@ -8,36 +8,36 @@ Param(
     [Parameter(Mandatory = $True)]
     [string] $logsFolderPath,
     [string] $nugetFoldersPath,
-    [int] $iterationCount
+    [int] $iterationCount,
+    [string] $additionalOptions
 )
 
 . "$PSScriptRoot\..\PerformanceTestUtilities.ps1"
 
-$repoUrl = "https://github.com/NuGet/NuGet.Client.git"
-$commitHash = "37c31cd7c1c2429a643a881fe637dc1d718d7259"
-$repoName = GenerateNameFromGitUrl $repoUrl
-$resultsFilePath = [System.IO.Path]::Combine($resultsFolderPath, "$repoName.csv")
-$sourcePath = $([System.IO.Path]::Combine($sourceRootFolderPath, $repoName))
-$solutionFilePath = SetupGitRepository $repoUrl $commitHash $sourcePath
-# It's fine if this is run from here. It is run again the performance test script, but it'll set it to the same values.
-# Additionally, this will cleanup the extras from the bootstrapping which are already in the local folder, allowing us to get more accurate measurements
-SetupNuGetFolders $nugetClientFilePath $nugetFoldersPath
-$currentWorkingDirectory = $pwd
-
-Try
+if(![string]::IsNullOrEmpty($additionalOptions))
 {
-    Set-Location $sourcePath
-    . "$sourcePath\configure.ps1" *>>$null
-}
-Finally
-{
-    Set-Location $currentWorkingDirectory
-}
-
-. "$PSScriptRoot\..\RunPerformanceTests.ps1" `
+RunPerformanceTestsOnGitRepository `
     -nugetClientFilePath $nugetClientFilePath `
-    -solutionFilePath $solutionFilePath `
-    -resultsFilePath $resultsFilePath `
+    -sourceRootFolderPath $sourceRootFolderPath `
+    -testCaseName $testCaseName `
+    -repoUrl "https://github.com/NuGet/NuGet.Client.git" `
+    -commitHash "4b906a9bd9dde24da0caaecbaf43c747b17f2668" `
+    -resultsFolderPath $resultsFolderPath `
     -logsFolderPath $logsFolderPath `
     -nugetFoldersPath $nugetFoldersPath `
-    -iterationCount $iterationCount
+    -iterationCount $iterationCount `
+    -additionalOptions $additionalOptions
+} 
+Else 
+{
+RunPerformanceTestsOnGitRepository `
+    -nugetClientFilePath $nugetClientFilePath `
+    -sourceRootFolderPath $sourceRootFolderPath `
+    -testCaseName $testCaseName `
+    -repoUrl "https://github.com/NuGet/NuGet.Client.git" `
+    -commitHash "f6279fb833960d9128d16c4e911705167e0bb754" `
+    -resultsFolderPath $resultsFolderPath `
+    -logsFolderPath $logsFolderPath `
+    -nugetFoldersPath $nugetFoldersPath `
+    -iterationCount $iterationCount 
+}

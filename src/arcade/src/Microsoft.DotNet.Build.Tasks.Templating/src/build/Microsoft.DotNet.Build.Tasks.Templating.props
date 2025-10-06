@@ -2,8 +2,8 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksTemplatingAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net9.0\Microsoft.DotNet.Build.Tasks.Templating.dll</MicrosoftDotNetBuildTasksTemplatingAssembly>
-    <MicrosoftDotNetBuildTasksTemplatingAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\Microsoft.DotNet.Build.Tasks.Templating.dll</MicrosoftDotNetBuildTasksTemplatingAssembly>
+    <MicrosoftDotNetBuildTasksTemplatingAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Templating.dll</MicrosoftDotNetBuildTasksTemplatingAssembly>
+    <MicrosoftDotNetBuildTasksTemplatingAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.Build.Tasks.Templating.dll</MicrosoftDotNetBuildTasksTemplatingAssembly>
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Templating.GenerateFileFromTemplate" AssemblyFile="$(MicrosoftDotNetBuildTasksTemplatingAssembly)" />

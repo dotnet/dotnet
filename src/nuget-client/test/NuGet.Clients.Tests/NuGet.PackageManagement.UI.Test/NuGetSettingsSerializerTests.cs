@@ -41,7 +41,7 @@ namespace NuGet.PackageManagement.UI.Test
         {
             IReadOnlyList<PropertyInfo> properties = GetSerializableProperties<UserSettings>();
 
-            Assert.Equal(12, properties.Count);
+            Assert.Equal(13, properties.Count);
         }
 
         [Fact]

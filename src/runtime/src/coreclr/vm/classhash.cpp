@@ -234,7 +234,7 @@ VOID EEClassHashTable::ConstructKeyFromData(PTR_EEClassHashEntry pEntry, // IN  
 #endif
 
         // If IsCaseInsensitiveTable() is true for the hash table, strings passed to the ConstructKeyCallback instance
-        // will be dynamically allocated. This is to prevent wasting bytes in the Loader Heap. Thusly, it is important 
+        // will be dynamically allocated. This is to prevent wasting bytes in the Loader Heap. Thusly, it is important
         // to note that in this case, the lifetime of Key is bounded by the lifetime of the single call to UseKeys, and
         // will be freed when that function returns.
 
@@ -452,7 +452,7 @@ EEClassHashTable *EEClassHashTable::MakeCaseInsensitiveTable(Module *pModule, Al
 
     // Allocate the table and verify that we actually got one.
     EEClassHashTable * pCaseInsTable = EEClassHashTable::Create(pModule,
-                                                                max(BaseGetElementCount() / 2, 11),
+                                                                max(BaseGetElementCount() / 2, (DWORD)11),
                                                                 this,
                                                                 pamTracker);
 
@@ -759,15 +759,15 @@ PTR_EEClassHashEntry EEClassHashTable::FindByNameHandle(const NameHandle* pName)
     switch (TypeFromToken(typeToken))
     {
     case mdtTypeDef:
-        PREFIX_ASSUME(pNameModule != NULL);
+        _ASSERTE(pNameModule != NULL);
         hash = ComputeHashFunctionWithTypeDef(pTable, m_pCaseSensitiveTable, pNameModule->GetMDImport(), typeToken, &failed);
         break;
     case mdtTypeRef:
-        PREFIX_ASSUME(pNameModule != NULL);
+        _ASSERTE(pNameModule != NULL);
         hash = ComputeHashFunctionWithTypeRef(pTable, m_pCaseSensitiveTable, pNameModule->GetMDImport(), typeToken, &failed);
         break;
     case mdtExportedType:
-        PREFIX_ASSUME(pNameModule != NULL);
+        _ASSERTE(pNameModule != NULL);
         hash = ComputeHashFunctionWithExportedType(pTable, m_pCaseSensitiveTable, pNameModule->GetMDImport(), typeToken, &failed);
         break;
     default:

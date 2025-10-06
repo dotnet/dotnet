@@ -619,7 +619,7 @@ internal abstract class BaseRunTests
                 UpdateTestCaseSourceToPackage(lastChunkTestResults, null, out lastChunkTestResults, out _);
             }
 
-            var testRunChangedEventArgs = new TestRunChangedEventArgs(runStats, lastChunkTestResults, Enumerable.Empty<TestCase>());
+            var testRunChangedEventArgs = new TestRunChangedEventArgs(runStats, lastChunkTestResults, []);
 
             // Adding Metrics along with Test Run Complete Event Args
             Collection<AttachmentSet>? attachments = FrameworkHandle?.Attachments;

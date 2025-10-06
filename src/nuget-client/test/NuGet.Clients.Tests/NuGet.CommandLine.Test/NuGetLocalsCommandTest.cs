@@ -3,6 +3,7 @@
 
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Moq;
 using NuGet.CommandLine.Commands;
 using NuGet.Commands;

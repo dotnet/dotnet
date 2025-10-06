@@ -176,8 +176,6 @@ internal class EnableBlameArgumentExecutor : IArgumentExecutor
     /// <summary>
     /// Initialize blame.
     /// </summary>
-    /// <param name="enableCrashDump">Enable dump.</param>
-    /// <param name="blameParameters">Blame parameters.</param>
     private void InitializeBlame(bool enableCrashDump, bool enableHangDump, bool monitorPostMortemDebugger, Dictionary<string, string>? collectDumpParameters)
     {
         // Add Blame Logger
@@ -333,9 +331,6 @@ internal class EnableBlameArgumentExecutor : IArgumentExecutor
     /// <summary>
     /// Adds node in outer node.
     /// </summary>
-    /// <param name="parameters">Parameters.</param>
-    /// <param name="xmlDocument">Xml document.</param>
-    /// <param name="outernode">Outer node.</param>
     private static void AddNode(Dictionary<string, string>? parameters, XmlDocument xmlDocument, XmlElement outernode, string nodeName)
     {
         var dumpNode = xmlDocument.CreateElement(nodeName);

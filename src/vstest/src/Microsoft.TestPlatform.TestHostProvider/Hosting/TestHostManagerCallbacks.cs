@@ -29,11 +29,11 @@ internal class TestHostManagerCallbacks
             {
                 but = " But logger is null, so it won't forward any output.";
             }
-            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is enabled.{but}");
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Forwarding output is enabled.{but}");
         }
         else
         {
-            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is disabled.");
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Forwarding output is disabled.");
         }
         _forwardOutput = forwardOutput;
         _messageLogger = logger;
@@ -58,7 +58,9 @@ internal class TestHostManagerCallbacks
         testHostProcessStdError.AppendSafeWithNewLine(data);
         if (_forwardOutput && _messageLogger != null && !StringUtils.IsNullOrWhiteSpace(data))
         {
-            _messageLogger.SendMessage(TestMessageLevel.Error, data);
+            // Forward the error output, but DO NOT forward it as error. Until now it was only written into logs,
+            // and applications love to write Debug messages into error stream. Which we do not want to fail the test run.
+            _messageLogger.SendMessage(TestMessageLevel.Informational, data);
         }
     }
 

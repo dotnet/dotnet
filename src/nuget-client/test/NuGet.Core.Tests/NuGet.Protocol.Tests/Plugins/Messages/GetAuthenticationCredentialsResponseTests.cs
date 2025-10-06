@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using NuGet.Protocol.Plugins;
 using NuGet.Protocol.Plugins.Tests;

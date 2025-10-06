@@ -235,8 +235,7 @@ type TrampolineHolder() =
 
     // This should be the only call to Thread.Start in this library. We must always install a trampoline.
     member this.StartThreadWithTrampoline(f: unit -> AsyncReturn) =
-        Thread(getThreadStartCallbackForStartThreadWithTrampoline (this), IsBackground = true)
-            .Start(f |> box)
+        Thread(getThreadStartCallbackForStartThreadWithTrampoline (this), IsBackground = true).Start(f |> box)
 
         AsyncReturn.Fake()
 
@@ -753,7 +752,7 @@ module AsyncPrimitives =
     ///   - Cancellation check after 'entering' the implied try/finally and before running the body  (see CreateTryFinallyAsync)
     ///   - Hijack check after 'entering' the implied try/finally and before running the body  (see CreateTryFinallyAsync)
     ///   - Run 'disposeFunction' with exception protection (see CreateTryFinallyAsync)
-    let CreateUsingAsync (resource: 'T :> IDisposable) (computation: 'T -> Async<'a>) : Async<'a> =
+    let CreateUsingAsync (resource: 'T :> IDisposable | null) (computation: 'T -> Async<'a>) : Async<'a> =
         let disposeFunction () =
             Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicFunctions.Dispose resource
 
@@ -822,7 +821,7 @@ module AsyncPrimitives =
             WhileLoop())
 #endif
 
-    /// Implement the for loop construct of async commputation expressions
+    /// Implement the for loop construct of async computation expressions
     ///   - No initial cancellation check before GetEnumerator call.
     ///   - No initial cancellation check before entering protection of implied try/finally
     ///   - Cancellation check after 'entering' the implied try/finally and before loop
@@ -867,7 +866,7 @@ module AsyncPrimitives =
 #endif
 
     ///   - Initial cancellation check
-    ///   - Call syncCtxt.Post with exception protection. THis may fail as it is arbitrary user code
+    ///   - Call syncCtxt.Post with exception protection. This may fail as it is arbitrary user code
     let CreateSwitchToAsync (syncCtxt: SynchronizationContext) =
         MakeAsyncWithCancelCheck(fun ctxt -> ctxt.PostWithTrampoline syncCtxt ctxt.cont)
 
@@ -1072,7 +1071,7 @@ module AsyncPrimitives =
 
     /// Create an instance of an arbitrary delegate type delegating to the given F# function
     type FuncDelegate<'T>(f) =
-        member _.Invoke(sender: obj, a: 'T) : unit =
+        member _.Invoke(sender: objnull, a: 'T) : unit =
             ignore sender
             f a
 
@@ -1305,7 +1304,7 @@ module AsyncPrimitives =
         | None -> ()
 
     [<Sealed; AutoSerializable(false)>]
-    type AsyncIAsyncResult<'T>(callback: System.AsyncCallback, state: obj) =
+    type AsyncIAsyncResult<'T>(callback: System.AsyncCallback, state: objnull) =
         // This gets set to false if the result is not available by the
         // time the IAsyncResult is returned to the caller of Begin
         let mutable completedSynchronously = true
@@ -1741,13 +1740,8 @@ type Async =
 
     /// StartWithContinuations, except the exception continuation is given an ExceptionDispatchInfo
     static member StartWithContinuationsUsingDispatchInfo
-        (
-            computation: Async<'T>,
-            continuation,
-            exceptionContinuation,
-            cancellationContinuation,
-            ?cancellationToken
-        ) : unit =
+        (computation: Async<'T>, continuation, exceptionContinuation, cancellationContinuation, ?cancellationToken)
+        : unit =
         let cancellationToken =
             defaultArg cancellationToken defaultCancellationTokenSource.Token
 
@@ -1759,13 +1753,8 @@ type Async =
             cancellationContinuation
 
     static member StartWithContinuations
-        (
-            computation: Async<'T>,
-            continuation,
-            exceptionContinuation,
-            cancellationContinuation,
-            ?cancellationToken
-        ) : unit =
+        (computation: Async<'T>, continuation, exceptionContinuation, cancellationContinuation, ?cancellationToken)
+        : unit =
         Async.StartWithContinuationsUsingDispatchInfo(
             computation,
             continuation,
@@ -1939,11 +1928,8 @@ type Async =
     /// it happens the child computation will be cancelled.   The resulting async doesn't support cancellation
     /// directly, rather the underlying computation must fill the result if cancellation occurs.
     static member AwaitAndBindChildResult
-        (
-            innerCTS: CancellationTokenSource,
-            resultCell: ResultCell<AsyncResult<'T>>,
-            millisecondsTimeout
-        ) : Async<'T> =
+        (innerCTS: CancellationTokenSource, resultCell: ResultCell<AsyncResult<'T>>, millisecondsTimeout)
+        : Async<'T> =
         match millisecondsTimeout with
         | None
         | Some -1 -> resultCell |> Async.AwaitAndBindResult_NoDirectCancelOrTimeout
@@ -2031,7 +2017,7 @@ type Async =
                             // Register the result.
                             resultCell.RegisterResult(res, reuseThread = true) |> unfake)
 
-            let (iar: IAsyncResult) = beginAction (callback, (null: obj))
+            let (iar: IAsyncResult) = beginAction (callback, (null: objnull))
 
             if iar.CompletedSynchronously then
                 // Ensure cancellation is not possible beyond this point
@@ -2063,7 +2049,7 @@ type Async =
     static member AsBeginEnd<'Arg, 'T>
         (computation: ('Arg -> Async<'T>))
         // The 'Begin' member
-        : ('Arg * System.AsyncCallback * obj -> System.IAsyncResult) *
+        : ('Arg * System.AsyncCallback * objnull -> System.IAsyncResult) *
           (System.IAsyncResult -> 'T) *
           (System.IAsyncResult -> unit)
         =
@@ -2330,7 +2316,7 @@ module WebExtensions =
                 Async.FromContinuations(fun (cont, econt, ccont) ->
                     let userToken = obj ()
 
-                    let rec delegate' (_: obj) (args: #ComponentModel.AsyncCompletedEventArgs) =
+                    let rec delegate' (_: objnull) (args: #ComponentModel.AsyncCompletedEventArgs) =
                         // ensure we handle the completed event from correct download call
                         if userToken = args.UserState then
                             event.RemoveHandler handle

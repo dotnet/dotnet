@@ -2,13 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.Features.RQName;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.FindSymbols.Finders;
@@ -223,9 +223,9 @@ internal static class DefinitionItemFactory
 
     private static ImmutableArray<DocumentSpan> GetSourceLocations(ISymbol definition, ImmutableArray<Location> locations, Solution solution, bool includeHiddenLocations)
     {
-        // Assembly, module and global namespace locations include all source documents; displaying all of them is not useful.
+        // Assembly, module, global namespace and preprocessing symbol locations include all source documents; displaying all of them is not useful.
         // We could consider creating a definition item that points to the project source instead.
-        if (definition is IAssemblySymbol or IModuleSymbol or INamespaceSymbol { IsGlobalNamespace: true })
+        if (definition is IAssemblySymbol or IModuleSymbol or INamespaceSymbol { IsGlobalNamespace: true } or IPreprocessingSymbol)
         {
             return [];
         }
@@ -301,6 +301,10 @@ internal static class DefinitionItemFactory
         var sourceSpan = location.SourceSpan;
 
         var options = await optionsProvider.GetOptionsAsync(document.Project.Services, cancellationToken).ConfigureAwait(false);
+
+        // We don't want to classify obsolete symbols as it is very expensive, and it's not necessary for find all
+        // references to strike out code in the window displaying results.
+        options = options with { ClassifyObsoleteSymbols = false };
 
         var documentSpan = new DocumentSpan(document, sourceSpan);
         var classifiedSpans = await ClassifiedSpansAndHighlightSpanFactory.ClassifyAsync(

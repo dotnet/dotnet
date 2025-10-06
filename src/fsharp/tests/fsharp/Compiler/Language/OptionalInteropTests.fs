@@ -3,16 +3,17 @@
 namespace FSharp.Compiler.UnitTests
 
 open System.Collections.Immutable
-open NUnit.Framework
+open Xunit
 open FSharp.Test
 open FSharp.Test.Utilities
 open Microsoft.CodeAnalysis
 
-[<TestFixture>]
+
 module OptionalInteropTests =
 
-    [<TestCase("5.0")>]
-    [<TestCase("preview")>]
+    [<Theory>]
+    [<InlineData("5.0")>]
+    [<InlineData("preview")>]
     let ``C# method with an optional parameter and called with an option type should compile`` langVersion =
         let csSrc =
             """
@@ -155,7 +156,7 @@ Test.OverloadedMethodTakingNullableOptionals(x = 6) |> ignore
             |> MetadataReference.CreateFromFile
 
         let cs =
-            CompilationUtil.CreateCSharpCompilation(csSrc, CSharpLanguageVersion.CSharp8, TargetFramework.NetCoreApp31, additionalReferences = ImmutableArray.CreateRange [fsharpCoreAssembly])
+            CompilationUtil.CreateCSharpCompilation(csSrc, CSharpLanguageVersion.CSharp8, TargetFramework.Current, additionalReferences = ImmutableArray.CreateRange [fsharpCoreAssembly])
             |> CompilationReference.Create
 
         let fs = Compilation.Create(fsSrc, CompileOutput.Exe, options = [| $"--langversion:{langVersion}" |], cmplRefs = [cs])

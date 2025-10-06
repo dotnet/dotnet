@@ -1,32 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NetVSAndVSCode);$(NetFxVS)</TargetFrameworks>
 
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
-    <DefineConstants>$(DefineConstants);__RemoveThisBitTo__GENERATE_BASELINES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Using Alias="Range" Include="Microsoft.VisualStudio.LanguageServer.Protocol.Range" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-    <Compile Include="..\OSSkipConditionFactAttribute.cs" LinkBase="Shared" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
-    <PackageReference Include="Microsoft.WebTools.Languages.Html" Version="$(MicrosoftWebToolsLanguagesHtmlPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" Version="$(MicrosoftWebToolsLanguagesHtmlPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" Version="$(MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared" Version="$(MicrosoftWebToolsLanguagesSharedPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.Editor" Version="$(MicrosoftWebToolsLanguagesSharedEditorPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.VS" Version="$(MicrosoftWebToolsLanguagesSharedEditorPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="$(MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Web" Version="$(MicrosoftVisualStudioWebPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Shared" Version="$(MicrosoftWebToolsSharedPackageVersion)" />
+    <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
   </ItemGroup>
 
   <ItemGroup>

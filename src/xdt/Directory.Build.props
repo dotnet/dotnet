@@ -5,8 +5,8 @@
   <PropertyGroup>
     <Copyright>$(CopyrightMicrosoft)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <AssemblyOriginatorKeyFile>$(RepositoryEngineeringDir)WebSdk.snk</AssemblyOriginatorKeyFile>
     <LangVersion>latest</LangVersion>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -20,6 +20,9 @@
     <PackageTags>Microsoft Xdt XmlDocumentTransform XmlTransform</PackageTags>
     <RepositoryUrl>https://github.com/dotnet/xdt</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
 
 </Project>

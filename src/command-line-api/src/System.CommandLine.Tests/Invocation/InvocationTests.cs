@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CommandLine.Help;
-using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading;
@@ -16,9 +15,9 @@ namespace System.CommandLine.Tests.Invocation
     public class InvocationTests
     {
         [Fact]
-        public async Task Command_InvokeAsync_enables_help_by_default()
+        public async Task Command_InvokeAsync_displays_help_when_HelpOption_is_present()
         {
-            var command = new CliCommand("the-command")
+            var command = new Command("the-command")
             {
                 new HelpOption()
             };
@@ -26,12 +25,8 @@ namespace System.CommandLine.Tests.Invocation
             command.Description = theHelpText;
 
             StringWriter output = new();
-            CliConfiguration config = new(command)
-            {
-                Output = output
-            };
-
-            await command.Parse("-h", config).InvokeAsync();
+          
+            await command.Parse("-h").InvokeAsync(new() { Output = output }, CancellationToken.None);
 
             output.ToString()
                   .Should()
@@ -39,9 +34,9 @@ namespace System.CommandLine.Tests.Invocation
         }
 
         [Fact]
-        public void Command_Invoke_enables_help_by_default()
+        public void Command_Invoke_displays_help_when_HelpOption_is_present()
         {
-            var command = new CliCommand("the-command")
+            var command = new Command("the-command")
             {
                 new HelpOption()
             };
@@ -49,12 +44,8 @@ namespace System.CommandLine.Tests.Invocation
             command.Description = theHelpText;
 
             StringWriter output = new ();
-            CliConfiguration config = new(command)
-            {
-                Output = output
-            };
-
-            command.Parse("-h", config).Invoke();
+         
+            command.Parse("-h").Invoke(new() { Output = output });
 
             output.ToString()
                   .Should()
@@ -65,7 +56,7 @@ namespace System.CommandLine.Tests.Invocation
         public async Task RootCommand_InvokeAsync_returns_0_when_handler_is_successful()
         {
             var wasCalled = false;
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction((_) => wasCalled = true);
 
@@ -79,7 +70,7 @@ namespace System.CommandLine.Tests.Invocation
         public void RootCommand_Invoke_returns_0_when_handler_is_successful()
         {
             var wasCalled = false;
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction(_ => wasCalled = true);
 
@@ -93,7 +84,7 @@ namespace System.CommandLine.Tests.Invocation
         public async Task RootCommand_InvokeAsync_returns_1_when_handler_throws()
         {
             var wasCalled = false;
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction((_, _) =>
             {
@@ -112,7 +103,7 @@ namespace System.CommandLine.Tests.Invocation
         public void RootCommand_Invoke_returns_1_when_handler_throws()
         {
             var wasCalled = false;
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction((_, _) =>
             {
@@ -134,7 +125,7 @@ namespace System.CommandLine.Tests.Invocation
         [Fact]
         public void Custom_RootCommand_Action_can_set_custom_result_code_via_Invoke()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
             rootCommand.SetAction(_ => 123);
 
             rootCommand.Parse("").Invoke().Should().Be(123);
@@ -143,7 +134,7 @@ namespace System.CommandLine.Tests.Invocation
         [Fact]
         public async Task Custom_RootCommand_Action_can_set_custom_result_code_via_InvokeAsync()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
             rootCommand.SetAction((_, _) => Task.FromResult(456));
 
             (await rootCommand.Parse("").InvokeAsync()).Should().Be(456);
@@ -152,7 +143,7 @@ namespace System.CommandLine.Tests.Invocation
         [Fact]
         public void Anonymous_RootCommand_Task_returning_Action_can_set_custom_result_code_via_Invoke()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction((_, _) => Task.FromResult(123));
 
@@ -162,7 +153,7 @@ namespace System.CommandLine.Tests.Invocation
         [Fact]
         public async Task Anonymous_RootCommand_Task_returning_Action_can_set_custom_result_code_via_InvokeAsync()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction((_, _) => Task.FromResult(123));
 
@@ -170,9 +161,19 @@ namespace System.CommandLine.Tests.Invocation
         }
 
         [Fact]
+        public async Task Anonymous_RootCommand_Task_int_returning_Action_can_set_custom_result_code_via_InvokeAsync()
+        {
+            var rootCommand = new RootCommand();
+
+            rootCommand.SetAction(_ => Task.FromResult(123));
+
+            (await rootCommand.Parse("").InvokeAsync()).Should().Be(123);
+        }
+
+        [Fact]
         public void Anonymous_RootCommand_int_returning_Action_can_set_custom_result_code_via_Invoke()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction(_ => 123);
 
@@ -182,13 +183,33 @@ namespace System.CommandLine.Tests.Invocation
         [Fact]
         public async Task Anonymous_RootCommand_int_returning_Action_can_set_custom_result_code_via_InvokeAsync()
         {
-            var rootCommand = new CliRootCommand();
+            var rootCommand = new RootCommand();
 
             rootCommand.SetAction(_ => 123);
 
             (await rootCommand.Parse("").InvokeAsync()).Should().Be(123);
         }
-        
+
+        [Fact] // https://github.com/dotnet/command-line-api/issues/2562
+        public void Anonymous_async_action_is_not_mapped_into_sync_void_with_fire_and_forget()
+        {
+            RootCommand rootCommand = new();
+            using CancellationTokenSource cts = new();
+            Task delay = Task.Delay(TimeSpan.FromHours(1), cts.Token);
+
+            rootCommand.SetAction(async parseResult =>
+            {
+                await delay;
+            });
+
+            Task started = rootCommand.Parse("").InvokeAsync();
+
+            // The action is supposed to wait for an hour, so it should not complete immediately.
+            started.IsCompleted.Should().BeFalse();
+
+            cts.Cancel();
+        }
+
         [Fact]
         public void Terminating_option_action_short_circuits_command_action()
         {
@@ -196,11 +217,11 @@ namespace System.CommandLine.Tests.Invocation
             SynchronousTestAction optionAction = new(_ => optionActionWasCalled = true, terminating: true);
             bool commandActionWasCalled = false;
 
-            CliOption<bool> option = new("--test")
+            Option<bool> option = new("--test")
             {
                 Action = optionAction
             };
-            CliCommand command = new CliCommand("cmd")
+            Command command = new Command("cmd")
             {
                 option
             };
@@ -227,11 +248,11 @@ namespace System.CommandLine.Tests.Invocation
             SynchronousTestAction optionAction = new(_ => optionActionWasCalled = true, terminating: false);
             bool commandActionWasCalled = false;
 
-            CliOption<bool> option = new("--test")
+            Option<bool> option = new("--test")
             {
                 Action = optionAction
             };
-            CliCommand command = new CliCommand("cmd")
+            Command command = new Command("cmd")
             {
                 option
             };
@@ -255,11 +276,11 @@ namespace System.CommandLine.Tests.Invocation
             SynchronousTestAction optionAction2 = new(_ => optionAction2WasCalled = true);
             SynchronousTestAction optionAction3 = new(_ => optionAction3WasCalled = true);
 
-            CliCommand command = new CliCommand("cmd")
+            Command command = new Command("cmd")
             {
-                new CliOption<bool>("--1") { Action = optionAction1 },
-                new CliOption<bool>("--2") { Action = optionAction2 },
-                new CliOption<bool>("--3") { Action = optionAction3 }
+                new Option<bool>("--1") { Action = optionAction1 },
+                new Option<bool>("--2") { Action = optionAction2 },
+                new Option<bool>("--3") { Action = optionAction3 }
             };
 
             ParseResult parseResult = command.Parse("cmd --1 true --3 false --2 true");
@@ -282,18 +303,18 @@ namespace System.CommandLine.Tests.Invocation
             SynchronousTestAction optionAction = new(_ => optionActionWasCalled = true);
             SynchronousTestAction directiveAction = new(_ => directiveActionWasCalled = true);
 
-            var directive = new CliDirective("directive")
+            var directive = new Directive("directive")
             {
                 Action = directiveAction
             };
 
-            CliRootCommand command = new("cmd")
+            RootCommand command = new("cmd")
             {
-                new CliOption<bool>("-x") { Action = optionAction },
+                new Option<bool>("-x") { Action = optionAction },
                 directive
             };
 
-            ParseResult parseResult = command.Parse("[directive] cmd -x", new CliConfiguration(command));
+            ParseResult parseResult = command.Parse("[directive] cmd -x");
 
             using var _ = new AssertionScope();
 
@@ -310,9 +331,9 @@ namespace System.CommandLine.Tests.Invocation
         {
             var nonexclusiveAction = new SynchronousTestAction(_ => throw new Exception("oops!"), terminating: false);
 
-            var command = new CliRootCommand
+            var command = new RootCommand
             {
-                new CliOption<bool>("-x")
+                new Option<bool>("-x")
                 {
                     Action = nonexclusiveAction
                 }
@@ -321,7 +342,7 @@ namespace System.CommandLine.Tests.Invocation
 
             int returnCode;
 
-            var parseResult = CliParser.Parse(command, "-x");
+            var parseResult = CommandLineParser.Parse(command, "-x");
 
             if (invokeAsync)
             {
@@ -339,7 +360,7 @@ namespace System.CommandLine.Tests.Invocation
         public async Task Command_InvokeAsync_with_cancelation_token_invokes_command_handler()
         {
             using CancellationTokenSource cts = new();
-            var command = new CliCommand("test");
+            var command = new Command("test");
             command.SetAction((_, cancellationToken) =>
             {
                 cancellationToken.Should().Be(cts.Token);

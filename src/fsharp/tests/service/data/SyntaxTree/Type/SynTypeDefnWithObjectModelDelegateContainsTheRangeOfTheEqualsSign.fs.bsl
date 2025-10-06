@@ -4,7 +4,6 @@ ImplFile
       false,
       QualifiedNameOfFile
         SynTypeDefnWithObjectModelDelegateContainsTheRangeOfTheEqualsSign, [],
-      [],
       [SynModuleOrNamespace
          ([SynTypeDefnWithObjectModelDelegateContainsTheRangeOfTheEqualsSign],
           false, AnonModule,
@@ -34,7 +33,7 @@ ImplFile
                             SynValInfo
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, None, None, (2,9--2,37),
+                            PreXmlDocEmpty, Single None, None, (2,9--2,37),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None
@@ -51,4 +50,5 @@ ImplFile
                                  WithKeyword = None })], (2,0--2,37))],
           PreXmlDocEmpty, [], None, (2,0--3,0), { LeadingKeyword = None })],
       (true, true), { ConditionalDirectives = []
+                      WarnDirectives = []
                       CodeComments = [] }, set []))

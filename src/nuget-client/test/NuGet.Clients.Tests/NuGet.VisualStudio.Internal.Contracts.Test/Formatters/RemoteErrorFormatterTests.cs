@@ -27,7 +27,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.TypeName, actualResult.TypeName);
         }
 
-        public static TheoryData RemoteErrors => new TheoryData<RemoteError>
+        public static TheoryData<RemoteError> RemoteErrors => new()
             {
                 {
                     new RemoteError(

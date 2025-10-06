@@ -24,7 +24,7 @@ namespace child_crash
             var directory = "Release";
 #endif
             // wait for two children to crash
-            var childProcess = Path.GetFullPath($@"../../../problematic-child/{directory}/net5.0/problematic-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
+            var childProcess = Path.GetFullPath($@"../../../problematic-child/{directory}/net9.0/problematic-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
             if (!File.Exists(childProcess))
             {
                 throw new FileNotFoundException(childProcess);

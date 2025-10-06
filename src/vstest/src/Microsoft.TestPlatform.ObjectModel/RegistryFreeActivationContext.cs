@@ -113,6 +113,7 @@ internal class RegistryFreeActivationContext : IDisposable
     }
 }
 
+/// <summary>
 /// ActivationContextNativeMethods class needed for registry-free context
 /// </summary>
 internal static class ActivationContextNativeMethods

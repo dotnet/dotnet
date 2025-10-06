@@ -68,6 +68,11 @@ namespace Microsoft.Interop.Analyzers
             return optionsBuilder.ToImmutable();
         }
 
+        protected override ImmutableDictionary<string, Option> CombineOptions(ImmutableDictionary<string, Option> fixAllOptions, ImmutableDictionary<string, Option> diagnosticOptions)
+        {
+            return fixAllOptions;
+        }
+
         protected override IEnumerable<ConvertToSourceGeneratedInteropFix> CreateAllFixesForDiagnosticOptions(SyntaxNode node, ImmutableDictionary<string, Option> options)
         {
             bool warnForAdditionalWork = options.TryGetValue(Option.MayRequireAdditionalWork, out Option mayRequireAdditionalWork) && mayRequireAdditionalWork is Option.Bool(true);
@@ -557,7 +562,7 @@ namespace Microsoft.Interop.Analyzers
                         // Named arguments in specified order, followed by any named arguments with no preferred order
                         string name = arg.NameEquals.Name.Identifier.Text;
                         int index = System.Array.IndexOf(s_preferredAttributeArgumentOrder, name);
-                        return index == -1 ? int.MaxValue : index;
+                        return index < 0 ? int.MaxValue : index;
                     })));
             return generator.ReplaceNode(attribute, attribute.ArgumentList, updatedArgList);
         }

@@ -95,11 +95,11 @@ public class EventLogDataCollectorTests
     [TestMethod]
     public void InitializeShouldInitializeDefaultEventLogNames()
     {
-        List<string> eventLogNames = new()
-        {
+        List<string> eventLogNames =
+        [
             "System",
             "Application"
-        };
+        ];
 
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
@@ -113,11 +113,11 @@ public class EventLogDataCollectorTests
         string configurationString =
             @"<Configuration><Setting name=""EventLogs"" value=""MyEventName,MyEventName2"" /></Configuration>";
 
-        List<string> eventLogNames = new()
-        {
+        List<string> eventLogNames =
+        [
             "MyEventName",
             "MyEventName2"
-        };
+        ];
 
         XmlDocument expectedXmlDoc = new();
         expectedXmlDoc.LoadXml(configurationString);
@@ -131,12 +131,12 @@ public class EventLogDataCollectorTests
     [TestMethod]
     public void InitializeShouldInitializeDefaultLogEntryTypes()
     {
-        List<EventLogEntryType> entryTypes = new()
-        {
+        List<EventLogEntryType> entryTypes =
+        [
             EventLogEntryType.Error,
             EventLogEntryType.Warning,
             EventLogEntryType.FailureAudit
-        };
+        ];
 
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
@@ -150,10 +150,7 @@ public class EventLogDataCollectorTests
         string configurationString =
             @"<Configuration><Setting name=""EntryTypes"" value=""Error"" /></Configuration>";
 
-        List<EventLogEntryType> entryTypes = new()
-        {
-            EventLogEntryType.Error
-        };
+        List<EventLogEntryType> entryTypes = [EventLogEntryType.Error];
 
         XmlDocument expectedXmlDoc = new();
         expectedXmlDoc.LoadXml(configurationString);
@@ -169,10 +166,7 @@ public class EventLogDataCollectorTests
         string configurationString =
             @"<Configuration><Setting name=""EventSources"" value=""MyEventSource"" /></Configuration>";
 
-        List<string> eventSources = new()
-        {
-            "MyEventSource"
-        };
+        List<string> eventSources = ["MyEventSource"];
 
         XmlDocument expectedXmlDoc = new();
         expectedXmlDoc.LoadXml(configurationString);

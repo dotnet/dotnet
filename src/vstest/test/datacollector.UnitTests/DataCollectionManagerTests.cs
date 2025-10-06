@@ -359,7 +359,7 @@ public class DataCollectionManagerTests
         var attachment = new AttachmentSet(new Uri("my://custom/datacollector"), "CustomDataCollector");
         attachment.Attachments.Add(new UriDataAttachment(new Uri("my://filename.txt"), "filename.txt"));
 
-        _mockDataCollectionAttachmentManager.Setup(x => x.GetAttachments(It.IsAny<DataCollectionContext>())).Returns(new List<AttachmentSet>() { attachment });
+        _mockDataCollectionAttachmentManager.Setup(x => x.GetAttachments(It.IsAny<DataCollectionContext>())).Returns([attachment]);
 
         _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
         var sessionStartEventArgs = new SessionStartEventArgs();
@@ -387,7 +387,7 @@ public class DataCollectionManagerTests
         var attachment = new AttachmentSet(new Uri("my://custom/datacollector"), "CustomDataCollector");
         attachment.Attachments.Add(new UriDataAttachment(new Uri("my://filename.txt"), "filename.txt"));
 
-        _mockDataCollectionAttachmentManager.Setup(x => x.GetAttachments(It.IsAny<DataCollectionContext>())).Returns(new List<AttachmentSet>() { attachment });
+        _mockDataCollectionAttachmentManager.Setup(x => x.GetAttachments(It.IsAny<DataCollectionContext>())).Returns([attachment]);
 
         SetupMockDataCollector((XmlElement a, DataCollectionEvents b, DataCollectionSink c, DataCollectionLogger d, DataCollectionEnvironmentContext e)
             => b.SessionEnd += (sender, ev) =>

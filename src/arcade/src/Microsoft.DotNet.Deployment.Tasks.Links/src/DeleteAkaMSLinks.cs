@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Deployment.Tasks.Links.src;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
         {
             try
             {
-                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log);
+                AkaMSLinkManager manager = CreateAkaMSLinksManager();
                 await manager.DeleteLinksAsync(new List<string>(ShortUrls));
             }
             catch (Exception e)

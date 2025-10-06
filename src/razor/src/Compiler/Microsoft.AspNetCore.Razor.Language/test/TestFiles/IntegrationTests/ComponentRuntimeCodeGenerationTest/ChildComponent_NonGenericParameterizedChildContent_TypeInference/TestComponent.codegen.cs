@@ -26,10 +26,9 @@ namespace Test
 #line hidden
 #nullable disable
             , 2, (context) => (__builder2) => {
-                __builder2.AddContent(3, 
 #nullable restore
-#line (2,21)-(2,38) "x:\dir\subdir\Test\TestComponent.cshtml"
-context.ToLower()
+#line (2,21)-(2,38) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(3, context.ToLower()
 
 #line default
 #line hidden
@@ -37,10 +36,9 @@ context.ToLower()
                 );
             }
             , 4, (context) => (__builder2) => {
-                __builder2.AddContent(5, 
 #nullable restore
-#line (3,17)-(3,24) "x:\dir\subdir\Test\TestComponent.cshtml"
-context
+#line (3,17)-(3,24) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+__builder2.AddContent(5, context
 
 #line default
 #line hidden
@@ -60,7 +58,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<TItem> __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment<global::System.Int32> __arg2)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (1,14)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "GenericFragment", __arg1);
         __builder.AddComponentParameter(__seq2, "IntFragment", __arg2);
         __builder.CloseComponent();

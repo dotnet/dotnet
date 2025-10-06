@@ -54,6 +54,12 @@ namespace System
     internal static class ThrowHelper
     {
         [DoesNotReturn]
+        internal static void ThrowUnreachableException()
+        {
+            throw new UnreachableException();
+        }
+
+        [DoesNotReturn]
         internal static void ThrowArithmeticException(string message)
         {
             throw new ArithmeticException(message);
@@ -72,21 +78,9 @@ namespace System
         }
 
         [DoesNotReturn]
-        internal static void ThrowArrayTypeMismatchException_CantAssignType()
+        internal static void ThrowArgument_TypeContainsReferences(Type targetType)
         {
-            throw new ArrayTypeMismatchException(SR.ArrayTypeMismatch_CantAssignType);
-        }
-
-        [DoesNotReturn]
-        internal static void ThrowInvalidCastException_DownCastArrayElement()
-        {
-            throw new InvalidCastException(SR.InvalidCast_DownCastArrayElement);
-        }
-
-        [DoesNotReturn]
-        internal static void ThrowInvalidTypeWithPointersNotSupported(Type targetType)
-        {
-            throw new ArgumentException(SR.Format(SR.Argument_InvalidTypeWithPointersNotSupported, targetType));
+            throw new ArgumentException(SR.Format(SR.Argument_TypeContainsReferences, targetType));
         }
 
         [DoesNotReturn]
@@ -615,6 +609,18 @@ namespace System
         }
 
         [DoesNotReturn]
+        internal static void ThrowFormatException_BadHexChar()
+        {
+            throw new FormatException(SR.Format_BadHexChar);
+        }
+
+        [DoesNotReturn]
+        internal static void ThrowFormatException_BadHexLength()
+        {
+            throw new FormatException(SR.Format_BadHexLength);
+        }
+
+        [DoesNotReturn]
         internal static void ThrowFormatException_NeedSingleChar()
         {
             throw new FormatException(SR.Format_NeedSingleChar);
@@ -779,8 +785,6 @@ namespace System
             if (!(default(T) == null) && value == null)
                 ThrowArgumentNullException(argName);
         }
-
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void ThrowForUnsupportedSimdVectorBaseType<TVector, T>()
@@ -998,12 +1002,8 @@ namespace System
                     return "type";
                 case ExceptionArgument.sourceIndex:
                     return "sourceIndex";
-                case ExceptionArgument.sourceArray:
-                    return "sourceArray";
                 case ExceptionArgument.destinationIndex:
                     return "destinationIndex";
-                case ExceptionArgument.destinationArray:
-                    return "destinationArray";
                 case ExceptionArgument.pHandle:
                     return "pHandle";
                 case ExceptionArgument.handle:
@@ -1064,6 +1064,14 @@ namespace System
                     return "divisor";
                 case ExceptionArgument.factor:
                     return "factor";
+                case ExceptionArgument.set:
+                    return "set";
+                case ExceptionArgument.valueFactory:
+                    return "valueFactory";
+                case ExceptionArgument.addValueFactory:
+                    return "addValueFactory";
+                case ExceptionArgument.updateValueFactory:
+                    return "updateValueFactory";
                 default:
                     Debug.Fail("The enum value is not defined, please check the ExceptionArgument Enum.");
                     return "";
@@ -1244,6 +1252,12 @@ namespace System
                     return SR.Format_ExpectedAsciiDigit;
                 case ExceptionResource.Argument_HasToBeArrayClass:
                     return SR.Argument_HasToBeArrayClass;
+                case ExceptionResource.InvalidOperation_IncompatibleComparer:
+                    return SR.InvalidOperation_IncompatibleComparer;
+                case ExceptionResource.ConcurrentDictionary_ItemKeyIsNull:
+                    return SR.ConcurrentDictionary_ItemKeyIsNull;
+                case ExceptionResource.ConcurrentDictionary_TypeOfValueIncorrect:
+                    return SR.ConcurrentDictionary_TypeOfValueIncorrect;
                 default:
                     Debug.Fail("The enum value is not defined, please check the ExceptionResource Enum.");
                     return "";
@@ -1321,9 +1335,7 @@ namespace System
         timeout,
         type,
         sourceIndex,
-        sourceArray,
         destinationIndex,
-        destinationArray,
         pHandle,
         handle,
         other,
@@ -1354,6 +1366,10 @@ namespace System
         arrayType,
         divisor,
         factor,
+        set,
+        valueFactory,
+        addValueFactory,
+        updateValueFactory
     }
 
     //
@@ -1440,5 +1456,8 @@ namespace System
         Format_UnclosedFormatItem,
         Format_ExpectedAsciiDigit,
         Argument_HasToBeArrayClass,
+        InvalidOperation_IncompatibleComparer,
+        ConcurrentDictionary_ItemKeyIsNull,
+        ConcurrentDictionary_TypeOfValueIncorrect,
     }
 }

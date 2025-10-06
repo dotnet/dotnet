@@ -12,14 +12,14 @@ namespace NuGet.Commands.Test
     /// </summary>
     public class TestPackageSourceProvider : IPackageSourceProvider
     {
-        private IEnumerable<PackageSource> PackageSources { get; set; }
+        private IEnumerable<PackageSource> _packageSources;
 
         public TestPackageSourceProvider(IEnumerable<PackageSource> packageSources)
         {
-            PackageSources = packageSources;
+            _packageSources = packageSources;
         }
 
-        public IEnumerable<PackageSource> LoadPackageSources() => PackageSources;
+        public IEnumerable<PackageSource> LoadPackageSources() => _packageSources;
 
         public IReadOnlyList<PackageSource> LoadAuditSources() => Array.Empty<PackageSource>();
 
@@ -27,7 +27,7 @@ namespace NuGet.Commands.Test
 
         public void SavePackageSources(IEnumerable<PackageSource> sources)
         {
-            PackageSources = sources;
+            _packageSources = sources;
             PackageSourcesChanged?.Invoke(this, null);
         }
 

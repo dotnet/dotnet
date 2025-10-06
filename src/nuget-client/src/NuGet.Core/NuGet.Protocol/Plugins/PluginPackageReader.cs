@@ -822,7 +822,7 @@ namespace NuGet.Protocol.Plugins
             if (referenceGroups.Any())
             {
                 // the 'any' group from references, for pre2.5 nuspecs this will be the only group
-                var fallbackGroup = referenceGroups.Where(g => g.TargetFramework.Equals(NuGetFramework.AnyFramework)).FirstOrDefault();
+                var fallbackGroup = referenceGroups.FirstOrDefault(g => g.TargetFramework.Equals(NuGetFramework.AnyFramework));
 
                 foreach (var fileGroup in fileGroups)
                 {
@@ -1142,12 +1142,10 @@ namespace NuGet.Protocol.Plugins
 
         public override bool CanVerifySignedPackages(SignedPackageVerifierSettings verifierSettings)
         {
-#if IS_SIGNING_SUPPORTED
             if (!verifierSettings.AllowUnsigned)
             {
                 throw new SignatureException(NuGetLogCode.NU3041, Strings.Plugin_DownloadNotSupportedSinceUnsignedNotAllowed);
             }
-#endif
             return false;
         }
 

@@ -4,23 +4,37 @@
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
     <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
+
+    <EnableMSTestRunner>false</EnableMSTestRunner>
+    <!--
+      Arcade uses UseMSTestRunner instead of EnableMSTestRunner
+      https://github.com/dotnet/arcade/blob/c9ed073c0a2a828aed8f5c6ecb0a544b0f0fd3f8/src/Microsoft.DotNet.Arcade.Sdk/tools/MSTest/MSTest.targets#L29
+      https://github.com/dotnet/arcade/issues/15875      
+    -->
+    <UseMSTestRunner>false</UseMSTestRunner>
   </PropertyGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>$(TargetFrameworks);net472</TargetFrameworks>
+    <TargetFrameworks>$(RunnerTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.9.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.9.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="$(RepoRoot)src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
+    This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
+    prevents us from having to lookup the correct .NET runtime. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkMinimum)" />
+
+    <!-- Event log collector only works on .NET Framework, and so we build it only for that. -->
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"  SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"  />
+
     <ProjectReference Include="$(RepoRoot)src\datacollector\datacollector.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
@@ -32,8 +46,9 @@
     <ProjectReference Include="$(RepoRoot)src\AttachVS\AttachVS.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Build\Microsoft.TestPlatform.Build.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />
@@ -49,31 +64,34 @@
 
     <ItemGroup>
       <!-- .NET Framework console -->
-      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="netfx" />
-      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="netfx\Extensions\" />
+      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\win7-x64\**\*.*" SubFolder="netfx" />
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\**\*.*" SubFolder="netfx\Extensions\" />
 
-      <!-- copy net462, net47, net471, net472 and net48 testhosts -->
-      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <!-- copy net462, net47, net471, net472, net48 and net481 testhosts -->
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
-      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net47\win7-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net47\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net47\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
-      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net471\win7-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net471\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net471\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
-      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net472\win7-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net472\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net472\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
-      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net48\win7-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net48\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net48\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net481\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net481\win7-x64\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
 
       <!-- copy datacollectors -->
       <FileToCopy Include="$(SourcePath)bin\datacollector\$(Configuration)\net472\win7-x64\**\*.*" SubFolder="netfx\" />
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net472\**\*.*" SubFolder="netfx\Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="netfx\Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="netfx\Extensions\blame\" />
-      <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="netfx\Extensions\blame\" />
+      <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\**\*.*" SubFolder="netfx\Extensions\blame\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\**\*.*" SubFolder="netfx\Extensions\blame\" />
 
       <!-- copy loggers -->
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*" SubFolder="netfx\Extensions\" />
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*" SubFolder="netfx\Extensions\" />
 
       <!-- .NET console -->
       <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />
@@ -87,7 +105,7 @@
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net472\**\*.*" SubFolder="net\Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net\Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net\Extensions\blame\" />
-      <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.x86\$(Configuration)\$(NetCoreAppMinimum)\win7-x86\**\*.*" SubFolder="net\Extensions\blame\" />
+      <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.x86\$(Configuration)\$(NetCoreAppMinimum)\win-x86\**\*.*" SubFolder="net\Extensions\blame\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.arm64\$(Configuration)\$(NetCoreAppMinimum)\win10-arm64\**\*.*" SubFolder="net\Extensions\blame\" />-->
 
       <!-- copy loggers --><!--

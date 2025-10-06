@@ -31,7 +31,7 @@ namespace ILCompiler.DependencyAnalysis
 
         public void AppendMangledName(NameMangler nameMangler, Utf8StringBuilder sb)
         {
-            sb.Append(nameMangler.CompilationUnitPrefix).Append("__InterfaceDispatchMap_").Append(nameMangler.SanitizeName(nameMangler.GetMangledTypeName(_type)));
+            sb.Append(nameMangler.CompilationUnitPrefix).Append("__InterfaceDispatchMap_"u8).Append(nameMangler.SanitizeName(nameMangler.GetMangledTypeName(_type)));
         }
 
         public int Offset => 0;
@@ -89,25 +89,15 @@ namespace ILCompiler.DependencyAnalysis
 
             DefType declType = type.GetClosestDefType();
 
-            for (int interfaceIndex = 0; interfaceIndex < declType.RuntimeInterfaces.Length; interfaceIndex++)
+            for (int interfaceIndex = declType.RuntimeInterfaces.Length - 1; interfaceIndex >= 0; interfaceIndex--)
             {
                 DefType interfaceType = declType.RuntimeInterfaces[interfaceIndex];
                 InstantiatedType interfaceOnDefinitionType = interfaceType.IsTypeDefinition ?
                     null :
                     (InstantiatedType)declType.GetTypeDefinition().RuntimeInterfaces[interfaceIndex];
 
-                IEnumerable<MethodDesc> slots;
-
-                // If the vtable has fixed slots, we can query it directly.
-                // If it's a lazily built vtable, we might not be able to query slots
-                // just yet, so approximate by looking at all methods.
                 VTableSliceNode vtableSlice = factory.VTable(interfaceType);
-                if (vtableSlice.HasFixedSlots)
-                    slots = vtableSlice.Slots;
-                else
-                    slots = interfaceType.GetAllVirtualMethods();
-
-                foreach (MethodDesc slotMethod in slots)
+                foreach (MethodDesc slotMethod in vtableSlice.Slots)
                 {
                     MethodDesc declMethod = slotMethod;
 
@@ -176,16 +166,20 @@ namespace ILCompiler.DependencyAnalysis
                 if (!factory.InterfaceUse(interfaceType.GetTypeDefinition()).Marked)
                     continue;
 
-                IReadOnlyList<MethodDesc> virtualSlots = factory.VTable(interfaceType).Slots;
+                VTableSliceNode interfaceVTable = factory.VTable(interfaceType);
+                IReadOnlyList<MethodDesc> virtualSlots = interfaceVTable.Slots;
 
                 for (int interfaceMethodSlot = 0; interfaceMethodSlot < virtualSlots.Count; interfaceMethodSlot++)
                 {
                     MethodDesc declMethod = virtualSlots[interfaceMethodSlot];
 
+                    if (!interfaceVTable.IsSlotUsed(declMethod))
+                        continue;
+
                     if (!declMethod.Signature.IsStatic && !needsEntriesForInstanceInterfaceMethodImpls)
                         continue;
 
-                    if(!interfaceType.IsTypeDefinition)
+                    if (!interfaceType.IsTypeDefinition)
                         declMethod = factory.TypeSystemContext.GetMethodForInstantiatedType(declMethod.GetTypicalMethodDefinition(), (InstantiatedType)definitionInterfaceType);
 
                     var implMethod = declMethod.Signature.IsStatic ?

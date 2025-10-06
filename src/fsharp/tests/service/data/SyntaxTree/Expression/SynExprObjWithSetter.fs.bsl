@@ -1,7 +1,7 @@
 ImplFile
   (ParsedImplFileInput
      ("/root/Expression/SynExprObjWithSetter.fs", false,
-      QualifiedNameOfFile SynExprObjWithSetter, [], [],
+      QualifiedNameOfFile SynExprObjWithSetter, [],
       [SynModuleOrNamespace
          ([SynExprObjWithSetter], false, AnonModule,
           [Types
@@ -31,7 +31,7 @@ ImplFile
                             SynValInfo ([], SynArgInfo ([], false, None)), false,
                             false,
                             PreXmlDoc ((4,4), FSharp.Compiler.Xml.XmlDocCollector),
-                            None, None, (4,4--4,54),
+                            Single None, None, (4,4--4,54),
                             { LeadingKeyword = Abstract (4,4--4,12)
                               InlineKeyword = None
                               WithKeyword = Some (4,46--4,50)
@@ -100,4 +100,5 @@ ImplFile
                  (6,0--7,69)), (6,0--7,69))], PreXmlDocEmpty, [], None,
           (2,0--7,69), { LeadingKeyword = None })], (true, true),
       { ConditionalDirectives = []
+        WarnDirectives = []
         CodeComments = [] }, set []))

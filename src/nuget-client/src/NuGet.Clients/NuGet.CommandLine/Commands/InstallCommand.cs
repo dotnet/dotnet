@@ -350,18 +350,30 @@ namespace NuGet.CommandLine
                     PackageSaveMode = EffectivePackageSaveMode;
                 }
 
-                // Check if the package already exists or a higher version exists already.
-                var skipInstall = project.PackageExists(packageIdentity, PackageSaveMode);
+                var exactVersionExists = project.PackageExists(packageIdentity, PackageSaveMode);
+                var higherVersionExists = alreadyInstalledVersions.Any(e => e >= version);
 
-                // For SxS allow other versions to install. For non-SxS skip if a higher version exists.
-                skipInstall |= (ExcludeVersion && alreadyInstalledVersions.Any(e => e >= version));
+                // For SxS skip if exact version exists. For non-SxS skip if a higher version exists.
+                var skipInstall = exactVersionExists || (ExcludeVersion && higherVersionExists);
 
                 if (skipInstall)
                 {
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        LocalizedResourceManager.GetString("InstallCommandPackageAlreadyExists"),
-                        packageIdentity);
+                    string message;
+                    if (exactVersionExists)
+                    {
+                        message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            LocalizedResourceManager.GetString("InstallCommandPackageAlreadyExists"),
+                            packageIdentity);
+                    }
+                    else
+                    {
+                        var higherPackageIdentity = new PackageIdentity(packageId, alreadyInstalledVersions.FirstOrDefault(e => e >= version));
+                        message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            LocalizedResourceManager.GetString("InstallCommandHigherVersionAlreadyExists"),
+                            packageIdentity, higherPackageIdentity);
+                    }
 
                     Console.LogMinimal(message);
                 }

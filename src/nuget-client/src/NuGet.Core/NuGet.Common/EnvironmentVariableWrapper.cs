@@ -14,7 +14,9 @@ namespace NuGet.Common
         {
             try
             {
+#pragma warning disable RS0030 // Do not use banned APIs
                 return Environment.GetEnvironmentVariable(variable);
+#pragma warning restore RS0030 // Do not use banned APIs
             }
             catch (SecurityException)
             {

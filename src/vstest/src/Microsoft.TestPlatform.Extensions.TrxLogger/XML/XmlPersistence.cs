@@ -706,7 +706,7 @@ internal class XmlPersistence
         }
         else
         {
-            string[] parts = location.Split(new char[] { '/' }, 2);
+            string[] parts = location.Split(['/'], 2);
             string firstPart = parts[0];
 
             XmlNode? firstChild = LocationToXmlNode(xml, firstPart);
@@ -805,7 +805,7 @@ internal class XmlPersistence
         }
 
         // fix the empty namespaces to a temp prefix, so xpath query can understand them
-        string[] parts = queryIn.Split(new char[] { '/' }, StringSplitOptions.None);
+        string[] parts = queryIn.Split(['/'], StringSplitOptions.None);
 
         StringBuilder query = new();
 
