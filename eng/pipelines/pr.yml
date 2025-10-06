@@ -69,10 +69,5 @@ stages:
     ${{ else }}:
       scope: ${{ parameters.buildScope }}
     # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
-    # Will exclude runtime-dependent jobs when either of the following are true:
-    #   - 'Detect By Branch Name' was selected for the feature band: branch is not main and does not contain '.1xx' but does end with 'xx'.
-    #   - '>= 2xx' was selected for the feature band
-    # This handles both PR and manually run builds as the variables are different between the two contexts
-    # Note that for manually run builds, the user must select '>= 2xx' when targeting a custom branch
-    ${{ if or(and(eq(parameters.featureBand, 'Detect by Branch Name'), eq(variables.isPRTrigger, 'true'), ne(variables['System.PullRequest.TargetBranch'], 'refs/heads/main'), not(contains(variables['System.PullRequest.TargetBranch'], '.1xx')), endsWith(variables['System.PullRequest.TargetBranch'], 'xx')), and(eq(parameters.featureBand, 'Detect by Branch Name'), ne(variables.isPRTrigger, 'true'), ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(contains(variables['Build.SourceBranch'], '.1xx')), endsWith(variables['Build.SourceBranch'], 'xx')), eq(parameters.featureBand, '>= 2xx')) }}:
-      excludeRuntimeDependentJobs: true
+    # This is enabled for all branches except main and 1xx
+    excludeRuntimeDependentJobs: true
