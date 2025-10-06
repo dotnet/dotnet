@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -53,18 +54,18 @@ internal sealed class SourceGeneratorProjectEngine
         Debug.Assert(_discoveryPhaseIndex < _rewritePhaseIndex);
     }
 
-    public SourceGeneratorRazorCodeDocument ProcessInitialParse(RazorProjectItem projectItem, bool designTime)
+    public SourceGeneratorRazorCodeDocument ProcessInitialParse(RazorProjectItem projectItem, bool designTime, CancellationToken cancellationToken)
     {
         var codeDocument = _projectEngine.CreateCodeDocument(projectItem, designTime);
 
-        ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument);
+        ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
 
         // record the syntax tree, before the tag helper re-writing occurs
         codeDocument.SetPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    public SourceGeneratorRazorCodeDocument ProcessTagHelpers(SourceGeneratorRazorCodeDocument sgDocument, IReadOnlyList<TagHelperDescriptor> tagHelpers, bool checkForIdempotency)
+    public SourceGeneratorRazorCodeDocument ProcessTagHelpers(SourceGeneratorRazorCodeDocument sgDocument, IReadOnlyList<TagHelperDescriptor> tagHelpers, bool checkForIdempotency, CancellationToken cancellationToken)
     {
         Debug.Assert(sgDocument.CodeDocument.GetPreTagHelperSyntaxTree() is not null);
 
@@ -87,7 +88,7 @@ internal sealed class SourceGeneratorProjectEngine
 
                 // re-run discovery to figure out which tag helpers are now in scope for this document
                 codeDocument.SetTagHelpers(tagHelpers);
-                _discoveryPhase.Execute(codeDocument);
+                _discoveryPhase.Execute(codeDocument, cancellationToken);
                 var tagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
 
                 // Check if any new tag helpers were added or ones we previously used were removed
@@ -108,26 +109,26 @@ internal sealed class SourceGeneratorProjectEngine
             codeDocument.SetTagHelpers(tagHelpers);
         }
 
-        ExecutePhases(Phases[startIndex..(_rewritePhaseIndex + 1)], codeDocument);
+        ExecutePhases(Phases[startIndex..(_rewritePhaseIndex + 1)], codeDocument, cancellationToken);
 
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    public SourceGeneratorRazorCodeDocument ProcessRemaining(SourceGeneratorRazorCodeDocument sgDocument)
+    public SourceGeneratorRazorCodeDocument ProcessRemaining(SourceGeneratorRazorCodeDocument sgDocument, CancellationToken cancellationToken)
     {
         var codeDocument = sgDocument.CodeDocument;
         Debug.Assert(codeDocument.GetReferencedTagHelpers() is not null);
 
-        ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument);
+        ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument, cancellationToken);
 
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    private static void ExecutePhases(ReadOnlySpan<IRazorEnginePhase> phases, RazorCodeDocument codeDocument)
+    private static void ExecutePhases(ReadOnlySpan<IRazorEnginePhase> phases, RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         foreach (var phase in phases)
         {
-            phase.Execute(codeDocument);
+            phase.Execute(codeDocument, cancellationToken);
         }
     }
 }
