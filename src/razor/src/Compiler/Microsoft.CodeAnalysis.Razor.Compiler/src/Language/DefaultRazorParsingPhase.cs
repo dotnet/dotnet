@@ -19,7 +19,7 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
     protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var options = codeDocument.ParserOptions;
-        var syntaxTree = RazorSyntaxTree.Parse(codeDocument.Source, options);
+        var syntaxTree = RazorSyntaxTree.Parse(codeDocument.Source, options, cancellationToken);
         codeDocument.SetSyntaxTree(syntaxTree);
 
         using var importSyntaxTrees = new PooledArrayBuilder<RazorSyntaxTree>(codeDocument.Imports.Length);
@@ -30,7 +30,7 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
             if (!TryGetCachedImportTree(import, options, out var tree))
             {
                 // We don't have a cached version, parse the import and add it to the CWT
-                tree = RazorSyntaxTree.Parse(import, options);
+                tree = RazorSyntaxTree.Parse(import, options, cancellationToken);
 
 #if NET
                 s_importTrees.AddOrUpdate(import, tree);

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-
 namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 // Simplified version of Roslyn's SyntaxNodeCache
@@ -12,7 +10,8 @@ internal sealed class SyntaxTokenCache
     private const int CacheSize = 1 << CacheSizeBits;
     private const int CacheMask = CacheSize - 1;
     public static readonly SyntaxTokenCache Instance = new();
-    private static readonly Entry[] s_cache = new Entry[CacheSize];
+
+    private readonly Entry[] _cache = new Entry[CacheSize];
 
     internal SyntaxTokenCache() { }
 
@@ -29,30 +28,7 @@ internal sealed class SyntaxTokenCache
     }
 
     public bool CanBeCached(SyntaxKind kind, params RazorDiagnostic[] diagnostics)
-    {
-        if (diagnostics.Length == 0)
-        {
-            switch (kind)
-            {
-                case SyntaxKind.CharacterLiteral:
-                case SyntaxKind.Dot:
-                case SyntaxKind.Identifier:
-                case SyntaxKind.IntegerLiteral:
-                case SyntaxKind.NumericLiteral:
-                case SyntaxKind.Keyword:
-                case SyntaxKind.NewLine:
-                case SyntaxKind.RazorCommentStar:
-                case SyntaxKind.RazorCommentTransition:
-                case SyntaxKind.StringLiteral:
-                case SyntaxKind.Transition:
-                case SyntaxKind.Whitespace:
-                case SyntaxKind.EndOfFile:
-                    return true;
-            }
-        }
-
-        return false;
-    }
+        => diagnostics.Length == 0;
 
     public SyntaxToken GetCachedToken(SyntaxKind kind, string content)
     {
@@ -62,15 +38,15 @@ internal sealed class SyntaxTokenCache
         var indexableHash = hash ^ (hash >> 16);
 
         var idx = indexableHash & CacheMask;
-        var e = s_cache[idx];
+        var e = _cache[idx];
 
         if (e.Hash == hash && e.Token != null && e.Token.Kind == kind && e.Token.Content == content)
         {
             return e.Token;
         }
 
-        var token = new SyntaxToken(kind, content, Array.Empty<RazorDiagnostic>());
-        s_cache[idx] = new Entry(hash, token);
+        var token = new SyntaxToken(kind, content, []);
+        _cache[idx] = new Entry(hash, token);
 
         return token;
     }

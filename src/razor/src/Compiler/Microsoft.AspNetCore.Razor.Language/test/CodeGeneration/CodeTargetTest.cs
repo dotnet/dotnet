@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using Xunit;
 
@@ -15,10 +13,9 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.Default;
 
         // Act
-        var target = CodeTarget.CreateDefault(codeDocument, options);
+        var target = CodeTarget.CreateDefault(codeDocument);
 
         // Assert
         Assert.IsType<DefaultCodeTarget>(target);
@@ -32,10 +29,9 @@ public class CodeTargetTest
         Action<CodeTargetBuilder> @delegate = (b) => { wasCalled = true; };
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.Default;
 
         // Act
-        CodeTarget.CreateDefault(codeDocument, options, @delegate);
+        CodeTarget.CreateDefault(codeDocument, @delegate);
 
         // Assert
         Assert.True(wasCalled);
@@ -46,10 +42,9 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.Default;
 
         // Act
-        CodeTarget.CreateDefault(codeDocument, options, configure: null);
+        CodeTarget.CreateDefault(codeDocument, configure: null);
 
         // Assert (does not throw)
     }
@@ -59,10 +54,9 @@ public class CodeTargetTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.Default;
 
         // Act
-        CodeTarget.CreateDefault(codeDocument, options, configure: null);
+        CodeTarget.CreateDefault(codeDocument, configure: null);
 
         // Assert (does not throw)
     }
