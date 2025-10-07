@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -15,7 +14,10 @@ internal sealed class ComponentMarkupDiagnosticPass : ComponentIntermediateNodeP
 
     public override int Order => DefaultOrder;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var visitor = new Visitor();
         visitor.Visit(documentNode);

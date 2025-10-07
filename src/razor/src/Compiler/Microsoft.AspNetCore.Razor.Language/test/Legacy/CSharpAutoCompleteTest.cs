@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Xunit;
 
@@ -15,14 +12,14 @@ public class CSharpAutoCompleteTest() : ParserTestBase(layer: TestProject.Layer.
     public void FunctionsDirectiveAutoCompleteAtEOF()
     {
         // Arrange, Act & Assert
-        ParseDocumentTest("@functions{", new[] { FunctionsDirective.Directive });
+        ParseDocumentTest("@functions{", [FunctionsDirective.Directive]);
     }
 
     [Fact]
     public void SectionDirectiveAutoCompleteAtEOF()
     {
         // Arrange, Act & Assert
-        ParseDocumentTest("@section Header {", new[] { SectionDirective.Directive });
+        ParseDocumentTest("@section Header {", [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -38,7 +35,7 @@ public class CSharpAutoCompleteTest() : ParserTestBase(layer: TestProject.Layer.
         ParseDocumentTest("""
             @functions{
             foo
-            """, new[] { FunctionsDirective.Directive });
+            """, [FunctionsDirective.Directive]);
     }
 
     [Fact]
@@ -48,7 +45,7 @@ public class CSharpAutoCompleteTest() : ParserTestBase(layer: TestProject.Layer.
         ParseDocumentTest("""
             @section Header {
             <p>Foo</p>
-            """, new[] { SectionDirective.Directive });
+            """, [SectionDirective.Directive]);
     }
 
     [Fact]

@@ -1,12 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -40,12 +39,15 @@ public static class InjectDirective
         return builder;
     }
 
-    internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+    internal sealed class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
     {
         // Runs after the @model and @namespace directives
         public override int Order => 10;
 
-        protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+        protected override void ExecuteCore(
+            RazorCodeDocument codeDocument,
+            DocumentIntermediateNode documentNode,
+            CancellationToken cancellationToken)
         {
             if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind &&
                documentNode.DocumentKind != MvcViewDocumentClassifierPass.MvcViewDocumentKind)
@@ -76,7 +78,7 @@ public static class InjectDirective
                 var memberName = hasMemberName ? tokens[1].Content : null;
                 var memberSpan = hasMemberName ? tokens[1].Source : null;
 
-                if (hasMemberName && !properties.Add(memberName))
+                if (hasMemberName && !properties.Add(memberName!))
                 {
                     continue;
                 }
@@ -100,23 +102,20 @@ public static class InjectDirective
                     IsMalformed = isMalformed
                 };
 
-                visitor.Class.Children.Add(injectNode);
+                visitor.Class!.Children.Add(injectNode);
             }
         }
     }
 
     private class Visitor : IntermediateNodeWalker
     {
-        public ClassDeclarationIntermediateNode Class { get; private set; }
+        public ClassDeclarationIntermediateNode? Class { get; private set; }
 
         public IList<IntermediateNode> Directives { get; } = [];
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
-            if (Class == null)
-            {
-                Class = node;
-            }
+            Class ??= node;
 
             base.VisitClassDeclaration(node);
         }
