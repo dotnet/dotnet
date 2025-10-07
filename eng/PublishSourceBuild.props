@@ -216,15 +216,8 @@
       <SdkNonStableVersionedTarballPath>$(SourceBuiltPublishAssetsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
     </PropertyGroup>
 
-    <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
-    <Copy SourceFiles="@(SdkRepoSdkTarball)"
-          DestinationFiles="$(SdkNonStableVersionedTarballPath)"
-          SkipUnchangedFiles="true"
-          UseHardlinksIfPossible="true" />
-
     <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
-      <!-- Copy SDK archive to assets root as source-only build partners expect the file to be there. -->
-      <SdkTarball Include="$(SdkNonStableVersionedTarballPath)">
+      <SdkTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SdkTarball>
@@ -250,9 +243,16 @@
       </Artifact>
     </ItemGroup>
 
+    <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
+    <Copy Condition="'$(IsPublishPass2)' == 'true'"
+          SourceFiles="@(SdkRepoSdkTarball)"
+          DestinationFiles="$(SdkNonStableVersionedTarballPath)"
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/dotnet-sdk-*$(ArchiveExtension)" />
+      <SourceBuildArtifact Include="$(SdkNonStableVersionedTarballPath)" />
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
