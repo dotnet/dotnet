@@ -28,8 +28,9 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             }
             @functions
             {
-                void [|GetX|]()
+                int [|GetX|]()
                 {
+                    return 4;
                 }
             }
             """;
@@ -248,7 +249,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         {
                             public string Invoke(int authorId)
                             {
-                                return firstName;
+                                return "Steve";
                             }
                         }
                         """).Text));

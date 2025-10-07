@@ -2,11 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using Microsoft.CodeAnalysis.Razor.Logging;
 
-namespace Microsoft.VisualStudio.Razor.Logging;
+namespace Microsoft.CodeAnalysis.Razor.Logging;
 
-internal partial class MemoryLoggerProvider
+internal partial class AbstractMemoryLoggerProvider
 {
     private class Logger(Buffer buffer, string categoryName) : ILogger
     {

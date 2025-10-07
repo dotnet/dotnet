@@ -48,8 +48,6 @@
 
     <file src="$SourceBuildTfmPrevious$\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" />
     <file src="$SourceBuildTfmCurrent$\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
-    <file src="$SourceBuildTfmPrevious$\System.ComponentModel.Composition.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" />
-    <file src="$SourceBuildTfmCurrent$\System.ComponentModel.Composition.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmPrevious$" />
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
