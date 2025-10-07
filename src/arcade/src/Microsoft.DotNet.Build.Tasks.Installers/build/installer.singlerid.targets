@@ -158,7 +158,7 @@
   -->
   <Target Name="_BuildMarinerRpm"
           AfterTargets="GenerateRpm"
-          Condition="'$(PackageTargetOS)' != ''">
+          Condition="'$(PackageTargetOS)' == ''">
     <!-- CBL-Mariner -->
     <PropertyGroup>
       <!-- CBL-Mariner 1.0 -->
@@ -194,8 +194,8 @@
     <!-- Packages to be signed with the new key -->
     <PropertyGroup>
       <_NewKeyVersionSuffix>newkey</_NewKeyVersionSuffix>
-      <_InstallerBuildPartNewKey>$(Version)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
-      <_InstallerBuildPartNewKey Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
+      <_InstallerBuildPartNewKey>$(Version)-$(_NewKeyVersionSuffix)-$(InstallerTargetArchitecture)</_InstallerBuildPartNewKey>
+      <_InstallerBuildPartNewKey Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_NewKeyVersionSuffix)-$(InstallerTargetArchitecture)</_InstallerBuildPartNewKey>
       <_InstallerFileNameWithoutExtensionNewKey>$(InstallerName)-$(_InstallerBuildPartNewKey)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionNewKey>
       <_InstallerFileNewKey>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionNewKey)$(InstallerExtension)</_InstallerFileNewKey>
     </PropertyGroup>
