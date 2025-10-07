@@ -113,6 +113,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         private const string FeedDotNet10InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet10-internal/nuget/v3/index.json";
         private const string FeedDotNet10InternalTransport = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet10-internal-transport/nuget/v3/index.json";
 
+        private const string FeedDotNet11Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json";
+        private const string FeedDotNet11Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11-transport/nuget/v3/index.json";
+        private const string FeedDotNet11Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11-workloads/nuget/v3/index.json";
+
         private const string FeedDotNetLibrariesShipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json";
         private const string FeedDotNetLibrariesTransport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries-transport/nuget/v3/index.json";
 
@@ -228,6 +232,30 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         {
             (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.ShippingOnly),
             (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+        
+        private static TargetFeedSpecification[] DotNet11Feeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet11Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet11Transport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetEng, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetEng, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet11Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet11Transport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetLibrariesShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetLibrariesTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetTools, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNetTools, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+        
+        private static TargetFeedSpecification[] DotNet11WorkloadFeeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet11Workloads, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet11Workloads, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingForChecksums),
         };
@@ -989,6 +1017,33 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
+            // .NET 11,
+            new TargetChannelConfig(
+                id: 8297,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["11.0"],
+                targetFeeds: DotNet11Feeds,
+                symbolTargetType: PublicAndInternalSymbolTargets),
+
+            // .NET 11 Workload Release,
+            new TargetChannelConfig(
+                id: 8299,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "11.0-workloads" ],
+                targetFeeds: DotNet11WorkloadFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets),
+
+            // .NET 11.0.1xx SDK,
+            new TargetChannelConfig(
+                id: 8298,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "11.0.1xx", "11.0" ],
+                targetFeeds: DotNet11Feeds,
+                symbolTargetType: PublicAndInternalSymbolTargets),
+
             // .NET Core Experimental,
             new TargetChannelConfig(
                 id: 562,
@@ -1370,7 +1425,84 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude,
                 flatten: false),
-        };
+            
+            // 18.0
+            new TargetChannelConfig(
+                id: 7987,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // 18.1
+            new TargetChannelConfig(
+                id: 8703,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // 18.2
+            new TargetChannelConfig(
+                id: 8704,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // 18.3
+            new TargetChannelConfig(
+                id: 8705,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // 18.4
+            new TargetChannelConfig(
+                id: 8706,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+
+            // 18.5
+            new TargetChannelConfig(
+                id: 8707,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // 18.6
+            new TargetChannelConfig(
+                id: 8708,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            };
         #endregion
     }
 }
