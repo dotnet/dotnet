@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -16,7 +15,10 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 /// </summary>
 internal sealed class CreateNewOnMetadataUpdateAttributePass : IntermediateNodePassBase, IRazorOptimizationPass
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind &&
             documentNode.DocumentKind != MvcViewDocumentClassifierPass.MvcViewDocumentKind)
@@ -27,6 +29,12 @@ internal sealed class CreateNewOnMetadataUpdateAttributePass : IntermediateNodeP
 
         var @namespace = documentNode.FindPrimaryNamespace();
         var @class = documentNode.FindPrimaryClass();
+
+        if (@namespace == null || @class == null)
+        {
+            // Nothing to do, bail. We can't function without the standard structure.
+            return;
+        }
 
         var classIndex = @namespace.Children.IndexOf(@class);
         if (classIndex == -1)
