@@ -6,12 +6,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 namespace Microsoft.VisualStudio.Razor.Logging;
 
 [ExportLoggerProvider]
-internal partial class MemoryLoggerProvider : ILoggerProvider
+internal sealed class MemoryLoggerProvider : AbstractMemoryLoggerProvider
 {
-    // How many messages will the buffer contain
-    private const int BufferSize = 5000;
-    private readonly Buffer _buffer = new(BufferSize);
-
-    public ILogger CreateLogger(string categoryName)
-        => new Logger(_buffer, categoryName);
 }
