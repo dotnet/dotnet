@@ -30,8 +30,9 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
             @code
             {
-                void [|GetX|]()
+                int [|GetX|]()
                 {
+                    return 4;
                 }
             }
             """;

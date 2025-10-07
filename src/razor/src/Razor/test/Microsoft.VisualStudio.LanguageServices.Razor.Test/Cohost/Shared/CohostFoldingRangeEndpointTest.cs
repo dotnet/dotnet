@@ -86,13 +86,13 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
                 <div>
                   Hello World
                 </div>
-                else {[|
+                } else {[|
                 <div>
                     Goodbye World
                 </div>
                 }|]
-              }
-            |]</div>
+            |]  }
+            </div>
             """);
 
     [Fact]
@@ -160,7 +160,7 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             <p>hello!</p>
 
             @code {[|
-                var helloWorld = "";
+                private string helloWorld = "";
             }|]
 
             <p>hello!</p>
@@ -172,7 +172,7 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             <p>hello!</p>
 
             @functions {[|
-                var helloWorld = "";
+                private string helloWorld = "";
             }|]
 
             <p>hello!</p>

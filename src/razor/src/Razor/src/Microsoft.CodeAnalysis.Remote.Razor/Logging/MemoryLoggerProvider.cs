@@ -3,9 +3,8 @@
 
 using Microsoft.CodeAnalysis.Razor.Logging;
 
-namespace Microsoft.VisualStudio.Razor.Logging;
+namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
 
-[ExportLoggerProvider]
 internal sealed class MemoryLoggerProvider : AbstractMemoryLoggerProvider
 {
 }
