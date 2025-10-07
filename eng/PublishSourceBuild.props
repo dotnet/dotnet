@@ -199,13 +199,7 @@
          This tarball should be versioned in the filename the same as the output of the sdk repo. -->
     <Copy SourceFiles="@(SdkRepoSdkTarball)"
           DestinationFolder="$(ArtifactsAssetsDir)"
-          SkipUnchangedFiles="true"
-          UseHardlinksIfPossible="true" />
-
-    <MakeDir Directories="$(SourceBuiltPublishAssetsDir)" />
-    <PropertyGroup>
-      <SdkNonStableVersionedTarballPath>$(SourceBuiltPublishAssetsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
-    </PropertyGroup>
+          SkipUnchangedFiles="true" />
 
     <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
       <SdkTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)">
@@ -234,12 +228,16 @@
       </Artifact>
     </ItemGroup>
 
+    <MakeDir Condition="'$(IsPublishPass2)' == 'true'" Directories="$(SourceBuiltPublishAssetsDir)" />
+    <PropertyGroup>
+      <SdkNonStableVersionedTarballPath>$(SourceBuiltPublishAssetsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
+    </PropertyGroup>
+
     <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
     <Copy Condition="'$(IsPublishPass2)' == 'true'"
           SourceFiles="@(SdkRepoSdkTarball)"
           DestinationFiles="$(SdkNonStableVersionedTarballPath)"
-          SkipUnchangedFiles="true"
-          UseHardlinksIfPossible="true" />
+          SkipUnchangedFiles="true" />
 
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
