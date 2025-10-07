@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Xunit;
@@ -218,11 +217,10 @@ public class CSharpCodeParserTest
         using var context = new ParserContext(source, options);
 
         // Act & Assert (Does not throw)
-        var directiveDescriptors = new[]
-        {
+        ImmutableArray<DirectiveDescriptor> directiveDescriptors = [
             DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine),
-            DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine),
-        };
+            DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine)
+        ];
 
         _ = new CSharpCodeParser(directiveDescriptors, context);
     }

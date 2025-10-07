@@ -6,16 +6,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // This pass runs earlier than our other passes that 'lower' specific kinds of attributes.
     public override int Order => 0;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {

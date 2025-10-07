@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 
@@ -49,18 +50,20 @@ internal partial class DefaultRazorTagHelperContextDiscoveryPhase
     internal static PooledDirectiveVisitor GetPooledVisitor(
         RazorCodeDocument codeDocument,
         IReadOnlyList<TagHelperDescriptor> tagHelpers,
+        CancellationToken cancellationToken,
         out DirectiveVisitor visitor)
     {
         var useComponentDirectiveVisitor = codeDocument.ParserOptions.AllowComponentFileKind &&
                                            codeDocument.FileKind.IsComponent();
+
+        var filePath = codeDocument.Source.FilePath;
 
         if (useComponentDirectiveVisitor)
         {
             var componentDirectiveVisitor = s_componentDirectiveVisitorPool.Get();
 
             codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var currentNamespace);
-            var filePath = codeDocument.Source.FilePath.AssumeNotNull();
-            componentDirectiveVisitor.Initialize(filePath, tagHelpers, currentNamespace);
+            componentDirectiveVisitor.Initialize(tagHelpers, filePath, currentNamespace, cancellationToken);
 
             visitor = componentDirectiveVisitor;
         }
@@ -68,7 +71,7 @@ internal partial class DefaultRazorTagHelperContextDiscoveryPhase
         {
             var tagHelperDirectiveVisitor = s_tagHelperDirectiveVisitorPool.Get();
 
-            tagHelperDirectiveVisitor.Initialize(tagHelpers);
+            tagHelperDirectiveVisitor.Initialize(tagHelpers, filePath, cancellationToken);
 
             visitor = tagHelperDirectiveVisitor;
         }

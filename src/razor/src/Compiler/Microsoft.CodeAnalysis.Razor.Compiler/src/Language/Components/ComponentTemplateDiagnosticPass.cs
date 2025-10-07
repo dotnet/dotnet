@@ -2,19 +2,23 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after components/eventhandlers/ref/bind. We need to check for templates in all of those
     // places.
     public override int Order => 150;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {

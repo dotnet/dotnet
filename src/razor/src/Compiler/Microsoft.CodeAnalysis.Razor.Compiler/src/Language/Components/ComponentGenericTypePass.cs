@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
@@ -19,13 +20,16 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 // 1. Adds diagnostics for missing generic type arguments
 // 2. Rewrites the type name of the component to substitute generic type arguments
 // 3. Rewrites the type names of parameters/child content to substitute generic type arguments
-internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after components/eventhandlers/ref/bind/templates. We want to validate every component
     // and it's usage of ChildContent.
     public override int Order => 160;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
