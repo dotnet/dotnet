@@ -1,16 +1,15 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
-public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
+public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
 {
     public static readonly string RazorPageDocumentKind = "mvc.1.0.razor-page";
     public static readonly string RouteTemplateKey = "RouteTemplate";
@@ -115,7 +114,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         if (pageDirective.DirectiveNode.IsImported)
         {
             pageDirective.DirectiveNode.AddDiagnostic(
-                RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.Value));
+                RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.AssumeNotNull()));
         }
         else
         {
@@ -131,7 +130,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             {
                 // The page directive is not the leading directive. Add an error.
                 pageDirective.DirectiveNode.AddDiagnostic(
-                    RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.Value));
+                    RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.AssumeNotNull()));
             }
         }
     }

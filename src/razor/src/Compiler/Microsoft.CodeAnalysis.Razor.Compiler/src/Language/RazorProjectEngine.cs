@@ -435,7 +435,7 @@ public sealed class RazorProjectEngine
         }
 
         // Document Classifier
-        builder.Features.Add(new ComponentDocumentClassifierPass(razorLanguageVersion));
+        builder.Features.Add(new ComponentDocumentClassifierPass());
 
         // Directive Classifier
         builder.Features.Add(new ComponentWhitespacePass());

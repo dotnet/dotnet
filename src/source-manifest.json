@@ -34,19 +34,19 @@
       "barId": 284034,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "29b752ed624a2796726cbe9891c8627dd580002d"
+      "commitSha": "1ec231f32576ce9577401a5d9459f6eb5e4e202f"
     },
     {
-      "barId": 285276,
+      "barId": 285749,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "12c62ad3f88b811fcaaa4d3de249ff4ef7ec1da5"
+      "commitSha": "1e743334f0bcdfe9e665ed9354b8110e8b52160d"
     },
     {
-      "barId": 280647,
+      "barId": 285755,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "8414d1e1025bbfaca0829a595d2654836fd0034b"
+      "commitSha": "aead567b56fe284ee05b3bb324705b76331d4719"
     },
     {
       "barId": 285874,
@@ -70,7 +70,7 @@
       "barId": 284027,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "64fdc2c3d168168a2fa28da45084145eb2be0f4d"
+      "commitSha": "b400e0402eed2002b5f78eff7152691af9d39bf7"
     },
     {
       "barId": 285804,
@@ -124,7 +124,7 @@
       "barId": 280001,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "9cbffb03835ba1e99643da46f2fc2678a0c1b5f7"
+      "commitSha": "d9177b1896ddb4d8ff617e3ae6b352486e87f855"
     },
     {
       "barId": 285071,
