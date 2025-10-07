@@ -7,10 +7,10 @@
       "commitSha": "e6f510cb87812d56ad781d93ff0513cdcccd0eb4"
     },
     {
-      "barId": 284639,
+      "barId": 285665,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "8d296106fa62df773bc7740746905d064605195a"
+      "commitSha": "89f85318cc9c0b7e4db8e898d9c025eda1486a3b"
     },
     {
       "barId": 279211,
@@ -31,16 +31,16 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 284990,
+      "barId": 285795,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "46eddddffcb272342504d143b46cba130783e75b"
+      "commitSha": "8127357b6c52f9d978ade3b6b76f4bbeea68bfe0"
     },
     {
-      "barId": 285257,
+      "barId": 285648,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "fda80094153c64589041623ec25acada2bc63798"
+      "commitSha": "9f21708d124ca38c7d2c94d5538b597ba20129e1"
     },
     {
       "barId": 283436,
@@ -49,16 +49,16 @@
       "commitSha": "36bb70920a16cdfe30540412069796113d9f3e5c"
     },
     {
-      "barId": 285361,
+      "barId": 285640,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "e85fd51f9c4dc8cd222602aaea6dde3982f71ef3"
+      "commitSha": "e52305b59c48dca36e5611cae5824ca0248db97e"
     },
     {
-      "barId": 284523,
+      "barId": 285457,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "5480b47bbc592c6feedca7c57c9863ba01e0c52c"
+      "commitSha": "dc755eb75a2a1f6a82036588da128eb859d96e8e"
     },
     {
       "barId": 284434,
@@ -79,10 +79,10 @@
       "commitSha": "c847160676a0cbf91245c9ac873cf7519a55fa8a"
     },
     {
-      "barId": 285261,
+      "barId": 285733,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "810a76fc9660c446d8b608220fce8078e4badd09"
+      "commitSha": "617d3b263fae0343b31281130741020f41af0c30"
     },
     {
       "barId": 277711,
