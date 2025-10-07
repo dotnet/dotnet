@@ -226,9 +226,6 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
 
             foreach (var type in types)
             {
-                // Create helper to delay computing display names for this type when we need them.
-                var displayNames = new DisplayNameHelper(type);
-
                 // Not handling duplicates here for now since we're the primary ones extending this.
                 // If we see users adding to the set of 'bind' constructs we will want to add deduplication
                 // and potentially diagnostics.
@@ -245,11 +242,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     // if the language service fails to initialize. This is an invalid case, so skip it.
                     if (constructorArguments.Length == 4 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindElementAttribute))
                     {
-                        var (typeName, namespaceName) = displayNames.GetNames();
-
                         tagHelper = CreateElementBindTagHelper(
-                            typeName,
-                            namespaceName,
+                            typeName: type.GetDefaultDisplayString(),
+                            typeNamespace: type.ContainingNamespace.GetFullName(),
                             typeNameIdentifier: type.Name,
                             element: (string?)constructorArguments[0].Value,
                             typeAttribute: null,
@@ -259,11 +254,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     }
                     else if (constructorArguments.Length == 4 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElementAttribute))
                     {
-                        var (typeName, namespaceName) = displayNames.GetNames();
-
                         tagHelper = CreateElementBindTagHelper(
-                            typeName,
-                            namespaceName,
+                            typeName: type.GetDefaultDisplayString(),
+                            typeNamespace: type.ContainingNamespace.GetFullName(),
                             typeNameIdentifier: type.Name,
                             element: "input",
                             typeAttribute: (string?)constructorArguments[0].Value,
@@ -273,11 +266,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     }
                     else if (constructorArguments.Length == 6 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElementAttribute))
                     {
-                        var (typeName, namespaceName) = displayNames.GetNames();
-
                         tagHelper = CreateElementBindTagHelper(
-                            typeName,
-                            namespaceName,
+                            typeName: type.GetDefaultDisplayString(),
+                            typeNamespace: type.ContainingNamespace.GetFullName(),
                             typeNameIdentifier: type.Name,
                             element: "input",
                             typeAttribute: (string?)constructorArguments[0].Value,
@@ -308,19 +299,6 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
             {
                 results.Add(tagHelper);
             }
-        }
-
-        /// <summary>
-        ///  Helper to avoid computing various type-based names until necessary.
-        /// </summary>
-        private ref struct DisplayNameHelper(INamedTypeSymbol type)
-        {
-            private readonly INamedTypeSymbol _type = type;
-            private (string Type, string Namespace)? _names;
-
-            public (string Type, string Namespace) GetNames()
-                => _names ??= (_type.ToDisplayString(),
-                    _type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat));
         }
 
         private static TagHelperDescriptor CreateElementBindTagHelper(

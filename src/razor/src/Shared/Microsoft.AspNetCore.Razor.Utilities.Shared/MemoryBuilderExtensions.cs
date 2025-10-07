@@ -7,6 +7,11 @@ namespace Microsoft.AspNetCore.Razor;
 
 internal static class MemoryBuilderExtensions
 {
+    public static void Append(this ref MemoryBuilder<ReadOnlyMemory<char>> builder, string value)
+    {
+        builder.Append(value.AsMemory());
+    }
+
     /// <summary>
     ///  Builds a string from the contents of a <see cref="MemoryBuilder{T}"/> where T is <see cref="ReadOnlyMemory{T}"/> of <see cref="char"/>.
     /// </summary>
