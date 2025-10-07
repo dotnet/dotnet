@@ -65,7 +65,7 @@ extends:
             docker-compose up --abort-on-container-exit --no-color
           timeoutInMinutes: 35 # In case the HTTP/3.0 run hangs, we timeout shortly after the expected 30 minute run
           displayName: Run HttpStress - HTTP 3.0
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - bash: |
             cd '$(httpStressProject)'
@@ -75,7 +75,7 @@ extends:
             docker-compose down
             docker-compose up --abort-on-container-exit --no-color
           displayName: Run HttpStress - HTTP 2.0
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - bash: |
             cd '$(httpStressProject)'
@@ -85,7 +85,7 @@ extends:
             docker-compose down
             docker-compose up --abort-on-container-exit --no-color
           displayName: Run HttpStress - HTTP 1.1
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - bash: |
             sudo chown -R $(id -u):$(id -g) $(Build.ArtifactStagingDirectory)/dumps
@@ -138,7 +138,7 @@ extends:
             New-Item -Force $env:DUMPS_SHARE -ItemType Directory
             docker compose up --abort-on-container-exit --no-color
           displayName: Run HttpStress - HTTP 3.0
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - powershell: |
             cd '$(httpStressProject)'
@@ -147,7 +147,7 @@ extends:
             New-Item -Force $env:DUMPS_SHARE -ItemType Directory
             docker compose up --abort-on-container-exit --no-color
           displayName: Run HttpStress - HTTP 2.0
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - powershell: |
             cd '$(httpStressProject)'
@@ -156,7 +156,7 @@ extends:
             New-Item -Force $env:DUMPS_SHARE -ItemType Directory
             docker compose up --abort-on-container-exit --no-color
           displayName: Run HttpStress - HTTP 1.1
-          condition: and(eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
+          condition: and(succeeded(), eq(variables['buildRuntime.succeeded'], 'true'), eq(variables['buildStress.succeeded'], 'true'))
 
         - publish: $(Build.ArtifactStagingDirectory)/dumps
           artifact: DumpsWindows

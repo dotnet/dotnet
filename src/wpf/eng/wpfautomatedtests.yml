@@ -168,7 +168,7 @@ jobs:
         #   When building on a Helix pipeline, only build Release configs
         #   (!_HelixPipeline) ||
         #   (_HelixPipeline && _PublicBuildPipeline && _ContinuousIntegrationTestsEnabled && _BuildConfig == Release)
-        condition: or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true') ,eq(variables['_BuildConfig'], 'Release'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true')))
+        condition: and(succeeded(), or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true') ,eq(variables['_BuildConfig'], 'Release'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true'))))
 
       - task: DownloadPipelineArtifact@2
         inputs:
@@ -195,42 +195,42 @@ jobs:
         inputs:
           filePath: $(Build.SourcesDirectory)/dotnet-test-install.ps1
           arguments: -InstallDir $(_programfiles) -Architecture $(_Platform) -Runtime dotnet -Version 8.0.0-alpha.1.23080.2
-          condition: eq(variables['_Platform'], 'x64')
+          condition: and(succeeded(), eq(variables['_Platform'], 'x64'))
       
       - task: PowerShell@2
         displayName: Install .NET Core(x86)
         inputs:
           filePath: $(Build.SourcesDirectory)/dotnet-test-install.ps1
           arguments: -InstallDir $(_programfilesx86) -Architecture $(_Platform) -Runtime dotnet -Version 8.0.0-alpha.1.23080.2
-        condition: eq(variables['_Platform'], 'x86')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x86'))
   
       - task: PowerShell@2
         displayName: Install .NET WindowsDesktop
         inputs:
           filePath: $(Build.SourcesDirectory)/dotnet-test-install.ps1
           arguments: -InstallDir $(_programfiles) -Architecture $(_Platform) -Runtime windowsdesktop -Version 8.0.0-alpha.1.23080.2
-        condition: eq(variables['_Platform'], 'x64')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x64'))
      
       - task: PowerShell@2
         displayName: Install .NET WindowsDesktop(x86)
         inputs:
           filePath: $(Build.SourcesDirectory)/dotnet-test-install.ps1
           arguments: -InstallDir $(_programfilesx86) -Architecture $(_Platform) -Runtime windowsdesktop -Version 8.0.0-alpha.1.23080.2
-        condition: eq(variables['_Platform'], 'x86')   
+        condition: and(succeeded(), eq(variables['_Platform'], 'x86'))
       
       - task: PowerShell@2
         displayName: Replace WPF binaries
         inputs:
           targetType: 'inline'
           script: '.\eng\copy-wpf.ps1 -testhost -destination $(_programfilesx86) -$(_BuildConfig) -arch $(_Platform)' 
-        condition: eq(variables['_Platform'], 'x86')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x86'))
 
       - task: PowerShell@2
         displayName: Replace WPF binaries
         inputs:
           targetType: 'inline'
           script: '.\eng\copy-wpf.ps1 -testhost -destination $(_programfiles) -$(_BuildConfig) -arch $(_Platform)' 
-        condition: eq(variables['_Platform'], 'x64')      
+        condition: and(succeeded(), eq(variables['_Platform'], 'x64'))
 
       - task: PowerShell@2
         displayName: Run DRTs
@@ -255,7 +255,7 @@ jobs:
           script: '.\RunTests.cmd /Area=$(areas)'
           workingDirectory: '$(System.ArtifactsDirectory)\testbins'
         continueOnError: true
-        condition: ne(variables['areas'], '')
+        condition: and(succeeded(), ne(variables['areas'], ''))
 
       - task: PowerShell@2
         displayName: Run Full Suites
@@ -264,7 +264,7 @@ jobs:
           script: '.\RunTests.cmd'
           workingDirectory: '$(System.ArtifactsDirectory)\testbins'
         continueOnError: true
-        condition: eq(variables['fulltest'], 'fulltest')
+        condition: and(succeeded(), eq(variables['fulltest'], 'fulltest'))
 
       - task: CopyFiles@2
         inputs:
@@ -273,7 +273,7 @@ jobs:
           TargetFolder: '$(System.DefaultWorkingDirectory)\Results\'
           CleanTargetFolder: true
           OverWrite: true
-        condition: eq(variables['_Platform'], 'x64')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x64'))
         
       - task: CopyFiles@2
         inputs:
@@ -282,19 +282,19 @@ jobs:
           TargetFolder: '$(System.DefaultWorkingDirectory)\ResultsX86\'
           CleanTargetFolder: true
           OverWrite: true
-        condition: eq(variables['_Platform'], 'x86')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x86'))
 
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: 'TestResultsX64'
           targetPath: '$(System.DefaultWorkingDirectory)\Results\'      
-        condition: eq(variables['_Platform'], 'x64')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x64'))
 
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: 'TestResultsX86'
           targetPath: '$(System.DefaultWorkingDirectory)\ResultsX86\'
-        condition: eq(variables['_Platform'], 'x86')
+        condition: and(succeeded(), eq(variables['_Platform'], 'x86'))
           
       - task: PublishTestResults@2
         inputs:

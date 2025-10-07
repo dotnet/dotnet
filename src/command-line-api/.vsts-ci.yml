@@ -63,7 +63,7 @@ stages:
           displayName: Build and Publish
         - task: PublishBuildArtifacts@1
           displayName: Upload package artifacts
-          condition: and(eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
           inputs:
             pathtoPublish: artifacts/packages/
             artifactName: artifacts
@@ -71,7 +71,7 @@ stages:
             parallel: true
         - task: PublishBuildArtifacts@1
           displayName: Publish Artifact Symbols
-          condition: and(eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
           inputs:
             PathtoPublish: '$(Build.SourcesDirectory)\artifacts\SymStore\$(_BuildConfig)'
             ArtifactName: 'NativeSymbols'

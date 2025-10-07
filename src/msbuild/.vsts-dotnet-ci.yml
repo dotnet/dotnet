@@ -47,7 +47,7 @@ jobs:
       if (!($isInitialCommit -or $isVersionBumped)) {
         throw "Hello! I noticed that you're targeting one of our servicing branches. You need to increase the revision version number (the last part) of 'VersionPrefix' in eng/Versions.props."
       }
-    condition: startsWith(variables['System.PullRequest.TargetBranch'], 'vs')
+    condition: and(succeeded(), startsWith(variables['System.PullRequest.TargetBranch'], 'vs'))
     displayName: "Check if patch version is bumped up"
 
 - job: IfOnlyDocumentionChanged
@@ -100,7 +100,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PublishTestResults@2
     displayName: Publish .NET Test Results
     inputs:
@@ -112,7 +112,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
@@ -137,9 +137,9 @@ jobs:
       PathtoPublish: 'artifacts/TestResults'
       ArtifactName: 'FullOnWindows test logs'
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: CopyFiles@2
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     displayName: 'Copy Verify *.received.* files to Artifact Staging'
     inputs:
@@ -150,7 +150,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Verify *.received.* files as Artifacts'
     name: 'verifypublish'
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)\Verify'
@@ -189,7 +189,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PublishTestResults@2
     displayName: Publish .NET Test Results
     inputs:
@@ -201,7 +201,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: logs'
     inputs:
@@ -215,7 +215,7 @@ jobs:
       PathtoPublish: 'artifacts/TestResults'
       ArtifactName: 'CoreOnWindows test logs'
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
 
 - job: FullReleaseOnWindows
   displayName: "Windows Full Release (no bootstrap)"
@@ -243,13 +243,13 @@ jobs:
     inputs:
       filename: 'eng/cibuild.cmd'
       arguments: '-configuration Release -test'
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeeded(), eq(variables.onlyDocChanged, 0))
   - task: BatchScript@1
     displayName: cibuild.cmd without test
     inputs:
       filename: 'eng/cibuild.cmd'
       arguments: '-configuration Release'
-    condition: eq(variables.onlyDocChanged, 1)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 1))
   - task: PublishTestResults@2
     displayName: Publish .NET Framework Test Results
     inputs:
@@ -259,7 +259,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PublishTestResults@2
     displayName: Publish .NET Test Results
     inputs:
@@ -271,7 +271,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: logs'
     inputs:
@@ -285,7 +285,7 @@ jobs:
       PathtoPublish: 'artifacts/TestResults'
       ArtifactName: 'FullOnWindows Release test logs'
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
 
 - job: CoreBootstrappedOnLinux
   displayName: "Linux Core"
@@ -318,7 +318,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
@@ -343,9 +343,9 @@ jobs:
       PathtoPublish: 'artifacts/TestResults'
       ArtifactName: 'CoreOnLinux test logs'
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: CopyFiles@2
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     displayName: 'Copy Verify *.received.* files to Artifact Staging'
     inputs:
@@ -356,7 +356,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Verify *.received.* files as Artifacts'
     name: 'verifypublish'
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)/Verify'
@@ -393,7 +393,7 @@ jobs:
       publishRunAttachments: true
       mergeTestResults: true
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
@@ -418,9 +418,9 @@ jobs:
       PathtoPublish: 'artifacts/TestResults'
       ArtifactName: 'CoreOnMac test logs'
     continueOnError: true
-    condition: eq(variables.onlyDocChanged, 0)
+    condition: and(succeededOrFailed(), eq(variables.onlyDocChanged, 0))
   - task: CopyFiles@2
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     displayName: 'Copy Verify *.received.* files to Artifact Staging'
     inputs:
@@ -431,7 +431,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Verify *.received.* files as Artifacts'
     name: 'verifypublish'
-    condition: eq(variables['publishverify'], 'Yes')
+    condition: and(succeeded(), eq(variables['publishverify'], 'Yes'))
     continueOnError: true
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)/Verify'

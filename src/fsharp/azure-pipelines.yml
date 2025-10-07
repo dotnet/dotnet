@@ -155,7 +155,7 @@ extends:
                 testResultsFiles: '*.xml'
                 searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
               continueOnError: true
-              condition: ne(variables['SkipTests'], 'true')
+              condition: and(succeededOrFailed(), ne(variables['SkipTests'], 'true'))
             - task: 1ES.PublishPipelineArtifact@1
               displayName: Publish Test Logs
               inputs:
@@ -163,7 +163,7 @@ extends:
                 artifactName: 'Test Logs'
                 publishLocation: Container
               continueOnError: true
-              condition: ne(variables['SkipTests'], 'true')
+              condition: and(succeededOrFailed(), ne(variables['SkipTests'], 'true'))
             - task: 1ES.PublishPipelineArtifact@1
               displayName: Publish Artifact Packages
               inputs:
