@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 
-namespace Microsoft.VisualStudio.Razor.Logging;
+namespace Microsoft.CodeAnalysis.Razor.Logging;
 
-internal partial class MemoryLoggerProvider
+internal partial class AbstractMemoryLoggerProvider
 {
     /// <summary>
     /// A circular in memory buffer to store logs in memory.
