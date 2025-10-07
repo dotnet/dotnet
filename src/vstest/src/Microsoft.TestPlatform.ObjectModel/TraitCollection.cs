@@ -67,15 +67,17 @@ public class TraitCollection : IEnumerable<Trait>
     {
         if (!_testObject.Properties.Contains(TraitsProperty))
         {
-            yield break;
+            return Array.Empty<Trait>();
         }
 
-        var traits = _testObject.GetPropertyValue(TraitsProperty, Enumerable.Empty<KeyValuePair<string, string>>().ToArray());
-
-        foreach (var trait in traits)
+        var traitsKvp = _testObject.GetPropertyValue(TraitsProperty, Enumerable.Empty<KeyValuePair<string, string>>().ToArray());
+        var traits = new Trait[traitsKvp.Length];
+        for (int i = 0; i < traits.Length; i++)
         {
-            yield return new Trait(trait);
+            traits[i] = new Trait(traitsKvp[i]);
         }
+
+        return traits;
     }
 
     private void Add(IEnumerable<Trait> traits, IEnumerable<Trait> newTraits)

@@ -11,6 +11,22 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
 internal sealed class ViewComponentTagHelperTargetExtension : ViewComponentTagHelperTargetExtensionBase
 {
+    private ImmutableArray<MethodParameter> _processInvokeAsyncArgsMethodParameters;
+
+    private ImmutableArray<MethodParameter> ProcessInvokeAsyncArgsMethodParameters
+    {
+        get
+        {
+            if (_processInvokeAsyncArgsMethodParameters.IsDefault)
+            {
+                ImmutableInterlocked.InterlockedInitialize(ref _processInvokeAsyncArgsMethodParameters,
+                    [new(TagHelperContextVariableName, ViewComponentsApi.TagHelperContext.FullTypeName)]);
+            }
+
+            return _processInvokeAsyncArgsMethodParameters;
+        }
+    }
+
     protected override string TagHelperContentVariableName => "__helperContent";
     protected override string TagHelperContextVariableName => "__context";
     protected override string TagHelperOutputVariableName => "__output";
@@ -32,7 +48,7 @@ internal sealed class ViewComponentTagHelperTargetExtension : ViewComponentTagHe
             CommonModifiers.Private,
             DictionaryType,
             ViewComponentsApi.ProcessInvokeAsyncArgsMethodName,
-            [(ViewComponentsApi.TagHelperContext.FullTypeName, TagHelperContextVariableName)]))
+            ProcessInvokeAsyncArgsMethodParameters))
         {
             writer.WriteStartAssignment($"{DictionaryType} args")
                 .WriteStartNewObject(DictionaryType)
