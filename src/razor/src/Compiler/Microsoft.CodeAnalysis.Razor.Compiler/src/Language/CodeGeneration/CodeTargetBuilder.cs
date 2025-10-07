@@ -1,19 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-public abstract class CodeTargetBuilder
+public abstract class CodeTargetBuilder(RazorCodeDocument codeDocument)
 {
-    public abstract RazorCodeDocument CodeDocument { get; }
+    private ImmutableArray<ICodeTargetExtension>.Builder? _targetExtensions;
 
-    public abstract RazorCodeGenerationOptions Options { get; }
+    public RazorCodeDocument CodeDocument => codeDocument;
+    public RazorCodeGenerationOptions Options => codeDocument.CodeGenerationOptions;
 
-    public abstract ICollection<ICodeTargetExtension> TargetExtensions { get; }
+    public ImmutableArray<ICodeTargetExtension>.Builder TargetExtensions
+        => _targetExtensions ??= ImmutableArray.CreateBuilder<ICodeTargetExtension>();
 
     public abstract CodeTarget Build();
 }

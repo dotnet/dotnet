@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultRazorDirectiveClassifierPhase : RazorEnginePhaseBase, IRazorDirectiveClassifierPhase
+internal sealed class DefaultRazorDirectiveClassifierPhase : RazorEnginePhaseBase, IRazorDirectiveClassifierPhase
 {
     public ImmutableArray<IRazorDirectiveClassifierPass> Passes { get; private set; }
 
@@ -22,7 +22,9 @@ internal class DefaultRazorDirectiveClassifierPhase : RazorEnginePhaseBase, IRaz
 
         foreach (var pass in Passes)
         {
-            pass.Execute(codeDocument, documentNode);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            pass.Execute(codeDocument, documentNode, cancellationToken);
         }
 
         codeDocument.SetDocumentNode(documentNode);

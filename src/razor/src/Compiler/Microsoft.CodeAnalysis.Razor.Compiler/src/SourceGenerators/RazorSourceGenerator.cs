@@ -86,14 +86,14 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Combine(importFiles.Collect())
                 .Combine(razorSourceGeneratorOptions)
                 .WithLambdaComparer((old, @new) => old.Right.Equals(@new.Right) && old.Left.Left.Equals(@new.Left.Left) && old.Left.Right.SequenceEqual(@new.Left.Right))
-                .Select(static (pair, _) =>
+                .Select(static (pair, cancellationToken) =>
                 {
                     var ((sourceItem, importFiles), razorSourceGeneratorOptions) = pair;
                     RazorSourceGeneratorEventSource.Log.GenerateDeclarationCodeStart(sourceItem.FilePath);
 
                     var projectEngine = GetDeclarationProjectEngine(sourceItem, importFiles, razorSourceGeneratorOptions);
 
-                    var codeGen = projectEngine.Process(sourceItem);
+                    var codeGen = projectEngine.Process(sourceItem, cancellationToken);
 
                     var result = new SourceGeneratorText(codeGen.GetRequiredCSharpDocument().Text);
 
@@ -243,7 +243,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             IncrementalValuesProvider<(string, SourceGeneratorRazorCodeDocument)> processed(bool designTime)
             {
                 return (designTime ? withOptionsDesignTime : withOptions)
-                    .Select((pair, _) =>
+                    .Select((pair, cancellationToken) =>
                     {
                         var ((sourceItem, imports), razorSourceGeneratorOptions) = pair;
 
@@ -251,7 +251,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                         var projectEngine = GetGenerationProjectEngine(sourceItem, imports, razorSourceGeneratorOptions);
 
-                        var document = projectEngine.ProcessInitialParse(sourceItem, designTime);
+                        var document = projectEngine.ProcessInitialParse(sourceItem, designTime, cancellationToken);
 
                         RazorSourceGeneratorEventSource.Log.ParseRazorDocumentStop(sourceItem.RelativePhysicalPath);
                         return (projectEngine, sourceItem.RelativePhysicalPath, document);
@@ -260,12 +260,12 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     // Add the tag helpers in, but ignore if they've changed or not, only reprocessing the actual document changed
                     .Combine(allTagHelpers)
                     .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left))
-                    .Select(static (pair, _) =>
+                    .Select(static (pair, cancellationToken) =>
                     {
                         var ((projectEngine, filePath, codeDocument), allTagHelpers) = pair;
                         RazorSourceGeneratorEventSource.Log.RewriteTagHelpersStart(filePath);
 
-                        codeDocument = projectEngine.ProcessTagHelpers(codeDocument, allTagHelpers, checkForIdempotency: false);
+                        codeDocument = projectEngine.ProcessTagHelpers(codeDocument, allTagHelpers, checkForIdempotency: false, cancellationToken);
 
                         RazorSourceGeneratorEventSource.Log.RewriteTagHelpersStop(filePath);
                         return (projectEngine, filePath, codeDocument);
@@ -273,23 +273,23 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     // next we do a second parse, along with the helpers, but check for idempotency. If the tag helpers used on the previous parse match, the compiler can skip re-writing them
                     .Combine(allTagHelpers)
-                    .Select(static (pair, _) =>
+                    .Select(static (pair, cancellationToken) =>
                     {
                         var ((projectEngine, filePath, document), allTagHelpers) = pair;
                         RazorSourceGeneratorEventSource.Log.CheckAndRewriteTagHelpersStart(filePath);
 
-                        document = projectEngine.ProcessTagHelpers(document, allTagHelpers, checkForIdempotency: true);
+                        document = projectEngine.ProcessTagHelpers(document, allTagHelpers, checkForIdempotency: true, cancellationToken);
 
                         RazorSourceGeneratorEventSource.Log.CheckAndRewriteTagHelpersStop(filePath);
                         return (projectEngine, filePath, document);
                     })
-                    .Select((pair, _) =>
+                    .Select((pair, cancellationToken) =>
                     {
                         var (projectEngine, filePath, document) = pair;
 
                         var kind = designTime ? "DesignTime" : "Runtime";
                         RazorSourceGeneratorEventSource.Log.RazorCodeGenerateStart(filePath, kind);
-                        document = projectEngine.ProcessRemaining(document);
+                        document = projectEngine.ProcessRemaining(document, cancellationToken);
 
                         RazorSourceGeneratorEventSource.Log.RazorCodeGenerateStop(filePath, kind);
                         return (filePath, document);
@@ -300,7 +300,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Select(static (pair, _) =>
                 {
                     var (filePath, document) = pair;
-                    return (hintName: GetIdentifierFromPath(filePath), codeDocument: document.CodeDocument, csharpDocument: document.CodeDocument.GetRequiredCSharpDocument());
+                    return (
+                        hintName: GetIdentifierFromPath(filePath),
+                        codeDocument: document.CodeDocument,
+                        csharpDocument: document.CodeDocument.GetRequiredCSharpDocument());
                 })
                 .WithLambdaComparer(static (a, b) =>
                 {
