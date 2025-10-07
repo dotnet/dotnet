@@ -3,24 +3,18 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+internal sealed class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (documentNode == null)
-        {
-            throw new ArgumentNullException(nameof(documentNode));
-        }
-
         var @namespace = documentNode.FindPrimaryNamespace();
         var @class = documentNode.FindPrimaryClass();
         if (@namespace == null || @class == null)
