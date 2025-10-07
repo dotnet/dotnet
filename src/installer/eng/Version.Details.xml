@@ -219,18 +219,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25465.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25504.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>4bd1c6c93b5a3b8bc864d2863469c3f2e489d0af</Sha>
+      <Sha>3edea53c9b10e4bc63de863d71a05d47d9bb5b69</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.25465.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.25504.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>4bd1c6c93b5a3b8bc864d2863469c3f2e489d0af</Sha>
+      <Sha>3edea53c9b10e4bc63de863d71a05d47d9bb5b69</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.25465.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.25504.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>4bd1c6c93b5a3b8bc864d2863469c3f2e489d0af</Sha>
+      <Sha>3edea53c9b10e4bc63de863d71a05d47d9bb5b69</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23578.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -248,9 +248,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.25462.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.25474.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>55cc6bb942c12203e42ddb58f72cf5dbf1173eac</Sha>
+      <Sha>fcf0226bfea241d4e4f127600b6c3ae10d772e9a</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23475.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
