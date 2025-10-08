@@ -120,6 +120,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     //
     public MarkupBlockSyntax? ParseBlock()
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         if (Context == null)
         {
             throw new InvalidOperationException(Resources.Parser_Context_Not_Set);
@@ -183,6 +185,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     //
     public MarkupBlockSyntax ParseRazorBlock(Tuple<string, string> nestingSequences, bool caseSensitive)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         if (Context == null)
         {
             throw new InvalidOperationException(Resources.Parser_Context_Not_Set);
@@ -219,6 +223,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         ParseMode mode,
         Func<SyntaxToken, bool>? stopCondition = null)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         stopCondition = stopCondition ?? (token => false);
         while (!EndOfFile && !stopCondition(CurrentToken))
         {
@@ -228,6 +234,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMarkupNode(in SyntaxListBuilder<RazorSyntaxNode> builder, ParseMode mode)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         switch (GetParserState(mode))
         {
             case ParserState.MarkupText:
@@ -278,6 +286,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     {
         do
         {
+            CancellationToken.ThrowIfCancellationRequested();
+
             switch (GetParserState(ParseMode.MarkupInCodeBlock))
             {
                 case ParserState.EOF:
@@ -297,7 +307,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     ParseMarkupNode(builder, ParseMode.Text);
                     break;
             }
-        } while (!EndOfFile && _tagTracker.Count > 0);
+        }
+        while (!EndOfFile && _tagTracker.Count > 0);
 
         CompleteMarkupInCodeBlock(builder);
     }
@@ -465,6 +476,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMarkupElement(in SyntaxListBuilder<RazorSyntaxNode> builder, ParseMode mode)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         Assert(SyntaxKind.OpenAngle);
 
         // Output already accepted tokens if any.
@@ -2014,14 +2027,14 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
             // Check condition 2.2
             var isValidComment = false;
-            LookaheadUntil((token, prevTokens) =>
+            LookaheadUntil((token, ref readonly prevTokens) =>
             {
                 if (token.Kind == SyntaxKind.DoubleHyphen)
                 {
                     if (NextIs(SyntaxKind.CloseAngle))
                     {
                         // Check condition 2.3: We're at the end of a comment. Check to make sure the text ending is allowed.
-                        isValidComment = !IsCommentContentEndingInvalid(prevTokens);
+                        isValidComment = !IsCommentContentEndingInvalid(in prevTokens);
                         return true;
                     }
                     else if (NextIs(ns => IsHyphen(ns) && NextIs(SyntaxKind.CloseAngle)))
@@ -2208,13 +2221,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     /// <summary>
     /// Verifies, that the sequence doesn't end with the "&lt;!-" HtmlTokens. Note, the first token is an opening bracket token
     /// </summary>
-    internal static bool IsCommentContentEndingInvalid(IEnumerable<SyntaxToken> sequence)
+    internal static bool IsCommentContentEndingInvalid(ref readonly PooledArrayBuilder<SyntaxToken> tokens)
     {
-        var reversedSequence = sequence.Reverse();
         var index = 0;
-        foreach (var item in reversedSequence)
+
+        for (var i = tokens.Count - 1; i >= 0; i--)
         {
-            if (!item.IsEquivalentTo(nonAllowedHtmlCommentEnding[index++]))
+            if (!tokens[i].IsEquivalentTo(nonAllowedHtmlCommentEnding[index++]))
             {
                 return false;
             }
