@@ -101,7 +101,7 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - Internal **General Servicing** VMR branches (`internal/release/10.0.Nxx) - For internal fixes.
 - Changes in the public VMR branches automatically merge into the internal VMR branches (release/10.0.Nxx->internal/release/10.0.Nxx). This happens on a continuous basis for both **Release Specific** and **General Servicing**.
 - Automated validation for changes is provided in the following ways:
-  - **General Servicing** - Public forward flows from component repositories recieve validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
+  - **General Servicing** - Public forward flows from component repositories receive validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
   - **General Servicing** and **Release Specific** - Public VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - **General Servicing** and **Release Specific** Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - **General Servicing** and **Release Specific** - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0 and sdk @ valdiation/release/10.0.202).
