@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -69,12 +70,15 @@ public sealed class RazorSyntaxTree
         }
     }
 
-    public static RazorSyntaxTree Parse(RazorSourceDocument source, RazorParserOptions? options = null)
+    public static RazorSyntaxTree Parse(
+        RazorSourceDocument source,
+        RazorParserOptions? options = null,
+        CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(source);
 
         options ??= RazorParserOptions.Default;
         var parser = new RazorParser(options);
-        return parser.Parse(source);
+        return parser.Parse(source, cancellationToken);
     }
 }

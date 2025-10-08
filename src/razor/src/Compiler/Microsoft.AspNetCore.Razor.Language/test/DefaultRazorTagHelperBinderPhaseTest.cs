@@ -594,7 +594,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers: []);
+        visitor.Initialize(descriptors: [], sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -760,7 +760,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -906,7 +906,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -929,7 +929,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         };
 
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, filePath: null);
         var sourceDocument = CreateTestSourceDocument();
         var tree = RazorSyntaxTree.Parse(sourceDocument);
 
@@ -983,7 +983,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(@"<Counter />", "C:\\SomeFolder\\SomeProject\\Counter.cshtml");
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1015,7 +1015,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1050,7 +1050,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1088,7 +1088,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1123,7 +1123,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1159,7 +1159,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1189,7 +1189,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1226,7 +1226,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
