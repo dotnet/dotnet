@@ -5,7 +5,7 @@ The information below represents potential options for branching and branding st
 Terminology for the info below:
 - **Current Month** - The month being built, but not yet released.
 - **Current+1 Month** - The next release after the current month.
-- **Current+2 Month** - The next release after the current month.
+- **Current+2 Month** - The next release after the current+1 month.
 - **Release Specific** - Referring to a specific release, rather than an overall release train (e.g. release/10.0.101)
 - **General Servicing** - Referring to an overall servicing train (e.g. release/10.0.1xx)
 
