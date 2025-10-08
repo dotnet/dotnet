@@ -27,7 +27,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0).
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
-  - Public VMR builds of servicing branches back flow to the public component repositories (e.g. builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ release/10.0 and sdk @ release/10.0.1xx).=
+  - Public VMR builds of servicing branches back flow to the public component repositories (e.g. builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ release/10.0 and sdk @ release/10.0.1xx).
     PR validation occurs on those backflows. This covers changes made solely in the VMR, as well as validation of the repo sources against the latest built packages of its dependencies.
   - Internal VMR builds of servicing branches back flow to internal component repository validation branches (e.g. runtime @ validation/release/10.0).
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
