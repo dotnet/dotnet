@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15.5)
 
+set(CMAKE_GENERATOR_TOOLSET "v143")
+
 # Create project named finalizer, this will
 # will generate Finalizer.vcxproj
 project(Finalizer)
