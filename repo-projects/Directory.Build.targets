@@ -171,6 +171,7 @@
       <PreviouslySourceBuiltNuGetSourceName>previously-source-built</PreviouslySourceBuiltNuGetSourceName>
       <PreviouslySourceBuiltSharedComponentsNuGetSourceName>shared-components</PreviouslySourceBuiltSharedComponentsNuGetSourceName>
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
+      <ExtraTestDependenciesNuGetSourceName>extra-test-dependencies</ExtraTestDependenciesNuGetSourceName>
       
       <AddPrebuiltFeeds>true</AddPrebuiltFeeds>
       <AddPrebuiltFeeds Condition="'$(DotNetSourceOnlyTestOnly)' == 'true' or '$(DotNetBuildSourceOnly)' != 'true'">false</AddPrebuiltFeeds>
@@ -179,6 +180,7 @@
     <ItemGroup>
       <_CommonBuildSources Include="@(DependentRepoSourceName)" />
       <_CommonBuildSources Include="$(ExtraSourcesNuGetSourceName)" Condition="'$(ExtraRestoreSourcePath)' != ''" />
+      <_CommonBuildSources Include="$(ExtraTestDependenciesNuGetSourceName)" Condition="Exists('$(ExtraTestDependenciesRestoreSourcePath)')" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
@@ -237,6 +239,11 @@
                             SourceName="$(ExtraSourcesNuGetSourceName)"
                             SourcePath="$(ExtraRestoreSourcePath)"
                             Condition="'$(ExtraRestoreSourcePath)' != ''" />
+
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
+                            SourceName="$(ExtraTestDependenciesNuGetSourceName)"
+                            SourcePath="$(ExtraTestDependenciesRestoreSourcePath)"
+                            Condition="Exists('$(ExtraTestDependenciesRestoreSourcePath)')" />
 
     <!-- See root Directory.Build.props for value. -->
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
