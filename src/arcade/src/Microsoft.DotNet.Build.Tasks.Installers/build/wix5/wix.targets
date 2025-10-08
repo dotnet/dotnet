@@ -325,6 +325,7 @@
             RunHeatHarvester">
     <PropertyGroup>
       <WixDependencyKeyName Condition="'$(WixDependencyKeyName)' == ''">$(InstallerName.Replace('-', '_'))</WixDependencyKeyName>
+      <!-- Use backwards compatible GUID generation. -->
       <WixAdditionalOptions>-bcgg</WixAdditionalOptions>
     </PropertyGroup>
 
