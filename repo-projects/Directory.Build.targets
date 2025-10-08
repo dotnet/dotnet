@@ -350,7 +350,13 @@
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
              Properties="SharedComponentFilterMode=NonToolingOnly"
-             Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
+             Condition="$(RepositoryName) != 'source-build-reference-packages' and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
+      <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
+    </MSBuild>
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetFilteredSharedComponentPackages"
+             Properties="SharedComponentFilterMode=SbrpDepsOnly"
+             Condition="$(RepositoryName) == 'source-build-reference-packages'">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
 

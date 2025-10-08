@@ -4,9 +4,19 @@
 
   <Target Name="GetFilteredSharedComponentPackages"
           Outputs="@(SharedComponentFilteredPackages)">
+    
+    <ItemGroup>
+      <_SbrpDeps Include="Microsoft.Build" />
+      <_SbrpDeps Include="Microsoft.Build.Utilities.Core" />
+      <_SbrpDeps Include="Microsoft.DotNet.Arcade.Sdk" />
+      <_SbrpDeps Include="Microsoft.DotNet.GenAPI.Task" />
+      <_SbrpDeps Include="Microsoft.NETCore.ILAsm" />
+      <_SbrpDeps Include="Microsoft.NETCore.ILDAsm" />
+    </ItemGroup>
 
     <PropertyGroup>
       <SharedRepositoryReferenceString>;@(SharedRepositoryReference);</SharedRepositoryReferenceString>
+      <_SbrpDepsString>;@(_SbrpDeps);</_SbrpDepsString>
       <SharedComponentFilterMode Condition="'$(SharedComponentFilterMode)' == ''">NonToolingAndBootstrapOnly</SharedComponentFilterMode>
     </PropertyGroup>
 
@@ -37,6 +47,12 @@
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'BootstrapOnly'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
+    </ItemGroup>
+
+    <!-- SBRP mode: Keep only packages from SBRP's dependencies -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'SbrpDepsOnly'">
+      <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
+                      Condition="!$([System.String]::new(';$(_SbrpDepsString);').Contains(';%(Identity);'))" />
     </ItemGroup>
 
     <!-- Create a lookup string of items to remove -->
