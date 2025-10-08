@@ -113,7 +113,7 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - The VMR release tag is merged back into the public **General Servicing** and **Release Specific** VMR release branches (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, tag v10.0.101->release/10.0.102, tag v10.0.200->release/10.0.201).
   - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR) in the **General Servicing** branch.
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
-- An approved change that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
+- Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
 ### Pros
 
