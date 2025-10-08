@@ -325,6 +325,7 @@
             RunHeatHarvester">
     <PropertyGroup>
       <WixDependencyKeyName Condition="'$(WixDependencyKeyName)' == ''">$(InstallerName.Replace('-', '_'))</WixDependencyKeyName>
+      <WixAdditionalOptions>-bcgg</WixAdditionalOptions>
     </PropertyGroup>
 
     <ItemGroup>
@@ -363,6 +364,7 @@
 
       <_wixArgs>$(_wixArgs) $(AdditionalCandleArgs)</_wixArgs>
       <_wixArgs>$(_wixArgs) $(AdditionalLightArgs)</_wixArgs>
+      <_wixArgs>$(_wixArgs) $(WixAdditionalOptions)</_wixArgs>
       
       <_wixCommand>wix.exe build $(_wixArgs)</_wixCommand>
     </PropertyGroup>
@@ -381,6 +383,7 @@
       RetryDelayBase="2" />
 
     <CreateWixBuildWixpack
+      AdditionalOptions="$(WixAdditionalOptions)"
       Cultures="en-us"
       DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
       Extensions="@(WixExtensions)"
