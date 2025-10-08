@@ -5,7 +5,7 @@ The information below represents potential options for branching and branding st
 Terminology for the info below:
 - **Current Month** - The month being built, but not yet released.
 - **Current+1 Month** - The next release after the current month.
-- **Current+2 Month** - The next release after the current month.
+- **Current+2 Month** - The next release after the current+1 month.
 - **Release Specific** - Referring to a specific release, rather than an overall release train (e.g. release/10.0.101)
 - **General Servicing** - Referring to an overall servicing train (e.g. release/10.0.1xx)
 
@@ -22,12 +22,12 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Internal VMR branches (`internal/release/10.0.Nxx) - For internal fixes.
 - Changes in the public VMR branches automatically merge into the internal VMR branches (release/10.0.Nxx->internal/release/10.0.Nxx). This happens on a continuous basis.
 - Automated validation for changes is provided in the following ways:
-  - Public forward flows from component repositories recieve validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
+  - Public forward flows from component repositories receive validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
   - Public VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0).
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
-  - Public VMR builds of servicing branches back flow to the public component repositories (e.g. builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ release/10.0 and sdk @ release/10.0.1xx).=
+  - Public VMR builds of servicing branches back flow to the public component repositories (e.g. builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ release/10.0 and sdk @ release/10.0.1xx).
     PR validation occurs on those backflows. This covers changes made solely in the VMR, as well as validation of the repo sources against the latest built packages of its dependencies.
   - Internal VMR builds of servicing branches back flow to internal component repository validation branches (e.g. runtime @ validation/release/10.0).
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
@@ -37,7 +37,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - The **Current+1 Month** builds as new changes are merged into the VMR. Validation occurs as this happens via backflow, validation via the CTI teams, VS insertion, etc.
   Approved changes for **Current+1 Month** allowed as quality bar, risk, and time allows.
-- An approved change that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
+- Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
 ### Pros
 
@@ -101,10 +101,10 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - Internal **General Servicing** VMR branches (`internal/release/10.0.Nxx) - For internal fixes.
 - Changes in the public VMR branches automatically merge into the internal VMR branches (release/10.0.Nxx->internal/release/10.0.Nxx). This happens on a continuous basis for both **Release Specific** and **General Servicing**.
 - Automated validation for changes is provided in the following ways:
-  - **General Servicing** - Public forward flows from component repositories recieve validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
+  - **General Servicing** - Public forward flows from component repositories receive validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
   - **General Servicing** and **Release Specific** - Public VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - **General Servicing** and **Release Specific** Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
-  - **General Servicing** and **Release Specific** - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0 and sdk @ valdiation/release/10.0.202).
+  - **General Servicing** and **Release Specific** - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0 and sdk @ validation/release/10.0.202).
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
   - **General Servicing** Public VMR builds of **General Servicing** branches back flow to the public **General Servicing** component repository branches (e.g. builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ release/10.0 and sdk @ release/10.0.1xx).
     PR validation occurs on those backflows. This covers changes made solely in the VMR, as well as validation of the repo sources against the latest built packages of its dependencies.
@@ -113,7 +113,7 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - The VMR release tag is merged back into the public **General Servicing** and **Release Specific** VMR release branches (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, tag v10.0.101->release/10.0.102, tag v10.0.200->release/10.0.201).
   - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR) in the **General Servicing** branch.
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
-- An approved change that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
+- Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
 ### Pros
 
