@@ -80,7 +80,7 @@ function DownloadArchive {
   local archiveUrl
   local artifactsBaseFileName="Private.SourceBuilt.Artifacts"
   local prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
-  local sdkBaseFileName="dotnet-sdk-"
+  local sdkBaseFileName="dotnet-sdk"
   local defaultArtifactsRid='centos.10-x64'
 
   # Use override base filename if provided
