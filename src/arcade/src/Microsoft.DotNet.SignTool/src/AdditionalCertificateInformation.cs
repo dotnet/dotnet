@@ -21,6 +21,10 @@ namespace Microsoft.DotNet.SignTool
         /// If the certificate name represents a sign+notarize operation, this is the name of the notarize operation.
         /// </summary>
         public string MacNotarizationAppName { get; set; }
+        /// <summary>
+        /// If true, this certificate should generate detached signatures instead of in-place signing.
+        /// </summary>
+        public bool GeneratesDetachedSignature { get; set; }
         public string CollisionPriorityId { get; set; }
     }
 }
