@@ -208,13 +208,15 @@
          This tarball should be versioned in the filename the same as the output of the sdk repo. -->
     <Copy SourceFiles="@(SdkRepoSdkTarball)"
           DestinationFolder="$(ArtifactsAssetsDir)"
-          SkipUnchangedFiles="true" />
-
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+    
     <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
-      <SdkTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)">
+      <!-- Add SDK archive to assets root as source-only build partners expect the file to be there. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SdkFileNamePrefix)*$(ArchiveExtension)">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
-      </SdkTarball>
+      </SourceBuildArtifact>
       <!-- Add the symbols archives to the publishing output. -->
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)dotnet-symbols-*$(ArchiveExtension)">
         <Kind>Blob</Kind>
@@ -230,23 +232,26 @@
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
-      <Artifact Include="@(SdkTarball);@(SourceBuildArtifact)">
+      <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
         <Kind>Blob</Kind>
         <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
 
-    <MakeDir Condition="'$(IsPublishPass2)' == 'true'" Directories="$(SourceBuiltPublishAssetsDir)" />
     <PropertyGroup>
-      <SdkNonStableVersionedTarballPath>$(SourceBuiltPublishAssetsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
+      <_SourceBuildArtifactsDir>$(ArtifactsAssetsDir)/source-build/</_SourceBuildArtifactsDir>
+      <SdkNonStableVersionedTarballPath>$(_SourceBuildArtifactsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
     </PropertyGroup>
+
+    <MakeDir Condition="'$(IsPublishPass2)' == 'true'" Directories="$(_SourceBuildArtifactsDir)" />
 
     <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
     <Copy Condition="'$(IsPublishPass2)' == 'true'"
           SourceFiles="@(SdkRepoSdkTarball)"
           DestinationFiles="$(SdkNonStableVersionedTarballPath)"
-          SkipUnchangedFiles="true" />
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
 
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
