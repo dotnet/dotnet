@@ -13,6 +13,12 @@ pr:
     include:
     - main
     - release/*
+  paths:
+    include:
+      - '*'
+    exclude:
+      - docs/*
+      - *.md
 
 schedules:
   - cron: "0 1 * * *" # run at 01:00 (UTC)
