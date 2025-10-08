@@ -37,7 +37,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - The **Current+1 Month** builds as new changes are merged into the VMR. Validation occurs as this happens via backflow, validation via the CTI teams, VS insertion, etc.
   Approved changes for **Current+1 Month** allowed as quality bar, risk, and time allows.
-- An approved change that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
+- Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
 ### Pros
 
