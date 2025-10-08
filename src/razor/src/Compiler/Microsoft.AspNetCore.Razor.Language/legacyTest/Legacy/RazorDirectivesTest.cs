@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Xunit;
@@ -29,7 +26,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         ParseDocumentTest(
 @"@custom System.Text.Encoding.ASCIIEncoding
 @custom System.Text.Encoding.UTF8Encoding",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -49,7 +46,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         ParseDocumentTest(
 @"@custom System.Text.Encoding.ASCIIEncoding
 @custom System.Text.Encoding.UTF8Encoding",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -77,7 +74,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         ParseDocumentTest(
 @"@custom System.Text.Encoding.ASCIIEncoding
 @something Else",
-            new[] { customDescriptor, somethingDescriptor });
+            [customDescriptor, somethingDescriptor]);
     }
 
     [Fact]
@@ -109,7 +106,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
 @something Else
 
 <p>This is extra</p>",
-            new[] { customDescriptor, somethingDescriptor });
+            [customDescriptor, somethingDescriptor]);
     }
 
     [Fact]
@@ -124,7 +121,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"string1\"\"string2\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -139,7 +136,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom System.",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -154,7 +151,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom System<",
-            new[] { descriptor });
+            [descriptor]);
     }
     [Fact]
     public void DirectiveDescriptor_CanHandleIncompleteNamespaceTokens()
@@ -170,7 +167,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             @custom System.
 
             """,
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -187,7 +184,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             @custom System<
 
             """,
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -204,7 +201,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
 
               @custom System.Text.Encoding.ASCIIEncoding
             """,
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -242,7 +239,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             {  @custom System.Text.Encoding.ASCIIEncoding
             }
             """,
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -257,7 +254,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom System.Text.Encoding.ASCIIEncoding",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -272,7 +269,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom Some_Member",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -287,7 +284,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom BaseNamespace",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -302,7 +299,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom BaseNamespace.Foo.Bar",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -317,7 +314,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"AString\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -332,7 +329,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom AString",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -347,7 +344,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom {foo?}",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -362,7 +359,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom 'AString'",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -377,7 +374,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom AString\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -392,7 +389,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom System.Text.Encoding.ASCIIEncoding Some_Member \"AString\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -407,7 +404,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"Header\" { <p>F{o}o</p> }",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -422,7 +419,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"Name\" { foo(); bar(); }",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -437,7 +434,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom    System.Text.Encoding.ASCIIEncoding       Some_Member    ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -452,7 +449,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom -Some_Member",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -467,7 +464,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"hello\" ;  ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -505,7 +502,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         }
 
         // Act & Assert
-        ParseDocumentTest(source, new[] { descriptor });
+        ParseDocumentTest(source, [descriptor]);
     }
 
     [Fact]
@@ -543,7 +540,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         }
 
         // Act & Assert
-        ParseDocumentTest(source, new[] { descriptor });
+        ParseDocumentTest(source, [descriptor]);
     }
 
     [Fact]
@@ -558,7 +555,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             $"@custom (bool, int?)   ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -573,7 +570,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"hello\" \"world\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -588,7 +585,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"Hello\" World { foo(); bar(); }",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -603,7 +600,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"Hello\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -618,7 +615,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"Hello\" {",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -759,7 +756,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@inherits string[[]][]",
-            new[] { InheritsDirective.Directive, });
+            [InheritsDirective.Directive]);
     }
 
     [Fact]
@@ -767,7 +764,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@inherits System.Web.Mvc.WebViewPage<IEnumerable<MvcApplication2.Models.RegisterModel>>",
-            new[] { InheritsDirective.Directive, });
+            [InheritsDirective.Directive]);
     }
 
     [Fact]
@@ -775,7 +772,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@inherits string",
-            new[] { InheritsDirective.Directive, });
+            [InheritsDirective.Directive]);
     }
 
     [Fact]
@@ -783,7 +780,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@functions { foo(); bar(); }",
-            new[] { FunctionsDirective.Directive, });
+            [FunctionsDirective.Directive]);
     }
 
     [Fact]
@@ -791,7 +788,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@functions { }",
-            new[] { FunctionsDirective.Directive, });
+            [FunctionsDirective.Directive]);
     }
 
     [Fact]
@@ -799,7 +796,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     {
         ParseDocumentTest(
             "@section Header { <p>F{o}o</p> }",
-            new[] { SectionDirective.Directive, });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -813,7 +810,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     // something
 }
 """,
-            new[] { ComponentConstrainedTypeParamDirective.Directive });
+            [ComponentConstrainedTypeParamDirective.Directive]);
     }
 
     [Fact]
@@ -827,7 +824,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     // something
 }
 """,
-            new[] { ComponentConstrainedTypeParamDirective.Directive });
+            [ComponentConstrainedTypeParamDirective.Directive]);
     }
 
     [Fact]
@@ -842,7 +839,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -857,7 +854,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"simple-value\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -872,7 +869,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"{formaction}?/{id}?\"",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -887,7 +884,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@custom \"{formaction}?/{id}?\" System.String",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -902,7 +899,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@TestDirective ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -917,7 +914,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@TestDirective PropertyName",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -931,7 +928,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@class",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -945,7 +942,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(
             "@namespace",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -971,7 +968,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         ParseDocumentTest(@"
 @custom TSomething where TSomething : class
 ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -990,7 +987,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(@"
 @custom TSomething where TSomething : class",
-            directives: new[] { descriptor });
+            directives: [descriptor]);
     }
 
     [Fact]
@@ -1009,7 +1006,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(@"
 @custom TSomething maybe TSomething : class",
-            directives: new[] { descriptor });
+            directives: [descriptor]);
     }
 
     [Fact]
@@ -1028,7 +1025,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         // Act & Assert
         ParseDocumentTest(@"
 @custom TSomething where TElse : class",
-            directives: new[] { descriptor });
+            directives: [descriptor]);
     }
 
     [Fact]
@@ -1045,7 +1042,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
 @custom [Serializable]
 @custom [DllImport(""user32.dll"", SetLastError=false, ExactSpelling=false)]
 ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -1061,7 +1058,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         ParseDocumentTest(@"
 @custom [SomeCustom(new int[] { 1, 2, 3 }
 ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -1082,7 +1079,7 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
         3
     }]
 ",
-            new[] { descriptor });
+            [descriptor]);
     }
 
     [Fact]
@@ -1096,6 +1093,6 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
 
         // Act & Assert
         ParseDocumentTest("@custom Serializable]",
-            new[] { descriptor });
+            [descriptor]);
     }
 }

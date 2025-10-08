@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Xunit;
 
@@ -231,7 +229,7 @@ public class CSharpImplicitExpressionTest() : ParserTestBase(layer: TestProject.
     public void ParsesNullForgivenessOperatorImplicitExpression_DirectiveCodeBlock()
     {
         // Act & Assert
-        ParseDocumentTest("@functions { public void Foo() { @Model!.Name![0]!?.Bar } }", new[] { FunctionsDirective.Directive });
+        ParseDocumentTest("@functions { public void Foo() { @Model!.Name![0]!?.Bar } }", [FunctionsDirective.Directive]);
     }
 
     [Fact]

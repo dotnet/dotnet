@@ -1,16 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
+using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
+public sealed class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind)
         {
@@ -25,7 +28,7 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
         var visitor = new Visitor();
         visitor.Visit(documentNode);
 
-        var @class = visitor.Class;
+        var @class = visitor.Class.AssumeNotNull();
 
         var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType.Content}>";
         var vddProperty = new CSharpCodeIntermediateNode();
@@ -64,14 +67,11 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
 
     private class Visitor : IntermediateNodeWalker
     {
-        public ClassDeclarationIntermediateNode Class { get; private set; }
+        public ClassDeclarationIntermediateNode? Class { get; private set; }
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
-            if (Class == null)
-            {
-                Class = node;
-            }
+            Class ??= node;
 
             base.VisitClassDeclaration(node);
         }
