@@ -7,10 +7,10 @@
       "commitSha": "b277affeace1bfee3a4f9246e0d0eda445fb4a4f"
     },
     {
-      "barId": 285894,
+      "barId": 286047,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "8f657272b6a9092f58df84c0123729919a693fbe"
+      "commitSha": "318c48149651c804d525eee3bf4287cd5149660b"
     },
     {
       "barId": 277712,
@@ -73,10 +73,10 @@
       "commitSha": "c8a8e7fec622caed9cca4d85f57a8874a7fabfdb"
     },
     {
-      "barId": 285926,
+      "barId": 286031,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ff59510c836ea86807490781dbd3d77f78c77b59"
+      "commitSha": "827ae8b440db55e71cb5f1e8784148fbd2125f1c"
     },
     {
       "barId": 284614,
@@ -91,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 285682,
+      "barId": 286068,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f49821513314459df88302142d6fe1aabbb5e9e9"
+      "commitSha": "4d6795d295714e740f1661000659c9229c3ce93e"
     },
     {
       "barId": 285327,
@@ -121,10 +121,10 @@
       "commitSha": "95c013d05b0da72f91bfd53b436162061f9907ae"
     },
     {
-      "barId": 285868,
+      "barId": 285989,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "51891d6b33641ad30bc512747652225ca7964386"
+      "commitSha": "81d120f85fbdddc7b981e910a127bd6ef913cd42"
     },
     {
       "barId": 285071,
