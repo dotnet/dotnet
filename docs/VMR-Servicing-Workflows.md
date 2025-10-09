@@ -12,6 +12,13 @@ Terminology for the info below:
 ## Status Quo (.NET 9 and prior) Approach
 
 The status quo approach closely matches the workflow used today in servicing, with some differences that are required due to different workflow with the VMR.
+
+### TL;DR
+
+
+
+### Detailed Description
+
 - Tactics approves bugs continuously. These bugs are approved for a specific release (milestone) based on whether we have reached code complete for the **Current Month**
 - On a specified day after the **Current Month** has been signed off on and is on its way out the door, the public VMR branches (`release/10.0.Nxx`) are rebranded to the **Current+1 Month**'s release.
 - The internal component repo validation branches (e.g. sdk @ validation/release/10.0.1xx) are force-reset to the last forward flow of the corresponding
