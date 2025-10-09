@@ -17,6 +17,9 @@ namespace Microsoft.DotNet.SignTool
         internal readonly SignInfo SignInfo;
         internal ImmutableArray<byte> ContentHash => File.ContentHash;
         internal readonly string WixContentFilePath;
+        internal string DetachedSignatureFilePath => $"{FileName}.sig";
+        internal string DetachedSignatureFullPath => $"{FullPath}.sig";
+
         internal readonly PathWithHash File;
 
         // optional file information that allows to disambiguate among multiple files with the same name:
