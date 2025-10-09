@@ -340,10 +340,6 @@ stages:
         linuxPortable: true
         runTests: false
 
-  - template: /eng/common/templates/jobs/source-build.yml
-    parameters:
-      enableInternalSources: true
-
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish
     dependsOn:
