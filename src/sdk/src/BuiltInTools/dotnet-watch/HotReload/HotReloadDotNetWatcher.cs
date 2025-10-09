@@ -128,7 +128,7 @@ namespace Microsoft.DotNet.Watch
                         rootProcessTerminationSource,
                         onOutput: null,
                         onExit: null,
-                        restartOperation: new RestartOperation(_ => default), // the process will automatically restart
+                        restartOperation: new RestartOperation(_ => throw new InvalidOperationException("Root project shouldn't be restarted")),
                         iterationCancellationToken);
 
                     if (rootRunningProject == null)
@@ -531,7 +531,7 @@ namespace Microsoft.DotNet.Watch
 
                     if (rootRunningProject != null)
                     {
-                        await rootRunningProject.TerminateAsync();
+                        await rootRunningProject.TerminateAsync(isRestarting: false);
                     }
 
                     if (runtimeProcessLauncher != null)
@@ -541,8 +541,7 @@ namespace Microsoft.DotNet.Watch
 
                     if (waitForFileChangeBeforeRestarting &&
                         !shutdownCancellationToken.IsCancellationRequested &&
-                        !forceRestartCancellationSource.IsCancellationRequested &&
-                        rootRunningProject?.IsRestarting != true)
+                        !forceRestartCancellationSource.IsCancellationRequested)
                     {
                         using var shutdownOrForcedRestartSource = CancellationTokenSource.CreateLinkedTokenSource(shutdownCancellationToken, forceRestartCancellationSource.Token);
                         await WaitForFileChangeBeforeRestarting(fileWatcher, evaluationResult, shutdownOrForcedRestartSource.Token);
