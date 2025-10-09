@@ -15,7 +15,9 @@ The status quo approach closely matches the workflow used today in servicing, wi
 
 ### TL;DR
 
-
+- Release builds are cut from a long-lived servicing branch.
+- Validation occurs against long-lived validation and repo branches
+- Branches are closed for a period of time during stabilization and validation.
 
 ### Detailed Description
 
@@ -45,6 +47,41 @@ The status quo approach closely matches the workflow used today in servicing, wi
 - The **Current+1 Month** builds as new changes are merged into the VMR. Validation occurs as this happens via backflow, validation via the CTI teams, VS insertion, etc.
   Approved changes for **Current+1 Month** allowed as quality bar, risk, and time allows.
 - Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
+
+### Participant Workflows
+
+#### Developer – Public Fix
+
+1. Developer prepares source for their fix in their component repository, or in the VMR if the fix is VMR-specific
+2. Developer prepares an approval template and brings the fix to Tactics.
+3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
+4. Developer merges the fix based on the current branch status and schedule
+    - If release branches are currently closed, or the component release branch/VMR servicing branch corresponds to a different milestone for which the fix is approved, the fix is parked until the brach opens for check-ins to that milestone, at which time the fix is merged.
+    - If the component release branch/VMR servicing branch currently corresponds to the milestone for which the bug is approved i.e. is branded for that month, and the branch is open, then the fix is merged immediately.
+5. If the fix was made to the component repository, confirm that the fix flowed into the VMR servicing branch via a merged forward flow PR.
+6. Wait for a validation build.
+7. Validate the fix in the shipping product.
+
+#### Developer – Internal Fix
+
+1. Developer prepares source for their fix. This can be done in a two ways:
+  - In the internal validation branch of their component repository (to enable repo-specific PR validation), subsequently cherry-picking to the internal VMR servicing branch.
+  - Directly in the internal VMR servicing 
+2. Developer prepares an approval template and brings the fix to .NET Tactics.
+3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
+4. Developer merges the fix based on the current branch status and schedule
+    - If release branches are currently closed, or the internal VMR servicing branch corresponds to a different milestone for which the fix is approved, the fix is parked until the brach opens for check-ins to that milestone, at which time the fix is merged.
+    - If the internal VMR servicing branch currently corresponds to the milestone for which the bug is approved i.e. is branded for that month, and the branch is open, then the fix is merged immediately.
+5. Wait for a validation build.
+6. Validate the fix in the shipping product.
+
+#### Repository Owner – Release Sign-off
+
+Fill out
+
+#### Coherency QB – Branch Management
+
+Fill out
 
 ### Pros
 
@@ -93,6 +130,16 @@ gantt
 
 This alternative utilizes a **continuously** open release branch. A new VMR **Release Specific** branch is created off of this release for each actual release (e.g. release/10.0.101 and release/10.0.200) with additional temporary validation branches. These new **Release Specific** branches may receive additional late breaking fixes without endangering a future release.
 
+### TL;DR
+
+- Release builds are cut from a short-lived servicing branches.
+- Long lived servicing branches are always open.
+- Day-to-day validation occurs against long-lived validation and repo branches.
+- Final validation occurs against short lived servicing branches.
+- Devs switch where they check-in based on point of time in the month.
+
+### Detailed Description
+
 - Tactics approves bugs continuously. These bugs are approved for a specific release (milestone). Which release they are approved for may change depending on the bug. For instance, a bug might be approved, but delayed to align with another product's release. Changes are **immediately** checked into the branch that matches the milestone that the bug is approved for. This target would shift depending on where we were in the month.
 - On a specified day after the **Current Month** content is code complete (validation may not yet be complete), **Release Specific** VMR and validation branches are created:
   - Public **Release Specific** VMR -> release/10.0.Nxx -> release/10.0.NOM off of HEAD
@@ -122,6 +169,24 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
+### Participant Workflows
+
+#### Developer – Public Fix
+
+Fill out
+
+#### Developer – Internal Fix
+
+Fill out
+
+#### Repository Owner – Release Sign-off
+
+Fill out
+
+#### Coherency QB – Branch Management
+
+Fill out
+
 ### Pros
 
 - **General Servicing** is always open.
@@ -133,8 +198,9 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
 - Devs need to know where to check-in to meet the current release. If the **Release Specific** branch point is too early, then this could be an issue.
 - Some fixes might have to wait for check-in if they are not approved for a release that has an active branch.
 - For late-breaking changes, there is no forward flow.
+- We need to be careful around branch time, ensuring that all approved fixes make it into the VMR before that branch point. For instance, let's say a runtime fix is approved, checked in to the runtime repo, and then begins to flow into the VMR as part of a PR. If the release branch is cut before that PR merges, this fix has not yet made it into release. Most likely, we can build tooling to mitigate this risk. *Note: A similar situation exists today in the Status Quo approach. However, it's likely that the long-lived branches make it less likely that we will miss a change.*
 
-### Diagrams
+### Sample Schedule
 
 ```mermaid
 gantt
@@ -165,3 +231,4 @@ gantt
   RS-Mar Staging / Release                              :rs_feb_build, 2026-03-01, 9d
   RS-Mar Release                                       :milestone, 2026-03-10, 0d
 ```
+
