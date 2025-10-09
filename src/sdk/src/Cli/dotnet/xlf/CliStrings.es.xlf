@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Establece el valor de una variable de entorno. 
-Crea la variable si no existe o la reemplaza en caso de que exista. 
+        <target state="translated">Establece el valor de una variable de entorno.
+Crea la variable si no existe o la reemplaza en caso de que exista.
 Este argumento se puede especificar varias veces para proporcionar múltiples variables.
 
 Ejemplos:
@@ -118,9 +118,9 @@ Ejemplos:
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
-This will force the tests to be run in an isolated process. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
+This will force the tests to be run in an isolated process.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Establece el valor de una variable de entorno. 
-Crea la variable si no existe o la reemplaza en caso de que exista. 
-Esto forzará la ejecución de las pruebas en un proceso aislado. 
+        <target state="translated">Establece el valor de una variable de entorno.
+Crea la variable si no existe o la reemplaza en caso de que exista.
+Esto forzará la ejecución de las pruebas en un proceso aislado.
 Este argumento se puede especificar varias veces para proporcionar múltiples variables.
 
 Ejemplos:

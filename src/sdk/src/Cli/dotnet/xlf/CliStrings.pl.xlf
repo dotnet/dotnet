@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Ustawia wartość zmiennej środowiskowej. 
-Jeśli zmienna nie istnieje, tworzy ją, a jeśli istnieje, przesłania. 
+        <target state="translated">Ustawia wartość zmiennej środowiskowej.
+Jeśli zmienna nie istnieje, tworzy ją, a jeśli istnieje, przesłania.
 Ten argument można określić wiele razy w celu podania wielu wartości.
 
 Przykłady:
@@ -118,9 +118,9 @@ Przykłady:
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
-This will force the tests to be run in an isolated process. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
+This will force the tests to be run in an isolated process.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Ustawia wartość zmiennej środowiskowej. 
-Jeśli zmienna nie istnieje, tworzy ją, a jeśli istnieje, przesłania. 
-Wymusi to uruchamianie testów w izolowanym procesie. 
+        <target state="translated">Ustawia wartość zmiennej środowiskowej.
+Jeśli zmienna nie istnieje, tworzy ją, a jeśli istnieje, przesłania.
+Wymusi to uruchamianie testów w izolowanym procesie.
 Ten argument można określić wiele razy w celu podania wielu wartości.
 
 Przykłady:

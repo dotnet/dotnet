@@ -609,7 +609,7 @@ public class RuntimeProcessLauncherTests(ITestOutputHelper logger) : DotNetWatch
 
         Log("Waiting for changes...");
         await waitingForChanges.WaitAsync(w.ShutdownSource.Token);
-        
+
         UpdateSourceFile(path, "class C { int F() => 2; }");
 
         switch ((isExisting, isIncluded, directoryKind))

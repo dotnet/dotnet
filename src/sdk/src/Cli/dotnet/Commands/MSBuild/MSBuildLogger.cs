@@ -169,7 +169,12 @@ public sealed class MSBuildLogger : INodeLogger
         if (args.EventName is null) return;
         if (!_aggregatedEvents.TryGetValue(args.EventName, out Dictionary<string, int>? eventData) || eventData is null)
         {
-            eventData = new Dictionary<string, int>();
+            return;
+        }
+
+        if (!_aggregatedEvents.TryGetValue(args.EventName, out var eventData))
+        {
+            eventData = [];
             _aggregatedEvents[args.EventName] = eventData;
         }
 
