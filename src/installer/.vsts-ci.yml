@@ -330,11 +330,6 @@ extends:
             buildArchitecture: arm64
             runTests: false
 
-      # Source Build
-      - template: /eng/common/templates-official/jobs/source-build.yml@self
-        parameters:
-          enableInternalSources: true
-
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish
         dependsOn:
