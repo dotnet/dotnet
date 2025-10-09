@@ -192,7 +192,7 @@ namespace Microsoft.DotNet.Cli.MSBuild.Tests
             var fakeTelemetry = new FakeTelemetry();
             fakeTelemetry.Enabled = true;
             var logger = new MSBuildLogger(fakeTelemetry);
-            
+
             var eventArgs = new TelemetryEventArgs
             {
                 EventName = MSBuildLogger.TaskFactoryTelemetryAggregatedEventName,

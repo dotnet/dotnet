@@ -559,7 +559,6 @@
     </Dependency>
     <Dependency Name="MSTest" Version="4.1.0-preview.25508.5">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>9866a77221b818a70721106b9622eac95f81adec</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.0-rtm.25507.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>

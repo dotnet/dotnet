@@ -3546,9 +3546,9 @@ and the corresponding package Ids for installed tools using the command
 'dotnet tool list'.</source>
         <target state="translated">'{0}' paket kimliğine sahip araç bulunamadı.
 
-Araçlar, aracı çağırırken kullandığınız araç adından farklı olabilen 
-paket kimlikleri kullanılarak kaldırılır. Yüklü araçların araç adlarını ve 
-karşılık gelen paket kimliklerini bulmak için 
+Araçlar, aracı çağırırken kullandığınız araç adından farklı olabilen
+paket kimlikleri kullanılarak kaldırılır. Yüklü araçların araç adlarını ve
+karşılık gelen paket kimliklerini bulmak için
 'dotnet tool list' komutunu kullanabilirsiniz.</target>
         <note />
       </trans-unit>
