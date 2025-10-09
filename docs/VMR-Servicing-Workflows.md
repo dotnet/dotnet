@@ -33,7 +33,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
 - On the release day for the **Current Month**:
   - The VMR release tag is merged back into the public VMR release branch (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, etc.).
-  - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR)
+  - The VMR bootstrap SDK is updated (updates the version of the SDK used to build the VMR)
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - The **Current+1 Month** builds as new changes are merged into the VMR. Validation occurs as this happens via backflow, validation via the CTI teams, VS insertion, etc.
   Approved changes for **Current+1 Month** allowed as quality bar, risk, and time allows.
