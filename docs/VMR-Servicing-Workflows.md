@@ -29,7 +29,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Internal VMR branches (`internal/release/10.0.Nxx) - For internal fixes.
 - Changes in the public VMR branches automatically merge into the internal VMR branches (release/10.0.Nxx->internal/release/10.0.Nxx). This happens on a continuous basis.
 - Automated validation for changes is provided in the following ways:
-  - Public forward flows from component repositories receive validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
+  - Public forward flows from component repositories receive validation on the original public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
   - Public VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0).
@@ -40,7 +40,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
     These changes may be merged into the validation branch, but do not flow anywhere if they are.
 - On the release day for the **Current Month**:
   - The VMR release tag is merged back into the public VMR release branch (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, etc.).
-  - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR)
+  - The VMR bootstrap SDK is updated (updates the version of the SDK used to build the VMR)
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - The **Current+1 Month** builds as new changes are merged into the VMR. Validation occurs as this happens via backflow, validation via the CTI teams, VS insertion, etc.
   Approved changes for **Current+1 Month** allowed as quality bar, risk, and time allows.
@@ -118,7 +118,7 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - **General Servicing** and **Release Specific** - Internal VMR builds of servicing branches back flow to internal component repository validation branches (e.g. runtime @ validation/release/10.0 and runtime @ validation/release/10.0.2).
 - On the release day for the **Current Month**:
   - The VMR release tag is merged back into the public **General Servicing** and **Release Specific** VMR release branches (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, tag v10.0.101->release/10.0.102, tag v10.0.200->release/10.0.201).
-  - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR) in the **General Servicing** branch.
+  - The VMR bootstrap SDK is updated (updates the version of the SDK used to build the VMR) in the **General Servicing** branch.
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
