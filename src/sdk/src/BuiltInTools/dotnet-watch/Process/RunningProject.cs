@@ -41,9 +41,8 @@ namespace Microsoft.DotNet.Watch
         /// Set to true when the process termination is being requested so that it can be restarted within
         /// the Hot Reload session (i.e. without restarting the root project).
         /// </summary>
-        public bool IsRestarting => _isRestarting != 0;
+        public bool IsRestarting { get; private set; }
 
-        private volatile int _isRestarting;
         private volatile bool _isDisposed;
 
         /// <summary>
@@ -82,34 +81,16 @@ namespace Microsoft.DotNet.Watch
             }
         }
 
-        /// <summary>
-        /// Terminates the process if it hasn't terminated yet.
-        /// </summary>
-        public Task TerminateAsync()
+        public async Task<int> TerminateAsync(bool isRestarting)
         {
+            IsRestarting = isRestarting;
+
             if (!_isDisposed)
             {
                 processTerminationSource.Cancel();
             }
 
-            return RunningProcess;
-        }
-
-        /// <summary>
-        /// Marks the <see cref="RunningProject"/> as restarting.
-        /// Subsequent process termination will be treated as a restart.
-        /// </summary>
-        /// <returns>True if the project hasn't been int restarting state prior the call.</returns>
-        public bool InitiateRestart()
-            => Interlocked.Exchange(ref _isRestarting, 1) == 0;
-
-        /// <summary>
-        /// Terminates the process in preparation for a restart.
-        /// </summary>
-        public Task TerminateForRestartAsync()
-        {
-            InitiateRestart();
-            return TerminateAsync();
+            return await RunningProcess;
         }
     }
 }
