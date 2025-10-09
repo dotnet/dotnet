@@ -75,13 +75,14 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
     /// <remarks>
     /// Kept in sync with the default <c>dotnet new console</c> project file (enforced by <c>DotnetProjectAddTests.SameAsTemplate</c>).
     /// </remarks>
-    private static readonly FrozenDictionary<string, string> s_defaultProperties = FrozenDictionary.Create<string, string>(StringComparer.OrdinalIgnoreCase,
+    public static readonly FrozenDictionary<string, string> DefaultProperties = FrozenDictionary.Create<string, string>(StringComparer.OrdinalIgnoreCase,
     [
         new("OutputType", "Exe"),
         new("TargetFramework", $"net{TargetFrameworkVersion}"),
         new("ImplicitUsings", "enable"),
         new("Nullable", "enable"),
         new("PublishAot", "true"),
+        new("PackAsTool", "true"),
     ]);
 
     /// <summary>
@@ -189,7 +190,7 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
         var verbosity = MSBuildArgs.Verbosity ?? MSBuildForwardingAppWithoutLogging.DefaultVerbosity;
         var consoleLogger = minimizeStdOut
             ? new SimpleErrorLogger()
-            : TerminalLogger.CreateTerminalOrConsoleLogger([$"--verbosity:{verbosity}", .. MSBuildArgs.OtherMSBuildArgs]);
+            : CommonRunHelpers.GetConsoleLogger(MSBuildArgs.CloneWithExplicitArgs([$"--verbosity:{verbosity}", .. MSBuildArgs.OtherMSBuildArgs]));
         var binaryLogger = GetBinaryLogger(MSBuildArgs.OtherMSBuildArgs);
 
         CacheInfo? cache = null;
@@ -355,9 +356,16 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                     // Cache run info (to avoid re-evaluating the project instance).
                     cache.CurrentEntry.Run = RunProperties.FromProject(buildRequest.ProjectInstance);
 
-                    TryCacheCscArguments(cache, buildResult, buildRequest.ProjectInstance);
+                    if (!MSBuildUtilities.ConvertStringToBool(buildRequest.ProjectInstance.GetPropertyValue(FileBasedProgramCanSkipMSBuild), defaultValue: true))
+                    {
+                        Reporter.Verbose.WriteLine($"Not saving cache because there is an opt-out via MSBuild property {FileBasedProgramCanSkipMSBuild}.");
+                    }
+                    else
+                    {
+                        CacheCscArguments(cache, buildResult);
 
-                    MarkBuildSuccess(cache);
+                        MarkBuildSuccess(cache);
+                    }
                 }
 
                 projectInstance = buildRequest.ProjectInstance;
@@ -444,14 +452,8 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
             return null;
         }
 
-        void TryCacheCscArguments(CacheInfo cache, BuildResult result, ProjectInstance projectInstance)
+        void CacheCscArguments(CacheInfo cache, BuildResult result)
         {
-            if (!MSBuildUtilities.ConvertStringToBool(projectInstance.GetPropertyValue(FileBasedProgramCanSkipMSBuild), defaultValue: true))
-            {
-                Reporter.Verbose.WriteLine($"Not saving CSC arguments because there is an opt-out via MSBuild property {FileBasedProgramCanSkipMSBuild}.");
-                return;
-            }
-
             // We cannot reuse CSC arguments from previous run and skip MSBuild if there are project references
             // because we cannot easily detect whether any referenced projects have changed.
             if (Directives.Any(static d => d is CSharpDirective.Project))
@@ -1139,8 +1141,12 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
         string? targetFilePath = null,
         string? artifactsPath = null,
         bool includeRuntimeConfigInformation = true,
-        string? userSecretsId = null)
+        string? userSecretsId = null,
+        IEnumerable<string>? excludeDefaultProperties = null)
     {
+        Debug.Assert(userSecretsId == null || !isVirtualProject);
+        Debug.Assert(excludeDefaultProperties == null || !isVirtualProject);
+
         int processedDirectives = 0;
 
         var sdkDirectives = directives.OfType<CSharpDirective.Sdk>();
@@ -1179,6 +1185,20 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                     <PublishDir>artifacts/$(MSBuildProjectName)</PublishDir>
                     <PackageOutputPath>artifacts/$(MSBuildProjectName)</PackageOutputPath>
                     <FileBasedProgram>true</FileBasedProgram>
+                    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+                    <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
+                """);
+
+            // Write default properties before importing SDKs so they can be overridden by SDKs
+            // (and implicit build files which are imported by the default .NET SDK).
+            foreach (var (name, value) in DefaultProperties)
+            {
+                writer.WriteLine($"""
+                        <{name}>{EscapeValue(value)}</{name}>
+                    """);
+            }
+
+            writer.WriteLine($"""
                   </PropertyGroup>
 
                   <ItemGroup>
@@ -1245,32 +1265,28 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                 """);
 
             // First write the default properties except those specified by the user.
-            var customPropertyNames = propertyDirectives.Select(d => d.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            foreach (var (name, value) in s_defaultProperties)
+            if (!isVirtualProject)
             {
-                if (!customPropertyNames.Contains(name))
+                var customPropertyNames = propertyDirectives
+                    .Select(static d => d.Name)
+                    .Concat(excludeDefaultProperties ?? [])
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                foreach (var (name, value) in DefaultProperties)
+                {
+                    if (!customPropertyNames.Contains(name))
+                    {
+                        writer.WriteLine($"""
+                                <{name}>{EscapeValue(value)}</{name}>
+                            """);
+                    }
+                }
+
+                if (userSecretsId != null && !customPropertyNames.Contains("UserSecretsId"))
                 {
                     writer.WriteLine($"""
-                            <{name}>{EscapeValue(value)}</{name}>
+                            <UserSecretsId>{EscapeValue(userSecretsId)}</UserSecretsId>
                         """);
                 }
-            }
-
-            if (userSecretsId != null && !customPropertyNames.Contains("UserSecretsId"))
-            {
-                writer.WriteLine($"""
-                        <UserSecretsId>{EscapeValue(userSecretsId)}</UserSecretsId>
-                    """);
-            }
-
-            // Write virtual-only properties.
-            if (isVirtualProject)
-            {
-                writer.WriteLine("""
-                        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-                        <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
-                        <RestoreUseStaticGraphEvaluation>false</RestoreUseStaticGraphEvaluation>
-                    """);
             }
 
             // Write custom properties.
@@ -1287,6 +1303,7 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
             if (isVirtualProject)
             {
                 writer.WriteLine("""
+                        <RestoreUseStaticGraphEvaluation>false</RestoreUseStaticGraphEvaluation>
                         <Features>$(Features);FileBasedProgram</Features>
                     """);
             }
@@ -1488,8 +1505,15 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                     Diagnostics = diagnostics,
                     SourceFile = sourceFile,
                     DirectiveKind = name.ToString(),
-                    DirectiveText = value.ToString()
+                    DirectiveText = value.ToString(),
                 };
+
+                // Block quotes now so we can later support quoted values without a breaking change. https://github.com/dotnet/sdk/issues/49367
+                if (value.Contains('"'))
+                {
+                    diagnostics.AddError(sourceFile, context.Info.Span, CliCommandStrings.QuoteInDirective);
+                }
+
                 if (CSharpDirective.Parse(context) is { } directive)
                 {
                     // If the directive is already present, report an error.
@@ -1885,7 +1909,11 @@ internal abstract class CSharpDirective(in CSharpDirective.ParseInfo info)
                 if (Directory.Exists(resolvedProjectPath))
                 {
                     var fullFilePath = MsbuildProject.GetProjectFileFromDirectory(resolvedProjectPath).FullName;
-                    directiveText = Path.GetRelativePath(relativeTo: sourceDirectory, fullFilePath);
+
+                    // Keep a relative path only if the original directive was a relative path.
+                    directiveText = Path.IsPathFullyQualified(directiveText)
+                        ? fullFilePath
+                        : Path.GetRelativePath(relativeTo: sourceDirectory, fullFilePath);
                 }
                 else if (!File.Exists(resolvedProjectPath))
                 {
@@ -1901,6 +1929,11 @@ internal abstract class CSharpDirective(in CSharpDirective.ParseInfo info)
             {
                 Name = directiveText,
             };
+        }
+
+        public Project WithName(string name)
+        {
+            return new Project(Info) { Name = name };
         }
 
         public override string ToString() => $"#:project {Name}";
