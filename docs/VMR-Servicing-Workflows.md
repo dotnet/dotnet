@@ -111,7 +111,7 @@ This alternative utilizes a **continuously** open release branch. A new VMR **Re
   - **General Servicing** and **Release Specific** - Internal VMR builds of servicing branches back flow to internal component repository validation branches (e.g. runtime @ validation/release/10.0 and runtime @ validation/release/10.0.2).
 - On the release day for the **Current Month**:
   - The VMR release tag is merged back into the public **General Servicing** and **Release Specific** VMR release branches (e.g. tag v10.0.101->release/10.0.1xx, tag v10.0.200->release/10.0.2xx, tag v10.0.101->release/10.0.102, tag v10.0.200->release/10.0.201).
-  - The VMR bootstrap SDK is updated (updated the version of the SDK used to build the VMR) in the **General Servicing** branch.
+  - The VMR bootstrap SDK is updated (updates the version of the SDK used to build the VMR) in the **General Servicing** branch.
   - Arcade gets the new bootstrap SDK version, which would then flow out to component repositories.
 - Approved changes that do not meet the bar for **Current+1 Month** are marked with the **Current+2 Month** milestone.
 
