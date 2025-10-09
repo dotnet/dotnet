@@ -22,7 +22,7 @@ The status quo approach closely matches the workflow used today in servicing, wi
   - Internal VMR branches (`internal/release/10.0.Nxx) - For internal fixes.
 - Changes in the public VMR branches automatically merge into the internal VMR branches (release/10.0.Nxx->internal/release/10.0.Nxx). This happens on a continuous basis.
 - Automated validation for changes is provided in the following ways:
-  - Public forward flows from component repositories receive validation on the public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
+  - Public forward flows from component repositories receive validation on the original public PRs to those component repositories (e.g. my-fix-12345 is validated before merge to runtime @ release/10.0)
   - Public VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal VMR-targeted changes are validated before merge via the VMR PR pipelines and scenario testing.
   - Internal component repository changes may be validated before cherry-picking into the VMR by PRs against the internal validation branches (e.g. runtime @ validation/release/10.0).
