@@ -1,22 +1,22 @@
 <Project>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetDependencyNamesFromVersionDetails" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
 
   <Target Name="GetFilteredSharedComponentPackages"
           Outputs="@(SharedComponentFilteredPackages)">
-    
-    <ItemGroup>
-      <_SbrpDeps Include="Microsoft.Build" />
-      <_SbrpDeps Include="Microsoft.Build.Utilities.Core" />
-      <_SbrpDeps Include="Microsoft.DotNet.Arcade.Sdk" />
-      <_SbrpDeps Include="Microsoft.DotNet.GenAPI.Task" />
-      <_SbrpDeps Include="Microsoft.NETCore.ILAsm" />
-      <_SbrpDeps Include="Microsoft.NETCore.ILDAsm" />
-    </ItemGroup>
+
+    <PropertyGroup>
+      <_VersionDetailsXml Condition="'$(PackageVersionPropsFlowType)' == 'DependenciesOnly'">$(ProjectDirectory)eng/Version.Details.xml</_VersionDetailsXml>
+    </PropertyGroup>
+    <GetDependencyNamesFromVersionDetails VersionDetailsPath="$(_VersionDetailsXml)"
+                                          Condition="'$(SharedComponentFilterMode)' == 'BootstrapRepoDepsOnly'">
+      <Output TaskParameter="DependencyNames" ItemName="_BootstrapRepoDeps" />
+    </GetDependencyNamesFromVersionDetails>
 
     <PropertyGroup>
       <SharedRepositoryReferenceString>;@(SharedRepositoryReference);</SharedRepositoryReferenceString>
-      <_SbrpDepsString>;@(_SbrpDeps);</_SbrpDepsString>
+      <_BootstrapRepoDepsString>;@(_BootstrapRepoDeps);</_BootstrapRepoDepsString>
       <SharedComponentFilterMode Condition="'$(SharedComponentFilterMode)' == ''">NonToolingAndBootstrapOnly</SharedComponentFilterMode>
     </PropertyGroup>
 
@@ -49,10 +49,10 @@
                       Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
-    <!-- SBRP mode: Keep only packages from SBRP's dependencies -->
-    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'SbrpDepsOnly'">
+    <!-- Bootstrap-repo-dependencies-only mode: Keep only packages from the bootstrap repo's dependencies -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'BootstrapRepoDepsOnly'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
-                      Condition="!$([System.String]::new(';$(_SbrpDepsString);').Contains(';%(Identity);'))" />
+                      Condition="!$([System.String]::new(';$(_BootstrapRepoDepsString);').Contains(';%(Identity);'))" />
     </ItemGroup>
 
     <!-- Create a lookup string of items to remove -->
