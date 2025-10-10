@@ -21,6 +21,16 @@ schedules:
       - main
     always: false # run only if there were changes since the last successful scheduled run.
 
+parameters:
+- name: buildScope
+  displayName: 'Build Scope'
+  type: string
+  default: 'auto'
+  values:
+    - auto
+    - lite
+    - full
+
 variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
@@ -40,12 +50,18 @@ variables:
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
-    ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
-      scope: full
-    ${{ elseif eq(variables.isPRTrigger, 'true') }}:
-      scope: lite
+    ${{ if eq(parameters.buildScope, 'auto') }}:
+      ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
+        scope: full
+      ${{ elseif eq(variables.isPRTrigger, 'true') }}:
+        scope: lite
+      ${{ else }}:
+        scope: full
     ${{ else }}:
       scope: full
+    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+    # This is enabled for all branches except main and 1xx
+    excludeRuntimeDependentJobs: false
 
 - stage: ValidateUserChanges
   displayName: Validate user changes in VMR
