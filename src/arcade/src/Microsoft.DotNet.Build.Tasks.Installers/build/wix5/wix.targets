@@ -23,7 +23,8 @@
     <PropertyGroup>
       <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
       <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
-      <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' == 'true'">x86</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' != 'true'">$(InstallerTargetArchitecture)</MsiArch>
     </PropertyGroup>
 
     <Error
@@ -260,6 +261,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <CandleVariables Include="MicrosoftEula" Value="$(MSBuildThisFileDirectory)eula.rtf" />
       <CandleVariables Include="InstallerVersion" Value="$(WixInstallerVersion)" />
     </ItemGroup>
   </Target>
@@ -338,6 +340,7 @@
       <CandleVariables Include="BuildVersion" Value="$(MsiVersionString)" />
       <CandleVariables Include="NugetVersion" Value="$(Version)" />
       <CandleVariables Include="InstallerPlatform" Value="$(MsiArch)" />
+      <CandleVariables Include="Platform" Value="$(InstallerTargetArchitecture)" />
       <CandleVariables Include="TargetArchitectureDescription" Value="$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart)" />
       <CandleVariables Include="UpgradeCode" Value="$(UpgradeCode)" />
       <CandleVariables Include="MajorUpgradeSchedule" Value="$(MajorUpgradeSchedule)" Condition="'$(MajorUpgradeSchedule)' != ''" />
@@ -377,7 +380,6 @@
       IgnoreStandardErrorWarningFormat="true"
       RetryDelayBase="2" />
 
-    <!-- TODO this fails on preprocessor directives -->
     <CreateWixBuildWixpack
       Cultures="en-us"
       DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
