@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "detected_license_expression": "mit AND apache-2.0 AND bsd-new AND (gpl-2.0 AND gcc-linking-exception-2.0) AND (lgpl-2.1-plus AND apache-2.0 AND mpl-2.0 AND bsd-simplified AND bsd-new AND ms-pl AND ms-rl) AND (ms-testplatform-17.0.0 AND ms-vs-addons-ext-17.2.0) AND ms-net-library-2019-06 AND (ms-net-library-2019-06 AND ms-typescript-msbuild-4.1.4) AND ms-net-library-2018-11 AND ms-vs-addons-ext-17.2.0 AND ms-pl"
+    }
+  ]
+}
