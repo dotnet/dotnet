@@ -15,7 +15,7 @@
     <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
     <HasSharedComponents>false</HasSharedComponents>
     <HasSharedComponents Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">true</HasSharedComponents>
-    <SharedComponentFilterMode>BootstrapOnly</SharedComponentFilterMode>
+    <SharedComponentFilterMode>$(SharedComponentFilter_BootstrapOnly)</SharedComponentFilterMode>
   </PropertyGroup>
 
   <Target Name="CleanSharedComponentsArtifacts"

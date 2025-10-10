@@ -351,8 +351,8 @@
     </GetKnownArtifactsFromAssetManifests>
 
     <PropertyGroup>
-      <_SharedComponentFilterMode>NonToolingOnly</_SharedComponentFilterMode>
-      <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">BootstrapRepoDepsOnly</_SharedComponentFilterMode>
+      <_SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</_SharedComponentFilterMode>
+      <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">$(SharedComponentFilter_BootstrapRepoDepsOnly)</_SharedComponentFilterMode>
     </PropertyGroup>
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
