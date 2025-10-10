@@ -45,6 +45,7 @@
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
+  <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed/Microsoft.DotNet.Build.Tasks.Feed.csproj" />
@@ -71,7 +72,6 @@
   <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
   <Project Path="src/Microsoft.DotNet.Tar/Microsoft.DotNet.Tar.csproj" />
-  <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />
