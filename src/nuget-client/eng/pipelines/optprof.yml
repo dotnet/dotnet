@@ -11,6 +11,7 @@ resources:
         include:
         - dev
         - release-*
+        - release/*
         exclude:
         - release-6.0.x
         - release-6.3.x
