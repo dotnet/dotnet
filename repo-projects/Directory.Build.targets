@@ -350,16 +350,14 @@
       <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
+    <PropertyGroup>
+      <_SharedComponentFilterMode>NonToolingOnly</_SharedComponentFilterMode>
+      <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">BootstrapRepoDepsOnly</_SharedComponentFilterMode>
+    </PropertyGroup>
+
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
-             Properties="SharedComponentFilterMode=NonToolingOnly"
-             Condition="$(RepositoryName) != 'source-build-reference-packages' and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
-      <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
-    </MSBuild>
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="GetFilteredSharedComponentPackages"
-             Properties="SharedComponentFilterMode=SbrpDepsOnly"
-             Condition="$(RepositoryName) == 'source-build-reference-packages'">
+             Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
 
