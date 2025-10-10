@@ -52,7 +52,7 @@ namespace Microsoft.DotNet.XUnitExtensions
                 var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, theoryAttribute);
 
                 var testCases = skipReason != null
-                   ? new[] { new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout) }
+                   ? new[] { new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, skipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout) }
                    : new IXunitTestCase[] { new SkippedFactTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout) }; // Theory skippable at runtime.
 
                 return new ValueTask<IReadOnlyCollection<IXunitTestCase>>(Task.FromResult<IReadOnlyCollection<IXunitTestCase>>(testCases));
