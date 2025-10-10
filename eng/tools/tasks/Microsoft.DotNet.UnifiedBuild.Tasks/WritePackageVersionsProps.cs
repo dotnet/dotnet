@@ -98,56 +98,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// <returns>Hash set of dependency names. </returns>
         private HashSet<string> GetDependences()
         {
-            XmlDocument document = new XmlDocument();
-
-            try
-            {
-                document.Load(VersionDetails);
-            }
-            catch (Exception e)
-            {
-                Log.LogErrorFromException(e);
-                return null;
-            }
-
-            HashSet<string> dependencyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            // Load the nodes, filter those that are not pinned, and 
-            XmlNodeList dependencyNodes = document.DocumentElement.SelectNodes($"//{DependencyAttributeName}");
-
-            foreach (XmlNode dependency in dependencyNodes)
-            {
-                if (dependency.NodeType == XmlNodeType.Comment || dependency.NodeType == XmlNodeType.Whitespace)
-                {
-                    continue;
-                }
-
-                bool isPinned = false;
-                XmlAttribute pinnedAttribute = dependency.Attributes[PinnedAttributeName];
-                if (pinnedAttribute != null && !bool.TryParse(pinnedAttribute.Value, out isPinned))
-                {
-                    Log.LogError($"The '{PinnedAttributeName}' attribute is set but the value " +
-                        $"'{pinnedAttribute.Value}' is not a valid boolean...");
-                    return null;
-                }
-
-                if (isPinned)
-                {
-                    continue;
-                }
-
-                var name = dependency.Attributes[NameAttributeName]?.Value?.Trim();
-
-                if (string.IsNullOrEmpty(name))
-                {
-                    Log.LogError($"The '{NameAttributeName}' attribute must be specified.");
-                    return null;
-                }
-
-                dependencyNames.Add(name);
-            }
-
-            return dependencyNames;
+            return VersionDetailsHelper.GetDependencies(VersionDetails, Log);
         }
 
         /// <summary>
