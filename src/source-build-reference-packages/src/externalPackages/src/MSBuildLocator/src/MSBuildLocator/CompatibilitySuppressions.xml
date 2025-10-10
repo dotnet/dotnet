@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- No in-support .NET 6 SDKs so this isn't a breaking change in practices -->
+  <Suppression>
+    <DiagnosticId>PKV006</DiagnosticId>
+    <Target>net6.0</Target>
+  </Suppression>
+</Suppressions>

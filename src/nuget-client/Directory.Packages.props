@@ -39,7 +39,7 @@
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Artifacts" Version="4.2.0" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildVersion)" />
-    <PackageVersion Include="Microsoft.Build.Locator" Version="1.5.5" />
+    <PackageVersion Include="Microsoft.Build.Locator" Version="1.10.2" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.3.1" />
