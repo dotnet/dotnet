@@ -61,7 +61,15 @@
       </BootstrapperApplication>
     <?endif?>
 
-    <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles6432Folder]dotnet" />
+    <?if $(var.Platform)=x64?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
+    <?endif?>
+    <?if $(var.Platform)=arm64?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
+    <?endif?>
+    <?if $(var.Platform)=x86?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFilesFolder]dotnet" />
+    <?endif?>
 
     <!-- Variables used solely for localization. -->
     <Variable Name="BUNDLEMONIKER" Type="string" Value="$(var.ProductMoniker) ($(var.TargetArchitectureDescription))" bal:Overridable="no" />
