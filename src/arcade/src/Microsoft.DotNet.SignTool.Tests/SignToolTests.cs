@@ -480,7 +480,9 @@ namespace Microsoft.DotNet.SignTool.Tests
             string layout = Path.Combine(tempDir, "layout");
             Directory.CreateDirectory(layout);
 
-            ZipData.ExtractRpmPayloadContents(log: null, rpmPackage, layout);
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+            ZipData.ExtractRpmPayloadContents(fakeLog, rpmPackage, layout);
 
             // Checks:
             // Expected files are present
