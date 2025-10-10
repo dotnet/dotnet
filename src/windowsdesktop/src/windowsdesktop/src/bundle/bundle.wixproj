@@ -1,0 +1,103 @@
+<Project Sdk="Microsoft.WixToolset.Sdk">
+
+  <Import Project="Wix.props" />
+
+  <PropertyGroup>
+    <!-- OutputType determines the extension, .msi, .wixlib, .exe, etc. -->
+    <OutputType>Bundle</OutputType>
+    
+    <!-- MSBuild parallelism settings to prevent WiX file locking issues -->
+    <BuildInParallel>false</BuildInParallel>
+    <MaxCpuCount>1</MaxCpuCount>
+    
+    <!-- Enable Wixpack generation for all build types (PR, CI, local) -->
+    <WixCreateWixPackOutput>true</WixCreateWixPackOutput>
+    
+    <!-- Burn bundle stub must remain x86 regardless of payload architecture. -->
+    <BundlePlatform>x86</BundlePlatform>
+    <InstallerPlatform>x86</InstallerPlatform>
+    
+    <!-- Suppress WiX warning about bundle upgrades -->
+    <NoWarn>$(NoWarn);WIX1098</NoWarn>
+
+    <!-- Globbing will automatically find any .wxl relative to the project file. Since we're simshipping localized content for
+         the bundle UI, we either need to exclude the .wxl files or place them in a directory outside of the project. For simshipping
+         we only need to ensure the files are pulled in as additional payloads into the UX container. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);LCID\**\*;theme\**\*</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <Import Project="Product.targets" />
+
+  <ItemGroup>
+    <!-- Use the working wix5 path - the new wix path has namespace issues -->
+    <Compile Include="$(PkgMicrosoft_DotNet_Build_Tasks_Installers)\build\wix5\bundle\upgradePolicies.wxs" />
+    <Compile Include="dotnet-packages.wxs" />
+
+    <!-- Workload manifests will be included only if the source fragment was generated. -->
+    <Compile Include="$(WorkloadManifestsWxsPath)" Condition="'$(WorkloadManifestsWxsPath)' != '' AND Exists('$(WorkloadManifestsWxsPath)')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="dotnet.ico" />
+    <BundleSigningAsset Include="$(MSBuildThisFileDirectory)dotnet.ico" />
+  </ItemGroup>
+
+  <Target Name="CopyBundleSigningAssets" AfterTargets="PublishBundle">
+    <PropertyGroup>
+      <_BundleOutputDir>$(TargetDir)</_BundleOutputDir>
+      <_BundleShippingDir Condition="'$(ArtifactsPackagesDir)' != ''">$(ArtifactsPackagesDir)Shipping\</_BundleShippingDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_BundleOutputDir)" Condition="'$(_BundleOutputDir)' != ''" />
+    <MakeDir Directories="$(_BundleShippingDir)" Condition="'$(_BundleShippingDir)' != ''" />
+
+    <Copy SourceFiles="@(BundleSigningAsset)"
+          DestinationFolder="$(_BundleOutputDir)"
+          SkipUnchangedFiles="true"
+          Condition="'$(_BundleOutputDir)' != ''" />
+
+    <Copy SourceFiles="@(BundleSigningAsset)"
+          DestinationFolder="$(_BundleShippingDir)"
+          SkipUnchangedFiles="true"
+          Condition="'$(_BundleShippingDir)' != ''" />
+  </Target>
+
+  <Target Name="BuildDependentProject" BeforeTargets="Build">
+    <!-- Ensure the Windows Desktop Runtime is built before this bundle -->
+    <MSBuild Projects="..\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+             Targets="Build" />
+  </Target>
+
+  <!-- Import extracted WiX build targets -->
+  <Import Project="Wix.targets" />
+
+</Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
