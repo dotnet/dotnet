@@ -1,11 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -39,9 +38,12 @@ public static class NamespaceDirective
     }
 
     // internal for testing
-    internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+    internal sealed class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
     {
-        protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+        protected override void ExecuteCore(
+            RazorCodeDocument codeDocument,
+            DocumentIntermediateNode documentNode,
+            CancellationToken cancellationToken)
         {
             if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind &&
                 documentNode.DocumentKind != MvcViewDocumentClassifierPass.MvcViewDocumentKind)
@@ -78,7 +80,7 @@ public static class NamespaceDirective
     //
     // In the event that these two source either don't have FileNames set or don't follow a coherent hierarchy,
     // we will just use the namespace verbatim.
-    internal static string GetNamespace(string source, DirectiveIntermediateNode directive)
+    internal static string GetNamespace(string? source, DirectiveIntermediateNode directive)
     {
         var directiveSource = NormalizeDirectory(directive.Source?.FilePath);
 
@@ -131,7 +133,7 @@ public static class NamespaceDirective
     // We also don't normalize the separators here. We expect that all documents are using a consistent style of path.
     //
     // If we can't normalize the path, we just return null so it will be ignored.
-    private static string NormalizeDirectory(string path)
+    private static string? NormalizeDirectory(string? path)
     {
         if (string.IsNullOrEmpty(path))
         {
@@ -150,29 +152,23 @@ public static class NamespaceDirective
 
     private class Visitor : IntermediateNodeWalker
     {
-        public ClassDeclarationIntermediateNode FirstClass { get; private set; }
+        public ClassDeclarationIntermediateNode? FirstClass { get; private set; }
 
-        public NamespaceDeclarationIntermediateNode FirstNamespace { get; private set; }
+        public NamespaceDeclarationIntermediateNode? FirstNamespace { get; private set; }
 
         // We want the last one, so get them all and then .
-        public DirectiveIntermediateNode LastNamespaceDirective { get; private set; }
+        public DirectiveIntermediateNode? LastNamespaceDirective { get; private set; }
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
         {
-            if (FirstNamespace == null)
-            {
-                FirstNamespace = node;
-            }
+            FirstNamespace ??= node;
 
             base.VisitNamespaceDeclaration(node);
         }
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
-            if (FirstClass == null)
-            {
-                FirstClass = node;
-            }
+            FirstClass ??= node;
 
             base.VisitClassDeclaration(node);
         }
