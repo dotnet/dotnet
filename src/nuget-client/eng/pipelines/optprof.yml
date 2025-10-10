@@ -11,6 +11,7 @@ resources:
         include:
         - dev
         - release-*
+        - release/*
         exclude:
         - release-6.0.x
         - release-6.3.x
@@ -166,10 +167,13 @@ stages:
     - task: MicroBuildBuildVSBootstrapper@3
       displayName: 'Build a Visual Studio bootstrapper'
       inputs:
+        azureSubscription: 'VSEng-VSDrop-MI'
         channelName: "$(VsTargetChannel)"
         vsMajorVersion: "$(VsTargetMajorVersion)"
         manifests: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
         outputFolder: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15'
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     - task: PowerShell@2
       displayName: Set 'VisualStudio.InstallationUnderTest.BootstrapperURL'
       inputs:
