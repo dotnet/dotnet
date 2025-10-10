@@ -8,11 +8,22 @@
     <!-- The Microsoft.WindowsDesktop.App shared framework composition depends on winforms, wpf and runtime transport packages
          which contain architecture agnostic assets. As the OS part of the RID is always the portable "win", we don't need to
          support non portable builds. If we ever want to target a specific base OS version,we should update this line. -->
-    <RuntimeIdentifier>win-$(TargetArchitecture)</RuntimeIdentifier>
+    <!-- Only set RuntimeIdentifier if not already set by project (avoids conflict with multi-arch RuntimeIdentifiers) -->
+    <!-- Skip AnyCPU since it's not a valid RuntimeIdentifier -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(RuntimeIdentifiers)' == '' and '$(TargetArchitecture)' != 'AnyCPU'">win-$(TargetArchitecture)</RuntimeIdentifier>
+    <!-- Suppress automatic wix Light command package drop for non-bundle projects to avoid file-in-use races.
+      Bundle project manages wixpack generation explicitly; keeping it enabled there. -->
+    <DisableWixCreateLightCommandPackageDrop Condition="'$(OutputType)'!='Bundle'">true</DisableWixCreateLightCommandPackageDrop>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" />
+  <PackageReference Include="Microsoft.Wix" ExcludeAssets="all" GeneratePathProperty="true" />
+  <PackageReference Include="Microsoft.WixToolset.UI.wixext" GeneratePathProperty="true" />
+  <PackageReference Include="Microsoft.WixToolset.Dependency.wixext" GeneratePathProperty="true" />
+  <PackageReference Include="Microsoft.WixToolset.Util.wixext" GeneratePathProperty="true" />
+  <PackageReference Include="Microsoft.WixToolset.Bal.wixext" GeneratePathProperty="true" />
+  <PackageReference Include="Microsoft.WixToolset.Heat" GeneratePathProperty="true" />
   </ItemGroup>
 
 </Project>
