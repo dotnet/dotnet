@@ -33,7 +33,6 @@
     <file src="net9.0\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="contentFiles\any\net9.0" />
 
     <file src="net9.0\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\net9.0" />
-    <file src="net9.0\System.ComponentModel.Composition.dll" target="contentFiles\any\net9.0" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\net9.0" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\net9.0" />
@@ -130,7 +129,7 @@
 
     <file src="net462\Newtonsoft.Json.dll" target="contentFiles\any\net9.0\TestHostNetFramework" />
 
-    <file src="net462\System*.dll" exclude="net462\System.ComponentModel.Composition.dll;net462\System.Threading.Tasks.Extensions.dll;net462\System.Diagnostics.DiagnosticSource.dll;net462\System.Text.Json.dll;net462\System.Text.Encodings.Web.dll;net462\System.IO.Pipelines.dll" target="contentFiles\any\net9.0\TestHostNetFramework" />
+    <file src="net462\System*.dll" exclude="net462\System.Threading.Tasks.Extensions.dll;net462\System.Diagnostics.DiagnosticSource.dll;net462\System.Text.Json.dll;net462\System.Text.Encodings.Web.dll;net462\System.IO.Pipelines.dll" target="contentFiles\any\net9.0\TestHostNetFramework" />
     <file src="net462\netstandard.dll" target="contentFiles\any\net9.0\TestHostNetFramework" />
     <file src="net462\Microsoft.Win32.Primitives.dll" target="contentFiles\any\net9.0\TestHostNetFramework" />
 
