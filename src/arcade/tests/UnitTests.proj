@@ -9,6 +9,7 @@
 
   <PropertyGroup>
     <HelixType>test/product/</HelixType>
+    <HelixJobName>Arcade Job Name</HelixJobName>
 
     <IncludeDotNetCli>true</IncludeDotNetCli>
     <DotNetCliPackageType>sdk</DotNetCliPackageType>
