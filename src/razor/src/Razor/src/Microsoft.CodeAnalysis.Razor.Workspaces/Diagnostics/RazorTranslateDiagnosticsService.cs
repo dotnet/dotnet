@@ -422,10 +422,29 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             return false;
         }
 
-        var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.End);
+        if (!sourceText.TryGetAbsoluteIndex(diagnostic.Range.End, out var absoluteIndex))
+        {
+            return false;
+        }
+
+        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
         if (owner is null)
         {
             return false;
+        }
+
+        // If the owner is the close quote of an attribute value, then we need to move to the previous position, as
+        // the closing quote is actually owned by the whole attribute node. This will put us in the actual attribute
+        // value node for sure, and as long as the diagnostic range isn't zero-width, shouldn't affect semantics.
+        if (absoluteIndex > 0 &&
+            diagnostic.Range.Start != diagnostic.Range.End &&
+            owner is MarkupTextLiteralSyntax { LiteralTokens: [{ Content: "\"" or "'" }], Parent: MarkupTagHelperAttributeSyntax or MarkupAttributeBlockSyntax })
+        {
+            owner = syntaxTree.Root.FindInnermostNode(absoluteIndex - 1);
+            if (owner is null)
+            {
+                return false;
+            }
         }
 
         var markupAttributeValue = owner.FirstAncestorOrSelf<RazorSyntaxNode>(static n =>
