@@ -56,13 +56,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25509.113">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25510.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>cdbdb8f49a61a93d2ece59a66bed09e111cbb2ed</Sha>
+      <Sha>8656e755a6efd273c038b670bc52648783d3f667</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25509.113">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25510.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>cdbdb8f49a61a93d2ece59a66bed09e111cbb2ed</Sha>
+      <Sha>8656e755a6efd273c038b670bc52648783d3f667</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
