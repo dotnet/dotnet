@@ -1145,7 +1145,14 @@ using SurveyPromptRootNamspace;
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, ""<h1>Hello world</h1>\r\n"");
-            __builder.OpenComponent<global::SurveyPromptRootNamspace.SurveyPrompt>(1);
+            __builder.OpenComponent<global::SurveyPromptRootNamspace.
+#nullable restore
+#line (4,2)-(4,14) ""Pages/Index.razor""
+SurveyPrompt
+#line default
+#line hidden
+#nullable disable
+            >(1);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
