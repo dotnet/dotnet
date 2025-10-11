@@ -86,10 +86,11 @@ internal abstract partial class AbstractRenameCommandHandler : ICommandHandler<R
         }
 
         var backgroundWorkIndicatorFactory = workspace.Services.GetRequiredService<IBackgroundWorkIndicatorFactory>();
-        using var context = backgroundWorkIndicatorFactory.Create(
+        var context = backgroundWorkIndicatorFactory.Create(
             args.TextView,
             args.TextView.GetTextElementSpan(caretPoint.Value),
             EditorFeaturesResources.Finding_token_to_rename);
+        await using var _1 = context.ConfigureAwait(false);
 
         var cancellationToken = context.UserCancellationToken;
 

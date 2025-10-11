@@ -895,6 +895,11 @@ internal sealed class CSharpOnTypeFormattingPass(
             return false;
         }
 
+        if (IsComponentStartTagName())
+        {
+            return false;
+        }
+
         if (IsInHtmlAttributeValue())
         {
             return false;
@@ -997,6 +1002,19 @@ internal sealed class CSharpOnTypeFormattingPass(
                         MarkupMinimizedTagHelperAttributeSyntax { TagHelperAttributeInfo.Bound: true } or
                         MarkupMinimizedTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo.Bound: true }
             } && !options.IsLineRequest;
+        }
+
+        bool IsComponentStartTagName()
+        {
+            // E.g, (| is position)
+            //
+            // `<|Component>` - true
+            //
+            // As above, we map component elements, so GTD and FAR works, there could be C# mapping for them.
+            // We don't want the mapping to make the formatting engine think it needs to apply C# indentation rules.
+
+            return owner is MarkupTagHelperStartTagSyntax startTag &&
+                startTag.Name.Span.Contains(mappingSpan.Start);
         }
 
         bool IsInHtmlAttributeValue()
