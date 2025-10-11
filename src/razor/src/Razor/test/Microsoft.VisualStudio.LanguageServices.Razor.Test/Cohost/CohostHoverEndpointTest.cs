@@ -38,16 +38,18 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
                 Container(
                     Container(
                         Image,
-                        ClassifiedText( // Microsoft.AspNetCore.Components.Web.PageTitle
-                            Text("Microsoft"),
+                        ClassifiedText( // class Microsoft.AspNetCore.Components.Web.PageTitle
+                            Keyword("class"),
+                            WhiteSpace(" "),
+                            Namespace("Microsoft"),
                             Punctuation("."),
-                            Text("AspNetCore"),
+                            Namespace("AspNetCore"),
                             Punctuation("."),
-                            Text("Components"),
+                            Namespace("Components"),
                             Punctuation("."),
-                            Text("Web"),
+                            Namespace("Web"),
                             Punctuation("."),
-                            Type("PageTitle")))));
+                            ClassName("PageTitle")))));
         });
     }
 
@@ -168,16 +170,18 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
                 Container(
                     Container(
                         Image,
-                        ClassifiedText( // Microsoft.ApsNetCore.Components.Forms.InputText
-                            Text("Microsoft"),
+                        ClassifiedText( // class Microsoft.ApsNetCore.Components.Forms.InputText
+                            Keyword("class"),
+                            WhiteSpace(" "),
+                            Namespace("Microsoft"),
                             Punctuation("."),
-                            Text("AspNetCore"),
+                            Namespace("AspNetCore"),
                             Punctuation("."),
-                            Text("Components"),
+                            Namespace("Components"),
                             Punctuation("."),
-                            Text("Forms"),
+                            Namespace("Forms"),
                             Punctuation("."),
-                            Type("InputText")))));
+                            ClassName("InputText")))));
         });
     }
 

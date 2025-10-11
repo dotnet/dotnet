@@ -31,15 +31,6 @@ parameters:
     - lite
     - full
 
-- name: featureBand
-  displayName: 'Target Feature Band'
-  type: string
-  default: 'Detect by Branch Name'
-  values:
-    - 'Detect by Branch Name'
-    - '1xx'
-    - '>= 2xx'
-
 variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
