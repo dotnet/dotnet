@@ -42,6 +42,13 @@ jobs:
     steps:
     - template: /eng/common/templates/steps/enable-internal-sources.yml
 
+    - pwsh: >-
+        $(Build.SourcesDirectory)\eng\scripts\runtime-prereqs\restore-runtime-prereqs.ps1
+        -Architectures $(TargetArchitecture)
+        -CI
+      displayName: Restore runtime prerequisite MSIs
+      condition: ne(variables['TargetArchitecture'], '')
+
     - ${{ if ne(variables['System.TeamProject'], 'public') }}:
       - task: MicroBuildSigningPlugin@4
         displayName: Install MicroBuild plugin for Signing
