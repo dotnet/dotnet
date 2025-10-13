@@ -26,6 +26,7 @@ internal sealed class FormattingContext
         IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
         RazorFormattingOptions options,
+        IFormattingLogger? logger,
         bool automaticallyAddUsings,
         int hostDocumentIndex,
         char triggerCharacter)
@@ -33,6 +34,7 @@ internal sealed class FormattingContext
         OriginalSnapshot = originalSnapshot;
         CodeDocument = codeDocument;
         Options = options;
+        Logger = logger;
         AutomaticallyAddUsings = automaticallyAddUsings;
         HostDocumentIndex = hostDocumentIndex;
         TriggerCharacter = triggerCharacter;
@@ -43,6 +45,7 @@ internal sealed class FormattingContext
     public IDocumentSnapshot OriginalSnapshot { get; }
     public RazorCodeDocument CodeDocument { get; }
     public RazorFormattingOptions Options { get; }
+    public IFormattingLogger? Logger { get; }
     public bool AutomaticallyAddUsings { get; }
     public int HostDocumentIndex { get; }
     public char TriggerCharacter { get; }
@@ -230,6 +233,7 @@ internal sealed class FormattingContext
             OriginalSnapshot,
             codeDocument,
             Options,
+            Logger,
             AutomaticallyAddUsings,
             HostDocumentIndex,
             TriggerCharacter);
@@ -259,6 +263,7 @@ internal sealed class FormattingContext
         IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
         RazorFormattingOptions options,
+        IFormattingLogger? logger,
         bool automaticallyAddUsings,
         int hostDocumentIndex,
         char triggerCharacter)
@@ -267,6 +272,7 @@ internal sealed class FormattingContext
             originalSnapshot,
             codeDocument,
             options,
+            logger,
             automaticallyAddUsings,
             hostDocumentIndex,
             triggerCharacter);
@@ -275,12 +281,14 @@ internal sealed class FormattingContext
     public static FormattingContext Create(
         IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
-        RazorFormattingOptions options)
+        RazorFormattingOptions options,
+        IFormattingLogger? logger)
     {
         return new FormattingContext(
             originalSnapshot,
             codeDocument,
             options,
+            logger,
             automaticallyAddUsings: false,
             hostDocumentIndex: 0,
             triggerCharacter: '\0');

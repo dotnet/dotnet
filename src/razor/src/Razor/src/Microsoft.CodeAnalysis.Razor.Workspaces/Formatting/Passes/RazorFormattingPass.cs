@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
@@ -23,10 +22,8 @@ using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.Syntax
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed class RazorFormattingPass(ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed class RazorFormattingPass : IFormattingPass
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorFormattingPass>();
-
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Apply previous edits if any.
@@ -49,7 +46,7 @@ internal sealed class RazorFormattingPass(ILoggerFactory loggerFactory) : IForma
         {
             // Compute the final combined set of edits
             changedText = changedText.WithChanges(razorChanges);
-            _logger.LogTestOnly($"After RazorFormattingPass:\r\n{changedText}");
+            changedContext.Logger?.LogSourceText("AfterRazorFormatter", changedText);
         }
 
         return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
