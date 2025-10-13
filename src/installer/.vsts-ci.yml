@@ -288,7 +288,7 @@ extends:
             buildArchitecture: x64
             # Do not publish zips and tarballs. The linux-x64 binaries are
             # already published by Build_LinuxPortable_Release_x64
-            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:IsRPMBasedDistro=true'
+            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:BuildSdkRpm=true'
             linuxPortable: true
             runTests: false
         - template: eng/build.yml@self
@@ -301,7 +301,7 @@ extends:
             runtimeIdentifier: 'linux-arm64'
             # Do not publish zips and tarballs. The linux-x64 binaries are
             # already published by Build_LinuxPortable_Release_x64
-            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:CLIBUILD_SKIP_TESTS=true  /p:IsRPMBasedDistro=true'
+            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:CLIBUILD_SKIP_TESTS=true  /p:BuildSdkRpm=true'
             linuxPortable: true
             runTests: false
         - template: eng/build.yml@self
