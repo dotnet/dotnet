@@ -42,7 +42,7 @@ parameters:
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
-  default: 'Default (repo specifies)'
+  default: 'Stable Final'
   values:
     - Default (repo specifies)
     - Stable Preview
