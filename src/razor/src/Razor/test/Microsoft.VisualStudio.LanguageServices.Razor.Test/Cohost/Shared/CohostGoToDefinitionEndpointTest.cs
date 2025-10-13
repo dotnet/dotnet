@@ -150,6 +150,158 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
 
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute()
+    {
+        TestCode input = """
+            <SurveyPrompt Ti$$tle="InputValue" />
+            """;
+
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttributeValue()
+    {
+        TestCode input = """
+            <SurveyPrompt Title="@Inp$$utValue" />
+
+            @code
+            {
+                private string? [|InputValue|] { get; set; }
+            }
+            """;
+
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("File1.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(input.Text);
+        var range = text.GetRange(input.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task Component_DefinedInCSharp()
+    {
+        TestCode input = """
+            <Surv$$eyPrompt Title="InputValue" />
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class [|SurveyPrompt|] : ComponentBase
+            {
+                [Parameter]
+                public string Title { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.cs"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.cs"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute_DefinedInCSharp()
+    {
+        TestCode input = """
+            <SurveyPrompt Ti$$tle="InputValue" />
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class SurveyPrompt : ComponentBase
+            {
+                [Parameter]
+                public string [|Title|] { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.cs"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.cs"), location.DocumentUri.GetRequiredParsedUri());
         var text = SourceText.From(surveyPrompt.Text);
         var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
