@@ -1399,7 +1399,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var declarationSpan = extensionDeclaration.Span;
             foreach (var symbol in collection)
             {
-                if (symbol is TypeSymbol { IsExtension: true } && symbol.HasLocationContainedWithin(this.SyntaxTree, declarationSpan, out var wasZeroWidthMatch))
+                if (symbol is NamedTypeSymbol { IsExtension: true } && symbol.HasLocationContainedWithin(this.SyntaxTree, declarationSpan, out var wasZeroWidthMatch))
                 {
                     if (!wasZeroWidthMatch)
                         return (NamedTypeSymbol)symbol;
@@ -2405,6 +2405,18 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         public override AwaitExpressionInfo GetAwaitExpressionInfo(AwaitExpressionSyntax node)
+        {
+            MemberSemanticModel memberModel = GetMemberModel(node);
+            return memberModel == null ? default(AwaitExpressionInfo) : memberModel.GetAwaitExpressionInfo(node);
+        }
+
+        public override AwaitExpressionInfo GetAwaitExpressionInfo(LocalDeclarationStatementSyntax node)
+        {
+            MemberSemanticModel memberModel = GetMemberModel(node);
+            return memberModel == null ? default(AwaitExpressionInfo) : memberModel.GetAwaitExpressionInfo(node);
+        }
+
+        public override AwaitExpressionInfo GetAwaitExpressionInfo(UsingStatementSyntax node)
         {
             MemberSemanticModel memberModel = GetMemberModel(node);
             return memberModel == null ? default(AwaitExpressionInfo) : memberModel.GetAwaitExpressionInfo(node);

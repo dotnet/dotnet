@@ -9,7 +9,215 @@ configuration:
       if:
       - payloadType: Pull_Request
       - filesMatchPattern:
-          pattern: src/arcade/.*
+          pattern: 'src/arcade/.*'
+          matchAny: true
       then:
       - requestReview:
           teamReviewer: dnceng
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/aspnetcore/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: aspnet-build
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/cecil/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/command-line-api/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: system-commandline
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/deployment-tools/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: deployment-tools-admins
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/diagnostics/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/efcore/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: efteam
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/emsdk/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: dnr-codeflow
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/fsharp/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: fsharp
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/msbuild/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: msbuild
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/nuget-client/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: nuget-team
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/razor/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: roslyn-infrastructure-current-swat
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/roslyn/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: roslyn-infrastructure-current-swat
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/runtime/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: dnr-codeflow
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/scenario-tests/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/sdk/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: dotnet-cli
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/source-build-reference-packages/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: source-build
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/sourcelink/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/symreader/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/templating/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: templating-engine-maintainers
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/vstest/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: testing-admin
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/windowsdesktop/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: wpf-developers
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/winforms/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: dotnet-winforms-admin
+    - description: 
+      if:
+      - payloadType: Pull_Request
+      - filesMatchPattern:
+          pattern: 'src/wpf/.*'
+          matchAny: true
+      then:
+      - requestReview:
+          teamReviewer: wpf-developers

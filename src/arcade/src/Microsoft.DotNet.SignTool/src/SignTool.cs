@@ -13,6 +13,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Packaging;
 using Microsoft.DotNet.StrongName;
+using System.ComponentModel;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -148,15 +149,37 @@ namespace Microsoft.DotNet.SignTool
             
             var zippedPaths = ZipMacFiles(filesToSign);
 
-            // First the signing pass
-            var signProjectPath = Path.Combine(dir, $"Round{round}-Sign.proj");
-            File.WriteAllText(signProjectPath, GenerateBuildFileContent(filesToSign, zippedPaths, false));
-            string signingLogName = $"SigningRound{round}";
-            status = RunMSBuild(buildEngine, signProjectPath, Path.Combine(_args.LogDir, $"{signingLogName}.binlog"), Path.Combine(_args.LogDir, $"{signingLogName}.log"), Path.Combine(_args.LogDir, $"{signingLogName}.error.log"));
+            // Identify files that need detached signatures
+            var detachedSignatureFiles = filesToSign.Where(f => f.SignInfo.GeneratesDetachedSignature).ToList();
+            var originalFileBackups = new Dictionary<string, string>();
 
-            if (!status)
+            try
             {
-                return false;
+                PrepareDetachedSignatureFiles(detachedSignatureFiles, originalFileBackups);
+
+                var signProjectPath = Path.Combine(dir, $"Round{round}-Sign.proj");
+                File.WriteAllText(signProjectPath, GenerateBuildFileContent(filesToSign, zippedPaths, false));
+                string signingLogName = $"SigningRound{round}";
+                status = RunMSBuild(buildEngine, signProjectPath, Path.Combine(_args.LogDir, $"{signingLogName}.binlog"), Path.Combine(_args.LogDir, $"{signingLogName}.log"), Path.Combine(_args.LogDir, $"{signingLogName}.error.log"));
+
+                if (!status)
+                {
+                    return false;
+                }
+
+                // After signing, handle detached signatures
+                CompleteDetachedSignatures(detachedSignatureFiles, originalFileBackups);
+            }
+            finally
+            {
+                // Delete any original detached signature files
+                foreach (var backupPath in originalFileBackups.Values)
+                {
+                    if (File.Exists(backupPath))
+                    {
+                        File.Delete(backupPath);
+                    }
+                }
             }
 
             // Now unzip. Notarization does not expect zipped packages.
@@ -173,6 +196,47 @@ namespace Microsoft.DotNet.SignTool
             }
 
             return status;
+        }
+
+        /// <summary>
+        /// Copies the signed content to the .sig file and restores the original file.
+        /// </summary>
+        /// <param name="detachedSignatureFiles"></param>
+        /// <param name="originalFileBackups"></param>
+        private void CompleteDetachedSignatures(List<FileSignInfo> detachedSignatureFiles, Dictionary<string, string> originalFileBackups)
+        {
+            foreach (var fileInfo in detachedSignatureFiles)
+            {
+                // Copy the signed content to .sig file
+                File.Copy(fileInfo.FullPath, fileInfo.DetachedSignatureFullPath);
+                _log.LogMessage($"Created detached signature file: {fileInfo.DetachedSignatureFullPath}");
+
+                // Restore the original file
+                string backupPath = originalFileBackups[fileInfo.FullPath];
+                File.Copy(backupPath, fileInfo.FullPath, overwrite: true);
+                _log.LogMessage($"Restored original file: {fileInfo.FullPath}");
+            }
+        }
+
+        /// <summary>
+        /// Creates backup copies of the specified files to prepare for detached signature operations.
+        /// </summary>
+        /// <remarks>Each file is backed up by copying it to a new file with the ".original" extension
+        /// appended to its path. The method updates the provided dictionary to allow later restoration of the original
+        /// files if needed.</remarks>
+        /// <param name="detachedSignatureFiles">A list of file information objects representing the files for which detached signature backups will be
+        /// created. Each file in the list will be copied to a backup location.</param>
+        /// <param name="originalFileBackups">A dictionary that will be populated with mappings from the original file paths to their corresponding backup
+        /// file paths. The dictionary is updated in place.</param>
+        private void PrepareDetachedSignatureFiles(List<FileSignInfo> detachedSignatureFiles, Dictionary<string, string> originalFileBackups)
+        {
+            foreach (var fileInfo in detachedSignatureFiles)
+            {
+                string backupPath = fileInfo.FullPath + ".original";
+                File.Copy(fileInfo.FullPath, backupPath);
+                originalFileBackups[fileInfo.FullPath] = backupPath;
+                _log.LogMessage($"Backed up original file for detached signature: {fileInfo.FullPath} -> {backupPath}");
+            }
         }
 
         private string GenerateBuildFileContent(IEnumerable<FileSignInfo> filesToSign, Dictionary<string, string> zippedPaths, bool notarize)

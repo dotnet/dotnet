@@ -116,6 +116,7 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
                     <InputText Value="@(_value)" />
                 </div>
 
+                @code { private string _value = ""; }
                 """,
             toolTipMap: [],
             output: """
@@ -125,7 +126,8 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
                     <InputText Value="@_value" />
                     <InputText Value="@(_value)" />
                 </div>
-
+                
+                @code { private string _value = ""; }
                 """);
 
     [Theory]

@@ -134,7 +134,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
 
                 @code
                 {
-                    [|IDisposable|].Dispose()
+                    void Dispose([|IDisposable|] thingToDispose)
                     {
                     }
                 }

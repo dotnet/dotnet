@@ -672,10 +672,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         Debug.Assert(_useConstructorExitWarnings);
                         var thisSlot = 0;
-                        if (method.RequiresInstanceReceiver)
+                        if (method.TryGetThisParameter(out var thisParameter) && thisParameter is object)
                         {
-                            method.TryGetThisParameter(out var thisParameter);
-                            Debug.Assert(thisParameter is object);
                             thisSlot = GetOrCreateSlot(thisParameter);
                         }
                         var exitLocation = method is SynthesizedPrimaryConstructor || method.DeclaringSyntaxReferences.IsEmpty ? null : method.TryGetFirstLocation();
@@ -2258,7 +2256,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     enclosingMemberMethod = enclosingMemberMethod.ContainingSymbol as MethodSymbol;
                 }
 
-                if (enclosingMemberMethod?.TryGetThisParameter(out ParameterSymbol methodThisParameter) == true &&
+                if (enclosingMemberMethod?.TryGetThisParameter(out ParameterSymbol? methodThisParameter) == true &&
                     methodThisParameter?.ContainingSymbol.ContainingSymbol == (object)primaryConstructor.ContainingSymbol &&
                     GetOrCreateSlot(methodThisParameter) is >= 0 and var thisSlot)
                 {
@@ -3997,7 +3995,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithState convertCollection(BoundCollectionExpression node, TypeWithAnnotations targetCollectionType, ArrayBuilder<Func<TypeWithAnnotations, TypeSymbol, TypeWithState>> completions)
             {
                 var strippedTargetCollectionType = targetCollectionType.Type.StrippedType();
-                Debug.Assert(TypeSymbol.Equals(strippedTargetCollectionType, node.Type, TypeCompareKind.IgnoreNullableModifiersForReferenceTypes));
+                Debug.Assert(TypeSymbol.Equals(strippedTargetCollectionType, node.Type, TypeCompareKind.AllIgnoreOptions));
 
                 // https://github.com/dotnet/roslyn/issues/68786: Use inferInitialObjectState() to set the initial
                 // state of the instance: see the call to InheritNullableStateOfTrackableStruct() in particular.
@@ -4072,8 +4070,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     node.Conversion,
                     conversion,
                     node.ExpressionPlaceholder,
-                    node.EnumeratorInfoOpt,
-                    awaitOpt: null);
+                    node.EnumeratorInfoOpt);
                 RemovePlaceholderReplacement(node.ExpressionPlaceholder);
             }
             else
@@ -5493,7 +5490,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 derivedType = derivedType.StrippedType();
                 var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 var conversion = _conversions.ClassifyBuiltInConversion(derivedType, baseType, isChecked: false, ref discardedUseSiteInfo);
-                if (conversion.Exists && !conversion.IsExplicit)
+                if (conversion.Kind is ConversionKind.Identity or ConversionKind.ImplicitReference)
                 {
                     return derivedType;
                 }
@@ -6543,37 +6540,56 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     VisitExpressionWithoutStackGuardEpilogue(receiver); // VisitExpressionWithoutStackGuard does this after visiting each node
 
-                    bool isNewExtensionMethod = node.Method.GetIsNewExtensionMember();
-
-                    // Only instance receivers go through VisitRvalue; arguments go through VisitArgumentEvaluate.
-                    if (node.ReceiverOpt is not null && !isNewExtensionMethod)
+                    if (node.IsErroneousNode)
                     {
                         VisitRvalueEpilogue(receiver); // VisitRvalue does this after visiting each node
-                        receiverType = ResultType;
-                        CheckCallReceiver(receiver, receiverType, node.Method);
-                        extensionReceiverResult = null;
-                    }
-                    else
-                    {
-                        // The receiver for new extension methods is analyzed as an argument
-                        Debug.Assert(node.InvokedAsExtensionMethod || isNewExtensionMethod);
 
-                        var refKind = isNewExtensionMethod ? GetExtensionReceiverRefKind(node.Method) : GetRefKind(node.ArgumentRefKindsOpt, 0);
-
-                        FlowAnalysisAnnotations annotations;
-                        if (isNewExtensionMethod)
+                        if (node.ReceiverOpt is not null)
                         {
-                            Debug.Assert(node.Method.ContainingType.ExtensionParameter is not null);
-                            annotations = node.Method.ContainingType.ExtensionParameter.FlowAnalysisAnnotations;
+                            receiverType = ResultType;
+                            extensionReceiverResult = null;
                         }
                         else
                         {
-                            TypeWithAnnotations paramsIterationType = default;
-                            annotations = GetCorrespondingParameter(0, node.Method.Parameters, node.ArgsToParamsOpt, node.Expanded, ref paramsIterationType).Annotations;
+                            Debug.Assert(node.InvokedAsExtensionMethod);
+                            extensionReceiverResult = _visitResult;
+                            receiverType = default;
                         }
+                    }
+                    else
+                    {
+                        bool isNewExtensionMethod = node.Method.GetIsNewExtensionMember();
 
-                        extensionReceiverResult = VisitArgumentEvaluateEpilogue(receiver, refKind, annotations);
-                        receiverType = default;
+                        // Only instance receivers go through VisitRvalue; arguments go through VisitArgumentEvaluate.
+                        if (node.ReceiverOpt is not null && !isNewExtensionMethod)
+                        {
+                            VisitRvalueEpilogue(receiver); // VisitRvalue does this after visiting each node
+                            receiverType = ResultType;
+                            CheckCallReceiver(receiver, receiverType, node.Method);
+                            extensionReceiverResult = null;
+                        }
+                        else
+                        {
+                            // The receiver for new extension methods is analyzed as an argument
+                            Debug.Assert(node.InvokedAsExtensionMethod || isNewExtensionMethod);
+
+                            var refKind = isNewExtensionMethod ? GetExtensionReceiverRefKind(node.Method) : GetRefKind(node.ArgumentRefKindsOpt, 0);
+
+                            FlowAnalysisAnnotations annotations;
+                            if (isNewExtensionMethod)
+                            {
+                                Debug.Assert(node.Method.ContainingType.ExtensionParameter is not null);
+                                annotations = node.Method.ContainingType.ExtensionParameter.FlowAnalysisAnnotations;
+                            }
+                            else
+                            {
+                                TypeWithAnnotations paramsIterationType = default;
+                                annotations = GetCorrespondingParameter(0, node.Method.Parameters, node.ArgsToParamsOpt, node.Expanded, ref paramsIterationType).Annotations;
+                            }
+
+                            extensionReceiverResult = VisitArgumentEvaluateEpilogue(receiver, refKind, annotations);
+                            receiverType = default;
+                        }
                     }
                 }
 
@@ -6613,11 +6629,35 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             TypeWithState visitAndCheckReceiver(BoundCall node)
             {
+                if (node.IsErroneousNode)
+                {
+                    return VisitBadExpressionChild(node.ReceiverOpt);
+                }
+
                 return VisitAndCheckReceiver(node.ReceiverOpt, node.Method);
             }
 
             void reinferMethodAndVisitArguments(BoundCall node, TypeWithState receiverType, VisitResult? firstArgumentResult = null)
             {
+                if (node.IsErroneousNode)
+                {
+                    for (int i = 0; i < node.Arguments.Length; i++)
+                    {
+                        if (i == 0 && firstArgumentResult is { })
+                        {
+                            continue;
+                        }
+
+                        BoundExpression? child = node.Arguments[i];
+                        VisitBadExpressionChild(child);
+                    }
+
+                    var type = TypeWithAnnotations.Create(node.Type);
+                    SetLvalueResultType(node, type);
+                    SetUpdatedSymbol(node, node.Method, node.Method);
+                    return;
+                }
+
                 (MethodSymbol method, ImmutableArray<VisitResult> results, bool returnNotNull) = ReInferMethodAndVisitArguments(
                     node,
                     node.ReceiverOpt,
@@ -6629,7 +6669,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     node.DefaultArguments,
                     node.Expanded,
                     node.InvokedAsExtensionMethod,
-                    suppressAdjustmentForNewExtension: node.HasErrors,
                     firstArgumentResult);
 
                 LearnFromEqualsMethod(method, node, receiverType, results);
@@ -6670,10 +6709,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             BitVector defaultArguments,
             bool expanded,
             bool invokedAsExtensionMethod,
-            bool suppressAdjustmentForNewExtension,
             VisitResult? firstArgumentResult = null)
         {
-            bool adjustForNewExtension = method.GetIsNewExtensionMember() && !suppressAdjustmentForNewExtension;
+            bool adjustForNewExtension = method.GetIsNewExtensionMember();
 
             refKindsOpt = GetArgumentRefKinds(refKindsOpt, adjustForNewExtension, method, arguments.Length);
 
@@ -8312,7 +8350,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var type = parameter.TypeWithAnnotations;
-            if (expanded && parameter.Ordinal == parametersOpt.Length - 1)
+            if (expanded && (object)parameter == parametersOpt[^1])
             {
                 if (!paramsIterationType.HasType)
                 {
@@ -10786,11 +10824,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 SetResultType(right, rightResultOpt.Value);
             }
             var rightResult = ResultType;
-
             var invocation = conversion.DeconstructionInfo.Invocation as BoundCall;
-            var deconstructMethod = invocation?.Method;
 
-            if (deconstructMethod is object)
+            if (invocation is { Method: { } deconstructMethod, IsErroneousNode: false })
             {
                 Debug.Assert(invocation is object);
                 Debug.Assert(rightResult.Type is object);
@@ -11074,8 +11110,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         argsToParamsOpt: default,
                         defaultArguments: default,
                         expanded: false,
-                        invokedAsExtensionMethod: false,
-                        suppressAdjustmentForNewExtension: false);
+                        invokedAsExtensionMethod: false);
 
                     if (node.Type.IsVoidType())
                     {
@@ -11252,8 +11287,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         argsToParamsOpt: default,
                         defaultArguments: default,
                         expanded: false,
-                        invokedAsExtensionMethod: false,
-                        suppressAdjustmentForNewExtension: false);
+                        invokedAsExtensionMethod: false);
 
                     if (node.Type.IsVoidType())
                     {
@@ -11648,7 +11682,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // If we're in this scenario, there was a binding error, and we should suppress any further warnings.
                 Debug.Assert(node.HasErrors);
                 VisitRvalue(node.Expression);
-                Visit(node.AwaitOpt);
+                Visit(node.EnumeratorInfoOpt?.MoveNextAwaitableInfo);
                 return;
             }
 
@@ -11660,8 +11694,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 node.Expression,
                 conversion,
                 expr,
-                node.EnumeratorInfoOpt,
-                node.AwaitOpt);
+                node.EnumeratorInfoOpt);
         }
 
         private void VisitForEachExpression(
@@ -11669,8 +11702,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression collectionExpression,
             Conversion conversion,
             BoundExpression expr,
-            ForEachEnumeratorInfo? enumeratorInfoOpt,
-            BoundAwaitableInfo? awaitOpt)
+            ForEachEnumeratorInfo? enumeratorInfoOpt)
         {
             // There are 7 ways that a foreach can be created:
             //    1. The collection type is an array type. For this, initial binding will generate an implicit reference conversion to
@@ -11723,7 +11755,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     defaultArguments: enumeratorMethodInfo.DefaultArguments,
                     expanded: enumeratorMethodInfo.Expanded,
                     invokedAsExtensionMethod: true,
-                    suppressAdjustmentForNewExtension: false,
                     firstArgumentResult: _visitResult);
 
                 targetTypeWithAnnotations = results[0].LValueType;
@@ -11736,7 +11767,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (conversion.IsImplicit)
             {
-                bool isAsync = awaitOpt != null;
+                bool isAsync = enumeratorInfoOpt?.MoveNextAwaitableInfo != null;
                 if (collectionExpression.Type!.SpecialType == SpecialType.System_Collections_IEnumerable)
                 {
                     // If this is a conversion to IEnumerable (non-generic), nothing to do. This is cases 1, 2, and 5.
@@ -11842,7 +11873,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     currentPropertyGetter.ReturnTypeFlowAnalysisAnnotations);
 
                 // Analyze `await MoveNextAsync()`
-                if (awaitOpt is { AwaitableInstancePlaceholder: BoundAwaitableValuePlaceholder moveNextPlaceholder } awaitMoveNextInfo)
+                if (enumeratorInfoOpt is { MoveNextAwaitableInfo: { AwaitableInstancePlaceholder: BoundAwaitableValuePlaceholder moveNextPlaceholder } awaitMoveNextInfo })
                 {
                     var moveNextAsyncMethod = (MethodSymbol)AsMemberOfType(reinferredGetEnumeratorMethod.ReturnType, enumeratorInfoOpt.MoveNextInfo.Method);
 
@@ -11996,22 +12027,29 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             foreach (var child in node.ChildBoundNodes)
             {
-                // https://github.com/dotnet/roslyn/issues/35042, we need to implement similar workarounds for object, collection, and dynamic initializers.
-                if (child is BoundLambda lambda)
-                {
-                    TakeIncrementalSnapshot(lambda);
-                    VisitLambda(lambda, delegateTypeOpt: null);
-                    VisitRvalueEpilogue(lambda);
-                }
-                else
-                {
-                    VisitRvalue(child as BoundExpression);
-                }
+                VisitBadExpressionChild(child);
             }
 
             var type = TypeWithAnnotations.Create(node.Type);
             SetLvalueResultType(node, type);
             return null;
+        }
+
+        private TypeWithState VisitBadExpressionChild(BoundExpression? child)
+        {
+            // https://github.com/dotnet/roslyn/issues/35042, we need to implement similar workarounds for object, collection, and dynamic initializers.
+            if (child is BoundLambda lambda)
+            {
+                TakeIncrementalSnapshot(lambda);
+                VisitLambda(lambda, delegateTypeOpt: null);
+                VisitRvalueEpilogue(lambda);
+            }
+            else
+            {
+                VisitRvalue(child as BoundExpression);
+            }
+
+            return ResultType;
         }
 
         public override BoundNode? VisitTypeExpression(BoundTypeExpression node)

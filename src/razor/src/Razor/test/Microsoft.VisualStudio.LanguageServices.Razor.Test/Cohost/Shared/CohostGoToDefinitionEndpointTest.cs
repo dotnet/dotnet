@@ -28,8 +28,9 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             }
             @functions
             {
-                void [|GetX|]()
+                int [|GetX|]()
                 {
+                    return 4;
                 }
             }
             """;
@@ -149,6 +150,158 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
 
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute()
+    {
+        TestCode input = """
+            <SurveyPrompt Ti$$tle="InputValue" />
+            """;
+
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttributeValue()
+    {
+        TestCode input = """
+            <SurveyPrompt Title="@Inp$$utValue" />
+
+            @code
+            {
+                private string? [|InputValue|] { get; set; }
+            }
+            """;
+
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("File1.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(input.Text);
+        var range = text.GetRange(input.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task Component_DefinedInCSharp()
+    {
+        TestCode input = """
+            <Surv$$eyPrompt Title="InputValue" />
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class [|SurveyPrompt|] : ComponentBase
+            {
+                [Parameter]
+                public string Title { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.cs"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.cs"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute_DefinedInCSharp()
+    {
+        TestCode input = """
+            <SurveyPrompt Ti$$tle="InputValue" />
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class SurveyPrompt : ComponentBase
+            {
+                [Parameter]
+                public string [|Title|] { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.cs"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.cs"), location.DocumentUri.GetRequiredParsedUri());
         var text = SourceText.From(surveyPrompt.Text);
         var range = text.GetRange(surveyPrompt.Span);
         Assert.Equal(range, location.Range);
@@ -227,6 +380,38 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         });
 
         await VerifyGoToDefinitionAsync(input, htmlResponse: htmlResponse);
+    }
+
+    [Fact]
+    public async Task ViewComponent()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <vc:aut$$hor-view author-id="1234"></vc:author-view>
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                (FileName("AuthorViewComponent.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Mvc;
+
+                        public class [|AuthorViewViewComponent|] : ViewComponent
+                        {
+                            public string Invoke(int authorId)
+                            {
+                                return "Steve";
+                            }
+                        }
+                        """).Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AuthorViewComponent.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
     }
 
     [Fact]

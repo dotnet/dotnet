@@ -13,14 +13,11 @@
   <?define LCID  = "$(var.ProductLanguage)"?>
   <?define DowngradeErrorMessage  = "A newer version is already installed; please uninstall it and re-run setup."?>
 
-  <?define Platform   =   "$(sys.BUILDARCH)" ?>
-
-  <?if $(var.Platform)!=x86?>
-    <?if $(var.Platform)!=x64?>
-      <?if $(var.Platform)!=arm64?>
-        <?error Invalid Platform ($(var.Platform))?>
-      <?endif?>
-    <?endif?>
+  <?if $(var.Platform)~=x86?>
+  <?elseif $(var.Platform)~=x64?>
+  <?elseif $(var.Platform)~=arm64?>
+  <?else?>
+    <?error Invalid Platform ($(var.Platform))?>
   <?endif?>
 
   <?ifndef DependencyKey?>

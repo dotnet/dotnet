@@ -23,7 +23,8 @@
     <PropertyGroup>
       <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
       <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
-      <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' == 'true'">x86</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' != 'true'">$(InstallerTargetArchitecture)</MsiArch>
     </PropertyGroup>
 
     <Error
@@ -324,6 +325,8 @@
             RunHeatHarvester">
     <PropertyGroup>
       <WixDependencyKeyName Condition="'$(WixDependencyKeyName)' == ''">$(InstallerName.Replace('-', '_'))</WixDependencyKeyName>
+      <!-- Use backwards compatible GUID generation. -->
+      <WixAdditionalOptions>-bcgg</WixAdditionalOptions>
     </PropertyGroup>
 
     <ItemGroup>
@@ -339,6 +342,7 @@
       <CandleVariables Include="BuildVersion" Value="$(MsiVersionString)" />
       <CandleVariables Include="NugetVersion" Value="$(Version)" />
       <CandleVariables Include="InstallerPlatform" Value="$(MsiArch)" />
+      <CandleVariables Include="Platform" Value="$(InstallerTargetArchitecture)" />
       <CandleVariables Include="TargetArchitectureDescription" Value="$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart)" />
       <CandleVariables Include="UpgradeCode" Value="$(UpgradeCode)" />
       <CandleVariables Include="MajorUpgradeSchedule" Value="$(MajorUpgradeSchedule)" Condition="'$(MajorUpgradeSchedule)' != ''" />
@@ -361,6 +365,7 @@
 
       <_wixArgs>$(_wixArgs) $(AdditionalCandleArgs)</_wixArgs>
       <_wixArgs>$(_wixArgs) $(AdditionalLightArgs)</_wixArgs>
+      <_wixArgs>$(_wixArgs) $(WixAdditionalOptions)</_wixArgs>
       
       <_wixCommand>wix.exe build $(_wixArgs)</_wixCommand>
     </PropertyGroup>
@@ -378,8 +383,8 @@
       IgnoreStandardErrorWarningFormat="true"
       RetryDelayBase="2" />
 
-    <!-- TODO this fails on preprocessor directives -->
     <CreateWixBuildWixpack
+      AdditionalOptions="$(WixAdditionalOptions)"
       Cultures="en-us"
       DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
       Extensions="@(WixExtensions)"

@@ -104,6 +104,11 @@
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
     <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
+
+    <!-- Explicitly use the "new" LinuxSign cert. -->
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.rpm" />
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.deb" />
+    <FileSignInfo Include="@(NewKeyLinuxPackage->'%(Filename)%(Extension)')" CertificateName="LinuxSign500207PGP" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400

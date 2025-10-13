@@ -1,13 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -64,7 +62,7 @@ public static class ModelDirective
 
         if (document.DocumentKind == RazorPageDocumentClassifierPass.RazorPageDocumentKind)
         {
-            return IntermediateNodeFactory.CSharpToken(visitor.Class.Name);
+            return IntermediateNodeFactory.CSharpToken(visitor.Class!.Name!);
         }
         else
         {
@@ -72,12 +70,15 @@ public static class ModelDirective
         }
     }
 
-    internal class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+    internal sealed class Pass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
     {
         // Runs after the @inherits directive
         public override int Order => 5;
 
-        protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+        protected override void ExecuteCore(
+            RazorCodeDocument codeDocument,
+            DocumentIntermediateNode documentNode,
+            CancellationToken cancellationToken)
         {
             if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind &&
                documentNode.DocumentKind != MvcViewDocumentClassifierPass.MvcViewDocumentKind)
@@ -112,9 +113,9 @@ public static class ModelDirective
 
     private class Visitor : IntermediateNodeWalker
     {
-        public NamespaceDeclarationIntermediateNode Namespace { get; private set; }
+        public NamespaceDeclarationIntermediateNode? Namespace { get; private set; }
 
-        public ClassDeclarationIntermediateNode Class { get; private set; }
+        public ClassDeclarationIntermediateNode? Class { get; private set; }
 
         public IList<DirectiveIntermediateNode> ModelDirectives { get; } = new List<DirectiveIntermediateNode>();
 
