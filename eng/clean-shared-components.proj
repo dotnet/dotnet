@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+  <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" />
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
