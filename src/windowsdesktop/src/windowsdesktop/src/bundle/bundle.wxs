@@ -51,7 +51,7 @@
 
     <!-- Do not use ProgramFiles6432Folder. It defaults to CSIDL_PROGRAM_FILES and will write
          the tag to Program Files when installing the x86 runtime on 64-bit OS. -->
-    <?if $(var.PlatformToken)~=x86?>
+    <?if $(PlatformToken)~=X86?>
     <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFilesFolder]dotnet" />
     <?else?>
     <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
@@ -199,7 +199,6 @@
       
       <!-- Host is the base component that everything else depends on -->
       <?if $(var.IncludeRuntimeMSIs) = true ?>
-      <?if $(var.PlatformToken)~=x86?>
       <MsiPackage 
         Id="DotNetHost"
         SourceFile="$(var.DotNetRedistHostInstaller)"
@@ -231,75 +230,9 @@
         <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
         <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
       </MsiPackage>
-      <?elseif $(var.PlatformToken)~=x64?>
-      <MsiPackage 
-        Id="DotNetHost"
-        SourceFile="$(var.DotNetRedistHostInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Host">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      
-      <!-- HostFxr depends on Host -->
-      <MsiPackage 
-        Id="DotNetHostFxr"
-        SourceFile="$(var.DotNetRedistHostfxrInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Host FX Resolver">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      
-      <!-- Runtime depends on Host and HostFxr -->
-      <MsiPackage 
-        Id="DotNetRuntime"
-        SourceFile="$(var.DotNetRedistLtsInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Runtime">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      <?elseif $(var.PlatformToken)~=arm64?>
-      <MsiPackage 
-        Id="DotNetHost"
-        SourceFile="$(var.DotNetRedistHostInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Host">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      
-      <!-- HostFxr depends on Host -->
-      <MsiPackage 
-        Id="DotNetHostFxr"
-        SourceFile="$(var.DotNetRedistHostfxrInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Host FX Resolver">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      
-      <!-- Runtime depends on Host and HostFxr -->
-      <MsiPackage 
-        Id="DotNetRuntime"
-        SourceFile="$(var.DotNetRedistLtsInstaller)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft .NET Runtime">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-      </MsiPackage>
-      <?endif?>
       <?endif ?>
       
       <!-- Windows Desktop Runtime depends on all the above .NET Core components -->
-      <?if $(var.PlatformToken)~=x86?>
       <MsiPackage 
         Id="WindowsDesktopRuntime"
         SourceFile="$(WindowsDesktopRuntimeMsiPath)"
@@ -310,29 +243,6 @@
         <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
         <MsiProperty Name="ARPSYSTEMCOMPONENT" Value="0" />
       </MsiPackage>
-      <?elseif $(var.PlatformToken)~=x64?>
-      <MsiPackage 
-        Id="WindowsDesktopRuntime"
-        SourceFile="$(WindowsDesktopRuntimeMsiPath)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft Windows Desktop Runtime">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-        <MsiProperty Name="ARPSYSTEMCOMPONENT" Value="0" />
-      </MsiPackage>
-      <?elseif $(var.PlatformToken)~=arm64?>
-      <MsiPackage 
-        Id="WindowsDesktopRuntime"
-        SourceFile="$(WindowsDesktopRuntimeMsiPath)"
-        Vital="yes"
-        Cache="keep"
-        DisplayName="Microsoft Windows Desktop Runtime">
-        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
-        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
-        <MsiProperty Name="ARPSYSTEMCOMPONENT" Value="0" />
-      </MsiPackage>
-      <?endif?>
     </Chain>
   </Bundle>
 </Wix>
