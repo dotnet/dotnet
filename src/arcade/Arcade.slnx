@@ -29,6 +29,7 @@
     <Project Path="src/Microsoft.DotNet.NuGetRepack/tests/Microsoft.DotNet.NuGetRepack.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.PackageTesting.Tests/Microsoft.DotNet.PackageTesting.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.RemoteExecutor/tests/Microsoft.DotNet.RemoteExecutor.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.SetupNugetSources.Tests/Microsoft.DotNet.SetupNugetSources.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
