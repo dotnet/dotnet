@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
+    <SkipSharedSourceOnlyImport>true</SkipSharedSourceOnlyImport>
   </PropertyGroup>
 
   <ItemGroup>
