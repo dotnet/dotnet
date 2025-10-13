@@ -15,7 +15,7 @@ pr:
     - release/*
 
 schedules:
-  - cron: "0 1 * * *" # run at 01:00 (UTC)
+  - cron: "0 14 * * *" # run at 01:00 (UTC)
     branches:
       include:
       - main
