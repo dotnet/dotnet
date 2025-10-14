@@ -96,6 +96,11 @@ gantt
   RS-Mar Staging / Release                              :rs_feb_build, 2026-03-01, 9d
   RS-Mar Release                                       :milestone, 2026-03-10, 0d
 ```
+#### Notes on schedule
+
+- Choosing the RS branch day is a key component. The branch day should balance the following:
+  - **Late enough** to avoid requiring devs to switch check-in targets as much as possible (devs should primarily care about GS branches).
+  - **Early enough** to avoid 'parking' too many approved fixes while waiting for the matching GS branch to open.
 
 #### Developer – Public Fix
 
@@ -124,6 +129,12 @@ gantt
 5. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
 6. Wait for a validation build.
 7. Validate the fix in the shipping product.
+
+#### Repository Owner - Preparing for Upcoming Release
+
+1. Continually review approved fixes. Ensure that any approved fixes are merged to a branch that matches their milestone.
+2. Before the **Release Specific** branch date, ensure that all approved fixes have been merged into the VMR **General Servicing** branch. *Note: Tooling for this will be available*.
+3. After **Release Specific** branching, ensure that fixes approved for the milestone matching the **Release Specific** VMR branch are merged into the **Release Specific** branch.
 
 #### Repository Owner – Release Sign-off
 
@@ -165,7 +176,16 @@ Various parties may want to validate that a set of approved fixes from a specifi
 - [Services Approved Fixes Tooling](https://github.com/dotnet/release/issues/1586)
 - [Linking PRs in forward flows](https://github.com/dotnet/arcade-services/pull/5355)
 
-### Special Cases - OOB Releases
+### Special Considerations - Cherry-pick Release Specific to General Servicing?
+
+When a fix is made directly to a **Release Specific** branch, that fix will make its way back into **General Servicing** on release day, when the VMR tag is merged in. However, this is primarily an insurance measure, and cannot account for:
+- Additional special case **Release Specific** branches created before the release day.
+- The **General Servicing** branch not having a fix required for release available in daily validation.
+- Current infrastructure issues in the **General Servicing** branch resolved by the fix.
+
+It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be merged back into the appropriate **General Servicing** branch (public->public, internal->internal).
+
+### Special Considerations - OOB Releases
 
 There are times when an OOB release is required. These are releases that contain a minimal set of fixes with new branding. These typically come in two forms:
 - A full release that includes a new runtime and new SDKs. The current in-progress release becomes N+1.
