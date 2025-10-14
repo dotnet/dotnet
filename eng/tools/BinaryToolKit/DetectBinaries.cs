@@ -21,7 +21,7 @@ public static class DetectBinaries
     private const int ChunkSize = 4096;
     private static readonly Regex GitCleanRegex = new Regex(@"Would (remove|skip)( repository)? (.*)");
 
-    public static async Task<IList<string>> ExecuteAsync(
+    public static IList<string> Execute(
         TaskLoggingHelper log,
         string targetDirectory,
         string outputReportDirectory,
@@ -40,33 +40,30 @@ public static class DetectBinaries
             return (pattern: p, matcher: m);
         }).ToList();
 
-        var parallelOptions = new ParallelOptions
+        foreach (var file in Directory.GetFiles(targetDirectory, "*", new EnumerationOptions() { AttributesToSkip = FileAttributes.ReparsePoint, RecurseSubdirectories = true }))
         {
-            MaxDegreeOfParallelism = Environment.ProcessorCount * 2
-        };
-
-        await Parallel.ForEachAsync(Directory.EnumerateFiles(targetDirectory, "*", SearchOption.AllDirectories), parallelOptions, async (file, _) =>
-        {
-            bool matched = false;
-
-            foreach (var (pattern, matcher) in patternMatchers)
+            // This code is meant for finding binaries in source code repositories.
+            // Most files will be non-binary. We want to avoid checking each of those against the patternMatchers [O(N*M)], so we first check if the file is binary.
+            if (IsBinary(file))
             {
-                if (matcher.Match(targetDirectory, file).HasMatches)
+                bool matched = false;
+
+                foreach (var (pattern, matcher) in patternMatchers)
                 {
-                    usedPatterns.Add(pattern);
-                    matched = true;
-                    break;
+                    if (matcher.Match(targetDirectory, file).HasMatches)
+                    {
+                        usedPatterns.Add(pattern);
+                        matched = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!matched)
-            {
-                if (await IsBinaryAsync(log, file))
+                if (!matched)
                 {
                     newBinaries.Add(file.Substring(targetDirectory.Length + 1));
                 }
             }
-        });
+        }
 
         var unusedPatterns = new HashSet<string>(patterns.Except(usedPatterns));
         UpdateAllowedBinariesFile(log, allowedBinariesFile, outputReportDirectory, unusedPatterns);
@@ -76,69 +73,23 @@ public static class DetectBinaries
         return newBinaries.ToList();
     }
 
-    private static async Task<bool> IsBinaryAsync(TaskLoggingHelper log, string filePath)
+    private static bool IsBinary(string filePath)
     {
         // Using the GNU diff heuristic to determine if a file is binary or not.
         // For more details, refer to the GNU diff manual: 
         // https://www.gnu.org/software/diffutils/manual/html_node/Binary.html
 
         using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        using (BinaryReader br = new BinaryReader(fs))
         {
-            byte[] buffer = new byte[ChunkSize];
-            int bytesRead = br.Read(buffer, 0, ChunkSize);
-            for (int i = 0; i < bytesRead; i++)
-            {
-                if (buffer[i] == 0)
-                {
-                    // Need to check that the file is not UTF-16 encoded
-                    // because heuristic can return false positives
-                    return await IsNotUTF16Async(log, filePath);
-                }
-            }
+            Span<byte> buffer = stackalloc byte[4096];
+            int bytesRead = fs.Read(buffer);
+            buffer = buffer[..bytesRead];
+
+            bool hasZeroByte = buffer.IndexOf((byte)0) != -1;
+            bool hasUTF16ByteOrderMarker = buffer.StartsWith("\xFF\xFE"u8) || buffer.StartsWith("\xFE\xFF"u8);
+
+            return hasZeroByte && !hasUTF16ByteOrderMarker;
         }
-        return false;
-    }
-
-    private static async Task<bool> IsNotUTF16Async(TaskLoggingHelper log, string file)
-    {
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
-        {
-            string output = await ExecuteProcessAsync(log, "file", $"\"{file}\"");
-            output = output.Split(":")[1].Trim();
-
-            if (output.Contains(Utf16Marker))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static async Task<string> ExecuteProcessAsync(TaskLoggingHelper log, string executable, string arguments)
-    {
-        ProcessStartInfo psi = new()
-        {
-            FileName = executable,
-            Arguments = arguments,
-            CreateNoWindow = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        var proc = Process.Start(psi)!;
-
-        string output = await proc.StandardOutput.ReadToEndAsync();
-        string error = await proc.StandardError.ReadToEndAsync();
-
-        await proc.WaitForExitAsync();
-
-        if (!string.IsNullOrEmpty(error))
-        {
-            log.LogError(error);
-        }
-
-        return output;
     }
 
     private static IEnumerable<string> ParseAllowedBinariesFile(TaskLoggingHelper log, string file, List<string>? knownFiles = null)
