@@ -34,9 +34,10 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, context.Options);
 
         var generatedCSharpText = generatedDocument.SourceText;
-        _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
+        context.Logger?.LogSourceText("FormattingDocument", generatedCSharpText);
+        context.Logger?.LogObject("FormattingDocumentLineInfo", generatedDocument.LineInfo);
         var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options, cancellationToken).ConfigureAwait(false);
-        _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
+        context.Logger?.LogSourceText("FormattedFormattingDocument", formattedCSharpText);
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
         // document as they come from very different places. What we want to do is go through each line of the generated document,
@@ -111,6 +112,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                                 iFormatted++;
                                 if (iFormatted >= formattedCSharpText.Lines.Count)
                                 {
+                                    context.Logger?.LogMessage($"Ran out of formatted lines. iFormatted={iFormatted}, formattedLineCount={formattedCSharpText.Lines.Count}, iOriginal={iOriginal}, originalLineCount={changedText.Lines.Count}");
                                     _logger.LogError($"Ran out of formatted lines while trying to process formatted changes after {iOriginal} lines. Abandoning further formatting to not corrupt the source file, please report this issue.");
                                     break;
                                 }
@@ -125,6 +127,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                                 iOriginal++;
                                 if (iOriginal >= changedText.Lines.Count)
                                 {
+                                    context.Logger?.LogMessage($"Ran out of original lines. iFormatted={iFormatted}, formattedLineCount={formattedCSharpText.Lines.Count}, iOriginal={iOriginal}, originalLineCount={changedText.Lines.Count}");
                                     _logger.LogError("Ran out of lines while trying to process formatted changes. Abandoning further formatting to not corrupt the source file, please report this issue.");
                                     break;
                                 }
@@ -199,7 +202,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 {
                     // To avoid overlapping changes, which Roslyn will throw on, we just have to drop this change. It gives the user
                     // something at least, and hopefully they'll report a bug for this case so we can find it.
-                    _logger.LogTestOnly($"Skipping a change that would have overlapped an existing change, starting at {start} for {length} chars, overlapping a change at {formattingChanges[iChanges].Span}");
+                    context.Logger?.LogMessage($"Skipping a change that would have overlapped an existing change, starting at {start} for {length} chars, overlapping a change at {formattingChanges[iChanges].Span}. iFormatted={iFormatted}, iChanges={iChanges}");
                     continue;
                 }
 
@@ -207,8 +210,10 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             }
         }
 
-        changedText = changedText.WithChanges(formattingChanges.ToArray());
-        _logger.LogTestOnly($"Final formatted document:\r\n{changedText}");
+        var finalFormattingChanges = formattingChanges.ToArray();
+        context.Logger?.LogObject("FinalFormattingChanges", finalFormattingChanges);
+        changedText = changedText.WithChanges(finalFormattingChanges);
+        context.Logger?.LogSourceText("FinalFormattedDocument", changedText);
 
         // And we're done, we have a final set of changes to apply. BUT these are changes to the document after Html and Razor
         // formatting, and the return from this method must be changes relative to the original passed in document. The algorithm

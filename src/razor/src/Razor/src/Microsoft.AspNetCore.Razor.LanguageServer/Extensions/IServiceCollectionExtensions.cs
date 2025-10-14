@@ -63,6 +63,7 @@ internal static class IServiceCollectionExtensions
         // Formatting
         services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
 
+        services.AddSingleton<IFormattingLoggerFactory, FormattingLoggerFactory>();
         services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
 
         services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
