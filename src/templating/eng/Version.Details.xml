@@ -2,9 +2,9 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="templating" Sha="a01724db6d16445177cb31c6f300d38b0af06290" BarId="279606" />
   <ProductDependencies>
-    <Dependency Name="System.CommandLine" Version="2.0.0-rtm.25512.102">
+    <Dependency Name="System.CommandLine" Version="2.0.0-rtm.25513.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>0b60d265d30d96c827b73dbce74cb78f600d3c92</Sha>
+      <Sha>b502b6eeec0db06720ead7fd9570befa39a6b2f7</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
