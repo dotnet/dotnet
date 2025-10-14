@@ -63,7 +63,7 @@
     </ItemGroup>
     
     <Copy SourceFiles="@(_DownloadedNupkgs)"
-          DestinationFolder="$(ExtraRestoreSourcePath)" 
+          DestinationFolder="$(ExtraTestDependenciesRestoreSourcePath)" 
           Condition="@(_DownloadedNupkgs->Count()) > 0" />
   </Target>
 

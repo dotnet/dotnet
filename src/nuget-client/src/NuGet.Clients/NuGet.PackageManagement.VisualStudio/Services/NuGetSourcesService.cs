@@ -12,6 +12,8 @@ using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using NuGet.Configuration;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.VisualStudio
@@ -49,6 +51,24 @@ namespace NuGet.PackageManagement.VisualStudio
                 .LoadPackageSources()
                 .Select(PackageSourceContextInfo.Create)
                 .ToList());
+        }
+
+        public IReadOnlyList<SourceRepository> GetEnabledAuditSources()
+        {
+            IReadOnlyList<PackageSource> auditSources = _packageSourceProvider.LoadAuditSources();
+
+            List<SourceRepository> auditRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource auditSource = auditSources[i];
+                if (auditSource.IsEnabled)
+                {
+                    SourceRepository repository = Repository.Factory.GetCoreV3(auditSource);
+                    auditRepositories.Add(repository);
+                }
+            }
+
+            return auditRepositories;
         }
 
         public ValueTask SavePackageSourceContextInfosAsync(IReadOnlyList<PackageSourceContextInfo> sources, CancellationToken cancellationToken)
