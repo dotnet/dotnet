@@ -84,7 +84,7 @@ public static class DetectBinaries
             buffer = buffer[..bytesRead];
 
             bool hasZeroByte = buffer.IndexOf((byte)0) != -1;
-            bool hasUTF16ByteOrderMarker = buffer.StartsWith("\xFF\xFE"u8) || buffer.StartsWith("\xFE\xFF"u8);
+            bool hasUTF16ByteOrderMarker = buffer.StartsWith((ReadOnlySpan<byte>)[0xFE, 0xFF]) || buffer.StartsWith((ReadOnlySpan<byte>)[0xFF, 0xFE]);
 
             return hasZeroByte && !hasUTF16ByteOrderMarker;
         }
