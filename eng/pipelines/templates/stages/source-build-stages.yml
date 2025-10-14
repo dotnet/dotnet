@@ -121,6 +121,8 @@ stages:
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
+            ${{ if in(parameters.scope, 'lite') }}:
+              extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
           - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
@@ -136,6 +138,8 @@ stages:
               disableSigning: true               # ✅
               createSourceArtifacts: false       # 🚫
               reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
+              ${{ if in(parameters.scope, 'lite') }}:
+                extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
           ### Additional legs for full build ###
           - ${{ if in(parameters.scope, 'full') }}:
