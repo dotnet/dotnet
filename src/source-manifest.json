@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 286474,
+      "barId": 286821,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ba45f22d375e21c42fdc89695451932731d94552"
+      "commitSha": "e8ca69398033dd1eea35e9667bf857234465de2b"
     },
     {
       "barId": 287082,
@@ -67,22 +67,22 @@
       "commitSha": "5514d935e3e77d90d931758cf9e2589735b905a3"
     },
     {
-      "barId": 286683,
+      "barId": 286870,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "4e5ddbfa9a31b06d262234f8e582575d6ceb0739"
+      "commitSha": "48a2659b91e7032c97ea024751a6ea9469a94d7f"
     },
     {
-      "barId": 286456,
+      "barId": 286854,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "929ae2333a73eca047b9b6e2f01bf7121558308f"
+      "commitSha": "7463b65f5c25bd1e4180609bf8aaaa9436833a15"
     },
     {
-      "barId": 286595,
+      "barId": 287019,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "a402595199e366ae6cf697d74b9dd43081fa2fcd"
+      "commitSha": "7d43e0fca9c154b82f2aba04573a57d0f9e15c2d"
     },
     {
       "barId": 277711,
@@ -91,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 286627,
+      "barId": 286927,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "09b6a7d0d679cf9480932424ae025e83c49fd9f6"
+      "commitSha": "6ddd5579bbd2e4b370f37d2e0ac6ddbe93b53dc1"
     },
     {
       "barId": 282656,
@@ -103,10 +103,10 @@
       "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
     },
     {
-      "barId": 277912,
+      "barId": 286928,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "9b949eeb2d5dba635c06ae936b50d2141b0aabe2"
+      "commitSha": "a9562142aa6c9e094cb6cf6da28132fdfc2aed0e"
     },
     {
       "barId": 284900,
