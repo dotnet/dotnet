@@ -17,8 +17,6 @@ namespace BinaryToolKit;
 
 public static class DetectBinaries
 {
-    private const string Utf16Marker = "UTF-16";
-    private const int ChunkSize = 4096;
     private static readonly Regex GitCleanRegex = new Regex(@"Would (remove|skip)( repository)? (.*)");
 
     public static IList<string> Execute(
