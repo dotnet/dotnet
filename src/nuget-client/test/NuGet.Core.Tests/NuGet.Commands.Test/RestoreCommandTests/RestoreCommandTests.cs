@@ -3104,8 +3104,8 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(false);
             projectInformationEvent["NETSdkVersion"].Should().Be(NuGetVersion.Parse("10.0.100"));
             projectInformationEvent["Pruning.FrameworksEnabled.Count"].Should().Be(0);
-            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(1);
-            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
             projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
         }
