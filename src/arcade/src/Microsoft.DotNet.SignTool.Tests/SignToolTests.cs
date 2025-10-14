@@ -480,7 +480,9 @@ namespace Microsoft.DotNet.SignTool.Tests
             string layout = Path.Combine(tempDir, "layout");
             Directory.CreateDirectory(layout);
 
-            ZipData.ExtractRpmPayloadContents(log: null, rpmPackage, layout);
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+            ZipData.ExtractRpmPayloadContents(fakeLog, rpmPackage, layout);
 
             // Checks:
             // Expected files are present
@@ -1279,6 +1281,93 @@ $@"
 </FilesToSign>
 "
             });
+        }
+
+        [Fact]
+        public void SignArchivesUsingDetachedSignature()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("test.zip")),
+                new ItemToSign(GetResourcePath("test.tgz")),
+                new ItemToSign(GetResourcePath("NestedZip.zip")),
+                new ItemToSign(GetResourcePath("InnerZipFile.zip"))
+            };
+
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>();
+
+            // Overriding information
+            var explicitCertKeys = new Dictionary<ExplicitCertificateKey, string>()
+            {
+                { new ExplicitCertificateKey("test.zip"), "ArchiveCert" },
+                { new ExplicitCertificateKey("test.tgz"), "ArchiveCert" },
+                { new ExplicitCertificateKey("InnerZipFile.zip"), "ArchiveCert" }
+            };
+
+            var additionalCertificateInfo = new Dictionary<string, List<AdditionalCertificateInformation>>()
+            {
+                {  "ArchiveCert",
+                    new List<AdditionalCertificateInformation>() {
+                        new AdditionalCertificateInformation() { GeneratesDetachedSignature = true }
+                    }
+                }
+            };
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, explicitCertKeys, s_fileExtensionSignInfo, new[]
+            {
+                "File 'NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'Nested.NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'Nested.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'test.zip' Certificate='ArchiveCert'",
+                "File 'test.tgz' Certificate='ArchiveCert'",
+                "File 'InnerZipFile.zip' Certificate='ArchiveCert'",
+                "File 'Mid.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'MidNativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'NestedZip.zip'",
+            },
+            additionalCertificateInfo: additionalCertificateInfo,
+            expectedCopyFiles: new[]
+            {
+                $"{Path.Combine(_tmpDir, "ContainerSigning", "6", "InnerZipFile.zip")} -> {Path.Combine(_tmpDir, "InnerZipFile.zip")}",
+                $"{Path.Combine(_tmpDir, "ContainerSigning", "6", "InnerZipFile.zip.sig")} -> {Path.Combine(_tmpDir, "InnerZipFile.zip.sig")}"
+            });
+
+            ValidateGeneratedProject(itemsToSign, strongNameSignInfo, explicitCertKeys, s_fileExtensionSignInfo, new[]
+            {
+$@"
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "0", "NativeLibrary.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "1", "SOS.NETCore.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "2", "this_is_a_big_folder_name_look/this_is_an_even_more_longer_folder_name/but_this_one_is_ever_longer_than_the_previous_other_two/Nested.NativeLibrary.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "3", "this_is_a_big_folder_name_look/this_is_an_even_more_longer_folder_name/but_this_one_is_ever_longer_than_the_previous_other_two/Nested.SOS.NETCore.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "7", "Mid.SOS.NETCore.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "8", "MidNativeLibrary.dll"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>
+",
+$@"
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.zip"))}"">
+  <Authenticode>ArchiveCert</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.tgz"))}"">
+  <Authenticode>ArchiveCert</Authenticode>
+</FilesToSign>
+<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "6", "InnerZipFile.zip"))}"">
+  <Authenticode>ArchiveCert</Authenticode>
+</FilesToSign>
+"
+            }, additionalCertificateInfo: additionalCertificateInfo);
         }
 
         /// <summary>
@@ -2592,6 +2681,11 @@ $@"
                 new TaskItem(GetResourcePath("SignedLibrary.dll"), new Dictionary<string, string>
                 {
                     { SignToolConstants.CollisionPriorityId, "123" }
+                }),
+                // Sign a test.zip
+                new TaskItem(GetResourcePath("test.zip"), new Dictionary<string, string>
+                {
+                    { SignToolConstants.CollisionPriorityId, "123" }
                 })
             };
 
@@ -2621,6 +2715,11 @@ $@"
                     { "CertificateName", "DualSignCertificate" },
                     { "PublicKeyToken", "31bf3856ad364e35" },
                     { "CollisionPriorityId", "123" }
+                }),
+                new TaskItem("test.zip", new Dictionary<string, string>
+                {
+                    { "CertificateName", "DetachedArchiveCert" },
+                    { "CollisionPriorityId", "123" }
                 })
             };
 
@@ -2637,7 +2736,11 @@ $@"
                     { "MacCertificate", "MacDeveloperHarden" },
                     { "MacNotarizationAppName", "com.microsoft.dotnet" },
                     { "CollisionPriorityId", "123" }
-                })
+                }),
+                new TaskItem("DetachedArchiveCert", new Dictionary<string, string>
+                {
+                    { "DetachedSignature", "true" }
+                }),
             };
 
             var task = new SignToolTask
@@ -2670,7 +2773,11 @@ $@"
                 "File 'ProjectOne.dll' TargetFramework='.NETCoreApp,Version=v2.1' Certificate='3PartySHA2' StrongName='ArcadeStrongTest'",
                 "File 'ProjectOne.dll' TargetFramework='.NETStandard,Version=v2.0' Certificate='OverrideCertificateName' StrongName='ArcadeStrongTest'",
                 "File 'ContainerOne.1.0.0.nupkg' Certificate='NuGet'",
-                "File 'SignedLibrary.dll' TargetFramework='.NETCoreApp,Version=v2.0' Certificate='DualSignCertificate'"
+                "File 'SignedLibrary.dll' TargetFramework='.NETCoreApp,Version=v2.0' Certificate='DualSignCertificate'",
+                "File 'SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'Nested.NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'Nested.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'test.zip' Certificate='DetachedArchiveCert'"
             };
             task.ParsedSigningInput.FilesToSign.Select(f => f.ToString()).Should().BeEquivalentTo(expected);
         }
