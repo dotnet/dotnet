@@ -96,11 +96,11 @@ internal sealed class CSharpOnTypeFormattingPass(
             }
         }
 
-        _logger.LogTestOnly($"Original C#:\r\n{csharpText}");
+        context.Logger?.LogSourceText("OriginalCSharp", csharpText);
 
         var normalizedChanges = csharpText.MinimizeTextChanges(changes, out var originalTextWithChanges);
 
-        _logger.LogTestOnly($"Formatted C#:\r\n{originalTextWithChanges}");
+        context.Logger?.LogSourceText("FormattedCSharp", originalTextWithChanges);
 
         var mappedChanges = _documentMappingSerivce.GetRazorDocumentEdits(codeDocument.GetRequiredCSharpDocument(), normalizedChanges);
         var filteredChanges = FilterCSharpTextChanges(context, mappedChanges);
@@ -117,13 +117,13 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // Find the lines that were affected by these edits.
         var originalText = codeDocument.Source.Text;
-        _logger.LogTestOnly($"Original text:\r\n{originalText}");
+        context.Logger?.LogSourceText("OriginalRazor", originalText);
 
-        _logger.LogTestOnly($"Source Mappings:\r\n{RenderSourceMappings(context.CodeDocument)}");
+        context.Logger?.LogMessage($"Source Mappings:\r\n{RenderSourceMappings(context.CodeDocument)}");
 
         // Apply the format on type edits sent over by the client.
         var formattedText = ApplyChangesAndTrackChange(originalText, filteredChanges, out _, out var spanAfterFormatting);
-        _logger.LogTestOnly($"After C# changes:\r\n{formattedText}");
+        context.Logger?.LogSourceText("AfterCSharpChanges", formattedText);
 
         var changedContext = await context.WithTextAsync(formattedText, cancellationToken).ConfigureAwait(false);
         var linePositionSpanAfterFormatting = formattedText.GetLinePositionSpan(spanAfterFormatting);
@@ -133,7 +133,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, linePositionSpanAfterFormatting);
         var cleanedText = formattedText.WithChanges(cleanupChanges);
-        _logger.LogTestOnly($"After CleanupDocument:\r\n{cleanedText}");
+        context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
 
         changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
 
@@ -189,7 +189,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // Apply the edits that modify indentation.
             cleanedText = cleanedText.WithChanges(indentationChanges);
 
-            _logger.LogTestOnly($"After AdjustIndentationAsync:\r\n{cleanedText}");
+            context.Logger?.LogSourceText("AfterAdjustIndentationAsync", cleanedText);
         }
 
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
@@ -624,7 +624,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             if (!ShouldFormat(context, lineStartSpan, allowImplicitStatements: true, out var owner))
             {
                 // We don't care about this range as this can potentially lead to incorrect scopes.
-                logger.LogTestOnly($"Don't care about line: {line.ToString()}");
+                context.Logger?.LogMessage($"Don't care about line: {line.ToString()}");
                 continue;
             }
 
@@ -671,7 +671,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             }
             else
             {
-                logger.LogTestOnly($"Couldn't map line: {line.ToString()}");
+                context.Logger?.LogMessage($"Couldn't map line: {line.ToString()}");
             }
         }
 

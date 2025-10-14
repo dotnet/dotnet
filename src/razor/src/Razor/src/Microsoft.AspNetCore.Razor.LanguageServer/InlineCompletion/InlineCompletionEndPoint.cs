@@ -107,7 +107,8 @@ internal sealed class InlineCompletionEndpoint(
             var formattingContext = FormattingContext.Create(
                 documentContext.Snapshot,
                 codeDocument,
-                options);
+                options,
+                logger: null);
             if (!SnippetFormatter.TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
             {
                 continue;
