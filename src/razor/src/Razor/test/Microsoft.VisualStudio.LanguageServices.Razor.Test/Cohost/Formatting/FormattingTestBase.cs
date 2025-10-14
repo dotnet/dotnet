@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
@@ -31,8 +30,6 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
     private protected FormattingTestBase(FormattingTestContext context, HtmlFormattingService htmlFormattingService, ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
-        ITestOnlyLoggerExtensions.TestOnlyLoggingEnabled = true;
-
         _context = context;
         _htmlFormattingService = htmlFormattingService;
     }
@@ -69,6 +66,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
         var accessor = formattingService.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
+        accessor.SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
@@ -116,6 +114,9 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var document = CreateProjectAndRazorDocument(input.Text, fileKind: fileKind, inGlobalNamespace: inGlobalNamespace);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
