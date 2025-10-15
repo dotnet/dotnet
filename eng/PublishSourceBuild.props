@@ -91,7 +91,7 @@
   </Target>
 
   <PropertyGroup>
-    <SharedComponentFilterMode>NonToolingOnly</SharedComponentFilterMode>
+    <SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</SharedComponentFilterMode>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
       $(CreatePrivateSourceBuiltArtifactsArchiveDependsOn);GetFilteredSharedComponentPackages
