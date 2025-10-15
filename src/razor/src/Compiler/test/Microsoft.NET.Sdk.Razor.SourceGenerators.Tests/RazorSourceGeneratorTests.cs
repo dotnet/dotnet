@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Test.Utilities;
@@ -2623,9 +2622,6 @@ namespace AspNetCoreGeneratedDocument
             // start with the generator suppressed (this is the default state in VS)
             driver = SetSuppressionState(true);
 
-            // Disable co-hosting, this test only applies to non-cohosting scenarios
-            RazorCohostingOptions.UseRazorCohostServer = false;
-
             // results should be empty, and no recorded steps should have run
             using var eventListener = new RazorEventListener();
             var result = RunGenerator(compilation!, ref driver).VerifyPageOutput();
@@ -3468,7 +3464,6 @@ namespace MyApp
                 ["Component.Razor"] = "<h1>Hello world</h1>",
             });
             var compilation = await project.GetCompilationAsync();
-            RazorCohostingOptions.UseRazorCohostServer = false;
 
             // Start with the generator suppressed
             var (driver, additionalTexts, optionsProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project, configureGlobalOptions: (o) =>

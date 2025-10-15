@@ -260,20 +260,23 @@ internal sealed class CohostDocumentCompletionEndpoint(
             return completionList;
         }
 
-        // If there was a list with items, add them to snippets
-        if (completionList?.Items is { } combinedItems)
-        {
-            builder.AddRange(combinedItems);
-        }
+        // We create a list here to put in our cache. It doesn't really matter if its not the one that is sent to the client,
+        // we'll still be able to pull it out again when the client sends us back an item. The SetResultId method associates
+        // the resolution context with each item.
+        var snippetCompletionList = new RazorVSInternalCompletionList { IsIncomplete = true, Items = builder.ToArray() };
+        var resolutionContext = new SnippetCompletionResolutionContext();
+        var resultId = _completionListCache.Add(snippetCompletionList, resolutionContext);
+        snippetCompletionList.SetResultId(resultId, _clientCapabilitiesService.ClientCapabilities);
 
-        // Create or update final completion list
         if (completionList is null)
         {
-            completionList = new RazorVSInternalCompletionList { IsIncomplete = true, Items = builder.ToArray() };
+            // If there were no Html completion items, just use our snippet list
+            completionList = snippetCompletionList;
         }
         else
         {
-            completionList.Items = builder.ToArray();
+            // There were Html completion items, so combine them with our snippet list
+            completionList.Items = [.. snippetCompletionList.Items, .. completionList.Items];
         }
 
         return completionList;
