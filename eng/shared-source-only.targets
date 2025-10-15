@@ -1,13 +1,31 @@
 <Project>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetDependencyNamesFromVersionDetails" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+
+  <PropertyGroup>
+    <SharedComponentFilter_BootstrapOnly>BootstrapOnly</SharedComponentFilter_BootstrapOnly>
+    <SharedComponentFilter_BootstrapRepoDepsOnly>BootstrapRepoDepsOnly</SharedComponentFilter_BootstrapRepoDepsOnly>
+    <SharedComponentFilter_NonToolingOnly>NonToolingOnly</SharedComponentFilter_NonToolingOnly>
+    <SharedComponentFilter_NonToolingAndBootstrapOnly>NonToolingAndBootstrapOnly</SharedComponentFilter_NonToolingAndBootstrapOnly>
+    <SharedComponentFilter_ToolingOnly>ToolingOnly</SharedComponentFilter_ToolingOnly>
+  </PropertyGroup>
 
   <Target Name="GetFilteredSharedComponentPackages"
           Outputs="@(SharedComponentFilteredPackages)">
 
     <PropertyGroup>
+      <_VersionDetailsXml Condition="'$(PackageVersionPropsFlowType)' == 'DependenciesOnly'">$(ProjectDirectory)eng/Version.Details.xml</_VersionDetailsXml>
+    </PropertyGroup>
+    <GetDependencyNamesFromVersionDetails VersionDetailsPath="$(_VersionDetailsXml)"
+                                          Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_BootstrapRepoDepsOnly)'">
+      <Output TaskParameter="DependencyNames" ItemName="_BootstrapRepoDeps" />
+    </GetDependencyNamesFromVersionDetails>
+
+    <PropertyGroup>
       <SharedRepositoryReferenceString>;@(SharedRepositoryReference);</SharedRepositoryReferenceString>
-      <SharedComponentFilterMode Condition="'$(SharedComponentFilterMode)' == ''">NonToolingAndBootstrapOnly</SharedComponentFilterMode>
+      <_BootstrapRepoDepsString>;@(_BootstrapRepoDeps);</_BootstrapRepoDepsString>
+      <SharedComponentFilterMode Condition="'$(SharedComponentFilterMode)' == ''">$(SharedComponentFilter_NonToolingAndBootstrapOnly)</SharedComponentFilterMode>
     </PropertyGroup>
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="$(SharedComponentAssetManifests)"
@@ -16,27 +34,33 @@
     </GetKnownArtifactsFromAssetManifests>
 
     <!-- Non-tooling-and-bootstrap mode: Keep non-tooling components and bootstrap arcade repos -->
-    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'NonToolingAndBootstrapOnly'">
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_NonToolingAndBootstrapOnly)'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
     <!-- Non-tooling-only mode: Keep only non-tooling components that are not bootstrap arcade repos -->
-    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'NonToolingOnly'">
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_NonToolingOnly)'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Tooling-only mode: Keep only tooling components that are not bootstrap arcade repos -->
-    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'ToolingOnly'">
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_ToolingOnly)'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Bootstrap-only mode: Keep only packages from bootstrap arcade repos -->
-    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'BootstrapOnly'">
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_BootstrapOnly)'">
       <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
+    </ItemGroup>
+
+    <!-- Bootstrap-repo-dependencies-only mode: Keep only packages from the bootstrap repo's dependencies -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == '$(SharedComponentFilter_BootstrapRepoDepsOnly)'">
+      <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
+                      Condition="!$([System.String]::new(';$(_BootstrapRepoDepsString);').Contains(';%(Identity);'))" />
     </ItemGroup>
 
     <!-- Create a lookup string of items to remove -->
