@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Define o valor de uma variável de ambiente. 
-Cria a variável se ela não existir, substitui se existir. 
+        <target state="translated">Define o valor de uma variável de ambiente.
+Cria a variável se ela não existir, substitui se existir.
 Este argumento pode ser especificado várias vezes para fornecer múltiplas variáveis.
 
 Exemplos:
@@ -118,9 +118,9 @@ Exemplos:
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
-This will force the tests to be run in an isolated process. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
+This will force the tests to be run in an isolated process.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Define o valor de uma variável de ambiente. 
-Criará a variável quando ela não existir e a substituirá quando existir. 
-Isso forçará a execução dos testes em um processo isolado. 
+        <target state="translated">Define o valor de uma variável de ambiente.
+Criará a variável quando ela não existir e a substituirá quando existir.
+Isso forçará a execução dos testes em um processo isolado.
 Esse argumento pode ser especificado várias vezes para fornecer várias variáveis.
 
 Exemplos:

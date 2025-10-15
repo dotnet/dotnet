@@ -25,7 +25,6 @@ public class ChunkedRequestTests : LoggedTest
     public async Task RejectsInvalidChunkExtensions(string invalidChunkLine)
     {
         var testContext = new TestServiceContext(LoggerFactory);
-
         await using (var server = new TestServer(AppChunked, testContext))
         {
             using (var connection = server.CreateConnection())
@@ -59,7 +58,6 @@ public class ChunkedRequestTests : LoggedTest
     public async Task AllowsValidChunkExtensions(string chunkLine)
     {
         var testContext = new TestServiceContext(LoggerFactory);
-
         await using (var server = new TestServer(AppChunked, testContext))
         {
             using (var connection = server.CreateConnection())
@@ -1215,7 +1213,6 @@ public class ChunkedRequestTests : LoggedTest
                 await tcs.Task;
                 await connection.SendAll(
                     "\r");
-
                 await connection.ReceiveEnd(
                     "HTTP/1.1 400 Bad Request",
                     "Content-Length: 0",
@@ -1256,7 +1253,6 @@ public class ChunkedRequestTests : LoggedTest
                 await tcs.Task;
                 await connection.SendAll(
                     "t");
-
                 await connection.ReceiveEnd(
                     "HTTP/1.1 400 Bad Request",
                     "Content-Length: 0",

@@ -351,7 +351,6 @@ internal sealed class Http1ChunkedEncodingMessageBody : Http1MessageBody
     // https://www.rfc-editor.org/rfc/rfc9112#section-7.1
     // chunk          = chunk-size [ chunk-ext ] CRLF
     // chunk-data CRLF
-
     // https://www.rfc-editor.org/rfc/rfc9112#section-7.1.1
     // chunk-ext      = *( BWS ";" BWS chunk-ext-name
     //                     [BWS "=" BWS chunk-ext-val] )
@@ -421,7 +420,6 @@ internal sealed class Http1ChunkedEncodingMessageBody : Http1MessageBody
             {
                 consumed = suffixBuffer.End;
                 examined = suffixBuffer.End;
-
                 // We have \rX or \nX, that's an invalid extension.
                 KestrelBadHttpRequestException.Throw(RequestRejectionReason.BadChunkExtension);
             }

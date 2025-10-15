@@ -2261,12 +2261,12 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                 case global::SerializationTypes.EnumFlags.@Two: s = @"Two"; break;
                 case global::SerializationTypes.EnumFlags.@Three: s = @"Three"; break;
                 case global::SerializationTypes.EnumFlags.@Four: s = @"Four"; break;
-                default: s = FromEnum(((System.Int64)v), new string[] {@"One", 
-                    @"Two", 
-                    @"Three", 
-                    @"Four"}, new System.Int64[] {(long)global::SerializationTypes.EnumFlags.@One, 
-                    (long)global::SerializationTypes.EnumFlags.@Two, 
-                    (long)global::SerializationTypes.EnumFlags.@Three, 
+                default: s = FromEnum(((System.Int64)v), new string[] {@"One",
+                    @"Two",
+                    @"Three",
+                    @"Four"}, new System.Int64[] {(long)global::SerializationTypes.EnumFlags.@One,
+                    (long)global::SerializationTypes.EnumFlags.@Two,
+                    (long)global::SerializationTypes.EnumFlags.@Three,
                     (long)global::SerializationTypes.EnumFlags.@Four}, @"SerializationTypes.EnumFlags"); break;
             }
             return s;
@@ -4733,7 +4733,7 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"TypeWithEnumFlagPropertyHavingDefaultValue", @"");
-            if (((global::SerializationTypes.EnumFlags)o.@EnumProperty) != (global::SerializationTypes.EnumFlags.@One | 
+            if (((global::SerializationTypes.EnumFlags)o.@EnumProperty) != (global::SerializationTypes.EnumFlags.@One |
             global::SerializationTypes.EnumFlags.@Four)) {
                 WriteElementString(@"EnumProperty", @"", Write75_EnumFlags(((global::SerializationTypes.EnumFlags)o.@EnumProperty)));
             }
@@ -6984,8 +6984,8 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
             Reader.MoveToContent();
             if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
                 do {
-                    if (((object) Reader.LocalName == (object)id112_Item && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                        o = Read109_Item(true, true);
+                    if (((object) Reader.LocalName == (object)id118_Item && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                        o = Read117_Item(true, true);
                         break;
                     }
                     throw CreateUnknownNodeException();
@@ -10064,9 +10064,9 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
                     UnknownNode((object)o, @"");
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
                 Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
                     a_0 = (global::System.Xml.XmlNode[])EnsureArrayIndex(a_0, ca_0, typeof(global::System.Xml.XmlNode));a_0[ca_0++] = (global::System.Xml.XmlNode)Document.CreateTextNode(Reader.ReadString());
                 }
@@ -13413,9 +13413,9 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
                     UnknownNode((object)o, @"");
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
                 Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
                     o.@Value = ToTime(Reader.ReadString());
                 }
@@ -13460,9 +13460,9 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
                     UnknownNode((object)o, @"");
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
                 Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
                     o.@Value = ToByteArrayBase64(Reader.ReadString());
                 }
@@ -13559,9 +13559,9 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
                     UnknownNode((object)o, @"");
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
                 Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
                     a_0 = (global::System.String[])EnsureArrayIndex(a_0, ca_0, typeof(global::System.String));a_0[ca_0++] = Reader.ReadString();
                 }
@@ -14064,9 +14064,9 @@ namespace Microsoft.Xml.Serialization.GeneratedAssembly {
                         UnknownNode((object)o, @":Word, :Number, :DecimalNumber, :XmlIncludeProperty, :XmlEnumProperty, :XmlNamespaceDeclarationsProperty, http://element:XmlElementPropertyNode, http://mynamespace:CustomXmlArrayProperty");
                     } while (false);
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
                 Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
                     tmp = ReadString(tmp, false);
                     o.@XmlTextProperty = tmp;

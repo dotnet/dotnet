@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Устанавливает значение переменной среды. 
-Если переменной среды не существует, она создается, если существует — переопределяется. 
+        <target state="translated">Устанавливает значение переменной среды.
+Если переменной среды не существует, она создается, если существует — переопределяется.
 Этот аргумент может быть указан несколько раз для указания нескольких переменных.
 
 Примеры:
@@ -118,9 +118,9 @@ Examples:
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable. 
-Creates the variable if it does not exist, overrides if it does. 
-This will force the tests to be run in an isolated process. 
+        <source>Sets the value of an environment variable.
+Creates the variable if it does not exist, overrides if it does.
+This will force the tests to be run in an isolated process.
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Устанавливает значение переменной среды. 
-Если переменной среды не существует, она создается. Если переменная среды существует, она переопределяется. 
-Этот аргумент подразумевает принудительное выполнение тестов в изолированном процессе. 
+        <target state="translated">Устанавливает значение переменной среды.
+Если переменной среды не существует, она создается. Если переменная среды существует, она переопределяется.
+Этот аргумент подразумевает принудительное выполнение тестов в изолированном процессе.
 Этот аргумент может быть указан несколько раз для нескольких переменных среды.
 
 Примеры:

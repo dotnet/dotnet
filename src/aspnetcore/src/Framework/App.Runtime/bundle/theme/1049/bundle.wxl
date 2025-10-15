@@ -1,15 +1,15 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-  
+
   <String Id="Caption" Value="Установка [WixBundleName]"/>
-  
+
   <String Id="Title" Value="[BUNDLEMONIKER]"/>
-  
-  
+
+
   <String Id="InstallVersion" Value="Версия [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="Вы действительно хотите отменить?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Предыдущая версия"/>
   <String Id="HelpHeader" Value="Справка по установке"/>
-  
+
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] — устанавливает, исправляет, удаляет или
    создает полную локальную копию пакета в каталоге. По умолчанию выполняется установка.
 
@@ -73,6 +73,6 @@
   <String Id="DotNetEulaLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-license-windows&quot;&gt;Сведения о лицензировании для .NET&lt;/A&gt;"/>
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Сбор данных телеметрии и возможность отказа&lt;/A&gt;"/>
 
-  
+
   <String Id="EulaPrivacy" Value="&lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;Условия лицензии&lt;/a&gt; и &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;заявление о конфиденциальности&lt;/a&gt; [WixBundleName]."/>
 </WixLocalization>

@@ -309,6 +309,5 @@ public sealed class MSBuildLogger : INodeLogger
     }
 
     public LoggerVerbosity Verbosity { get; set; }
-
     public string? Parameters { get; set; }
 }

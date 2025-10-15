@@ -1,16 +1,16 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-  
+
   <String Id="Caption" Value="Установка [WixBundleName]"/>
-  
+
   <String Id="Title" Value="[BundleNameShort]"/>
-  
+
   <String Id="SubTitle" Value="[BundleNameSub]"/>
-  
+
   <String Id="InstallVersion" Value="Версия [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="Выполнить отмену?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Предыдущая версия"/>
   <String Id="HelpHeader" Value="Справка по установке"/>
-  
+
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] — устанавливает, восстанавливает, удаляет или создает полную локальную копию пакета в каталоге. По умолчанию выполняется установка.
 
 /passive | /quiet — выводит минимальный пользовательский интерфейс без запросов или вообще не выводит пользовательский интерфейс и запросы. По умолчанию отображаются пользовательский интерфейс и все запросы.
@@ -72,16 +72,16 @@
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Сбор данных телеметрии и возможность отказа&lt;/A&gt;"/>
 
   <!-- Custom UI strings -->
-  
+
   <String Id="Welcome" Value="Вас приветствует мастер установки [WixBundleName]."/>
-  
+
   <String Id="InstallResetIIS" Value="Перезапустите службы IIS после завершения установки. Дополнительные сведения см. &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;здесь&lt;/a&gt;."/>
-  
+
   <String Id="InstallNoIIS" Value="Службы IIS не включены на этом компьютере. Если вы планируете запускать приложения ASP.NET Core с IIS, перед запуском этого установщика необходимо установить службы IIS. Дополнительные сведения см. &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;здесь&lt;/a&gt;."/>
-  
+
   <String Id="EulaPrivacy" Value="&lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;Условия лицензии&lt;/a&gt; и &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;заявление о конфиденциальности&lt;/a&gt; [WixBundleName]."/>
-  
+
   <String Id="ModifyResetIIS" Value="Перезапустите службы IIS после завершения установки. Дополнительные сведения см. &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;здесь&lt;/a&gt;."/>
-  
+
   <String Id="ModifyNoIIS" Value="Службы IIS не включены на этом компьютере. Если вы планируете запускать приложения ASP.NET Core с IIS, перед запуском этого установщика необходимо установить службы IIS. Дополнительные сведения см. &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;здесь&lt;/a&gt;."/>
 </WixLocalization>

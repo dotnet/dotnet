@@ -1,16 +1,16 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-  
+
   <String Id="Caption" Value="[WixBundleName] Configuração"/>
-  
+
   <String Id="Title" Value="[BundleNameShort]"/>
-  
+
   <String Id="SubTitle" Value="[BundleNameSub]"/>
-  
+
   <String Id="InstallVersion" Value="Versão [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="Tem certeza de que deseja cancelar?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versão anterior"/>
   <String Id="HelpHeader" Value="Ajuda de Configuração"/>
-  
+
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] - instala, repara, desinstala ou cria uma cópia local completa do pacote no diretório. A instalação é padrão.
 
 /passive | /quiet — exibe a interface do usuário mínima sem prompts ou não exibe nenhuma interface do usuário e nenhum prompt. Por padrão, a interface do usuário e todas as solicitações são exibidas.
@@ -72,16 +72,16 @@
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Coleta e recusa de telemetria&lt;/A&gt;"/>
 
   <!-- Custom UI strings -->
-  
+
   <String Id="Welcome" Value="Bem-vindo à Instalação do [WixBundleName]."/>
-  
+
   <String Id="InstallResetIIS" Value="Reinicie o IIS após a conclusão da instalação. Você pode encontrar informações adicionais &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;aqui&lt;/a&gt;."/>
-  
+
   <String Id="InstallNoIIS" Value="O IIS não está habilitado nesta máquina. Se você pretende executar aplicações ASP.NET Core com o IIS, é necessário instalar o IIS antes de executar este instalador. Você pode encontrar informações adicionais &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;aqui&lt;/a&gt;."/>
-  
+
   <String Id="EulaPrivacy" Value="[WixBundleName] &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;termos de licença&lt;/a&gt; e &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;declaração de privacidade&lt;/a&gt;."/>
-  
+
   <String Id="ModifyResetIIS" Value="Reinicie o IIS após a conclusão da instalação. Você pode encontrar informações adicionais &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;aqui&lt;/a&gt;."/>
-  
+
   <String Id="ModifyNoIIS" Value="O IIS não está habilitado nesta máquina. Se você pretende executar aplicações ASP.NET Core com o IIS, é necessário instalar o IIS antes de executar este instalador. Você pode encontrar informações adicionais &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;aqui&lt;/a&gt;."/>
 </WixLocalization>

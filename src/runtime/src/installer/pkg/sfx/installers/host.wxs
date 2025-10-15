@@ -25,7 +25,7 @@
           <CopyFile Id="copyFileCoreHostExe" DestinationDirectory="PROGRAMFILES_DOTNET" />
         </File>
       </Component>
-        
+
       <Component Id="cmpSharedHostVersionRegistry" Directory="DOTNETHOME">
         <RegistryKey Root="HKLM" Key="SOFTWARE\dotnet\Setup\InstalledVersions\$(var.Platform)\sharedhost">
           <RegistryValue KeyPath="yes" Action="write" Name="Version" Type="string" Value="$(var.NugetVersion)"/>
@@ -83,12 +83,12 @@
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="PROGRAMFILES_DOTNET" Name="dotnet" />
     </StandardDirectory>
-    
+
     <?if $(var.Platform)~=x64 ?>
     <CustomActionRef Id="Set_PROGRAMFILES_DOTNET_NON_NATIVE_ARCHITECTURE" />
     <?endif?>
   </Fragment>
-  
+
   <Fragment>
     <!-- Unlike DOTNETHOME which gives precedence to a user specified value over an x64 suffix, here we always want the suffixed path -->
     <SetProperty Action="Set_PROGRAMFILES_DOTNET_NON_NATIVE_ARCHITECTURE" Id="PROGRAMFILES_DOTNET" Value="[ProgramFiles64Folder]dotnet\x64\" After="Set_NON_NATIVE_ARCHITECTURE" Condition="NON_NATIVE_ARCHITECTURE" />
