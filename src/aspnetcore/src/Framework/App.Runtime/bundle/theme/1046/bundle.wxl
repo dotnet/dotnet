@@ -1,15 +1,15 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-
+  
   <String Id="Caption" Value="[WixBundleName] Configuração"/>
-
+  
   <String Id="Title" Value="[BUNDLEMONIKER]"/>
-
-
+  
+  
   <String Id="InstallVersion" Value="Versão [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="Tem certeza de que deseja cancelar?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versão anterior"/>
   <String Id="HelpHeader" Value="Ajuda de Configuração"/>
-
+  
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] - instala, repara, desinstala ou
    cria uma cópia local completa do pacote no diretório. A instalação é padrão.
 
@@ -73,6 +73,6 @@
   <String Id="DotNetEulaLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-license-windows&quot;&gt;Informações de licenciamento para .NET&lt;/A&gt;"/>
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Coleta e recusa de telemetria&lt;/A&gt;"/>
 
-
+  
   <String Id="EulaPrivacy" Value="[WixBundleName] &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;termos de licença&lt;/a&gt; e &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;declaração de privacidade&lt;/a&gt;."/>
 </WixLocalization>

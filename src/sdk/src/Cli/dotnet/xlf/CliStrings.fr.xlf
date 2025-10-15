@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable.
-Creates the variable if it does not exist, overrides if it does.
+        <source>Sets the value of an environment variable. 
+Creates the variable if it does not exist, overrides if it does. 
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Définit la valeur d’une variable d’environnement.
-Crée la variable si elle n’existe pas, et la remplace si elle existe.
+        <target state="translated">Définit la valeur d’une variable d’environnement. 
+Crée la variable si elle n’existe pas, et la remplace si elle existe. 
 Vous pouvez spécifier cet argument plusieurs fois pour fournir plusieurs variables.
 
 Exemples :
@@ -118,9 +118,9 @@ Exemples :
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable.
-Creates the variable if it does not exist, overrides if it does.
-This will force the tests to be run in an isolated process.
+        <source>Sets the value of an environment variable. 
+Creates the variable if it does not exist, overrides if it does. 
+This will force the tests to be run in an isolated process. 
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Définit la valeur d'une variable d'environnement.
-Crée la variable si elle n'existe pas, et la remplace si elle existe.
-Cela entraîne l'exécution forcée des tests dans un processus isolé.
+        <target state="translated">Définit la valeur d'une variable d'environnement. 
+Crée la variable si elle n'existe pas, et la remplace si elle existe. 
+Cela entraîne l'exécution forcée des tests dans un processus isolé. 
 Vous pouvez spécifier cet argument plusieurs fois pour fournir plusieurs variables.
 
 Exemples :

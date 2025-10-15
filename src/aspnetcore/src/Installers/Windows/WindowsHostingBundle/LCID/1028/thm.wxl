@@ -1,16 +1,16 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-
+  
   <String Id="Caption" Value="[WixBundleName] 設定"/>
-
+  
   <String Id="Title" Value="[BundleNameShort]"/>
-
+  
   <String Id="SubTitle" Value="[BundleNameSub]"/>
-
+  
   <String Id="InstallVersion" Value="版本 [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="您確定要取消嗎?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="先前的版本"/>
   <String Id="HelpHeader" Value="安裝程式說明"/>
-
+  
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] - 安裝、修復、解除安裝或在目錄中建立搭售方案的完整本機複本。預設會進行安裝。
 
 /passive | /quiet - 顯示最基本的 UI 且不出現提示，或是不顯示任何 UI 且不出現提示。預設會顯示 UI 及所有提示。
@@ -72,16 +72,16 @@
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;遙測收集和選擇退出&lt;/A&gt;"/>
 
   <!-- Custom UI strings -->
-
+  
   <String Id="Welcome" Value="歡迎使用 [WixBundleName] 安裝程式。"/>
-
+  
   <String Id="InstallResetIIS" Value="請在安裝完成後重新啟動 IIS。如需其他資訊，請參閱&lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;此處&lt;/a&gt; (部分內容可能是機器或 AI 翻譯)。"/>
-
+  
   <String Id="InstallNoIIS" Value="這部電腦上未啟用 IIS。如果您要使用 IIS 執行 ASP.NET Core 應用程式，就必須先安裝 IIS 才能執行此安裝程式。如需其他資訊，請參閱&lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;此處&lt;/a&gt; (部分內容可能是機器或 AI 翻譯)。"/>
-
+  
   <String Id="EulaPrivacy" Value="[WixBundleName] &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;授權條款&lt;/a&gt; (英文) 和&lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;隱私權聲明&lt;/a&gt;。"/>
-
+  
   <String Id="ModifyResetIIS" Value="請在安裝完成後重新啟動 IIS。如需其他資訊，請參閱&lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;此處&lt;/a&gt; (部分內容可能是機器或 AI 翻譯)。"/>
-
+  
   <String Id="ModifyNoIIS" Value="這部電腦上未啟用 IIS。如果您要使用 IIS 執行 ASP.NET Core 應用程式，就必須先安裝 IIS 才能執行此安裝程式。如需其他資訊，請參閱&lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;此處&lt;/a&gt; (部分內容可能是機器或 AI 翻譯)。"/>
 </WixLocalization>

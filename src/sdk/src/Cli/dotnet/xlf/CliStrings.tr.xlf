@@ -90,8 +90,8 @@
         <note />
       </trans-unit>
       <trans-unit id="CmdEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable.
-Creates the variable if it does not exist, overrides if it does.
+        <source>Sets the value of an environment variable. 
+Creates the variable if it does not exist, overrides if it does. 
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -100,8 +100,8 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Bir ortam değişkeninin değerini ayarlar.
-Değişken yoksa oluşturur, varsa değişkeni geçersiz kılar.
+        <target state="translated">Bir ortam değişkeninin değerini ayarlar. 
+Değişken yoksa oluşturur, varsa değişkeni geçersiz kılar. 
 Bu bağımsız değişken, birden çok değişken sağlamak için birden çok kez belirtilebilir.
 
 Örnek:
@@ -118,9 +118,9 @@ Bu bağımsız değişken, birden çok değişken sağlamak için birden çok ke
         <note />
       </trans-unit>
       <trans-unit id="CmdTestEnvironmentVariableDescription">
-        <source>Sets the value of an environment variable.
-Creates the variable if it does not exist, overrides if it does.
-This will force the tests to be run in an isolated process.
+        <source>Sets the value of an environment variable. 
+Creates the variable if it does not exist, overrides if it does. 
+This will force the tests to be run in an isolated process. 
 This argument can be specified multiple times to provide multiple variables.
 
 Examples:
@@ -129,9 +129,9 @@ Examples:
 -e VARIABLE="value;seperated with;semicolons"
 -e VAR1=abc -e VAR2=def -e VAR3=ghi
 </source>
-        <target state="translated">Bir ortam değişkeninin değerini ayarlar.
-Değişken yoksa oluşturur, varsa değişkeni geçersiz kılar.
-Bu, testleri yalıtılmış bir işlemde çalıştırılmaya zorlar.
+        <target state="translated">Bir ortam değişkeninin değerini ayarlar. 
+Değişken yoksa oluşturur, varsa değişkeni geçersiz kılar. 
+Bu, testleri yalıtılmış bir işlemde çalıştırılmaya zorlar. 
 Bu bağımsız değişken, birden çok değişken sağlamak için birden çok kez belirtilebilir.
 
 Örnek:

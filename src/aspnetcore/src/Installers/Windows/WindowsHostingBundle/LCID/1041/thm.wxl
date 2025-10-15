@@ -1,16 +1,16 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-
+  
   <String Id="Caption" Value="[WixBundleName] のセットアップ"/>
-
+  
   <String Id="Title" Value="[BundleNameShort]"/>
-
+  
   <String Id="SubTitle" Value="[BundleNameSub]"/>
-
+  
   <String Id="InstallVersion" Value="バージョン [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="取り消しますか?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="以前のバージョン"/>
   <String Id="HelpHeader" Value="セットアップのヘルプ"/>
-
+  
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]directory[\]] - ディレクトリ内のバンドルの完全なローカル コピーをインストール、修復、アンインストール、または作成します。install が既定値です。
 
 /passive | /quiet - プロンプトなしで最小限の UI を表示するか、UI もプロンプトも表示しません。既定では、UI とすべてのプロンプトが表示されます。
@@ -72,16 +72,16 @@
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;テレメトリの収集とオプトアウト&lt;/A&gt;"/>
 
   <!-- Custom UI strings -->
-
+  
   <String Id="Welcome" Value="[WixBundleName] のセットアップへようこそ。"/>
-
+  
   <String Id="InstallResetIIS" Value="インストールが完了したら、IIS を再起動してください。その他の情報については、&lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;こちら&lt;/a&gt;でご確認ください。"/>
-
+  
   <String Id="InstallNoIIS" Value="このコンピューターでは IIS が有効になっていません。IIS を使用して ASP.NET Core アプリケーションを実行する場合は、このインストーラーを実行する前に、IIS をインストールする必要があります。その他の情報については、&lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;こちら&lt;/a&gt;でご確認ください。"/>
-
+  
   <String Id="EulaPrivacy" Value="[WixBundleName] の &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;ライセンス条項&lt;/a&gt; および &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;プライバシーに関する声明&lt;/a&gt;。"/>
-
+  
   <String Id="ModifyResetIIS" Value="インストールが完了したら、IIS を再起動してください。その他の情報については、&lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;こちら&lt;/a&gt;でご確認ください。"/>
-
+  
   <String Id="ModifyNoIIS" Value="このコンピューターでは IIS が有効になっていません。IIS を使用して ASP.NET Core アプリケーションを実行する場合は、このインストーラーを実行する前に、IIS をインストールする必要があります。その他の情報については、&lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;こちら&lt;/a&gt;でご確認ください。"/>
 </WixLocalization>

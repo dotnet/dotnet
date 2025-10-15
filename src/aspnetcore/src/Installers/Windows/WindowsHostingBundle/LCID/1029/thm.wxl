@@ -1,16 +1,16 @@
 ﻿<WixLocalization Culture="en-us" Language="1033" xmlns="http://wixtoolset.org/schemas/v4/wxl">
-
+  
   <String Id="Caption" Value="Instalace [WixBundleName]"/>
-
+  
   <String Id="Title" Value="[BundleNameShort]"/>
-
+  
   <String Id="SubTitle" Value="[BundleNameSub]"/>
-
+  
   <String Id="InstallVersion" Value="Verze [WixBundleVersion]"/>
   <String Id="ConfirmCancelMessage" Value="Opravdu chcete akci zrušit?"/>
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Předchozí verze"/>
   <String Id="HelpHeader" Value="Nápověda k nastavení"/>
-
+  
   <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [\[]adresář[\]] – Nainstaluje, opraví, odinstaluje nebo vytvoří úplnou místní kopii sady v adresáři. Výchozí možností je instalace.
 
 /passive | /quiet – Zobrazí minimální uživatelské rozhraní bez jakýchkoli výzev nebo nezobrazí žádné rozhraní ani výzvy. Ve výchozím nastavení se zobrazí uživatelské rozhraní a všechny výzvy.
@@ -72,16 +72,16 @@
   <String Id="DotNetCLITelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Shromažďování telemetrie a výslovný nesouhlas&lt;/A&gt;"/>
 
   <!-- Custom UI strings -->
-
+  
   <String Id="Welcome" Value="Vítá vás instalační program produktu [WixBundleName]"/>
-
+  
   <String Id="InstallResetIIS" Value="Po dokončení instalace restartujte službu IIS. Další informace najdete na &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;zde&lt;/a&gt;."/>
-
+  
   <String Id="InstallNoIIS" Value="Služba IIS není na tomto počítači povolená. Pokud máte v úmyslu spouštět aplikace ASP.NET Core se službou IIS, je nutné před spuštěním tohoto instalačního programu nainstalovat službu IIS. Další informace najdete na &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;zde&lt;/a&gt;."/>
-
+  
   <String Id="EulaPrivacy" Value="[WixBundleName] – &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=329770&quot;&gt;licenční podmínky&lt;/a&gt; a &lt;a href=&quot;https://go.microsoft.com/fwlink/?LinkId=786378&quot;&gt;prohlášení o zásadách ochrany osobních údajů&lt;/a&gt;"/>
-
+  
   <String Id="ModifyResetIIS" Value="Po dokončení instalace restartujte službu IIS. Další informace najdete na &lt;a href=&quot;https://aka.ms/aspnet/host-and-deploy-with-iis&quot;&gt;zde&lt;/a&gt;."/>
-
+  
   <String Id="ModifyNoIIS" Value="Služba IIS není na tomto počítači povolená. Pokud máte v úmyslu spouštět aplikace ASP.NET Core se službou IIS, je nutné před spuštěním tohoto instalačního programu nainstalovat službu IIS. Další informace najdete na &lt;a href=&quot;https://aka.ms/aspnet/8.0/host-and-deploy-with-iis&quot;&gt;zde&lt;/a&gt;."/>
 </WixLocalization>
