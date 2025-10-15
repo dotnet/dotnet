@@ -103,7 +103,6 @@ src/runtime/src/mono/mono/eglib/test/*.txt
 src/runtime/src/mono/mono/tests/exiting/*.out
 src/runtime/src/mono/wasm/testassets/**/*.dat
 src/runtime/src/mono/wasm/testassets/**/*.o
-src/runtime/src/native/external/LinuxTracepoints/TestOutput/EventHeaderInterceptorLE64.dat
 src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.mibc
 src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/AOT_PROFILED/*.nettrace
 src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/gRPC/grpc-dotnet/testassets/Certs/InteropTests/server1.pfx
