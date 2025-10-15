@@ -11,22 +11,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-host-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi">
+        <TargetFilename>dotnet-host-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi</TargetFilename>
         <StageFilename>dotnet-host-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>Host</AssetKind>
         <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
         <StageDestination>$(RuntimePrereqStageDirectory)%(StageFilename)</StageDestination>
       </RemoteAsset>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-hostfxr-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi">
+        <TargetFilename>dotnet-hostfxr-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi</TargetFilename>
         <StageFilename>dotnet-hostfxr-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>HostFxr</AssetKind>
         <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
         <StageDestination>$(RuntimePrereqStageDirectory)%(StageFilename)</StageDestination>
       </RemoteAsset>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)/dotnet-runtime-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi">
+        <TargetFilename>dotnet-runtime-$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)-win-$(TargetArchitecture).msi</TargetFilename>
         <StageFilename>dotnet-runtime-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>Runtime</AssetKind>
         <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
