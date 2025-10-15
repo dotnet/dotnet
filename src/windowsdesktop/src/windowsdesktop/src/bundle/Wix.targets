@@ -262,8 +262,8 @@
       <DefineConstants>$(DefineConstants);MajorVersion=$(MajorVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);MinorVersion=$(MinorVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);WinFormsAndWpfVersion=$(WinFormsAndWpfVersion)</DefineConstants>
-      <DefineConstants>$(DefineConstants);DotNetRuntimeVersion=$(DotNetRuntimeVersion)</DefineConstants>
-      <DefineConstants>$(DefineConstants);AspNetCoreVersion=$(AspNetCoreVersion)</DefineConstants>
+      <DefineConstants>$(DefineConstants);DotNetRuntimeVersion=$(MicrosoftNETCoreAppRefVersion)</DefineConstants>
+      <DefineConstants>$(DefineConstants);AspNetCoreVersion=$(MicrosoftNETCoreAppRefVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);MinimumVSVersion=$(MinimumVSVersion)</DefineConstants>
 
       <WindowsDesktopRuntimeMsiPath>$(ArtifactsPackagesDir)Shipping\windowsdesktop-runtime-$(Version)-win-$(TargetArchitecture).msi</WindowsDesktopRuntimeMsiPath>

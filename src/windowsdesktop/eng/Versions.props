@@ -35,9 +35,6 @@
     <!-- WiX -->
     <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == '' and '$(DefaultWixSdkVersion)' != ''">$(DefaultWixSdkVersion)</MicrosoftWixToolsetSdkVersion>
     
-    <!-- Runtime version variables for CI builds (missing variables causing CI issues) -->
-    <DotNetRuntimeVersion>$(MicrosoftNETCoreAppRefVersion)</DotNetRuntimeVersion>
-    <AspNetCoreVersion>$(MicrosoftNETCoreAppRefVersion)</AspNetCoreVersion>
     <!-- Transport package version for VS insertion packages is defined in Version.Details.props -->
   </PropertyGroup>
 </Project>
