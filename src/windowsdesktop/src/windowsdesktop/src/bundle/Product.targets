@@ -49,15 +49,15 @@
   <Target Name="CollectDependencies" BeforeTargets="Restore;CollectPackageReferences">
     <!-- Use the BrowserDebugHost as a sentinel for the nonshipping version for NETCoreApp. -->
     <ItemGroup>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+      <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
         <TargetFileName>dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
   <StageFilename>dotnet-runtime-win-$(TargetArchitecture).msi</StageFilename>
       </RemoteAsset>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+      <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
         <TargetFileName>dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
   <StageFilename>dotnet-host-win-$(TargetArchitecture).msi</StageFilename>
       </RemoteAsset>
-      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+      <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
         <TargetFileName>dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
   <StageFilename>dotnet-hostfxr-win-$(TargetArchitecture).msi</StageFilename>
       </RemoteAsset>

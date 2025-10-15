@@ -16,7 +16,8 @@
     <DisableWixCreateLightCommandPackageDrop Condition="'$(OutputType)'!='Bundle'">true</DisableWixCreateLightCommandPackageDrop>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- WiX tooling is only needed for installer builds, not for source-only builds -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" />
   <PackageReference Include="Microsoft.Wix" ExcludeAssets="all" GeneratePathProperty="true" />
   <PackageReference Include="Microsoft.WixToolset.UI.wixext" GeneratePathProperty="true" />
