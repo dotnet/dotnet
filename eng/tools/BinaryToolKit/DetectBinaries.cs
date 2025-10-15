@@ -38,7 +38,7 @@ public static class DetectBinaries
             return (pattern: p, matcher: m);
         }).ToList();
 
-        foreach (var file in Directory.GetFiles(targetDirectory, "*", new EnumerationOptions() { AttributesToSkip = FileAttributes.ReparsePoint, RecurseSubdirectories = true }))
+        foreach (var file in Directory.EnumerateFiles(targetDirectory, "*", new EnumerationOptions() { AttributesToSkip = FileAttributes.ReparsePoint, RecurseSubdirectories = true }))
         {
             // This code is meant for finding binaries in source code repositories.
             // Most files will be non-binary. We want to avoid checking each of those against the patternMatchers [O(N*M)], so we first check if the file is binary.
