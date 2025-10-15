@@ -5,22 +5,9 @@
     <PlatformPackageType>RuntimePack</PlatformPackageType>
     <ArchiveName>windowsdesktop-runtime</ArchiveName>
     <InstallerName>windowsdesktop-runtime</InstallerName>
-    <RuntimeIdentifiers>win-x64;win-x86;win-arm64</RuntimeIdentifiers>
     <InstallerRuntimeIdentifiers>win-x64;win-x86;win-arm64</InstallerRuntimeIdentifiers>
     <VSInsertionShortComponentName>WindowsDesktop.SharedFramework</VSInsertionShortComponentName>
     <RollForward>LatestPatch</RollForward>
-    
-    <!-- WindowsDesktop relies on transport packages with pre-compiled R2R assemblies -->
-    <!-- Local CrossGen2 compilation disabled to avoid conflicts with transport packages -->
-    <PublishReadyToRun>false</PublishReadyToRun>
-    <BuildInParallel>false</BuildInParallel>
-    
-    <!-- Additional parallelism controls for multi-architecture builds -->
-    <MaxCpuCount>1</MaxCpuCount>
-    <BuildingInstallers>true</BuildingInstallers>
-    
-    <!-- CI-specific stability measures to prevent resource conflicts -->
-    <!-- Note: We consume pre-compiled assemblies from transport packages, not building them -->
   </PropertyGroup>
 
   <!-- Profile is intentionally undefined so that the reference will only be included when no profile is specified i.e. both WPF and WindowsForms are in use https://github.com/dotnet/wpf/blob/bbfc24fd13804a191e20064acd599b0a359092df/packaging/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.props#L45-L46 -->
