@@ -1,7 +1,7 @@
 <Project>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
-  <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" />
+  <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" Condition="'$(SkipSharedSourceOnlyImport)' != 'true'" />
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
 
