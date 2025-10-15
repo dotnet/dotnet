@@ -81,26 +81,6 @@
       <ExeBundleInstallerFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).exe</ExeBundleInstallerFile>
       <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
     </PropertyGroup>
-
-    <!--
-      Packages produced for Azure Linux must be signed with a special certificate.
-      RPM v4 doesn't support multiple signatures, so we must have two separate copies of the RPM for us to sign.
-      To solve this, we make a copy of the RPM for Azure Linux (which the Arcade SDK will sign with the correct certificate).
-      If Azure Linux ever switches to RPM v6, we should be able to remove this workaround if our signing tooling adds support for multiple signatures
-      (something RPM v6 supports but RPM v4 does not).
-    -->
-    <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
-      <CreateRPMForAzureLinux>true</CreateRPMForAzureLinux>
-      <!-- PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for Azure Linux. -->
-      <CreateRPMForAzureLinux Condition="'$(PackageTargetOS)' != ''">false</CreateRPMForAzureLinux>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(CreateRPMForAzureLinux)' == 'true'">
-      <_AzureLinuxVersionSuffix>azl</_AzureLinuxVersionSuffix>
-      <_InstallerBuildPartAzureLinux>$(Version)-$(_AzureLinuxVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartAzureLinux>
-      <_InstallerFileNameWithoutExtensionAzureLinux>$(InstallerName)-$(_InstallerBuildPartAzureLinux)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionAzureLinux>
-      <_InstallerFileAzureLinux>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionAzureLinux)$(InstallerExtension)</_InstallerFileAzureLinux>
-    </PropertyGroup>
   </Target>
 
   <!-- This target is a hook for users to add package info in a target. -->
@@ -345,10 +325,24 @@
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
   </Target>
 
+  <!--
+    Packages produced for Azure Linux must be signed with a special certificate.
+    Additionally, some distros use old keys (SHA-1 based) so there's a different cert for new packages.
+    RPM v4 doesn't support multiple signatures, so we must have two separate copies of the RPM for us to sign.
+    To solve this, we make copies of the packages with special names (which the Arcade SDK will sign with the correct certificate).
+    PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for Azure Linux.
+    As a result, we don't need to create a separate copy of the package for Azure Linux, but we do need to create a copy with the new key (unless the target is Azure Linux).
+  -->
   <Target Name="_BuildAzureLinuxRpm"
           AfterTargets="GenerateRpm"
-          Condition="'$(CreateRPMForAzureLinux)' == 'true'">
+          Condition="'$(PackageTargetOS)' == ''">
     <!-- AzureLinux -->
+    <PropertyGroup>
+      <_AzureLinuxVersionSuffix>azl</_AzureLinuxVersionSuffix>
+      <_InstallerBuildPartAzureLinux>$(Version)-$(_AzureLinuxVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartAzureLinux>
+      <_InstallerFileNameWithoutExtensionAzureLinux>$(InstallerName)-$(_InstallerBuildPartAzureLinux)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionAzureLinux>
+      <_InstallerFileAzureLinux>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionAzureLinux)$(InstallerExtension)</_InstallerFileAzureLinux>
+    </PropertyGroup>
     <Copy SourceFiles="$(_InstallerFile)"
           DestinationFiles="$(_InstallerFileAzureLinux)"
           OverwriteReadOnlyFiles="True"
@@ -356,6 +350,26 @@
           UseHardlinksIfPossible="False" />
 
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFileAzureLinux)" Importance="high" />
+  </Target>
+
+  <Target Name="_BuildNewKeyLinuxPackage"
+          AfterTargets="GenerateRpm;GenerateDeb"
+          Condition="!$(PackageTargetOS.Contains('azl'))">
+    <!-- Packages to be signed with the new key -->
+    <PropertyGroup>
+      <_NewKeyVersionSuffix>newkey</_NewKeyVersionSuffix>
+      <_InstallerBuildPartNewKey>$(Version)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
+      <_InstallerBuildPartNewKey Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
+      <_InstallerFileNameWithoutExtensionNewKey>$(InstallerName)-$(_InstallerBuildPartNewKey)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionNewKey>
+      <_InstallerFileNewKey>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionNewKey)$(InstallerExtension)</_InstallerFileNewKey>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_InstallerFile)"
+          DestinationFiles="$(_InstallerFileNewKey)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFileNewKey)" Importance="high" />
   </Target>
 
   <!--

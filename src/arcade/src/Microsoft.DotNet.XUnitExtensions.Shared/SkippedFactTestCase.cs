@@ -1,11 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-// Not adding the support for xunit.v3.
-// This is used by ConditionalFact and ConditionalTheory which we no longer support in xunit.v3.
-// Still keeping the logic inside supporting xunit.v3 in case we decided to add it.
-#if !USES_XUNIT_3
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,4 +74,3 @@ namespace Microsoft.DotNet.XUnitExtensions
         }
     }
 }
-#endif

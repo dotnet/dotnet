@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
 internal readonly struct SemanticRange : IComparable<SemanticRange>
 {
-    public SemanticRange(int kind, int startLine, int startCharacter, int endLine, int endCharacter, int modifier, bool fromRazor)
+    public SemanticRange(int kind, int startLine, int startCharacter, int endLine, int endCharacter, int modifier, bool fromRazor, bool isCSharpWhitespace)
     {
         Kind = kind;
         StartLine = startLine;
@@ -17,6 +17,7 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
         EndCharacter = endCharacter;
         Modifier = modifier;
         FromRazor = fromRazor;
+        IsCSharpWhitespace = isCSharpWhitespace;
     }
 
     public SemanticRange(int kind, LinePositionSpan range, int modifier, bool fromRazor)
@@ -25,7 +26,12 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
     }
 
     public SemanticRange(int kind, LinePosition start, LinePosition end, int modifier, bool fromRazor)
-        : this(kind, start.Line, start.Character, end.Line, end.Character, modifier, fromRazor)
+        : this(kind, start.Line, start.Character, end.Line, end.Character, modifier, fromRazor, isCSharpWhitespace: false)
+    {
+    }
+
+    public SemanticRange(int kind, int startLine, int startCharacter, int endLine, int endCharacter, int modifier, bool fromRazor)
+        : this(kind, startLine, startCharacter, endLine, endCharacter, modifier, fromRazor, isCSharpWhitespace: false)
     {
     }
 
@@ -44,6 +50,8 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
     /// covers a range.
     /// </summary>
     public bool FromRazor { get; }
+
+    public bool IsCSharpWhitespace { get; }
 
     public LinePositionSpan AsLinePositionSpan()
         => new(new(StartLine, StartCharacter), new(EndLine, EndCharacter));
