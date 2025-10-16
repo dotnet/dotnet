@@ -87,7 +87,8 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
         var context = FormattingContext.Create(
             documentSnapshot,
             codeDocument,
-            options);
+            options,
+            logger: null);
         return context;
     }
 
