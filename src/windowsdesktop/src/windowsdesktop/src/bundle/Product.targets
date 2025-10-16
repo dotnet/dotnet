@@ -10,7 +10,7 @@
     <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
       <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
     </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
+    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
       <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
     </RuntimeInstallers>
     <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">

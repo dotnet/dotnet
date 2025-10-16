@@ -248,7 +248,13 @@
   <Target Name="Pack" DependsOnTargets="Build;PublishBundle;GenerateWixpackPackage">
     <Message Text="Bundle pack completed" Importance="high" />
   </Target>
-
+  <!-- This target can be used to set additional Wix options. -->  
+  <Target Name="SetAdditionalWixOptions" BeforeTargets="CoreCompile">  
+    <PropertyGroup>  
+      <!-- Use backwards compatible GUID generation. -->  
+      <CompilerAdditionalOptions>$(CompilerAdditionalOptions) -bcgg</CompilerAdditionalOptions>  
+    </PropertyGroup>  
+  </Target>  
   <!-- Generate a wixpack using the Wix toolset task (pattern aligned with aspnetcore). -->
   <!-- Run after Build to ensure all artifacts are ready, but before Pack -->
   <Target Name="GenerateWixpackPackage" AfterTargets="Build" BeforeTargets="Pack" Condition="'$(OutputType)'=='Bundle' AND '$(WixCreateWixPackOutput)'=='true' AND '$(RunWixpackTargets)'=='true'">
@@ -276,6 +282,7 @@
     <Message Text="[Wixpack] WixpackOutputDir=$(WixpackOutputDir)" Importance="high" />
     <Message Text="[Wixpack] Existing wixpack detected at $(ExpectedBundleWixpackFile); skipping custom generation" Importance="high" Condition="Exists('$(ExpectedBundleWixpackFile)')" />
     <CreateWixBuildWixpack
+        AdditionalOptions="$(CompilerAdditionalOptions) $(LinkerAdditionalOptions)"
         Condition="!Exists('$(ExpectedBundleWixpackFile)') AND '$(WixpackOutputDir)'!=''"
         InstallerPlatform="$(InstallerPlatform)"
         InstallerFile="$(TargetPath)"
