@@ -1,7 +1,6 @@
 <Project>
-  <!-- Import VersionDetails.props for direct version property access -->
   <!-- Extracted WiX build targets for Windows Desktop Runtime bundle -->
-  
+
   <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <Target Name="CollectRuntimePrereqDependencies" Condition="'$(RestoreRuntimePrereqs)'!='false' AND '$(TargetArchitecture)'!=''">
@@ -13,43 +12,25 @@
 
     <ItemGroup>
       <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+        <TargetFileName>dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
         <StageFilename>dotnet-host-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>Host</AssetKind>
-        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
+        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFileName)</DownloadDestination>
         <StageDestination>$(RuntimePrereqStageDirectory)%(StageFilename)</StageDestination>
       </RemoteAsset>
       <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+        <TargetFileName>dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
         <StageFilename>dotnet-hostfxr-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>HostFxr</AssetKind>
-        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
+        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFileName)</DownloadDestination>
         <StageDestination>$(RuntimePrereqStageDirectory)%(StageFilename)</StageDestination>
       </RemoteAsset>
       <RemoteAsset Include="$(MicrosoftNETCorePlatformsVersion)/dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
-        <TargetFilename>dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFilename>
+        <TargetFileName>dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
         <StageFilename>dotnet-runtime-win-$(TargetArchitecture).msi</StageFilename>
         <AssetKind>Runtime</AssetKind>
-        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFilename)</DownloadDestination>
+        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(TargetFileName)</DownloadDestination>
         <StageDestination>$(RuntimePrereqStageDirectory)%(StageFilename)</StageDestination>
-      </RemoteAsset>
-    </ItemGroup>
-
-    <ItemGroup>
-      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.TargetFilename)'=='' AND '%(RemoteAsset.TargetFileName)'!=''">
-        <TargetFilename>%(RemoteAsset.TargetFileName)</TargetFilename>
-      </RemoteAsset>
-      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.TargetFilename)'=='' AND '%(RemoteAsset.Filename)'!=''">
-        <TargetFilename>%(RemoteAsset.Filename)%(RemoteAsset.Extension)</TargetFilename>
-      </RemoteAsset>
-      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.StageFilename)'=='' AND '%(RemoteAsset.TargetFilename)'!=''">
-        <StageFilename>%(RemoteAsset.TargetFilename)</StageFilename>
-      </RemoteAsset>
-      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.DownloadDestination)'=='' AND '%(RemoteAsset.TargetFilename)'!=''">
-        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(RemoteAsset.TargetFilename)</DownloadDestination>
-      </RemoteAsset>
-      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.StageDestination)'=='' AND '%(RemoteAsset.StageFilename)'!=''">
-        <StageDestination>$(RuntimePrereqStageDirectory)%(RemoteAsset.StageFilename)</StageDestination>
       </RemoteAsset>
     </ItemGroup>
 
@@ -60,7 +41,7 @@
   <Target Name="FetchRuntimePrereqDependencies"
           DependsOnTargets="CollectRuntimePrereqDependencies"
           Condition="'$(RestoreRuntimePrereqs)'!='false' AND '$(TargetArchitecture)'!=''"
-          Outputs="$(BaseIntermediateOutputPath)runtime-prereqs\$(TargetArchitecture)\%(RemoteAsset.TargetFilename)">
+          Outputs="$(BaseIntermediateOutputPath)runtime-prereqs\$(TargetArchitecture)\%(RemoteAsset.TargetFileName)">
     <PropertyGroup>
       <_CurrentRemoteAsset>%(RemoteAsset.Identity)</_CurrentRemoteAsset>
       <_CurrentDestination>%(RemoteAsset.DownloadDestination)</_CurrentDestination>
@@ -71,9 +52,7 @@
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)Runtime/$(_CurrentRemoteAsset)')" />
     </ItemGroup>
 
-    <DownloadFile Condition="!Exists('$(_CurrentDestination)')"
-                  Uris="@(UrisToDownload)"
-                  DestinationPath="$(_CurrentDestination)" />
+    <DownloadFile Condition="!Exists('$(_CurrentDestination)')" Uris="@(UrisToDownload)" DestinationPath="$(_CurrentDestination)" />
   </Target>
 
   <!-- Flexible prerequisite runtime MSI staging with robust discovery -->
@@ -110,10 +89,7 @@
       <_RuntimeSource Include="@(_TransportAsset)" Condition="!Exists('%(DownloadDestination)')" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(_RuntimeSource->'%(ResolvedSource)')"
-          DestinationFiles="@(_RuntimeSource->'%(StageDestination)')"
-          SkipUnchangedFiles="true"
-          Condition="@(_RuntimeSource)!=''" />
+    <Copy SourceFiles="@(_RuntimeSource->'%(ResolvedSource)')" DestinationFiles="@(_RuntimeSource->'%(StageDestination)')" SkipUnchangedFiles="true" Condition="@(_RuntimeSource)!=''" />
 
     <ItemGroup>
       <_StagedHost Include="$(RuntimePrereqStageDirectory)dotnet-host-win-$(TargetArchitecture).msi" Condition="Exists('$(RuntimePrereqStageDirectory)dotnet-host-win-$(TargetArchitecture).msi')" />
@@ -121,10 +97,7 @@
       <_StagedRuntime Include="$(RuntimePrereqStageDirectory)dotnet-runtime-win-$(TargetArchitecture).msi" Condition="Exists('$(RuntimePrereqStageDirectory)dotnet-runtime-win-$(TargetArchitecture).msi')" />
     </ItemGroup>
 
-    <WriteLinesToFile File="$(RuntimePrereqStageDirectory)resolved-runtime-version.txt"
-                      Lines="RuntimePrereqVersion=$(MicrosoftNETCoreAppRefVersion)"
-                      Overwrite="true"
-                      Condition="'$(MicrosoftNETCoreAppRefVersion)'!='' AND (@(_StagedHost)!='' OR @(_StagedHostFxr)!='' OR @(_StagedRuntime)!='')" />
+    <WriteLinesToFile File="$(RuntimePrereqStageDirectory)resolved-runtime-version.txt" Lines="RuntimePrereqVersion=$(MicrosoftNETCoreAppRefVersion)" Overwrite="true" Condition="'$(MicrosoftNETCoreAppRefVersion)'!='' AND (@(_StagedHost)!='' OR @(_StagedHostFxr)!='' OR @(_StagedRuntime)!='')" />
   </Target>
 
   <Target Name="StagePrereqRuntimeMsis" BeforeTargets="_GetBundledComponentInstallers" DependsOnTargets="RestoreRuntimePrereqs">
@@ -183,16 +156,14 @@
       <DefineConstants>$(DefineConstants);NativeMachine_x64=x64</DefineConstants>
       <DefineConstants>$(DefineConstants);NativeMachine_arm64=arm64</DefineConstants>
 
-  <!-- Allow downgrade only for preview/RC builds to handle version stamp issues. Disable for GA to prevent servicing downgrades. -->
-  <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' == 'true'">yes</SuppressDowngradeFailure>
-  <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' != 'true'">no</SuppressDowngradeFailure>
+      <!-- Allow downgrade only for preview/RC builds to handle version stamp issues. Disable for GA to prevent servicing downgrades. -->
+      <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' == 'true'">yes</SuppressDowngradeFailure>
+      <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' != 'true'">no</SuppressDowngradeFailure>
       <DefineConstants>$(DefineConstants);SuppressDowngradeFailure=$(SuppressDowngradeFailure)</DefineConstants>
 
       <DefineConstants>$(DefineConstants);MajorVersion=$(MajorVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);MinorVersion=$(MinorVersion)</DefineConstants>
-      <DefineConstants>$(DefineConstants);WinFormsAndWpfVersion=$(WinFormsAndWpfVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);DotNetRuntimeVersion=$(MicrosoftNETCoreAppRefVersion)</DefineConstants>
-      <DefineConstants>$(DefineConstants);AspNetCoreVersion=$(MicrosoftNETCoreAppRefVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);MinimumVSVersion=$(MinimumVSVersion)</DefineConstants>
 
       <WindowsDesktopRuntimeMsiPath>$(ArtifactsPackagesDir)Shipping\windowsdesktop-runtime-$(Version)-win-$(TargetArchitecture).msi</WindowsDesktopRuntimeMsiPath>
@@ -230,17 +201,17 @@
     <GenerateGuidFromName Name="$(ProviderKeySeed)">
       <Output TaskParameter="GeneratedGuid" PropertyName="GeneratedProviderKey" />
     </GenerateGuidFromName>
-    
+
     <!-- Generate architecture-specific UpgradeCode (different per architecture for SxS) -->
     <GenerateGuidFromName Name="$(UpgradeCodeSeedWithArch)">
       <Output TaskParameter="GeneratedGuid" PropertyName="GeneratedUpgradeCode" />
     </GenerateGuidFromName>
-    
+
     <PropertyGroup>
       <DefineConstants>$(DefineConstants);ProviderKey={$(GeneratedProviderKey)}</DefineConstants>
       <DefineConstants>$(DefineConstants);UpgradeCode={$(GeneratedUpgradeCode)}</DefineConstants>
     </PropertyGroup>
-    
+
     <Message Text="Generated ProviderKey for $(TargetArchitecture): {$(GeneratedProviderKey)} from seed '$(ProviderKeySeed)'" Importance="high" />
     <Message Text="Generated UpgradeCode for $(TargetArchitecture) v$(MajorVersion).$(MinorVersion): {$(GeneratedUpgradeCode)} from seed '$(UpgradeCodeSeedWithArch)'" Importance="high" />
   </Target>
@@ -248,13 +219,13 @@
   <Target Name="Pack" DependsOnTargets="Build;PublishBundle;GenerateWixpackPackage">
     <Message Text="Bundle pack completed" Importance="high" />
   </Target>
-  <!-- This target can be used to set additional Wix options. -->  
-  <Target Name="SetAdditionalWixOptions" BeforeTargets="CoreCompile">  
-    <PropertyGroup>  
-      <!-- Use backwards compatible GUID generation. -->  
-      <CompilerAdditionalOptions>$(CompilerAdditionalOptions) -bcgg</CompilerAdditionalOptions>  
-    </PropertyGroup>  
-  </Target>  
+  <!-- This target can be used to set additional Wix options. -->
+  <Target Name="SetAdditionalWixOptions" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <!-- Use backwards compatible GUID generation. -->
+      <CompilerAdditionalOptions>$(CompilerAdditionalOptions) -bcgg</CompilerAdditionalOptions>
+    </PropertyGroup>
+  </Target>
   <!-- Generate a wixpack using the Wix toolset task (pattern aligned with aspnetcore). -->
   <!-- Run after Build to ensure all artifacts are ready, but before Pack -->
   <Target Name="GenerateWixpackPackage" AfterTargets="Build" BeforeTargets="Pack" Condition="'$(OutputType)'=='Bundle' AND '$(WixCreateWixPackOutput)'=='true' AND '$(RunWixpackTargets)'=='true'">
@@ -264,43 +235,36 @@
       <WixpackOutputDir Condition="'$(WixCommandPackagesDir)'!=''">$(WixCommandPackagesDir)</WixpackOutputDir>
       <WixpackOutputDir Condition="'$(WixCommandPackagesDir)'==''">$(ArtifactsPackagesDir)NonShipping</WixpackOutputDir>
       <DefaultBundleWixpackFile>$(WixpackOutputDir)\$(TargetFileName).wixpack.zip</DefaultBundleWixpackFile>
-  <BundleShippingName Condition="'$(BundleShippingName)'==''">$(OutputName).exe</BundleShippingName>
-  <!-- Use version properties directly from VersionDetails.props -->
-  <!-- Use direct version properties from Version.Details.props -->
-  <WinFormsAndWpfVersion>$(MicrosoftNETCoreAppRefVersion)</WinFormsAndWpfVersion>
-  <MajorVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^(\d+)').Groups[1].Value)</MajorVersion>
-  <MinorVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^\d+\.(\d+)').Groups[1].Value)</MinorVersion>
-  <PatchVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^\d+\.\d+\.(\d+)').Groups[1].Value)</PatchVersion>
-  <!-- Expected wixpack file should match the bundle executable name -->
-  <ExpectedBundleWixpackFile>$(WixpackOutputDir)\$(BundleShippingName).wixpack.zip</ExpectedBundleWixpackFile>
-  <!-- PDB name follows Wix default: TargetName + .wixpdb -->
-  <_BundlePdbFile>$(TargetDir)$(TargetName).wixpdb</_BundlePdbFile>
+      <BundleShippingName Condition="'$(BundleShippingName)'==''">$(OutputName).exe</BundleShippingName>
+      <!-- Expected wixpack file should match the bundle executable name -->
+      <ExpectedBundleWixpackFile>$(WixpackOutputDir)\$(BundleShippingName).wixpack.zip</ExpectedBundleWixpackFile>
+      <!-- PDB name follows Wix default: TargetName + .wixpdb -->
+      <_BundlePdbFile>$(TargetDir)$(TargetName).wixpdb</_BundlePdbFile>
     </PropertyGroup>
-    <Move Condition="'$(DefaultBundleWixpackFile)' != '' AND '$(ExpectedBundleWixpackFile)' != '' AND '$(DefaultBundleWixpackFile)' != '$(ExpectedBundleWixpackFile)' AND Exists('$(DefaultBundleWixpackFile)')"
-      SourceFiles="$(DefaultBundleWixpackFile)" DestinationFiles="$(ExpectedBundleWixpackFile)" OverwriteReadOnlyFiles="true" />
+    <Move Condition="'$(DefaultBundleWixpackFile)' != '' AND '$(ExpectedBundleWixpackFile)' != '' AND '$(DefaultBundleWixpackFile)' != '$(ExpectedBundleWixpackFile)' AND Exists('$(DefaultBundleWixpackFile)')" SourceFiles="$(DefaultBundleWixpackFile)" DestinationFiles="$(ExpectedBundleWixpackFile)" OverwriteReadOnlyFiles="true" />
     <Message Text="[Wixpack] RunWixpackTargets=$(RunWixpackTargets), WixCreateWixPackOutput=$(WixCreateWixPackOutput)" Importance="high" />
     <Message Text="[Wixpack] WixpackOutputDir=$(WixpackOutputDir)" Importance="high" />
     <Message Text="[Wixpack] Existing wixpack detected at $(ExpectedBundleWixpackFile); skipping custom generation" Importance="high" Condition="Exists('$(ExpectedBundleWixpackFile)')" />
     <CreateWixBuildWixpack
-        AdditionalOptions="$(CompilerAdditionalOptions) $(LinkerAdditionalOptions)"
-        Condition="!Exists('$(ExpectedBundleWixpackFile)') AND '$(WixpackOutputDir)'!=''"
-        InstallerPlatform="$(InstallerPlatform)"
-        InstallerFile="$(TargetPath)"
-        IntermediateDirectory="$(IntermediateOutputPath)"
-        OutputFolder="$(WixpackOutputDir)"
-        OutputType="$(OutputType)"
-        PdbFile="$(_BundlePdbFile)"
-        PdbType="$(DebugType)"
-        SourceFiles="@(Compile)"
-        Extensions="@(_ResolvedWixExtensionPaths)"
-        LocalizationFiles="@(_WixLocalizationFile)"
-        BindPaths="@(BindPath)"
-        WixpackWorkingDir="$(WixpackWorkingDir)"
-        DefineConstants="$(DefineConstants)">
+      AdditionalOptions="$(CompilerAdditionalOptions) $(LinkerAdditionalOptions)"
+      Condition="!Exists('$(ExpectedBundleWixpackFile)') AND '$(WixpackOutputDir)'!=''"
+      InstallerPlatform="$(InstallerPlatform)"
+      InstallerFile="$(TargetPath)"
+      IntermediateDirectory="$(IntermediateOutputPath)"
+      OutputFolder="$(WixpackOutputDir)"
+      OutputType="$(OutputType)"
+      PdbFile="$(_BundlePdbFile)"
+      PdbType="$(DebugType)"
+      SourceFiles="@(Compile)"
+      Extensions="@(_ResolvedWixExtensionPaths)"
+      LocalizationFiles="@(_WixLocalizationFile)"
+      BindPaths="@(BindPath)"
+      WixpackWorkingDir="$(WixpackWorkingDir)"
+      DefineConstants="$(DefineConstants)">
+
       <Output TaskParameter="OutputFile" PropertyName="_WixBuildCommandPackageNameOutput" />
     </CreateWixBuildWixpack>
-    <Move Condition="'$(_WixBuildCommandPackageNameOutput)' != '' AND '$(ExpectedBundleWixpackFile)' != '' AND '$(_WixBuildCommandPackageNameOutput)' != '$(ExpectedBundleWixpackFile)' AND Exists('$(_WixBuildCommandPackageNameOutput)')"
-      SourceFiles="$(_WixBuildCommandPackageNameOutput)" DestinationFiles="$(ExpectedBundleWixpackFile)" OverwriteReadOnlyFiles="true" />
+    <Move Condition="'$(_WixBuildCommandPackageNameOutput)' != '' AND '$(ExpectedBundleWixpackFile)' != '' AND '$(_WixBuildCommandPackageNameOutput)' != '$(ExpectedBundleWixpackFile)' AND Exists('$(_WixBuildCommandPackageNameOutput)')" SourceFiles="$(_WixBuildCommandPackageNameOutput)" DestinationFiles="$(ExpectedBundleWixpackFile)" OverwriteReadOnlyFiles="true" />
     <PropertyGroup>
       <_WixBuildCommandPackageNameOutput Condition="'$(_WixBuildCommandPackageNameOutput)' != '' AND '$(ExpectedBundleWixpackFile)' != ''">$(ExpectedBundleWixpackFile)</_WixBuildCommandPackageNameOutput>
     </PropertyGroup>

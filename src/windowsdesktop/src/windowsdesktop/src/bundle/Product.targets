@@ -6,38 +6,14 @@
     <DefineConstants>$(DefineConstants);InstallersOutputPath=$(InstallersOutputPath)</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetArchitecture)' == 'x86'">
-    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
+  <ItemGroup>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
       <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
     </RuntimeInstallers>
     <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
       <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
     </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
-      <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetArchitecture)' == 'x64'">
-    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
-      <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
-      <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
-      <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetArchitecture)' == 'arm64'">
-    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
-      <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
-      <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
-    </RuntimeInstallers>
-    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
+    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
       <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
     </RuntimeInstallers>
   </ItemGroup>
