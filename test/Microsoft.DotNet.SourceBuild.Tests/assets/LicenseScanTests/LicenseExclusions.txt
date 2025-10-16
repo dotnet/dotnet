@@ -114,6 +114,9 @@ src/nuget-client/test/TestUtilities/Test.Utility/JsonData.cs
 # roslyn
 #
 
+# Reference to a license, not applicable to source
+src/roslyn/THIRD-PARTY-NOTICES.txt
+
 # Test data
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
