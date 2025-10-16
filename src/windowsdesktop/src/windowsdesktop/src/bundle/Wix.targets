@@ -1,4 +1,5 @@
 <Project>
+  <!-- Import VersionDetails.props for direct version property access -->
   <!-- Extracted WiX build targets for Windows Desktop Runtime bundle -->
   
   <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
@@ -257,11 +258,17 @@
       <WixpackOutputDir Condition="'$(WixCommandPackagesDir)'!=''">$(WixCommandPackagesDir)</WixpackOutputDir>
       <WixpackOutputDir Condition="'$(WixCommandPackagesDir)'==''">$(ArtifactsPackagesDir)NonShipping</WixpackOutputDir>
       <DefaultBundleWixpackFile>$(WixpackOutputDir)\$(TargetFileName).wixpack.zip</DefaultBundleWixpackFile>
-      <BundleShippingName Condition="'$(BundleShippingName)'==''">$(OutputName).exe</BundleShippingName>
-      <!-- Expected wixpack file should match the bundle executable name -->
-      <ExpectedBundleWixpackFile>$(WixpackOutputDir)\$(BundleShippingName).wixpack.zip</ExpectedBundleWixpackFile>
-      <!-- PDB name follows Wix default: TargetName + .wixpdb -->
-      <_BundlePdbFile>$(TargetDir)$(TargetName).wixpdb</_BundlePdbFile>
+  <BundleShippingName Condition="'$(BundleShippingName)'==''">$(OutputName).exe</BundleShippingName>
+  <!-- Use version properties directly from VersionDetails.props -->
+  <!-- Use direct version properties from Version.Details.props -->
+  <WinFormsAndWpfVersion>$(MicrosoftNETCoreAppRefVersion)</WinFormsAndWpfVersion>
+  <MajorVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^(\d+)').Groups[1].Value)</MajorVersion>
+  <MinorVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^\d+\.(\d+)').Groups[1].Value)</MinorVersion>
+  <PatchVersion>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETCoreAppRefVersion)', '^\d+\.\d+\.(\d+)').Groups[1].Value)</PatchVersion>
+  <!-- Expected wixpack file should match the bundle executable name -->
+  <ExpectedBundleWixpackFile>$(WixpackOutputDir)\$(BundleShippingName).wixpack.zip</ExpectedBundleWixpackFile>
+  <!-- PDB name follows Wix default: TargetName + .wixpdb -->
+  <_BundlePdbFile>$(TargetDir)$(TargetName).wixpdb</_BundlePdbFile>
     </PropertyGroup>
     <Move Condition="'$(DefaultBundleWixpackFile)' != '' AND '$(ExpectedBundleWixpackFile)' != '' AND '$(DefaultBundleWixpackFile)' != '$(ExpectedBundleWixpackFile)' AND Exists('$(DefaultBundleWixpackFile)')"
       SourceFiles="$(DefaultBundleWixpackFile)" DestinationFiles="$(ExpectedBundleWixpackFile)" OverwriteReadOnlyFiles="true" />
