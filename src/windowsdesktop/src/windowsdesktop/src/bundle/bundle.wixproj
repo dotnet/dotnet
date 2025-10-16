@@ -6,10 +6,6 @@
     <!-- OutputType determines the extension, .msi, .wixlib, .exe, etc. -->
     <OutputType>Bundle</OutputType>
     
-    <!-- MSBuild parallelism settings to prevent WiX file locking issues -->
-    <BuildInParallel>false</BuildInParallel>
-    <MaxCpuCount>1</MaxCpuCount>
-    
     <!-- Enable Wixpack generation for all build types (PR, CI, local) -->
     <WixCreateWixPackOutput>true</WixCreateWixPackOutput>
     
