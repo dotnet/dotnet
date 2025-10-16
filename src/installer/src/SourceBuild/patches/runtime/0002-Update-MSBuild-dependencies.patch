@@ -15,23 +15,23 @@ index c0d77ea95ce..f4353aa9cab 100644
 +++ b/eng/Version.Details.xml
 @@ -414,6 +414,18 @@
        <Uri>https://github.com/dotnet/msbuild</Uri>
-       <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
+       <Sha>2e2d89a923d83b7cf43ec543f725c1b206c912fe</Sha>
      </Dependency>
-+    <Dependency Name="Microsoft.Build.Framework" Version="17.8.3">
++    <Dependency Name="Microsoft.Build.Framework" Version="17.8.29">
 +      <Uri>https://github.com/dotnet/msbuild</Uri>
-+      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++      <Sha>2e2d89a923d83b7cf43ec543f725c1b206c912fe</Sha>
 +    </Dependency>
-+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.8.3">
++    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.8.29">
 +      <Uri>https://github.com/dotnet/msbuild</Uri>
-+      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++      <Sha>2e2d89a923d83b7cf43ec543f725c1b206c912fe</Sha>
 +    </Dependency>
-+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.8.3">
++    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.8.29">
 +      <Uri>https://github.com/dotnet/msbuild</Uri>
-+      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++      <Sha>2e2d89a923d83b7cf43ec543f725c1b206c912fe</Sha>
 +    </Dependency>
-     <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.3-preview-23613-06">
+     <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.29-servicing-25277-01">
        <Uri>https://github.com/dotnet/msbuild</Uri>
-       <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
+       <Sha>2e2d89a923d83b7cf43ec543f725c1b206c912fe</Sha>
 diff --git a/eng/Versions.props b/eng/Versions.props
 index 08c67394ba7..e125a1882cc 100644
 --- a/eng/Versions.props
@@ -39,13 +39,13 @@ index 08c67394ba7..e125a1882cc 100644
 @@ -183,9 +183,9 @@
      <MicrosoftDiagnosticsToolsRuntimeClientVersion>1.0.4-preview6.19326.1</MicrosoftDiagnosticsToolsRuntimeClientVersion>
      <DNNEVersion>2.0.5</DNNEVersion>
-     <MicrosoftBuildVersion>17.8.3</MicrosoftBuildVersion>
+     <MicrosoftBuildVersion>17.8.29</MicrosoftBuildVersion>
 -    <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildTasksCoreVersion>
 -    <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildVersion)</MicrosoftBuildFrameworkVersion>
 -    <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildUtilitiesCoreVersion>
-+    <MicrosoftBuildTasksCoreVersion>17.8.3</MicrosoftBuildTasksCoreVersion>
-+    <MicrosoftBuildFrameworkVersion>17.8.3</MicrosoftBuildFrameworkVersion>
-+    <MicrosoftBuildUtilitiesCoreVersion>17.8.3</MicrosoftBuildUtilitiesCoreVersion>
++    <MicrosoftBuildTasksCoreVersion>17.8.29</MicrosoftBuildTasksCoreVersion>
++    <MicrosoftBuildFrameworkVersion>17.8.29</MicrosoftBuildFrameworkVersion>
++    <MicrosoftBuildUtilitiesCoreVersion>17.8.29</MicrosoftBuildUtilitiesCoreVersion>
      <NugetFrameworksVersion>6.2.4</NugetFrameworksVersion>
      <NugetProjectModelVersion>6.2.4</NugetProjectModelVersion>
      <NugetPackagingVersion>6.2.4</NugetPackagingVersion>
