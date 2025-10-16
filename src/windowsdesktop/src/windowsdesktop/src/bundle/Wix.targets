@@ -124,15 +124,6 @@
                       Lines="RuntimePrereqVersion=$(MicrosoftNETCoreAppRefVersion)"
                       Overwrite="true"
                       Condition="'$(MicrosoftNETCoreAppRefVersion)'!='' AND (@(_StagedHost)!='' OR @(_StagedHostFxr)!='' OR @(_StagedRuntime)!='')" />
-
-    <Message Importance="high" Condition="'@(_StagedHost)'!='' AND '@(_StagedHostFxr)'!='' AND '@(_StagedRuntime)'!=''" Text="[RestoreRuntimePrereqs] Staged runtime MSIs for $(TargetArchitecture)." />
-    <Message Importance="high" Condition="'@(_StagedRuntime)'!=''" Text="[RestoreRuntimePrereqs] Runtime source: @(_StagedRuntime)" />
-    <Message Importance="high" Condition="'@(_StagedHost)'!=''" Text="[RestoreRuntimePrereqs] Host source: @(_StagedHost)" />
-    <Message Importance="high" Condition="'@(_StagedHostFxr)'!=''" Text="[RestoreRuntimePrereqs] HostFxr source: @(_StagedHostFxr)" />
-    <Message Importance="high" Condition="'@(_StagedRuntime)'==''" Text="[RestoreRuntimePrereqs] Unable to locate runtime MSI for $(TargetArchitecture)." />
-    <Message Importance="high" Condition="'@(_StagedHost)'==''" Text="[RestoreRuntimePrereqs] Unable to locate host MSI for $(TargetArchitecture)." />
-    <Message Importance="high" Condition="'@(_StagedHostFxr)'==''" Text="[RestoreRuntimePrereqs] Unable to locate hostfxr MSI for $(TargetArchitecture)." />
-    <Message Condition="'$(_TransportPackageRoot)'=='' AND @(_DownloadedRuntime)==''" Importance="high" Text="[RestoreRuntimePrereqs] Transport package not restored and remote download unavailable; prerequisite MSIs will not be bundled." />
   </Target>
 
   <Target Name="StagePrereqRuntimeMsis" BeforeTargets="_GetBundledComponentInstallers" DependsOnTargets="RestoreRuntimePrereqs">
