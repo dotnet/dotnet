@@ -42,7 +42,7 @@ namespace Microsoft.DotNet.XUnitExtensions
                 var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
 
                 return skipReason != null
-                    ? (IXunitTestCase)new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout)
+                    ? (IXunitTestCase)new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, skipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout)
                     : new SkippedFactTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout); // Test case skippable at runtime.
 #else
                 return skipReason != null

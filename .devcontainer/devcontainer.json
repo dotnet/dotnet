@@ -20,6 +20,8 @@
     },
     "remoteEnv": {
         "PATH": "${containerWorkspaceFolder}/.dotnet:${containerEnv:PATH}",
+        // Enable SHA1. Required for compilers to strong name assemblies.
+        "OPENSSL_ENABLE_SHA1_SIGNATURES":"1",
     },
     "onCreateCommand": ".devcontainer/init.sh"
 }
