@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.14.28</PackageVersion>
+    <AssemblyName>Microsoft.Build.Tasks.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.build.framework/17.14.28/Microsoft.Build.Framework.17.14.28.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.14.28/Microsoft.NET.StringTools.17.14.28.csproj" />
+    <ProjectReference Include="../../microsoft.build.utilities.core/17.14.28/Microsoft.Build.Utilities.Core.17.14.28.csproj" />
+    <ProjectReference Include="../../system.codedom/9.0.0/System.CodeDom.9.0.0.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/9.0.0/System.Collections.Immutable.9.0.0.csproj" />
+    <ProjectReference Include="../../system.resources.extensions/9.0.0/System.Resources.Extensions.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/9.0.0/System.Security.Cryptography.Pkcs.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.xml/9.0.0/System.Security.Cryptography.Xml.9.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/9.0.0/System.Configuration.ConfigurationManager.9.0.0.csproj" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/9.0.0/System.Diagnostics.EventLog.9.0.0.csproj" />
+    <ProjectReference Include="../../system.formats.nrbf/9.0.0/System.Formats.Nrbf.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/9.0.0/System.Security.Cryptography.ProtectedData.9.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.build.framework/17.14.28/Microsoft.Build.Framework.17.14.28.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.14.28/Microsoft.NET.StringTools.17.14.28.csproj" />
+    <ProjectReference Include="../../microsoft.build.utilities.core/17.14.28/Microsoft.Build.Utilities.Core.17.14.28.csproj" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.codedom/9.0.0/System.CodeDom.9.0.0.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/9.0.0/System.Collections.Immutable.9.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/9.0.0/System.Reflection.Metadata.9.0.0.csproj" />
+    <ProjectReference Include="../../system.resources.extensions/9.0.0/System.Resources.Extensions.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/9.0.0/System.Security.Cryptography.Pkcs.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.xml/9.0.0/System.Security.Cryptography.Xml.9.0.0.csproj" />
+    <ProjectReference Include="../../system.threading.tasks.dataflow/9.0.0/System.Threading.Tasks.Dataflow.9.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/9.0.0/System.Configuration.ConfigurationManager.9.0.0.csproj" />
+    <ProjectReference Include="../../system.diagnostics.diagnosticsource/9.0.0/System.Diagnostics.DiagnosticSource.9.0.0.csproj" />
+    <ProjectReference Include="../../system.formats.asn1/9.0.0/System.Formats.Asn1.9.0.0.csproj" />
+    <ProjectReference Include="../../system.formats.nrbf/9.0.0/System.Formats.Nrbf.9.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.6.0/System.Memory.4.6.0.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.1.0/System.Runtime.CompilerServices.Unsafe.6.1.0.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/9.0.0/System.Security.Cryptography.ProtectedData.9.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encoding.codepages/9.0.0/System.Text.Encoding.CodePages.9.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

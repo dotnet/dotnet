@@ -11,18 +11,20 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Text;
 using System.Text.RegularExpressions;
 
 #nullable enable
 
 namespace Microsoft.Build.Locator
 {
-    internal static class DotNetSdkLocationHelper
+    internal static partial class DotNetSdkLocationHelper
     {
-        private static readonly Regex VersionRegex = new Regex(@"^(\d+)\.(\d+)\.(\d+)", RegexOptions.Multiline);
-        private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        private static readonly string ExeName = IsWindows ? "dotnet.exe" : "dotnet";
-        private static readonly Lazy<IList<string>> s_dotnetPathCandidates = new(() => ResolveDotnetPathCandidates());
+        [GeneratedRegex(@"^(\d+)\.(\d+)\.(\d+)", RegexOptions.Multiline)]
+        private static partial Regex VersionRegex();
+
+        private static string ExeName => OperatingSystem.IsWindows() ? "dotnet.exe" : "dotnet";
+        private static readonly Lazy<List<string>> s_dotnetPathCandidates = new(() => ResolveDotnetPathCandidates());
 
         public static VisualStudioInstance? GetInstance(string dotNetSdkPath, bool allowQueryAllRuntimeVersions)
         {
@@ -38,7 +40,7 @@ namespace Microsoft.Build.Locator
             }
 
             // Preview versions contain a hyphen after the numeric part of the version. Version.TryParse doesn't accept that.
-            Match versionMatch = VersionRegex.Match(File.ReadAllText(versionPath));
+            Match versionMatch = VersionRegex().Match(File.ReadAllText(versionPath));
 
             if (!versionMatch.Success)
             {
@@ -116,12 +118,13 @@ namespace Microsoft.Build.Locator
             static IEnumerable<string> GetAllAvailableSDKs(bool allowAllDotnetLocations)
             {
                 bool foundSdks = false;
-                string[]? resolvedPaths = null;
+                int rc = 0;
+                StringBuilder? errorMessage = null;
                 foreach (string dotnetPath in s_dotnetPathCandidates.Value)
                 {
-                    int rc = NativeMethods.hostfxr_get_available_sdks(exe_dir: dotnetPath, result: (key, value) => resolvedPaths = value);
+                    rc = NativeMethods.hostfxr_get_available_sdks(exe_dir: dotnetPath, out string[]? resolvedPaths, out errorMessage);
 
-                    if (rc == 0 && resolvedPaths != null)
+                    if (resolvedPaths != null)
                     {
                         foundSdks = true;
 
@@ -140,7 +143,7 @@ namespace Microsoft.Build.Locator
                 // Errors are automatically printed to stderr. We should not continue to try to output anything if we failed.
                 if (!foundSdks)
                 {
-                    throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_get_available_sdks)));
+                    throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_get_available_sdks), rc, errorMessage));
                 }
             }
 
@@ -148,15 +151,11 @@ namespace Microsoft.Build.Locator
             static string? GetSdkFromGlobalSettings(string workingDirectory)
             {
                 string? resolvedSdk = null;
+                int rc = 0;
+                StringBuilder? errorMessage = null;
                 foreach (string dotnetPath in s_dotnetPathCandidates.Value)
                 {
-                    int rc = NativeMethods.hostfxr_resolve_sdk2(exe_dir: dotnetPath, working_dir: workingDirectory, flags: 0, result: (key, value) =>
-                    {
-                        if (key == NativeMethods.hostfxr_resolve_sdk2_result_key_t.resolved_sdk_dir)
-                        {
-                            resolvedSdk = value;
-                        }
-                    });
+                    rc = NativeMethods.hostfxr_resolve_sdk2(exe_dir: dotnetPath, working_dir: workingDirectory, flags: 0, out resolvedSdk, out _, out errorMessage);
 
                     if (rc == 0)
                     {
@@ -166,7 +165,7 @@ namespace Microsoft.Build.Locator
                 }
 
                 return string.IsNullOrEmpty(resolvedSdk)
-                    ? throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_resolve_sdk2)))
+                    ? throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_resolve_sdk2), rc, errorMessage))
                     : resolvedSdk;
             }
         }
@@ -178,7 +177,7 @@ namespace Microsoft.Build.Locator
         private static void ModifyUnmanagedDllResolver(Action<AssemblyLoadContext> resolverAction)
         {
             // For Windows hostfxr is loaded in the process.
-            if (!IsWindows)
+            if (!OperatingSystem.IsWindows())
             {
                 var loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
                 if (loadContext != null)
@@ -197,9 +196,9 @@ namespace Microsoft.Build.Locator
             }
 
             string hostFxrLibName =
-                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                OperatingSystem.IsWindows() ?
                 "hostfxr.dll" :
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "libhostfxr.dylib" : "libhostfxr.so";
+                OperatingSystem.IsMacOS() ? "libhostfxr.dylib" : "libhostfxr.so";
             string hostFxrRoot = string.Empty;
 
             // Get the dotnet path candidates
@@ -235,14 +234,15 @@ namespace Microsoft.Build.Locator
             throw new InvalidOperationException(error);
         }
 
-        private static string SdkResolutionExceptionMessage(string methodName) => $"Failed to find all versions of .NET Core MSBuild. Call to {methodName}. There may be more details in stderr.";
+        private static string SdkResolutionExceptionMessage(string methodName, int rc, StringBuilder? errorMessage) =>
+            $"Error while calling hostfxr function {methodName}. Error code: {rc} Detailed error: {errorMessage}";
 
-        private static IList<string> ResolveDotnetPathCandidates()
+        private static List<string> ResolveDotnetPathCandidates()
         {
             var pathCandidates = new List<string>();
             AddIfValid(GetDotnetPathFromROOT());
 
-            string? dotnetExePath = GetCurrentProcessPath();
+            string? dotnetExePath = Environment.ProcessPath;
             bool isRunFromDotnetExecutable = !string.IsNullOrEmpty(dotnetExePath)
                 && Path.GetFileName(dotnetExePath).Equals(ExeName, StringComparison.InvariantCultureIgnoreCase);
 
@@ -254,9 +254,9 @@ namespace Microsoft.Build.Locator
             string? hostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
             if (!string.IsNullOrEmpty(hostPath) && File.Exists(hostPath))
             {
-                if (!IsWindows)
+                if (!OperatingSystem.IsWindows())
                 {
-                    hostPath = realpath(hostPath) ?? hostPath;
+                    hostPath = File.ResolveLinkTarget(hostPath, true)?.FullName ?? hostPath;
                 }
 
                 AddIfValid(Path.GetDirectoryName(hostPath));
@@ -289,8 +289,6 @@ namespace Microsoft.Build.Locator
             return dotnetPath;
         }
 
-        private static string? GetCurrentProcessPath() => Environment.ProcessPath;
-
         private static string? GetDotnetPathFromPATH()
         {
             string? dotnetPath = null;
@@ -314,19 +312,6 @@ namespace Microsoft.Build.Locator
             return dotnetPath;
         }
 
-        /// <summary>
-        /// This native method call determines the actual location of path, including
-        /// resolving symbolic links.
-        /// </summary>
-        private static string? realpath(string path)
-        {
-            IntPtr ptr = NativeMethods.realpath(path, IntPtr.Zero);
-            string? result = Marshal.PtrToStringAuto(ptr);
-            NativeMethods.free(ptr);
-
-            return result;
-        }
-
         private static string? FindDotnetPathFromEnvVariable(string environmentVariable)
         {
             string? dotnetPath = Environment.GetEnvironmentVariable(environmentVariable);
@@ -347,9 +332,9 @@ namespace Microsoft.Build.Locator
             string fullPathToDotnetFromRoot = Path.Combine(dotnetPath, ExeName);
             if (File.Exists(fullPathToDotnetFromRoot))
             {
-                if (!IsWindows)
+                if (!OperatingSystem.IsWindows())
                 {
-                    fullPathToDotnetFromRoot = realpath(fullPathToDotnetFromRoot) ?? fullPathToDotnetFromRoot;
+                    fullPathToDotnetFromRoot = File.ResolveLinkTarget(fullPathToDotnetFromRoot, true)?.FullName ?? fullPathToDotnetFromRoot;
                     return File.Exists(fullPathToDotnetFromRoot) ? Path.GetDirectoryName(fullPathToDotnetFromRoot) : null;
                 }
 
