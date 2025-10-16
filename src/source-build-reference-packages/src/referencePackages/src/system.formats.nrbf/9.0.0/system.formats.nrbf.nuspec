@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>System.Formats.Nrbf</id>
+    <version>9.0.0</version>
+    <authors>Microsoft</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <description>Provides a safe reader for .NET Remoting Binary Format (NRBF) payloads.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/runtime" commit="9d5a6a9aa463d6d10b0b0ba6d5982cc82f363dc3" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="System.Reflection.Metadata" version="9.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0" />
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="System.Reflection.Metadata" version="9.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Bcl.HashCode" version="1.1.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
