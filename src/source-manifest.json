@@ -7,10 +7,10 @@
       "commitSha": "e8ca69398033dd1eea35e9667bf857234465de2b"
     },
     {
-      "barId": 287136,
+      "barId": 287272,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "9fc1da3057ef21c3771ecd55ad8f6e1ec72c62bc"
+      "commitSha": "c697d89744c309f4085856630213054242a13010"
     },
     {
       "barId": 279211,
@@ -31,16 +31,16 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 286647,
+      "barId": 287331,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "53c7e6f445c2d1a918707a609b0fd08c3604c659"
+      "commitSha": "05321bc8e158478204d312c9de45dbb9eeddf0a2"
     },
     {
-      "barId": 287185,
+      "barId": 287416,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "209ba39d733850cce6b4e4168d0cfd4e6debf5d8"
+      "commitSha": "456f97264be60ccdb1474621f8b2e60a6722c82e"
     },
     {
       "barId": 283436,
@@ -79,10 +79,10 @@
       "commitSha": "7463b65f5c25bd1e4180609bf8aaaa9436833a15"
     },
     {
-      "barId": 287156,
+      "barId": 287444,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "2db078908b24bae52bb0f6ac1a9de9df587e886c"
+      "commitSha": "10307514ae71110167780d0229b61095d16ae3a3"
     },
     {
       "barId": 277711,
@@ -91,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 287157,
+      "barId": 287252,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c92a32ff53dd25396b4603ca481dd078d97fcab8"
+      "commitSha": "2ee5539e482d6e38d4aa9c36ec33b9a232ad475d"
     },
     {
       "barId": 287459,
@@ -115,10 +115,10 @@
       "commitSha": "ee968d4a1bf717f4bba3a4ffc3f93b5c9870b117"
     },
     {
-      "barId": 287151,
+      "barId": 287390,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "304a9820f03ab29b4d387043d35892cc22da6e63"
+      "commitSha": "e3fa6845d03322a83d240e32e693beb34747c074"
     },
     {
       "barId": 285355,
@@ -139,10 +139,10 @@
       "commitSha": "2b9471644494f912a5ea1f559ed7e2d443a631aa"
     },
     {
-      "barId": 284453,
+      "barId": 287409,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "a94c8eb81ba1e5ea9f6e282a717cd52270548589"
+      "commitSha": "8409237906c778eeb16662b444a24b46a07a0976"
     },
     {
       "barId": 278018,
