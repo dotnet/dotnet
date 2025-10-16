@@ -116,6 +116,8 @@ jobs:
     helixRepo: dotnet/installer
     workspace:
       clean: all
+    ${{ if ne(variables['Build.DefinitionName'], 'dotnet-installer-official-ci') }}:
+      microbuildUseESRP: false
 
     variables:
     # Test variables
@@ -167,7 +169,8 @@ jobs:
       - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
         - group: DotNet-HelixApi-Access
         - _PushToVSFeed: true
-        - _SignType: real
+        - ${{ if eq(variables['Build.DefinitionName'], 'dotnet-installer-official-ci') }}:
+          - _SignType: real
         - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                   /p:DotNetSignType=$(_SignType)
                   /p:TeamName=$(_TeamName)
