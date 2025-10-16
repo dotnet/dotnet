@@ -174,11 +174,6 @@
       <DefineConstants>$(DefineConstants);Manufacturer=Microsoft Corporation</DefineConstants>
       <DefineConstants>$(DefineConstants);SdkBrandName=Microsoft Windows Desktop Runtime</DefineConstants>
 
-      <!-- Ensure TargetArchitecture is set based on OutputRid if not already set -->
-      <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(OutputRid)' == 'win-x86'">x86</TargetArchitecture>
-      <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(OutputRid)' == 'win-x64'">x64</TargetArchitecture>
-      <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(OutputRid)' == 'win-arm64'">arm64</TargetArchitecture>
-
       <UpgradeCodeSeed>Windows Desktop Shared Framework Bundle Installer</UpgradeCodeSeed>
       <UpgradeCodeSeedWithArch>$(UpgradeCodeSeed) $(TargetArchitecture) $(MajorVersion).$(MinorVersion)</UpgradeCodeSeedWithArch>
 

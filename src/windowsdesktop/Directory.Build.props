@@ -1,6 +1,5 @@
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-
   <PropertyGroup>
     <!-- WiX v5 Configuration -->
     <UseWix5>true</UseWix5>
@@ -9,8 +8,7 @@
     <WixToolsetCompilerPdbType>full</WixToolsetCompilerPdbType>
     <WixToolsetLinkerPdbType>full</WixToolsetLinkerPdbType>
     
-    <!-- Ensure Wixpack generation is enabled for all build types -->
-    <WixCreateWixPackOutput Condition="'$(OutputType)' == 'Bundle'">true</WixCreateWixPackOutput>
+    
     <RunWixpackTargets Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RunWixpackTargets>
     <RunWixpackTargets Condition="'$(RunWixpackTargets)' == ''">true</RunWixpackTargets>
     
