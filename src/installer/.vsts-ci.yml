@@ -44,7 +44,7 @@ resources:
     ref: refs/tags/release
 
 extends:
-  ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.DefinitionName'], 'dotnet-installer-official-ci')) }}:
     template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   ${{ else }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
@@ -335,7 +335,7 @@ extends:
         parameters:
           enableInternalSources: true
 
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.DefinitionName'], 'dotnet-installer-official-ci')) }}:
       - stage: Publish
         dependsOn:
         - Build
