@@ -37,14 +37,12 @@ public class BinaryToolTask : BuildTask
 
     private Modes _mode;
 
-    public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
-
-    private async Task<bool> ExecuteAsync()
+    public override bool Execute()
     {
         try
         {
             ParseArgs();
-            await BinaryTool.ExecuteAsync(Log, TargetDirectory, OutputReportDirectory, AllowedBinariesFile, _mode);
+            BinaryTool.Execute(Log, TargetDirectory, OutputReportDirectory, AllowedBinariesFile, _mode);
         }
         catch (Exception ex)
         {
