@@ -338,14 +338,25 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             int deltaStart;
             if (!isFirstRange && previousRange.StartLine == currentRange.StartLine)
             {
-                deltaStart = currentRange.StartCharacter - previousRange.StartCharacter;
-
-                // If there is no line delta, no char delta, and this isn't the first range
-                // then it means this range overlaps the previous, so we skip it.
-                if (deltaStart == 0)
+                // If the current range overlaps the previous one, we assume the sort order was
+                // correct, and prefer the previous range. We have a check for the start character first
+                // just in case there is a C# range that extends past a Razor range. There is no known case
+                // for this, but we need to make sure we don't report bad data.
+                if (previousRange.StartCharacter == currentRange.StartCharacter)
                 {
                     return false;
                 }
+
+                // Razor ranges are allowed to extend past C# ranges though, so we need to check for that too.
+                if (previousRange.StartCharacter <= currentRange.StartCharacter &&
+                    (previousRange.EndCharacter >= currentRange.EndCharacter || previousRange.EndLine > currentRange.EndLine))
+                {
+                    return false;
+                }
+
+                deltaStart = currentRange.StartCharacter - previousRange.StartCharacter;
+
+                Debug.Assert(deltaStart > 0, "There is no char delta which means this span overlaps the previous. This should have been filtered out!");
             }
             else
             {
