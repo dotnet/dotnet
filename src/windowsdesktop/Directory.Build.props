@@ -9,8 +9,7 @@
     <WixToolsetLinkerPdbType>full</WixToolsetLinkerPdbType>
     
     
-    <RunWixpackTargets Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RunWixpackTargets>
-    <RunWixpackTargets Condition="'$(RunWixpackTargets)' == ''">true</RunWixpackTargets>
+  <RunWixpackTargets>true</RunWixpackTargets>
     
     <!-- Packaging properties -->
     <RepositoryUrl>https://github.com/dotnet/windowsdesktop</RepositoryUrl>
