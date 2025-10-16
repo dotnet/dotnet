@@ -73,10 +73,10 @@
       "commitSha": "48a2659b91e7032c97ea024751a6ea9469a94d7f"
     },
     {
-      "barId": 286854,
+      "barId": 287262,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7463b65f5c25bd1e4180609bf8aaaa9436833a15"
+      "commitSha": "739dc0e352a331e8a41cd66c09d2edf359255365"
     },
     {
       "barId": 287444,
@@ -97,10 +97,10 @@
       "commitSha": "2ee5539e482d6e38d4aa9c36ec33b9a232ad475d"
     },
     {
-      "barId": 282656,
+      "barId": 287459,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
+      "commitSha": "b385687ccf8e30fdbee0111adbf72b4003b5d287"
     },
     {
       "barId": 287042,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
