@@ -256,22 +256,6 @@
     
     <Message Text="Generated ProviderKey for $(TargetArchitecture): {$(GeneratedProviderKey)} from seed '$(ProviderKeySeed)'" Importance="high" />
     <Message Text="Generated UpgradeCode for $(TargetArchitecture) v$(MajorVersion).$(MinorVersion): {$(GeneratedUpgradeCode)} from seed '$(UpgradeCodeSeedWithArch)'" Importance="high" />
-
-    <!-- Diagnostic: Generate and log UpgradeCodes for all architectures for verification -->
-    <GenerateGuidFromName Name="$(UpgradeCodeSeed) x86 $(MajorVersion).$(MinorVersion)">
-      <Output TaskParameter="GeneratedGuid" PropertyName="GeneratedUpgradeCode_x86" />
-    </GenerateGuidFromName>
-    <GenerateGuidFromName Name="$(UpgradeCodeSeed) x64 $(MajorVersion).$(MinorVersion)">
-      <Output TaskParameter="GeneratedGuid" PropertyName="GeneratedUpgradeCode_x64" />
-    </GenerateGuidFromName>
-    <GenerateGuidFromName Name="$(UpgradeCodeSeed) arm64 $(MajorVersion).$(MinorVersion)">
-      <Output TaskParameter="GeneratedGuid" PropertyName="GeneratedUpgradeCode_arm64" />
-    </GenerateGuidFromName>
-
-    <Message Text="[Diagnostic] Expected UpgradeCodes for v$(MajorVersion).$(MinorVersion):" Importance="high" />
-    <Message Text="  x86:   {$(GeneratedUpgradeCode_x86)}" Importance="high" />
-    <Message Text="  x64:   {$(GeneratedUpgradeCode_x64)}" Importance="high" />
-    <Message Text="  arm64: {$(GeneratedUpgradeCode_arm64)}" Importance="high" />
   </Target>
 
   <Target Name="Pack" DependsOnTargets="Build;PublishBundle;GenerateWixpackPackage">
