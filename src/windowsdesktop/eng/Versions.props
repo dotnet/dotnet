@@ -13,11 +13,6 @@
   <PropertyGroup>
     <!-- corefx -->
     <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
-    <!-- The SQL team had deprecated System.Data.SqlClient package and replaced it with Microsoft.Data.SqlClient.
-     However, windows compatibility package should not include Microsoft.Data.SqlClient since that's not part of .NETFramework surface area.
-     The purpose of Microsoft.Windows.Compatibility is to bring assemblies that implement the actual types from .NETFramework
-     that aren't inbox on .NET. It is not meant to "advertise" new types/packages that were not part of .NETFramework. -->
-    <SystemDataSqlClientVersion>4.9.0</SystemDataSqlClientVersion>
     <SystemReflectionEmitVersion>4.7.0</SystemReflectionEmitVersion>
     <SystemReflectionEmitILGenerationVersion>4.7.0</SystemReflectionEmitILGenerationVersion>
     <SystemReflectionEmitLightweightVersion>4.7.0</SystemReflectionEmitLightweightVersion>

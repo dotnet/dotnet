@@ -109,9 +109,10 @@ internal sealed class GoToDefinitionCommandHandler(
             ? new SnapshotSpan(position, position + 1)
             : new SnapshotSpan(position - 1, position);
 
-        using (var backgroundIndicator = indicatorFactory.Create(
+        var backgroundIndicator = indicatorFactory.Create(
             args.TextView, applicableToSpan,
-            EditorFeaturesResources.Navigating_to_definition))
+            EditorFeaturesResources.Navigating_to_definition);
+        await using (var _1 = backgroundIndicator.ConfigureAwait(false))
         {
             var cancellationToken = backgroundIndicator.UserCancellationToken;
 

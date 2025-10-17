@@ -25,7 +25,6 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" />
     <PackageReference Include="System.Data.Odbc" />
     <PackageReference Include="System.Data.OleDb" />
-    <PackageReference Include="System.Data.SqlClient" />
     <PackageReference Include="System.Diagnostics.EventLog" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" />

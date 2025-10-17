@@ -9,7 +9,7 @@ namespace BinaryToolKit;
 
 public static class BinaryTool
 {
-    public static async Task ExecuteAsync(
+    public static void Execute(
         TaskLoggingHelper log,
         string targetDirectory,
         string outputReportDirectory,
@@ -21,7 +21,7 @@ public static class BinaryTool
         log.LogMessage(MessageImportance.High, $"Starting binary tool at {startTime} in {mode} mode");
 
         // Run the tooling
-        var detectedBinaries = await DetectBinaries.ExecuteAsync(log, targetDirectory, outputReportDirectory, allowedBinariesFile);
+        var detectedBinaries = DetectBinaries.Execute(log, targetDirectory, outputReportDirectory, allowedBinariesFile);
 
         if (mode == Modes.Validate)
         {
