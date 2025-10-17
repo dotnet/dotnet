@@ -97,10 +97,10 @@
       "commitSha": "4223d2f78f7e5b33c6366fa170c3e4a5a1686a26"
     },
     {
-      "barId": 285327,
+      "barId": 287497,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e6ae81a48df0569bea8f2e5d67a37c768904e33f"
+      "commitSha": "0eed3a94644603ef1c0095bc3f1bff525fff876e"
     },
     {
       "barId": 277912,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
