@@ -43,15 +43,7 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
         {
             foreach (ProcessEnvironmentVariable env in environmentVariables)
             {
-                try
-                {
-                    processInfo.EnvironmentVariables.Add(env.Name, env.Value);
-                }
-                catch (ArgumentException)
-                {
-                    // If the environment variable already exists, update its value
-                    processInfo.EnvironmentVariables[env.Name] = env.Value;
-                }
+                processInfo.EnvironmentVariables[env.Name] = env.Value;
             }
         }
 
