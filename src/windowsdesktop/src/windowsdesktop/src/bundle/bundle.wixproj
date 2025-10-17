@@ -58,7 +58,7 @@
           Condition="'$(_BundleShippingDir)' != ''" />
   </Target>
 
-  <Target Name="BuildDependentProject" BeforeTargets="Build">
+  <Target Name="BuildDependentProject" BeforeTargets="BeforeBuild">
     <!-- Ensure the Windows Desktop Runtime is built before this bundle -->
     <MSBuild Projects="..\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
              Targets="Build" />
