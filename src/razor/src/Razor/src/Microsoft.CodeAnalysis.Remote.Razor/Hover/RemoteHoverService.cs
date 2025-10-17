@@ -1,10 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Hover;
@@ -46,10 +48,16 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!codeDocument.Source.Text.TryGetAbsoluteIndex(position, out var hostDocumentIndex))
+        var sourceText = codeDocument.Source.Text;
+        if (!sourceText.TryGetAbsoluteIndex(position, out var hostDocumentIndex))
         {
             return NoFurtherHandling;
         }
+
+        var originalHostDocumentIndex = hostDocumentIndex;
+
+        // Adjust position if on a component end tag to use the start tag position
+        hostDocumentIndex = codeDocument.AdjustPositionForComponentEndTag(hostDocumentIndex);
 
         var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
@@ -80,6 +88,27 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
                 DocumentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), range.ToLinePositionSpan(), out var hostDocumentSpan))
             {
                 csharpHover.Range = LspFactory.CreateRange(hostDocumentSpan);
+            }
+
+            // If we adjusted from an end tag to a start tag, we need to make sure the range covers the end tag,
+            // not just the start tag, or VS won't show the hover info
+            if (originalHostDocumentIndex > hostDocumentIndex &&
+                csharpHover.Range is not null)
+            {
+                // We were originally on the end tag somewhere, then redirected to the start tag to get the hover.
+                // We now need to translate the range we got back, and mapped, over to the end tag again. This is as
+                // easy as just offsetting the range by the difference between our original and adjusted index.
+                if (sourceText.TryGetAbsoluteIndex(csharpHover.Range.Start, out var adjustedStart) &&
+                    sourceText.TryGetAbsoluteIndex(csharpHover.Range.End, out var adjustedEnd))
+                {
+                    var offset = originalHostDocumentIndex - hostDocumentIndex;
+
+                    // Make sure we don't fall off the end of the document, though it should be impossible
+                    adjustedStart = Math.Min(adjustedStart + offset, sourceText.Length - 1);
+                    adjustedEnd = Math.Min(adjustedEnd + offset, sourceText.Length - 1);
+
+                    csharpHover.Range = sourceText.GetRange(adjustedStart, adjustedEnd);
+                }
             }
 
             return Results(csharpHover);

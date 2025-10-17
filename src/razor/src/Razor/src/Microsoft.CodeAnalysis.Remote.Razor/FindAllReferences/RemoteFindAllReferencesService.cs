@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -54,6 +55,9 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
         {
             return NoFurtherHandling;
         }
+
+        // Adjust position if on a component end tag to use the start tag position
+        hostDocumentIndex = codeDocument.AdjustPositionForComponentEndTag(hostDocumentIndex);
 
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
 
