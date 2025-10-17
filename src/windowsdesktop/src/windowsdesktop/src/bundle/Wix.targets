@@ -34,6 +34,25 @@
       </RemoteAsset>
     </ItemGroup>
 
+    <!-- TODO: Refactor above to remove this. -->
+    <ItemGroup>
+      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.TargetFilename)'=='' AND '%(RemoteAsset.TargetFileName)'!=''">
+        <TargetFilename>%(RemoteAsset.TargetFileName)</TargetFilename>
+      </RemoteAsset>
+      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.TargetFilename)'=='' AND '%(RemoteAsset.Filename)'!=''">
+        <TargetFilename>%(RemoteAsset.Filename)%(RemoteAsset.Extension)</TargetFilename>
+      </RemoteAsset>
+      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.StageFilename)'=='' AND '%(RemoteAsset.TargetFilename)'!=''">
+        <StageFilename>%(RemoteAsset.TargetFilename)</StageFilename>
+      </RemoteAsset>
+      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.DownloadDestination)'=='' AND '%(RemoteAsset.TargetFilename)'!=''">
+        <DownloadDestination>$(RuntimePrereqDownloadDirectory)%(RemoteAsset.TargetFilename)</DownloadDestination>
+      </RemoteAsset>
+      <RemoteAsset Update="@(RemoteAsset)" Condition="'%(RemoteAsset.StageDestination)'=='' AND '%(RemoteAsset.StageFilename)'!=''">
+        <StageDestination>$(RuntimePrereqStageDirectory)%(RemoteAsset.StageFilename)</StageDestination>
+      </RemoteAsset>
+    </ItemGroup>
+
     <MakeDir Directories="$(RuntimePrereqStageDirectory)" />
     <MakeDir Directories="$(RuntimePrereqDownloadDirectory)" />
   </Target>
