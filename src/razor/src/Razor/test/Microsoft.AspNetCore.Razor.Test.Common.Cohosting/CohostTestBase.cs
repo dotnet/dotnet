@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -141,8 +142,13 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
     protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
     {
+        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+    }
+
+    protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    {
         // We simulate a miscellaneous file project by not having a project file path.
-        var projectFilePath = miscellaneousFile ? null : TestProjectData.SomeProject.FilePath;
+        projectFilePath = miscellaneousFile ? null : projectFilePath;
         var projectName = miscellaneousFile ? "" : Path.GetFileNameWithoutExtension(projectFilePath).AssumeNotNull();
 
         var sgAssembly = typeof(RazorSourceGenerator).Assembly;
@@ -167,7 +173,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
             projectInfo = projectInfo.WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace);
         }
 
-        var solution = workspace.CurrentSolution.AddProject(projectInfo);
+        solution = solution.AddProject(projectInfo);
 
         solution = solution
             .AddAdditionalDocument(
@@ -221,7 +227,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
             var projectBasePath = Path.GetDirectoryName(projectFilePath).AssumeNotNull();
             // Normally MS Build targets do this for us, but we're on our own!
-            foreach (var razorDocument in solution.Projects.Single().AdditionalDocuments)
+            foreach (var razorDocument in solution.GetRequiredProject(projectId).AdditionalDocuments)
             {
                 if (razorDocument.FilePath is not null &&
                     razorDocument.FilePath.StartsWith(projectBasePath))

@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Composition;
+using Microsoft.VisualStudio.Language.CodeCleanUp;
 using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
@@ -86,6 +87,18 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
     private protected virtual TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
         => composition;
+
+    protected TextDocument CreateProjectAndRazorDocument(
+        string contents,
+        bool remoteOnly)
+    {
+        if (remoteOnly)
+        {
+            return base.CreateProjectAndRazorDocument(contents, fileKind: null, documentFilePath: null, additionalFiles: null, inGlobalNamespace: false, miscellaneousFile: false);
+        }
+
+        return this.CreateProjectAndRazorDocument(contents);
+    }
 
     protected override TextDocument CreateProjectAndRazorDocument(
         string contents,
