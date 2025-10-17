@@ -22,8 +22,6 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);LCID\**\*;theme\**\*</DefaultItemExcludes>
   </PropertyGroup>
 
-  <Import Project="Product.targets" />
-
   <ItemGroup>
     <!-- Use the working wix5 path - the new wix path has namespace issues -->
     <Compile Include="$(PkgMicrosoft_DotNet_Build_Tasks_Installers)\build\wix5\bundle\upgradePolicies.wxs" />
@@ -62,7 +60,7 @@
           Condition="'$(_BundleShippingDir)' != ''" />
   </Target>
 
-  <Target Name="BuildDependentProject" BeforeTargets="Build">
+  <Target Name="BuildDependentProject" BeforeTargets="BeforeBuild">
     <!-- Ensure the Windows Desktop Runtime is built before this bundle -->
     <MSBuild Projects="..\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
              Targets="Build" />

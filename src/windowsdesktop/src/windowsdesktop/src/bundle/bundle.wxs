@@ -195,7 +195,6 @@
       <!-- These are conditionally included only if the MSI files exist -->
       
       <!-- Host is the base component that everything else depends on -->
-      <?if $(var.IncludeRuntimeMSIs) = true ?>
       <MsiPackage 
         Id="DotNetHost"
         SourceFile="$(var.DotNetRedistHostInstaller)"
@@ -227,7 +226,6 @@
         <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
         <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
       </MsiPackage>
-      <?endif ?>
       
       <!-- Windows Desktop Runtime depends on all the above .NET Core components -->
       <MsiPackage 
