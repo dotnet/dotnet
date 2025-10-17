@@ -21,7 +21,7 @@
     <NetRoslynNext>net9.0</NetRoslynNext>
   </PropertyGroup>
 
-  <!-- 
+  <!--
     There are effectively three modes that are needed for our source build TFMs and this is where
     we calculate them
   -->
