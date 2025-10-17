@@ -7,10 +7,10 @@
       "commitSha": "e8ca69398033dd1eea35e9667bf857234465de2b"
     },
     {
-      "barId": 287272,
+      "barId": 287510,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c697d89744c309f4085856630213054242a13010"
+      "commitSha": "32228b9fa8ef4ea0a7e68fc1ec69c32ffa791adb"
     },
     {
       "barId": 279211,
@@ -67,16 +67,16 @@
       "commitSha": "5514d935e3e77d90d931758cf9e2589735b905a3"
     },
     {
-      "barId": 286870,
+      "barId": 287531,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "48a2659b91e7032c97ea024751a6ea9469a94d7f"
+      "commitSha": "967dc4f230a5eea690b563d1526c4c07b89ea897"
     },
     {
-      "barId": 286854,
+      "barId": 287262,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7463b65f5c25bd1e4180609bf8aaaa9436833a15"
+      "commitSha": "739dc0e352a331e8a41cd66c09d2edf359255365"
     },
     {
       "barId": 287444,
@@ -91,16 +91,16 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 287252,
+      "barId": 287581,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2ee5539e482d6e38d4aa9c36ec33b9a232ad475d"
+      "commitSha": "f6115a4e2a9f0ce931da611010c3f5b2fcfdf8e1"
     },
     {
-      "barId": 282656,
+      "barId": 287459,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
+      "commitSha": "b385687ccf8e30fdbee0111adbf72b4003b5d287"
     },
     {
       "barId": 287042,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
