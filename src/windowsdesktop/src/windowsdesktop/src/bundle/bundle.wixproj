@@ -38,6 +38,10 @@
     <BundleSigningAsset Include="$(MSBuildThisFileDirectory)dotnet.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <WixLocalization Include="theme\**\*.wxl" />
+  </ItemGroup>
+
   <Target Name="CopyBundleSigningAssets" AfterTargets="PublishBundle">
     <PropertyGroup>
       <_BundleOutputDir>$(TargetDir)</_BundleOutputDir>
