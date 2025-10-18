@@ -231,13 +231,24 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
         {
             var descriptionInfo = new AggregateBoundElementDescription(tagHelpers.SelectAsArray(BoundElementDescriptionInfo.From));
 
+            // Always add the regular completion item
             var razorCompletionItem = RazorCompletionItem.CreateTagHelperElement(
                 displayText: displayText,
                 insertText: displayText,
                 descriptionInfo,
-                commitCharacters: commitChars);
+                commitCharacters: commitChars,
+                isSnippet: false);
 
             completionItems.Add(razorCompletionItem);
+
+            AddCompletionItemWithRequiredAttributesSnippet(
+                ref completionItems.AsRef(),
+                context,
+                tagHelpers,
+                displayText,
+                descriptionInfo,
+                commitChars);
+
             AddCompletionItemWithUsingDirective(ref completionItems.AsRef(), context, commitChars, displayText, descriptionInfo);
         }
 
@@ -305,6 +316,79 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             AttributeContext.FullSnippet => AttributeSnippetCommitCharacters,
             _ => throw new InvalidOperationException("Unexpected context"),
         };
+    }
+
+    private static void AddCompletionItemWithRequiredAttributesSnippet(
+        ref PooledArrayBuilder<RazorCompletionItem> completionItems,
+        RazorCompletionContext context,
+        IEnumerable<TagHelperDescriptor> tagHelpers,
+        string displayText,
+        AggregateBoundElementDescription descriptionInfo,
+        ImmutableArray<RazorCommitCharacter> commitChars)
+    {
+        // If snippets are not supported, exit early
+        if (!context.Options.SnippetsSupported)
+        {
+            return;
+        }
+
+        if (TryGetEditorRequiredAttributesSnippet(tagHelpers, displayText, out var snippetText))
+        {
+            var snippetCompletionItem = RazorCompletionItem.CreateTagHelperElement(
+                displayText: SR.FormatComponentCompletionWithRequiredAttributesLabel(displayText),
+                insertText: snippetText,
+                descriptionInfo: descriptionInfo,
+                commitCharacters: commitChars,
+                isSnippet: true);
+
+            completionItems.Add(snippetCompletionItem);
+        }
+    }
+
+    private static bool TryGetEditorRequiredAttributesSnippet(
+        IEnumerable<TagHelperDescriptor> tagHelpers,
+        string tagName,
+        [NotNullWhen(true)] out string? snippetText)
+    {
+        // For components, there should only be one tag helper descriptor per component name
+        // Get EditorRequired attributes from the first component tag helper
+        var componentTagHelper = tagHelpers.FirstOrDefault(th => th.Kind == TagHelperKind.Component);
+        if (componentTagHelper is null)
+        {
+            snippetText = null;
+            return false;
+        }
+
+        var requiredAttributes = componentTagHelper.EditorRequiredAttributes;
+        if (requiredAttributes.Length == 0)
+        {
+            snippetText = null;
+            return false;
+        }
+
+        // Build snippet with placeholders for each required attribute
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        builder.Append(tagName);
+
+        var tabStopIndex = 1;
+        foreach (var attribute in requiredAttributes)
+        {
+            builder.Append(' ');
+            builder.Append(attribute.Name);
+            builder.Append("=\"$");
+            builder.Append(tabStopIndex);
+            builder.Append('"');
+
+            tabStopIndex++;
+        }
+
+        // Add final tab stop for the element content
+        builder.Append(">$0</");
+        builder.Append(tagName);
+        builder.Append('>');
+
+        snippetText = builder.ToString();
+        return true;
     }
 
     private enum AttributeContext

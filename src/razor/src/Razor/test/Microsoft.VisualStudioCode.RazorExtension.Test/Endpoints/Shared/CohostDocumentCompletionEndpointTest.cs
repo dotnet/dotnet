@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -19,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Resources;
 using Roslyn.Test.Utilities;
 using Roslyn.Text.Adornments;
 using Xunit;
@@ -808,6 +808,36 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             useVsCodeCompletionCommitCharacters: true);
 
         Assert.All(list.Items, item => Assert.DoesNotContain("=", item.CommitCharacters ?? []));
+    }
+
+    [Fact]
+    public async Task ComponentWithEditorRequiredAttributes()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["LayoutView", "EditForm", "ValidationMessage", "div", "Router", SR.FormatComponentCompletionWithRequiredAttributesLabel("Router")],
+            htmlItemLabels: ["div"],
+            itemToResolve: SR.FormatComponentCompletionWithRequiredAttributesLabel("Router"),
+            expectedResolvedItemDescription: "Microsoft.AspNetCore.Components.Routing.Router",
+            expected: $"""
+                This is a Razor document.
+
+                <Router AppAssembly="$1" Found="$2">$0</Router>
+
+                The end.
+                """);
     }
 
     [Fact]
