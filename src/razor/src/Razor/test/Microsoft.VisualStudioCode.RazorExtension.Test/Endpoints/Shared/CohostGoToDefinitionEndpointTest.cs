@@ -157,6 +157,38 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     }
 
     [Fact]
+    public async Task ComponentEndTag()
+    {
+        TestCode input = """
+            <SurveyPrompt Title="InputValue"></Surv$$eyPrompt>
+            """;
+
+        TestCode surveyPrompt = """
+            [||]@namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
     public async Task ComponentAttribute()
     {
         TestCode input = """

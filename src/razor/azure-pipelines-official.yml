@@ -348,7 +348,7 @@ extends:
           - job: Linux
             pool:
               name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals 1es-ubuntu-2004
+              demands: ImageOverride -equals 1es-ubuntu-2204
               os: linux
 
             strategy:
