@@ -74,6 +74,26 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
     }
 
     [Fact]
+    public async Task Html_EndTag()
+    {
+        TestCode code = """
+            <PageTitle></PageTitle>
+            <div></d$$iv>
+            
+            @{
+                var myVariable = "Hello";
+            
+                var length = myVariable.Length;
+            }
+            """;
+
+        // This simply verifies that Hover will call into HTML.
+        var htmlResponse = new VSInternalHover();
+
+        await VerifyHoverAsync(code, htmlResponse, h => Assert.Same(htmlResponse, h));
+    }
+
+    [Fact]
     public async Task CSharp()
     {
         TestCode code = """
@@ -182,6 +202,111 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
                             Namespace("Forms"),
                             Punctuation("."),
                             ClassName("InputText")))));
+        });
+    }
+
+    [Fact]
+    public async Task ComponentEndTag()
+    {
+        TestCode code = """
+            <PageTitle></[|Pa$$geTitle|]>
+            <div></div>
+            
+            @{
+                var myVariable = "Hello";
+            
+                var length = myVariable.Length;
+            }
+            """;
+
+        await VerifyHoverAsync(code, async (hover, document) =>
+        {
+            await hover.VerifyRangeAsync(code.Span, document);
+
+            hover.VerifyRawContent(
+                Container(
+                    Container(
+                        Image,
+                        ClassifiedText( // class Microsoft.AspNetCore.Components.Web.PageTitle
+                            Keyword("class"),
+                            WhiteSpace(" "),
+                            Namespace("Microsoft"),
+                            Punctuation("."),
+                            Namespace("AspNetCore"),
+                            Punctuation("."),
+                            Namespace("Components"),
+                            Punctuation("."),
+                            Namespace("Web"),
+                            Punctuation("."),
+                            ClassName("PageTitle")))));
+        });
+    }
+
+    [Fact]
+    public async Task ComponentEndTag_FullyQualified()
+    {
+        TestCode code = """
+            <Microsoft.AspNetCore.Components.Web.PageTitle></Microsoft.AspNetCore.Components.Web.[|Pa$$geTitle|]>
+            <div></div>
+            
+            @{
+                var myVariable = "Hello";
+            
+                var length = myVariable.Length;
+            }
+            """;
+
+        await VerifyHoverAsync(code, async (hover, document) =>
+        {
+            await hover.VerifyRangeAsync(code.Span, document);
+
+            hover.VerifyRawContent(
+                Container(
+                    Container(
+                        Image,
+                        ClassifiedText( // class Microsoft.AspNetCore.Components.Web.PageTitle
+                            Keyword("class"),
+                            WhiteSpace(" "),
+                            Namespace("Microsoft"),
+                            Punctuation("."),
+                            Namespace("AspNetCore"),
+                            Punctuation("."),
+                            Namespace("Components"),
+                            Punctuation("."),
+                            Namespace("Web"),
+                            Punctuation("."),
+                            ClassName("PageTitle")))));
+        });
+    }
+
+    [Fact]
+    public async Task ComponentEndTag_FullyQualified_Namespace()
+    {
+        TestCode code = """
+            <Microsoft.AspNetCore.Components.Web.PageTitle></Microsoft.[|AspNe$$tCore|].Components.Web.PageTitle>
+            <div></div>
+            
+            @{
+                var myVariable = "Hello";
+            
+                var length = myVariable.Length;
+            }
+            """;
+
+        await VerifyHoverAsync(code, async (hover, document) =>
+        {
+            await hover.VerifyRangeAsync(code.Span, document);
+
+            hover.VerifyRawContent(
+                Container(
+                    Container(
+                        Image,
+                        ClassifiedText( // namespace Microsoft.AspNetCore
+                            Keyword("namespace"),
+                            WhiteSpace(" "),
+                            Namespace("Microsoft"),
+                            Punctuation("."),
+                            Namespace("AspNetCore")))));
         });
     }
 
