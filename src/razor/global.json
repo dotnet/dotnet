@@ -1,6 +1,6 @@
 {
   "tools": {
-    "dotnet": "9.0.110",
+    "dotnet": "9.0.111",
     "runtimes": {
       "dotnet": [
         "2.1.30",
@@ -16,7 +16,7 @@
     }
   },
   "sdk": {
-    "version": "9.0.110",
+    "version": "9.0.111",
     "allowPrerelease": false,
     "rollForward": "latestPatch"
   },

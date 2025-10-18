@@ -7,6 +7,11 @@
         <target state="translated">O valor não pode ser nulo ou uma cadeia de caracteres vazia.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="new">{0} (and req'd attributes...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Criar componente a partir da marca</target>

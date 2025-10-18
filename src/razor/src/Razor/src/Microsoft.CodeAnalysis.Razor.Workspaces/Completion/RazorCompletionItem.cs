@@ -87,8 +87,9 @@ internal sealed class RazorCompletionItem
         string displayText, string insertText,
         AggregateBoundElementDescription descriptionInfo,
         ImmutableArray<RazorCommitCharacter> commitCharacters,
+        bool isSnippet = false,
         TextEdit[]? additionalTextEdits = null)
-        => new(RazorCompletionItemKind.TagHelperElement, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet: false, additionalTextEdits);
+        => new(RazorCompletionItemKind.TagHelperElement, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet, additionalTextEdits);
 
     public static RazorCompletionItem CreateTagHelperAttribute(
         string displayText, string insertText, string? sortText,

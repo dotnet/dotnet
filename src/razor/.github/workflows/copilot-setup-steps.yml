@@ -40,6 +40,11 @@ jobs:
         # Use restore script, but don't fail on errors so Copilot can still attempt to work
         run: ./restore.sh
 
+      # Activate the private .NET install. Hopefully this resolves firewall issues when using dotnet build/test
+      - name: Activate
+        continue-on-error: true
+        run: source ./activate.sh
+
       # Diagnostics in the log
       - name: Show .NET info
         run: dotnet --info

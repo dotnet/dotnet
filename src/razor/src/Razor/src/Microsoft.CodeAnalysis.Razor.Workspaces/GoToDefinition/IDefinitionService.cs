@@ -20,4 +20,9 @@ internal interface IDefinitionService
         bool ignoreComponentAttributes,
         bool includeMvcTagHelpers,
         CancellationToken cancellationToken);
+
+    Task<LspLocation[]?> TryGetDefinitionFromStringLiteralAsync(
+        IDocumentSnapshot documentSnapshot,
+        Position position,
+        CancellationToken cancellationToken);
 }
