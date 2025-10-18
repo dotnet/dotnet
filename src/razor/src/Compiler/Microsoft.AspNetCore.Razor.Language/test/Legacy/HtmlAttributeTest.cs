@@ -344,6 +344,12 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
         ParseDocumentTest("""<p @* comment *@ class="@c" />""");
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void AttributeAfterComment()
+    {
+        ParseDocumentTest("""<p class="first" @* comment *@ data-value="second" />""");
+    }
+
     [Fact]
     public void EscapedAttributeName_WithValue()
     {

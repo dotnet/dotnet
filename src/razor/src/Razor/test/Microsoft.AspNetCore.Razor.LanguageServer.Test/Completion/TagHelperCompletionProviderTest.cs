@@ -942,6 +942,6 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
 
         var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position);
-        return new RazorCompletionContext(position, owner, syntaxTree, context, Options: options);
+        return new RazorCompletionContext(codeDocument, position, owner, syntaxTree, context, Options: options);
     }
 }

@@ -94,6 +94,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, TagHelperCompletionProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, BlazorDataAttributeCompletionItemProvider>();
     }
 
     public static void AddDiagnosticServices(this IServiceCollection services)
