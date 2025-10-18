@@ -5,13 +5,13 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25451.107</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25451.107</MicrosoftDotNetBuildManifestPackageVersion>
+    <!-- _git/dotnet-dotnet dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25502.107</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25502.107</MicrosoftDotNetBuildManifestPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- dotnet/dotnet dependencies -->
+    <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
   </PropertyGroup>
