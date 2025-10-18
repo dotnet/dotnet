@@ -46,11 +46,11 @@ jobs:
       - task: MicroBuildSigningPlugin@4
         displayName: Install MicroBuild plugin for Signing
         inputs:
-          signType: $(SignType)
+          signType: $(_SignType)
           zipSources: false
           feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
         continueOnError: false
-        condition: and(succeeded(), in(variables['SignType'], 'real', 'test'))
+        condition: and(succeeded(), in(variables['_SignType'], 'real', 'test'))
 
     - script: >-
         eng/common/cibuild.cmd
