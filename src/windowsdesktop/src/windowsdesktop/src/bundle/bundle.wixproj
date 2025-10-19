@@ -6,10 +6,6 @@
     <!-- OutputType determines the extension, .msi, .wixlib, .exe, etc. -->
     <OutputType>Bundle</OutputType>
     
-    <!-- MSBuild parallelism settings to prevent WiX file locking issues -->
-    <BuildInParallel>false</BuildInParallel>
-    <MaxCpuCount>1</MaxCpuCount>
-    
     <!-- Enable Wixpack generation for all build types (PR, CI, local) -->
     <WixCreateWixPackOutput>true</WixCreateWixPackOutput>
     
@@ -25,8 +21,6 @@
          we only need to ensure the files are pulled in as additional payloads into the UX container. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);LCID\**\*;theme\**\*</DefaultItemExcludes>
   </PropertyGroup>
-
-  <Import Project="Product.targets" />
 
   <ItemGroup>
     <!-- Use the working wix5 path - the new wix path has namespace issues -->
@@ -66,7 +60,7 @@
           Condition="'$(_BundleShippingDir)' != ''" />
   </Target>
 
-  <Target Name="BuildDependentProject" BeforeTargets="Build">
+  <Target Name="BuildDependentProject" BeforeTargets="BeforeBuild">
     <!-- Ensure the Windows Desktop Runtime is built before this bundle -->
     <MSBuild Projects="..\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
              Targets="Build" />
@@ -76,18 +70,6 @@
   <Import Project="Wix.targets" />
 
 </Project>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

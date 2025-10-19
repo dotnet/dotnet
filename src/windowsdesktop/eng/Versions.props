@@ -32,12 +32,9 @@
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
-    <!-- WiX -->
-    <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == '' and '$(DefaultWixSdkVersion)' != ''">$(DefaultWixSdkVersion)</MicrosoftWixToolsetSdkVersion>
+  <!-- WiX -->
+  <MicrosoftWixToolsetSdkVersion>5.0.2-dotnet.2811440</MicrosoftWixToolsetSdkVersion>
     
-    <!-- Runtime version variables for CI builds (missing variables causing CI issues) -->
-    <DotNetRuntimeVersion>$(MicrosoftNETCoreAppRefVersion)</DotNetRuntimeVersion>
-    <AspNetCoreVersion>$(MicrosoftNETCoreAppRefVersion)</AspNetCoreVersion>
     <!-- Transport package version for VS insertion packages is defined in Version.Details.props -->
   </PropertyGroup>
 </Project>

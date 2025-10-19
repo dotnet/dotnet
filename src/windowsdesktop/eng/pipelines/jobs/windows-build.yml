@@ -45,22 +45,6 @@ jobs:
   - template: /eng/common/templates-official/steps/enable-internal-sources.yml
   - template: /eng/common/templates-official/steps/enable-internal-runtimes.yml
 
-  - pwsh: >-
-      $(Build.SourcesDirectory)\eng\scripts\runtime-prereqs\restore-runtime-prereqs.ps1
-      -Architectures $(TargetArchitecture)
-      -CI
-    displayName: Restore runtime prerequisite MSIs
-    condition: ne(variables['TargetArchitecture'], '')
-
-  - task: MicroBuildSigningPlugin@4
-    displayName: Install MicroBuild plugin for Signing
-    inputs:
-      signType: $(SignType)
-      zipSources: false
-      feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-    continueOnError: false
-    condition: and(succeeded(), in(variables['SignType'], 'real', 'test'))
-
   - template: /eng/common/core-templates/steps/install-microbuild.yml
     parameters:
       enableMicrobuild: true
