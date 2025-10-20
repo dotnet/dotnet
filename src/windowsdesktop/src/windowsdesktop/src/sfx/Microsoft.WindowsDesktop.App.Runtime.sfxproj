@@ -5,6 +5,7 @@
     <PlatformPackageType>RuntimePack</PlatformPackageType>
     <ArchiveName>windowsdesktop-runtime</ArchiveName>
     <InstallerName>windowsdesktop-runtime</InstallerName>
+    <InstallerRuntimeIdentifiers>win-x64;win-x86;win-arm64</InstallerRuntimeIdentifiers>
     <VSInsertionShortComponentName>WindowsDesktop.SharedFramework</VSInsertionShortComponentName>
     <RollForward>LatestPatch</RollForward>
   </PropertyGroup>
@@ -41,6 +42,10 @@
 
   <!-- WPF specific references -->
   <ItemGroup>
+    <!-- Main WPF assemblies are already included in Directory.Build.props -->
+    <!-- Only include assemblies that are NOT in Directory.Build.props -->
+    
+    <!-- WPF native and support libraries -->
     <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WPF" />
     <FrameworkListFileClass Include="DirectWriteForwarder.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PenImc_cor3.dll" Profile="WPF" />

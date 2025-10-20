@@ -7,10 +7,10 @@
       "commitSha": "e8ca69398033dd1eea35e9667bf857234465de2b"
     },
     {
-      "barId": 287272,
+      "barId": 287630,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c697d89744c309f4085856630213054242a13010"
+      "commitSha": "7387de91234d3ef751fa50b3d1bfede4130213ff"
     },
     {
       "barId": 279211,
@@ -31,16 +31,16 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 286647,
+      "barId": 287675,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "53c7e6f445c2d1a918707a609b0fd08c3604c659"
+      "commitSha": "297a926f29a461b9015f401f7e9b98edfa09b922"
     },
     {
-      "barId": 287185,
+      "barId": 287416,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "209ba39d733850cce6b4e4168d0cfd4e6debf5d8"
+      "commitSha": "456f97264be60ccdb1474621f8b2e60a6722c82e"
     },
     {
       "barId": 283436,
@@ -67,22 +67,22 @@
       "commitSha": "5514d935e3e77d90d931758cf9e2589735b905a3"
     },
     {
-      "barId": 286870,
+      "barId": 287531,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "48a2659b91e7032c97ea024751a6ea9469a94d7f"
+      "commitSha": "967dc4f230a5eea690b563d1526c4c07b89ea897"
     },
     {
-      "barId": 286854,
+      "barId": 287262,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7463b65f5c25bd1e4180609bf8aaaa9436833a15"
+      "commitSha": "739dc0e352a331e8a41cd66c09d2edf359255365"
     },
     {
-      "barId": 287245,
+      "barId": 287665,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "9756c8e93d10c06af6ca884f468e5bc8b4a015d5"
+      "commitSha": "7f46a7e226a0e7af8011e833639e6c94207860ff"
     },
     {
       "barId": 277711,
@@ -97,10 +97,10 @@
       "commitSha": "ca9ada18900021e134d460f2be9e71d27caae40f"
     },
     {
-      "barId": 282656,
+      "barId": 287593,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
+      "commitSha": "2beeb9176ed657f8ec4d9773c514a52c69abb629"
     },
     {
       "barId": 287042,
@@ -115,22 +115,22 @@
       "commitSha": "ee968d4a1bf717f4bba3a4ffc3f93b5c9870b117"
     },
     {
-      "barId": 287151,
+      "barId": 287390,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "304a9820f03ab29b4d387043d35892cc22da6e63"
+      "commitSha": "e3fa6845d03322a83d240e32e693beb34747c074"
     },
     {
-      "barId": 285355,
+      "barId": 287701,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "740c6833bf93da474c364c36b55fd616c8e9f3d0"
+      "commitSha": "b7e87338056b11ba38cb501d695ce7ad0fc686ed"
     },
     {
-      "barId": 280421,
+      "barId": 287542,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "e2dc1b239ab7828c6ccf3395db5f6e72af652549"
+      "commitSha": "b7aa786ac2b4c4515b7895ad8024b86e0c37b852"
     },
     {
       "barId": 282630,
@@ -139,10 +139,10 @@
       "commitSha": "2b9471644494f912a5ea1f559ed7e2d443a631aa"
     },
     {
-      "barId": 284453,
+      "barId": 287409,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "a94c8eb81ba1e5ea9f6e282a717cd52270548589"
+      "commitSha": "8409237906c778eeb16662b444a24b46a07a0976"
     },
     {
       "barId": 278018,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",

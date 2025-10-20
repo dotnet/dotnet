@@ -28,7 +28,7 @@ variables:
     value: .NETCoreValidation
 
   # Produce test-signed build for PR and Public builds
-  - name: SignType
+  - name: _SignType
     value: test
 
 stages:
