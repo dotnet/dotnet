@@ -67,10 +67,10 @@
       "commitSha": "30ead0726895d4320657b96229061d1c347e3ac8"
     },
     {
-      "packageVersion": "17.8.43-servicing-25466-03",
+      "packageVersion": "17.8.43-servicing-25517-04",
       "path": "msbuild",
-      "remoteUri": "https://dev.azure.com/devdiv/DevDiv/_git/DotNet-msbuild-Trusted",
-      "commitSha": "f0cbb13971c30ad15a3f252a8d0171898a01ec11"
+      "remoteUri": "https://github.com/dotnet/msbuild",
+      "commitSha": "6be7d7558719130df3de51b2ab8ce13e21e99a3b"
     },
     {
       "packageVersion": "6.8.1-rc.2",
