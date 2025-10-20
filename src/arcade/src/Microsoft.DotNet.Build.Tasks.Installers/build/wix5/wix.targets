@@ -487,7 +487,7 @@
 
     <Copy SourceFiles="$(MangledNuspecFile)" DestinationFiles="$(VsInsertionNuspecFile)" />
 
-    <Exec Command="dotnet pack &quot;$(VsInsertionNuspecFile)&quot; --property $(PackProperties) --version $(Version) -o &quot;$(ArtifactsNonShippingPackagesDir)&quot;" StandardOutputImportance="normal" />
+    <Exec Command="dotnet pack &quot;$(VsInsertionNuspecFile)&quot; --property &quot;$(PackProperties)&quot; --version $(Version) -o &quot;$(ArtifactsNonShippingPackagesDir)&quot;" StandardOutputImportance="normal" />
 
     <Error
       Condition="!Exists('$(NupkgOutputFile)')"

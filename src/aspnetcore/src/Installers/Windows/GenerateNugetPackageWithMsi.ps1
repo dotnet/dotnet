@@ -19,7 +19,7 @@ param(
 $NuspecProperties = "ASPNETCORE_RUNTIME_MSI=$MsiPath;ARCH=$Architecture;MAJOR=$MajorVersion;MINOR=$MinorVersion;PackageIcon=$PackageIcon;PackageIconFullPath=$PackageIconFullPath;PackageLicenseExpression=$PackageLicenseExpression"
 
 & dotnet pack "$NuspecFile" `
-    --property $NuspecProperties `
+    --property "$NuspecProperties" `
     --version $PackageVersion `
     -o "$OutputDirectory"
 
