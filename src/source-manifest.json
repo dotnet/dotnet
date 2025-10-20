@@ -91,16 +91,16 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 287649,
+      "barId": 287776,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0235c63abd7d470d8701643be7fd7b003bdc0ae4"
+      "commitSha": "ca9ada18900021e134d460f2be9e71d27caae40f"
     },
     {
-      "barId": 287593,
+      "barId": 287831,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "2beeb9176ed657f8ec4d9773c514a52c69abb629"
+      "commitSha": "f18248044133f48b1657610098fee7e513206f3e"
     },
     {
       "barId": 287042,
@@ -121,16 +121,16 @@
       "commitSha": "e3fa6845d03322a83d240e32e693beb34747c074"
     },
     {
-      "barId": 287701,
+      "barId": 287819,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "b7e87338056b11ba38cb501d695ce7ad0fc686ed"
+      "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 287542,
+      "barId": 287768,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "b7aa786ac2b4c4515b7895ad8024b86e0c37b852"
+      "commitSha": "67b80e6bc07a2c40e668b9f1e1e6af5b59aa7181"
     },
     {
       "barId": 282630,
