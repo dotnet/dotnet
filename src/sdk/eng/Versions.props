@@ -34,7 +34,7 @@
     <SystemCollectionsImmutablePackageVersion>7.0.0</SystemCollectionsImmutablePackageVersion>
     <SystemDiagnosticsFileVersionInfoVersion>4.0.0</SystemDiagnosticsFileVersionInfoVersion>
     <SystemReflectionMetadataVersion>7.0.0</SystemReflectionMetadataVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.25504.1</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.25515.1</MicrosoftDotNetSignToolVersion>
     <MicrosoftWebXdtPackageVersion>7.0.0-preview.22423.2</MicrosoftWebXdtPackageVersion>
     <SystemSecurityCryptographyProtectedDataPackageVersion>8.0.0</SystemSecurityCryptographyProtectedDataPackageVersion>
     <SystemCollectionsSpecializedPackageVersion>4.3.0</SystemCollectionsSpecializedPackageVersion>
@@ -50,12 +50,12 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/runtime -->
     <MicrosoftNETCoreAppRefPackageVersion>8.0.22</MicrosoftNETCoreAppRefPackageVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.22-servicing.25513.14</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.22-servicing.25517.4</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
     <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.22</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
     <MicrosoftNETCoreAppRuntimePackageVersion>$(MicrosoftNETCoreAppRuntimewinx64PackageVersion)</MicrosoftNETCoreAppRuntimePackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>8.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.22</MicrosoftNETCoreDotNetHostResolverPackageVersion>
-    <MicrosoftNETHostModelVersion>8.0.22-servicing.25513.14</MicrosoftNETHostModelVersion>
+    <MicrosoftNETHostModelVersion>8.0.22-servicing.25517.4</MicrosoftNETHostModelVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>8.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftExtensionsLoggingVersion>8.0.1</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsLoggingAbstractionsVersion>8.0.3</MicrosoftExtensionsLoggingAbstractionsVersion>
@@ -135,7 +135,7 @@
     <MicrosoftBuildPackageVersion Condition="exists('$(RepoRoot)\src\Layout\redist\minimumMSBuildVersion') and '$(DotNetBuildFromSource)' != 'true'">$([System.IO.File]::ReadAllText('$(RepoRoot)\src\Layout\redist\minimumMSBuildVersion').Trim())</MicrosoftBuildPackageVersion> -->
     <MicrosoftBuildFrameworkPackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildRuntimePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildRuntimePackageVersion>
-    <MicrosoftBuildLocalizationPackageVersion>17.8.43-servicing-25466-03</MicrosoftBuildLocalizationPackageVersion>
+    <MicrosoftBuildLocalizationPackageVersion>17.8.43-servicing-25517-04</MicrosoftBuildLocalizationPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftBuildTasksCorePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildTasksCorePackageVersion>
     <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildTasksCorePackageVersion)</MicrosoftBuildTasksCoreVersion>
@@ -148,7 +148,7 @@
     <MicrosoftTemplateEngineUtilsPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineUtilsPackageVersion>
     <MicrosoftTemplateSearchCommonPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateSearchCommonPackageVersion>
     <!-- test dependencies -->
-    <MicrosoftTemplateEngineMocksPackageVersion>8.0.122-servicing.25510.9</MicrosoftTemplateEngineMocksPackageVersion>
+    <MicrosoftTemplateEngineMocksPackageVersion>8.0.122-servicing.25515.8</MicrosoftTemplateEngineMocksPackageVersion>
     <MicrosoftTemplateEngineTestHelperPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateEngineTestHelperPackageVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
     <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
@@ -171,11 +171,11 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
     <MicrosoftAspNetCoreAppRefPackageVersion>8.0.22</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>8.0.22-servicing.25514.12</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
-    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>8.0.22-servicing.25514.12</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>8.0.22-servicing.25514.12</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>8.0.22-servicing.25514.12</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreAnalyzersPackageVersion>8.0.22-servicing.25514.12</MicrosoftAspNetCoreAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>8.0.22-servicing.25517.13</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
+    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>8.0.22-servicing.25517.13</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>8.0.22-servicing.25517.13</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>8.0.22-servicing.25517.13</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreAnalyzersPackageVersion>8.0.22-servicing.25517.13</MicrosoftAspNetCoreAnalyzersPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>8.0.22</MicrosoftAspNetCoreTestHostPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/razor -->
@@ -186,7 +186,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/wpf -->
-    <MicrosoftNETSdkWindowsDesktopPackageVersion>8.0.22-servicing.25514.4</MicrosoftNETSdkWindowsDesktopPackageVersion>
+    <MicrosoftNETSdkWindowsDesktopPackageVersion>8.0.22-servicing.25517.2</MicrosoftNETSdkWindowsDesktopPackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="Manually updated">
     <!-- Dependencies from https://github.com/microsoft/MSBuildLocator -->
@@ -214,7 +214,7 @@
   <PropertyGroup>
     <FluentAssertionsVersion>6.12.0</FluentAssertionsVersion>
     <FluentAssertionsJsonVersion>6.1.0</FluentAssertionsJsonVersion>
-    <MicrosoftDotNetXUnitExtensionsVersion>8.0.0-beta.25504.1</MicrosoftDotNetXUnitExtensionsVersion>
+    <MicrosoftDotNetXUnitExtensionsVersion>8.0.0-beta.25515.1</MicrosoftDotNetXUnitExtensionsVersion>
     <MoqPackageVersion>4.18.4</MoqPackageVersion>
     <XunitCombinatorialVersion>1.3.2</XunitCombinatorialVersion>
     <MicrosoftDotNetInstallerWindowsSecurityTestDataPackageVersion>8.0.0-beta.23607.1</MicrosoftDotNetInstallerWindowsSecurityTestDataPackageVersion>
