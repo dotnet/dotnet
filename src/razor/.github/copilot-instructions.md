@@ -37,6 +37,7 @@ Razor documents contain multiple languages:
 - Prefer immutable collection types and pooled collections where possible
 - Use `using` statements for disposable resources
 - Ensure proper async/await patterns, avoid `Task.Wait()`
+- Use GetRequiredAbsoluteIndex for converting positions to absolute indexes
 
 ### Testing Patterns
 
