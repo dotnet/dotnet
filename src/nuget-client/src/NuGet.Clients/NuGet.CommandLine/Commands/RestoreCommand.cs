@@ -352,6 +352,7 @@ namespace NuGet.CommandLine
             var repositories = packageSources
                 .Select(sourceRepositoryProvider.CreateRepository)
                 .ToList();
+            var auditSources = GetAuditSources(SourceProvider);
 
             if (!areAnyPackagesMissing)
             {
@@ -371,8 +372,6 @@ namespace NuGet.CommandLine
                     restoreSummaries);
 
                 using SourceCacheContext cacheContext = new();
-
-                var auditSources = GetAuditSources();
 
                 var auditUtility = new AuditChecker(
                     repositories,
@@ -401,6 +400,7 @@ namespace NuGet.CommandLine
                 packageRestoredEvent: (sender, args) => { Interlocked.Add(ref installCount, args.Restored ? 1 : 0); },
                 packageRestoreFailedEvent: (sender, args) => { failedEvents.Enqueue(args); },
                 sourceRepositories: repositories,
+                auditSources: auditSources,
                 maxNumberOfParallelTasks: DisableParallelProcessing
                         ? 1
                         : PackageManagementConstants.DefaultMaxDegreeOfParallelism,
@@ -472,9 +472,9 @@ namespace NuGet.CommandLine
             }
         }
 
-        private List<SourceRepository> GetAuditSources()
+        internal static List<SourceRepository> GetAuditSources(IPackageSourceProvider sourceProvider)
         {
-            IReadOnlyList<PackageSource> auditSources = SourceProvider.LoadAuditSources();
+            IReadOnlyList<PackageSource> auditSources = sourceProvider.LoadAuditSources();
 
             List<SourceRepository> auditRepositories = new List<SourceRepository>(auditSources.Count);
             for (int i = 0; i < auditSources.Count; i++)
