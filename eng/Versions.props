@@ -31,7 +31,7 @@
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>17.12.36</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
