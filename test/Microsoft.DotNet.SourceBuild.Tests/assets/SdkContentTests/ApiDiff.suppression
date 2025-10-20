@@ -9,36 +9,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.CollectionBuilderAttribute</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.RequiredMemberAttribute</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
