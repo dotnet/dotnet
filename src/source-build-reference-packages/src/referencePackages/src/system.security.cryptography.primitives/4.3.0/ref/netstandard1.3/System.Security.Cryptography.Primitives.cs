@@ -40,7 +40,7 @@ namespace System.Security.Cryptography
     public enum CipherMode
     {
         CBC = 1,
-        ECB = 2, // CodeQL [SM02299] This just defines the API and doesn't represent usage // CodeQL [SM00395] This just defines the API and doesn't represent usage
+        ECB = 2,
         CTS = 5
     }
 
