@@ -2,10 +2,20 @@ Coding Style and Changes:
 - Code should match the style of the file it's in.
 - Changes should be minimal to resolve a problem in a clean way.
 - User-visible changes to behavior should be considered carefully before committing. They should always be flagged.
+- When generating code, run `dotnet format` to ensure uniform formatting.
+- Prefer using file-based namespaces for new code.
+- Do not allow unused `using` directives to be committed.
 
 Testing:
 - Large changes should always include test changes.
 - The Skip parameter of the Fact attribute to point to the specific issue link.
+- To run tests in this repo:
+  - Use the repo-local dotnet instance: `./.dotnet/dotnet`
+  - For MSTest-style projects: `dotnet test path/to/project.csproj --filter "FullyQualifiedName~TestName"`
+  - For XUnit test assemblies: `dotnet exec artifacts/bin/redist/Debug/TestAssembly.dll -method "*TestMethodName*"`
+  - Examples:
+    - `dotnet test test/dotnet.Tests/dotnet.Tests.csproj --filter "Name~ItShowsTheAppropriateMessageToTheUser"`
+    - `dotnet exec artifacts/bin/redist/Debug/dotnet.Tests.dll -method "*ItShowsTheAppropriateMessageToTheUser*"`
 
 Output Considerations:
 - When considering how output should look, solicit advice from baronfel.

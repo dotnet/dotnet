@@ -305,7 +305,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">Do projektu se nevedlo přidat všechny požadované balíčky. Instalace následujících balíčků z {0} se nepovedla:</target>
+        <target state="translated">Do projektu se nepovedlo přidat všechny požadované balíčky. Instalace následujících balíčků z {0} se nepovedla:</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
@@ -330,7 +330,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">Probíhá pokus o instalaci verze {1} pro {0}, ale tenhle projekt už zahrnuje jinou verzi. Přeskakuje se...</target>
+        <target state="translated">Probíhá pokus o instalaci verze {1} pro {0}, ale tento projekt už zahrnuje jinou verzi. Přeskakuje se...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Hodnota {0} nemůže být nulová.</target>
+        <target state="translated">{0} nemůže být null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -365,27 +365,27 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">Atribut repository v elementu balíčku má neplatnou hodnotu: '{0}'. Platné hodnoty jsou: template nebo extension.</target>
+        <target state="translated">Atribut repository v elementu balíčku má neplatnou hodnotu: {0}. Platné hodnoty jsou: template nebo extension.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">Tenhle průvodce šablonou se dá použít jen pro jednoprojektové šablony nebo šablony položek projektů.</target>
+        <target state="translated">Tento průvodce šablonou se dá použít jen pro jednoprojektové šablony nebo šablony položek projektů.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">V šabloně projektů je nakonfigurované použití úložiště balíčků pro konkrétní rozšíření, ale nezadalo se ID rozšíření. Zadejte ID rozšíření pomocí atributu repositoryId.</target>
+        <target state="translated">V šabloně projektů je nakonfigurované použití úložiště balíčků pro konkrétní rozšíření, ale není zadané ID rozšíření. Zadejte ID rozšíření pomocí atributu repositoryId.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">V šabloně projektů je nakonfigurované použití úložiště balíčků z registru, ale nezadal se název hodnoty registru. Zadejte hodnotu registru pomocí atributu keyName.</target>
+        <target state="translated">V šabloně projektů je nakonfigurované použití úložiště balíčků z registru, ale není zadaný název hodnoty registru. Zadejte hodnotu registru pomocí atributu keyName.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">
         <source>Unable to find package '{0}'.</source>
-        <target state="translated">Nelze najít balíček {0}.</target>
+        <target state="translated">Nenašel se balíček {0}.</target>
         <note />
       </trans-unit>
     </body>

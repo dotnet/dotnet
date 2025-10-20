@@ -32,3 +32,6 @@ stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     scope: scout
+    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+    # This is enabled for all branches except main and 1xx
+    excludeRuntimeDependentJobs: true

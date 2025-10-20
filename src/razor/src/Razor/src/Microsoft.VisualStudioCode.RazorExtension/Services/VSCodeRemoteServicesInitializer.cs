@@ -62,7 +62,7 @@ internal class VSCodeRemoteServicesInitializer(
             UseVsCodeCompletionCommitCharacters = _featureOptions.UseVsCodeCompletionCommitCharacters,
         }, cancellationToken).ConfigureAwait(false);
 
-        await service.InitializeLSPAsync(new RemoteClientLSPInitializationOptions
+        await service.InitializeLspAsync(new RemoteClientLSPInitializationOptions
         {
             ClientCapabilities = clientCapabilities,
             TokenTypes = _semanticTokensLegendService.TokenTypes.All,
