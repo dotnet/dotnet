@@ -13,12 +13,13 @@ param(
     [Parameter(Mandatory=$true)][string]$MinorVersion,
     [Parameter(Mandatory=$true)][string]$PackageIcon,
     [Parameter(Mandatory=$true)][string]$PackageIconFullPath,
-    [Parameter(Mandatory=$true)][string]$PackageLicenseExpression
+    [Parameter(Mandatory=$true)][string]$PackageLicenseExpression,
+    [Parameter(Mandatory=$true)][string]$DotNetPath
 )
 
 $NuspecProperties = "ASPNETCORE_RUNTIME_MSI=$MsiPath;ARCH=$Architecture;MAJOR=$MajorVersion;MINOR=$MinorVersion;PackageIcon=$PackageIcon;PackageIconFullPath=$PackageIconFullPath;PackageLicenseExpression=$PackageLicenseExpression"
 
-& dotnet pack "$NuspecFile" `
+& "$DotNetPath" pack "$NuspecFile" `
     --property "$NuspecProperties" `
     --version $PackageVersion `
     -o "$OutputDirectory"
