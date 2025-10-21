@@ -19,7 +19,7 @@ namespace Microsoft.DotNet.SignTool
     /// </summary>
     internal sealed class RealSignTool : SignTool
     {
-        private readonly string _dotnetPath;
+        private readonly string _dotNetPathMicroBuild;
         private readonly string _logDir;
         private readonly string _msbuildVerbosity;
         private readonly string _snPath;
@@ -39,7 +39,7 @@ namespace Microsoft.DotNet.SignTool
         internal RealSignTool(SignToolArgs args, TaskLoggingHelper log) : base(args, log)
         {
             TestSign = args.TestSign;
-            _dotnetPath = args.DotNetPath;
+            _dotNetPathMicroBuild = args.DotNetPathMicroBuild;
             _msbuildVerbosity = args.MSBuildVerbosity;
             _snPath = args.SNBinaryPath;
             _logDir = args.LogDir;
@@ -48,7 +48,7 @@ namespace Microsoft.DotNet.SignTool
 
         public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath)
         {
-            if (_dotnetPath == null)
+            if (_dotNetPathMicroBuild == null)
             {
                 return buildEngine.BuildProjectFile(projectFilePath, null, null, null);
             }
@@ -59,7 +59,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 process.StartInfo = new ProcessStartInfo()
                 {
-                    FileName = _dotnetPath,
+                    FileName = _dotNetPathMicroBuild,
                     Arguments = $@"build ""{projectFilePath}"" -v:""{_msbuildVerbosity}"" -bl:""{binLogPath}""",
                     UseShellExecute = false,
                     WorkingDirectory = TempDir,
@@ -167,9 +167,9 @@ namespace Microsoft.DotNet.SignTool
             return VerifySignatures.IsSignedVSIXByFileMarker(filePath);
         }
 
-        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string fullPath, string pkgToolPath)
+        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string fullPath, string dotNetPathTooling, string pkgToolPath)
         {
-            return VerifySignatures.IsSignedPkgOrAppBundle(log, fullPath, pkgToolPath);
+            return VerifySignatures.IsSignedPkgOrAppBundle(log, fullPath, dotNetPathTooling, pkgToolPath);
         }
 
         public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
