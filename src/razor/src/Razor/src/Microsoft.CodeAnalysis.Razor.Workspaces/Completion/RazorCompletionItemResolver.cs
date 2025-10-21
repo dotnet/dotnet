@@ -89,6 +89,19 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     break;
                 }
+            case RazorCompletionItemKind.Attribute:
+                {
+                    if (associatedRazorCompletion.DescriptionInfo is AttributeDescriptionInfo descriptionInfo)
+                    {
+                        completionItem.Documentation = new MarkupContent
+                        {
+                            Kind = documentationKind,
+                            Value = descriptionInfo.Documentation
+                        };
+                    }
+
+                    break;
+                }
             case RazorCompletionItemKind.DirectiveAttribute:
             case RazorCompletionItemKind.DirectiveAttributeParameter:
             case RazorCompletionItemKind.TagHelperAttribute:
