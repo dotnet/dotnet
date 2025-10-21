@@ -124,7 +124,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
         if (result == null)
         {
-            var green = Green.GetSlot(slot);
+            var green = Green.GetRequiredSlot(slot);
             // passing list's parent
             Interlocked.CompareExchange(ref element, green.CreateRed(Parent, GetChildPosition(slot)), null);
             result = element;

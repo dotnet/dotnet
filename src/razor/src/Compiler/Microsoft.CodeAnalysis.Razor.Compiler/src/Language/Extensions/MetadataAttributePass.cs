@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -12,9 +11,9 @@ namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
 // Optimization pass is the best choice for this class. It's not an optimization, but it also doesn't add semantically
 // meaningful information.
-internal class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizationPass
 {
-    private IMetadataIdentifierFeature _identifierFeature;
+    private IMetadataIdentifierFeature? _identifierFeature;
 
     protected override void OnInitialized()
     {
@@ -22,7 +21,10 @@ internal class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizat
         Debug.Assert(_identifierFeature is not null);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.Options == null || documentNode.Options.SuppressMetadataAttributes)
         {

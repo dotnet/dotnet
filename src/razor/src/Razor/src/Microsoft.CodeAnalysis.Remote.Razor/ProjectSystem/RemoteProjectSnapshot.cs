@@ -73,7 +73,8 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
             // of re-running the generator (a "retry project") and the document they passed in is from the original project
             // because it comes from the devenv side, so we can be a little lenient here. Since retry projects only exist
             // early in a session, we should still catch coding errors with even basic manual testing.
-            document = _project.IsRetryProject() && _project.GetAdditionalDocument(document.Id) is { } retryDocument
+            document = _project.Solution.Projects.Any(p => p.IsRetryProject()) &&
+                _project.GetAdditionalDocument(document.Id) is { } retryDocument
                     ? retryDocument
                     : throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
         }

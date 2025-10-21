@@ -80,6 +80,15 @@ internal static partial class TypeNameHelper
 
     internal static void WriteGloballyQualifiedName(CodeWriter codeWriter, ReadOnlyMemory<char> typeName)
     {
+        WriteGlobalPrefixIfNeeded(codeWriter, typeName);
+        codeWriter.Write(typeName);
+    }
+
+    /// <summary>
+    /// Writes "global::" if the typename doesn't already start with it and isn't a predefined type.
+    /// </summary>
+    internal static void WriteGlobalPrefixIfNeeded(CodeWriter codeWriter, ReadOnlyMemory<char> typeName)
+    {
         if (typeName.Length == 0)
         {
             return;
@@ -89,7 +98,6 @@ internal static partial class TypeNameHelper
 
         if (typeNameSpan.StartsWith(GlobalPrefix.AsSpan(), StringComparison.Ordinal))
         {
-            codeWriter.Write(typeName);
             return;
         }
 
@@ -98,7 +106,6 @@ internal static partial class TypeNameHelper
         // just skip prefixing tuples.
         if (typeNameSpan[0] == '(')
         {
-            codeWriter.Write(typeName);
             return;
         }
 
@@ -107,24 +114,25 @@ internal static partial class TypeNameHelper
         if (typeNameSpan.Length < 3 || typeNameSpan.Length > 7)
         {
             codeWriter.Write(GlobalPrefix);
-            codeWriter.Write(typeName);
             return;
         }
 
         if (PredefinedTypeNames.Contains(typeName))
         {
-            codeWriter.Write(typeName);
             return;
         }
 
         codeWriter.Write(GlobalPrefix);
-        codeWriter.Write(typeName);
     }
 
-    internal static ReadOnlyMemory<char> GetNonGenericTypeName(string typeName)
+    internal static ReadOnlyMemory<char> GetNonGenericTypeName(string typeName, out ReadOnlyMemory<char> genericTypeParameterList)
     {
         var memory = typeName.AsMemory();
         var index = memory.Span.IndexOf('<');
+
+        genericTypeParameterList = index == -1
+            ? default
+            : memory[index..];
         return index == -1 ? memory : memory[..index];
     }
 }

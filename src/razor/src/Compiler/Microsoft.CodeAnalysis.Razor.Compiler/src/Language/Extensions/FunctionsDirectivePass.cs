@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -12,7 +13,10 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
 {
     private static readonly Comparer<int?> s_nullableIntComparer = Comparer<int?>.Default;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var @class = documentNode.FindPrimaryClass();
         if (@class == null)
