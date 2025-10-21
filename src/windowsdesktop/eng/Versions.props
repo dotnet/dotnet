@@ -12,8 +12,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksArchivesVersion>9.0.0-beta.25503.3</MicrosoftDotNetBuildTasksArchivesVersion>
-    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.25503.3</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksArchivesVersion>9.0.0-beta.25515.2</MicrosoftDotNetBuildTasksArchivesVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.25515.2</MicrosoftDotNetBuildTasksInstallersVersion>
     <!-- corefx -->
     <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
     <SystemDataSqlClientVersion>4.9.0</SystemDataSqlClientVersion>
@@ -23,7 +23,7 @@
     <!-- nuget -->
     <NugetPackagingVersion>6.2.4</NugetPackagingVersion>
     <!-- runtime -->
-    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.11-servicing.25513.9</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
+    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.11-servicing.25517.16</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
     <MicrosoftNETCoreAppRefVersion>9.0.11</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreAppRuntimewinx64Version>9.0.11</MicrosoftNETCoreAppRuntimewinx64Version>
     <MicrosoftWin32RegistryAccessControlVersion>9.0.11</MicrosoftWin32RegistryAccessControlVersion>
@@ -59,13 +59,13 @@
     <SystemSpeechVersion>9.0.11</SystemSpeechVersion>
     <SystemTextEncodingCodePagesVersion>9.0.11</SystemTextEncodingCodePagesVersion>
     <SystemThreadingAccessControlVersion>9.0.11</SystemThreadingAccessControlVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.11-servicing.25513.9</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.11-servicing.25517.16</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>4.10.3</SystemServiceModelVersion>
     <!-- winforms -->
-    <MicrosoftPrivateWinformsVersion>9.0.11-servicing.25514.1</MicrosoftPrivateWinformsVersion>
+    <MicrosoftPrivateWinformsVersion>9.0.11-servicing.25519.1</MicrosoftPrivateWinformsVersion>
     <SystemDrawingCommonVersion>9.0.11</SystemDrawingCommonVersion>
     <!-- wpf -->
-    <MicrosoftDotNetWpfGitHubVersion>9.0.11-rtm.25514.5</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>9.0.11-rtm.25520.2</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
