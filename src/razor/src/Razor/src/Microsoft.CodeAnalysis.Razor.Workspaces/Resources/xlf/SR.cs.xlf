@@ -7,6 +7,11 @@
         <target state="translated">Hodnota nesmí být null ani prázdný řetězec.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="new">{0} (and req'd attributes...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Vytvořit komponentu ze značky</target>
