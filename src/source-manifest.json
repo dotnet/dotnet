@@ -55,10 +55,10 @@
       "commitSha": "2cb9ee0a5d63b52ad7bfbd9364b90b991a26fd72"
     },
     {
-      "barId": 285653,
+      "barId": 287967,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "ef8ee47aa94a43657e516677db73ed77bdbe92bf"
+      "commitSha": "995a3dce41788caebf2b8ca6602a7431f08bfd06"
     },
     {
       "barId": 286446,
