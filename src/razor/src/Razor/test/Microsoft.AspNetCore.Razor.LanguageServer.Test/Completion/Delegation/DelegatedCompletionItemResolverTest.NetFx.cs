@@ -91,7 +91,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
             ShouldIncludeSnippets: false,
             CorrelationId: Guid.Empty);
 
-        _lazyFormattingService = AsyncLazy.Create(_ => TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory));
+        _lazyFormattingService = AsyncLazy.Create(_ => TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper));
 
         var projectManager = CreateProjectSnapshotManager();
         _componentAvailabilityService = new ComponentAvailabilityService(projectManager);

@@ -32,6 +32,18 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     }
 
     [Fact]
+    public async Task TrySynchronize_FailsIfPublishFails()
+    {
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var publisher = new TestHtmlDocumentPublisher(publishResult: false);
+        var remoteServiceInvoker = new RemoteServiceInvoker(document);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
+        Assert.False((await synchronizer.TrySynchronizeAsync(document, DisposalToken)).Synchronized);
+    }
+
+    [Fact]
     public async Task TrySynchronize_NewDocument_Generates()
     {
         var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();

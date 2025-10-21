@@ -1,13 +1,21 @@
 ﻿name: "Copilot Setup Steps"
 
-# Allow testing of the setup steps from your repository's "Actions" tab.
-on: workflow_dispatch
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
 
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   # See https://docs.github.com/en/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent
   copilot-setup-steps:
-    runs-on: 8-core-ubuntu-latest
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -31,6 +39,11 @@ jobs:
           CI: false
         # Use restore script, but don't fail on errors so Copilot can still attempt to work
         run: ./restore.sh
+
+      # Activate the private .NET install. Hopefully this resolves firewall issues when using dotnet build/test
+      - name: Activate
+        continue-on-error: true
+        run: source ./activate.sh
 
       # Diagnostics in the log
       - name: Show .NET info
