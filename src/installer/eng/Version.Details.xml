@@ -156,11 +156,11 @@
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="17.8.43" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Uri>https://dev.azure.com/devdiv/DevDiv/_git/DotNet-msbuild-Trusted</Uri>
       <Sha>f0cbb13971c30ad15a3f252a8d0171898a01ec11</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.43-servicing-25466-03" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Uri>https://dev.azure.com/devdiv/DevDiv/_git/DotNet-msbuild-Trusted</Uri>
       <Sha>f0cbb13971c30ad15a3f252a8d0171898a01ec11</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
@@ -248,7 +248,7 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.25515.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.25520.5">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
       <Sha>4f39ba9e117ece1679a2bd4f2e8c188f914078e1</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
