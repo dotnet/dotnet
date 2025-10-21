@@ -998,12 +998,78 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
+            // .NET 10.0.1xx SDK Release,
+            new TargetChannelConfig(
+                id: 8859,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "10.0.1xx-release", "10.0-release" ],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
             // .NET 10.0.1xx SDK Internal,
             new TargetChannelConfig(
                 id: 5178,
                 isInternal: true,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["internal/10.0.1xx", "internal/10.0"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10InternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal),
+
+            // .NET 10.0.1xx SDK Release Internal,
+            new TargetChannelConfig(
+                id: 8858,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["internal/10.0.1xx-release", "internal/10.0-release"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10InternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal),
+
+            // .NET 10.0.2xx SDK,
+            new TargetChannelConfig(
+                id: 8856,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "10.0.2xx", "10.0" ],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 10.0.2xx SDK Release,
+            new TargetChannelConfig(
+                id: 8860,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "10.0.2xx-release" ],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 10.0.2xx SDK Internal,
+            new TargetChannelConfig(
+                id: 8857,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["internal/10.0.2xx"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10InternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal),
+
+            // .NET 10.0.2xx SDK Internal,
+            new TargetChannelConfig(
+                id: 8861,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["internal/10.0.2xx-release"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10InternalFeeds,

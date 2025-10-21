@@ -213,6 +213,7 @@ namespace Microsoft.DotNet.Helix.Sdk
             "-v " +
             (!includesTestRunner ? "--expected-exit-code $expected_exit_code " : string.Empty) +
             (resetSimulator ? $"--reset-simulator " : string.Empty) +
+            "--set-env=DOTNET_CI=true " +
             (!string.IsNullOrEmpty(AppArguments) ? "-- " + AppArguments : string.Empty);
 
         private string GetHelixCommand(
