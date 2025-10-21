@@ -157,7 +157,9 @@ namespace Microsoft.DotNet.Helix.Sdk
                 "--timeout \"$timeout\" " +
                 "--package-name \"$package_name\" " +
                 " -v " +
-                $"{ devOutArg } { instrumentationArg } { exitCodeArg } { extraArguments } { passthroughArgs }";
+                $"{ devOutArg }  { instrumentationArg } { exitCodeArg } { extraArguments } " +
+                "--arg env:DOTNET_CI=true " +
+                $"{ passthroughArgs }";
         }
 
         private string GetHelixCommand(

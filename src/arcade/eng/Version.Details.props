@@ -14,35 +14,35 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/templating dependencies -->
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25504.3</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25504.3</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25509.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25509.1</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25504.1</MicrosoftDotNetDarcLibPackageVersion>
-    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25504.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25515.1</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25515.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet/xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25475.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25513.3</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
     <!-- dotnet/diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorPackageVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorPackageVersion>
-    <!-- _git/dotnet-runtime dependencies -->
-    <MicrosoftBclAsyncInterfacesPackageVersion>9.0.0-rc.2.24473.5</MicrosoftBclAsyncInterfacesPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftExtensionsHttpPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsHttpPackageVersion>
-    <MicrosoftExtensionsLoggingConsolePackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingConsolePackageVersion>
-    <SystemCollectionsImmutablePackageVersion>9.0.0-rc.2.24473.5</SystemCollectionsImmutablePackageVersion>
-    <SystemFormatsAsn1PackageVersion>9.0.0-rc.2.24473.5</SystemFormatsAsn1PackageVersion>
-    <SystemIOPackagingPackageVersion>9.0.0-rc.2.24473.5</SystemIOPackagingPackageVersion>
-    <SystemReflectionMetadataPackageVersion>9.0.0-rc.2.24473.5</SystemReflectionMetadataPackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebPackageVersion>
-    <SystemTextJsonPackageVersion>9.0.0-rc.2.24473.5</SystemTextJsonPackageVersion>
+    <!-- dotnet/runtime dependencies -->
+    <MicrosoftBclAsyncInterfacesPackageVersion>9.0.0</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>9.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>9.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsHttpPackageVersion>9.0.0</MicrosoftExtensionsHttpPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>9.0.0</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <SystemCollectionsImmutablePackageVersion>9.0.0</SystemCollectionsImmutablePackageVersion>
+    <SystemFormatsAsn1PackageVersion>9.0.0</SystemFormatsAsn1PackageVersion>
+    <SystemIOPackagingPackageVersion>9.0.0</SystemIOPackagingPackageVersion>
+    <SystemReflectionMetadataPackageVersion>9.0.0</SystemReflectionMetadataPackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>9.0.0</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>9.0.0</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemTextEncodingsWebPackageVersion>9.0.0</SystemTextEncodingsWebPackageVersion>
+    <SystemTextJsonPackageVersion>9.0.0</SystemTextJsonPackageVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.24305.1</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <!-- dotnet/sdk dependencies -->
@@ -84,7 +84,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderPdb2PdbVersion>$(MicrosoftDiaSymReaderPdb2PdbPackageVersion)</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- dotnet/diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorVersion>$(MicrosoftSymbolManifestGeneratorPackageVersion)</MicrosoftSymbolManifestGeneratorVersion>
-    <!-- _git/dotnet-runtime dependencies -->
+    <!-- dotnet/runtime dependencies -->
     <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>$(MicrosoftExtensionsDependencyInjectionPackageVersion)</MicrosoftExtensionsDependencyInjectionVersion>
     <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
