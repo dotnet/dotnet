@@ -17,8 +17,19 @@ public static class Extensions
     {
         return artifactType switch
         {
-            ArtifactType.Tarball => ".tar.gz",
-            ArtifactType.Zipball => ".zip",
+            ArtifactType.Tarball => "tar.gz",
+            ArtifactType.Zipball => "zip",
+            _ => throw new ArgumentOutOfRangeException(nameof(artifactType), artifactType, null)
+        };
+    }
+
+    public static string GetGitArchiveArgs(this ArtifactType artifactType, string artifactFilePath, string githubRepoName, string artifactVersion, string sourceCommit)
+    {
+        string baseArgs = $"archive --format={artifactType.GetArtifactExtension()} --output \"{artifactFilePath}\" --prefix \"{githubRepoName}-{artifactVersion}/\" {sourceCommit}";
+        return artifactType switch
+        {
+            ArtifactType.Tarball => $"-c \"tar.tar.gz.command=gzip -cn\" {baseArgs}",
+            ArtifactType.Zipball => baseArgs,
             _ => throw new ArgumentOutOfRangeException(nameof(artifactType), artifactType, null)
         };
     }

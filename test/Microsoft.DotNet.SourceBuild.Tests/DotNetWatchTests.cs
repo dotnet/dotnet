@@ -40,6 +40,34 @@ public class DotNetWatchTests : SdkTests
 
             bool fileChanged = false;
 
+            process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) =>
+            {
+                if (e.Data == null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    OutputHelper.WriteLine(e.Data);
+                }
+                catch
+                {
+                    // avoid System.InvalidOperationException: There is no currently active test.
+                }
+                
+                if (e.Data.Contains(waitingString))
+                {
+                    if (!fileChanged) {
+                        OutputHelper.WriteLine("Program started, changing file on disk to trigger restart...");
+                        File.WriteAllText(
+                            Path.Combine(projectDirectory, "Program.cs"),
+                            File.ReadAllText(Path.Combine(projectDirectory, "Program.cs")).Replace("Hello, World!", expectedString));
+                        fileChanged = true;
+                    }
+                }
+            });
+
             process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
             {
                 if (e.Data == null)
@@ -56,17 +84,7 @@ public class DotNetWatchTests : SdkTests
                     // avoid System.InvalidOperationException: There is no currently active test.
                 }
 
-                if (e.Data.Contains(waitingString))
-                {
-                    if (!fileChanged) {
-                        OutputHelper.WriteLine("Program started, changing file on disk to trigger restart...");
-                        File.WriteAllText(
-                            Path.Combine(projectDirectory, "Program.cs"),
-                            File.ReadAllText(Path.Combine(projectDirectory, "Program.cs")).Replace("Hello, World!", expectedString));
-                        fileChanged = true;
-                    }
-                }
-                else if (e.Data.Contains(expectedString))
+                if (e.Data.Contains(expectedString))
                 {
                     outputChanged = true;
                     OutputHelper.WriteLine("Successfully re-ran program after code change.");

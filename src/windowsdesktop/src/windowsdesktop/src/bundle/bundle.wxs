@@ -1,0 +1,243 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Bundle Name="$(SdkBrandName) $(Version) ($(TargetArchitecture))" 
+          Manufacturer="$(Manufacturer)" 
+          Version="$(BundleVersion)" 
+          UpgradeCode="$(UpgradeCode)"
+          ProviderKey="$(ProviderKey)"
+          AboutUrl="https://aka.ms/dotnet-windows-desktop"
+          Compressed="yes">
+
+  <!-- Related bundle for upgrade scenarios - upgrade any earlier version with same upgrade code -->
+  <!-- This enables preview -> RC -> GA -> servicing upgrade path -->
+
+  <!-- Primary upgrade relationship using current deterministic upgrade code (for GA and all servicing) -->
+  <RelatedBundle Id="$(UpgradeCode)" Action="Upgrade" />
+
+  <!-- Secondary: Upgrade bundles that shipped with legacy UpgradeCode (Preview 2 through RC2) -->
+  <!-- Architecture-specific legacy codes used before deterministic generation -->
+  <?if $(TargetArchitecture)=x64?>
+  <RelatedBundle Id="{55414577-5A99-7937-6951-9CCC4BE8857E}" Action="Upgrade" />
+  <?endif?>
+  <?if $(TargetArchitecture)=x86?>
+  <RelatedBundle Id="{4FEAFCE2-50E6-6CFB-797A-D44EBBE7AC5D}" Action="Upgrade" />
+  <?endif?>
+  <?if $(TargetArchitecture)=arm64?>
+  <RelatedBundle Id="{BCE1CB35-52F6-5801-38F9-1E2D6E0FB355}" Action="Upgrade" />
+  <?endif?>
+
+    <bal:Condition Message="#(loc.InstallPathx64x86)" Condition="WixBundleInstalled OR (NOT DOTNETHOME_X64 ~= DOTNETHOME_X86) OR DOTNETHOMESIMILARITYCHECKOVERRIDE" />
+
+    <bal:Condition Message="#(loc.InstallPathARM64x86)" Condition="WixBundleInstalled OR (NOT DOTNETHOME_ARM64 ~= DOTNETHOME_X86) OR DOTNETHOMESIMILARITYCHECKOVERRIDE" />
+
+    <!-- Permit same path on non-ARM64 machines since past SDKs always wrote this value -->
+    <bal:Condition Message="#(loc.InstallPathARM64x64)" Condition="WixBundleInstalled OR (NOT DOTNETHOME_ARM64 ~= DOTNETHOME_X64) OR (NOT NativeMachine=&quot;$(NativeMachine_arm64)&quot;) OR DOTNETHOMESIMILARITYCHECKOVERRIDE" />
+
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication LicenseFile="dummyeula.rtf"
+                                              LocalizationFile="theme\1033\thm.wxl"
+                                              ShowVersion="yes"
+                                              SuppressDowngradeFailure="$(SuppressDowngradeFailure)"
+                                              SuppressOptionsUI="yes"
+                                              Theme="rtfLicense"
+                                              ThemeFile="bundle.thm" />
+
+      <?foreach lcid in 2052;1028;1029;1031;3082;1036;1040;1041;1042;1045;1046;1049;1055?>
+      <Payload Id="PL_bundle_$(lcid)" SourceFile="theme\$(lcid)\thm.wxl" Name="$(lcid)\thm.wxl" Compressed="yes" />
+      <?endforeach?>
+
+      <Payload Name="DotNetLogo_256x.png" Compressed="yes" SourceFile="DotNetLogo_256x.png" />
+      <Payload Name="dotnet.ico" Compressed="yes" SourceFile="dotnet.ico" />
+    </BootstrapperApplication>
+
+    <!-- Do not use ProgramFiles6432Folder. It defaults to CSIDL_PROGRAM_FILES and will write
+         the tag to Program Files when installing the x86 runtime on 64-bit OS. -->
+    <?if $(PlatformToken)~=X86?>
+    <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFilesFolder]dotnet" />
+    <?else?>
+    <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
+    <?endif?>
+
+    <!-- Registry searches must be explicit about bitness to ensure the correct hive is checked. -->
+    <util:RegistrySearch Id="CheckDotnetInstallLocation_x86"
+                         Key="SOFTWARE\dotnet\Setup\InstalledVersions\x86"
+                         Result="exists"
+                         Root="HKLM"
+                         Value="InstallLocation"
+                         Variable="DotnetInstallLocationExists_x86"
+                         Bitness="always32" />
+
+    <util:RegistrySearch After="CheckDotnetInstallLocation_x86"
+                         Condition="DotnetInstallLocationExists_x86"
+                         Id="DotnetInstallLocation_x86"
+                         Variable="DOTNETHOME_X86"
+                         Result="value"
+                         Root="HKLM"
+                         Key="SOFTWARE\dotnet\Setup\InstalledVersions\x86"
+                         Value="InstallLocation"
+                         Bitness="always32" />
+
+    <util:FileSearch Id="DotnetExeSearch_x86"
+                     After="DotnetInstallLocation_x86"
+                     Variable="DotnetExeExists_x86"
+                     Condition="NOT DotnetInstallLocationExists_x86"
+                     Result="exists"
+                     Path="[ProgramFilesFolder]dotnet\dotnet.exe"/>
+    <util:DirectorySearch Id="DotnetExeLocation_x86"
+                          After="DotnetExeSearch_x86"
+                          Condition="DotnetExeExists_x86"
+                          Variable="DOTNETHOME_X86"
+                          Path="[ProgramFilesFolder]dotnet"/>
+
+    <?if $(TargetArchitecture)!=x86?>
+    <util:RegistrySearch Id="CheckDotnetInstallLocation_x64"
+              Variable="DotnetInstallLocationExists_x64"
+              Result="exists"
+              Root="HKLM"
+              Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64"
+              Value="InstallLocation"
+              Bitness="always64" />
+    <util:RegistrySearch Id="DotnetInstallLocation_x64"
+              After="CheckDotnetInstallLocation_x64"
+              Condition="DotnetInstallLocationExists_x64"
+              Variable="DOTNETHOME_X64"
+              Result="value"
+              Root="HKLM"
+              Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64"
+              Value="InstallLocation"
+              Bitness="always64" />
+
+    <!-- Check default location when on x64 OS-->
+    <util:FileSearch Id="DotnetExeSearch_x64"
+              After="DotnetInstallLocation_x64"
+              Variable="DotnetExeExists_x64"
+              Condition="NOT DotnetInstallLocationExists_x64 AND (NOT NativeMachine OR NativeMachine=&quot;$(NativeMachine_x64)&quot;)"
+              Result="exists"
+              Path="[ProgramFiles64Folder]dotnet\dotnet.exe"/>
+    <util:DirectorySearch Id="DotnetExeLocation_x64"
+              After="DotnetExeSearch_x64"
+              Condition="DotnetExeExists_x64"
+              Variable="DOTNETHOME_X64"
+              Path="[ProgramFiles64Folder]dotnet"/>
+
+    <!-- Check alternate location on non-x64 OS -->
+    <util:FileSearch Id="DotnetExeSearch_alt_x64"
+              After="DotnetInstallLocation_x64"
+              Variable="DotnetExeExists_alt_x64"
+              Condition="NOT DotnetInstallLocationExists_x64 AND NOT NativeMachine=&quot;$(NativeMachine_x64)&quot;"
+              Result="exists"
+              Path="[ProgramFiles64Folder]dotnet\x64\dotnet.exe"/>
+    <util:DirectorySearch Id="DotnetExeLocation_alt_x64"
+              After="DotnetExeSearch_alt_x64"
+              Condition="DotnetExeExists_alt_x64"
+              Variable="DOTNETHOME_X64"
+              Path="[ProgramFiles64Folder]dotnet\x64"/>
+    <?endif?>
+    <?if $(TargetArchitecture)=arm64?>
+    <util:RegistrySearch Id="CheckDotnetInstallLocation_arm64"
+              Variable="DotnetInstallLocationExists_arm64"
+              Result="exists"
+              Root="HKLM"
+              Key="SOFTWARE\dotnet\Setup\InstalledVersions\arm64"
+              Value="InstallLocation"
+              Bitness="always64" />
+    <util:RegistrySearch Id="DotnetInstallLocation_arm64"
+              After="CheckDotnetInstallLocation_arm64"
+              Condition="DotnetInstallLocationExists_arm64"
+              Variable="DOTNETHOME_ARM64"
+              Result="value"
+              Root="HKLM"
+              Key="SOFTWARE\dotnet\Setup\InstalledVersions\arm64"
+              Value="InstallLocation"
+              Bitness="always64" />
+
+    <util:FileSearch Id="DotnetExeSearch_arm64"
+              After="DotnetInstallLocation_arm64"
+              Variable="DotnetExeExists_arm64"
+              Condition="NOT DotnetInstallLocationExists_arm64"
+              Result="exists"
+              Path="[ProgramFiles64Folder]dotnet\dotnet.exe"/>
+    <util:DirectorySearch Id="DotnetExeLocation_arm64"
+              After="DotnetExeSearch_arm64"
+              Condition="DotnetExeExists_arm64"
+              Variable="DOTNETHOME_ARM64"
+              Path="[ProgramFiles64Folder]dotnet"/>
+    <?endif?>
+
+    <!-- References to upgrade policy registry searches defined in upgradePolicies.wxs -->
+    <util:RegistrySearchRef Id="RemovePreviousVersionRegistryKeySearch" />
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeyExistsSearch" />
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeySearch" />
+
+    <!--
+        When installing the SDK bundle to a custom location using the commandline parameters, it is intended, not mandatory, that
+        both "DOTNETHOME_X86" and "DOTNETHOME_X64" should be used on the commandline and should take this convention:
+            DOTNETHOME_X86=<InstallFolder>\x86
+            DOTNETHOME_X64=<InstallFolder>\x64
+        Example:
+            dotnet-sdk-3.0.100-alpha1-009719-win-x64.exe /install DOTNETHOME_X64="D:\dotnet\x64" DOTNETHOME_X86="D:\dotnet\x86" /log "installation.log" /quiet /norestart
+    -->
+    <Variable Name="DOTNETHOME_X86" bal:Overridable="yes" />
+    <Variable Name="DOTNETHOME_X64" bal:Overridable="yes" />
+    <Variable Name="DOTNETHOME_ARM64" bal:Overridable="yes" />
+    <Variable Name="DOTNETHOME" Type="formatted" Value="[DOTNETHOME_$(PlatformToken)]" bal:Overridable="no" />
+    <Variable Name="BUNDLEMONIKER" Type="string" Value="$(SdkBrandName)" bal:Overridable="no" />
+    <Variable Name="DOTNETRUNTIMEVERSION" Type="string" Value="$(DotNetRuntimeVersion)" bal:Overridable="no" />
+    <Variable Name="DOTNETHOMESIMILARITYCHECKOVERRIDE" Type="string" Value="" bal:Overridable="yes" />
+    <Variable Name="VERSIONMAJOR" Type="string" Value="$(MajorVersion)" bal:Overridable="no" />
+    <Variable Name="VERSIONMINOR" Type="string" Value="$(MinorVersion)" bal:Overridable="no" />
+    <Variable Name="MINIMUMVSVERSION" Type="string" Value="$(MinimumVSVersion)" bal:Overridable="no" />
+
+    <Chain DisableSystemRestore="yes" ParallelCache="yes">
+      <!-- Rollback boundary ensures transaction safety for all MSI packages -->
+      <RollbackBoundary Id="WindowsDesktopBoundary" />
+      
+      <!-- .NET Core components must be installed in dependency order -->
+      <!-- These are conditionally included only if the MSI files exist -->
+      
+      <!-- Host is the base component that everything else depends on -->
+      <MsiPackage 
+        Id="DotNetHost"
+        SourceFile="$(var.DotNetRedistHostInstaller)"
+        Vital="yes"
+        Cache="keep"
+        DisplayName="Microsoft .NET Host">
+        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
+        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
+      </MsiPackage>
+      
+      <!-- HostFxr depends on Host -->
+      <MsiPackage 
+        Id="DotNetHostFxr"
+        SourceFile="$(var.DotNetRedistHostfxrInstaller)"
+        Vital="yes"
+        Cache="keep"
+        DisplayName="Microsoft .NET Host FX Resolver">
+        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
+        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
+      </MsiPackage>
+      
+      <!-- Runtime depends on Host and HostFxr -->
+      <MsiPackage 
+        Id="DotNetRuntime"
+        SourceFile="$(var.DotNetRedistLtsInstaller)"
+        Vital="yes"
+        Cache="keep"
+        DisplayName="Microsoft .NET Runtime">
+        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
+        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
+      </MsiPackage>
+      
+      <!-- Windows Desktop Runtime depends on all the above .NET Core components -->
+      <MsiPackage 
+        Id="WindowsDesktopRuntime"
+        SourceFile="$(WindowsDesktopRuntimeMsiPath)"
+        Vital="yes"
+        Cache="keep"
+        DisplayName="Microsoft Windows Desktop Runtime">
+        <MsiProperty Name="DOTNETHOME" Value="[DOTNETHOME]" />
+        <MsiProperty Name="ALLOWMSIINSTALL" Value="True" />
+        <MsiProperty Name="ARPSYSTEMCOMPONENT" Value="0" />
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>
