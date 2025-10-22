@@ -567,6 +567,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         break;
                     }
 
+                    // Due to latency in receiving the response and calculating the value, we may have a negative timespan
+                    TimeSpan minWait = TimeSpan.FromMilliseconds(100);
+                    if (timeSpan < minWait)
+                    {
+                        timeSpan = minWait;
+                    }
+
                     Log.LogMessage(MessageImportance.High,
                         $"API rate limit exceeded, retrying in {timeSpan.Value.TotalSeconds} seconds. Retry attempt: {retry}");
                     Thread.Sleep(timeSpan.Value);
