@@ -2,9 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
@@ -149,6 +152,69 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
             renames: [("Component.razor", "DifferentName.razor")]);
 
     [Fact]
+    public Task Component_Attribute()
+        => VerifyRenamesAsync(
+            input: $"""
+                This is a Razor document.
+
+                <Component Tit$$le="Hello1" />
+
+                <div>
+                    <Component Title="Hello2" />
+                    <Component Title="Hello3">
+                    </Component>
+                    <div>
+                        <Component Title="Hello4"/>
+                        <Component Title="Hello5">
+                        </Component>
+                    </div>
+                </div>
+
+                The end.
+                """,
+            additionalFiles: [
+                (FilePath("Component.razor"), """
+                    <div></div>
+
+                    @code {
+                        [Parameter]
+                        public string Title { get; set; }
+                    }
+
+                    """)
+            ],
+            newName: "Name",
+            expected: """
+                This is a Razor document.
+                
+                <Component Name="Hello1" />
+                
+                <div>
+                    <Component Name="Hello2" />
+                    <Component Name="Hello3">
+                    </Component>
+                    <div>
+                        <Component Name="Hello4"/>
+                        <Component Name="Hello5">
+                        </Component>
+                    </div>
+                </div>
+                
+                The end.
+                """,
+             additionalExpectedFiles: [
+                (FileUri("Component.razor"), """
+                    <div></div>
+
+                    @code {
+                        [Parameter]
+                        public string Name { get; set; }
+                    }
+
+                    """)
+            ]);
+
+    [Fact]
     public Task Mvc()
         => VerifyRenamesAsync(
             input: """
@@ -171,7 +237,8 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
         string expected,
         RazorFileKind? fileKind = null,
         (string fileName, string contents)[]? additionalFiles = null,
-        (string oldName, string newName)[]? renames = null)
+        (string oldName, string newName)[]? renames = null,
+        (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
         var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles: additionalFiles);
@@ -215,13 +282,15 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
             }
         }
 
-        var actual = ProcessRazorDocumentEdits(inputText, document.CreateUri(), result);
+        await ProcessRazorDocumentEditsAsync(inputText, expected, document, additionalExpectedFiles, result, DisposalToken).ConfigureAwait(false);
 
-        AssertEx.EqualOrDiff(expected, actual);
     }
 
-    private static string ProcessRazorDocumentEdits(SourceText inputText, Uri razorDocumentUri, WorkspaceEdit result)
+    private static async Task ProcessRazorDocumentEditsAsync(SourceText inputText, string expected, TextDocument razorDocument, (Uri fileUri, string contents)[]? additionalExpectedFiles, WorkspaceEdit result, CancellationToken cancellationToken)
     {
+        var razorDocumentUri = razorDocument.CreateUri();
+        var solution = razorDocument.Project.Solution;
+
         Assert.True(result.TryGetTextDocumentEdits(out var textDocumentEdits));
         foreach (var textDocumentEdit in textDocumentEdits)
         {
@@ -232,8 +301,23 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
                     inputText = inputText.WithChanges(inputText.GetTextChange((TextEdit)edit));
                 }
             }
+            else if (additionalExpectedFiles is not null)
+            {
+                foreach (var (uri, contents) in additionalExpectedFiles)
+                {
+                    var additionalDocument = solution.GetTextDocuments(uri).First();
+                    var text = await additionalDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+
+                    foreach (var edit in textDocumentEdit.Edits)
+                    {
+                        text = text.WithChanges(text.GetTextChange((TextEdit)edit));
+                    }
+
+                    AssertEx.EqualOrDiff(contents, text.ToString());
+                }
+            }
         }
 
-        return inputText.ToString();
+        AssertEx.EqualOrDiff(expected, inputText.ToString());
     }
 }

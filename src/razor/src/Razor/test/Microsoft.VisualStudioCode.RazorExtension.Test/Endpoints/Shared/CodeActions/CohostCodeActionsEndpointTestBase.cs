@@ -20,8 +20,6 @@ using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -220,8 +218,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
     private async Task<WorkspaceEdit> ResolveCodeActionAsync(CodeAnalysis.TextDocument document, CodeAction codeAction)
     {
         var requestInvoker = new TestHtmlRequestInvoker();
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-        var endpoint = new CohostCodeActionsResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, clientSettingsManager, requestInvoker);
+        var endpoint = new CohostCodeActionsResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, ClientSettingsManager, requestInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, codeAction, DisposalToken);
 
