@@ -118,7 +118,7 @@ internal readonly partial struct ChildSyntaxList : IEquatable<ChildSyntaxList>, 
     /// </summary>
     internal static SyntaxNodeOrToken ItemInternal(SyntaxNode node, int index, ref SlotData slotData)
     {
-        GreenNode greenChild;
+        GreenNode? greenChild;
         var green = node.Green;
 
         // slotData may contain information that allows us to start the loop below using data
@@ -289,7 +289,7 @@ internal readonly partial struct ChildSyntaxList : IEquatable<ChildSyntaxList>, 
     /// </summary>
     internal static SyntaxNode? ItemInternalAsNode(SyntaxNode node, int index, ref SlotData slotData)
     {
-        GreenNode greenChild;
+        GreenNode? greenChild;
         var green = node.Green;
         var idx = index - slotData.PrecedingOccupantSlotCount;
         var slotIndex = slotData.SlotIndex;
