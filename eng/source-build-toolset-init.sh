@@ -32,7 +32,8 @@ function source_only_toolset_init() {
     export CLI_ROOT="$custom_sdk_dir"
     echo "Using custom bootstrap SDK from '$CLI_ROOT', version '$SDK_VERSION'"
   else
-    sdkLine=$(grep -m 1 'dotnet' "$repo_root/global.json")
+    # Extract the "dotnet" line from the "tools" section in global.json (handles multi-line JSON)
+    sdkLine=$(awk '/^\s*"tools"\s*:\s*\{/,/^\s*\}/ { if (/^\s*"dotnet"\s*:\s*/) print }' "$repo_root/global.json")
     sdkPattern="\"dotnet\" *: *\"(.*)\""
     if [[ $sdkLine =~ $sdkPattern ]]; then
       export SDK_VERSION=${BASH_REMATCH[1]}
