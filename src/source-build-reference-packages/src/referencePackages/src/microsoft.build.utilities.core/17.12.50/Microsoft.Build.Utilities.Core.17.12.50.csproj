@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>17.12.50</PackageVersion>
+    <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.build.framework/17.12.50/Microsoft.Build.Framework.17.12.50.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.50/Microsoft.NET.StringTools.17.12.50.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.build.framework/17.12.50/Microsoft.Build.Framework.17.12.50.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.50/Microsoft.NET.StringTools.17.12.50.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
+    <ProjectReference Include="../../system.text.encoding.codepages/7.0.0/System.Text.Encoding.CodePages.7.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.win32.registry/5.0.0/Microsoft.Win32.Registry.5.0.0.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+    <ProjectReference Include="../../system.security.principal.windows/5.0.0/System.Security.Principal.Windows.5.0.0.csproj" />
+  </ItemGroup>
+
+</Project>
