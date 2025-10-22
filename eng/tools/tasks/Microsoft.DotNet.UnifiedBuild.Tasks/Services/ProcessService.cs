@@ -43,7 +43,7 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
         {
             foreach (ProcessEnvironmentVariable env in environmentVariables)
             {
-                processInfo.EnvironmentVariables.Add(env.Name, env.Value);
+                processInfo.EnvironmentVariables[env.Name] = env.Value;
             }
         }
 
