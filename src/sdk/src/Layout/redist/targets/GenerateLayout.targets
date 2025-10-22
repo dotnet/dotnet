@@ -67,7 +67,7 @@
                    EnableMacOSCodeSign="$(SharedFrameworkRid.StartsWith('osx'))" />
     
     <Exec Command="codesign --sign - --entitlements '$(MSBuildProjectDirectory)/roslyn-entitlements.plist' %(_RoslynAppHost.RootDir)%(_RoslynAppHost.Directory)%(_RoslynAppHost.Filename)$(ExeExtension)"
-          Condition="'$(SharedFrameworkRid.StartsWith('osx'))' == 'true'" />
+          Condition="$(SharedFrameworkRid.StartsWith('osx'))" />
   </Target>
 
   <Target Name="PublishNETAnalyzers">
