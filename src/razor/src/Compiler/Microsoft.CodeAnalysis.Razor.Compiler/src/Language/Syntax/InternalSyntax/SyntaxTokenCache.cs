@@ -11,21 +11,9 @@ internal sealed class SyntaxTokenCache
     private const int CacheMask = CacheSize - 1;
     public static readonly SyntaxTokenCache Instance = new();
 
-    private readonly Entry[] _cache = new Entry[CacheSize];
+    private readonly SyntaxToken[] _cache = new SyntaxToken[CacheSize];
 
     internal SyntaxTokenCache() { }
-
-    private readonly struct Entry
-    {
-        public int Hash { get; }
-        public SyntaxToken? Token { get; }
-
-        internal Entry(int hash, SyntaxToken token)
-        {
-            Hash = hash;
-            Token = token;
-        }
-    }
 
     public bool CanBeCached(SyntaxKind kind, params RazorDiagnostic[] diagnostics)
         => diagnostics.Length == 0;
@@ -38,15 +26,15 @@ internal sealed class SyntaxTokenCache
         var indexableHash = hash ^ (hash >> 16);
 
         var idx = indexableHash & CacheMask;
-        var e = _cache[idx];
+        var token = _cache[idx];
 
-        if (e.Hash == hash && e.Token != null && e.Token.Kind == kind && e.Token.Content == content)
+        if (token != null && token.Kind == kind && token.Content == content)
         {
-            return e.Token;
+            return token;
         }
 
-        var token = new SyntaxToken(kind, content, []);
-        _cache[idx] = new Entry(hash, token);
+        token = new SyntaxToken(kind, content, []);
+        _cache[idx] = token;
 
         return token;
     }

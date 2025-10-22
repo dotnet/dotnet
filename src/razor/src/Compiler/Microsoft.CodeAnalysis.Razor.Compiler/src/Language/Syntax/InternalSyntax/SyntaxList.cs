@@ -22,6 +22,31 @@ internal abstract class SyntaxList : GreenNode
 
     internal override bool IsList => true;
 
+    public static SyntaxList<TNode> Create<TNode>(params ReadOnlySpan<TNode> nodes)
+        where TNode : GreenNode
+    {
+        return nodes.Length switch
+        {
+            0 => default,
+            1 => new(nodes[0]),
+            2 => new(List(nodes[0], nodes[1])),
+            3 => new(List(nodes[0], nodes[1], nodes[2])),
+            _ => new(List(nodes))
+        };
+    }
+
+    public static SyntaxList<GreenNode> Create(params ReadOnlySpan<GreenNode> nodes)
+    {
+        return nodes.Length switch
+        {
+            0 => default,
+            1 => new(nodes[0]),
+            2 => new(List(nodes[0], nodes[1])),
+            3 => new(List(nodes[0], nodes[1], nodes[2])),
+            _ => new(List(nodes))
+        };
+    }
+
     internal static GreenNode List(GreenNode child)
     {
         return child;
@@ -46,15 +71,27 @@ internal abstract class SyntaxList : GreenNode
         return result;
     }
 
-    internal static GreenNode List(GreenNode[] nodes)
+    internal static GreenNode List<TNode>(ReadOnlySpan<TNode> nodes)
+    where TNode : GreenNode
     {
-        return List(nodes, nodes.Length);
+        var count = nodes.Length;
+        var array = new ArrayElement<GreenNode>[count];
+
+        for (var i = 0; i < count; i++)
+        {
+            Debug.Assert(nodes[i] != null);
+            array[i].Value = nodes[i];
+        }
+
+        return List(array);
     }
 
-    internal static GreenNode List(GreenNode[] nodes, int count)
+    internal static GreenNode List(ReadOnlySpan<GreenNode> nodes)
     {
+        var count = nodes.Length;
         var array = new ArrayElement<GreenNode>[count];
-        for (int i = 0; i < count; i++)
+
+        for (var i = 0; i < count; i++)
         {
             Debug.Assert(nodes[i] != null);
             array[i].Value = nodes[i];

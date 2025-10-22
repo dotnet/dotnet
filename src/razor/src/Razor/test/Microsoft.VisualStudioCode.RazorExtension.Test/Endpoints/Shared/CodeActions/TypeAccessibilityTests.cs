@@ -93,6 +93,7 @@ public class TypeAccessibilityTests(ITestOutputHelper testOutputHelper) : Cohost
 
         var document = CreateRazorDocument(input);
         var codeActions = await GetCodeActionsAsync(document, input);
+        Assert.NotNull(codeActions);
 
         Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, codeActions.Select(a => ((RazorVSInternalCodeAction)a.Value!).Name).First());
     }
