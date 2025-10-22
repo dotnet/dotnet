@@ -161,6 +161,7 @@ jobs:
       find artifacts/TestResults/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/TestResults/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/TestResults/ -type f -name "*.diff" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.suppression" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/TestResults/ -type f -name "Updated*.txt" -exec cp {} --parents -t ${targetFolder} \;
     displayName: Prepare BuildLogs staging directory
     continueOnError: true
