@@ -179,12 +179,23 @@ jobs:
 
     - template: /eng/common/templates-official/variables/pool-providers.yml
 
-    steps:
-    - checkout: self
-      clean: true
-    - template: /eng/common/templates/steps/enable-internal-runtimes.yml
-    - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
-      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
+    ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
+      presteps:
+      # Install pwsh for enable-internal-runtimes.yml when the container is ubuntu2204 (the image is missing pwsh).
+      - ${{ if and(eq(parameters.container, 'ubuntu2204'), eq(parameters.buildArchitecture, 'x64')) }}:
+        # Script from here: https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.5#installation-via-package-repository-the-package-repository
+        - script: |
+            sudo apt-get update
+            sudo apt-get install -y wget apt-transport-https software-properties-common
+            source /etc/os-release
+            wget -q https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb
+            sudo dpkg -i packages-microsoft-prod.deb
+            rm packages-microsoft-prod.deb
+            sudo apt-get update
+            sudo apt-get install -y powershell
+            pwsh --version
+          displayName: Install PowerShell on Ubuntu 22.04
+      - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
         - task: PowerShell@2
           displayName: Setup Private Feeds Credentials
           inputs:
@@ -192,6 +203,18 @@ jobs:
             arguments: -ConfigFile $(installerRoot)/NuGet.config -Password $Env:Token
           env:
             Token: $(dn-bot-dnceng-artifact-feeds-rw)
+      - ${{ else }}:
+        - task: Bash@3
+          displayName: Setup Private Feeds Credentials
+          inputs:
+            filePath: $(installerRoot)/eng/common/SetupNugetSources.sh
+            arguments: $(installerRoot)/NuGet.config $Token
+          env:
+            Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+    steps:
+    - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+    - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
       - script: $(installerRoot)/build.cmd
                   $(_TestArg) $(_PackArg)
                   -publish -ci -sign
@@ -204,15 +227,6 @@ jobs:
         env:
           DOTNET_CLI_UI_LANGUAGE: ${{ parameters.dotnetCLIUILanguage }}
 
-    - ${{ if ne(parameters.agentOs, 'Windows_NT') }}:
-      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
-        - task: Bash@3
-          displayName: Setup Private Feeds Credentials
-          inputs:
-            filePath: $(installerRoot)/eng/common/SetupNugetSources.sh
-            arguments: $(installerRoot)/NuGet.config $Token
-          env:
-            Token: $(dn-bot-dnceng-artifact-feeds-rw)
     - ${{ if eq(parameters.agentOs, 'Linux') }}:
       - script: $(installerRoot)/build.sh
                   $(_TestArg) $(_PackArg)
