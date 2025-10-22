@@ -32,6 +32,11 @@ namespace NuGet.Build.Tasks
         public string MSBuildProjectName { get; set; }
 
         /// <summary>
+        /// The path to a project.json file.
+        /// </summary>
+        public string ProjectJsonPath { get; set; }
+
+        /// <summary>
         /// Gets or sets the <see cref="ProjectModel.ProjectStyle"/> of the project.
         /// </summary>
         [Output]
@@ -46,7 +51,7 @@ namespace NuGet.Build.Tasks
         {
             var log = new MSBuildLogger(Log);
 
-            var result = BuildTasksUtility.GetProjectRestoreStyle(RestoreProjectStyle, HasPackageReferenceItems, MSBuildProjectDirectory, MSBuildProjectName, log);
+            var result = BuildTasksUtility.GetProjectRestoreStyle(RestoreProjectStyle, HasPackageReferenceItems, ProjectJsonPath, MSBuildProjectDirectory, MSBuildProjectName, log);
 
             IsPackageReferenceCompatibleProjectStyle = result.ProjectStyle == ProjectStyle.PackageReference;
             ProjectStyle = result.ProjectStyle;

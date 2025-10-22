@@ -4,14 +4,13 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Microsoft.Build.Graph;
 using Microsoft.DotNet.HotReload;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Watch;
 
-internal sealed class BrowserLauncher(ILogger logger, IProcessOutputReporter processOutputReporter, EnvironmentOptions environmentOptions)
+internal sealed class BrowserLauncher(ILogger logger, EnvironmentOptions environmentOptions)
 {
     // interlocked
     private ImmutableHashSet<ProjectInstanceId> _browserLaunchAttempted = [];
@@ -62,13 +61,18 @@ internal sealed class BrowserLauncher(ILogger logger, IProcessOutputReporter pro
 
     private void LaunchBrowser(string launchUrl, AbstractBrowserRefreshServer? server)
     {
-        var (fileName, arg, useShellExecute) = environmentOptions.BrowserPath is { } browserPath
-            ? (browserPath, launchUrl, false)
-            : (launchUrl, null, true);
+        var fileName = launchUrl;
 
-        logger.Log(MessageDescriptor.LaunchingBrowser, fileName, arg);
+        var args = string.Empty;
+        if (environmentOptions.BrowserPath is { } browserPath)
+        {
+            args = fileName;
+            fileName = browserPath;
+        }
 
-        if (environmentOptions.TestFlags != TestFlags.None && environmentOptions.BrowserPath == null)
+        logger.LogDebug("Launching browser: {FileName} {Args}", fileName, args);
+
+        if (environmentOptions.TestFlags != TestFlags.None)
         {
             if (environmentOptions.TestFlags.HasFlag(TestFlags.MockBrowser))
             {
@@ -79,23 +83,29 @@ internal sealed class BrowserLauncher(ILogger logger, IProcessOutputReporter pro
             return;
         }
 
-        // dotnet-watch, by default, relies on URL file association to launch browsers. On Windows and MacOS, this works fairly well
-        // where URLs are associated with the default browser. On Linux, this is a bit murky.
-        // From emperical observation, it's noted that failing to launch a browser results in either Process.Start returning a null-value
-        // or for the process to have immediately exited.
-        // We can use this to provide a helpful message.
-        var processSpec = new ProcessSpec()
+        var info = new ProcessStartInfo
         {
-            Executable = fileName,
-            Arguments = arg != null ? [arg] : [],
-            UseShellExecute = useShellExecute,
-            OnOutput = environmentOptions.TestFlags.HasFlag(TestFlags.RedirectBrowserOutput) ? processOutputReporter.ReportOutput : null,
+            FileName = fileName,
+            Arguments = args,
+            UseShellExecute = true,
         };
 
-        using var browserProcess = ProcessRunner.TryStartProcess(processSpec, logger);
-        if (browserProcess is null or { HasExited: true })
+        try
         {
-            logger.LogWarning("Unable to launch the browser. Url '{Url}'.", launchUrl);
+            using var browserProcess = Process.Start(info);
+            if (browserProcess is null or { HasExited: true })
+            {
+                // dotnet-watch, by default, relies on URL file association to launch browsers. On Windows and MacOS, this works fairly well
+                // where URLs are associated with the default browser. On Linux, this is a bit murky.
+                // From emperical observation, it's noted that failing to launch a browser results in either Process.Start returning a null-value
+                // or for the process to have immediately exited.
+                // We can use this to provide a helpful message.
+                logger.LogInformation("Unable to launch the browser. Url '{Url}'.", launchUrl);
+            }
+        }
+        catch (Exception e)
+        {
+            logger.LogDebug("Failed to launch a browser: {Message}", e.Message);
         }
     }
 

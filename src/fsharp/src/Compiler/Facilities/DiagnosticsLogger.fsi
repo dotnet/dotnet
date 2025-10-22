@@ -459,11 +459,6 @@ val tryLanguageFeatureErrorOption:
 
 val languageFeatureNotSupportedInLibraryError: langFeature: LanguageFeature -> m: range -> 'T
 
-module internal StackGuardMetrics =
-    val Listen: unit -> IDisposable
-    val StatsToString: unit -> string
-    val CaptureStatsAndWriteToConsole: unit -> IDisposable
-
 type StackGuard =
     new: maxDepth: int * name: string -> StackGuard
 

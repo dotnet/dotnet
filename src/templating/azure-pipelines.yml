@@ -120,7 +120,6 @@ extends:
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
               steps:
               # Use utility script to run script command dependent on agent OS.
-              - template: /eng/common/templates-official/steps/enable-internal-sources.yml@self
               - script: eng/common/cibuild.cmd
                   -configuration $(_BuildConfig)
                   -prepareMachine
@@ -138,7 +137,6 @@ extends:
                 - _BuildConfig: ${{ config.buildConfig }}
                 - _SignType: none
                 steps:
-                - template: /eng/common/templates-official/steps/enable-internal-sources.yml@self
                 - script: eng/common/cibuild.sh
                     --configuration $(_BuildConfig)
                     --prepareMachine
@@ -163,7 +161,6 @@ extends:
                 - _BuildConfig: ${{ config.buildConfig }}
                 - _SignType: none
                 steps:
-                - template: /eng/common/templates-official/steps/enable-internal-sources.yml@self
                 - script: eng/common/cibuild.sh
                     --configuration $(_BuildConfig)
                     --prepareMachine

@@ -9,21 +9,11 @@ namespace Microsoft.DotNet.Watch
 {
     internal sealed class ProcessRunner(TimeSpan processCleanupTimeout)
     {
-        private sealed class ProcessState(Process process) : IDisposable
+        private sealed class ProcessState
         {
-            public Process Process { get; } = process;
-
             public int ProcessId;
             public bool HasExited;
-
-            // True if Ctrl+C was sent to the process on Windows.
-            public bool SentWindowsCtrlC;
-
-            public void Dispose()
-                => Process.Dispose();
         }
-
-        private const int CtlrCExitCode = unchecked((int)0xC000013A);
 
         // For testing purposes only, lock on access.
         private static readonly HashSet<int> s_runningApplicationProcesses = [];
@@ -41,24 +31,59 @@ namespace Microsoft.DotNet.Watch
         /// </summary>
         public async Task<int> RunAsync(ProcessSpec processSpec, ILogger logger, ProcessLaunchResult? launchResult, CancellationToken processTerminationToken)
         {
+            var state = new ProcessState();
             var stopwatch = new Stopwatch();
+
+            var onOutput = processSpec.OnOutput;
+
+            using var process = CreateProcess(processSpec, onOutput, state, logger);
+
             stopwatch.Start();
 
-            using var state = TryStartProcessImpl(processSpec, logger);
-            if (state == null)
+            Exception? launchException = null;
+            try
             {
+                if (!process.Start())
+                {
+                    throw new InvalidOperationException("Process can't be started.");
+                }
+
+                state.ProcessId = process.Id;
+
+                if (processSpec.IsUserApplication)
+                {
+                    lock (s_runningApplicationProcesses)
+                    {
+                        s_runningApplicationProcesses.Add(state.ProcessId);
+                    }
+                }
+
+                if (onOutput != null)
+                {
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                }
+            }
+            catch (Exception e)
+            {
+                launchException = e;
+            }
+
+            var argsDisplay = processSpec.GetArgumentsDisplay();
+            if (launchException == null)
+            {
+                logger.Log(MessageDescriptor.LaunchedProcess, processSpec.Executable, argsDisplay, state.ProcessId);
+            }
+            else
+            {
+                logger.Log(MessageDescriptor.FailedToLaunchProcess, processSpec.Executable, argsDisplay, launchException.Message);
                 return int.MinValue;
             }
 
-            if (processSpec.IsUserApplication)
+            if (launchResult != null)
             {
-                lock (s_runningApplicationProcesses)
-                {
-                    s_runningApplicationProcesses.Add(state.ProcessId);
-                }
+                launchResult.ProcessId = process.Id;
             }
-
-            launchResult?.ProcessId = state.ProcessId;
 
             int? exitCode = null;
 
@@ -66,7 +91,7 @@ namespace Microsoft.DotNet.Watch
             {
                 try
                 {
-                    await state.Process.WaitForExitAsync(processTerminationToken);
+                    await process.WaitForExitAsync(processTerminationToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -74,7 +99,7 @@ namespace Microsoft.DotNet.Watch
                     // Either Ctrl+C was pressed or the process is being restarted.
 
                     // Non-cancellable to not leave orphaned processes around blocking resources:
-                    await TerminateProcessAsync(state.Process, processSpec, state, logger, CancellationToken.None);
+                    await TerminateProcessAsync(process, processSpec, state, logger, CancellationToken.None);
                 }
             }
             catch (Exception e)
@@ -100,18 +125,18 @@ namespace Microsoft.DotNet.Watch
 
                 try
                 {
-                    exitCode = state.Process.ExitCode;
+                    exitCode = process.ExitCode;
                 }
                 catch
                 {
                     exitCode = null;
                 }
 
-                logger.Log(MessageDescriptor.ProcessRunAndExited, state.ProcessId, stopwatch.ElapsedMilliseconds, exitCode);
+                logger.Log(MessageDescriptor.ProcessRunAndExited, process.Id, stopwatch.ElapsedMilliseconds, exitCode);
 
                 if (processSpec.IsUserApplication)
                 {
-                    if (exitCode == 0 || state.SentWindowsCtrlC && exitCode == CtlrCExitCode)
+                    if (exitCode == 0)
                     {
                         logger.Log(MessageDescriptor.Exited);
                     }
@@ -134,27 +159,20 @@ namespace Microsoft.DotNet.Watch
             return exitCode ?? int.MinValue;
         }
 
-        internal static Process? TryStartProcess(ProcessSpec processSpec, ILogger logger)
-            => TryStartProcessImpl(processSpec, logger)?.Process;
-
-        private static ProcessState? TryStartProcessImpl(ProcessSpec processSpec, ILogger logger)
+        private static Process CreateProcess(ProcessSpec processSpec, Action<OutputLine>? onOutput, ProcessState state, ILogger logger)
         {
-            var onOutput = processSpec.OnOutput;
-
             var process = new Process
             {
                 EnableRaisingEvents = true,
                 StartInfo =
                 {
                     FileName = processSpec.Executable,
-                    UseShellExecute = processSpec.UseShellExecute,
+                    UseShellExecute = false,
                     WorkingDirectory = processSpec.WorkingDirectory,
                     RedirectStandardOutput = onOutput != null,
                     RedirectStandardError = onOutput != null,
                 }
             };
-
-            var state = new ProcessState(process);
 
             if (processSpec.IsUserApplication && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -211,38 +229,14 @@ namespace Microsoft.DotNet.Watch
                 };
             }
 
-            var argsDisplay = processSpec.GetArgumentsDisplay();
-
-            try
-            {
-                if (!process.Start())
-                {
-                    throw new InvalidOperationException("Process can't be started.");
-                }
-                state.ProcessId = process.Id;
-
-                if (onOutput != null)
-                {
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-                }
-
-                logger.Log(MessageDescriptor.LaunchedProcess, processSpec.Executable, argsDisplay, state.ProcessId);
-                return state;
-            }
-            catch (Exception e)
-            {
-                logger.Log(MessageDescriptor.FailedToLaunchProcess, processSpec.Executable, argsDisplay, e.Message);
-
-                state.Dispose();
-                return null;
-            }
+            return process;
         }
 
         private async ValueTask TerminateProcessAsync(Process process, ProcessSpec processSpec, ProcessState state, ILogger logger, CancellationToken cancellationToken)
         {
             var forceOnly = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !processSpec.IsUserApplication;
 
+            // Ctrl+C hasn't been sent.
             TerminateProcess(process, state, logger, forceOnly);
 
             if (forceOnly)
@@ -362,11 +356,7 @@ namespace Microsoft.DotNet.Watch
             else
             {
                 var error = ProcessUtilities.SendWindowsCtrlCEvent(state.ProcessId);
-                if (error == null)
-                {
-                    state.SentWindowsCtrlC = true;
-                }
-                else
+                if (error != null)
                 {
                     logger.Log(MessageDescriptor.FailedToSendSignalToProcess, signalName, state.ProcessId, error);
                 }

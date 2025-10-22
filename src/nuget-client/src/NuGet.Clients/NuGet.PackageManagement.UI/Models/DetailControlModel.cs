@@ -271,8 +271,7 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     searchResultPackage.KnownOwnerViewModels,
-                    searchResultPackage.DownloadCount,
-                    PackageVulnerabilities);
+                    searchResultPackage.DownloadCount);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 
@@ -650,8 +649,7 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     packageItemViewModel.KnownOwnerViewModels,
-                    packageItemViewModel.DownloadCount,
-                    packageItemViewModel.Vulnerabilities);
+                    packageItemViewModel.DownloadCount);
             }
             else
             {
@@ -671,8 +669,7 @@ namespace NuGet.PackageManagement.UI
                         searchMetadata,
                         deprecationData,
                         knownOwnerViewModels: null,
-                        searchMetadata.DownloadCount,
-                        PackageVulnerabilities);
+                        searchMetadata.DownloadCount);
 
                     _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 

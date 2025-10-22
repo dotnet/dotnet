@@ -1,8 +1,0 @@
-<Project>
-
-  <Import Project="..\..\Directory.Build.targets" />
-
-  <!-- Provide default targets which can be hooked onto or overridden as necessary -->
-  <Target Name="Pack" />
-
-</Project>

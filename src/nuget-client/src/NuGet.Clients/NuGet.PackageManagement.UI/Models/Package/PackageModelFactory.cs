@@ -32,17 +32,18 @@ namespace NuGet.PackageManagement.UI.Models.Package
             }
 
             EmbeddedResourcesCapability embeddedResources = new EmbeddedResourcesCapability(_packageFileService, metadata.Identity!, metadata.ReadmeUrl);
-            IVulnerableCapable vulnerableCapability = new VulnerableDatabaseCapability(_packageVulnerabilityService, metadata.Identity!);
 
             if (metadata.TransitiveOrigins != null)
             {
-                return CreateTransitivelyReferencedPackageModel(metadata, vulnerableCapability, embeddedResources);
+                IVulnerableCapable vulnerableDatabaseCapability = new VulnerableDatabaseCapability(_packageVulnerabilityService, metadata.Identity!);
+                return CreateTransitivelyReferencedPackageModel(metadata, vulnerableDatabaseCapability, embeddedResources);
             }
             else
             {
                 if (metadata.PackagePath != null)
                 {
                     PackageMetadataRetrievalAdapter packageMetadataRetrievalAdapter = new PackageMetadataRetrievalAdapter(_searchService, metadata.Identity!, _packageSources, _includePrerelease);
+                    IVulnerableCapable vulnerableCapability = new VulnerablePackageMetadataCapability(packageMetadataRetrievalAdapter);
 
                     if (itemFilter.Equals(ContractItemFilter.All))
                     {
@@ -56,6 +57,7 @@ namespace NuGet.PackageManagement.UI.Models.Package
                 {
                     PackageMetadataRetrievalAdapter packageMetadataRetrievalAdapter = new PackageMetadataRetrievalAdapter(_searchService, metadata.Identity!, _packageSources, _includePrerelease);
                     IDeprecationCapable deprecationCapable = new DeprecationPackageMetadataCapability(packageMetadataRetrievalAdapter);
+                    VulnerablePackageMetadataCapability vulnerableCapability = new VulnerablePackageMetadataCapability(packageMetadataRetrievalAdapter);
 
                     if (metadata.IsRecommended)
                     {

@@ -12,37 +12,21 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.HotReload;
 
-internal interface IMessage
-{
-    ValueTask WriteAsync(Stream stream, CancellationToken cancellationToken);
-}
-
-internal interface IRequest : IMessage
+internal interface IRequest
 {
     RequestType Type { get; }
-}
-
-internal interface IResponse : IMessage
-{
-    ResponseType Type { get; }
+    ValueTask WriteAsync(Stream stream, CancellationToken cancellationToken);
 }
 
 internal interface IUpdateRequest : IRequest
 {
 }
 
-internal enum RequestType : byte
+internal enum RequestType
 {
     ManagedCodeUpdate = 1,
     StaticAssetUpdate = 2,
     InitialUpdatesCompleted = 3,
-}
-
-internal enum ResponseType : byte
-{
-    InitializationResponse = 1,
-    UpdateResponse = 2,
-    HotReloadExceptionNotification = 3,
 }
 
 internal readonly struct ManagedCodeUpdateRequest(IReadOnlyList<RuntimeManagedCodeUpdate> updates, ResponseLoggingLevel responseLoggingLevel) : IUpdateRequest
@@ -97,10 +81,8 @@ internal readonly struct ManagedCodeUpdateRequest(IReadOnlyList<RuntimeManagedCo
     }
 }
 
-internal readonly struct UpdateResponse(IReadOnlyCollection<(string message, AgentMessageSeverity severity)> log, bool success) : IResponse
+internal readonly struct UpdateResponse(IReadOnlyCollection<(string message, AgentMessageSeverity severity)> log, bool success)
 {
-    public ResponseType Type => ResponseType.UpdateResponse;
-
     public async ValueTask WriteAsync(Stream stream, CancellationToken cancellationToken)
     {
         await stream.WriteAsync(success, cancellationToken);
@@ -134,11 +116,9 @@ internal readonly struct UpdateResponse(IReadOnlyCollection<(string message, Age
     }
 }
 
-internal readonly struct ClientInitializationResponse(string capabilities) : IResponse
+internal readonly struct ClientInitializationResponse(string capabilities) 
 {
     private const byte Version = 0;
-
-    public ResponseType Type => ResponseType.InitializationResponse;
 
     public string Capabilities { get; } = capabilities;
 
@@ -158,26 +138,6 @@ internal readonly struct ClientInitializationResponse(string capabilities) : IRe
 
         var capabilities = await stream.ReadStringAsync(cancellationToken);
         return new ClientInitializationResponse(capabilities);
-    }
-}
-
-internal readonly struct HotReloadExceptionCreatedNotification(int code, string message) : IResponse
-{
-    public ResponseType Type => ResponseType.HotReloadExceptionNotification;
-    public int Code => code;
-    public string Message => message;
-
-    public async ValueTask WriteAsync(Stream stream, CancellationToken cancellationToken)
-    {
-        await stream.WriteAsync(code, cancellationToken);
-        await stream.WriteAsync(message, cancellationToken);
-    }
-
-    public static async ValueTask<HotReloadExceptionCreatedNotification> ReadAsync(Stream stream, CancellationToken cancellationToken)
-    {
-        var code = await stream.ReadInt32Async(cancellationToken);
-        var message = await stream.ReadStringAsync(cancellationToken);
-        return new HotReloadExceptionCreatedNotification(code, message);
     }
 }
 

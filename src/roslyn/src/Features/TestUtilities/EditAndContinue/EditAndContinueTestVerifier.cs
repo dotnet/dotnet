@@ -275,13 +275,7 @@ internal abstract class EditAndContinueTestVerifier
         AssertEx.Empty(duplicateNonPartial, "Duplicate non-partial symbols");
 
         // check if we can merge edits without throwing:
-        var (mergedEdits, _) = EditSession.MergePartialEditsAsync(
-            oldProject.GetCompilationAsync().Result!,
-            newProject.GetCompilationAsync().Result!,
-            oldProject,
-            newProject,
-            allEdits,
-            CancellationToken.None).AsTask().Result;
+        EditSession.MergePartialEdits(oldProject.GetCompilationAsync().Result!, newProject.GetCompilationAsync().Result!, allEdits, out var mergedEdits, out _, CancellationToken.None);
 
         // merging is where we fill in NewSymbol for deletes, so make sure that happened too
         foreach (var edit in mergedEdits)
@@ -290,26 +284,6 @@ internal abstract class EditAndContinueTestVerifier
                 edit.OldSymbol is IMethodSymbol)
             {
                 Assert.True(edit.NewSymbol is not null);
-            }
-
-            // Validate that the syntax mapping function provides mapping for all lambdas and closures within the changed syntax,
-            // so the compiler is able to determine the mapping.
-            if (edit.SyntaxMap != null)
-            {
-                Assert.NotNull(edit.NewSymbol);
-
-                foreach (var newSyntaxRef in edit.NewSymbol.DeclaringSyntaxReferences)
-                {
-                    var newSyntax = newSyntaxRef.GetSyntax(CancellationToken.None);
-
-                    foreach (var newNode in newSyntax.DescendantNodesAndSelf())
-                    {
-                        if (Analyzer.IsLambda(newNode) || Analyzer.IsClosureScope(newNode))
-                        {
-                            _ = edit.SyntaxMap(newNode);
-                        }
-                    }
-                }
             }
         }
     }

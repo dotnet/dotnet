@@ -30,7 +30,6 @@ internal sealed class ProjectLauncher(
         ProjectOptions projectOptions,
         CancellationTokenSource processTerminationSource,
         Action<OutputLine>? onOutput,
-        ProcessExitAction? onExit,
         RestartOperation restartOperation,
         CancellationToken cancellationToken)
     {
@@ -67,14 +66,12 @@ internal sealed class ProjectLauncher(
             IsUserApplication = true,
             WorkingDirectory = projectOptions.WorkingDirectory,
             OnOutput = onOutput,
-            OnExit = onExit,
         };
 
         // Stream output lines to the process output reporter.
         // The reporter synchronizes the output of the process with the logger output,
         // so that the printed lines don't interleave.
-        // Only send the output to the reporter if no custom output handler was provided (e.g. for Aspire child processes).
-        processSpec.OnOutput ??= line =>
+        processSpec.OnOutput += line =>
         {
             context.ProcessOutputReporter.ReportOutput(context.ProcessOutputReporter.PrefixProcessOutput ? line with { Content = $"[{projectDisplayName}] {line.Content}" } : line);
         };
@@ -91,7 +88,7 @@ internal sealed class ProjectLauncher(
         environmentBuilder[EnvironmentVariables.Names.DotnetWatch] = "1";
         environmentBuilder[EnvironmentVariables.Names.DotnetWatchIteration] = (Iteration + 1).ToString(CultureInfo.InvariantCulture);
 
-        if (Logger.IsEnabled(LogLevel.Trace))
+        if (Logger.IsEnabled(LogLevel.Debug))
         {
             environmentBuilder[EnvironmentVariables.Names.HotReloadDeltaClientLogMessages] =
                 (EnvironmentOptions.SuppressEmojis ? Emoji.Default : Emoji.Agent).GetLogMessagePrefix() + $"[{projectDisplayName}]";
@@ -132,4 +129,7 @@ internal sealed class ProjectLauncher(
         arguments.AddRange(projectOptions.CommandArguments);
         return arguments;
     }
+
+    public ValueTask<int> TerminateProcessAsync(RunningProject project, CancellationToken cancellationToken)
+        => compilationHandler.TerminateNonRootProcessAsync(project, cancellationToken);
 }

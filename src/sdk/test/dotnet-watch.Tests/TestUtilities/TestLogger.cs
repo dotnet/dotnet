@@ -11,8 +11,6 @@ internal class TestLogger(ITestOutputHelper? output = null) : ILogger
     public readonly Lock Guard = new();
     private readonly List<string> _messages = [];
 
-    public Func<LogLevel, bool>? IsEnabledImpl;
-
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         var message = $"[{logLevel}] {formatter(state, exception)}";
@@ -38,5 +36,5 @@ internal class TestLogger(ITestOutputHelper? output = null) : ILogger
         where TState : notnull => throw new NotImplementedException();
 
     public bool IsEnabled(LogLevel logLevel)
-        => IsEnabledImpl?.Invoke(logLevel) ?? true;
+        => true;
 }

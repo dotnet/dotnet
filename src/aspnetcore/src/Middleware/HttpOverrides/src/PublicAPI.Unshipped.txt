@@ -1,2 +1,0 @@
-#nullable enable
-Microsoft.AspNetCore.Builder.ForwardedHeadersOptions.KnownIPNetworks.get -> System.Collections.Generic.IList<System.Net.IPNetwork>!

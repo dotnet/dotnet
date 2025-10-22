@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Runtime.InteropServices.JavaScript</name>
+  </assembly>
+  <members>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSException">
+      <summary>Represents an exception initiated from the JavaScript interop code.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSException.#ctor(System.String)">
+      <summary>Initializes a new instance of the JSException class with a specified error message.</summary>
+      <param name="msg">The message that describes the error.</param>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSExportAttribute">
+      <summary>Indicates that a source generator should export the attributed method to JavaScript and create thunks necessary to marshal its arguments and any return value or thrown exception.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSExportAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.JavaScript.JSExportAttribute" /> class.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSHost">
+      <summary>Represents the JavaScript host environment where the .NET runtime is currently operating.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSHost.ImportAsync(System.String,System.String,System.Threading.CancellationToken)">
+      <summary>Downloads and instantiates an ES6 module from the provided URL, via the JavaScript host's dynamic import API.
+            If a module with the provided <paramref name="moduleName" /> has previously been instantiated, it will be returned instead.</summary>
+      <param name="moduleName">Globally unique identifier of the ES6 module, which is used by <see cref="M:System.Runtime.InteropServices.JavaScript.JSImportAttribute.#ctor(System.String,System.String)" />.</param>
+      <param name="moduleUrl">The location of the module file.</param>
+      <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+      <exception cref="T:System.OperationCanceledException">The cancellation token was canceled. This exception is stored into the returned task.</exception>
+      <returns>A proxy for the JavaScript object that contains the module's exports.</returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.JavaScript.JSHost.DotnetInstance">
+      <summary>Returns a proxy for the JavaScript module that contains the .NET runtime.</summary>
+    </member>
+    <member name="P:System.Runtime.InteropServices.JavaScript.JSHost.GlobalThis">
+      <summary>Returns a proxy for the globalThis JavaScript host object.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSImportAttribute">
+      <summary>Indicates that the JSImport source generator should create a managed wrapper to invoke a specific imported JavaScript function and marshal its arguments, return values, and exceptions.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSImportAttribute.#ctor(System.String,System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.JavaScript.JSImportAttribute" /> class.</summary>
+      <param name="functionName">The name of the target JavaScript function. This name will be used as a key to locate the function in the module.
+            Functions nested inside of objects can be referred to by using the dot operator to connect one or more names.</param>
+      <param name="moduleName">Globally unique identifier of the ES6 module, if any, that contains the function. The module must be loaded via <see cref="M:System.Runtime.InteropServices.JavaScript.JSHost.ImportAsync(System.String,System.String,System.Threading.CancellationToken)" /> before any attempt to invoke the function.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSImportAttribute.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.JavaScript.JSImportAttribute" /> class.</summary>
+      <param name="functionName">The name of the function to be bound in the module. Use dots for nested objects.</param>
+    </member>
+    <member name="P:System.Runtime.InteropServices.JavaScript.JSImportAttribute.FunctionName">
+      <summary>Gets the name of the target JavaScript function. This name will be used as a key to locate the function in the module.</summary>
+    </member>
+    <member name="P:System.Runtime.InteropServices.JavaScript.JSImportAttribute.ModuleName">
+      <summary>Gets the globally unique identifier of the ES6 module, if any, that contains the function. The module must be loaded via <see cref="M:System.Runtime.InteropServices.JavaScript.JSHost.ImportAsync(System.String,System.String,System.Threading.CancellationToken)" /> before any attempt to invoke the function.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSMarshalAsAttribute`1">
+      <summary>Specifies the JavaScript type associated with a managed argument or return value.
+            The JSImport generator will use this information to marshal data between the JavaScript and managed environments.</summary>
+      <typeparam name="T">One of the types defined in <see cref="T:System.Runtime.InteropServices.JavaScript.JSType" />, for example <see cref="T:System.Runtime.InteropServices.JavaScript.JSType.MemoryView" />.</typeparam>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSMarshalAsAttribute`1.#ctor">
+      <summary>Initializes a new instance of <see cref="T:System.Runtime.InteropServices.JavaScript.JSMarshalAsAttribute`1" /> configured by generic parameters of <see cref="T:System.Runtime.InteropServices.JavaScript.JSType" />.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSObject">
+      <summary>Represents a reference to an object in the JavaScript host environment and enables interaction with it as a proxy.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsBoolean(System.String)">
+      <summary>Returns the value of the specified property as <see cref="T:System.Boolean" /> if the property exists, otherwise <see langword="false" />.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not a <see cref="T:System.Boolean" />.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsByteArray(System.String)">
+      <summary>Returns the value of the specified property as a <see cref="T:System.Byte" /> array if the property exists, otherwise <see langword="null" />.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not an array.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsDouble(System.String)">
+      <summary>Returns the value of the property as <see cref="T:System.Double" /> if the property exists, otherwise 0.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not a number.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsInt32(System.String)">
+      <summary>Returns the value of the property as <see cref="T:System.Int32" /> if the property exists, otherwise 0.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not an integer.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsJSObject(System.String)">
+      <summary>Returns the value of the property as <see cref="T:System.Runtime.InteropServices.JavaScript.JSObject" /> proxy if the property exists, otherwise <see langword="null" />.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not a <see cref="T:System.Runtime.InteropServices.JavaScript.JSObject" />.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetPropertyAsString(System.String)">
+      <summary>Returns the value of the property as <see cref="T:System.String" /> if the property exists, otherwise <see langword="null" />.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <exception cref="T:System.Runtime.InteropServices.JavaScript.JSException">The property value is not a string.</exception>
+      <returns>The value of the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.GetTypeOfProperty(System.String)">
+      <summary>Returns <code>typeof()</code> of the property.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <returns>One of "undefined", "object", "boolean", "number", "bigint", "string", "symbol" or "function".</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.HasProperty(System.String)">
+      <summary>Checks whether the target object or one of its prototypes has a property with the specified name.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <returns>
+        <see langword="true" /> when the object has the property with the specified name.</returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.Boolean)">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.Byte[])">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.Double)">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.Int32)">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.Runtime.InteropServices.JavaScript.JSObject)">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="M:System.Runtime.InteropServices.JavaScript.JSObject.SetProperty(System.String,System.String)">
+      <summary>Defines a new property on the target object, or modifies an existing property to have the specified value.</summary>
+      <param name="propertyName">The name of the property.</param>
+      <param name="value">The value of property to set.</param>
+    </member>
+    <member name="P:System.Runtime.InteropServices.JavaScript.JSObject.IsDisposed">
+      <summary>Gets a value that indicates whether the proxy was already disposed.</summary>
+      <returns>
+        <see langword="true" /> if the proxy was already disposed; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType">
+      <summary>Used as the generic argument for <see cref="T:System.Runtime.InteropServices.JavaScript.JSMarshalAsAttribute`1" /> to express the expected JavaScript type, which should be the source or result of argument marshalling.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Any">
+      <summary>Dynamically selects the most appropriate JavaScript or managed type for each argument value at run time.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Array`1">
+      <summary>Marshals as a copy of the JavaScript Array or TypedArray type.</summary>
+      <typeparam name="T">The type of array element.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.BigInt">
+      <summary>Marshal as JavaScript BigInt type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Boolean">
+      <summary>Marshal as JavaScript Boolean type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Date">
+      <summary>Marshal as JavaScript Date type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Discard">
+      <summary>Suppresses marshalling of the JavaScript function's return value and discards it.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Error">
+      <summary>Marshals as the JavaScript Error type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Function">
+      <summary>Marshals as the JavaScript Function type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Function`1">
+      <summary>Marshals as the JavaScript Function type.</summary>
+      <typeparam name="T">The type of marshalled parameter or result.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Function`2">
+      <summary>Marshals as the JavaScript Function type.</summary>
+      <typeparam name="T1">The type of marshalled parameter or result.</typeparam>
+      <typeparam name="T2">The type of marshalled parameter.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Function`3">
+      <summary>Marshals as the JavaScript Function type.</summary>
+      <typeparam name="T1">The type of marshalled parameter or result.</typeparam>
+      <typeparam name="T2">The type of marshalled parameter.</typeparam>
+      <typeparam name="T3">The type of marshalled parameter.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Function`4">
+      <summary>Marshals as the JavaScript Function type.</summary>
+      <typeparam name="T1">The type of marshalled parameter or result.</typeparam>
+      <typeparam name="T2">The type of marshalled parameter.</typeparam>
+      <typeparam name="T3">The type of marshalled parameter.</typeparam>
+      <typeparam name="T4">The type of marshalled parameter.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.MemoryView">
+      <summary>Marshals a managed Span or ArraySegment as a JavaScript wrapper object that provides access to the managed memory.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Number">
+      <summary>Marshal as JavaScript Number type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Object">
+      <summary>Marshal as JavaScript Object type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Promise`1">
+      <summary>Marshal as JavaScript Promise type.</summary>
+      <typeparam name="T">The type of marshalled result value.</typeparam>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.String">
+      <summary>Marshal as JavaScript String type.</summary>
+    </member>
+    <member name="T:System.Runtime.InteropServices.JavaScript.JSType.Void">
+      <summary>Asserts that a JavaScript function should have no return value.</summary>
+    </member>
+  </members>
+</doc>

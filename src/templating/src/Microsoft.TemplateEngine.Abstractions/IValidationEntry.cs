@@ -11,7 +11,7 @@ namespace Microsoft.TemplateEngine.Abstractions
         /// <summary>
         /// Error severity.
         /// </summary>
-        enum SeverityLevel
+        public enum SeverityLevel
         {
             None,
             Info,
@@ -42,7 +42,7 @@ namespace Microsoft.TemplateEngine.Abstractions
         /// <summary>
         /// Details of the error location.
         /// </summary>
-        readonly struct ErrorLocation
+        public readonly struct ErrorLocation
         {
             /// <summary>
             /// Gets the filename where the error occurred.

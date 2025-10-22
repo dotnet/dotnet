@@ -56,6 +56,7 @@ internal sealed class MSBuildForwardingAppWithoutLogging
             msbuildArgs.OtherMSBuildArgs.Add("-nologo");
         }
         string? tlpDefault = TerminalLoggerDefault;
+        // new for .NET 9 - default TL to auto (aka enable in non-CI scenarios)
         if (string.IsNullOrWhiteSpace(tlpDefault))
         {
             tlpDefault = "auto";

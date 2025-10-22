@@ -4,11 +4,9 @@
 #nullable disable
 
 using System.Collections.Concurrent;
-using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.DotNet.Cli.NugetPackageDownloader;
 using Microsoft.DotNet.Cli.ToolPackage;
 using Microsoft.DotNet.Cli.Utils;
-using Microsoft.DotNet.Cli.Utils.Extensions;
 using Microsoft.Extensions.EnvironmentAbstractions;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -452,19 +450,7 @@ internal class NuGetPackageDownloader : INuGetPackageDownloader
             throw new NuGetPackageInstallerException("No NuGet sources are defined or enabled");
         }
 
-        CheckHttpSources(sources);
         return sources;
-    }
-
-    private void CheckHttpSources(IEnumerable<PackageSource> packageSources)
-    {
-        foreach (var packageSource in packageSources)
-        {
-            if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
-            {
-                throw new NuGetPackageInstallerException(string.Format(CliStrings.Error_NU1302_HttpSourceUsed, packageSource.Source));
-            }
-        }
     }
 
     private async Task<(PackageSource, IPackageSearchMetadata)> GetMatchingVersionInternalAsync(

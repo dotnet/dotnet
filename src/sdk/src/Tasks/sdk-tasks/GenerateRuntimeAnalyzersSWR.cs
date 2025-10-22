@@ -19,19 +19,11 @@ namespace Microsoft.DotNet.Cli.Build
 
             // NOTE: Keep in sync with SdkAnalyzerAssemblyRedirector.
             // This is intentionally short to avoid long path problems.
-            const string installDir = @"Common7\IDE\CommonExtensions\Microsoft\DotNet";
+            const string installDir = @"DotNetRuntimeAnalyzers";
 
             AddFolder(sb,
-                      "",
-                      installDir,
-                      filesToInclude:
-                      [
-                          "metadata.json",
-                      ]);
-
-            AddFolder(sb,
-                      "AnalyzerRedirecting",
-                      @$"{installDir}\AnalyzerRedirecting",
+                      @"AnalyzerRedirecting",
+                      @"Common7\IDE\CommonExtensions\Microsoft\AnalyzerRedirecting",
                       filesToInclude:
                       [
                           "Microsoft.Net.Sdk.AnalyzerRedirecting.dll",
@@ -40,23 +32,23 @@ namespace Microsoft.DotNet.Cli.Build
                       ]);
 
             AddFolder(sb,
-                      "AspNetCoreAnalyzers",
+                      @"AspNetCoreAnalyzers",
                       @$"{installDir}\AspNetCoreAnalyzers");
 
             AddFolder(sb,
-                      "NetCoreAnalyzers",
+                      @"NetCoreAnalyzers",
                       @$"{installDir}\NetCoreAnalyzers");
 
             AddFolder(sb,
-                      "WindowsDesktopAnalyzers",
+                      @"WindowsDesktopAnalyzers",
                       @$"{installDir}\WindowsDesktopAnalyzers");
 
             AddFolder(sb,
-                      "SDKAnalyzers",
+                      @"SDKAnalyzers",
                       @$"{installDir}\SDKAnalyzers");
 
             AddFolder(sb,
-                      "WebSDKAnalyzers",
+                      @"WebSDKAnalyzers",
                       @$"{installDir}\WebSDKAnalyzers");
 
             File.WriteAllText(OutputFile, sb.ToString());

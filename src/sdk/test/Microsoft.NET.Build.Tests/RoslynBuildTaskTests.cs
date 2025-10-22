@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using Basic.CompilerLog.Util;
 using Microsoft.Build.Logging.StructuredLogger;
 using Microsoft.CodeAnalysis;
-using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.NET.Build.Tests;
 
@@ -19,16 +18,16 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
         _ => throw new ArgumentOutOfRangeException(paramName: nameof(language)),
     };
 
-    private static string DotNetExecCompilerFileName(Language language) => CompilerFileNameWithoutExtension(language) + ".dll";
+    private static string CoreCompilerFileName(Language language) => CompilerFileNameWithoutExtension(language) + ".dll";
 
-    private static string AppHostCompilerFileName(Language language) => CompilerFileNameWithoutExtension(language) + FileNameSuffixes.CurrentPlatform.Exe;
+    private static string FxCompilerFileName(Language language) => CompilerFileNameWithoutExtension(language) + ".exe";
 
     [FullMSBuildOnlyTheory, CombinatorialData]
     public void FullMSBuild_SdkStyle(bool useSharedCompilation, Language language)
     {
         var testAsset = CreateProject(useSharedCompilation, language);
         var buildCommand = BuildAndRunUsingMSBuild(testAsset);
-        VerifyCompiler(buildCommand, AppHostCompilerFileName(language), useSharedCompilation);
+        VerifyCompiler(buildCommand, CoreCompilerFileName(language), useSharedCompilation);
     }
 
     [FullMSBuildOnlyTheory, CombinatorialData]
@@ -39,7 +38,7 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
             doc.Root!.Element("PropertyGroup")!.Add(new XElement("RoslynCompilerType", "Framework"));
         });
         var buildCommand = BuildAndRunUsingMSBuild(testAsset);
-        VerifyCompiler(buildCommand, AppHostCompilerFileName(language), useSharedCompilation);
+        VerifyCompiler(buildCommand, FxCompilerFileName(language), useSharedCompilation);
     }
 
     [FullMSBuildOnlyTheory, CombinatorialData]
@@ -51,7 +50,7 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
             project.TargetFrameworkVersion = "v4.7.2";
         });
         var buildCommand = BuildAndRunUsingMSBuild(testAsset);
-        VerifyCompiler(buildCommand, AppHostCompilerFileName(language), useSharedCompilation);
+        VerifyCompiler(buildCommand, FxCompilerFileName(language), useSharedCompilation);
     }
 
     [FullMSBuildOnlyTheory, CombinatorialData]
@@ -59,7 +58,7 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testAsset = CreateProject(useSharedCompilation, language, AddCompilersToolsetPackage);
         var buildCommand = BuildAndRunUsingMSBuild(testAsset);
-        VerifyCompiler(buildCommand, AppHostCompilerFileName(language), useSharedCompilation, toolsetPackage: true);
+        VerifyCompiler(buildCommand, FxCompilerFileName(language), useSharedCompilation, toolsetPackage: true);
     }
 
     [Theory, CombinatorialData]
@@ -67,7 +66,7 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testAsset = CreateProject(useSharedCompilation, language);
         var buildCommand = BuildAndRunUsingDotNet(testAsset);
-        VerifyCompiler(buildCommand, AppHostCompilerFileName(language), useSharedCompilation);
+        VerifyCompiler(buildCommand, CoreCompilerFileName(language), useSharedCompilation);
     }
 
     //  https://github.com/dotnet/sdk/issues/49665
@@ -76,7 +75,7 @@ public sealed class RoslynBuildTaskTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testAsset = CreateProject(useSharedCompilation, language, AddCompilersToolsetPackage);
         var buildCommand = BuildAndRunUsingDotNet(testAsset);
-        VerifyCompiler(buildCommand, DotNetExecCompilerFileName(language), useSharedCompilation, toolsetPackage: true);
+        VerifyCompiler(buildCommand, CoreCompilerFileName(language), useSharedCompilation, toolsetPackage: true);
     }
 
     private TestAsset CreateProject(bool useSharedCompilation, Language language, Action<TestProject>? configure = null, [CallerMemberName] string callingMethod = "")

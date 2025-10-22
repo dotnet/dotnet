@@ -197,10 +197,8 @@ namespace NuGet.PackageManagement.UI
                 controller.PackageManagerControl = this;
             }
 
-            List<SourceRepository> sourceRepositories = sourceRepositoryProvider.GetRepositories().ToList();
-
-            var auditSourceRepositories = Model.Context.SourceService.GetEnabledAuditSources();
-            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, auditSourceRepositories, _uiLogger);
+            var sourceRepositories = sourceRepositoryProvider.GetRepositories();
+            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, _uiLogger);
 
             var solutionManager = Model.Context.SolutionManagerService;
             solutionManager.ProjectAdded += OnProjectChanged;
@@ -1075,14 +1073,6 @@ namespace NuGet.PackageManagement.UI
                 if (s.Vulnerabilities != null && s.Vulnerabilities.Any())
                 {
                     vulnerablePackagesCount++;
-                }
-                else // Fallback to checking audit sources.
-                {
-                    List<PackageVulnerabilityMetadataContextInfo> auditSourceVulnerabilityContextInfo = await _packageVulnerabilityService.GetVulnerabilityInfoAsync(s.Identity, token);
-                    if (auditSourceVulnerabilityContextInfo.Count > 0)
-                    {
-                        vulnerablePackagesCount++;
-                    }
                 }
                 if (d != null)
                 {

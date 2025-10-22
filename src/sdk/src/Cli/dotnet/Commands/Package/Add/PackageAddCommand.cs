@@ -163,12 +163,10 @@ internal class PackageAddCommand(ParseResult parseResult) : CommandBase(parseRes
             }
         }
 
-        string? specifiedVersion = _packageId.HasVersion
-            ? _packageId.VersionRange?.OriginalString ?? string.Empty
-            : _parseResult.GetValue(PackageAddCommandParser.VersionOption);
+        bool hasVersion = _packageId.HasVersion;
         bool prerelease = _parseResult.GetValue(PackageAddCommandParser.PrereleaseOption);
 
-        if (specifiedVersion != null && prerelease)
+        if (hasVersion && prerelease)
         {
             throw new GracefulException(CliCommandStrings.PrereleaseAndVersionAreNotSupportedAtTheSameTime);
         }
@@ -195,7 +193,11 @@ internal class PackageAddCommand(ParseResult parseResult) : CommandBase(parseRes
 
         // Set initial version to Directory.Packages.props and/or C# file
         // (we always need to add the package reference to the C# file but when CPM is enabled, it's added without a version).
-        string version = specifiedVersion ?? (prerelease ? "*-*" : "*");
+        string version = hasVersion
+            ? _packageId.VersionRange?.OriginalString ?? string.Empty
+            : (prerelease
+                ? "*-*"
+                : "*");
         bool skipUpdate = false;
         var central = SetCentralVersion(version);
         var local = SetLocalVersion(central != null ? null : version);
@@ -212,7 +214,7 @@ internal class PackageAddCommand(ParseResult parseResult) : CommandBase(parseRes
             }
 
             // If no version was specified by the user, save the actually restored version.
-            if (specifiedVersion == null && !skipUpdate)
+            if (!hasVersion && !skipUpdate)
             {
                 var projectAssetsFile = projectInstance.GetProperty("ProjectAssetsFile")?.EvaluatedValue;
                 if (!File.Exists(projectAssetsFile))
@@ -304,7 +306,7 @@ internal class PackageAddCommand(ParseResult parseResult) : CommandBase(parseRes
 
                     // If user didn't specify a version and a version is already specified in Directory.Packages.props,
                     // don't update the Directory.Packages.props (that's how the project-based equivalent behaves as well).
-                    if (specifiedVersion == null)
+                    if (!hasVersion)
                     {
                         skipUpdate = true;
                         return (Revert: NoOp, Update: Unreachable, Save: Revert);

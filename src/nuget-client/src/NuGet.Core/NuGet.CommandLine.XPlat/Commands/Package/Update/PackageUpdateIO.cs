@@ -191,14 +191,11 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
             packageDependency,
             resolvedVersion);
 
-        // MSBuildUtility only updated CPM Directory.Packages.props when "noVersion" is false.
-        const bool noVersion = false;
-
         // Determine whether to add package reference conditionally or unconditionally
         if (packageTfms.Count == updatedPackageSpec.TargetFrameworks.Count)
         {
             // package is used by all project TFMs (no condition)
-            _msbuildUtility.AddPackageReference(updatedPackageSpec.FilePath, libraryDependency, noVersion);
+            _msbuildUtility.AddPackageReference(updatedPackageSpec.FilePath, libraryDependency, true);
         }
         else
         {
@@ -206,7 +203,7 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
                 .Select(e => AddPackageReferenceCommandRunner.GetAliasForFramework(updatedPackageSpec, e))
                 .Where(originalFramework => originalFramework != null);
 
-            _msbuildUtility.AddPackageReferencePerTFM(updatedPackageSpec.FilePath, libraryDependency, frameworkAliases, noVersion);
+            _msbuildUtility.AddPackageReferencePerTFM(updatedPackageSpec.FilePath, libraryDependency, frameworkAliases, true);
         }
     }
 

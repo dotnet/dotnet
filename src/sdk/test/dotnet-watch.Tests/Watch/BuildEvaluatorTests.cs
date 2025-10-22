@@ -16,11 +16,9 @@ namespace Microsoft.DotNet.Watch.UnitTests
                 SuppressMSBuildIncrementalism = suppressMSBuildIncrementalism
             };
 
-            var processOutputReporter = new TestProcessOutputReporter();
-
             return new DotNetWatchContext()
             {
-                ProcessOutputReporter = processOutputReporter,
+                ProcessOutputReporter = new TestProcessOutputReporter(),
                 Logger = NullLogger.Instance,
                 BuildLogger = NullLogger.Instance,
                 LoggerFactory = NullLoggerFactory.Instance,
@@ -28,7 +26,7 @@ namespace Microsoft.DotNet.Watch.UnitTests
                 Options = new(),
                 RootProjectOptions = TestOptions.ProjectOptions,
                 EnvironmentOptions = environmentOptions,
-                BrowserLauncher = new BrowserLauncher(NullLogger.Instance, processOutputReporter, environmentOptions),
+                BrowserLauncher = new BrowserLauncher(NullLogger.Instance, environmentOptions),
                 BrowserRefreshServerFactory = new BrowserRefreshServerFactory()
             };
         }

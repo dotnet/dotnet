@@ -219,7 +219,6 @@ internal sealed class IncrementalMSBuildWorkspace : Workspace
 
     public async Task ReportSolutionFilesAsync(Solution solution, CancellationToken cancellationToken)
     {
-#if DEBUG
         _logger.LogDebug("Solution: {Path}", solution.FilePath);
         foreach (var project in solution.Projects)
         {
@@ -246,8 +245,5 @@ internal sealed class IncrementalMSBuildWorkspace : Workspace
             var text = await document.GetTextAsync(cancellationToken);
             _logger.LogDebug("    {Kind}: {FilePath} [{Checksum}]", kind, document.FilePath, Convert.ToBase64String(text.GetChecksum().ToArray()));
         }
-#else
-        await Task.CompletedTask;
-#endif
     }
 }

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.UI
@@ -79,11 +78,6 @@ namespace NuGet.PackageManagement.UI
             return Service.GetActivePackageSourceNameAsync(cancellationToken);
         }
 
-        public IReadOnlyList<SourceRepository> GetEnabledAuditSources()
-        {
-            return Service.GetEnabledAuditSources();
-        }
-
         private sealed class NullNuGetSourcesService : INuGetSourcesService
         {
             public event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged { add { } remove { } }
@@ -97,8 +91,6 @@ namespace NuGet.PackageManagement.UI
             public ValueTask SavePackageSourceContextInfosAsync(IReadOnlyList<PackageSourceContextInfo> sources, CancellationToken cancellationToken) => new ValueTask();
 
             public ValueTask<string?> GetActivePackageSourceNameAsync(CancellationToken cancellationToken) => new ValueTask<string?>();
-
-            public IReadOnlyList<SourceRepository> GetEnabledAuditSources() => Array.Empty<SourceRepository>();
         }
     }
 }

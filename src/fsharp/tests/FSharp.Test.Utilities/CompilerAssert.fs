@@ -376,15 +376,13 @@ module CompilerAssertHelpers =
         let setup = AppDomainSetup(ApplicationBase = thisAssemblyDirectory)
         let testCaseDomain = AppDomain.CreateDomain($"built app {assembly}", null, setup)
 
-        let handler = ResolveEventHandler(fun _ args ->
+        testCaseDomain.add_AssemblyResolve(fun _ args ->
             dependecies
             |> List.tryFind (fun path -> Path.GetFileNameWithoutExtension path = AssemblyName(args.Name).Name)
             |> Option.filter FileSystem.FileExistsShim
             |> Option.map Assembly.LoadFile
             |> Option.toObj
         )
-
-        testCaseDomain.add_AssemblyResolve handler
 
         let worker =
             (testCaseDomain.CreateInstanceFromAndUnwrap(typeof<Worker>.Assembly.CodeBase, typeof<Worker>.FullName)) :?> Worker
@@ -393,8 +391,8 @@ module CompilerAssertHelpers =
         // Replay streams captured in appdomain.
         printf $"{output}"
         eprintf $"{errors}"
-
-        testCaseDomain.remove_AssemblyResolve handler
+        
+        AppDomain.Unload testCaseDomain
         
         outcome, output, errors
 

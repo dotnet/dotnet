@@ -101,7 +101,7 @@ internal abstract class AbstractBrowserRefreshServer(string middlewareAssemblyPa
             builder[MiddlewareEnvironmentVariables.DotNetModifiableAssemblies] = "debug";
         }
 
-        if (logger.IsEnabled(LogLevel.Trace))
+        if (logger.IsEnabled(LogLevel.Debug))
         {
             // enable debug logging from middleware:
             builder[MiddlewareEnvironmentVariables.LoggingLevel] = "Debug";
@@ -163,7 +163,7 @@ internal abstract class AbstractBrowserRefreshServer(string middlewareAssemblyPa
         }, progressCancellationSource.Token);
 
         // Work around lack of Task.WaitAsync(cancellationToken) on .NET Framework:
-        cancellationToken.Register(() => _browserConnected.TrySetCanceled());
+        cancellationToken.Register(() => _browserConnected.SetCanceled());
 
         try
         {
@@ -237,12 +237,8 @@ internal abstract class AbstractBrowserRefreshServer(string middlewareAssemblyPa
     }
 
     public ValueTask SendWaitMessageAsync(CancellationToken cancellationToken)
-    {
-        logger.Log(LogEvents.SendingWaitMessage);
-        return SendAsync(s_waitMessage, cancellationToken);
-    }
+        => SendAsync(s_waitMessage, cancellationToken);
 
-    // obsolete: to be removed
     public ValueTask SendPingMessageAsync(CancellationToken cancellationToken)
         => SendAsync(s_pingMessage, cancellationToken);
 
@@ -299,7 +295,14 @@ internal abstract class AbstractBrowserRefreshServer(string middlewareAssemblyPa
     public ValueTask ReportCompilationErrorsInBrowserAsync(ImmutableArray<string> compilationErrors, CancellationToken cancellationToken)
     {
         logger.Log(LogEvents.UpdatingDiagnostics);
-        return SendJsonMessageAsync(new HotReloadDiagnostics { Diagnostics = compilationErrors }, cancellationToken);
+        if (compilationErrors.IsEmpty)
+        {
+            return SendJsonMessageAsync(new AspNetCoreHotReloadApplied(), cancellationToken);
+        }
+        else
+        {
+            return SendJsonMessageAsync(new HotReloadDiagnostics { Diagnostics = compilationErrors }, cancellationToken);
+        }
     }
 
     public async ValueTask UpdateStaticAssetsAsync(IEnumerable<string> relativeUrls, CancellationToken cancellationToken)

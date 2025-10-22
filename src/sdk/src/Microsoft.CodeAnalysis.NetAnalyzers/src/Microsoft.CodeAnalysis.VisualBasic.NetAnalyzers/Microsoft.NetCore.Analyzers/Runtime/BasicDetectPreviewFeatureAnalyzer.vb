@@ -2,7 +2,6 @@
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.NetCore.Analyzers.Runtime
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
@@ -15,10 +14,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         Private Shared Function IsSyntaxToken(identifier As SyntaxToken, previewInterfaceSymbol As ISymbol) As Boolean
             Return identifier.ValueText.Equals(previewInterfaceSymbol.Name, StringComparison.OrdinalIgnoreCase)
-        End Function
-
-        Protected Overrides Function SymbolFromAwaitOperation(operation As IAwaitOperation) As ISymbol
-            Return Nothing
         End Function
 
         Private Shared Function GetElementTypeForNullableAndArrayTypeNodes(parameterType As TypeSyntax) As TypeSyntax

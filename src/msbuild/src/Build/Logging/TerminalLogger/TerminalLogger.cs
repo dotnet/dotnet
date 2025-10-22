@@ -210,11 +210,6 @@ public sealed partial class TerminalLogger : INodeLogger
     /// </summary>
     private bool? _showSummary;
 
-    /// <summary>
-    /// Indicates whether to show the live-updated nodes display.
-    /// </summary>
-    private bool _showNodesDisplay = true;
-
     private uint? _originalConsoleMode;
 
     /// <summary>
@@ -427,9 +422,6 @@ public sealed partial class TerminalLogger : INodeLogger
             case "NOSUMMARY":
                 _showSummary = false;
                 break;
-            case "DISABLENODEDISPLAY":
-                _showNodesDisplay = false;
-                break;
         }
     }
 
@@ -496,10 +488,9 @@ public sealed partial class TerminalLogger : INodeLogger
     /// </summary>
     private void BuildStarted(object sender, BuildStartedEventArgs e)
     {
-        if (!_manualRefresh && _showNodesDisplay)
+        if (!_manualRefresh)
         {
             _refresher = new Thread(ThreadProc);
-            _refresher.Name = "Terminal Logger Node Display Refresher";
             _refresher.Start();
         }
 
@@ -772,10 +763,7 @@ public sealed partial class TerminalLogger : INodeLogger
                     _buildErrorsCount += project.ErrorCount;
                     _buildWarningsCount += project.WarningCount;
 
-                    if (_showNodesDisplay)
-                    {
-                        DisplayNodes();
-                    }
+                    DisplayNodes();
                 }
                 finally
                 {

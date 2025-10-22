@@ -405,7 +405,6 @@
     <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" />
     <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" />
     <file src="net48\Newtonsoft.Json.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Newtonsoft.Json.dll" />
-    <file src="net48\System.ComponentModel.Composition.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\System.ComponentModel.Composition.dll" />
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-1.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-1.1.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-2.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-2.0.runtimeconfig.json" />

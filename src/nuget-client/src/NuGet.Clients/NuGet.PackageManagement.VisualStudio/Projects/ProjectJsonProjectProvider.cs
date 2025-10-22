@@ -54,8 +54,7 @@ namespace NuGet.PackageManagement.VisualStudio
             var guids = vsProjectAdapter.GetProjectTypeGuids();
 
             // Web sites cannot have project.json
-            if (guids.Contains(VsProjectTypes.WebSiteProjectTypeGuid, StringComparer.OrdinalIgnoreCase) ||
-                guids.Contains(VsProjectTypes.ESProjTypeGuid, StringComparer.OrdinalIgnoreCase))
+            if (guids.Contains(VsProjectTypes.WebSiteProjectTypeGuid, StringComparer.OrdinalIgnoreCase))
             {
                 return null;
             }

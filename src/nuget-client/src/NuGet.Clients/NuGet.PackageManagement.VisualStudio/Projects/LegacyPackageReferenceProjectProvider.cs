@@ -52,7 +52,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public NuGetProject TryCreateNuGetProject(
             IVsProjectAdapter vsProjectAdapter,
-            ProjectProviderContext _,
+            ProjectProviderContext context,
             bool forceProjectType)
         {
             Assumes.Present(vsProjectAdapter);

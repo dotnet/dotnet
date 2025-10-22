@@ -78,7 +78,6 @@ public class RuntimeProcessLauncherTests(ITestOutputHelper logger) : DotNetWatch
                 projectOptions,
                 new CancellationTokenSource(),
                 onOutput: null,
-                onExit: null,
                 restartOperation: startOp!,
                 cancellationToken);
 
@@ -526,7 +525,7 @@ public class RuntimeProcessLauncherTests(ITestOutputHelper logger) : DotNetWatch
 
         // Terminate the process:
         Log($"Terminating process {runningProject.ProjectNode.GetDisplayName()} ...");
-        await runningProject.TerminateAsync();
+        await w.Service.ProjectLauncher.TerminateProcessAsync(runningProject, CancellationToken.None);
 
         // rude edit in A (changing assembly level attribute):
         UpdateSourceFile(serviceSourceA2, """

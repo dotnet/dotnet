@@ -37,7 +37,7 @@ internal readonly struct BrowserConnection : IDisposable
         ServerLogger = loggerFactory.CreateLogger(ServerLogComponentName, displayName);
         AgentLogger = loggerFactory.CreateLogger(AgentLogComponentName, displayName);
 
-        ServerLogger.Log(LogEvents.ConnectedToRefreshServer);
+        ServerLogger.LogDebug("Connected to referesh server.");
     }
 
     public void Dispose()

@@ -1,9 +1,0 @@
-<Project>
-
-  <PropertyGroup>
-    <!-- we don't need symbol packages for emsdk -->
-    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
-    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
-  </PropertyGroup>
-
-</Project>

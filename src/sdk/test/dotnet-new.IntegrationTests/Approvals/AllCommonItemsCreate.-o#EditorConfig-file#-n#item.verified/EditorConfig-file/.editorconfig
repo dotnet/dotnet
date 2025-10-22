@@ -9,7 +9,7 @@ indent_style = space
 indent_size = 2
 
 # Xml project files
-[*.{csproj,fsproj,vbproj,proj,slnx}]
+[*.{csproj,fsproj,vbproj,proj}]
 indent_size = 2
 
 # Xml config files

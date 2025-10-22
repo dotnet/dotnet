@@ -9,13 +9,12 @@
     <TargetName>$(MSBuildProjectName)</TargetName>
     <OutputPath>$(VsixPublishDestination)</OutputPath>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <SBOMFileLocation>$(ManifestDirPath)\$(ARTIFACT_NAME)\_manifest\spdx_2.2\manifest.spdx.json</SBOMFileLocation>
   </PropertyGroup>
 
   <ItemGroup>
     <MergeManifest Include="$(VsixPublishDestination)Microsoft.VisualStudio.NuGet.Core.json"
-                   SBOMFileLocation="$(SBOMFileLocation)" />
+                   SBOMFileLocation="$(ManifestDirPath)\_manifest\spdx_2.2\manifest.spdx.json" />
   </ItemGroup>
-
+  
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

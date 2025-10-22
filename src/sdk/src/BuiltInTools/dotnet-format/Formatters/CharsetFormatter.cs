@@ -68,8 +68,7 @@ namespace Microsoft.CodeAnalysis.Tools.Formatters
         private static bool TryGetCharset(AnalyzerConfigOptions analyzerConfigOptions, [NotNullWhen(true)] out Encoding? encoding)
         {
             if (analyzerConfigOptions != null &&
-                analyzerConfigOptions.TryGetValue("charset", out var charsetOption) &&
-                charsetOption != "unset")
+                analyzerConfigOptions.TryGetValue("charset", out var charsetOption))
             {
                 encoding = GetCharset(charsetOption);
                 return true;

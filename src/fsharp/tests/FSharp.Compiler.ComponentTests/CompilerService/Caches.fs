@@ -1,4 +1,4 @@
-module internal CompilerService.Caches
+module CompilerService.Caches
 
 open FSharp.Compiler.Caches
 open Xunit
@@ -14,13 +14,11 @@ let shouldNeverTimeout = 15_000
 let shouldNeverTimeout = 200_000
 #endif
 
-let defaultStructural() = CacheOptions.getDefault HashIdentity.Structural
-
 [<Fact>]
 let ``Create and dispose many`` () =
     let caches = 
         [ for _  in 1 .. 100 do
-            new Cache<string, int>(defaultStructural(), name = "Create and dispose many") :> IDisposable ]
+            new Cache<string, int>(CacheOptions.getDefault(), name = "Create and dispose many") :> IDisposable ]
 
     for c in caches do
         c.Dispose()
@@ -28,7 +26,7 @@ let ``Create and dispose many`` () =
 [<Fact>]
 let ``Basic add and retrieve`` () =
     let name = "Basic_add_and_retrieve"
-    use cache = new Cache<string, int>(defaultStructural(), name = name)
+    use cache = new Cache<string, int>(CacheOptions.getDefault(), name = name)
     use metricsListener = cache.CreateMetricsListener()
 
     cache.TryAdd("key1", 1) |> shouldBeTrue
@@ -51,7 +49,7 @@ let ``Basic add and retrieve`` () =
 [<Fact>]
 let ``Eviction of least recently used`` () =
     let name = "Eviction_of_least_recently_used"
-    use cache = new Cache<string, int>({ defaultStructural() with TotalCapacity = 2; HeadroomPercentage = 0 }, name = name)
+    use cache = new Cache<string, int>({ CacheOptions.getDefault() with TotalCapacity = 2; HeadroomPercentage = 0 }, name = name)
     use metricsListener = cache.CreateMetricsListener()
 
     cache.TryAdd("key1", 1) |> shouldBeTrue
@@ -85,7 +83,7 @@ let ``Stress test evictions`` () =
     let iterations = 10_000
     let name = "Stress test evictions"
 
-    use cache = new Cache<string, int>({ defaultStructural() with TotalCapacity = cacheSize; HeadroomPercentage = 0 }, name = name)
+    use cache = new Cache<string, int>({ CacheOptions.getDefault() with TotalCapacity = cacheSize; HeadroomPercentage = 0 }, name = name)
     use metricsListener = cache.CreateMetricsListener()
 
     let evictionsCompleted = new TaskCompletionSource<unit>()
@@ -119,7 +117,7 @@ let ``Stress test evictions`` () =
 
 [<Fact>]
 let ``Metrics can be retrieved`` () =
-    use cache = new Cache<string, int>({ defaultStructural() with TotalCapacity = 2; HeadroomPercentage = 0 }, name = "test_metrics")
+    use cache = new Cache<string, int>({ CacheOptions.getDefault() with TotalCapacity = 2; HeadroomPercentage = 0 }, name = "test_metrics")
     use metricsListener = cache.CreateMetricsListener()
 
     cache.TryAdd("key1", 1) |> shouldBeTrue
@@ -135,16 +133,17 @@ let ``Metrics can be retrieved`` () =
     cache.TryAdd("key3", 3) |> shouldBeTrue
     evictionCompleted.Task.Wait shouldNeverTimeout |> shouldBeTrue
 
+    let stats = metricsListener.GetStats()
     let totals = metricsListener.GetTotals()
 
-    metricsListener.Ratio |> shouldEqual 1.0
+    stats.["hit-ratio"] |> shouldEqual 1.0
     totals.["evictions"] |> shouldEqual 1L
     totals.["adds"] |> shouldEqual 3L
 
 [<Fact>]
 let ``GetOrAdd basic usage`` () =
     let cacheName = "GetOrAdd_basic_usage"
-    use cache = new Cache<string, int>(defaultStructural(), name = cacheName)
+    use cache = new Cache<string, int>(CacheOptions.getDefault(), name = cacheName)
     use metricsListener = cache.CreateMetricsListener()
     let mutable factoryCalls = 0
     let factory k = factoryCalls <- factoryCalls + 1; String.length k
@@ -157,16 +156,17 @@ let ``GetOrAdd basic usage`` () =
     v3 |> shouldEqual 4
     factoryCalls |> shouldEqual 2
     // Metrics assertions
+    let stats = metricsListener.GetStats()
     let totals = metricsListener.GetTotals()
     totals.["hits"] |> shouldEqual 1L
     totals.["misses"] |> shouldEqual 2L
-    metricsListener.Ratio |> shouldEqual (1.0/3.0)
+    stats.["hit-ratio"] |> shouldEqual (1.0/3.0)
     totals.["adds"] |> shouldEqual 2L
 
 [<Fact>]
 let ``AddOrUpdate basic usage`` () =
     let cacheName = "AddOrUpdate_basic_usage"
-    use cache = new Cache<string, int>(defaultStructural(), name = cacheName)
+    use cache = new Cache<string, int>(CacheOptions.getDefault(), name = cacheName)
     use metricsListener = cache.CreateMetricsListener()
     cache.AddOrUpdate("x", 1)
     let mutable value = 0
@@ -179,10 +179,11 @@ let ``AddOrUpdate basic usage`` () =
     cache.TryGetValue("y", &value) |> shouldBeTrue
     value |> shouldEqual 99
     // Metrics assertions
+    let stats = metricsListener.GetStats()
     let totals = metricsListener.GetTotals()
     totals.["hits"] |> shouldEqual 3L // 3 cache hits
     totals.["misses"] |> shouldEqual 0L // 0 cache misses
-    metricsListener.Ratio |> shouldEqual 1.0
+    stats.["hit-ratio"] |> shouldEqual 1.0
     totals.["adds"] |> shouldEqual 2L // "x" and "y" added
     totals.["updates"] |> shouldEqual 1L // "x" updated
 
@@ -219,10 +220,11 @@ let ``GetOrAdd with reference identity`` () =
     v1'' |> shouldEqual v1'
     v2'' |> shouldEqual v2'
     // Metrics assertions
+    let stats = metricsListener.GetStats()
     let totals = metricsListener.GetTotals()
     totals.["hits"] |> shouldEqual 4L
     totals.["misses"] |> shouldEqual 3L
-    metricsListener.Ratio |> shouldEqual (4.0 / 7.0)
+    stats.["hit-ratio"] |> shouldEqual (4.0 / 7.0)
     totals.["adds"] |> shouldEqual 2L
 
 [<Fact>]
@@ -248,9 +250,10 @@ let ``AddOrUpdate with reference identity`` () =
     cache.TryGetValue(t1, &value1Updated) |> shouldBeTrue
     value1Updated |> shouldEqual 9
     // Metrics assertions
+    let stats = metricsListener.GetStats()
     let totals = metricsListener.GetTotals()
     totals.["hits"] |> shouldEqual 3L // 3 cache hits
     totals.["misses"] |> shouldEqual 0L // 0 cache misses
-    metricsListener.Ratio |> shouldEqual 1.0
+    stats.["hit-ratio"] |> shouldEqual 1.0
     totals.["adds"] |> shouldEqual 2L // t1 and t2 added
     totals.["updates"] |> shouldEqual 1L // t1 updated once

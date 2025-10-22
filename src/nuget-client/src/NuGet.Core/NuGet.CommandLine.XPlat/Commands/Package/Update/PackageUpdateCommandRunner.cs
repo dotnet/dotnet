@@ -81,7 +81,9 @@ internal static class PackageUpdateCommandRunner
             return ExitCodes.Error;
         }
 
-        PackageSpec projectSpec = dgSpec.GetProjectSpec(dgSpec.Restore[0]);
+        PackageSpec projectSpec = dgSpec.Projects.Count == 1
+            ? dgSpec.Projects[0]
+            : dgSpec.GetProjectSpec(dgSpec.Restore[0]);
 
         // 2. Find suitable version of package(s) to update
         // Source provider will be needed to find the package version and to restore, so create it here.
@@ -139,7 +141,7 @@ internal static class PackageUpdateCommandRunner
             }
         }
 
-        var projectName = Path.GetFileNameWithoutExtension(projectSpec.FilePath);
+        var projectName = Path.GetFileNameWithoutExtension(dgSpec.Projects[0].FilePath);
         logger.LogInformation($"  {projectName}:");
 
         foreach (var packageResult in packagesToUpdateResult)
@@ -152,7 +154,7 @@ internal static class PackageUpdateCommandRunner
 
         // 3. Preview restore to validate changes
         logger.LogDebug(Strings.PackageUpdate_PreviewRestore);
-        var updatedDgSpec = GetUpdatedDependencyGraphSpec(projectSpec, dgSpec, packagesToUpdateResult);
+        var updatedDgSpec = GetUpdatedDependencyGraphSpec(dgSpec, packagesToUpdateResult);
         var restorePreviewResult = await packageUpdateIO.PreviewUpdatePackageReferenceAsync(updatedDgSpec, logger, cancellationToken);
 
         if (!restorePreviewResult.Success)
@@ -163,7 +165,7 @@ internal static class PackageUpdateCommandRunner
 
         // 4. Update MSBuild files
 
-        var updatedPackageSpec = updatedDgSpec.GetProjectSpec(projectSpec.FilePath);
+        var updatedPackageSpec = updatedDgSpec.Projects[0];
         int updatedCount = 0;
 
         foreach (var packageResult in packagesToUpdateResult)
@@ -246,7 +248,7 @@ internal static class PackageUpdateCommandRunner
                         {
                             Id = packageIdentity.Id,
                             CurrentVersion = new VersionRange(packageIdentity.Version),
-                            NewVersion = VersionRange.Parse(nonVulnerableVersion.OriginalVersion!)
+                            NewVersion = new VersionRange(nonVulnerableVersion)
                         },
                         TargetFrameworkAliases = tfmAliases
                     });
@@ -339,7 +341,7 @@ internal static class PackageUpdateCommandRunner
                     continue;
                 }
 
-                upgradeVersion = VersionRange.Parse(latestVersion.OriginalVersion!);
+                upgradeVersion = new VersionRange(latestVersion);
                 if (upgradeVersion == existingVersion)
                 {
                     logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, latestVersion.OriginalVersion, project.FilePath), ConsoleColor.Yellow);
@@ -476,7 +478,7 @@ internal static class PackageUpdateCommandRunner
                 continue;
             }
 
-            var upgradeVersion = VersionRange.Parse(latestVersion.OriginalVersion!);
+            var upgradeVersion = new VersionRange(latestVersion);
             if (upgradeVersion.ToString() == package.identity.VersionRange.ToString())
             {
                 // Already using the highest version.
@@ -553,9 +555,9 @@ internal static class PackageUpdateCommandRunner
         return result;
     }
 
-    private static DependencyGraphSpec GetUpdatedDependencyGraphSpec(PackageSpec projectSpec, DependencyGraphSpec currentDgSpec, List<PackageUpdateResult> packagesToUpdate)
+    private static DependencyGraphSpec GetUpdatedDependencyGraphSpec(DependencyGraphSpec currentDgSpec, List<PackageUpdateResult> packagesToUpdate)
     {
-        var updatedPackageSpec = projectSpec.Clone();
+        var updatedPackageSpec = currentDgSpec.Projects[0].Clone();
 
         foreach (var packageResult in packagesToUpdate)
         {

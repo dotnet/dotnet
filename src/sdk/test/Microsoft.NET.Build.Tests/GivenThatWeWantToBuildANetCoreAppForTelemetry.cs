@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Reflection;
-using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.NET.Build.Tests
 {
@@ -30,7 +29,7 @@ namespace Microsoft.NET.Build.Tests
             string publishProtocol = "null",
             string configuration = "Debug")
         {
-            return $"{{\"EventName\":\"targetframeworkeval\",\"Properties\":{{\"TargetFrameworkVersion\":\"{targetFrameworkVersion}\",\"RuntimeIdentifier\":\"{runtimeIdentifier}\",\"SelfContained\":\"{selfContained}\",\"UseApphost\":\"{useApphost}\",\"OutputType\":\"{outputType}\",\"UseArtifactsOutput\":\"{useArtifactsOutput}\",\"ArtifactsPathLocationType\":\"{artifactsPathLocationType}\",\"TargetPlatformIdentifier\":\"{targetPlatformIdentifier}\",\"UseMonoRuntime\":\"{useMonoRuntime}\",\"PublishAot\":\"{publishAot}\",\"PublishTrimmed\":\"{publishTrimmed}\",\"PublishSelfContained\":\"{publishSelfContained}\",\"PublishReadyToRun\":\"{publishReadyToRun}\",\"PublishReadyToRunComposite\":\"{publishReadyToRunComposite}\",\"PublishProtocol\":\"{publishProtocol}\",\"Configuration\":\"{Sha256Hasher.HashWithNormalizedCasing(configuration)}\"}}";
+            return $"{{\"EventName\":\"targetframeworkeval\",\"Properties\":{{\"TargetFrameworkVersion\":\"{targetFrameworkVersion}\",\"RuntimeIdentifier\":\"{runtimeIdentifier}\",\"SelfContained\":\"{selfContained}\",\"UseApphost\":\"{useApphost}\",\"OutputType\":\"{outputType}\",\"UseArtifactsOutput\":\"{useArtifactsOutput}\",\"ArtifactsPathLocationType\":\"{artifactsPathLocationType}\",\"TargetPlatformIdentifier\":\"{targetPlatformIdentifier}\",\"UseMonoRuntime\":\"{useMonoRuntime}\",\"PublishAot\":\"{publishAot}\",\"PublishTrimmed\":\"{publishTrimmed}\",\"PublishSelfContained\":\"{publishSelfContained}\",\"PublishReadyToRun\":\"{publishReadyToRun}\",\"PublishReadyToRunComposite\":\"{publishReadyToRunComposite}\",\"PublishProtocol\":\"{publishProtocol}\",\"Configuration\":\"{configuration}\"}}";
         }
 
         [CoreMSBuildOnlyFact]
@@ -83,7 +82,7 @@ namespace Microsoft.NET.Build.Tests
             result
                 .StdOut.Should()
                 .Contain(CreateTargetFrameworkEvalTelemetryJson(
-                    ".NETFramework,Version=v4.6",
+                    ".NETFramework,Version=v4.6", 
                     targetPlatformIdentifier: "Windows",
                     publishReadyToRunComposite: "null"))
                 .And

@@ -3,7 +3,6 @@
 
 using System.IO.Pipelines;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -556,30 +555,8 @@ namespace Microsoft.AspNetCore.Watch.BrowserRefresh
             Assert.Equal("true", context.Response.Headers["ASPNETCORE-BROWSER-TOOLS"]);
         }
 
-        [Theory]
-        [InlineData(500, "text/html")]
-        [InlineData(404, "text/html")]
-        [InlineData(200, "text/html")]
-        public async Task InvokeAsync_AddsScriptToThePage_ForSupportedStatusCodes(int statusCode, string contentType)
-        {
-            // Act & Assert
-            var responseContent = await TestBrowserRefreshMiddleware(statusCode, contentType, "Test Content");
-            Assert.Contains("<script src=\"/_framework/aspnetcore-browser-refresh.js\"></script>", responseContent);
-        }
-
-        [Theory]
-        [InlineData(400, "text/html")] // Bad Request
-        [InlineData(401, "text/html")] // Unauthorized
-        [InlineData(404, "application/json")] // 404 with wrong content type
-        [InlineData(200, "application/json")] // 200 with wrong content type
-        public async Task InvokeAsync_DoesNotAddScript_ForUnsupportedStatusCodesOrContentTypes(int statusCode, string contentType)
-        {
-            // Act & Assert
-            var responseContent = await TestBrowserRefreshMiddleware(statusCode, contentType, "Test Content", includeHtmlWrapper: false);
-            Assert.DoesNotContain("<script src=\"/_framework/aspnetcore-browser-refresh.js\"></script>", responseContent);
-        }
-
-        private async Task<string> TestBrowserRefreshMiddleware(int statusCode, string contentType, string content, bool includeHtmlWrapper = true)
+        [Fact]
+        public async Task InvokeAsync_AddsScriptToThePage()
         {
             // Arrange
             var stream = new MemoryStream();
@@ -598,32 +575,24 @@ namespace Microsoft.AspNetCore.Watch.BrowserRefresh
 
             var middleware = new BrowserRefreshMiddleware(async (context) =>
             {
-                context.Response.StatusCode = statusCode;
-                context.Response.ContentType = contentType;
 
-                if (includeHtmlWrapper)
-                {
-                    await context.Response.WriteAsync("<html>");
-                    await context.Response.WriteAsync("<body>");
-                    await context.Response.WriteAsync("<h1>");
-                    await context.Response.WriteAsync(content);
-                    await context.Response.WriteAsync("</h1>");
-                    await context.Response.WriteAsync("</body>");
-                    await context.Response.WriteAsync("</html>");
-                }
-                else
-                {
-                    await context.Response.WriteAsync(content);
-                }
+                context.Response.ContentType = "text/html";
+
+                await context.Response.WriteAsync("<html>");
+                await context.Response.WriteAsync("<body>");
+                await context.Response.WriteAsync("<h1>");
+                await context.Response.WriteAsync("Hello world");
+                await context.Response.WriteAsync("</h1>");
+                await context.Response.WriteAsync("</body>");
+                await context.Response.WriteAsync("</html>");
             }, NullLogger<BrowserRefreshMiddleware>.Instance);
 
             // Act
             await middleware.InvokeAsync(context);
 
-            // Return response content and verify status code
+            // Assert
             var responseContent = Encoding.UTF8.GetString(stream.ToArray());
-            Assert.Equal(statusCode, context.Response.StatusCode);
-            return responseContent;
+            Assert.Equal("<html><body><h1>Hello world</h1><script src=\"/_framework/aspnetcore-browser-refresh.js\"></script></body></html>", responseContent);
         }
 
         private class TestHttpResponseFeature : IHttpResponseFeature, IHttpResponseBodyFeature

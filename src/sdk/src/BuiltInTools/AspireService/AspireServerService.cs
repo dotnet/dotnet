@@ -123,7 +123,6 @@ internal partial class AspireServerService : IAsyncDisposable
             new(DebugSessionServerCertEnvVar, _certificateEncodedBytes),
         ];
 
-    /// <exception cref="OperationCanceledException"/>
     public ValueTask NotifySessionEndedAsync(string dcpId, string sessionId, int processId, int? exitCode, CancellationToken cancelationToken)
         => SendNotificationAsync(
             new SessionTerminatedNotification()
@@ -137,7 +136,6 @@ internal partial class AspireServerService : IAsyncDisposable
             sessionId,
             cancelationToken);
 
-    /// <exception cref="OperationCanceledException"/>
     public ValueTask NotifySessionStartedAsync(string dcpId, string sessionId, int processId, CancellationToken cancelationToken)
         => SendNotificationAsync(
             new ProcessRestartedNotification()
@@ -150,7 +148,6 @@ internal partial class AspireServerService : IAsyncDisposable
             sessionId,
             cancelationToken);
 
-    /// <exception cref="OperationCanceledException"/>
     public ValueTask NotifyLogMessageAsync(string dcpId, string sessionId, bool isStdErr, string data, CancellationToken cancelationToken)
         => SendNotificationAsync(
             new ServiceLogsNotification()
@@ -164,28 +161,23 @@ internal partial class AspireServerService : IAsyncDisposable
             sessionId,
             cancelationToken);
 
-    /// <exception cref="OperationCanceledException"/>
-    private async ValueTask SendNotificationAsync<TNotification>(TNotification notification, string dcpId, string sessionId, CancellationToken cancellationToken)
+    private async ValueTask SendNotificationAsync<TNotification>(TNotification notification, string dcpId, string sessionId, CancellationToken cancelationToken)
         where TNotification : SessionNotification
     {
         try
         {
-            Log($"[#{sessionId}] Sending '{notification.NotificationType}': {notification}");
+            Log($"[#{sessionId}] Sending '{notification.NotificationType}'");
             var jsonSerialized = JsonSerializer.SerializeToUtf8Bytes(notification, JsonSerializerOptions);
-            var success = await SendMessageAsync(dcpId, jsonSerialized, cancellationToken);
-
-            if (!success)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                Log($"[#{sessionId}] Failed to send message: Connection not found (dcpId='{dcpId}').");
-            }
+            await SendMessageAsync(dcpId, jsonSerialized, cancelationToken);
         }
-        catch (Exception e) when (e is not OperationCanceledException)
+        catch (Exception e) when (e is not OperationCanceledException && LogAndPropagate(e))
         {
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                Log($"[#{sessionId}] Failed to send message: {e.Message}");
-            }
+        }
+
+        bool LogAndPropagate(Exception e)
+        {
+            Log($"[#{sessionId}] Sending '{notification.NotificationType}' failed: {e.Message}");
+            return false;
         }
     }
 
@@ -381,13 +373,15 @@ internal partial class AspireServerService : IAsyncDisposable
         }
     }
 
-    private async ValueTask<bool> SendMessageAsync(string dcpId, byte[] messageBytes, CancellationToken cancellationToken)
+    private async Task SendMessageAsync(string dcpId, byte[] messageBytes, CancellationToken cancellationToken)
     {
         // Find the connection for the passed in dcpId
         WebSocketConnection? connection = _socketConnectionManager.GetSocketConnection(dcpId);
         if (connection is null)
         {
-            return false;
+            // Most likely the connection has already gone away
+            Log($"Send message failure: Connection with the following dcpId was not found {dcpId}");
+            return;
         }
 
         var success = false;
@@ -411,8 +405,6 @@ internal partial class AspireServerService : IAsyncDisposable
 
             _webSocketAccess.Release();
         }
-
-        return success;
     }
 
     private async ValueTask HandleStopSessionRequestAsync(HttpContext context, string sessionId)

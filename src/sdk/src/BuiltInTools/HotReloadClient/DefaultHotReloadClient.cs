@@ -28,9 +28,6 @@ namespace Microsoft.DotNet.HotReload
         private NamedPipeServerStream? _pipe;
         private bool _managedCodeUpdateFailedOrCancelled;
 
-        // The status of the last update response.
-        private TaskCompletionSource<bool> _updateStatusSource = new();
-
         public override void Dispose()
         {
             DisposePipe();
@@ -38,14 +35,9 @@ namespace Microsoft.DotNet.HotReload
 
         private void DisposePipe()
         {
-            if (_pipe != null)
-            {
-                Logger.LogDebug("Disposing agent communication pipe");
-
-                // Dispose the pipe but do not set it to null, so that any in-progress 
-                // operations throw the appropriate exception type.
-                _pipe.Dispose();
-            }
+            Logger.LogDebug("Disposing agent communication pipe");
+            _pipe?.Dispose();
+            _pipe = null;
         }
 
         // for testing
@@ -78,64 +70,23 @@ namespace Microsoft.DotNet.HotReload
 
                     var capabilities = (await ClientInitializationResponse.ReadAsync(_pipe, cancellationToken)).Capabilities;
                     Logger.Log(LogEvents.Capabilities, capabilities);
-
-                    // fire and forget:
-                    _ = ListenForResponsesAsync(cancellationToken);
-
                     return [.. capabilities.Split(' ')];
+                }
+                catch (EndOfStreamException)
+                {
+                    // process terminated before capabilities sent:
+                    return [];
                 }
                 catch (Exception e) when (e is not OperationCanceledException)
                 {
-                    ReportPipeReadException(e, "capabilities", cancellationToken);
+                    // pipe might throw another exception when forcibly closed on process termination:
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        Logger.LogError("Failed to read capabilities: {Message}", e.Message);
+                    }
+
                     return [];
                 }
-            }
-        }
-
-        private void ReportPipeReadException(Exception e, string responseType, CancellationToken cancellationToken)
-        {
-            // Don't report a warning when cancelled or the pipe has been disposed. The process has terminated or the host is shutting down in that case.
-            // Best effort: There is an inherent race condition due to time between the process exiting and the cancellation token triggering.
-            if (e is ObjectDisposedException or EndOfStreamException || cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
-
-            Logger.LogError("Failed to read {ResponseType} from the pipe: {Message}", responseType, e.Message);
-        }
-
-        private async Task ListenForResponsesAsync(CancellationToken cancellationToken)
-        {
-            Debug.Assert(_pipe != null);
-
-            try
-            {
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    var type = (ResponseType)await _pipe.ReadByteAsync(cancellationToken);
-
-                    switch (type)
-                    {
-                        case ResponseType.UpdateResponse:
-                            // update request can't be issued again until the status is read and a new source is created:
-                            _updateStatusSource.SetResult(await ReadUpdateResponseAsync(cancellationToken));
-                            break;
-
-                        case ResponseType.HotReloadExceptionNotification:
-                            var notification = await HotReloadExceptionCreatedNotification.ReadAsync(_pipe, cancellationToken);
-                            RuntimeRudeEditDetected(notification.Code, notification.Message);
-                            break;
-
-                        default:
-                            // can't continue, the pipe is in undefined state:
-                            Logger.LogError("Unexpected response received from the agent: {ResponseType}", type);
-                            return;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ReportPipeReadException(e, "response", cancellationToken);
             }
         }
 
@@ -150,7 +101,8 @@ namespace Microsoft.DotNet.HotReload
             // should only be called after connection has been created:
             _ = GetCapabilitiesTask();
 
-            Debug.Assert(_pipe != null);
+            if (_pipe == null)
+                throw new InvalidOperationException("Pipe has been disposed.");
         }
 
         public override void ConfigureLaunchEnvironment(IDictionary<string, string> environmentBuilder)
@@ -200,13 +152,7 @@ namespace Microsoft.DotNet.HotReload
             {
                 if (!success)
                 {
-                    // Don't report a warning when cancelled. The process has terminated or the host is shutting down in that case.
-                    // Best effort: There is an inherent race condition due to time between the process exiting and the cancellation token triggering.
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        Logger.LogWarning("Further changes won't be applied to this process.");
-                    }
-
+                    Logger.LogWarning("Further changes won't be applied to this process.");
                     _managedCodeUpdateFailedOrCancelled = true;
                     DisposePipe();
                 }
@@ -270,7 +216,7 @@ namespace Microsoft.DotNet.HotReload
         private ValueTask<bool> SendAndReceiveUpdateAsync<TRequest>(TRequest request, bool isProcessSuspended, CancellationToken cancellationToken)
             where TRequest : IUpdateRequest
         {
-            // Should not initialized:
+            // Should not be disposed:
             Debug.Assert(_pipe != null);
 
             return SendAndReceiveUpdateAsync(
@@ -295,10 +241,8 @@ namespace Microsoft.DotNet.HotReload
 
                     Logger.LogDebug("Update batch #{UpdateId} failed.", batchId);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e is not OperationCanceledException || isProcessSuspended)
                 {
-                    // Don't report an error when cancelled. The process has terminated or the host is shutting down in that case.
-                    // Best effort: There is an inherent race condition due to time between the process exiting and the cancellation token triggering.
                     if (cancellationToken.IsCancellationRequested)
                     {
                         Logger.LogDebug("Update batch #{UpdateId} canceled.", batchId);
@@ -323,14 +267,7 @@ namespace Microsoft.DotNet.HotReload
 
         private async ValueTask<bool> ReceiveUpdateResponseAsync(CancellationToken cancellationToken)
         {
-            var result = await _updateStatusSource.Task;
-            _updateStatusSource = new TaskCompletionSource<bool>();
-            return result;
-        }
-
-        private async ValueTask<bool> ReadUpdateResponseAsync(CancellationToken cancellationToken)
-        {
-            // Should be initialized:
+            // Should not be disposed:
             Debug.Assert(_pipe != null);
 
             var (success, log) = await UpdateResponse.ReadAsync(_pipe, cancellationToken);
@@ -359,12 +296,10 @@ namespace Microsoft.DotNet.HotReload
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                // Pipe might throw another exception when forcibly closed on process termination.
-                // Don't report an error when cancelled. The process has terminated or the host is shutting down in that case.
-                // Best effort: There is an inherent race condition due to time between the process exiting and the cancellation token triggering.
+                // pipe might throw another exception when forcibly closed on process termination:
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    Logger.LogError("Failed to send {RequestType}: {Message}", nameof(RequestType.InitialUpdatesCompleted), e.Message);
+                    Logger.LogError("Failed to send InitialUpdatesCompleted: {Message}", e.Message);
                 }
             }
         }
