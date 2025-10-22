@@ -411,10 +411,17 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
-  - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        # Download the 1xx source-built SDK
+        DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
+      displayName: Download 1xx SDK
+
+  - ${{ if parameters.excludeRuntimeDependentJobs }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
       displayName: Download Shared Component Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758
@@ -453,7 +460,6 @@ jobs:
           isOfficialBuild: true
           serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
           serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
-          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
 
     - script: build.cmd
@@ -504,16 +510,22 @@ jobs:
           customPrepArgs=""
           prepSdk=true
 
+          if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            prepSdk=false
+          fi
+
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Using previous SDK implies we do not want to bootstrap.
-            customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
+            # Using source-built SDK implies we do not want to bootstrap.
+            customPrepArgs="${customPrepArgs} --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            customPrepArgs="${customPrepArgs} --no-artifacts"
             prepSdk=false
           fi
 
           if [[ "$prepSdk" == "false" ]]; then
+            customPrepArgs="${customPrepArgs} --no-sdk"
+            rm -rf $(sourcesPath)/.dotnet
             mkdir $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
