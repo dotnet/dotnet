@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
@@ -44,6 +45,8 @@ public class CreateSourceArtifacts : BuildTask
     [Required]
     public required string OutputDirectory { get; init; }
 
+    private const string GitHubRepoName = "dotnet";
+    private const string GitHubTimezone = "America/Los_Angeles"; // GitHub uses this timezone for commit timestamps in zip metadata
     private const int GitArchiveTimeout = 5 * 60 * 1000; // 5 minutes
 
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
@@ -74,8 +77,7 @@ public class CreateSourceArtifacts : BuildTask
 
     private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService, ConcurrentQueue<string> errors)
     {
-        string artifactFileName = $"{ArtifactName}-{ArtifactVersion}{artifactType.GetArtifactExtension()}";
-        string artifactFilePath = Path.Combine(OutputDirectory, artifactFileName);
+        string artifactFilePath = Path.Combine(OutputDirectory, $"{ArtifactName}-{ArtifactVersion}.{artifactType.GetArtifactExtension()}");
 
         Log.LogMessage(MessageImportance.High, $"Creating {artifactType} source artifact at: {artifactFilePath}");
 
@@ -83,8 +85,10 @@ public class CreateSourceArtifacts : BuildTask
         {
             ProcessResult result = await processService.RunProcessAsync(
                 "git",
-                $"archive -o {artifactFilePath} {SourceCommit}",
-                workingDirectory: RepoRoot);
+                artifactType.GetGitArchiveArgs(artifactFilePath, GitHubRepoName, ArtifactVersion, SourceCommit),
+                environmentVariables: new List<ProcessEnvironmentVariable> { new ProcessEnvironmentVariable("TZ", GitHubTimezone) },
+                workingDirectory: RepoRoot
+            );
 
             if (result.ExitCode != 0)
             {
