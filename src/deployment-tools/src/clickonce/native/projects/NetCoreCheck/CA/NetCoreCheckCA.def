@@ -1,4 +1,0 @@
-LIBRARY "NETCoreCheckCA"
-
-EXPORTS
-	CheckNETRuntime
