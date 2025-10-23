@@ -570,6 +570,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case ErrorCode.WRN_UninitializedNonNullableBackingField:
                 case ErrorCode.WRN_AccessorDoesNotUseBackingField:
                 case ErrorCode.WRN_UnscopedRefAttributeOldRules:
+                case ErrorCode.WRN_RedundantPattern:
                     return 1;
                 default:
                     return 0;
@@ -1807,7 +1808,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_BadSourceCodeKind
                 or ErrorCode.ERR_BadDocumentationMode
                 or ErrorCode.ERR_BadLanguageVersion
-                or ErrorCode.ERR_ImplicitlyTypedOutVariableUsedInTheSameArgumentList
+                or ErrorCode.ERR_ImplicitlyTypedVariableUsedInForbiddenZone
                 or ErrorCode.ERR_TypeInferenceFailedForImplicitlyTypedOutVariable
                 or ErrorCode.ERR_ExpressionTreeContainsOutVariable
                 or ErrorCode.ERR_VarInvocationLvalueReserved
@@ -2538,6 +2539,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_BadSpreadInCatchFilter
                 or ErrorCode.ERR_ExplicitInterfaceMemberTypeMismatch
                 or ErrorCode.ERR_ExplicitInterfaceMemberReturnTypeMismatch
+                or ErrorCode.HDN_RedundantPattern
+                or ErrorCode.WRN_RedundantPattern
+                or ErrorCode.HDN_RedundantPatternStackGuard
+                or ErrorCode.ERR_BadVisBaseType
                     => false,
             };
 #pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.

@@ -1897,17 +1897,17 @@ public static class Extensions
 """;
         var comp = CreateCompilation(src);
         comp.VerifyEmitDiagnostics(
-            // (5,14): error CS1109: Extension methods must be defined in a top level static class;  is a nested class
+            // (5,16): error CS0027: Keyword 'this' is not available in the current context
             //         void M(this int i) { }
-            Diagnostic(ErrorCode.ERR_ExtensionMethodsDecl, "M").WithArguments("").WithLocation(5, 14));
+            Diagnostic(ErrorCode.ERR_ThisInBadContext, "this").WithLocation(5, 16));
 
         var tree = comp.SyntaxTrees[0];
         var model = comp.GetSemanticModel(tree);
         var method = tree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>().Single();
 
         var symbol = model.GetDeclaredSymbol(method);
-        AssertEx.Equal("void Extensions.<G>$C43E2675C7BBF9284AF22FB8A9BF0280.M(this System.Int32 i)", symbol.ToTestDisplayString());
-        Assert.True(symbol.IsExtensionMethod);
+        AssertEx.Equal("void Extensions.<G>$C43E2675C7BBF9284AF22FB8A9BF0280.M(System.Int32 i)", symbol.ToTestDisplayString());
+        Assert.False(symbol.IsExtensionMethod);
     }
 
     [Fact]
@@ -38184,6 +38184,114 @@ namespace N
     }
 
     [Fact]
+    public void LookupSymbols_WasNotFullyInferred()
+    {
+        var src = """
+
+public static class E
+{
+    extension<T, U>(T t)
+    {
+        public void M() => throw null;
+        public int Property => throw null;
+    }
+}
+""";
+
+        var comp = CreateCompilation(src);
+        comp.VerifyEmitDiagnostics(
+            // (7,20): error CS9295: The type parameter `U` is not referenced by either the extension parameter or a parameter of this member
+            //         public int Property => throw null;
+            Diagnostic(ErrorCode.ERR_UnderspecifiedExtension, "Property").WithArguments("U").WithLocation(7, 20));
+
+        var tree = comp.SyntaxTrees.Single();
+        var model = comp.GetSemanticModel(tree);
+
+        var o = ((Compilation)comp).GetSpecialType(SpecialType.System_Object);
+        AssertEqualAndNoDuplicates(["void E.<G>$B7F0343159FB3A22D67EC9801612841A<System.Object, U>.M()"],
+            model.LookupSymbols(position: 0, o, name: "M", includeReducedExtensionMethods: true).ToTestDisplayStrings());
+
+        AssertEqualAndNoDuplicates(["System.Int32 E.<G>$B7F0343159FB3A22D67EC9801612841A<System.Object, U>.Property { get; }"],
+            model.LookupSymbols(position: 0, o, name: "Property", includeReducedExtensionMethods: true).ToTestDisplayStrings());
+
+        AssertEqualAndNoDuplicates([
+            "void E.<G>$B7F0343159FB3A22D67EC9801612841A<System.Object, U>.M()",
+            "System.Int32 E.<G>$B7F0343159FB3A22D67EC9801612841A<System.Object, U>.Property { get; }",
+            .. _objectMembers
+            ], model.LookupSymbols(position: 0, o, name: null, includeReducedExtensionMethods: true).ToTestDisplayStrings());
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/26549")]
+    public void LookupSymbols_FromBaseInterface_01()
+    {
+        var src = """
+
+public static class E
+{
+    extension<T>(I<T> i)
+    {
+        public void M(T t) => throw null;
+    }
+}
+
+public interface I<T> { }
+public class C : I<int> { }
+""";
+
+        var comp = CreateCompilation(src);
+        comp.VerifyEmitDiagnostics();
+
+        var tree = comp.SyntaxTrees.Single();
+        var model = comp.GetSemanticModel(tree);
+
+        var c = ((Compilation)comp).GlobalNamespace.GetTypeMember("C");
+        AssertEqualAndNoDuplicates(["void E.<G>$74EBC78B2187AB07A25EEFC1322000B0<System.Int32>.M(System.Int32 t)"],
+            model.LookupSymbols(position: 0, c, name: "M", includeReducedExtensionMethods: true).ToTestDisplayStrings());
+
+        var extension = comp.GlobalNamespace.GetTypeMember("E").GetTypeMembers().Single();
+        var method = extension.GetMember<MethodSymbol>("M").GetPublicSymbol();
+        AssertEx.Equal("void E.<G>$74EBC78B2187AB07A25EEFC1322000B0<System.Int32>.M(System.Int32 t)",
+            method.ReduceExtensionMember(c).ToTestDisplayString());
+
+        var extensionMethod = comp.GlobalNamespace.GetTypeMember("E").GetMember<MethodSymbol>("M").GetPublicSymbol();
+        AssertEx.Equal("void I<System.Int32>.M<System.Int32>(System.Int32 t)", extensionMethod.ReduceExtensionMethod(c).ToTestDisplayString());
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/26549")]
+    public void LookupSymbols_FromBaseInterface_02()
+    {
+        var src = """
+
+public static class E
+{
+    extension<T>(I<T> i)
+    {
+        public void M(T t) => throw null;
+    }
+}
+
+public interface I<T> { }
+public class C : I<int>, I<double> { }
+""";
+
+        var comp = CreateCompilation(src);
+        comp.VerifyEmitDiagnostics();
+
+        var tree = comp.SyntaxTrees.Single();
+        var model = comp.GetSemanticModel(tree);
+
+        var c = ((Compilation)comp).GlobalNamespace.GetTypeMember("C");
+        Assert.Empty(model.LookupSymbols(position: 0, c, name: "M", includeReducedExtensionMethods: true));
+
+        var extension = comp.GlobalNamespace.GetTypeMember("E").GetTypeMembers().Single();
+        var method = extension.GetMember<MethodSymbol>("M").GetPublicSymbol();
+        Assert.Null(method.ReduceExtensionMember(c));
+
+        var extensionMethod = comp.GlobalNamespace.GetTypeMember("E").GetMember<MethodSymbol>("M").GetPublicSymbol();
+        Assert.Null(extensionMethod.ReduceExtensionMethod(c));
+    }
+
+    [Fact]
     public void GetMemberGroup_01()
     {
         var src = """
@@ -40680,6 +40788,32 @@ public class C : Base
             // (1,9): error CS8917: The delegate type could not be inferred.
             // var x = new C().M;
             Diagnostic(ErrorCode.ERR_CannotInferDelegateType, "new C().M").WithLocation(1, 9));
+    }
+
+    [Fact]
+    public void FunctionType_InstanceReceiver_13()
+    {
+        var src = """
+var x = 42.M;
+
+public static class E
+{
+    extension<T, U>(T t)
+    {
+        public void M(U u) { }
+    }
+}
+""";
+        var comp = CreateCompilation(src);
+        comp.VerifyEmitDiagnostics(
+            // (1,9): error CS8917: The delegate type could not be inferred.
+            // var x = 42.M;
+            Diagnostic(ErrorCode.ERR_CannotInferDelegateType, "42.M").WithLocation(1, 9));
+
+        var tree = comp.SyntaxTrees.First();
+        var model = comp.GetSemanticModel(tree);
+        var localDeclaration = GetSyntax<VariableDeclarationSyntax>(tree, "var x = 42.M");
+        Assert.True(model.GetTypeInfo(localDeclaration.Type).Type.IsErrorType());
     }
 
     [Fact]
