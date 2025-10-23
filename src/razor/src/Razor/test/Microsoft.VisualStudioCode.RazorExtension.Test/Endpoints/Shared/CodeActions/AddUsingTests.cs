@@ -31,6 +31,9 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.FullyQualify);
     }
 
+#if !VSCODE
+    // This uses a nested code action in Roslyn which we don't support in VS Code
+    // https://github.com/dotnet/razor/issues/11832
     [Fact]
     public async Task FullyQualify_Multiple()
     {
@@ -58,6 +61,7 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
             codeActionName: LanguageServerConstants.CodeActions.FullyQualify,
             childActionIndex: 0);
     }
+#endif
 
     [Fact]
     public async Task AddUsing()

@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using RazorSyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -39,12 +38,6 @@ internal class RenameService(
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
         if (!documentContext.FileKind.IsComponent())
-        {
-            return null;
-        }
-
-        // If we're in C# then there is no point checking for a component tag, because there won't be one
-        if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
             return null;
         }
