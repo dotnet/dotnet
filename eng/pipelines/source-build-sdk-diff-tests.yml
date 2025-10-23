@@ -2,8 +2,13 @@ schedules:
 - cron: "0 12 * * 1-5"
   displayName: Run on weekdays at 12pm UTC
   branches:
+    # The 2xx, 3xx, 4xx triggers exist to cover the feature band pre-release time periods.
+    # They can be removed once released as the pipeline triggers below will handle the branches after release.
     include:
     - main
+    - release/*.0.2xx*
+    - release/*.0.3xx*
+    - release/*.0.4xx*
 
 # Relies on dotnet-unified-build being in the same repo as this pipeline
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops#branch-considerations
@@ -17,7 +22,7 @@ resources:
       branches:
         include:
         - refs/heads/release/*.0.1xx-preview*
-        - refs/heads/internal/release/*.0.1xx*
+        - refs/heads/internal/release/*.0.?xx*
       # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
       # publish/validation failures.
       stages:
@@ -27,11 +32,9 @@ resources:
   - pipeline: dotnet-source-build-pre10.0
     source: dotnet-source-build-pre10.0
     # For releases branches only run on internal/release branches because that's where dependencies flow.
-    # Previews don't have internal/release branches so they must be run from non-internal release branches.
     trigger:
       branches:
         include:
-        - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.1xx*
 
   repositories:
