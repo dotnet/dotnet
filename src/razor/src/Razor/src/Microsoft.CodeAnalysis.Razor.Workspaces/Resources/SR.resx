@@ -223,4 +223,8 @@
   <data name="ExtractTo_Css_Title" xml:space="preserve">
     <value>Extract to {0}.css</value>
   </data>
+  <data name="ComponentCompletionWithRequiredAttributesLabel" xml:space="preserve">
+    <value>{0} (and req'd attributes...)</value>
+    <comment>The term "req'd" is an abbreviation for "required"</comment>
+  </data>
 </root>
