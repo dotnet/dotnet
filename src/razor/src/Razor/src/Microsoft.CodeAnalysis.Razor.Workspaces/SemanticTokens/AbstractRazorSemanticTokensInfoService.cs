@@ -188,7 +188,7 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             ContainsOnlySpacesOrTabs(razorSource, previousSpanEndIndex + 1, startChar - previousRange.End.Character - 1))
         {
             // we're on the same line as previous, lets extend ours to include whitespace between us and the proceeding range
-            razorRanges.Add(new SemanticRange(textClassification, startLine, previousRange.End.Character, startLine, startChar, _semanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false));
+            razorRanges.Add(new SemanticRange(textClassification, startLine, previousRange.End.Character, startLine, startChar, _semanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false, isCSharpWhitespace: true));
         }
         else if (startChar > 0 &&
             previousRazorSemanticRange?.End.Line != startLine &&
@@ -196,7 +196,7 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             ContainsOnlySpacesOrTabs(razorSource, originalRangeStartIndex - startChar + 1, startChar - 1))
         {
             // We're on a new line, and the start of the line is only whitespace, so give that a background color too
-            razorRanges.Add(new SemanticRange(textClassification, startLine, 0, startLine, startChar, _semanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false));
+            razorRanges.Add(new SemanticRange(textClassification, startLine, 0, startLine, startChar, _semanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false, isCSharpWhitespace: true));
         }
     }
 
@@ -297,10 +297,10 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             if (TryWriteToken(range, previousRange, isFirstRange, sourceText, tokens.AsSpan(index, TokenSize)))
             {
                 index += TokenSize;
+                previousRange = range;
             }
 
             isFirstRange = false;
-            previousRange = range;
         }
 
         // The common case is that the ConvertIntoDataArray calls didn't find any overlap, and we can just directly use the
@@ -338,18 +338,39 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             int deltaStart;
             if (!isFirstRange && previousRange.StartLine == currentRange.StartLine)
             {
-                deltaStart = currentRange.StartCharacter - previousRange.StartCharacter;
-
-                // If there is no line delta, no char delta, and this isn't the first range
-                // then it means this range overlaps the previous, so we skip it.
-                if (deltaStart == 0)
+                // If the current range overlaps the previous one, we assume the sort order was
+                // correct, and prefer the previous range. We have a check for the start character first
+                // just in case there is a C# range that extends past a Razor range. There is no known case
+                // for this, but we need to make sure we don't report bad data.
+                if (previousRange.StartCharacter == currentRange.StartCharacter)
                 {
                     return false;
                 }
+
+                // Razor ranges are allowed to extend past C# ranges though, so we need to check for that too.
+                if (previousRange.StartCharacter <= currentRange.StartCharacter &&
+                    (previousRange.EndCharacter >= currentRange.EndCharacter || previousRange.EndLine > currentRange.EndLine))
+                {
+                    return false;
+                }
+
+                deltaStart = currentRange.StartCharacter - previousRange.StartCharacter;
+
+                Debug.Assert(deltaStart > 0, "There is no char delta which means this span overlaps the previous. This should have been filtered out!");
             }
             else
             {
                 deltaStart = currentRange.StartCharacter;
+            }
+
+            // If this is a C# whitespace range, and the previous range is on the same line, and from Razor
+            // then we don't want to emit this. This happens when we have leftover whitespace from between
+            // two C# ranges, that were superseded by Razor ranges.
+            if (currentRange.IsCSharpWhitespace &&
+                previousRange.FromRazor &&
+                currentRange.StartLine == previousRange.EndLine)
+            {
+                return false;
             }
 
             destination[0] = deltaLine;

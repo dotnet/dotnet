@@ -45,7 +45,7 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!TryGetDocumentPositionInfo(codeDocument, position, out var positionInfo))
+        if (!TryGetDocumentPositionInfo(codeDocument, position, preferCSharpOverHtml: true, out var positionInfo))
         {
             return NoFurtherHandling;
         }

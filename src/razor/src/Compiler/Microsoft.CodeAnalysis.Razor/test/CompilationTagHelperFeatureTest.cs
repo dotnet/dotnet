@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
@@ -71,7 +72,7 @@ public class CompilationTagHelperFeatureTest
     {
         // Arrange
         var provider = new Mock<ITagHelperDescriptorProvider>();
-        provider.Setup(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>()));
+        provider.Setup(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>(), It.IsAny<CancellationToken>()));
 
         var engine = RazorProjectEngine.Create(
             configure =>
@@ -93,7 +94,7 @@ public class CompilationTagHelperFeatureTest
 
         // Assert
         Assert.Empty(result);
-        provider.Verify(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>()), Times.Never);
+        provider.Verify(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -103,8 +104,8 @@ public class CompilationTagHelperFeatureTest
         Compilation compilation = null;
         var provider = new Mock<ITagHelperDescriptorProvider>();
         provider
-            .Setup(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>()))
-            .Callback<TagHelperDescriptorProviderContext>(c => compilation = c.Compilation)
+            .Setup(c => c.Execute(It.IsAny<TagHelperDescriptorProviderContext>(), It.IsAny<CancellationToken>()))
+            .Callback((TagHelperDescriptorProviderContext c, CancellationToken ct) => compilation = c.Compilation)
             .Verifiable();
 
         var references = new[]

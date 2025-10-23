@@ -78,7 +78,7 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
 #pragma warning disable CS0618 // Type or member is obsolete, will be removed in an upcoming change
             var owner = syntaxTree.Root.LocateOwner(queryableChange);
 #pragma warning restore CS0618 // Type or member is obsolete
-            var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperContext);
+            var razorCompletionContext = new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, tagHelperContext);
             var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
             if (razorCompletionItems.Length == 0)

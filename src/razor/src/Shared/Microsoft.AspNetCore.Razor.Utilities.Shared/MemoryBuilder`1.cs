@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 // Inspired by https://github.com/dotnet/runtime/blob/9c7ee976fd771c183e98cf629e3776bba4e45ccc/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/ValueListBuilder.cs
@@ -18,8 +19,9 @@ internal ref struct MemoryBuilder<T>
     private Memory<T> _memory;
     private T[]? _arrayFromPool;
     private int _length;
+    private bool _clearArray;
 
-    public MemoryBuilder(int initialCapacity = 0)
+    public MemoryBuilder(int initialCapacity = 0, bool clearArray = false)
     {
         ArgHelper.ThrowIfNegative(initialCapacity);
 
@@ -28,6 +30,8 @@ internal ref struct MemoryBuilder<T>
             _arrayFromPool = ArrayPool<T>.Shared.Rent(initialCapacity);
             _memory = _arrayFromPool;
         }
+
+        _clearArray = clearArray;
     }
 
     public void Dispose()
@@ -35,15 +39,20 @@ internal ref struct MemoryBuilder<T>
         var toReturn = _arrayFromPool;
         if (toReturn is not null)
         {
+            ArrayPool<T>.Shared.Return(toReturn, _clearArray);
+
             _memory = default;
             _arrayFromPool = null;
-            ArrayPool<T>.Shared.Return(toReturn);
+            _length = 0;
+            _clearArray = false;
         }
     }
 
+    public readonly bool IsEmpty => _length == 0;
+
     public int Length
     {
-        get => _length;
+        readonly get => _length;
         set
         {
             Debug.Assert(value >= 0);
@@ -53,7 +62,17 @@ internal ref struct MemoryBuilder<T>
         }
     }
 
-    public readonly ReadOnlyMemory<T> AsMemory()
+    public readonly ref T this[int index]
+    {
+        get
+        {
+            Debug.Assert(index >= 0 && index < _length);
+
+            return ref _memory.Span[index];
+        }
+    }
+
+    public readonly Memory<T> AsMemory()
         => _memory[.._length];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -148,8 +167,38 @@ internal ref struct MemoryBuilder<T>
 
         if (toReturn != null)
         {
-            ArrayPool<T>.Shared.Return(toReturn);
+            ArrayPool<T>.Shared.Return(toReturn, _clearArray);
         }
+    }
+
+    public void Push(T item)
+    {
+        Append(item);
+    }
+
+    public readonly T Peek()
+    {
+        return this[^1];
+    }
+
+    public T Pop()
+    {
+        var item = this[^1];
+        _length--;
+
+        return item;
+    }
+
+    public bool TryPop([MaybeNullWhen(false)] out T result)
+    {
+        if (IsEmpty)
+        {
+            result = default;
+            return false;
+        }
+
+        result = Pop();
+        return true;
     }
 }
 
