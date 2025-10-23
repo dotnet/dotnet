@@ -31,10 +31,10 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 288040,
+      "barId": 288262,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "fee8d6975fa81e7379d62d536b3c74de20b4d24a"
+      "commitSha": "fcb028b0c776e72f2cdaa9b4a841dd69e72f6bf0"
     },
     {
       "barId": 287743,
@@ -49,10 +49,10 @@
       "commitSha": "aead567b56fe284ee05b3bb324705b76331d4719"
     },
     {
-      "barId": 287823,
+      "barId": 288200,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "1ff7cb1730d55f4cd075aa13afe17b52fb86b604"
+      "commitSha": "36645e1741a9e1ae674c9c35064613f63de17fb6"
     },
     {
       "barId": 287968,
@@ -67,10 +67,10 @@
       "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
     },
     {
-      "barId": 288051,
+      "barId": 288204,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "2d14fbb491f959363ad29463a05128f534c139a7"
+      "commitSha": "bb9fc372e43cdc6be177b1a3b2153c91203877ed"
     },
     {
       "barId": 286437,
@@ -133,10 +133,10 @@
       "commitSha": "9f2ae28ea4f111e6a336682484e5aa412e114f3c"
     },
     {
-      "barId": 288028,
+      "barId": 288259,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "1b9ba2a16b5469aa5401d60085d34daa1b0864d3"
+      "commitSha": "e68e2fec260cf78b082f2a23c9fb77e961002650"
     },
     {
       "barId": 283721,

@@ -202,10 +202,15 @@ internal static class TagHelperBlockRewriter
             attributes = attributeBuilder.ToList();
         }
 
-        var tagHelperStartTag = SyntaxFactory.MarkupTagHelperStartTag(
-            startTag.OpenAngle, startTag.Bang, startTag.Name, attributes, startTag.ForwardSlash, startTag.CloseAngle, startTag.ChunkGenerator);
-
-        return tagHelperStartTag.WithEditHandler(startTag.GetEditHandler());
+        return SyntaxFactory.MarkupTagHelperStartTag(
+            startTag.OpenAngle,
+            startTag.Bang,
+            startTag.Name,
+            attributes,
+            startTag.ForwardSlash,
+            startTag.CloseAngle,
+            startTag.ChunkGenerator,
+            startTag.EditHandler);
     }
 
     private static TryParseResult TryParseMinimizedAttribute(
@@ -231,10 +236,13 @@ internal static class TagHelperBlockRewriter
         {
             var rewritten = SyntaxFactory.MarkupMinimizedTagHelperAttribute(
                 attributeBlock.NamePrefix,
-                attributeBlock.Name);
-
-            rewritten = rewritten.WithTagHelperAttributeInfo(
-                    new TagHelperAttributeInfo(result.AttributeName, parameterName: null, result.AttributeStructure, result.IsBoundAttribute, isDirectiveAttribute: false));
+                attributeBlock.Name,
+                new TagHelperAttributeInfo(
+                    result.AttributeName,
+                    parameterName: null,
+                    result.AttributeStructure,
+                    result.IsBoundAttribute,
+                    isDirectiveAttribute: false));
 
             result.RewrittenAttribute = rewritten;
 
@@ -287,7 +295,7 @@ internal static class TagHelperBlockRewriter
             using PooledArrayBuilder<RazorSyntaxNode> builder = [];
 
             // Add a marker for attribute value when there are no quotes like, <p class= >
-            builder.Add(SyntaxFactory.MarkupTextLiteral(literalTokens: default, chunkGenerator: null));
+            builder.Add(SyntaxFactory.MarkupTextLiteral(literalTokens: default));
 
             attributeValue = SyntaxFactory.GenericBlock(builder.ToList());
         }
@@ -309,10 +317,13 @@ internal static class TagHelperBlockRewriter
                 attributeBlock.EqualsToken,
                 attributeBlock.ValuePrefix,
                 rewrittenValue,
-                attributeBlock.ValueSuffix);
-
-            rewritten = rewritten.WithTagHelperAttributeInfo(
-                new TagHelperAttributeInfo(result.AttributeName, parameterName: null, result.AttributeStructure, result.IsBoundAttribute, isDirectiveAttribute: false));
+                attributeBlock.ValueSuffix,
+                new TagHelperAttributeInfo(
+                    result.AttributeName,
+                    parameterName: null,
+                    result.AttributeStructure,
+                    result.IsBoundAttribute,
+                    isDirectiveAttribute: false));
 
             result.RewrittenAttribute = rewritten;
 
@@ -336,18 +347,17 @@ internal static class TagHelperBlockRewriter
         //
         var attributeName = result.AttributeName;
         var attributeNameSyntax = attributeBlock.Name;
-        var transition = SyntaxFactory.RazorMetaCode(
-            new SyntaxTokenList(SyntaxFactory.MissingToken(SyntaxKind.Transition)), chunkGenerator: null);
+        var transition = SyntaxFactory.RazorMetaCode(SyntaxFactory.MissingToken(SyntaxKind.Transition));
         RazorMetaCodeSyntax colon = null;
         MarkupTextLiteralSyntax parameterName = null;
         if (attributeName.StartsWith("@", StringComparison.Ordinal))
         {
             attributeName = attributeName.Substring(1);
             var attributeNameToken = SyntaxFactory.Token(SyntaxKind.Text, attributeName);
-            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(attributeNameToken);
+            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(attributeNameToken);
 
             var transitionToken = SyntaxFactory.Token(SyntaxKind.Transition, "@");
-            transition = SyntaxFactory.RazorMetaCode(new SyntaxTokenList(transitionToken), chunkGenerator: null);
+            transition = SyntaxFactory.RazorMetaCode(transitionToken);
         }
 
         if (attributeName.IndexOf(':') != -1)
@@ -355,16 +365,16 @@ internal static class TagHelperBlockRewriter
             var segments = attributeName.Split(new[] { ':' }, 2);
 
             var attributeNameToken = SyntaxFactory.Token(SyntaxKind.Text, segments[0]);
-            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(attributeNameToken);
+            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(attributeNameToken);
 
             var colonToken = SyntaxFactory.Token(SyntaxKind.Colon, ":");
-            colon = SyntaxFactory.RazorMetaCode(new SyntaxTokenList(colonToken), chunkGenerator: null);
+            colon = SyntaxFactory.RazorMetaCode(colonToken);
 
             var parameterNameToken = SyntaxFactory.Token(SyntaxKind.Text, segments[1]);
-            parameterName = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(parameterNameToken);
+            parameterName = SyntaxFactory.MarkupTextLiteral(parameterNameToken);
         }
 
-        var rewritten = SyntaxFactory.MarkupTagHelperDirectiveAttribute(
+        return SyntaxFactory.MarkupTagHelperDirectiveAttribute(
             attributeBlock.NamePrefix,
             transition,
             attributeNameSyntax,
@@ -374,12 +384,13 @@ internal static class TagHelperBlockRewriter
             attributeBlock.EqualsToken,
             attributeBlock.ValuePrefix,
             rewrittenValue,
-            attributeBlock.ValueSuffix);
-
-        rewritten = rewritten.WithTagHelperAttributeInfo(
-            new TagHelperAttributeInfo(result.AttributeName, parameterName?.GetContent(), result.AttributeStructure, result.IsBoundAttribute, isDirectiveAttribute: true));
-
-        return rewritten;
+            attributeBlock.ValueSuffix,
+            new TagHelperAttributeInfo(
+                result.AttributeName,
+                parameterName?.GetContent(),
+                result.AttributeStructure,
+                result.IsBoundAttribute,
+                isDirectiveAttribute: true));
     }
 
     private static MarkupMinimizedTagHelperDirectiveAttributeSyntax RewriteToMinimizedDirectiveAttribute(
@@ -397,18 +408,17 @@ internal static class TagHelperBlockRewriter
         //
         var attributeName = result.AttributeName;
         var attributeNameSyntax = attributeBlock.Name;
-        var transition = SyntaxFactory.RazorMetaCode(
-            new SyntaxTokenList(SyntaxFactory.MissingToken(SyntaxKind.Transition)), chunkGenerator: null);
+        var transition = SyntaxFactory.RazorMetaCode(SyntaxFactory.MissingToken(SyntaxKind.Transition));
         RazorMetaCodeSyntax colon = null;
         MarkupTextLiteralSyntax parameterName = null;
         if (attributeName.StartsWith("@", StringComparison.Ordinal))
         {
             attributeName = attributeName.Substring(1);
             var attributeNameToken = SyntaxFactory.Token(SyntaxKind.Text, attributeName);
-            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(attributeNameToken);
+            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(attributeNameToken);
 
             var transitionToken = SyntaxFactory.Token(SyntaxKind.Transition, "@");
-            transition = SyntaxFactory.RazorMetaCode(new SyntaxTokenList(transitionToken), chunkGenerator: null);
+            transition = SyntaxFactory.RazorMetaCode(transitionToken);
         }
 
         if (attributeName.IndexOf(':') != -1)
@@ -416,26 +426,27 @@ internal static class TagHelperBlockRewriter
             var segments = attributeName.Split(new[] { ':' }, 2);
 
             var attributeNameToken = SyntaxFactory.Token(SyntaxKind.Text, segments[0]);
-            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(attributeNameToken);
+            attributeNameSyntax = SyntaxFactory.MarkupTextLiteral(attributeNameToken);
 
             var colonToken = SyntaxFactory.Token(SyntaxKind.Colon, ":");
-            colon = SyntaxFactory.RazorMetaCode(new SyntaxTokenList(colonToken), chunkGenerator: null);
+            colon = SyntaxFactory.RazorMetaCode(colonToken);
 
             var parameterNameToken = SyntaxFactory.Token(SyntaxKind.Text, segments[1]);
-            parameterName = SyntaxFactory.MarkupTextLiteral(chunkGenerator: null).AddLiteralTokens(parameterNameToken);
+            parameterName = SyntaxFactory.MarkupTextLiteral(parameterNameToken);
         }
 
-        var rewritten = SyntaxFactory.MarkupMinimizedTagHelperDirectiveAttribute(
+        return SyntaxFactory.MarkupMinimizedTagHelperDirectiveAttribute(
             attributeBlock.NamePrefix,
             transition,
             attributeNameSyntax,
             colon,
-            parameterName);
-
-        rewritten = rewritten.WithTagHelperAttributeInfo(
-            new TagHelperAttributeInfo(result.AttributeName, parameterName?.GetContent(), result.AttributeStructure, result.IsBoundAttribute, isDirectiveAttribute: true));
-
-        return rewritten;
+            parameterName,
+            new TagHelperAttributeInfo(
+                result.AttributeName,
+                parameterName?.GetContent(),
+                result.AttributeStructure,
+                result.IsBoundAttribute,
+                isDirectiveAttribute: true));
     }
 
     private static MarkupTagHelperAttributeValueSyntax RewriteAttributeValue(TryParseResult result, RazorBlockSyntax attributeValue, RazorParserOptions options)
@@ -566,7 +577,7 @@ internal static class TagHelperBlockRewriter
                     return SyntaxFactory.MarkupBlock(
                         [SyntaxFactory.CSharpCodeBlock(
                             [SyntaxFactory.CSharpImplicitExpression(
-                                SyntaxFactory.CSharpTransition(transition, chunkGenerator: null),
+                                SyntaxFactory.CSharpTransition(transition),
                                 SyntaxFactory.CSharpImplicitExpressionBody(
                                     SyntaxFactory.CSharpCodeBlock(children)))])]);
                 }
@@ -578,7 +589,7 @@ internal static class TagHelperBlockRewriter
 
             SyntaxList<RazorSyntaxNode> createExpressionLiteral(SyntaxTokenList tokens)
             {
-                var expression = SyntaxFactory.CSharpExpressionLiteral(tokens, chunkGenerator: null);
+                var expression = SyntaxFactory.CSharpExpressionLiteral(tokens);
                 var rewrittenExpression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
                 return [rewrittenExpression];
             }
@@ -603,7 +614,7 @@ internal static class TagHelperBlockRewriter
             if (_rewriteAsMarkup)
             {
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
-                var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxTokenList(node.Transition), MarkupChunkGenerator.Instance).WithEditHandler(node.GetEditHandler());
+                var expression = SyntaxFactory.CSharpExpressionLiteral(node.Transition, MarkupChunkGenerator.Instance, node.EditHandler);
 
                 return base.VisitCSharpExpressionLiteral(expression);
             }
@@ -627,13 +638,11 @@ internal static class TagHelperBlockRewriter
                 var firstToken = firstChild.GetFirstToken();
                 var newFirstToken = SyntaxFactory.Token(firstToken.Kind, node.Transition.Transition.Content + firstToken.Content);
 
-                firstToken.CopyAnnotationsTo(newFirstToken);
-
                 var newFirstChild = firstChild.ReplaceToken(firstToken, newFirstToken);
                 builder.AddRange(rewrittenBody.Children.Replace(firstChild, newFirstChild));
 
                 // Since the original transition is part of the body, we need something to take it's place.
-                var transition = SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition), chunkGenerator: null);
+                var transition = SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition));
 
                 var rewrittenCodeBlock = SyntaxFactory.CSharpCodeBlock(builder.ToList());
                 return SyntaxFactory.CSharpImplicitExpression(transition, SyntaxFactory.CSharpImplicitExpressionBody(rewrittenCodeBlock));
@@ -653,15 +662,15 @@ internal static class TagHelperBlockRewriter
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 // This is bad code, since @( is never valid C#, so we don't worry about trying to stitch the @ and the ( together.
                 var editHandler = _options.EnableSpanEditHandlers
-                    ? node.GetEditHandler() ?? SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any)
+                    ? SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any)
                     : null;
 
-                var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxTokenList(node.Transition.Transition), MarkupChunkGenerator.Instance).WithEditHandler(editHandler);
+                var expression = SyntaxFactory.CSharpExpressionLiteral(node.Transition.Transition, MarkupChunkGenerator.Instance, editHandler);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
                 builder.Add(expression);
 
                 // Since the original transition is part of the body, we need something to take it's place.
-                transition = SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition), chunkGenerator: null);
+                transition = SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition));
 
                 var body = (CSharpExplicitExpressionBodySyntax)node.Body;
                 var rewrittenOpenParen = (RazorSyntaxNode)VisitRazorMetaCode(body.OpenParen);
@@ -700,7 +709,7 @@ internal static class TagHelperBlockRewriter
             if (_rewriteAsMarkup)
             {
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
-                var expression = SyntaxFactory.CSharpExpressionLiteral(node.MetaCode, MarkupChunkGenerator.Instance).WithEditHandler(node.GetEditHandler());
+                var expression = SyntaxFactory.CSharpExpressionLiteral(node.MetaCode, MarkupChunkGenerator.Instance, node.EditHandler);
 
                 return VisitCSharpExpressionLiteral(expression);
             }
@@ -762,14 +771,12 @@ internal static class TagHelperBlockRewriter
             {
                 _rewriteAsMarkup = true;
                 // Since this is a bound non-string attribute, we want to convert LiteralAttributeValue to just be a CSharp Expression literal.
-                var expression = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), chunkGenerator: null);
+                var expression = SyntaxFactory.CSharpExpressionLiteral(builder.ToList());
                 return VisitCSharpExpressionLiteral(expression);
             }
             else
             {
-                var literal = SyntaxFactory.MarkupTextLiteral(builder.ToList(), node.Value?.ChunkGenerator);
-                var editHandler = node.Value?.GetEditHandler();
-                literal = literal.WithEditHandler(editHandler);
+                var literal = SyntaxFactory.MarkupTextLiteral(builder.ToList(), node.Value?.ChunkGenerator, node.Value?.EditHandler);
 
                 return Visit(literal);
             }
@@ -815,8 +822,7 @@ internal static class TagHelperBlockRewriter
 
             _rewriteAsMarkup = true;
             node = (MarkupTextLiteralSyntax)ConfigureNonStringAttribute(node);
-            var value = SyntaxFactory.CSharpExpressionLiteral(node.LiteralTokens, node.ChunkGenerator);
-            return value.WithEditHandler(node.GetEditHandler());
+            return SyntaxFactory.CSharpExpressionLiteral(node.LiteralTokens, node.ChunkGenerator, node.EditHandler);
         }
 
         public override SyntaxNode VisitMarkupEphemeralTextLiteral(MarkupEphemeralTextLiteralSyntax node)
@@ -830,8 +836,7 @@ internal static class TagHelperBlockRewriter
             // Rewriting it to CSharpEphemeralTextLiteral so that it is not rendered to output.
             _rewriteAsMarkup = true;
             node = (MarkupEphemeralTextLiteralSyntax)ConfigureNonStringAttribute(node);
-            var value = SyntaxFactory.CSharpEphemeralTextLiteral(node.LiteralTokens, node.ChunkGenerator);
-            return value.WithEditHandler(node.GetEditHandler());
+            return SyntaxFactory.CSharpEphemeralTextLiteral(node.LiteralTokens, node.ChunkGenerator, node.EditHandler);
         }
 
         // Being collapsed represents that a block contains several identical looking markup literal attribute values. This can be the case
@@ -893,30 +898,18 @@ internal static class TagHelperBlockRewriter
                 newGenerator = new ExpressionChunkGenerator();
             }
 
-            if (originalGenerator != newGenerator)
-            {
-                node = node switch
-                {
-                    MarkupStartTagSyntax start => start.Update(start.OpenAngle, start.Bang, start.Name, start.Attributes, start.ForwardSlash, start.CloseAngle, newGenerator),
-                    MarkupEndTagSyntax end => end.Update(end.OpenAngle, end.ForwardSlash, end.Bang, end.Name, end.MiscAttributeContent, end.CloseAngle, newGenerator),
-                    MarkupEphemeralTextLiteralSyntax ephemeral => ephemeral.Update(ephemeral.LiteralTokens, newGenerator),
-                    MarkupTagHelperStartTagSyntax start => start.Update(start.OpenAngle, start.Bang, start.Name, start.Attributes, start.ForwardSlash, start.CloseAngle, newGenerator),
-                    MarkupTagHelperEndTagSyntax end => end.Update(end.OpenAngle, end.ForwardSlash, end.Bang, end.Name, end.MiscAttributeContent, end.CloseAngle, newGenerator),
-                    MarkupTextLiteralSyntax text => text.Update(text.LiteralTokens, newGenerator),
-                    MarkupTransitionSyntax transition => transition.Update(transition.TransitionTokens, newGenerator),
-                    CSharpStatementLiteralSyntax csharp => csharp.Update(csharp.LiteralTokens, newGenerator),
-                    CSharpExpressionLiteralSyntax csharp => csharp.Update(csharp.LiteralTokens, newGenerator),
-                    CSharpEphemeralTextLiteralSyntax ephemeral => ephemeral.Update(ephemeral.LiteralTokens, newGenerator),
-                    CSharpTransitionSyntax transition => transition.Update(transition.Transition, newGenerator),
-                    RazorMetaCodeSyntax meta => meta.Update(meta.MetaCode, newGenerator),
-                    UnclassifiedTextLiteralSyntax unclassified => unclassified.Update(unclassified.LiteralTokens, newGenerator),
-                    _ => throw new InvalidOperationException($"Unexpected node type {node.Kind}"),
-                };
-            }
-
             context = builder?.Build(AcceptedCharactersInternal.AnyExceptNewline);
 
-            return node.WithEditHandler(context);
+            if (originalGenerator != newGenerator)
+            {
+                return (node as ILegacySyntax)?.Update(newGenerator, context)
+                    ?? Assumed.Unreachable<SyntaxNode>($"Unexpected node type {node.Kind}");
+            }
+            else
+            {
+                return (node as ILegacySyntax)?.WithEditHandler(context)
+                    ?? Assumed.Unreachable<SyntaxNode>($"Unexpected node type {node.Kind}");
+            }
         }
     }
 
