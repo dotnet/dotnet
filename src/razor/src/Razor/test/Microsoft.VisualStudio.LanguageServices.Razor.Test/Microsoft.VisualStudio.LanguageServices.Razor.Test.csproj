@@ -15,7 +15,7 @@
       <Link>Shared\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
 
-    <Compile Include="..\Microsoft.VisualStudioCode.RazorExtension.Test\Endpoints\Shared\*.cs" LinkBase="Cohost\Shared" />
+    <Compile Include="..\Microsoft.VisualStudioCode.RazorExtension.Test\Endpoints\Shared\**\*.cs" LinkBase="Cohost\Shared" />
   </ItemGroup>
 
   <ItemGroup>

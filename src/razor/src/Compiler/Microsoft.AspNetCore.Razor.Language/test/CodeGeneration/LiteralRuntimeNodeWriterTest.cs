@@ -12,7 +12,7 @@ public class LiteralRuntimeNodeWriterTest
     public void WriteCSharpExpression_UsesWriteLiteral_WritesLinePragma_WithSource()
     {
         // Arrange
-        var writer = new LiteralRuntimeNodeWriter();
+        var writer = LiteralRuntimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
@@ -43,7 +43,7 @@ i++
     public void WriteCSharpExpression_WithMultipleChildren()
     {
         // Arrange
-        var writer = new LiteralRuntimeNodeWriter();
+        var writer = LiteralRuntimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode();
