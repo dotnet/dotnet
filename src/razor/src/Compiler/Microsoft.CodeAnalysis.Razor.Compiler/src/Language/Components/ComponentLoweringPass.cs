@@ -5,17 +5,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // This pass runs earlier than our other passes that 'lower' specific kinds of attributes.
     public override int Order => 0;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -138,12 +143,14 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
     private static ComponentIntermediateNode RewriteAsComponent(TagHelperIntermediateNode node, TagHelperDescriptor tagHelper)
     {
+        Debug.Assert(node.StartTagSpan.HasValue, "Component tags should always have a start tag span.");
         var component = new ComponentIntermediateNode()
         {
             Component = tagHelper,
             Source = node.Source,
             TagName = node.TagName,
             TypeName = tagHelper.TypeName,
+            StartTagSpan = node.StartTagSpan.AssumeNotNull(),
         };
 
         component.AddDiagnosticsFromNode(node);

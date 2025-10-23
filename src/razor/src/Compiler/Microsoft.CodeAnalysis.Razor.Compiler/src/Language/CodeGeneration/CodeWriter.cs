@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -118,7 +117,7 @@ public sealed partial class CodeWriter : IDisposable
             if (_indentSize != value)
             {
                 _indentSize = value;
-                _indentString = ComputeIndent(value, IndentWithTabs, TabSize);
+                _indentString = IndentCache.GetIndentString(value, IndentWithTabs, TabSize);
             }
         }
     }
@@ -189,7 +188,7 @@ public sealed partial class CodeWriter : IDisposable
 
         var indentString = size == _indentSize
             ? _indentString
-            : ComputeIndent(size, IndentWithTabs, TabSize);
+            : IndentCache.GetIndentString(size, IndentWithTabs, TabSize);
 
         AddTextChunk(indentString);
 
@@ -198,30 +197,6 @@ public sealed partial class CodeWriter : IDisposable
         _absoluteIndex += indentLength;
 
         return this;
-    }
-
-    private static ReadOnlyMemory<char> ComputeIndent(int size, bool useTabs, int tabSize)
-    {
-        if (size == 0)
-        {
-            return ReadOnlyMemory<char>.Empty;
-        }
-
-        if (useTabs)
-        {
-            var tabCount = size / tabSize;
-            var spaceCount = size % tabSize;
-
-            using var _ = StringBuilderPool.GetPooledObject(out var builder);
-            builder.SetCapacityIfLarger(tabCount + spaceCount);
-
-            builder.Append('\t', tabCount);
-            builder.Append(' ', spaceCount);
-
-            return builder.ToString().AsMemory();
-        }
-
-        return new string(' ', size).AsMemory();
     }
 
     public CodeWriter Write(string value)

@@ -17,7 +17,15 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.Grid<
+            __builder.OpenComponent<global::Test.
+#nullable restore
+#line (1,2)-(1,6) "x:\dir\subdir\Test\TestComponent.cshtml"
+Grid
+
+#line default
+#line hidden
+#nullable disable
+            <
 #nullable restore
 #line (1,14)-(1,22) "x:\dir\subdir\Test\TestComponent.cshtml"
 DateTime
@@ -60,12 +68,28 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.Column<TItem>>(seq);
+        __builder.OpenComponent<global::Test.
+#nullable restore
+#line (1,60)-(1,66) "x:\dir\subdir\Test\TestComponent.cshtml"
+Column
+
+#line default
+#line hidden
+#nullable disable
+        <TItem>>(seq);
         __builder.CloseComponent();
         }
         public static void CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.Column<TItem>>(seq);
+        __builder.OpenComponent<global::Test.
+#nullable restore
+#line (1,70)-(1,76) "x:\dir\subdir\Test\TestComponent.cshtml"
+Column
+
+#line default
+#line hidden
+#nullable disable
+        <TItem>>(seq);
         __builder.CloseComponent();
         }
     }
