@@ -14,8 +14,8 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
+using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.VisualStudio.Composition;
-using Microsoft.VisualStudio.Language.CodeCleanUp;
 using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
@@ -94,7 +94,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     {
         if (remoteOnly)
         {
-            return base.CreateProjectAndRazorDocument(contents, fileKind: null, documentFilePath: null, additionalFiles: null, inGlobalNamespace: false, miscellaneousFile: false);
+            var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
+            return base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind: null, documentFilePath: null, additionalFiles: null, inGlobalNamespace: false, miscellaneousFile: false);
         }
 
         return this.CreateProjectAndRazorDocument(contents);
@@ -108,7 +109,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         bool inGlobalNamespace = false,
         bool miscellaneousFile = false)
     {
-        var remoteDocument = base.CreateProjectAndRazorDocument(contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
+        var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
+        var remoteDocument = base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
 
         // In this project we simulate remote services running OOP by creating a different workspace with a different
         // set of services to represent the devenv Roslyn side of things. We don't have any actual solution syncing set

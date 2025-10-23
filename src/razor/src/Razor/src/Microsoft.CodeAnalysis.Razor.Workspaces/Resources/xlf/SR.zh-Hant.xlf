@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
         <source>{0} (and req'd attributes...)</source>
-        <target state="new">{0} (and req'd attributes...)</target>
+        <target state="translated">{0} (和必要屬性...)</target>
         <note>The term "req'd" is an abbreviation for "required"</note>
       </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
