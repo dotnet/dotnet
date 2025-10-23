@@ -21,4 +21,16 @@ internal static partial class SyntaxFactory
     {
         return SyntaxToken.CreateMissing(kind, diagnostics);
     }
+
+    public static CSharpExpressionLiteralSyntax CSharpExpressionLiteral(SyntaxList<SyntaxToken> literalTokens)
+        => CSharpExpressionLiteral(literalTokens, chunkGenerator: null, editHandler: null);
+
+    public static CSharpTransitionSyntax CSharpTransition(SyntaxToken transition)
+        => CSharpTransition(transition, chunkGenerator: null, editHandler: null);
+
+    public static MarkupTextLiteralSyntax MarkupTextLiteral(SyntaxList<SyntaxToken> literalTokens)
+        => MarkupTextLiteral(literalTokens, chunkGenerator: null, editHandler: null);
+
+    public static RazorDirectiveSyntax RazorDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body)
+        => RazorDirective(transition, body, directiveDescriptor: null);
 }

@@ -7,28 +7,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed class HtmlFormattingPass(ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed class HtmlFormattingPass : IFormattingPass
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlFormattingPass>();
-
     public Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var changedText = context.SourceText;
-
-        _logger.LogTestOnly($"Before HTML formatter:\r\n{changedText}");
 
         if (changes.Length > 0)
         {
             var filteredChanges = FilterIncomingChanges(context.CodeDocument.GetRequiredSyntaxTree(), changes);
             changedText = changedText.WithChanges(filteredChanges);
 
-            _logger.LogTestOnly($"After FilterIncomingChanges:\r\n{changedText}");
+            context.Logger?.LogSourceText("AfterHtmlFormatter", changedText);
         }
 
         return Task.FromResult(SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char));

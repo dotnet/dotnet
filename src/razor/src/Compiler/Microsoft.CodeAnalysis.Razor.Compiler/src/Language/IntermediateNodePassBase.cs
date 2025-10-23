@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -22,25 +21,21 @@ public abstract class IntermediateNodePassBase : RazorEngineFeatureBase
 
     public virtual int Order { get; }
 
-    public void Execute(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    public void Execute(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken = default)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (documentNode == null)
-        {
-            throw new ArgumentNullException(nameof(documentNode));
-        }
-
         if (Engine == null)
         {
             throw new InvalidOperationException(Resources.PhaseMustBeInitialized);
         }
 
-        ExecuteCore(codeDocument, documentNode);
+        ExecuteCore(codeDocument, documentNode, cancellationToken);
     }
 
-    protected abstract void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode);
+    protected abstract void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken);
 }

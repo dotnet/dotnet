@@ -2528,7 +2528,7 @@ To display a value, specify the corresponding command-line option without provid
     <value>Workloads</value>
   </data>
   <data name="WorkloadSearchCommandDescription" xml:space="preserve">
-    <value>Search for available workloads.</value>
+    <value>Search for available workloads or workload versions.</value>
   </data>
   <data name="WorkloadSetFromGlobalJsonInstalled" xml:space="preserve">
     <value>Using workload version {0}, which was specified in the global.json file at {1}.</value>
@@ -2697,5 +2697,9 @@ Proceed?</value>
   </data>
   <data name="UnexpectedMessageWithoutHandshake" xml:space="preserve">
     <value>A message of type '{0}' was received before we got any handshakes, which is unexpected.</value>
+  </data>
+  <data name="DotnetTestMismatchingExecutionId" xml:space="preserve">
+    <value>Received 'ExecutionId' of value '{0}' for message '{1}' while the 'ExecutionId' received of the handshake message was '{2}'.</value>
+    <comment>{Locked="ExecutionId"}</comment>
   </data>
 </root>

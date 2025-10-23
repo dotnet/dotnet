@@ -7,7 +7,7 @@
   -->
   <PropertyGroup>
     <MajorVersion>5</MajorVersion>
-    <MinorVersion>1</MinorVersion>
+    <MinorVersion>3</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <PreReleaseVersionLabel>1</PreReleaseVersionLabel>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
@@ -108,7 +108,7 @@
     Analyzer, it needs to directly reference patched versions of some transitive dependencies.
   -->
   <PropertyGroup>
-    <MicrosoftBuildTasksCoreVersionForMetrics>17.10.29</MicrosoftBuildTasksCoreVersionForMetrics>
+    <MicrosoftBuildTasksCoreVersionForMetrics>17.10.46</MicrosoftBuildTasksCoreVersionForMetrics>
     <SystemTextJsonVersionForMetrics>8.0.5</SystemTextJsonVersionForMetrics>
   </PropertyGroup>
   <PropertyGroup>
