@@ -12,6 +12,6 @@ internal sealed class DefaultCodeTarget(
 {
     public override IntermediateNodeWriter CreateNodeWriter()
         => Options.DesignTime
-            ? new DesignTimeNodeWriter()
-            : new RuntimeNodeWriter();
+            ? DesignTimeNodeWriter.Instance
+            : RuntimeNodeWriter.Instance;
 }
