@@ -12,7 +12,6 @@ internal static class SyntaxConstants
     public const string TransitionString = "@";
     public const string StartCommentSequence = "@*";
     public const string EndCommentSequence = "*@";
-    public const string EditHandlerKind = "EditHandler";
 
     public static class CSharp
     {

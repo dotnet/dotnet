@@ -234,9 +234,9 @@ internal static class AddUsingsHelper
     {
         if (node is RazorDirectiveSyntax directiveNode)
         {
-            return directiveNode.DirectiveDescriptor == ComponentPageDirective.Directive ||
-                directiveNode.DirectiveDescriptor == NamespaceDirective.Directive ||
-                directiveNode.DirectiveDescriptor == PageDirective.Directive;
+            return directiveNode.IsDirective(ComponentPageDirective.Directive) ||
+                   directiveNode.IsDirective(NamespaceDirective.Directive) ||
+                   directiveNode.IsDirective(PageDirective.Directive);
         }
 
         return false;

@@ -19,7 +19,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
     [Fact]
     public void WriteHtmlAttributeValue_RendersCorrectly()
     {
-        var writer = new TagHelperHtmlAttributeRuntimeNodeWriter();
+        var writer = TagHelperHtmlAttributeRuntimeNodeWriter.Instance;
 
         var content = "<input checked=\"hello-world @false\" />";
         var source = TestRazorSourceDocument.Create(content);
@@ -45,7 +45,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
     [Fact]
     public void WriteCSharpExpressionAttributeValue_RendersCorrectly()
     {
-        var writer = new TagHelperHtmlAttributeRuntimeNodeWriter();
+        var writer = TagHelperHtmlAttributeRuntimeNodeWriter.Instance;
         var content = "<input checked=\"hello-world @false\" />";
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
@@ -78,7 +78,7 @@ false
     [Fact]
     public void WriteCSharpCodeAttributeValue_BuffersResult()
     {
-        var writer = new TagHelperHtmlAttributeRuntimeNodeWriter();
+        var writer = TagHelperHtmlAttributeRuntimeNodeWriter.Instance;
 
         var content = "<input checked=\"hello-world @if(@true){ }\" />";
         var source = TestRazorSourceDocument.Create(content);

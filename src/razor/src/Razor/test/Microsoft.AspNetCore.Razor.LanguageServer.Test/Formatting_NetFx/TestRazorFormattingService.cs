@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -19,6 +20,7 @@ internal static class TestRazorFormattingService
 {
     public static async Task<IRazorFormattingService> CreateWithFullSupportAsync(
         ILoggerFactory loggerFactory,
+        ITestOutputHelper testOutputHelper,
         RazorCodeDocument? codeDocument = null,
         RazorLSPOptions? razorLSPOptions = null,
         LanguageServerFeatureOptions? languageServerFeatureOptions = null,
@@ -45,7 +47,8 @@ internal static class TestRazorFormattingService
 
         var hostServicesProvider = new DefaultHostServicesProvider();
 
-        var service = new RazorFormattingService(mappingService, hostServicesProvider, loggerFactory);
+        var formattingLoggerFactory = new TestFormattingLoggerFactory(testOutputHelper);
+        var service = new RazorFormattingService(mappingService, hostServicesProvider, formattingLoggerFactory, loggerFactory);
         var accessor = service.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
 

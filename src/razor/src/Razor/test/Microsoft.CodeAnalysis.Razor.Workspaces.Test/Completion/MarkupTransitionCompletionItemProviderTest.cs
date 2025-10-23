@@ -326,11 +326,14 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
 
     private static RazorCompletionContext CreateRazorCompletionContext(int absoluteIndex, RazorSyntaxTree syntaxTree)
     {
+        var sourceDocument = RazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+
         var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 
     private static RazorSyntaxTree CreateSyntaxTree(string text, params DirectiveDescriptor[] directives)
