@@ -230,7 +230,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // These occur when special types are missing or malformed, or the patterns are incompletely implemented.
             hasErrors |= builder.IsIncomplete;
 
-            BoundAwaitableInfo awaitInfo = null;
+            BoundAwaitableInfo moveNextAwaitableInfo = null;
             MethodSymbol getEnumeratorMethod = builder.GetEnumeratorInfo?.Method;
             if (getEnumeratorMethod != null)
             {
@@ -261,9 +261,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 var expr = _syntax.Expression;
                 ReportBadAwaitDiagnostics(_syntax.AwaitKeyword, diagnostics, ref hasErrors);
                 var placeholder = new BoundAwaitableValuePlaceholder(expr, builder.MoveNextInfo?.Method.ReturnType ?? CreateErrorType());
-                awaitInfo = BindAwaitInfo(placeholder, expr, diagnostics, ref hasErrors);
+                moveNextAwaitableInfo = BindAwaitInfo(placeholder, expr, diagnostics, ref hasErrors);
 
-                if (!hasErrors && (awaitInfo.GetResult ?? awaitInfo.RuntimeAsyncAwaitCall?.Method)?.ReturnType.SpecialType != SpecialType.System_Boolean)
+                if (!hasErrors && (moveNextAwaitableInfo.GetResult ?? moveNextAwaitableInfo.RuntimeAsyncAwaitCall?.Method)?.ReturnType.SpecialType != SpecialType.System_Boolean)
                 {
                     diagnostics.Add(ErrorCode.ERR_BadGetAsyncEnumerator, expr.Location, getEnumeratorMethod.ReturnTypeWithAnnotations, getEnumeratorMethod);
                     hasErrors = true;
@@ -453,7 +453,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     iterationErrorExpression,
                     collectionExpr,
                     deconstructStep,
-                    awaitInfo,
                     body,
                     this.BreakLabel,
                     this.ContinueLabel,
@@ -571,9 +570,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 builder.CurrentConversion = CreateConversion(_syntax, builder.CurrentPlaceholder, currentConversionClassification, isCast: false, conversionGroupOpt: null, builder.ElementType, diagnostics);
             }
 
-            if (builder.NeedsDisposal && IsAsync)
+            if (IsAsync)
             {
-                hasErrors |= GetAwaitDisposeAsyncInfo(ref builder, diagnostics);
+                builder.MoveNextAwaitableInfo = moveNextAwaitableInfo;
+
+                if (builder.NeedsDisposal)
+                {
+                    hasErrors |= GetAwaitDisposeAsyncInfo(ref builder, diagnostics);
+                }
             }
 
             Debug.Assert(
@@ -598,7 +602,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 iterationErrorExpression,
                 convertedCollectionExpression,
                 deconstructStep,
-                awaitInfo,
                 body,
                 this.BreakLabel,
                 this.ContinueLabel,
@@ -935,7 +938,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (collectionExprType is null) // There's no way to enumerate something without a type.
                 {
-                    if (!ReportConstantNullCollectionExpr(collectionExpr, diagnostics))
+                    if (collectionExpr is BoundLiteral && collectionExpr.ConstantValueOpt is { IsNull: true })
+                    {
+                        diagnostics.Add(ErrorCode.ERR_NullNotValid, collectionExpr.Syntax.Location);
+                    }
+                    else
                     {
                         // Anything else with a null type is a method group or anonymous function
                         diagnostics.Add(ErrorCode.ERR_AnonMethGrpInForEach, collectionSyntax.Location, collectionExpr.Display);
@@ -962,10 +969,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // The spec specifically lists the collection, enumerator, and element types for arrays and dynamic.
                 if (collectionExprType.Kind == SymbolKind.ArrayType || collectionExprType.Kind == SymbolKind.DynamicType)
                 {
-                    if (ReportConstantNullCollectionExpr(collectionExpr, diagnostics))
-                    {
-                        return EnumeratorResult.FailedAndReported;
-                    }
                     builder = GetDefaultEnumeratorInfo(syntax, builder, diagnostics, collectionExprType);
                     return EnumeratorResult.Succeeded;
                 }
@@ -976,10 +979,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (SatisfiesGetEnumeratorPattern(syntax, collectionSyntax, ref builder, unwrappedCollectionExpr, isAsync, viaExtensionMethod: false, diagnostics))
                 {
                     collectionExpr = unwrappedCollectionExpr;
-                    if (ReportConstantNullCollectionExpr(collectionExpr, diagnostics))
-                    {
-                        return EnumeratorResult.FailedAndReported;
-                    }
                     return createPatternBasedEnumeratorResult(ref builder, unwrappedCollectionExpr, isAsync, viaExtensionMethod: false, diagnostics);
                 }
 
@@ -1011,11 +1010,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Lowering will not use iterator info with strings, so it is ok.
                 if (!isAsync && collectionExprType.SpecialType == SpecialType.System_String)
                 {
-                    if (ReportConstantNullCollectionExpr(collectionExpr, diagnostics))
-                    {
-                        return EnumeratorResult.FailedAndReported;
-                    }
-
                     builder = GetDefaultEnumeratorInfo(syntax, builder, diagnostics, collectionExprType);
                     return EnumeratorResult.Succeeded;
                 }
@@ -1073,11 +1067,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!AllInterfacesContainsIEnumerable(collectionSyntax, ref builder, unwrappedCollectionExprType, isAsync, diagnostics, out bool foundMultipleGenericIEnumerableInterfaces))
             {
                 return EnumeratorResult.FailedNotReported;
-            }
-
-            if (ReportConstantNullCollectionExpr(collectionExpr, diagnostics))
-            {
-                return EnumeratorResult.FailedAndReported;
             }
 
             SyntaxNode errorLocationSyntax = collectionSyntax;
@@ -1198,17 +1187,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             // We don't know the runtime type, so we will have to insert a runtime check for IDisposable (with a conditional call to IDisposable.Dispose).
             builder.NeedsDisposal = true;
             return EnumeratorResult.Succeeded;
-        }
-
-        private bool ReportConstantNullCollectionExpr(BoundExpression collectionExpr, BindingDiagnosticBag diagnostics)
-        {
-            if (collectionExpr.ConstantValueOpt is { IsNull: true })
-            {
-                // Spec seems to refer to null literals, but Dev10 reports anything known to be null.
-                diagnostics.Add(ErrorCode.ERR_NullNotValid, collectionExpr.Syntax.Location);
-                return true;
-            }
-            return false;
         }
 
         private void GetDisposalInfoForEnumerator(SyntaxNode syntax, ref ForEachEnumeratorInfo.Builder builder, BoundExpression expr, bool isAsync, BindingDiagnosticBag diagnostics)
