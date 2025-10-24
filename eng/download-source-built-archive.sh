@@ -54,19 +54,20 @@ function DownloadArchive {
   local artifactsRid="$4"
   local outputDir="$5"
   local destinationFileNamePrefix="${6:-}"
-  local archiveBaseFileNameOverride="${7:-}"
+  local versionPropertyOverride="${7:-}"
+  local useCILocation="${8:-false}"
 
   local notFoundMessage="No $label found to download..."
-  local sdkVersionProperty="MicrosoftNETSdkPackageVersion"
 
   local archiveVersion
   local versionsPath
-  if [[ "$propertyName" == "$sdkVersionProperty" ]]; then
+  local versionProperty="${versionPropertyOverride:-$propertyName}"
+  if [[ "$versionProperty" == "MicrosoftNETSdkPackageVersion" ]]; then
     versionsPath="$PACKAGE_VERSION_DETAILS_PATH"
   else
     versionsPath="$PACKAGE_VERSIONS_PATH"
   fi
-  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$versionsPath")
+  archiveVersion=$(GetXmlPropertyValue "$versionProperty" "$versionsPath")
   if [[ -z "$archiveVersion" ]]; then
     if [ "$isRequired" == true ]; then
       echo "  ERROR: $notFoundMessage"
@@ -83,28 +84,29 @@ function DownloadArchive {
   local sdkBaseFileName="dotnet-sdk"
   local defaultArtifactsRid='centos.10-x64'
 
-  # Use override base filename if provided
-  if [[ -n "$archiveBaseFileNameOverride" ]]; then
-    artifactsBaseFileName="$archiveBaseFileNameOverride"
-    prebuiltsBaseFileName="$archiveBaseFileNameOverride"
-    sdkBaseFileName="$archiveBaseFileNameOverride"
+  local versionDelimiter="."
+  if [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
+    versionDelimiter="-"
   fi
 
-  local versionDelimiter="."
-  if [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]] || [[ "$archiveBaseFileNameOverride" == *sdk* ]]; then
-    versionDelimiter="-"
+  # Assets for the default RID are hosted in builds.dotnet.microsoft.com
+  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
+    useCILocation=false
   fi
 
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
-  if [[ "$propertyName" == "$sdkVersionProperty" ]]; then
-    archiveUrl="https://ci.dot.net/public/source-build/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
-  elif [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
+  baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
+  if [[ "$useCILocation" == true ]]; then
+    baseUrl="https://ci.dot.net/public/source-build"
+  fi
+
+  if [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
+    archiveUrl="${baseUrl}/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltArtifactsVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveUrl="${baseUrl}/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveUrl="${baseUrl}/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     return 1
@@ -120,10 +122,12 @@ function DownloadArchive {
   if [[ -n "$destinationFileNamePrefix" ]]; then
     local downloadedFilename
     downloadedFilename=$(basename "$archiveUrl")
-    # Extract the suffix from the downloaded filename using the appropriate base filename
+    # Extract the suffix from the downloaded filename
     local baseFilenameForSuffix="$artifactsBaseFileName"
     if [[ "$propertyName" == *Prebuilts* ]]; then
       baseFilenameForSuffix="$prebuiltsBaseFileName"
+    elif [[ "$propertyName" == *Sdk* ]]; then
+      baseFilenameForSuffix="$sdkBaseFileName"
     fi
     local suffix="${downloadedFilename#$baseFilenameForSuffix}"
     local newFilename="$destinationFileNamePrefix$suffix"
