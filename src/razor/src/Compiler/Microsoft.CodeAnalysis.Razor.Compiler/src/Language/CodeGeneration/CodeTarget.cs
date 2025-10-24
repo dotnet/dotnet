@@ -1,96 +1,55 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-public abstract class CodeTarget
+public abstract class CodeTarget(RazorCodeDocument codeDocument, ImmutableArray<ICodeTargetExtension> targetExtensions)
 {
-    public static CodeTarget CreateDefault(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
-    {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        return CreateDefault(codeDocument, options, configure: null);
-    }
+    public RazorCodeDocument CodeDocument => codeDocument;
+    public RazorCodeGenerationOptions Options => codeDocument.CodeGenerationOptions;
+    public ImmutableArray<ICodeTargetExtension> Extensions => targetExtensions;
 
     public static CodeTarget CreateDefault(
         RazorCodeDocument codeDocument,
-        RazorCodeGenerationOptions options,
-        Action<CodeTargetBuilder> configure)
+        Action<CodeTargetBuilder>? configure = null)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
+        ArgHelper.ThrowIfNull(codeDocument);
 
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        var builder = new DefaultCodeTargetBuilder(codeDocument, options);
-
-        if (builder.Options.DesignTime)
-        {
-            AddDesignTimeDefaults(builder);
-        }
-        else
-        {
-            AddRuntimeDefaults(builder);
-        }
-
-        if (configure != null)
-        {
-            configure.Invoke(builder);
-        }
-
-        return builder.Build();
-    }
-
-    public static CodeTarget CreateEmpty(
-        RazorCodeDocument codeDocument,
-        RazorCodeGenerationOptions options,
-        Action<CodeTargetBuilder> configure)
-    {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        var builder = new DefaultCodeTargetBuilder(codeDocument, options);
+        var builder = new DefaultCodeTargetBuilder(codeDocument);
         configure?.Invoke(builder);
         return builder.Build();
     }
 
-    internal static void AddDesignTimeDefaults(CodeTargetBuilder builder)
-    {
-
-    }
-
-    internal static void AddRuntimeDefaults(CodeTargetBuilder builder)
-    {
-
-    }
-
     public abstract IntermediateNodeWriter CreateNodeWriter();
 
-    public abstract TExtension GetExtension<TExtension>() where TExtension : class, ICodeTargetExtension;
+    public TExtension? GetExtension<TExtension>()
+        where TExtension : class, ICodeTargetExtension
+    {
+        foreach (var extension in Extensions)
+        {
+            if (extension is TExtension match)
+            {
+                return match;
+            }
+        }
 
-    public abstract bool HasExtension<TExtension>() where TExtension : class, ICodeTargetExtension;
+        return null;
+    }
+
+    public bool HasExtension<TExtension>()
+        where TExtension : class, ICodeTargetExtension
+    {
+        foreach (var extension in Extensions)
+        {
+            if (extension is TExtension)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

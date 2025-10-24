@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -101,10 +101,9 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return CurrentToken;
         }
 
-        using var _ = ListPool<SyntaxToken>.GetPooledObject(out var tokens);
-
         // We add 1 in order to store the current token.
-        tokens.SetCapacityIfLarger(count + 1);
+        using var tokens = new PooledArrayBuilder<SyntaxToken>(count + 1);
+
         var currentToken = CurrentToken;
 
         tokens.Add(currentToken);
@@ -129,22 +128,19 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
         return tokens[count];
     }
 
+    internal delegate bool LookaheadUntilCondition(SyntaxToken token, ref readonly PooledArrayBuilder<SyntaxToken> previousTokens);
+
     /// <summary>
     /// Looks forward until the specified condition is met.
     /// </summary>
     /// <param name="condition">A predicate accepting the token being evaluated and the list of tokens which have been looped through.</param>
     /// <returns>true, if the condition was met. false - if the condition wasn't met and the last token has already been processed.</returns>
     /// <remarks>The list of previous tokens is passed in the reverse order. So the last processed element will be the first one in the list.</remarks>
-    protected bool LookaheadUntil(Func<SyntaxToken, IEnumerable<SyntaxToken>, bool> condition)
+    protected bool LookaheadUntil(LookaheadUntilCondition condition)
     {
-        if (condition == null)
-        {
-            throw new ArgumentNullException(nameof(condition));
-        }
-
         var matchFound = false;
 
-        using var _ = ListPool<SyntaxToken>.GetPooledObject(out var tokens);
+        using var tokens = new PooledArrayBuilder<SyntaxToken>();
         tokens.Add(CurrentToken);
 
         while (true)
@@ -155,7 +151,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             }
 
             tokens.Add(CurrentToken);
-            if (condition(CurrentToken, tokens))
+            if (condition(CurrentToken, in tokens))
             {
                 matchFound = true;
                 break;
@@ -439,9 +435,9 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
         return token!;
     }
 
-    protected SyntaxToken EatExpectedToken(params SyntaxKind[] kinds)
+    protected SyntaxToken EatExpectedToken(SyntaxKind kind)
     {
-        Debug.Assert(!EndOfFile && CurrentToken != null && kinds.Contains(CurrentToken.Kind));
+        Debug.Assert(!EndOfFile && CurrentToken != null && kind == CurrentToken.Kind);
         var token = CurrentToken;
         NextToken();
         return token!;
@@ -475,9 +471,9 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
         AcceptWhile(static (token, arg) => arg.type1 == token.Kind || arg.type2 == token.Kind || arg.type3 == token.Kind, (type1, type2, type3));
     }
 
-    protected internal void AcceptWhile(params SyntaxKind[] types)
+    protected internal void AcceptWhile(params ImmutableArray<SyntaxKind> types)
     {
-        AcceptWhile(static (token, types) => types.Any(expected => expected == token.Kind), types);
+        AcceptWhile(static (token, types) => types.Any(token.Kind, static (expected, kind) => expected == kind), types);
     }
 
     protected internal void AcceptUntil(SyntaxKind type)
@@ -496,9 +492,9 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
         AcceptWhile(static (token, arg) => arg.type1 != token.Kind && arg.type2 != token.Kind && arg.type3 != token.Kind, (type1, type2, type3));
     }
 
-    protected internal void AcceptUntil(params SyntaxKind[] types)
+    protected internal void AcceptUntil(params ImmutableArray<SyntaxKind> types)
     {
-        AcceptWhile(static (token, types) => types.All(expected => expected != token.Kind), types);
+        AcceptWhile(static (token, types) => types.All(token.Kind, static (expected, kind) => expected != kind), types);
     }
 
     protected void AcceptWhile(Func<SyntaxToken, bool> condition)
@@ -625,7 +621,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             throw new InvalidOperationException("No tokens to output.");
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected MarkupTextLiteralSyntax? OutputAsMarkupLiteral()
@@ -636,7 +632,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected MarkupEphemeralTextLiteralSyntax? OutputAsMarkupEphemeralLiteral()
@@ -647,7 +643,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupEphemeralTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupEphemeralTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected RazorMetaCodeSyntax? OutputAsMetaCode(SyntaxList<SyntaxToken> tokens, AcceptedCharactersInternal? accepted = null)
@@ -657,27 +653,25 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        var metacode = SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null);
         chunkGenerator = SpanChunkGenerator.Null;
         Context.CurrentAcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
 
-        return GetNodeWithEditHandler(metacode);
+        return SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null, GetEditHandler());
     }
 
-    protected TNode GetNodeWithEditHandler<TNode>(TNode node) where TNode : Syntax.GreenNode
+    protected SpanEditHandler? GetEditHandler()
     {
         Context.MakeMarkerNode = Context.CurrentAcceptedCharacters != AcceptedCharactersInternal.Any;
         if (this.editHandlerBuilder == null)
         {
             InitializeContext();
-            return node;
+            return null;
         }
 
-        var editHandlerBuilder = this.editHandlerBuilder.Build(Context.CurrentAcceptedCharacters);
+        var editHandler = this.editHandlerBuilder.Build(Context.CurrentAcceptedCharacters);
         InitializeContext();
-        var annotation = new Syntax.SyntaxAnnotation(SyntaxConstants.EditHandlerKind, editHandlerBuilder);
 
-        return (TNode)node.SetAnnotations([annotation]);
+        return editHandler;
     }
 
     protected DisposableAction<(TokenizerBackedParser<TTokenizer>, SpanContextConfigAction?)> PushSpanContextConfig()

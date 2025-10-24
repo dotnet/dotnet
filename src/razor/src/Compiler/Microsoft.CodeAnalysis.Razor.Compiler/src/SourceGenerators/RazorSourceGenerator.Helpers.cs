@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -38,7 +38,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         private static RazorProjectEngine GetDeclarationProjectEngine(
             SourceGeneratorProjectItem item,
-            IEnumerable<SourceGeneratorProjectItem> imports,
+            ImmutableArray<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();
@@ -93,7 +93,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         private static SourceGeneratorProjectEngine GetGenerationProjectEngine(
             SourceGeneratorProjectItem item,
-            IEnumerable<SourceGeneratorProjectItem> imports,
+            ImmutableArray<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();

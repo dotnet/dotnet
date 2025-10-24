@@ -32,7 +32,6 @@
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
 
     <file src="$SourceBuildTfmCurrent$\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
-    <file src="$SourceBuildTfmCurrent$\System.ComponentModel.Composition.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />

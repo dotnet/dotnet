@@ -38,8 +38,6 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
     public bool ContainsDiagnostics => Green.ContainsDiagnostics;
 
-    public bool ContainsAnnotations => Green.ContainsAnnotations;
-
     internal abstract SyntaxNode? GetNodeSlot(int index);
 
     internal abstract SyntaxNode? GetCachedSlot(int index);
@@ -124,7 +122,7 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
 
         if (result == null)
         {
-            var green = Green.GetSlot(slot);
+            var green = Green.GetRequiredSlot(slot);
             // passing list's parent
             Interlocked.CompareExchange(ref element, green.CreateRed(Parent, GetChildPosition(slot)), null);
             result = element;
@@ -392,11 +390,6 @@ internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, i
     public RazorDiagnostic[] GetDiagnostics()
     {
         return Green.GetDiagnostics();
-    }
-
-    public SyntaxAnnotation[] GetAnnotations()
-    {
-        return Green.GetAnnotations();
     }
 
     public bool IsEquivalentTo(SyntaxNode other)

@@ -25,20 +25,6 @@ namespace Microsoft.DotNet.SignTool
             ExecutableType = executableType;
         }
 
-        private static ExecutableType ParseExecutableType(string executableType)
-        {
-            if (string.IsNullOrEmpty(executableType))
-                return ExecutableType.None;
-
-            return executableType switch
-            {
-                "PE" => ExecutableType.PE,
-                "MachO" => ExecutableType.MachO,
-                "ELF" => ExecutableType.ELF,
-                _ => ExecutableType.None
-            };
-        }
-
         public override bool Equals(object obj)
             => obj is ExplicitCertificateKey key && Equals(key);
 

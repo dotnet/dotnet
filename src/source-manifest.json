@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 283940,
+      "barId": 288263,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6275af47ebda0d394d4a5a401b77bc6f2304204a"
+      "commitSha": "63eed293471985f6fc4a60fd8b6f8f5ce3d03f38"
     },
     {
-      "barId": 284253,
+      "barId": 284267,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "b862c38c0df064f649ebd75ff1778a7566f6b956"
+      "commitSha": "9ee3a381a6a5d9df2cd9492d57c97e9ba4e28c6e"
     },
     {
       "barId": 279211,
@@ -25,10 +25,10 @@
       "commitSha": "e292617c0f829bfe777c7ad51467c6a509a9aff8"
     },
     {
-      "barId": 281094,
+      "barId": 284345,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "c3b8848af005deb9cab2a64b47a39f507f095835"
+      "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
       "barId": 284034,
@@ -55,34 +55,34 @@
       "commitSha": "e0100aca936e20561f359b2c81df5c4f75f385f6"
     },
     {
-      "barId": 284198,
+      "barId": 288357,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "bf373edc7ed1110a03d28fde1e2cd258fce88a74"
+      "commitSha": "ad915a4f47346b746998dabaa541a7e3bab1d6cd"
     },
     {
-      "barId": 284051,
+      "barId": 284283,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "c69588acc9bb46f38370c2b8cdedf57aea5ec904"
+      "commitSha": "97c64b5dfcc39b3babf6b3dfa828aa737860c145"
     },
     {
-      "barId": 284251,
+      "barId": 288408,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
+      "commitSha": "26a49b33203484409aae04ab090b7d3090897749"
     },
     {
-      "barId": 284229,
+      "barId": 284344,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
       "commitSha": "ce73a22e4f984ecede5e66dd3a3f2527edd23b01"
     },
     {
-      "barId": 284232,
+      "barId": 284318,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0abfd8727b71f279d5718e753a70c4353afea774"
+      "commitSha": "7365770a313df694e36c44400c00ad777011485a"
     },
     {
       "barId": 277711,
@@ -97,10 +97,10 @@
       "commitSha": "b7b9812866f245761b3af8d526bede699e170efc"
     },
     {
-      "barId": 282656,
+      "barId": 288334,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
+      "commitSha": "14e4c0ba865760f431f44549f6871498dd6171e5"
     },
     {
       "barId": 277912,
@@ -121,10 +121,10 @@
       "commitSha": "fcc5f2933e4ad7fbfc85a9c4e78d9bfa3e967eb7"
     },
     {
-      "barId": 283910,
+      "barId": 285868,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "f9fca5ca92f8ee36bd9f0274df79c1c1f40ae37a"
+      "commitSha": "51891d6b33641ad30bc512747652225ca7964386"
     },
     {
       "barId": 280421,
@@ -139,10 +139,10 @@
       "commitSha": "2b9471644494f912a5ea1f559ed7e2d443a631aa"
     },
     {
-      "barId": 284130,
+      "barId": 284453,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "f74ad8648cada953c13403d3801203c30ea33bac"
+      "commitSha": "a94c8eb81ba1e5ea9f6e282a717cd52270548589"
     },
     {
       "barId": 278018,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",

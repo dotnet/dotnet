@@ -7,6 +7,11 @@
         <target state="translated">值不能为 null 或空字符串。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (和必需属性...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">从标记创建组件</target>
