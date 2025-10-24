@@ -58,7 +58,7 @@ internal sealed class WhitespaceRewriter(CancellationToken cancellationToken = d
             if (!containsNonWhitespace)
             {
                 // Literal node is all whitespace. Can rewrite.
-                whitespaceLiteral = SyntaxFactory.MarkupTextLiteral(literal.LiteralTokens, chunkGenerator: null);
+                whitespaceLiteral = SyntaxFactory.MarkupTextLiteral(literal.LiteralTokens);
                 rewritten = codeBlock.ReplaceNode(literal, newNode: null);
                 return true;
             }

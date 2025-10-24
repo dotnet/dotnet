@@ -175,5 +175,40 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
                 "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet6-internal-transport/nuget/v3/index.json",
                 "should add dotnet6-internal-transport feed");
         }
+
+        [Fact]
+        public async Task ConfigWithCommentedOutDisabledDarcIntFeeds_RemovesEntriesAndProducesValidXml()
+        {
+            // Arrange - this test covers the issue where commented-out disabled entries would create invalid XML
+            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
+    <add key=""darc-int-dotnet-roslyn-12345"" value=""https://pkgs.dev.azure.com/dnceng/internal/_packaging/darc-int-dotnet-roslyn-12345/nuget/v3/index.json"" />
+  </packageSources>
+  <disabledPackageSources>
+    <!-- <add key=""darc-int-dotnet-roslyn-12345"" value=""true"" /> -->
+  </disabledPackageSources>
+</configuration>";
+            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+
+            // Act
+            var result = await _scriptRunner.RunScript(configPath);
+
+            // Assert
+            result.exitCode.Should().Be(0, "Script should succeed, but got error: {result.error}");
+            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+
+            // The modified config should be valid XML (this would fail if nested comments were created)
+            Action parseXml = () => System.Xml.Linq.XDocument.Parse(modifiedConfig);
+            parseXml.Should().NotThrow("modified config should be valid XML without nested comments");
+
+            // The darc-int feed should not be disabled
+            modifiedConfig.ShouldNotBeDisabled("darc-int-dotnet-roslyn-12345", "darc-int feed should be enabled");
+
+            // The commented-out line should be removed entirely (no comment remnants)
+            modifiedConfig.Should().NotContain("Reenabled for build", "should not add comments when removing disabled entries");
+        }
     }
 }

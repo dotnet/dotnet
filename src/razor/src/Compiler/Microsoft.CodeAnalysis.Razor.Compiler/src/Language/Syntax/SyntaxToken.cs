@@ -74,8 +74,6 @@ internal readonly struct SyntaxToken : IEquatable<SyntaxToken>
 
     public bool ContainsDiagnostics => Node?.ContainsDiagnostics ?? false;
 
-    public bool ContainsAnnotations => Node?.ContainsAnnotations ?? false;
-
     public string Content => Node != null ? ((InternalSyntax.SyntaxToken)Node).Content : string.Empty;
 
     public string Text => ToString();
@@ -175,41 +173,6 @@ internal readonly struct SyntaxToken : IEquatable<SyntaxToken>
         }
 
         return SyntaxNavigator.GetPreviousToken(this, predicate);
-    }
-
-    public IEnumerable<SyntaxAnnotation> GetAnnotations()
-    {
-        if (Node == null)
-        {
-            return SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>();
-        }
-
-        var annotations = Node.GetAnnotations();
-
-        return annotations.Length == 0
-            ? SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>()
-            : annotations;
-    }
-
-    public SyntaxToken CopyAnnotationsTo(SyntaxToken token)
-    {
-        if (token.Node == null)
-        {
-            return default;
-        }
-
-        if (Node == null)
-        {
-            return token;
-        }
-
-        var annotations = Node.GetAnnotations();
-        if (annotations?.Length > 0)
-        {
-            return new(parent: null, token.Node.WithAnnotationsGreen(annotations), position: 0, index: 0);
-        }
-
-        return token;
     }
 
     /// <summary>

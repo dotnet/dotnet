@@ -118,7 +118,16 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         }
     }
 
-    protected virtual TextDocument CreateProjectAndRazorDocument(
+    protected abstract TextDocument CreateProjectAndRazorDocument(
+        string contents,
+        RazorFileKind? fileKind = null,
+        string? documentFilePath = null,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool inGlobalNamespace = false,
+        bool miscellaneousFile = false);
+
+    protected TextDocument CreateProjectAndRazorDocument(
+        CodeAnalysis.Workspace remoteWorkspace,
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
@@ -136,7 +145,6 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
-        var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
         return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
     }
 

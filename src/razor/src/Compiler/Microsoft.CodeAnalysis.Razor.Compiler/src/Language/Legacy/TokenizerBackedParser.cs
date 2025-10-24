@@ -621,7 +621,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             throw new InvalidOperationException("No tokens to output.");
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected MarkupTextLiteralSyntax? OutputAsMarkupLiteral()
@@ -632,7 +632,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected MarkupEphemeralTextLiteralSyntax? OutputAsMarkupEphemeralLiteral()
@@ -643,7 +643,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.MarkupEphemeralTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.MarkupEphemeralTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     protected RazorMetaCodeSyntax? OutputAsMetaCode(SyntaxList<SyntaxToken> tokens, AcceptedCharactersInternal? accepted = null)
@@ -653,27 +653,25 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
             return null;
         }
 
-        var metaCode = SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null);
         chunkGenerator = SpanChunkGenerator.Null;
         Context.CurrentAcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
 
-        return GetNodeWithEditHandler(metaCode);
+        return SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null, GetEditHandler());
     }
 
-    protected TNode GetNodeWithEditHandler<TNode>(TNode node) where TNode : Syntax.GreenNode
+    protected SpanEditHandler? GetEditHandler()
     {
         Context.MakeMarkerNode = Context.CurrentAcceptedCharacters != AcceptedCharactersInternal.Any;
         if (this.editHandlerBuilder == null)
         {
             InitializeContext();
-            return node;
+            return null;
         }
 
-        var editHandlerBuilder = this.editHandlerBuilder.Build(Context.CurrentAcceptedCharacters);
+        var editHandler = this.editHandlerBuilder.Build(Context.CurrentAcceptedCharacters);
         InitializeContext();
-        var annotation = new Syntax.SyntaxAnnotation(SyntaxConstants.EditHandlerKind, editHandlerBuilder);
 
-        return (TNode)node.SetAnnotations([annotation]);
+        return editHandler;
     }
 
     protected DisposableAction<(TokenizerBackedParser<TTokenizer>, SpanContextConfigAction?)> PushSpanContextConfig()

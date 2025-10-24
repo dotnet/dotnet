@@ -155,6 +155,7 @@ src/runtime/src/libraries/System.Runtime/tests/System.Runtime.Tests/TestModule/R
 # Reference to a license, not applicable to source
 src/runtime/docs/project/copyright.md
 src/runtime/docs/project/licensing-assets.md
+src/runtime/docs/workflow/building/coreclr/ios.md
 src/runtime/src/coreclr/nativeaot/docs/compiling.md|openssl-ssleay
 src/runtime/src/libraries/System.Text.Json/roadmap/images/core-components.txt|unknown-license-reference
 src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-components.txt

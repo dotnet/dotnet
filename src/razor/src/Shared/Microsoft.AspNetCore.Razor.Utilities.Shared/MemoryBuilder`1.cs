@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 // Inspired by https://github.com/dotnet/runtime/blob/9c7ee976fd771c183e98cf629e3776bba4e45ccc/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/ValueListBuilder.cs
@@ -47,6 +48,8 @@ internal ref struct MemoryBuilder<T>
         }
     }
 
+    public readonly bool IsEmpty => _length == 0;
+
     public int Length
     {
         readonly get => _length;
@@ -59,7 +62,7 @@ internal ref struct MemoryBuilder<T>
         }
     }
 
-    public ref T this[int index]
+    public readonly ref T this[int index]
     {
         get
         {
@@ -69,7 +72,7 @@ internal ref struct MemoryBuilder<T>
         }
     }
 
-    public readonly ReadOnlyMemory<T> AsMemory()
+    public readonly Memory<T> AsMemory()
         => _memory[.._length];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -166,6 +169,36 @@ internal ref struct MemoryBuilder<T>
         {
             ArrayPool<T>.Shared.Return(toReturn, _clearArray);
         }
+    }
+
+    public void Push(T item)
+    {
+        Append(item);
+    }
+
+    public readonly T Peek()
+    {
+        return this[^1];
+    }
+
+    public T Pop()
+    {
+        var item = this[^1];
+        _length--;
+
+        return item;
+    }
+
+    public bool TryPop([MaybeNullWhen(false)] out T result)
+    {
+        if (IsEmpty)
+        {
+            result = default;
+            return false;
+        }
+
+        result = Pop();
+        return true;
     }
 }
 

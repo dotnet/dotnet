@@ -7,6 +7,11 @@
         <target state="translated">Der Wert darf nicht NULL oder eine leere Zeichenfolge sein.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (und erforderliche Attribute)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Komponente aus Tag erstellen</target>

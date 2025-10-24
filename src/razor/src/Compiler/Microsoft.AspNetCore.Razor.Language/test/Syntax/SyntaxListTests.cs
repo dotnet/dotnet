@@ -15,7 +15,7 @@ public class SyntaxListTests
         using var builder = new PooledArrayBuilder<SyntaxToken>(tokens.Length);
         builder.AddRange(tokens);
 
-        return SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
+        return SyntaxFactory.MarkupTextLiteral(builder.ToList());
     }
 
     private static readonly SyntaxToken s_openAngle = SyntaxFactory.Token(SyntaxKind.OpenAngle, "<");
