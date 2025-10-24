@@ -72,9 +72,7 @@ public class DirectiveTokenEditHandlerTest
             builder.Add(new SyntaxToken(token));
         }
 
-        var node = SyntaxFactory.CSharpStatementLiteral(builder.ToList(), SpanChunkGenerator.Null);
-
-        return node.WithEditHandler(editHandler);
+        return SyntaxFactory.CSharpStatementLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler);
     }
 
     private class TestDirectiveTokenEditHandler : DirectiveTokenEditHandler
