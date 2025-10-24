@@ -120,17 +120,17 @@ internal static class TagHelperParseTreeRewriter
                     // This is a tag helper.
                     if (tagHelperInfo.TagMode == TagMode.SelfClosing || tagHelperInfo.TagMode == TagMode.StartTagOnly)
                     {
-                        var tagHelperElement = SyntaxFactory.MarkupTagHelperElement(tagHelperStart, body: default, endTag: null);
-                        var rewrittenTagHelper = tagHelperElement.WithTagHelperInfo(tagHelperInfo);
+                        var tagHelperElement = SyntaxFactory.MarkupTagHelperElement(tagHelperStart, body: default, endTag: null, tagHelperInfo);
+
                         if (node.Body.Count == 0 && node.EndTag == null)
                         {
-                            return rewrittenTagHelper;
+                            return tagHelperElement;
                         }
 
                         // This tag contains a body and/or an end tag which needs to be moved to the parent.
                         using PooledArrayBuilder<RazorSyntaxNode> rewrittenNodes = [];
 
-                        rewrittenNodes.Add(rewrittenTagHelper);
+                        rewrittenNodes.Add(tagHelperElement);
                         var rewrittenBody = VisitList(node.Body);
                         rewrittenNodes.AddRange(rewrittenBody);
 
@@ -208,8 +208,7 @@ internal static class TagHelperParseTreeRewriter
             if (tagHelperInfo != null)
             {
                 // If we get here it means this element was rewritten as a tag helper.
-                var tagHelperElement = SyntaxFactory.MarkupTagHelperElement(tagHelperStart, body, tagHelperEnd);
-                return tagHelperElement.WithTagHelperInfo(tagHelperInfo);
+                return SyntaxFactory.MarkupTagHelperElement(tagHelperStart, body, tagHelperEnd, tagHelperInfo);
             }
 
             // There was no matching tag helper for this element. Return.
@@ -380,7 +379,14 @@ internal static class TagHelperParseTreeRewriter
             }
 
             rewritten = SyntaxFactory.MarkupTagHelperEndTag(
-                endTag.OpenAngle, endTag.ForwardSlash, endTag.Bang, endTag.Name, endTag.MiscAttributeContent, endTag.CloseAngle, chunkGenerator: null);
+                endTag.OpenAngle,
+                endTag.ForwardSlash,
+                endTag.Bang,
+                endTag.Name,
+                endTag.MiscAttributeContent,
+                endTag.CloseAngle,
+                chunkGenerator: null,
+                editHandler: null);
 
             return true;
         }

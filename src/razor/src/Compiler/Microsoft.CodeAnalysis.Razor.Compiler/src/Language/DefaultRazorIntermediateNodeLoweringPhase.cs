@@ -595,12 +595,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.Prefix?.LiteralTokens,
                 node.Value?.LiteralTokens);
 
-            var rewritten = node.Prefix?.Update(valueTokens, node.Prefix.ChunkGenerator) ?? node.Value?.Update(valueTokens, node.Value.ChunkGenerator);
+            var rewritten = node.Prefix?.Update(valueTokens) ?? node.Value?.Update(valueTokens);
+
             rewritten = (MarkupTextLiteralSyntax)rewritten?.Green.CreateRed(node, node.Position);
 
-            if (rewritten.GetEditHandler() is { } originalEditHandler)
+            if (rewritten.EditHandler is { } originalEditHandler)
             {
-                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance).WithEditHandler(originalEditHandler);
+                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance, originalEditHandler);
             }
 
             return rewritten;
@@ -633,7 +634,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             if (!_options.AllowConditionalDataDashAttributes && name.StartsWith("data-", StringComparison.OrdinalIgnoreCase))
@@ -658,14 +660,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             builder.AddRange(mergedValue.LiteralTokens);
                         }
 
-                        var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
+                        var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList());
 
                         var mergedLiterals = MergeTokenLists(
                             prefix?.LiteralTokens,
                             rewritten.LiteralTokens,
                             node.ValueSuffix?.LiteralTokens);
 
-                        var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                        var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals).Green.CreateRed(node.Parent, node.Position);
                         Visit(mergedAttribute);
 
                         return;
@@ -704,7 +706,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NamePrefix?.LiteralTokens,
                 node.Name?.LiteralTokens);
 
-            var literal = SyntaxFactory.MarkupTextLiteral(literals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+            var literal = SyntaxFactory.MarkupTextLiteral(literals).Green.CreateRed(node.Parent, node.Position);
 
             Visit(literal);
         }
@@ -889,7 +891,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -1184,7 +1186,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(mergedValue.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
@@ -1196,7 +1198,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
@@ -1208,12 +1210,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var literal in expressionLiteralArray)
                 {
                     generator = literal.ChunkGenerator;
-                    editHandler = literal.GetEditHandler();
+                    editHandler = literal.EditHandler;
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
-                rewritten = editHandler != null ? rewritten.WithEditHandler(editHandler) : rewritten;
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator, editHandler).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else
@@ -1380,7 +1381,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             _builder.Push(new HtmlAttributeIntermediateNode()
@@ -1402,7 +1404,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NamePrefix?.LiteralTokens,
                 node.Name.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             _builder.Add(new HtmlAttributeIntermediateNode()
@@ -1492,7 +1495,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            var context = node.GetEditHandler();
+            var context = node.EditHandler;
             if (node.ChunkGenerator == SpanChunkGenerator.Null)
             {
                 return;
@@ -1699,7 +1702,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -2047,7 +2050,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     valueTokens.AddRange(mergedValue.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
@@ -2059,7 +2062,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
@@ -2071,16 +2074,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var literal in expressionLiteralArray)
                 {
                     generator = literal.ChunkGenerator;
-                    editHandler = literal.GetEditHandler();
+                    editHandler = literal.EditHandler;
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
-
-                if (editHandler != null)
-                {
-                    rewritten = rewritten.WithEditHandler(editHandler);
-                }
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator, editHandler).Green.CreateRed(node.Parent, position);
 
                 Visit(rewritten);
             }
