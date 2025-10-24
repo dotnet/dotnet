@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
@@ -22,35 +23,43 @@ internal sealed class FormattingContentValidationPass(ILoggerFactory loggerFacto
     public Task<bool> IsValidAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var text = context.SourceText;
-        var changedText = text.WithChanges(changes);
 
-        if (!text.NonWhitespaceContentEquals(changedText))
+        if (!text.NonWhitespaceContentEquals(changes))
         {
             // Looks like we removed some non-whitespace content as part of formatting. Oops.
             // Discard this formatting result.
 
-            _logger.LogWarning($"{SR.Format_operation_changed_nonwhitespace}");
-
-            foreach (var change in changes)
-            {
-                if (change.NewText?.Any(c => !char.IsWhiteSpace(c)) ?? false)
-                {
-                    _logger.LogWarning($"{SR.FormatEdit_at_adds(text.GetLinePositionSpan(change.Span), change.NewText)}");
-                }
-                else if (text.TryGetFirstNonWhitespaceOffset(change.Span, out _))
-                {
-                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(text.GetLinePositionSpan(change.Span), text.ToString(change.Span))}");
-                }
-            }
+            var message = GetLogMessage(changes, text);
+            _logger.LogError(message);
 
             if (DebugAssertsEnabled)
             {
-                Debug.Fail("A formatting result was rejected because it was going to change non-whitespace content in the document.");
+                Debug.Fail(message);
             }
 
             return SpecializedTasks.False;
         }
 
         return SpecializedTasks.True;
+    }
+
+    private static string GetLogMessage(ImmutableArray<TextChange> changes, SourceText text)
+    {
+        using var _1 = StringBuilderPool.GetPooledObject(out var builder);
+        builder.AppendLine(SR.Format_operation_changed_nonwhitespace);
+
+        foreach (var change in changes)
+        {
+            if (change.NewText?.Any(c => !char.IsWhiteSpace(c)) ?? false)
+            {
+                builder.AppendLine(SR.FormatEdit_at_adds(text.GetLinePositionSpan(change.Span), change.NewText));
+            }
+            else if (text.TryGetFirstNonWhitespaceOffset(change.Span, out _))
+            {
+                builder.AppendLine(SR.FormatEdit_at_deletes(text.GetLinePositionSpan(change.Span), text.ToString(change.Span)));
+            }
+        }
+
+        return builder.ToString();
     }
 }

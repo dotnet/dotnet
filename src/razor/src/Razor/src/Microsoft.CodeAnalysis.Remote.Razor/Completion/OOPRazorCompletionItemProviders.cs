@@ -31,3 +31,6 @@ internal sealed class OOPMarkupTransitionCompletionItemProvider : MarkupTransiti
 [method: ImportingConstructor]
 internal sealed class OOPTagHelperCompletionProvider(ITagHelperCompletionService tagHelperCompletionService)
     : TagHelperCompletionProvider(tagHelperCompletionService);
+
+[Export(typeof(IRazorCompletionItemProvider)), Shared]
+internal sealed class OOPBlazorDataAttributeCompletionItemProvider : BlazorDataAttributeCompletionItemProvider;

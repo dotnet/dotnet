@@ -60,6 +60,16 @@
 ')</WinformsWindowsDesktopPackageLibraries>
     </PropertyGroup>
 
+    <!-- Every file we add to package overrides must be exposed for FrameworkListFileClass Profile="WindowsForms;WPF"
+         Emit an error if any are not. -->
+    <ItemGroup>
+      <_allProfileFiles Include="%(FrameworkListFileClass.FileName)" Condition="'%(FrameworkListFileClass.Profile)' == 'WindowsForms;WPF'" />
+      <_packageOverrideErrors Include="@(RuntimeWindowsDesktopPackageLibrary->'%(PackageId)');@(WinformsWindowsDesktopPackageLibrary->'%(PackageId)')"
+                              Exclude="@(_allProfileFiles)"/>
+    </ItemGroup>
+
+    <Error Text="Package override(s) '@(_packageOverrideErrors)' must be exposed for Profile='WindowsForms;WPF'.  Please update their FrameworkListFileClass item(s)." 
+           Condition="'@(_packageOverrideErrors)' != ''" />
     <ItemGroup>
       <CreatePackageOverridesTemplateProperty Include="RuntimeWindowsDesktopPackageLibraries=$(RuntimeWindowsDesktopPackageLibraries)" />
       <CreatePackageOverridesTemplateProperty Include="WinformsWindowsDesktopPackageLibraries=$(WinformsWindowsDesktopPackageLibraries)" />

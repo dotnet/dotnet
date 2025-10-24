@@ -378,9 +378,10 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
     [Fact]
     public Task FilterPropertyNameInCss()
     {
-        TestCode input = """
-            <div style="{|CSS024:/|}****/"></div>
-            <div style="@(someBool ? "width: 100%" : "width: 50%")">
+        const string CSharpExpression = """@(someBool ? "width: 100%" : "width: 50%")""";
+        TestCode input = $$"""
+            <div style="{|CSS024:/****/|}"></div>
+            <div style="{{CSharpExpression}}">
 
             </div>
 
@@ -398,12 +399,51 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                     new LspDiagnostic
                     {
                         Code = CSSErrorCodes.MissingPropertyName,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("/"), 1))
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("/"), "/****/".Length))
                     },
                     new LspDiagnostic
                     {
                         Code = CSSErrorCodes.MissingPropertyName,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@"), 1))
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@"), CSharpExpression.Length))
+                    },
+                ]
+            }]);
+    }
+
+    [Theory]
+    [InlineData("", "\"")]
+    [InlineData("", "'")]
+    [InlineData("@onclick=\"Send\"", "\"")] // The @onclick makes the disabled attribute a TagHelperAttributeSyntax
+    [InlineData("@onclick='Send'", "'")]
+    public Task FilterBadAttributeValueInHtml(string extraTagContent, string quoteChar)
+    {
+        TestCode input = $$"""
+            <button {{extraTagContent}} disabled={{quoteChar}}@(!EnableMyButton){{quoteChar}}>Send</button>
+            <button disabled={{quoteChar}}{|HTML0209:ThisIsNotValid|}{{quoteChar}} />
+
+            @code
+            {
+                private bool EnableMyButton => true;
+
+                Task Send() =>
+                    Task.CompletedTask;
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.UnknownAttributeValueErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@("), "@(!EnableMyButton)".Length))
+                    },
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.UnknownAttributeValueErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("T"), "ThisIsNotValid".Length))
                     },
                 ]
             }]);
