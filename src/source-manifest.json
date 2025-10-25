@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 287916,
+      "barId": 288570,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "da5c1d5aea74c2cedb284c4fe7b3457b47958914"
+      "commitSha": "48961fbacaf238c4a46448d5595f5a000cbda426"
     },
     {
       "barId": 288382,
