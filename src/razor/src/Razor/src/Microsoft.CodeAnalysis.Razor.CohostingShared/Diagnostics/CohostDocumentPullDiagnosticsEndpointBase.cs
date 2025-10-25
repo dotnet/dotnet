@@ -101,12 +101,7 @@ internal abstract class CohostDocumentPullDiagnosticsEndpointBase<TRequest, TRes
 
     protected static Task<SourceGeneratedDocument?> TryGetGeneratedDocumentAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (!razorDocument.TryComputeHintNameFromRazorDocument(out var hintName))
-        {
-            return SpecializedTasks.Null<SourceGeneratedDocument>();
-        }
-
-        return razorDocument.Project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken);
+        return razorDocument.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, cancellationToken);
     }
 
     private async Task<LspDiagnostic[]> GetCSharpDiagnosticsAsync(TextDocument razorDocument, Guid correletionId, CancellationToken cancellationToken)

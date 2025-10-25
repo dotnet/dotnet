@@ -411,7 +411,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             },
         });
 
-        await VerifyGoToDefinitionAsync(input, htmlResponse: htmlResponse);
+        await VerifyGoToDefinitionAsync(input, htmlResponse: htmlResponse, razorDocument: document);
     }
 
     [Fact]
@@ -824,9 +824,10 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     private async Task VerifyGoToDefinitionAsync(
         TestCode input,
         RazorFileKind? fileKind = null,
-        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null)
+        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null,
+        TextDocument? razorDocument = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var document = razorDocument ?? CreateProjectAndRazorDocument(input.Text, fileKind);
         var result = await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
 
         Assumes.NotNull(result);
