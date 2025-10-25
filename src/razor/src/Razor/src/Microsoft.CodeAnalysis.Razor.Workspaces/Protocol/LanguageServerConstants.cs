@@ -59,6 +59,8 @@ internal static class LanguageServerConstants
 
         public const string WrapAttributes = nameof(WrapAttributes);
 
+        public const string SimplifyFullyQualifiedComponent = nameof(SimplifyFullyQualifiedComponent);
+
         /// <summary>
         /// Remaps without formatting the resolved code action edit
         /// </summary>

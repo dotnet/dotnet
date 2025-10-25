@@ -162,6 +162,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, WrapAttributesCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, SimplifyTagToSelfClosingCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, SimplifyTagToSelfClosingCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, SimplifyFullyQualifiedComponentCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, SimplifyFullyQualifiedComponentCodeActionResolver>();
 
         // Html Code actions
         services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();
