@@ -314,7 +314,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
                 chunkGenerator = SpanChunkGenerator.Null;
                 SetAcceptedCharacters(AcceptedCharactersInternal.None);
-                var transition = GetNodeWithEditHandler(SyntaxFactory.CSharpTransition(transitionToken, chunkGenerator));
+                var transition = SyntaxFactory.CSharpTransition(transitionToken, chunkGenerator, GetEditHandler());
 
                 if (At(SyntaxKind.LeftBrace))
                 {
@@ -1893,17 +1893,17 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 var node = OutputTokensAsStatementLiteral();
                 if (node == null && directiveBuilder.Count == 0)
                 {
-                    node = SyntaxFactory.CSharpStatementLiteral(new SyntaxList<SyntaxToken>(SyntaxFactory.MissingToken(expectedTokenKindIfMissing)), chunkGenerator);
+                    node = SyntaxFactory.CSharpStatementLiteral(SyntaxFactory.MissingToken(expectedTokenKindIfMissing), chunkGenerator, editHandler: null);
                 }
+
                 directiveBuilder.Add(node);
                 var directiveCodeBlock = SyntaxFactory.CSharpCodeBlock(directiveBuilder.ToList());
 
                 var directiveBody = SyntaxFactory.RazorDirectiveBody(keywordBlock, directiveCodeBlock);
-                var directive = SyntaxFactory.RazorDirective(transition, directiveBody);
+                var directive = SyntaxFactory.RazorDirective(transition, directiveBody, descriptor);
 
                 var diagnostics = directiveErrorSink.GetErrorsAndClear();
                 directive = directive.WithDiagnosticsGreen(diagnostics);
-                directive = directive.WithDirectiveDescriptor(descriptor);
                 return directive;
             }
         }
@@ -2709,7 +2709,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         var directiveBody = SyntaxFactory.RazorDirectiveBody(keyword, csharpCode: null);
 
         // transition could be null if we're already inside a code block.
-        transition = transition ?? SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition), chunkGenerator: null);
+        transition = transition ?? SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition));
         var directive = SyntaxFactory.RazorDirective(transition, directiveBody);
         builder.Add(directive);
     }
@@ -2811,7 +2811,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.CSharpStatementLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.CSharpStatementLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     private CSharpExpressionLiteralSyntax? OutputTokensAsExpressionLiteral()
@@ -2822,7 +2822,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.CSharpExpressionLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.CSharpExpressionLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     private CSharpEphemeralTextLiteralSyntax? OutputTokensAsEphemeralLiteral()
@@ -2833,7 +2833,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.CSharpEphemeralTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.CSharpEphemeralTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     private UnclassifiedTextLiteralSyntax? OutputTokensAsUnclassifiedLiteral()
@@ -2844,7 +2844,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             return null;
         }
 
-        return GetNodeWithEditHandler(SyntaxFactory.UnclassifiedTextLiteral(tokens, chunkGenerator));
+        return SyntaxFactory.UnclassifiedTextLiteral(tokens, chunkGenerator, GetEditHandler());
     }
 
     private void OtherParserBlock(in SyntaxListBuilder<RazorSyntaxNode> builder)
