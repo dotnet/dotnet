@@ -19,6 +19,11 @@ on:
         required: false
         type: string
         default: 'dotnet,microsoft'
+      additional_git_am_switches:
+        description: 'Additional switches to pass to git am command (e.g., "--exclude=docs/release-notes/* --whitespace=fix"). Useful for excluding files that differ between branches or fixing whitespace conflicts.'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   cleanup:
@@ -80,6 +85,7 @@ jobs:
       env:
         BACKPORT_PR_TITLE_TEMPLATE: ${{ inputs.pr_title_template }}
         BACKPORT_PR_DESCRIPTION_TEMPLATE: ${{ inputs.pr_description_template }}
+        ADDITIONAL_GIT_AM_SWITCHES: ${{ inputs.additional_git_am_switches }}
       with:
         script: |
           const target_branch = '${{ steps.target-branch-extractor.outputs.result }}';
@@ -129,7 +135,11 @@ jobs:
             // download and apply patch
             await exec.exec(`curl -sSL "${context.payload.issue.pull_request.patch_url}" --output changes.patch`);
 
-            const git_am_command = "git am --3way --empty=keep --ignore-whitespace --keep-non-patch changes.patch";
+            const additional_switches = process.env.ADDITIONAL_GIT_AM_SWITCHES?.trim() || '';
+            const base_switches = '--3way --empty=keep --ignore-whitespace --keep-non-patch';
+            const git_am_command = additional_switches
+              ? `git am ${base_switches} ${additional_switches} changes.patch`
+              : `git am ${base_switches} changes.patch`;
             let git_am_output = `$ ${git_am_command}\n\n`;
             let git_am_failed = false;
             try {
