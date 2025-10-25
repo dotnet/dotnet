@@ -372,4 +372,78 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
 
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay);
     }
+
+    [Fact]
+    public async Task RemoveUnusedVariable_Local()
+    {
+        var input = """
+            @code
+            {
+                void M()
+                {
+                    int {|IDE0059:[||]x|} = 5;
+                }
+            }
+            """;
+
+        var expected = """
+            @code
+            {
+                void M()
+                {
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable);
+    }
+
+    [Fact]
+    public async Task RemoveUnusedVariable_ExplicitStatement_SingleLine()
+    {
+        var input = """
+            @{ var {|IDE0059:[||]x|} = 1; var y = 2; }
+            """;
+
+        var expected = """
+            @{
+                var y = 2; 
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable);
+    }
+
+    [Fact]
+    public async Task RemoveUnusedVariable_ExplicitStatement_SingleLine_OnlyVariable()
+    {
+        var input = """
+            @{ var {|IDE0059:[||]message|} = "Hello World"; }
+            """;
+
+        var expected = """
+            @{}
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable);
+    }
+
+    [Fact]
+    public async Task RemoveUnusedVariable_ExplicitStatement_MultiLine()
+    {
+        var input = """
+            @{
+                var {|IDE0059:[||]x|} = 1;
+                var y = 2;
+            }
+            """;
+
+        var expected = """
+            @{
+                var y = 2;
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable);
+    }
 }

@@ -1,27 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal sealed partial class RazorDirectiveSyntax
 {
-    private static readonly string DirectiveDescriptorKey = typeof(DirectiveDescriptor).Name;
+    [MemberNotNullWhen(true, nameof(DirectiveDescriptor))]
+    public bool HasDirectiveDescriptor
+        => DirectiveDescriptor is not null;
 
-    public DirectiveDescriptor DirectiveDescriptor
-    {
-        get
-        {
-            var descriptor = this.GetAnnotationValue(DirectiveDescriptorKey) as DirectiveDescriptor;
-            return descriptor;
-        }
-    }
+    [MemberNotNullWhen(true, nameof(DirectiveDescriptor))]
+    public bool IsDirective(DirectiveDescriptor directive)
+        => DirectiveDescriptor == directive;
 
-    public RazorDirectiveSyntax WithDirectiveDescriptor(DirectiveDescriptor descriptor)
-    {
-        var newGreen = Green.WithAnnotationsGreen([.. GetAnnotations(), new(DirectiveDescriptorKey, descriptor)]);
-
-        return (RazorDirectiveSyntax)newGreen.CreateRed(Parent, Position);
-    }
+    [MemberNotNullWhen(true, nameof(DirectiveDescriptor))]
+    public bool IsDirectiveKind(DirectiveKind kind)
+        => DirectiveDescriptor?.Kind == kind;
 }
