@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 287743,
+      "barId": 288392,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "a025407ace99e28b1364d0d3254051dd479c9e63"
+      "commitSha": "52d11dfe8820f6f915ec40e2583f29f0bb7a5b85"
     },
     {
       "barId": 285755,
@@ -49,16 +49,16 @@
       "commitSha": "aead567b56fe284ee05b3bb324705b76331d4719"
     },
     {
-      "barId": 288200,
+      "barId": 288352,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "36645e1741a9e1ae674c9c35064613f63de17fb6"
+      "commitSha": "12efe3b5121d8a662d1431763796dfd278af9129"
     },
     {
-      "barId": 287968,
+      "barId": 288357,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "243fb764b25affe8cc5f233001ead3b5742a297e"
+      "commitSha": "ad915a4f47346b746998dabaa541a7e3bab1d6cd"
     },
     {
       "barId": 279847,
@@ -67,10 +67,10 @@
       "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
     },
     {
-      "barId": 288204,
+      "barId": 288408,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "bb9fc372e43cdc6be177b1a3b2153c91203877ed"
+      "commitSha": "26a49b33203484409aae04ab090b7d3090897749"
     },
     {
       "barId": 286437,
@@ -79,10 +79,10 @@
       "commitSha": "a01d6a0838430706cea74ad38e054c2877ffbfa1"
     },
     {
-      "barId": 288338,
+      "barId": 288396,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "dac11e0f02a96ecfab5fbc2214a484c0a5effed8"
+      "commitSha": "70fd4cf52311a61c3811cad2192c5eb9914b05f9"
     },
     {
       "barId": 277711,
@@ -133,10 +133,10 @@
       "commitSha": "9f2ae28ea4f111e6a336682484e5aa412e114f3c"
     },
     {
-      "barId": 288259,
+      "barId": 288373,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "e68e2fec260cf78b082f2a23c9fb77e961002650"
+      "commitSha": "c43e8c73633ca83a3dd01d54b507af8caef2ffc4"
     },
     {
       "barId": 283721,
