@@ -402,11 +402,7 @@ if [[ "$sourceOnly" == "true" ]]; then
 
   # Support custom source built package locations
   if [ "$customPackagesDir" != "" ]; then
-    if [ "$test" == "true" ]; then
-      properties+=( "/p:CustomSourceBuiltPackagesPath=$customPackagesDir" )
-    else
-      properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir" )
-    fi
+    properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir" )
   fi
 
   if [ ! -d "$scriptroot/.git" ]; then

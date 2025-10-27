@@ -100,11 +100,11 @@ function DownloadArchive {
   if [[ "$propertyName" == "$sdkVersionProperty" ]]; then
     archiveUrl="https://ci.dot.net/public/source-build/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
+    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltArtifactsVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/sdks/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveUrl="https://builds.dotnet.microsoft.com/dotnet/source-build/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     return 1
