@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "path": "src/Microsoft.DotNet.Build.Tasks.Installers/build/wix5/eula.rtf",
+      "detected_license_expression": "ms-net-library-2016-05"
+    },
+    {
+      "path": "src/Microsoft.DotNet.Build.Tasks.Installers/build/wix5/bundle/bundle.wxs",
+      "detected_license_expression": "unknown-license-reference"
+    }
+  ]
+}
