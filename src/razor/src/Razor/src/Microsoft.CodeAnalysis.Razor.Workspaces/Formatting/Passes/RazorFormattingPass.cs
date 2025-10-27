@@ -91,7 +91,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         // }
         if (node is CSharpCodeBlockSyntax directiveCode &&
             directiveCode.Children is [RazorDirectiveSyntax directive, ..] &&
-            directive.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive &&
+            directive.IsDirective(SectionDirective.Directive) &&
             directive.Body is RazorDirectiveBodySyntax { CSharpCode.Children: var children })
         {
             if (TryGetWhitespace(children, out var whitespaceBeforeSectionName, out var whitespaceAfterSectionName))
@@ -254,7 +254,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         if (node is CSharpCodeBlockSyntax code &&
             node.Parent?.Parent is RazorDirectiveSyntax directive &&
             !directive.ContainsDiagnostics &&
-            directive.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock)
+            directive.IsDirectiveKind(DirectiveKind.CodeBlock))
         {
             // If we're formatting a @code or @functions directive, the user might have indicated they always want a newline
             var forceNewLine = context.Options.CodeBlockBraceOnNextLine &&

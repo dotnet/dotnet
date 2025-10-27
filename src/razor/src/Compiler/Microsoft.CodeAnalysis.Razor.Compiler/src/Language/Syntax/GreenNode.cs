@@ -11,10 +11,8 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
 internal abstract partial class GreenNode
 {
-    private static readonly RazorDiagnostic[] EmptyDiagnostics = [];
-    private static readonly SyntaxAnnotation[] EmptyAnnotations = [];
-    private static readonly ConditionalWeakTable<GreenNode, RazorDiagnostic[]> DiagnosticsTable = new();
-    private static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> AnnotationsTable = new();
+    private static readonly ConditionalWeakTable<GreenNode, RazorDiagnostic[]> s_diagnosticsTable = new();
+    private static readonly RazorDiagnostic[] s_emptyDiagnostics = [];
 
     private int _width;
     private byte _slotCount;
@@ -30,32 +28,18 @@ internal abstract partial class GreenNode
         _width = width;
     }
 
-    protected GreenNode(SyntaxKind kind, RazorDiagnostic[]? diagnostics, SyntaxAnnotation[]? annotations)
-        : this(kind, 0, diagnostics, annotations)
+    protected GreenNode(SyntaxKind kind, RazorDiagnostic[]? diagnostics)
+        : this(kind, 0, diagnostics)
     {
     }
 
-    protected GreenNode(SyntaxKind kind, int width, RazorDiagnostic[]? diagnostics, SyntaxAnnotation[]? annotations)
+    protected GreenNode(SyntaxKind kind, int width, RazorDiagnostic[]? diagnostics)
         : this(kind, width)
     {
         if (diagnostics?.Length > 0)
         {
             Flags |= NodeFlags.ContainsDiagnostics;
-            DiagnosticsTable.Add(this, diagnostics);
-        }
-
-        if (annotations?.Length > 0)
-        {
-            foreach (var annotation in annotations)
-            {
-                if (annotation == null)
-                {
-                    throw new ArgumentException("Annotation cannot be null", nameof(annotations));
-                }
-            }
-
-            Flags |= NodeFlags.ContainsAnnotations;
-            AnnotationsTable.Add(this, annotations);
+            s_diagnosticsTable.Add(this, diagnostics);
         }
     }
 
@@ -171,8 +155,6 @@ internal abstract partial class GreenNode
     internal virtual bool IsMissing => (Flags & NodeFlags.IsMissing) != 0;
 
     public bool ContainsDiagnostics => (Flags & NodeFlags.ContainsDiagnostics) != 0;
-
-    public bool ContainsAnnotations => (Flags & NodeFlags.ContainsAnnotations) != 0;
     #endregion
 
     #region Diagnostics
@@ -182,31 +164,13 @@ internal abstract partial class GreenNode
     {
         if (ContainsDiagnostics)
         {
-            if (DiagnosticsTable.TryGetValue(this, out var diagnostics))
+            if (s_diagnosticsTable.TryGetValue(this, out var diagnostics))
             {
                 return diagnostics;
             }
         }
 
-        return EmptyDiagnostics;
-    }
-    #endregion
-
-    #region Annotations
-    internal abstract GreenNode SetAnnotations(SyntaxAnnotation[]? annotations);
-
-    internal SyntaxAnnotation[] GetAnnotations()
-    {
-        if (ContainsAnnotations)
-        {
-            if (AnnotationsTable.TryGetValue(this, out var annotations))
-            {
-                Debug.Assert(annotations.Length != 0, "There cannot be an empty annotation entry.");
-                return annotations;
-            }
-        }
-
-        return EmptyAnnotations;
+        return s_emptyDiagnostics;
     }
     #endregion
 

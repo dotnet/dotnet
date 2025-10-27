@@ -71,7 +71,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
             var isInCodeBlockDirective =
                 node.Parent?.Parent?.Parent is RazorDirectiveSyntax directive &&
-                directive.DirectiveDescriptor.Kind == DirectiveKind.CodeBlock;
+                directive.IsDirectiveKind(DirectiveKind.CodeBlock);
 
             if (isInCodeBlockDirective)
             {
