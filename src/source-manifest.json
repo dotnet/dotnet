@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.22-servicing.25517.13",
+      "packageVersion": "8.0.22-servicing.25528.8",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "8c4d2304d886fd33d4d1315b9fd438afbc46a4c0"
+      "commitSha": "ee417479933278bb5aadc5944706a96b5ef74a5d"
     },
     {
       "packageVersion": "0.11.4-alpha.25515.1",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "4d4753eb155da8b4ee7a516d1f618df21f1a6e28"
+      "commitSha": "0e347fb2985795ec0ee1528fd510e5600d1c5c6e"
     },
     {
       "packageVersion": "17.8.43-servicing-25466-03",
@@ -97,16 +97,16 @@
       "commitSha": "de4aff542dacdc8027c1b4c4580a385dc097341f"
     },
     {
-      "packageVersion": "8.0.22-servicing.25517.4",
+      "packageVersion": "8.0.22-servicing.25527.7",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "f41eed7a945cb632ec834e5b1a36f4489232c978"
+      "commitSha": "a2266c728f63a494ccb6786d794da2df135030be"
     },
     {
-      "packageVersion": "8.0.122-servicing.25521.9",
+      "packageVersion": "8.0.122-servicing.25528.8",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "21470829d89db03d88f84fe1be88224a9e4bee23"
+      "commitSha": "2fa9beee6233beabbd7d2b212fc8f850c96a5629"
     },
     {
       "packageVersion": "8.0.0-alpha.1.25202.2",
