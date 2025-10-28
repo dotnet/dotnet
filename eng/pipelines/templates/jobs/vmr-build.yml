@@ -393,8 +393,8 @@ jobs:
             artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
             artifactName: ${{ reuseBuildArtifacts }}_Artifacts
             downloadFilePatterns: |
-              **/Private.SourceBuilt.Artifacts.*.tar.gz
-              **/dotnet-sdk-*.tar.gz
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
             copyDestination: $(sourcesPath)/prereqs/packages/archive/
             flattenDirs: true
 
@@ -415,13 +415,13 @@ jobs:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" true
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" true
       displayName: Download Shared Component Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758

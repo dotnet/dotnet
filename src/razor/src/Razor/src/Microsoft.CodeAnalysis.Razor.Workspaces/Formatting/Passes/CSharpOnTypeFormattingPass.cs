@@ -132,10 +132,15 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, linePositionSpanAfterFormatting);
-        var cleanedText = formattedText.WithChanges(cleanupChanges);
-        context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+        var cleanedText = formattedText;
 
-        changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        if (!cleanupChanges.IsEmpty)
+        {
+            cleanedText = formattedText.WithChanges(cleanupChanges);
+            context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+
+            changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        }
 
         // At this point we should have applied all edits that adds/removes newlines.
         // Let's now ensure the indentation of each of those lines is correct.
