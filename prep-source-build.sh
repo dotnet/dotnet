@@ -249,7 +249,7 @@ if [ "$removeBinaries" == true ]; then
   fi
 
   # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
-  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true"
+  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true" "/p:DisableSharedComponentValidation=true"
 
   "$_InitializeBuildTool" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
