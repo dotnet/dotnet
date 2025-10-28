@@ -6,9 +6,7 @@
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
     <!-- Calculate prerelease label -->
-    <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' != 'true'">servicing</PreReleaseVersionLabel>
-    <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and $(VersionPrefix.EndsWith('00'))">rtm</PreReleaseVersionLabel>
-    <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and !$(VersionPrefix.EndsWith('00'))">servicing</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <UsingToolXliff>true</UsingToolXliff>
     <FlagNetStandard1XDependencies>true</FlagNetStandard1XDependencies>
