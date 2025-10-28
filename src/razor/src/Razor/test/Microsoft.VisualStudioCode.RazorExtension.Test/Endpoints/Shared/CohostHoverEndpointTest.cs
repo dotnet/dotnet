@@ -32,9 +32,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -109,9 +109,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -139,9 +139,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -184,9 +184,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -221,9 +221,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -258,9 +258,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -295,9 +295,9 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
 
         await VerifyHoverAsync(code, async (hover, document) =>
         {
-            await hover.VerifyRangeAsync(code.Span, document);
+            await VerifyRangeAsync(hover, code.Span, document);
 
-            hover.VerifyRawContent(
+            hover.VerifyContents(
                 Container(
                     Container(
                         Image,
@@ -343,5 +343,12 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         };
 
         return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);
+    }
+
+    private static async Task VerifyRangeAsync(Hover hover, TextSpan expected, TextDocument document)
+    {
+        var text = await document.GetTextAsync();
+        Assert.NotNull(hover.Range);
+        Assert.Equal(text.GetLinePositionSpan(expected), hover.Range.ToLinePositionSpan());
     }
 }
