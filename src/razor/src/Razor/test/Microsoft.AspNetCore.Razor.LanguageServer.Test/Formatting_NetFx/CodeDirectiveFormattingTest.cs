@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5648")]
     public async Task GenericComponentWithCascadingTypeParameter()
     {
@@ -123,7 +123,7 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
             tagHelpers: GetComponentWithCascadingTypeParameter());
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5648")]
     public async Task GenericComponentWithCascadingTypeParameter_MultipleParameters()
     {

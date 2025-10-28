@@ -129,6 +129,11 @@
         <target state="translated">Promover usando diretivas para {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="new">Simplify fully qualified component</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
         <target state="translated">Simplificar a tag para autoconclusiva</target>

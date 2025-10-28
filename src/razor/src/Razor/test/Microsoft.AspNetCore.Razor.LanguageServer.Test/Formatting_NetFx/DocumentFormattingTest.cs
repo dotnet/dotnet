@@ -1872,14 +1872,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     public async Task FormatsShortBlock()
     {
         await RunFormattingTestAsync(
             input: """
+                    <div>
+                    </div>
                     @{<p></p>}
                     """,
             expected: """
+                    <div>
+                    </div>
                     @{
                         <p></p>
                     }

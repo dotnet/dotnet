@@ -300,6 +300,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var result = await formattingPass.ExecuteAsync(context, generatedDocumentChanges, cancellationToken).ConfigureAwait(false);
         var originalText = context.SourceText;
+        result = NormalizeLineEndings(originalText, result);
         var razorChanges = originalText.MinimizeTextChanges(result);
 
         if (validate)
