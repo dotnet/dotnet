@@ -94,13 +94,20 @@ internal abstract partial class RazorBrokeredServiceBase
             // Note that this means that the first non-empty ILoggerFactory that we use
             // will be used for MEF component logging for the lifetime of all services.
             var remoteLoggerFactory = exportProvider.GetExportedValue<RemoteLoggerFactory>();
-            remoteLoggerFactory.SetTargetLoggerFactory(targetLoggerFactory);
+            var didSetLoggerFactory = remoteLoggerFactory.SetTargetLoggerFactory(targetLoggerFactory);
 
             // In proc services don't use any service hub infra
             if (stream is null)
             {
                 var inProcArgs = new ServiceArgs(ServiceBroker: null, exportProvider, targetLoggerFactory, workspaceProvider, ServerConnection: null, brokeredServiceData.AssumeNotNull().Interceptor);
                 return CreateService(in inProcArgs);
+            }
+
+            // At this point, we know we're in a remote scenario where we're on the end of a service hub connection, so we want
+            // logged errors to be thrown, so they're bubbled up to the client.
+            if (didSetLoggerFactory)
+            {
+                remoteLoggerFactory.AddLoggerProvider(new ThrowingErrorLoggerProvider());
             }
 
             var serverConnection = CreateServerConnection(stream, traceSource);

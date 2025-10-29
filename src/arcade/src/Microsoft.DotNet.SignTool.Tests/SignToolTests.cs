@@ -2773,7 +2773,7 @@ $@"
                 }),
                 new TaskItem("DetachedArchiveCert", new Dictionary<string, string>
                 {
-                    { "DetachedSignature", "true" }
+                    { "SupportsDetachedSignature", "true" }
                 }),
             };
 

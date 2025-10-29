@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
         <source>{0} (and req'd attributes...)</source>
-        <target state="new">{0} (and req'd attributes...)</target>
+        <target state="translated">{0} (a požadované atributy...)</target>
         <note>The term "req'd" is an abbreviation for "required"</note>
       </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
@@ -127,6 +127,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Zvýšit úroveň direktivy using na {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="new">Simplify fully qualified component</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

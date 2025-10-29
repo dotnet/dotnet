@@ -7,9 +7,6 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal partial class MarkupStartTagSyntax
 {
-    public bool IsMarkupTransition
-        => ((InternalSyntax.MarkupStartTagSyntax)Green).IsMarkupTransition;
-
     public string GetTagNameWithOptionalBang()
     {
         return Name.IsMissing ? string.Empty : Bang.Content + Name.Content;

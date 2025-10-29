@@ -10,9 +10,8 @@ internal class SyntaxToken : RazorSyntaxNode
     internal SyntaxToken(
         SyntaxKind kind,
         string content,
-        RazorDiagnostic[]? diagnostics,
-        SyntaxAnnotation[]? annotations = null)
-        : base(kind, content.Length, diagnostics, annotations)
+        RazorDiagnostic[]? diagnostics)
+        : base(kind, content.Length, diagnostics)
     {
         Content = content;
     }
@@ -28,12 +27,7 @@ internal class SyntaxToken : RazorSyntaxNode
 
     internal override GreenNode SetDiagnostics(RazorDiagnostic[]? diagnostics)
     {
-        return new SyntaxToken(Kind, Content, diagnostics, GetAnnotations());
-    }
-
-    internal override GreenNode SetAnnotations(SyntaxAnnotation[]? annotations)
-    {
-        return new SyntaxToken(Kind, Content, GetDiagnostics(), annotations);
+        return new SyntaxToken(Kind, Content, diagnostics);
     }
 
     protected sealed override int GetSlotCount()
