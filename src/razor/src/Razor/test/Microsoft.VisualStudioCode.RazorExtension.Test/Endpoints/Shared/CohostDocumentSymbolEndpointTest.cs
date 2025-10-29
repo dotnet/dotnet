@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -46,10 +47,15 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
     [Theory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpClassWithMethods_MiscFile(bool hierarchical)
-        => VerifyDocumentSymbolsAsync(
-            """
+    {
+        // What the source generator would product for TestProjectData.SomeProjectPath
+        var generatedNamespace = PlatformInformation.IsWindows
+            ? "c_.users.example.src.SomeProject"
+            : "home.example.SomeProject";
+        return VerifyDocumentSymbolsAsync(
+            $$"""
             @functions {
-                class {|ASP.File1.C:C|}
+                class {|ASP.{{generatedNamespace}}.File1.C:C|}
                 {
                     private void {|HandleString(string s):HandleString|}(string s)
                     {
@@ -69,6 +75,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
             }
             
             """, hierarchical, miscellaneousFile: true);
+    }
 
     [Theory]
     [CombinatorialData]
