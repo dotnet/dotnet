@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -54,6 +55,9 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
             return NoFurtherHandling;
         }
 
+        // Adjust position if on a component end tag to use the start tag position
+        hostDocumentIndex = codeDocument.AdjustPositionForComponentEndTag(hostDocumentIndex);
+
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
 
         // First, see if this is a tag helper. We ignore component attributes here, because they're better served by the C# handler.
@@ -69,6 +73,21 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
         if (componentLocations is { Length: > 0 })
         {
             return Results(componentLocations);
+        }
+
+        // Check if we're in a string literal with a file path (before calling C# which would navigate to String class)
+        if (positionInfo.LanguageKind is RazorLanguageKind.CSharp)
+        {
+            var stringLiteralLocations = await _definitionService.TryGetDefinitionFromStringLiteralAsync(
+                context.Snapshot,
+                positionInfo.Position,
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            if (stringLiteralLocations is { Length: > 0 })
+            {
+                return Results(stringLiteralLocations);
+            }
         }
 
         if (positionInfo.LanguageKind is RazorLanguageKind.Html or RazorLanguageKind.Razor)

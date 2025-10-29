@@ -452,24 +452,10 @@
         ComponentMsiFile=$(CrossArchMsiFile)" />
   </Target>
 
-  <!--
-    Acquire NuGet.exe, if not present.
-  -->
-  <Target Name="_AcquireNuGetExe">
-    <MSBuild
-      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj"
-      Targets="AcquireNuGetExeCore"
-      Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)">
-      <Output TaskParameter="TargetOutputs" PropertyName="NuGetExeFile" />
-    </MSBuild>
-  </Target>
-  
   <Target Name="GenerateVSInsertionNupkgCore"
           DependsOnTargets="
             _GetTargetOSArchInfo;
             _AcquireWix;
-            _AcquireNuGetExe;
             _GetInstallerProperties;
             GetWixBuildConfiguration">
     <PropertyGroup>
@@ -480,25 +466,12 @@
       <MangledNuspecFile>$(MSBuildThisFileDirectory)vs\VS.Redist.Common.Component.nuspec.txt</MangledNuspecFile>
       <VsInsertionNuspecFile>$(IntermediateOutputPath)vs\VS.Redist.Common.Component.nuspec</VsInsertionNuspecFile>
 
-      <PackProperties />
-      <PackProperties>$(PackProperties)COMPONENT_MSI=$(ComponentMsiFile);</PackProperties>
-      <PackProperties>$(PackProperties)ARCH=$(MsiArch);</PackProperties>
-      <PackProperties>$(PackProperties)COMPONENT_NAME=$(VSInsertionComponentName);</PackProperties>
-      <PackProperties>$(PackProperties)FRIENDLY_NAME=$(ProductBrandName);</PackProperties>
-      <PackProperties>$(PackProperties)PROJECT_URL=$(RepositoryUrl);</PackProperties>
-
-      <PackArgs />
-      <PackArgs>$(PackArgs) $(VsInsertionNuspecFile)</PackArgs>
-      <PackArgs>$(PackArgs) -Version $(Version)</PackArgs>
-      <PackArgs>$(PackArgs) -OutputDirectory $(ArtifactsNonShippingPackagesDir)</PackArgs>
-      <PackArgs>$(PackArgs) -NoDefaultExcludes</PackArgs>
-      <PackArgs>$(PackArgs) -NoPackageAnalysis</PackArgs>
-      <PackArgs>$(PackArgs) -Properties "$(PackProperties)"</PackArgs>
+      <PackProperties>COMPONENT_MSI=$(ComponentMsiFile);ARCH=$(MsiArch);COMPONENT_NAME=$(VSInsertionComponentName);FRIENDLY_NAME=$(ProductBrandName);PROJECT_URL=$(RepositoryUrl)</PackProperties>
     </PropertyGroup>
 
     <Copy SourceFiles="$(MangledNuspecFile)" DestinationFiles="$(VsInsertionNuspecFile)" />
 
-    <Exec Command="$(NuGetExeFile) pack $(PackArgs)" StandardOutputImportance="normal" />
+    <Exec Command="$(DotNetTool) pack &quot;$(VsInsertionNuspecFile)&quot; --property &quot;$(PackProperties)&quot; --version $(Version) -o &quot;$(ArtifactsNonShippingPackagesDir.TrimEnd('\\'))&quot;" StandardOutputImportance="normal" />
 
     <Error
       Condition="!Exists('$(NupkgOutputFile)')"

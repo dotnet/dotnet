@@ -1,6 +1,7 @@
 # .NET Source Build Assets
 
 This repository contains source, tools, and infrastructure for auxilary packages required to [build .NET from source](https://github.com/dotnet/source-build).
+This repository is often referred to as `SBRP`.
 
 This repo supports the following package types:
 
@@ -44,6 +45,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 ### External
 
 #### Adding a New External Component
+
 1. Add the repo as a submodule to `./src/externalPackages/src`
 
     ```bash
@@ -52,7 +54,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
     ```
 
 1. Define a [project](src/externalPackages/projects) for the new component.
-   The project is responsible for building the submodule with the appropriate configuration for source build. 
+   The project is responsible for building the submodule with the appropriate configuration for source build.
    See the [existing projects](src/externalPackages/projects) for examples.
 
 1. [Build](#building) locally and resolve any build errors.
@@ -109,7 +111,7 @@ the maintenance burden when [updating a component to a newer version](#updating-
 
     1. From the root directory of the submodule, run [extract-patches.sh](src/externalPackages/patches/extract-patches.sh)/[extract-patches.ps1](src/externalPackages/patches/extract-patches.ps1).
        The script will prepare a patch based on the base sha of the submodule and the latest committed changes.
-       The patch will be added to patches/<component>/*.patch
+       The patch will be added to `patches/<component>/*.patch`
 
 1. To apply a patch, or multiple patches, use `git am` while inside the submodule directory.
    For example, to apply *all* `humanizer` patches:

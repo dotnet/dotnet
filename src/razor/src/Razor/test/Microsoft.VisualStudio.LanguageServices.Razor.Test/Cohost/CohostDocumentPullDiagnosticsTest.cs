@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
@@ -12,68 +11,11 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public partial class CohostDocumentPullDiagnosticsTest
 {
-    [Fact]
-    public Task NoDiagnostics()
-        => VerifyDiagnosticsAsync("""
-            <div></div>
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                }
-            }
-            """);
-
-    [Fact]
-    public Task CSharp()
-        => VerifyDiagnosticsAsync("""
-            <div></div>
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-            """);
-
-    [Fact]
-    public Task Razor()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-            """);
-
-    [Fact]
-    public Task CSharpAndRazor_MiscellaneousFile()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-            """,
-            miscellaneousFile: true);
-
     [Fact]
     public Task Html()
     {
@@ -448,34 +390,6 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 ]
             }]);
     }
-
-    [Fact]
-    public Task CombinedAndNestedDiagnostics()
-        => VerifyDiagnosticsAsync("""
-            @using System.Threading.Tasks;
-
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-
-            <div>
-                @{
-                    {|CS4033:await Task.{|CS1501:Delay|}()|};
-                }
-
-                {|RZ9980:<p>|}
-            </div>
-
-            </div>
-            """);
 
     [Fact]
     public Task TODOComments()

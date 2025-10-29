@@ -63,7 +63,7 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
         {
             if (throwIfNotFound)
             {
-                if (result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Name == "Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator").Generator is { } wrongGenerator)
+                if (result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().FullName == "Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator").Generator is { } wrongGenerator)
                 {
                     // Wrong ALC?
                     throw new InvalidOperationException(SR.FormatRazor_source_generator_reference_incorrect(wrongGenerator.GetGeneratorType().Assembly.Location, typeof(RazorSourceGenerator).Assembly.Location, project.Name));

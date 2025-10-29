@@ -22,6 +22,23 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 {
     [Theory]
     [CombinatorialData]
+    public async Task RazorComponents(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            <InputText Value="someValue" />
+            <InputText Value="someValue"></InputText>
+            <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue" />
+            <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue"></Microsoft.AspNetCore.Components.Forms.InputText>
+
+            @typeof(InputText).ToString()
+            @typeof(Microsoft.AspNetCore.Components.Forms.InputText).ToString()
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
     public async Task Razor(bool colorBackground, bool miscellaneousFile)
     {
         var input = """

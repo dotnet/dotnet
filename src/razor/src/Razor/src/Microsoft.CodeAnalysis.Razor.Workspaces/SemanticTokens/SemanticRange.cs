@@ -70,6 +70,18 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
             return result;
         }
 
+        // If the start positions are the same, and one is Razor and one isn't, we prefer Razor. This allows a Razor
+        // produced token to win over multiple C# tokens, for example the tag name in "<My.Cool.Component>" is one
+        // Razor classification (for component) but multiple C# classifications (2 namespaces and a type name)
+        if (FromRazor && !other.FromRazor)
+        {
+            return -1;
+        }
+        else if (other.FromRazor && !FromRazor)
+        {
+            return 1;
+        }
+
         result = EndLine.CompareTo(other.EndLine);
         if (result != 0)
         {
@@ -80,16 +92,6 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
         if (result != 0)
         {
             return result;
-        }
-
-        // If we have ranges that are the same, we want a Razor produced token to win over a non-Razor produced token
-        if (FromRazor && !other.FromRazor)
-        {
-            return -1;
-        }
-        else if (other.FromRazor && !FromRazor)
-        {
-            return 1;
         }
 
         return 0;
