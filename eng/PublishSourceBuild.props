@@ -181,7 +181,8 @@
 
   <Target Name="IncludeSharedComponentsAsArtifacts"
           AfterTargets="DiscoverArtifacts"
-          DependsOnTargets="GetFilteredSharedComponentPackages">
+          DependsOnTargets="GetFilteredSharedComponentPackages"
+          Condition="'$(IsPublishPass2)' != 'true'">
 
     <ItemGroup>
       <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
