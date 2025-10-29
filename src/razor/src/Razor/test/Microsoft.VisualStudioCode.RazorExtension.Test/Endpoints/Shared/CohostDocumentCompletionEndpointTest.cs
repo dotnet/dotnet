@@ -123,6 +123,78 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = ".",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"],
+            itemToResolve: "Now",
+            expectedResolvedItemDescription: "DateTime DateTime.Now { get; }",
+            expected: """
+            This is a Razor document.
+            
+            <div>@DateTime.Now</div>
+            
+            The end.
+            """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/8442")]
+    public async Task CSharpClassMembersInComponentParameterWithoutLeadingAt()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <EditForm Model="DateTime.$$"></EditForm>
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = ".",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/8442")]
+    public async Task CSharpClassMembersInComponentParameterWithLeadingAt()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <EditForm Model="@DateTime.$$"></EditForm>
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = ".",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/8442")]
+    public async Task CSharpClassMembersInComponentParameterWithLeadingAt_Incomplete()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <EditForm Model="@DateTime.$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = ".",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
             expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
@@ -1150,9 +1222,17 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             var insertIndex = text.GetRequiredAbsoluteIndex(position);
             changedText = text.WithChanges(new TextChange(new TextSpan(insertIndex, 0), insertText));
         }
+        else if (result.Label is { } label)
+        {
+            // We'll let expected be null here, since its just simple text insertion
+
+            var text = await document.GetTextAsync(DisposalToken).ConfigureAwait(false);
+            var insertIndex = text.GetRequiredAbsoluteIndex(position);
+            changedText = text.WithChanges(new TextChange(new TextSpan(insertIndex, 0), label));
+        }
         else if (expected is not null)
         {
-            Assert.Fail("Expected a TextEdit or Command with TextEdit, but got none. Presumably resolve failed. Result: " + JsonSerializer.SerializeToElement(result).ToString());
+            Assert.Fail("Expected a TextEdit or Command with TextEdit, or InsertText, or Label, but got none. Presumably resolve failed. Result: " + JsonSerializer.SerializeToElement(result).ToString());
         }
 
         if (result.AdditionalTextEdits is not null)
