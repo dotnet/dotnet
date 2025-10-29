@@ -3572,7 +3572,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             this.RefKind = refKind;
             this.ExpressionOpt = expressionOpt;
             this.Checked = @checked;
+            Validate();
         }
+
+        [Conditional("DEBUG")]
+        private partial void Validate();
 
         public RefKind RefKind { get; }
         public BoundExpression? ExpressionOpt { get; }
@@ -14974,15 +14978,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol narrowedType = GetUpdatedSymbol(node, node.NarrowedType);
             BoundTypeExpression declaredType = (BoundTypeExpression)this.Visit(node.DeclaredType);
             return node.Update(declaredType, node.IsExplicitNotNullTest, inputType, narrowedType);
-        }
-
-        public override BoundNode? VisitBinaryPattern(BoundBinaryPattern node)
-        {
-            TypeSymbol inputType = GetUpdatedSymbol(node, node.InputType);
-            TypeSymbol narrowedType = GetUpdatedSymbol(node, node.NarrowedType);
-            BoundPattern left = (BoundPattern)this.Visit(node.Left);
-            BoundPattern right = (BoundPattern)this.Visit(node.Right);
-            return node.Update(node.Disjunction, left, right, inputType, narrowedType);
         }
 
         public override BoundNode? VisitNegatedPattern(BoundNegatedPattern node)
