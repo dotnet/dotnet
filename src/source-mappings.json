@@ -90,7 +90,7 @@
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
             "exclude": [
                 // Contains undesired binaries
-                "src/source-build-reference-packages/src/externalPackages/spectre-console‎/docs/**/*"
+                "src/source-build-reference-packages/src/externalPackages/spectre-console/docs/**/*"
             ]
         },
         {
