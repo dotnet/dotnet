@@ -1,0 +1,552 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.AI.Evaluation.Safety</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.CodeVulnerabilityEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate code completion
+            responses produced by an AI model for the presence of vulnerable code.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.CodeVulnerabilityEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate code completion
+            responses produced by an AI model for the presence of vulnerable code.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.CodeVulnerabilityEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <param name="messages" />
+      <param name="modelResponse" />
+      <param name="chatConfiguration" />
+      <param name="additionalContext" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.CodeVulnerabilityEvaluator.CodeVulnerabilityMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.CodeVulnerabilityEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentHarmEvaluator">
+      <summary>
+             An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+             an AI model for the presence of a variety of harmful content such as violence, hate speech, etc.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform evaluations.</param>
+      <param name="contentSafetyServiceMetricName">
+            The name of the metric that should be used when this <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the
+            Azure AI Content Safety service to perform evaluations.</param>
+      <param name="metricName">
+            The name of the <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" /> produced by this <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" />.</param>
+      <param name="evaluatorName">The name of the derived <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" />.</param>
+      <param name="metricNames">
+             A optional dictionary containing the mapping from the names of the metrics that are used when communicating
+             with the Azure AI Foundry Evaluation service, to the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" />s of the
+             <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s returned by this <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />.
+            
+             If omitted, includes mappings for all content harm metrics that are supported by the Azure AI Foundry Evaluation
+             service. This includes <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator.HateAndUnfairnessMetricName" />,
+             <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator.ViolenceMetricName" />, <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator.SelfHarmMetricName" /> and
+             <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator.SexualMetricName" />.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentHarmEvaluator.#ctor(System.Collections.Generic.IDictionary{System.String,System.String})">
+      <summary>
+             An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+             an AI model for the presence of a variety of harmful content such as violence, hate speech, etc.</summary>
+      <param name="metricNames">
+             A optional dictionary containing the mapping from the names of the metrics that are used when communicating
+             with the Azure AI Foundry Evaluation service, to the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" />s of the
+             <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s returned by this <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />.
+            
+             If omitted, includes mappings for all content harm metrics that are supported by the Azure AI Foundry Evaluation
+             service. This includes <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator.HateAndUnfairnessMetricName" />,
+             <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator.ViolenceMetricName" />, <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator.SelfHarmMetricName" /> and
+             <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator.SexualMetricName" />.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentHarmEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <param name="messages" />
+      <param name="modelResponse" />
+      <param name="chatConfiguration" />
+      <param name="additionalContext" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator">
+      <summary>
+            An <see langword="abstract" /> base class that can be used to implement <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />s that utilize the
+            Azure AI Foundry Evaluation service to evaluate responses produced by an AI model for the presence of a variety of
+            unsafe content such as protected material, vulnerable code, harmful content etc.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform evaluations.</param>
+      <param name="evaluatorName">The name of the derived <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" />.</param>
+      <param name="contentSafetyServiceAnnotationTask">
+            The name of the annotation task that should be used when communicating with the Azure AI Foundry Evaluation service
+            to perform evaluations.</param>
+      <param name="metricNames">
+            A dictionary containing the mapping from the names of the metrics that are used when communicating with the Azure
+            AI Foundry Evaluation service, to the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" />s of the <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s
+            returned by this <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+      <summary>
+            An <see langword="abstract" /> base class that can be used to implement <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />s that utilize the
+            Azure AI Foundry Evaluation service to evaluate responses produced by an AI model for the presence of a variety of
+            unsafe content such as protected material, vulnerable code, harmful content etc.</summary>
+      <param name="contentSafetyServiceAnnotationTask">
+            The name of the annotation task that should be used when communicating with the Azure AI Foundry Evaluation service
+            to perform evaluations.</param>
+      <param name="metricNames">
+            A dictionary containing the mapping from the names of the metrics that are used when communicating with the Azure
+            AI Foundry Evaluation service, to the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" />s of the <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s
+            returned by this <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <summary>Evaluates the supplied <code data-dev-comment-type="paramref">modelResponse</code> and returns an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref>
+containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</summary>
+      <param name="messages">The conversation history including the request that produced the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="modelResponse">The response that is to be evaluated.</param>
+      <param name="chatConfiguration">A <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.ChatConfiguration"></xref> that specifies the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.IChatClient"></xref> that should be used if one or
+more composed <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref>s use an AI model to perform evaluation.</param>
+      <param name="additionalContext">Additional contextual information (beyond that which is available in <code data-dev-comment-type="paramref">messages</code>) that the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref> may need to accurately evaluate the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the evaluation operation.</param>
+      <returns>An <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref> containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator.EvaluateContentSafetyAsync(Microsoft.Extensions.AI.IChatClient,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.String,System.Boolean,System.Threading.CancellationToken)">
+      <summary>
+            Evaluates the supplied <paramref name="modelResponse" /> using the Azure AI Foundry Evaluation Service and
+            returns an <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationResult" /> containing one or more <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s.</summary>
+      <param name="contentSafetyServiceChatClient">
+            The <see cref="T:Microsoft.Extensions.AI.IChatClient" /> that should be used to communicate with the Azure AI Foundry Evaluation Service
+            when performing evaluations.</param>
+      <param name="messages">
+            The conversation history including the request that produced the supplied <paramref name="modelResponse" />.</param>
+      <param name="modelResponse">The response that is to be evaluated.</param>
+      <param name="additionalContext">
+            Additional contextual information (beyond that which is available in <paramref name="messages" />) that the
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> may need to accurately evaluate the supplied <paramref name="modelResponse" />.</param>
+      <param name="contentSafetyServicePayloadFormat">
+            An identifier that specifies the format of the payload that should be used when communicating with the Azure AI
+            Foundry Evaluation service to perform evaluations.</param>
+      <param name="includeMetricNamesInContentSafetyServicePayload">
+            A <see cref="T:System.Boolean" /> flag that indicates whether the names of the metrics should be included in the payload
+            that is sent to the Azure AI Foundry Evaluation service when performing evaluations.</param>
+      <param name="cancellationToken">
+            A <see cref="T:System.Threading.CancellationToken" /> that can cancel the evaluation operation.</param>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationResult" /> containing one or more <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator.FilterAdditionalContext(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext})">
+      <summary>
+            Filters the <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationContext" />s supplied by the caller via <paramref name="additionalContext" />
+            down to just the <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationContext" />s that are relevant to the evaluation being performed by this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" />.</summary>
+      <param name="additionalContext">The <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationContext" />s supplied by the caller.</param>
+      <returns>
+            The <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationContext" />s that are relevant to the evaluation being performed by this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator.EvaluationMetricNames">
+      <summary>Gets the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name"></xref>s of the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s produced by this
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref>.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration">
+      <summary>
+            Specifies configuration parameters such as the Azure AI Foundry project that should be used, and the credentials
+            that should be used, when a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Foundry Evaluation
+            service to perform evaluations.</summary>
+      <param name="credential">
+            The Azure <see cref="T:Azure.Core.TokenCredential" /> that should be used when authenticating requests.</param>
+      <param name="subscriptionId">
+            The ID of the Azure subscription that contains the project identified by <paramref name="projectName" />.</param>
+      <param name="resourceGroupName">
+            The name of the Azure resource group that contains the project identified by <paramref name="projectName" />.</param>
+      <param name="projectName">
+            The name of the Azure AI project.</param>
+      <param name="httpClient">
+            The <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that should be used when communicating with the Azure AI Foundry Evaluation service.
+            While the parameter is optional, it is recommended to supply an <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that is configured with
+            robust resilience and retry policies.</param>
+      <param name="timeoutInSecondsForRetries">
+            The timeout (in seconds) after which a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> should stop retrying failed attempts
+            to communicate with the Azure AI Foundry Evaluation service when performing evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.#ctor(Azure.Core.TokenCredential,System.String,System.Net.Http.HttpClient,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration" /> class for a non-Hub-based
+            Azure AI Foundry project with the specified <paramref name="endpointUrl" />.</summary>
+      <param name="credential">
+            The Azure <see cref="T:Azure.Core.TokenCredential" /> that should be used when authenticating requests.</param>
+      <param name="endpointUrl">
+            The endpoint URL for the non-Hub-based Azure AI Foundry project.</param>
+      <param name="httpClient">
+            The <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that should be used when communicating with the Azure AI Foundry Evaluation
+            service. While the parameter is optional, it is recommended to supply an <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that is
+            configured with robust resilience and retry policies.</param>
+      <param name="timeoutInSecondsForRetries">
+            The timeout (in seconds) after which a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> should stop retrying failed
+            attempts to communicate with the Azure AI Foundry Evaluation service when performing evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.#ctor(Azure.Core.TokenCredential,System.String,System.String,System.String,System.Net.Http.HttpClient,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration" /> class for a Hub-based Azure
+            AI Foundry project with the specified <paramref name="projectName" />.</summary>
+      <param name="credential">
+            The Azure <see cref="T:Azure.Core.TokenCredential" /> that should be used when authenticating requests.</param>
+      <param name="subscriptionId">
+            The ID of the Azure subscription that contains the Hub-based AI Foundry project identified by
+            <paramref name="projectName" />.</param>
+      <param name="resourceGroupName">
+            The name of the Azure resource group that contains the Hub-based AI Foundry project identified by
+            <paramref name="projectName" />.</param>
+      <param name="projectName">
+            The name of the Hub-based Azure AI Foundry project.</param>
+      <param name="httpClient">
+            The <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that should be used when communicating with the Azure AI Foundry Evaluation
+            service. While the parameter is optional, it is recommended to supply an <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that is
+            configured with robust resilience and retry policies.</param>
+      <param name="timeoutInSecondsForRetries">
+            The timeout (in seconds) after which a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> should stop retrying failed
+            attempts to communicate with the Azure AI Foundry Evaluation service when performing evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.#ctor(Azure.Core.TokenCredential,System.Uri,System.Net.Http.HttpClient,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration" /> class for a non-Hub-based
+            Azure AI Foundry project with the specified <paramref name="endpoint" />.</summary>
+      <param name="credential">
+            The Azure <see cref="T:Azure.Core.TokenCredential" /> that should be used when authenticating requests.</param>
+      <param name="endpoint">
+            The endpoint for the non-Hub-based Azure AI Foundry project.</param>
+      <param name="httpClient">
+            The <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that should be used when communicating with the Azure AI Foundry Evaluation
+            service. While the parameter is optional, it is recommended to supply an <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that is
+            configured with robust resilience and retry policies.</param>
+      <param name="timeoutInSecondsForRetries">
+            The timeout (in seconds) after which a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> should stop retrying failed
+            attempts to communicate with the Azure AI Foundry Evaluation service when performing evaluations.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.Credential">
+      <summary>
+            Gets the Azure <see cref="T:Azure.Core.TokenCredential" /> that should be used when authenticating requests.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.Endpoint">
+      <summary>
+            Gets the endpoint for the Azure AI Foundry project if the project is a non-Hub-based project.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.HttpClient" /> that should be used when communicating with the Azure AI Foundry Evaluation
+            service.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.ProjectName">
+      <summary>
+            Gets the name of the Azure AI Foundry project if the project is a Hub-based project.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.ResourceGroupName">
+      <summary>
+            Gets the name of the Azure resource group that contains the project identified by <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.ProjectName" /> if
+            the project is a Hub-based project.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.SubscriptionId">
+      <summary>
+            Gets the ID of the Azure subscription that contains the project identified by <see cref="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.ProjectName" /> if the
+            project is a Hub-based project.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration.TimeoutInSecondsForRetries">
+      <summary>
+            Gets the timeout (in seconds) after which a <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> should stop retrying failed
+            attempts to communicate with the Azure AI Foundry Evaluation service when performing evaluations.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfigurationExtensions">
+      <summary>
+            Extension methods for <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfigurationExtensions.ToChatConfiguration(Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration,Microsoft.Extensions.AI.Evaluation.ChatConfiguration)">
+      <summary>
+            Returns a <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> that can be used to communicate with the Azure AI Foundry Evaluation
+            service for performing content safety evaluations.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            An object that specifies configuration parameters such as the Azure AI project that should be used, and the
+            credentials that should be used, when communicating with the Azure AI Foundry Evaluation service to perform
+            content safety evaluations.</param>
+      <param name="originalChatConfiguration">
+            The original <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" />, if any. If specified, the returned
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> will be based on <paramref name="originalChatConfiguration" />, with the
+            <see cref="P:Microsoft.Extensions.AI.Evaluation.ChatConfiguration.ChatClient" /> in <paramref name="originalChatConfiguration" /> being replaced with
+            a new <see cref="T:Microsoft.Extensions.AI.IChatClient" /> that can be used both to communicate with the AI model that
+            <paramref name="originalChatConfiguration" /> is configured to communicate with, as well as to communicate with
+            the Azure AI Foundry Evaluation service.</param>
+      <returns>
+            A <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> that can be used to communicate with the Azure AI Foundry Evaluation service
+            for performing content safety evaluations.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfigurationExtensions.ToChatConfiguration(Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyServiceConfiguration,Microsoft.Extensions.AI.IChatClient)">
+      <summary>
+            Returns a <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> that can be used to communicate with the Azure AI Foundry Evaluation
+            service for performing content safety evaluations.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            An object that specifies configuration parameters such as the Azure AI project that should be used, and the
+            credentials that should be used, when communicating with the Azure AI Foundry Evaluation service to perform
+            content safety evaluations.</param>
+      <param name="originalChatClient">
+            The original <see cref="T:Microsoft.Extensions.AI.IChatClient" />. The returned <see cref="P:Microsoft.Extensions.AI.Evaluation.ChatConfiguration.ChatClient" /> will be a
+            wrapper around <paramref name="originalChatClient" /> that can be used both to communicate with the AI model
+            that <paramref name="originalChatClient" /> is configured to communicate with, as well as to communicate with
+            the Azure AI Foundry Evaluation service.</param>
+      <returns>
+            A <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> that can be used to communicate with the Azure AI Foundry Evaluation service
+            for performing content safety evaluations.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate the groundedness of
+            responses produced by an AI model.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate the groundedness of
+            responses produced by an AI model.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <summary>Evaluates the supplied <code data-dev-comment-type="paramref">modelResponse</code> and returns an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref>
+containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</summary>
+      <param name="messages">The conversation history including the request that produced the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="modelResponse">The response that is to be evaluated.</param>
+      <param name="chatConfiguration">A <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.ChatConfiguration"></xref> that specifies the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.IChatClient"></xref> that should be used if one or
+more composed <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref>s use an AI model to perform evaluation.</param>
+      <param name="additionalContext">Additional contextual information (beyond that which is available in <code data-dev-comment-type="paramref">messages</code>) that the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref> may need to accurately evaluate the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the evaluation operation.</param>
+      <returns>An <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref> containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator.GroundednessProMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.NumericMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluatorContext">
+      <summary>
+            Contextual information that the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator" /> uses to evaluate the groundedness of a
+            response.</summary>
+      <param name="groundingContext">
+            Contextual information against which the groundedness of a response is evaluated.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluatorContext.#ctor(System.String)">
+      <summary>
+            Contextual information that the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluator" /> uses to evaluate the groundedness of a
+            response.</summary>
+      <param name="groundingContext">
+            Contextual information against which the groundedness of a response is evaluated.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluatorContext.GroundingContext">
+      <summary>
+            Gets the contextual information against which the groundedness of a response is evaluated.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluatorContext.GroundingContextName">
+      <summary>
+            Gets the unique <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationContext.Name" /> that is used for
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.GroundednessProEvaluatorContext" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of content that is hateful or unfair.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of content that is hateful or unfair.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator.HateAndUnfairnessMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.NumericMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.HateAndUnfairnessEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.IndirectAttackEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of indirect attacks such as manipulated content, intrusion and information gathering.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.IndirectAttackEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of indirect attacks such as manipulated content, intrusion and information gathering.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.IndirectAttackEvaluator.IndirectAttackMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.IndirectAttackEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for presence of protected material.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for presence of protected material.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <summary>Evaluates the supplied <code data-dev-comment-type="paramref">modelResponse</code> and returns an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref>
+containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</summary>
+      <param name="messages">The conversation history including the request that produced the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="modelResponse">The response that is to be evaluated.</param>
+      <param name="chatConfiguration">A <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.ChatConfiguration"></xref> that specifies the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.IChatClient"></xref> that should be used if one or
+more composed <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref>s use an AI model to perform evaluation.</param>
+      <param name="additionalContext">Additional contextual information (beyond that which is available in <code data-dev-comment-type="paramref">messages</code>) that the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref> may need to accurately evaluate the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the evaluation operation.</param>
+      <returns>An <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref> containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.ProtectedArtworkMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator" /> for indicating presence of protected material in artwork in images.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.ProtectedFictionalCharactersMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator" /> for indicating presence of protected fictional characters in images.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.ProtectedLogosAndBrandsMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator" /> for indicating presence of protected logos and brands in images.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator.ProtectedMaterialMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ProtectedMaterialEvaluator" /> for indicating presence of protected material in responses.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of content that indicates self harm.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of content that indicates self harm.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator.SelfHarmMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.NumericMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.SelfHarmEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of sexual content.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of sexual content.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator.SexualMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.NumericMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.SexualEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for presence of content that indicates ungrounded inference of human attributes.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for presence of content that indicates ungrounded inference of human attributes.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator.EvaluateAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.EvaluationContext},System.Threading.CancellationToken)">
+      <summary>Evaluates the supplied <code data-dev-comment-type="paramref">modelResponse</code> and returns an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref>
+containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</summary>
+      <param name="messages">The conversation history including the request that produced the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="modelResponse">The response that is to be evaluated.</param>
+      <param name="chatConfiguration">A <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.ChatConfiguration"></xref> that specifies the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.IChatClient"></xref> that should be used if one or
+more composed <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref>s use an AI model to perform evaluation.</param>
+      <param name="additionalContext">Additional contextual information (beyond that which is available in <code data-dev-comment-type="paramref">messages</code>) that the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.IEvaluator"></xref> may need to accurately evaluate the supplied <code data-dev-comment-type="paramref">modelResponse</code>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the evaluation operation.</param>
+      <returns>An <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationResult"></xref> containing one or more <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.EvaluationMetric"></xref>s.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator.UngroundedAttributesMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.BooleanMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluatorContext">
+      <summary>
+            Contextual information that the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator" /> uses to evaluate whether a response is
+            ungrounded.</summary>
+      <param name="groundingContext">
+            Contextual information against which the groundedness (or ungroundedness) of a response is evaluated.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluatorContext.#ctor(System.String)">
+      <summary>
+            Contextual information that the <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluator" /> uses to evaluate whether a response is
+            ungrounded.</summary>
+      <param name="groundingContext">
+            Contextual information against which the groundedness (or ungroundedness) of a response is evaluated.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluatorContext.GroundingContext">
+      <summary>
+            Gets the contextual information against which the groundedness (or ungroundedness) of a response is evaluated.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluatorContext.GroundingContextName">
+      <summary>
+            Gets the unique <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationContext.Name" /> that is used for
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.UngroundedAttributesEvaluatorContext" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of violent content.</summary>
+      <param name="contentSafetyServiceConfiguration">
+            Specifies the Azure AI project that should be used and credentials that should be used when this
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ContentSafetyEvaluator" /> communicates with the Azure AI Content Safety service to perform
+            evaluations.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator.#ctor">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" /> that utilizes the Azure AI Foundry Evaluation service to evaluate responses produced by
+            an AI model for the presence of violent content.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator.ViolenceMetricName">
+      <summary>
+            Gets the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Name" /> of the <see cref="T:Microsoft.Extensions.AI.Evaluation.NumericMetric" /> returned by
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Safety.ViolenceEvaluator" />.</summary>
+    </member>
+  </members>
+</doc>

@@ -12,4 +12,5 @@ internal enum RazorCompletionItemKind
     MarkupTransition,
     TagHelperElement,
     TagHelperAttribute,
+    Attribute,
 }

@@ -211,6 +211,6 @@ public class DirectiveAttributeEventParameterCompletionItemProviderTest : RazorT
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 }

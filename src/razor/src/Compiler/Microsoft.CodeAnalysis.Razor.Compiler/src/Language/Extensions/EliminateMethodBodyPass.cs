@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -11,18 +12,11 @@ internal sealed class EliminateMethodBodyPass : IntermediateNodePassBase, IRazor
     // Run late in the optimization phase
     public override int Order => int.MaxValue;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (documentNode == null)
-        {
-            throw new ArgumentNullException(nameof(documentNode));
-        }
-
         if (!codeDocument.CodeGenerationOptions.SuppressPrimaryMethodBody)
         {
             return;

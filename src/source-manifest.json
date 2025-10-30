@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 283940,
+      "barId": 288263,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6275af47ebda0d394d4a5a401b77bc6f2304204a"
+      "commitSha": "63eed293471985f6fc4a60fd8b6f8f5ce3d03f38"
     },
     {
       "barId": 284267,
@@ -55,10 +55,10 @@
       "commitSha": "e0100aca936e20561f359b2c81df5c4f75f385f6"
     },
     {
-      "barId": 284307,
+      "barId": 288357,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "543d04595ee546f812aa26578c5c99083c752bd9"
+      "commitSha": "ad915a4f47346b746998dabaa541a7e3bab1d6cd"
     },
     {
       "barId": 284283,
@@ -67,10 +67,10 @@
       "commitSha": "97c64b5dfcc39b3babf6b3dfa828aa737860c145"
     },
     {
-      "barId": 284251,
+      "barId": 288408,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
+      "commitSha": "26a49b33203484409aae04ab090b7d3090897749"
     },
     {
       "barId": 284344,
@@ -97,10 +97,10 @@
       "commitSha": "b7b9812866f245761b3af8d526bede699e170efc"
     },
     {
-      "barId": 282656,
+      "barId": 288334,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fdb961b0749fa58221e92915a7a7bbec65d40251"
+      "commitSha": "14e4c0ba865760f431f44549f6871498dd6171e5"
     },
     {
       "barId": 277912,
@@ -200,7 +200,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "6235ee4484ceb8f9db32826ae252b0a2aad0955e"
+      "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",

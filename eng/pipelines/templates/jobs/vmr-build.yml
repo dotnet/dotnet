@@ -460,7 +460,6 @@ jobs:
           isOfficialBuild: true
           serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
           serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
-          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
 
     - script: build.cmd
@@ -526,6 +525,7 @@ jobs:
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
+            rm -rf $(sourcesPath)/.dotnet
             mkdir $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"

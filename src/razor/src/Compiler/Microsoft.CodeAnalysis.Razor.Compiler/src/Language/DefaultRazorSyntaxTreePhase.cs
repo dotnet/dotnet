@@ -22,7 +22,9 @@ internal class DefaultRazorSyntaxTreePhase : RazorEnginePhaseBase, IRazorSyntaxT
 
         foreach (var pass in Passes)
         {
-            syntaxTree = pass.Execute(codeDocument, syntaxTree);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            syntaxTree = pass.Execute(codeDocument, syntaxTree, cancellationToken);
         }
 
         codeDocument.SetSyntaxTree(syntaxTree);

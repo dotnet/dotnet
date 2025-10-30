@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -12,7 +13,7 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
 {
     private static readonly Lazy<TagHelperDescriptor> s_splatTagHelper = new(CreateSplatTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -26,7 +27,8 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilder.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilder.ContainingAssembly))
         {
             return;
         }
