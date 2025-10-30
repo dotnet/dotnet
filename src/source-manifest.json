@@ -79,10 +79,10 @@
       "commitSha": "739dc0e352a331e8a41cd66c09d2edf359255365"
     },
     {
-      "barId": 288058,
+      "barId": 288967,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "60629d14374c56f1cb51819049ad1fa529307f8d"
+      "commitSha": "6d0c7d7b4d9eca3b9d7d73f03d98ac41621e5960"
     },
     {
       "barId": 277711,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 287916,
+      "barId": 288985,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "da5c1d5aea74c2cedb284c4fe7b3457b47958914"
+      "commitSha": "fceb86686f28e09113faa6cd53a7a039a0e884f5"
     },
     {
       "barId": 288769,
