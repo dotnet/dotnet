@@ -51,7 +51,7 @@ internal class RazorFormattingService : IRazorFormattingService
         ];
 
         _documentFormattingPasses = [
-                new HtmlFormattingPass(),
+                new HtmlFormattingPass(documentMappingService),
                 new RazorFormattingPass(),
                 new CSharpFormattingPass(hostServicesProvider, loggerFactory),
             ];
@@ -92,7 +92,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var logger = _formattingLoggerFactory.CreateLogger(documentContext.FilePath, range is null ? "Full" : "Range");
         logger?.LogObject("Options", options);
-        logger?.LogObject("HtmlChanges", htmlChanges);
+        logger?.LogObject("HtmlChanges", htmlChanges.SelectAsArray(e => e.ToRazorTextChange()));
         logger?.LogObject("Range", range);
         logger?.LogSourceText("InitialDocument", sourceText);
 
