@@ -660,37 +660,37 @@ stages:
           - Windows_arm64
 
       # build the workloads
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows_Workloads
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x64
-          buildPass: 2
-          extraProperties: /p:BuildWorkloads=true
-          reuseBuildArtifactsFrom:
-          - Windows_x64
-          - Windows_x86
-          - Windows_arm64
-          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-            - Browser_Shortstack_wasm
-            - Browser_Multithreaded_Shortstack_wasm
-            - Wasi_Shortstack_wasm
-            - Android_Shortstack_arm64
-            - Android_Shortstack_arm
-            - Android_Shortstack_x64
-            - Android_Shortstack_x86
-            - iOS_Shortstack_arm64
-            - iOSSimulator_Shortstack_arm64
-            - iOSSimulator_Shortstack_x64
-            - tvOS_Shortstack_arm64
-            - tvOSSimulator_Shortstack_arm64
-            - tvOSSimulator_Shortstack_x64
-            - MacCatalyst_Shortstack_arm64
-            - MacCatalyst_Shortstack_x64
+      # - template: ../jobs/vmr-build.yml
+      #   parameters:
+      #     buildName: Windows_Workloads
+      #     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      #     sign: ${{ variables.signEnabled }}
+      #     signType: ${{ variables.signType }}
+      #     pool: ${{ parameters.pool_Windows }}
+      #     targetOS: windows
+      #     targetArchitecture: x64
+      #     buildPass: 2
+      #     extraProperties: /p:BuildWorkloads=true
+      #     reuseBuildArtifactsFrom:
+      #     - Windows_x64
+      #     - Windows_x86
+      #     - Windows_arm64
+      #     - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+      #       - Browser_Shortstack_wasm
+      #       - Browser_Multithreaded_Shortstack_wasm
+      #       - Wasi_Shortstack_wasm
+      #       - Android_Shortstack_arm64
+      #       - Android_Shortstack_arm
+      #       - Android_Shortstack_x64
+      #       - Android_Shortstack_x86
+      #       - iOS_Shortstack_arm64
+      #       - iOSSimulator_Shortstack_arm64
+      #       - iOSSimulator_Shortstack_x64
+      #       - tvOS_Shortstack_arm64
+      #       - tvOSSimulator_Shortstack_arm64
+      #       - tvOSSimulator_Shortstack_x64
+      #       - MacCatalyst_Shortstack_arm64
+      #       - MacCatalyst_Shortstack_x64
 
       ## Build Pass 3 verticals
 
@@ -706,7 +706,7 @@ stages:
           targetArchitecture: x64
           buildPass: 3
           reuseBuildArtifactsFrom:
-          - Windows_Workloads_x64_BuildPass2
+          #- Windows_Workloads_x64_BuildPass2
           - Windows_x64
           - Windows_x86
           - Windows_arm64
@@ -722,7 +722,7 @@ stages:
           targetArchitecture: x86
           buildPass: 3
           reuseBuildArtifactsFrom:
-          - Windows_Workloads_x64_BuildPass2
+          #- Windows_Workloads_x64_BuildPass2
           - Windows_x64
           - Windows_x86
           - Windows_arm64
@@ -738,7 +738,7 @@ stages:
           targetArchitecture: arm64
           buildPass: 3
           reuseBuildArtifactsFrom:
-          - Windows_Workloads_x64_BuildPass2
+          #- Windows_Workloads_x64_BuildPass2
           - Windows_x64
           - Windows_x86
           - Windows_arm64
