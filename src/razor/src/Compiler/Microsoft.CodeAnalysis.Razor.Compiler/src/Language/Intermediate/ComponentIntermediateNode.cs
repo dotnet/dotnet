@@ -22,7 +22,7 @@ public sealed class ComponentIntermediateNode : IntermediateNode
 
     public IEnumerable<ComponentChildContentIntermediateNode> ChildContents => Children.OfType<ComponentChildContentIntermediateNode>();
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public TagHelperDescriptor Component { get; set; }
 
@@ -48,6 +48,8 @@ public sealed class ComponentIntermediateNode : IntermediateNode
     public Dictionary<string, CascadingGenericTypeParameter> ProvidesCascadingGenericTypes { get; set; }
 
     public string TypeName { get; set; }
+
+    public SourceSpan StartTagSpan { get; init; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

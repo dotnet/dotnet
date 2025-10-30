@@ -28,6 +28,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
      */
     public class CreateWixBuildWixpack : Task
     {
+        public string AdditionalOptions { get; set; }
+
         public ITaskItem BindTrackingFile { get; set; }
 
         public ITaskItem[] BindPaths { get; set; }
@@ -70,6 +72,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         [Required]
         public ITaskItem[] SourceFiles { get; set; }
+
+        public string[] SuppressSpecificWarnings { get; set; }
 
         [Required]
         public string WixpackWorkingDir { get; set; }
@@ -194,7 +198,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             // We want to keep original files in wixpack, and only preprocess
             // them for wixpack creation. This ensures that repacking process would not be
             // affected by some unintentional change, or a bug in preprocessor.
-            var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(includeFile));
+            var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.Copy(includeFile, tempFilePath, overwrite: true);
 
             // We're processing a Wix include file, which contains preprocessor
@@ -334,6 +338,15 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
             }
 
+            // Add each Warning from SuppressSpecificWarnings array
+            if (SuppressSpecificWarnings != null && SuppressSpecificWarnings.Length > 0)
+            {
+                foreach (var warning in SuppressSpecificWarnings)
+                {
+                    commandLineArgs.Add($"-sw{warning}");
+                }
+            }
+
             // Add all define constants from dictionary
             if (_defineConstantsDictionary != null && _defineConstantsDictionary.Count > 0)
             {
@@ -396,6 +409,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 commandLineArgs.Add($"-trackingfile {BindTrackingFile.ItemSpec}");
             }
 
+            // Add AdditionalOptions if specified
+            if (!string.IsNullOrEmpty(AdditionalOptions))
+            {
+                commandLineArgs.Add(AdditionalOptions);
+            }
+
             commandLineArgs.Add($"-nologo");
             commandLineArgs.Add($"-wx");
 
@@ -408,7 +427,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
             }
 
-            string commandLine = "wix.exe build " + string.Join(" ", commandLineArgs);
+            // The command lines can be quite long, and cmd would reject them. Wix does support
+            // response files, so create a response file (create.rsp) to package alongside.
+            File.WriteAllText(Path.Combine(WixpackWorkingDir, "create.rsp"), string.Join(System.Environment.NewLine, commandLineArgs)); 
+
+            string commandLine = "wix.exe build @create.rsp";
 
             StringBuilder createCmdFileContents = new();
             createCmdFileContents.AppendLine("@echo off");

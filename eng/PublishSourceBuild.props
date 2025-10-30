@@ -91,7 +91,7 @@
   </Target>
 
   <PropertyGroup>
-    <SharedComponentFilterMode>NonToolingOnly</SharedComponentFilterMode>
+    <SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</SharedComponentFilterMode>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
       $(CreatePrivateSourceBuiltArtifactsArchiveDependsOn);GetFilteredSharedComponentPackages
@@ -181,7 +181,8 @@
 
   <Target Name="IncludeSharedComponentsAsArtifacts"
           AfterTargets="DiscoverArtifacts"
-          DependsOnTargets="GetFilteredSharedComponentPackages">
+          DependsOnTargets="GetFilteredSharedComponentPackages"
+          Condition="'$(IsPublishPass2)' != 'true'">
 
     <ItemGroup>
       <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">

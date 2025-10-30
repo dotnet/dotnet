@@ -2,19 +2,23 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after components/eventhandlers/ref/bind. We need to check for templates in all of those
     // places.
     public override int Order => 150;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -28,7 +32,7 @@ internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBa
 
         foreach (var candidate in candidates)
         {
-            var (parent, node) = candidate;
+            var (node, parent) = candidate;
 
             parent.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(node.Source));
 
@@ -53,7 +57,7 @@ internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBa
                                 TagHelperPropertyIntermediateNode or // Inside malformed ref attribute
                                 TagHelperDirectiveAttributeIntermediateNode) // Inside a directive attribute
                 {
-                    _candidates.Add(new IntermediateNodeReference(Parent, node));
+                    _candidates.Add(new IntermediateNodeReference(node, Parent.AssumeNotNull()));
 
                     // We found a candidate and can stop looking. There's no need to report multiple diagnostics for the same node.
                     break;

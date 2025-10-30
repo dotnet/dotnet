@@ -45,9 +45,9 @@ public class Async2SynchronizationContext
         // we check IsCompleted on the awaiter).
         //await WrappedYieldToThreadPool(suspend: true).ConfigureAwait(false);
         //Assert.Null(SynchronizationContext.Current);
-
-        await WrappedYieldToThreadWithCustomSyncContext();
-        Assert.Null(SynchronizationContext.Current);
+        //
+        //await WrappedYieldToThreadWithCustomSyncContext();
+        //Assert.Null(SynchronizationContext.Current);
     }
 
     private static async Task WrappedYieldToThreadPool(bool suspend)
@@ -67,8 +67,11 @@ public class Async2SynchronizationContext
 
     private class MySyncContext : SynchronizationContext
     {
+        public int NumPosts;
+
         public override void Post(SendOrPostCallback d, object state)
         {
+            NumPosts++;
             ThreadPool.UnsafeQueueUserWorkItem(_ =>
             {
                 SynchronizationContext prevContext = Current;
@@ -215,5 +218,27 @@ public class Async2SynchronizationContext
 
         if (suspend)
             await Task.Yield();
+    }
+
+    [Fact]
+    public static void TestNoSyncContextInRuntimeCallableThunk()
+    {
+        SynchronizationContext prevContext = SynchronizationContext.Current;
+        try
+        {
+            SynchronizationContext.SetSynchronizationContext(new MySyncContext());
+            TestNoSyncContextInRuntimeCallableThunkAsync().GetAwaiter().GetResult();
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(prevContext);
+        }
+    }
+
+    private static async Task TestNoSyncContextInRuntimeCallableThunkAsync()
+    {
+        MySyncContext syncCtx = (MySyncContext)SynchronizationContext.Current;
+        await Task.Delay(100).ConfigureAwait(false);
+        Assert.Equal(0, syncCtx.NumPosts);
     }
 }

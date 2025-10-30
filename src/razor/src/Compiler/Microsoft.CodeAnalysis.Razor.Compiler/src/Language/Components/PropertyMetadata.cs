@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-public sealed class PropertyMetadata() : MetadataObject(MetadataKind.Property)
+public sealed record PropertyMetadata() : MetadataObject(MetadataKind.Property)
 {
+    public static PropertyMetadata Default { get; } = new();
+
     public string? GloballyQualifiedTypeName { get; init; }
     public bool IsChildContent { get; init; }
     public bool IsEventCallback { get; init; }
@@ -15,9 +17,17 @@ public sealed class PropertyMetadata() : MetadataObject(MetadataKind.Property)
     public bool IsGenericTyped { get; init; }
     public bool IsInitOnlyProperty { get; init; }
 
+    internal override bool HasDefaultValue => Equals(Default);
+
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
         builder.AppendData(GloballyQualifiedTypeName);
+        builder.AppendData(IsChildContent);
+        builder.AppendData(IsEventCallback);
+        builder.AppendData(IsDelegateSignature);
+        builder.AppendData(IsDelegateWithAwaitableResult);
+        builder.AppendData(IsGenericTyped);
+        builder.AppendData(IsInitOnlyProperty);
     }
 
     public ref struct Builder

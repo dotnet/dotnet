@@ -202,8 +202,7 @@ namespace System
                 if (hasUnicode)
                 {
                     // Iri'ze and then normalize relative uris
-                    _string = EscapeUnescapeIri(_originalUnicodeString, 0, _originalUnicodeString.Length,
-                                                (UriComponents)0);
+                    _string = EscapeUnescapeIri(_originalUnicodeString, 0, _originalUnicodeString.Length, isQuery: false);
                 }
             }
             else
@@ -721,11 +720,11 @@ namespace System
         // b) Bidi chars are stripped
         //
         // should be called only if IRI parsing is switched on
-        internal unsafe string EscapeUnescapeIri(string input, int start, int end, UriComponents component)
+        internal unsafe string EscapeUnescapeIri(string input, int start, int end, bool isQuery)
         {
             fixed (char* pInput = input)
             {
-                return IriHelper.EscapeUnescapeIri(pInput, start, end, component);
+                return IriHelper.EscapeUnescapeIri(pInput, start, end, isQuery);
             }
         }
 
@@ -1028,17 +1027,7 @@ namespace System
             string self = GetParts(ComponentsToCompare, UriFormat.SafeUnescaped);
             string other = uriLink.GetParts(ComponentsToCompare, UriFormat.SafeUnescaped);
 
-            unsafe
-            {
-                fixed (char* selfPtr = self)
-                {
-                    fixed (char* otherPtr = other)
-                    {
-                        return UriHelper.TestForSubPath(selfPtr, self.Length, otherPtr, other.Length,
-                            IsUncOrDosPath || uriLink.IsUncOrDosPath);
-                    }
-                }
-            }
+            return UriHelper.TestForSubPath(self, other, IsUncOrDosPath || uriLink.IsUncOrDosPath);
         }
 
         //

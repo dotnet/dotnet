@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -29,8 +28,8 @@ public class ViewComponentTagHelperPassTest : RazorProjectEngineTestBase
     public void ViewComponentTagHelperPass_Execute_IgnoresRegularTagHelper()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestTagHelper"))
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestTagHelper")
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32"))
@@ -63,10 +62,9 @@ public class ViewComponentTagHelperPassTest : RazorProjectEngineTestBase
     public void ViewComponentTagHelperPass_Execute_CreatesViewComponentTagHelper()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .Metadata(
-                TypeName("__Generated__TagCloudViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+        var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
+            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("TagCloud", TypeNameObject.From("TagCloud")))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32")
@@ -101,10 +99,9 @@ public class ViewComponentTagHelperPassTest : RazorProjectEngineTestBase
     public void ViewComponentTagHelperPass_Execute_CreatesViewComponentTagHelper_WithIndexer()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .Metadata(
-                TypeName("__Generated__TagCloudViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+        var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
+            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("TagCloud", TypeNameObject.From("TagCloud")))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
@@ -141,8 +138,8 @@ public class ViewComponentTagHelperPassTest : RazorProjectEngineTestBase
     public void ViewComponentTagHelperPass_Execute_CreatesViewComponentTagHelper_Nested()
     {
         // Arrange
-        var tagHelper1 = TagHelperDescriptorBuilder.Create("PTestTagHelper", "TestAssembly")
-            .Metadata(TypeName("PTestTagHelper"))
+        var tagHelper1 = TagHelperDescriptorBuilder.CreateTagHelper("PTestTagHelper", "TestAssembly")
+            .TypeName("PTestTagHelper")
             .BoundAttributeDescriptor(attribute => attribute
                 .PropertyName("Foo")
                 .Name("Foo")
@@ -150,10 +147,9 @@ public class ViewComponentTagHelperPassTest : RazorProjectEngineTestBase
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
             .Build();
 
-        var tagHelper2 = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .Metadata(
-                TypeName("__Generated__TagCloudViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+        var tagHelper2 = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
+            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("TagCloud", TypeNameObject.From("TagCloud")))
             .BoundAttributeDescriptor(attribute => attribute
                 .PropertyName("Foo")
                 .Name("Foo")

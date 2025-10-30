@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -13,7 +13,7 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
 {
     private static readonly Lazy<TagHelperDescriptor> s_splatTagHelper = new(CreateSplatTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -27,7 +27,8 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilder.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilder.ContainingAssembly))
         {
             return;
         }
@@ -38,17 +39,17 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
     private static TagHelperDescriptor CreateSplatTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Splat.TagHelperKind, "Attributes", ComponentsApi.AssemblyName,
+            TagHelperKind.Splat, "Attributes", ComponentsApi.AssemblyName,
             out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.SplatTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.Attributes",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "Attributes");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.Splat.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.Splat.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.Attributes"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.SplatTagHelper);
 
         builder.TagMatchingRule(rule =>
         {

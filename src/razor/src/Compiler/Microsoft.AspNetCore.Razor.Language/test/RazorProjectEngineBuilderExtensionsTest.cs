@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.CodeAnalysis.CSharp;
 using Moq;
@@ -43,8 +44,8 @@ public class RazorProjectEngineBuilderExtensionsTest
         // Assert
         var feature = Assert.Single(builder.Features);
         var codeTargetExtensionFeature = Assert.IsAssignableFrom<IRazorTargetExtensionFeature>(feature);
-        var extensions = Assert.Single(codeTargetExtensionFeature.TargetExtensions);
-        Assert.Same(expectedExtension, extensions);
+        var extension = Assert.Single(codeTargetExtensionFeature.TargetExtensions);
+        Assert.Same(expectedExtension, extension);
     }
 
     [Fact]

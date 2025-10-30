@@ -203,6 +203,9 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     [IntegrationTestFact]
     public void TagHelpersWithBoundAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void TagHelpersWithBoundAttributesAndRazorComment() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
+
     [IntegrationTestFact]
     public void TagHelpersWithPrefix() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
@@ -436,7 +439,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     {
         var tagHelperClasses = descriptors.Select(descriptor =>
         {
-            var typeName = descriptor.GetTypeName();
+            var typeName = descriptor.TypeName;
             var namespaceSeparatorIndex = typeName.LastIndexOf('.');
             if (namespaceSeparatorIndex >= 0)
             {

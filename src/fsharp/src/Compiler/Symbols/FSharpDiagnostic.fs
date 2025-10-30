@@ -11,6 +11,7 @@ open System
 
 open FSharp.Compiler.CheckExpressions
 open FSharp.Compiler.ConstraintSolver
+open FSharp.Compiler.NameResolution
 open FSharp.Compiler.SignatureConformance
 open FSharp.Compiler.Symbols
 open FSharp.Compiler.Syntax
@@ -85,6 +86,12 @@ module ExtendedData =
         member x.ActualType = FSharpType(symbolEnv, actualType)
         member x.ContextInfo = context
         member x.DisplayContext = FSharpDisplayContext(fun _ -> dispEnv)
+
+    type TypeExtendedData internal (symbolEnv: SymbolEnv, displayEnv: DisplayEnv, actualType: TType) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.Type = FSharpType(symbolEnv, actualType)
+        member x.DisplayContext = FSharpDisplayContext(fun _ -> displayEnv)
 
     type ExpressionIsAFunctionExtendedData internal (symbolEnv: SymbolEnv, actualType: TType) =
         interface IFSharpDiagnosticExtendedData
@@ -169,6 +176,7 @@ type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, message: str
             | Some symbolEnv ->
 
             match diagnostic.Exception with
+            | ErrorFromAddingConstraint(displayEnv, ConstraintSolverTypesNotInEqualityRelation(_, actualType, expectedType, _, _, contextInfo), _)
             | ErrorFromAddingTypeEquation(_, displayEnv, expectedType, actualType, ConstraintSolverTupleDiffLengths(contextInfo = contextInfo), _)
             | ErrorsFromAddingSubsumptionConstraint(_, displayEnv, expectedType, actualType, _, contextInfo, _) ->
                let context = DiagnosticContextInfo.From(contextInfo)
@@ -180,6 +188,8 @@ type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, message: str
                        ty1, ty2
                    elif not (typeEquiv g ty1 ty2) then
                        ty1, ty2
+                   elif typeEquiv g ty2 ty2b then
+                       ty1b, ty2b
                    else ty2b, ty1b
 
                let context = DiagnosticContextInfo.From(contextInfo)
@@ -203,11 +213,15 @@ type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, message: str
             | DefinitionsInSigAndImplNotCompatibleAbbreviationsDiffer(implTycon = implTycon; sigTycon = sigTycon) ->
                 Some(DefinitionsInSigAndImplNotCompatibleAbbreviationsDifferExtendedData(sigTycon, implTycon))
 
-            | ObsoleteDiagnostic(diagnosticId= diagnosticId; urlFormat= urlFormat) ->
+            | ObsoleteDiagnostic(diagnosticId = diagnosticId; urlFormat = urlFormat) ->
                 Some(ObsoleteDiagnosticExtendedData(diagnosticId, urlFormat))
                 
-            | Experimental(diagnosticId= diagnosticId; urlFormat= urlFormat) ->
+            | Experimental(diagnosticId = diagnosticId; urlFormat = urlFormat) ->
                 Some(ExperimentalExtendedData(diagnosticId, urlFormat))
+
+            | NoConstructorsAvailableForType(ttype, displayEnv, _) ->
+                Some(TypeExtendedData(symbolEnv, displayEnv, ttype))
+
             | _ -> None
 
         let msg =

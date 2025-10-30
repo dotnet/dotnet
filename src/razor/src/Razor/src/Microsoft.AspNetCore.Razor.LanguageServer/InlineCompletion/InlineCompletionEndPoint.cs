@@ -108,8 +108,7 @@ internal sealed class InlineCompletionEndpoint(
                 documentContext.Snapshot,
                 codeDocument,
                 options,
-                // I don't think this makes a difference for inline completions, but it's better to be safe.
-                useNewFormattingEngine: false);
+                logger: null);
             if (!SnippetFormatter.TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
             {
                 continue;

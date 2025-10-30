@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -14,7 +14,7 @@ internal sealed class RenderModeTagHelperDescriptorProvider() : TagHelperDescrip
 {
     private static readonly Lazy<TagHelperDescriptor> s_renderModeTagHelper = new(CreateRenderModeTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -28,7 +28,8 @@ internal sealed class RenderModeTagHelperDescriptorProvider() : TagHelperDescrip
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, iComponentRenderMode.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, iComponentRenderMode.ContainingAssembly))
         {
             return;
         }
@@ -39,18 +40,17 @@ internal sealed class RenderModeTagHelperDescriptorProvider() : TagHelperDescrip
     private static TagHelperDescriptor CreateRenderModeTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.RenderMode.TagHelperKind, "RenderMode", ComponentsApi.AssemblyName,
+            TagHelperKind.RenderMode, "RenderMode", ComponentsApi.AssemblyName,
             out var builder);
 
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.RenderMode",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "RenderMode");
+
         builder.CaseSensitive = true;
-
+        builder.ClassifyAttributesOnly = true;
         builder.SetDocumentation(DocumentationDescriptor.RenderModeTagHelper);
-
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.RenderMode.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.RenderMode.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.RenderMode"));
 
         builder.TagMatchingRule(rule =>
         {

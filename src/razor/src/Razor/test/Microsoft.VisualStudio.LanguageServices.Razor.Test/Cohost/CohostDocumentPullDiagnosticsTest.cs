@@ -1,10 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -13,55 +11,11 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public partial class CohostDocumentPullDiagnosticsTest
 {
-    [Fact]
-    public Task CSharp()
-        => VerifyDiagnosticsAsync("""
-            <div></div>
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-            """);
-
-    [Fact]
-    public Task Razor()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-            """);
-
-    [Fact]
-    public Task CSharpAndRazor_MiscellaneousFile()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-            """,
-            miscellaneousFile: true);
-
     [Fact]
     public Task Html()
     {
@@ -364,37 +318,87 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
     }
 
     [Fact]
-    public Task CombinedAndNestedDiagnostics()
-        => VerifyDiagnosticsAsync("""
-            @using System.Threading.Tasks;
+    public Task FilterPropertyNameInCss()
+    {
+        const string CSharpExpression = """@(someBool ? "width: 100%" : "width: 50%")""";
+        TestCode input = $$"""
+            <div style="{|CSS024:/****/|}"></div>
+            <div style="{{CSharpExpression}}">
 
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
+            </div>
 
             @code
             {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
+                private bool someBool = false;
             }
+            """;
 
-            <div>
-                @{
-                    {|CS4033:await Task.{|CS1501:Delay|}()|};
-                }
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = CSSErrorCodes.MissingPropertyName,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("/"), "/****/".Length))
+                    },
+                    new LspDiagnostic
+                    {
+                        Code = CSSErrorCodes.MissingPropertyName,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@"), CSharpExpression.Length))
+                    },
+                ]
+            }]);
+    }
 
-                {|RZ9980:<p>|}
-            </div>
+    [Theory]
+    [InlineData("", "\"")]
+    [InlineData("", "'")]
+    [InlineData("@onclick=\"Send\"", "\"")] // The @onclick makes the disabled attribute a TagHelperAttributeSyntax
+    [InlineData("@onclick='Send'", "'")]
+    public Task FilterBadAttributeValueInHtml(string extraTagContent, string quoteChar)
+    {
+        TestCode input = $$"""
+            <button {{extraTagContent}} disabled={{quoteChar}}@(!EnableMyButton){{quoteChar}}>Send</button>
+            <button disabled={{quoteChar}}{|HTML0209:ThisIsNotValid|}{{quoteChar}} />
 
-            </div>
-            """);
+            @code
+            {
+                private bool EnableMyButton => true;
+
+                Task Send() =>
+                    Task.CompletedTask;
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.UnknownAttributeValueErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@("), "@(!EnableMyButton)".Length))
+                    },
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.UnknownAttributeValueErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("T"), "ThisIsNotValid".Length))
+                    },
+                ]
+            }]);
+    }
 
     [Fact]
     public Task TODOComments()
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
+
+            // TODO: This isn't C#
+
+            TODO: Nor is this
 
             <div>
 
@@ -403,12 +407,17 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 @* TODONT: This doesn't *@
 
             </div>
+
+            @code {
+                // This looks different because Roslyn only reports zero width ranges for task lists
+                // {|TODO:|}TODO: Write some C# code too
+            }
             """,
             taskListRequest: true);
 
     private async Task VerifyDiagnosticsAsync(TestCode input, VSInternalDiagnosticReport[]? htmlResponse = null, bool taskListRequest = false, bool miscellaneousFile = false)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true, miscellaneousFile: miscellaneousFile);
+        var document = CreateProjectAndRazorDocument(input.Text, miscellaneousFile: miscellaneousFile);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
@@ -425,22 +434,18 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 }];
 
         Assert.NotNull(result);
+        var report = Assert.Single(result);
+        Assert.NotNull(report);
 
-        if (result is [{ Diagnostics: null }])
-        {
-            // No diagnostics found, make sure none were expected
-            AssertEx.Equal(input.OriginalInput, input.Text);
-            return;
-        }
-
-        var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
+        var markers = report.Diagnostics.SelectMany(d =>
             new[] {
                 (index: inputText.GetTextSpan(d.Range).Start, text: $"{{|{d.Code!.Value.Second}:"),
                 (index: inputText.GetTextSpan(d.Range).End, text:"|}")
             });
 
         var testOutput = input.Text;
-        foreach (var (index, text) in markers.OrderByDescending(i => i.index))
+        // Ordering by text last means start tags get sorted before end tags, for zero width ranges
+        foreach (var (index, text) in markers.OrderByDescending(i => i.index).ThenByDescending(i => i.text))
         {
             testOutput = testOutput.Insert(index, text);
         }

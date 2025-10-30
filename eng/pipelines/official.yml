@@ -52,6 +52,12 @@ variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
+- name: GDN_EXTRACT_TOOLS
+  value: 'binskim,bandit,roslynanalyzers'
+ 
+- name: GDN_EXTRACT_FILTER
+  value: 'f|**/*.zip;f|**/*.nupkg;f|**/*.vsix;f|**/*.cspkg;f|**/*.sfpkg;f|**/*.package'
+
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
     value: true
@@ -73,7 +79,10 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     featureFlags:
+      binskimScanAllExtensions: true
       incrementalSDLBinaryAnalysis: true
+      autoEnablePREfastWithNewRuleset: false
+      autoEnableRoslynWithNewRuleset: false
     sdl:
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
@@ -93,13 +102,6 @@ extends:
         tsaEnabled: true
       binskim:
         enabled: true
-        # This may need to be updated to exclude files we don't want scanned.
-        # This pattern was pulled from dotnet/sdk, with the ESRPClient added.
-        # When binskim supports scanning of archive contents, this can be removed altogether.
-        # This is of the form: <pattern>;<pattern>
-        # +:f| - Include glob
-        # -:f| - Exclude glob
-        analyzeTargetGlob: +:f|eng\**\*.props;+:f|**\artifacts\bin\**\*.dll;+:f|**\artifacts\bin\**\*.exe;-:f|**\artifacts\bin\**\msdia140.dll;-:f|**\artifacts\bin\**\pgort140.dll;-:f|**\artifacts\bin\*Tests\**;-:f|**\Microsoft.NET.Runtime.Emscripten**\tools\**;-:f|**\CodeCoverage\**;-:f|**\artifacts\bin\**\capstone.dll;-:f|**\Microsoft.EsrpClient\**;
       policheck:
         enabled: true
       tsa:
@@ -167,3 +169,6 @@ extends:
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
         scope: full
+        # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+        # This is enabled for all branches except main and 1xx
+        excludeRuntimeDependentJobs: false

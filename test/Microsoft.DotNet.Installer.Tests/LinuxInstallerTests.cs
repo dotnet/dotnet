@@ -1,9 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.DotNet.Build.Tasks.Installers;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -31,8 +33,30 @@ public partial class LinuxInstallerTests : IDisposable
     private bool _debContextInitialized = false;
     private bool _sharedContextInitialized = false;
 
-    private static readonly Uri NetStandard21RpmPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.rpm");
-    private static readonly Uri NetStandard21DebPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.deb");
+    private readonly Dictionary<string, List<string>> _expectedPackageDependencies = new()
+    {
+        { DotnetHostPrefix, new List<string> { } },
+        { DotnetHostFxrPrefix, new List<string> { $"{DotnetHostPrefix.TrimEnd('-')}" } },
+        { DotnetRuntimePrefix, new List<string>
+            {
+                $"{DotnetHostFxrPrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetRuntimeDepsPrefix}{Config.TargetFrameworkVersion}"
+            }
+        },
+        { DotnetTargetingPackPrefix, new List<string> {  } },
+        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}" } },
+        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}" } },
+        { DotnetApphostPackPrefix, new List<string> { } },
+        { DotnetSdkPrefix, new List<string>
+            {
+                $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
+                $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
+                $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
+            }
+        }
+    };
 
     // Transform patch versions in 100-199 range by removing leading "1"
     // e.g., 10.0.100-rc.1.25405.108 -> 10.0.0-rc.1.25405.108
@@ -41,7 +65,26 @@ public partial class LinuxInstallerTests : IDisposable
     [GeneratedRegex(@"^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$")]
     private static partial Regex SdkVersionToRuntimeVersionRegex { get; }
     private static readonly string Runtime1xxVersion = SdkVersionToRuntimeVersionRegex.Replace(Config.Sdk1xxVersion, "$1$3$4");
-    
+
+    // Extract the package prefix from the package name
+    // e.g., dotnet-runtime-10.0.0-rc.2.25418.119-x64 -> dotnet-runtime-
+    [GeneratedRegex(@"^(.*?-)(?=\d)")]
+    private static partial Regex PackagePrefixFromPackageNameRegex { get; }
+
+    // Use multiline + case-insensitive to find the Depends line (same line only)
+    // Captures everything after "Depends:" up to the end of that line
+    [GeneratedRegex(@"(?im)^[ \t]*Depends:\s*(.+)$")]
+    private static partial Regex DependsLineRegex { get; }
+
+    // Remove any version constraint in parentheses: "package (>= 1.0)" -> "package"
+    // Handles any interior text until the matching closing parenthesis on that token.
+    [GeneratedRegex(@"\s*\([^)]*\)", RegexOptions.CultureInvariant)]
+    private static partial Regex RemoveVersionConstraintRegex { get; }
+
+    // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    private static partial Regex RemoveVersionFromPackageNameRegex { get; }
+
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
@@ -52,7 +95,6 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreRuntimePrefix = "aspnetcore-runtime-";
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
-    private const string NetStandardTargetingPackPrefix = "netstandard-targeting-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
@@ -92,7 +134,7 @@ public partial class LinuxInstallerTests : IDisposable
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
-    public async Task RpmTest(string repo, string tag)
+    public async Task RpmScenarioTest(string repo, string tag)
     {
         if (!tag.Contains("azurelinux"))
         {
@@ -107,14 +149,44 @@ public partial class LinuxInstallerTests : IDisposable
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
-    public async Task DebTest(string repo, string tag)
+    public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
 
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    private async Task InitializeContextAsync(PackageType packageType)
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests), Skip = "RPM package metadata test requires https://github.com/dotnet/arcade/pull/16079")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
+    public async Task RpmPackageMetadataTest(string repo, string tag)
+    {
+        await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
+
+        ValidatePackageMetadata($"{repo}:{tag}", PackageType.Rpm);
+    }
+
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    public async Task DebPackageMetadataTest(string repo, string tag)
+    {
+        await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
+
+        ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
+    }
+
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    public void ValidateRpmPackageList()
+    {
+        ValidatePackageList(PackageType.Rpm);
+    }
+
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    public void ValidateDebPackageList()
+    {
+        ValidatePackageList(PackageType.Deb);
+    }
+
+    private async Task InitializeContextAsync(PackageType packageType, bool initializeSharedContext = true)
     {
         string packageArchitecture =
             Config.Architecture == Architecture.X64 ?
@@ -138,7 +210,7 @@ public partial class LinuxInstallerTests : IDisposable
                 File.Copy(rpmPackage, Path.Combine(_contextDir, Path.GetFileName(rpmPackage)));
             }
 
-            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21RpmPackage);
+            await DownloadPackagesAsync(packageArchitecture, packageType);
             _rpmContextInitialized = true;
         }
         else if (!_debContextInitialized)
@@ -149,11 +221,12 @@ public partial class LinuxInstallerTests : IDisposable
                 File.Copy(debPackage, Path.Combine(_contextDir, Path.GetFileName(debPackage)));
             }
 
-            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21DebPackage);
+            await DownloadPackagesAsync(packageArchitecture, packageType);
             _debContextInitialized = true;
         }
 
-        if (!_sharedContextInitialized)
+        // Some tests do not need shared context
+        if (initializeSharedContext && !_sharedContextInitialized)
         {
             // Copy nuget packages
             string nugetPackagesDir = Path.Combine(_contextDir, "packages");
@@ -183,16 +256,11 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    private async Task DownloadPackagesAsync(string packageArchitecture, PackageType packageType, Uri netStandardPackageUri)
+    private async Task DownloadPackagesAsync(string packageArchitecture, PackageType packageType)
     {
         // Collect URLs and file names for downloading
         var downloadsToProcess = new List<(Uri url, string fileName)>();
         
-        if (Config.Architecture == Architecture.X64)
-        {
-            downloadsToProcess.Add((netStandardPackageUri, netStandardPackageUri.Segments.Last()));
-        }
-
         // Since this is for a non-1xx branch, we never produced runtime packages. Download these from
         // the referenced 1xx build instead.
         if (!Config.DotNetBuildSharedComponents)
@@ -374,11 +442,6 @@ public partial class LinuxInstallerTests : IDisposable
         AddPackage(packageList, AspNetCoreRuntimePrefix, packageType);
         AddPackage(packageList, AspNetCoreTargetingPackPrefix, packageType);
         AddPackage(packageList, DotnetApphostPackPrefix, packageType);
-        if (Config.Architecture == Architecture.X64)
-        {
-            // netstandard package exists for x64 only
-            AddPackage(packageList, NetStandardTargetingPackPrefix, packageType);
-        }
         AddPackage(packageList, DotnetSdkPrefix, packageType);
 
         return packageList;
@@ -495,5 +558,250 @@ public partial class LinuxInstallerTests : IDisposable
 
         using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await response.Content.CopyToAsync(fileStream);
+    }
+
+    private void ValidatePackageMetadata(string image, PackageType packageType)
+    {
+        List<string> list = GetPackageList(image, packageType);
+        ValidatePackageDependencies(list, packageType);
+    }
+
+    private void ValidatePackageDependencies(List<string> list, PackageType packageType)
+    {
+        foreach (string package in list)
+        {
+            // Skip runtime-deps packages as they are not expected to have .NET dependencies
+            if (package.StartsWith(DotnetRuntimeDepsPrefix))
+            {
+                continue;
+            }
+
+            EnsurePackageContainsExpectedDependencies(package, packageType);
+        }
+    }
+
+    private void EnsurePackageContainsExpectedDependencies(string package, PackageType packageType)
+    {
+        List<string> dependencies = GetPackageDependencies(package, packageType);
+
+        string packagePrefix = GetPackagePrefixFromPackageName(package);
+        List<string> expectedDependencies = _expectedPackageDependencies.ContainsKey(packagePrefix)
+            ? _expectedPackageDependencies[packagePrefix]
+            : [];
+
+        Assert.Equal(expectedDependencies.OrderBy(x => x), dependencies.OrderBy(x => x));
+    }
+
+    private string GetPackagePrefixFromPackageName(string packageName)
+    {
+        Match match = PackagePrefixFromPackageNameRegex.Match(packageName);
+        if (match.Success)
+        {
+            return match.Value;
+        }
+
+        Assert.Fail($"Could not extract package prefix from package name: {packageName}");
+        return string.Empty;
+    }
+
+    private List<string> GetPackageDependencies(string package, PackageType packageType)
+    {
+        string packagePath = Path.Combine(_contextDir, package);
+        if (!File.Exists(packagePath))
+        {
+            _outputHelper.WriteLine($"Package file not found: {packagePath}");
+            return [];
+        }
+
+        if (packageType == PackageType.Deb)
+        {
+            return GetDebianPackageDependencies(packagePath);
+        }
+        else if (packageType == PackageType.Rpm)
+        {
+            return GetRpmPackageDependencies(packagePath);
+        }
+
+        return [];
+    }
+
+    private List<string> GetRpmPackageDependencies(string packagePath)
+    {
+        throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
+    }
+
+    private List<string> GetDebianPackageDependencies(string packagePath)
+    {
+        try
+        {
+            using FileStream debStream = File.OpenRead(packagePath);
+            using ArReader ar = new ArReader(debStream, false);
+
+            // Find control.tar.* entry
+            while (ar.GetNextEntry() is ArEntry arEentry)
+            {
+                if (!arEentry.Name.StartsWith("control.tar", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                using MemoryStream controlArchiveData = new MemoryStream((int)arEentry.DataStream.Length);
+                arEentry.DataStream?.CopyTo(controlArchiveData);
+                controlArchiveData.Position = 0;
+
+                Stream decompressed =
+                    arEentry.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ?
+                        new GZipStream(controlArchiveData, CompressionMode.Decompress, leaveOpen: false) :
+                    // Future compressors can be added here (xz, zst). Fallback: treat as plain.
+                        controlArchiveData;
+
+                using (decompressed)
+                {
+                    // Read tar entries to find "control" file
+                    using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
+                    TarEntry? entry;
+                    while ((entry = tarReader.GetNextEntry()) is not null)
+                    {
+                        if (entry.Name
+                            .TrimStart('.', '/')
+                            .Equals("control", StringComparison.Ordinal))
+                        {
+                            using MemoryStream controlFileData = new MemoryStream();
+                            entry.DataStream?.CopyTo(controlFileData);
+                            string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
+                            File.WriteAllText(Path.Combine(Path.GetTempPath(), "control.txt"), controlContent);
+                            return ParseDebControlDependencies(controlContent);
+                        }
+                    }
+                }
+            }
+
+            _outputHelper.WriteLine($"No control.tar.* entry found in {packagePath}");
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _outputHelper.WriteLine($"Error parsing DEB package '{packagePath}': {ex}");
+            return [];
+        }
+    }
+
+    private static List<string> ParseDebControlDependencies(string contents)
+    {
+        Match match = DependsLineRegex.Match(contents);
+        if (!match.Success)
+        {
+            return [];
+        }
+
+        string dependsLine = match.Groups[1].Value.Trim();
+        if (dependsLine.Length == 0)
+        {
+            return [];
+        }
+
+        var results = new List<string>();
+
+        foreach (string segment in dependsLine.Split(','))
+        {
+            string part = segment.Trim();
+            if (part.Length == 0)
+            {
+                continue;
+            }
+
+            // If there are alternates (pkgA | pkgB), keep only the first one as the dependency
+            int pipeIndex = part.IndexOf('|');
+            if (pipeIndex >= 0)
+            {
+                part = part.Substring(0, pipeIndex).Trim();
+            }
+
+            part = RemoveVersionConstraintRegex.Replace(part, "").Trim();
+
+            // Skip native lib packages
+            if (part.Length > 0 && !part.StartsWith("lib"))
+            {
+                results.Add(part);
+            }
+        }
+
+        return results;
+    }
+
+    private void ValidatePackageList(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? "*.rpm" : "*.deb";
+        List<string> expectedPatterns = GetExpectedPackagePatterns(packageType).OrderBy(p => p).ToList();
+
+        // Find all packages of the specified type and normalize by removing version numbers
+        List<string> normalizedActual = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
+            .Select(path => RemoveVersionFromPackageNameRegex.Replace(Path.GetFileName(path), "*"))
+            .Distinct()
+            .OrderBy(name => name)
+            .ToList();
+
+        Assert.True(
+            expectedPatterns.SequenceEqual(normalizedActual),
+            $"Package list validation failed for {packageType}:\nExpected:\n{string.Join("\n", expectedPatterns)}\nActual:\n{string.Join("\n", normalizedActual)}"
+        );
+    }
+
+    private List<string> GetExpectedPackagePatterns(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? ".rpm" : ".deb";
+        string arch = Config.Architecture == Architecture.X64 ? "x64" :
+                     (packageType == PackageType.Rpm ? "aarch64" : "arm64");
+
+        var patterns = new List<string>();
+
+        // Base package prefixes (common to both RPM and DEB)
+        var basePackages = new List<string>
+        {
+            "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
+            "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
+        };
+
+        // Add runtime-deps for DEB only (RPM only has distro-specific variants)
+        if (packageType == PackageType.Deb)
+        {
+            basePackages.Add("dotnet-runtime-deps");
+        }
+
+        // Standard variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-{arch}{extension}");
+        }
+
+        // New key variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-newkey-{arch}{extension}");
+        }
+
+        if (packageType == PackageType.Rpm)
+        {
+            // Azure Linux variants
+            foreach (string package in basePackages)
+            {
+                patterns.Add($"{package}-*-azl-{arch}{extension}");
+            }
+
+            // Runtime deps distro variants (RPM only)
+            string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+            foreach (string distro in distros)
+            {
+                patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
+
+                // `azl` deps packages do not have a -newkey- variant
+                if (distro != "azl.3")
+                {
+                    patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+                }
+            }
+        }
+
+        return patterns;
     }
 }

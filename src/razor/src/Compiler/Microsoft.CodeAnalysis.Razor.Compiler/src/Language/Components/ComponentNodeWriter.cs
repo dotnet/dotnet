@@ -75,7 +75,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         return node.Diagnostics.Any(d => d.Id == ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id);
     }
 
-    protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType, bool allowNameof)
+    protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType, bool allowNameof, bool mapComponentStartTag)
     {
         if (context == null)
         {
@@ -166,7 +166,18 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         context.CodeWriter.Write(".");
         context.CodeWriter.Write(ComponentsApi.RenderTreeBuilder.OpenComponent);
         context.CodeWriter.Write("<");
-        context.CodeWriter.Write(node.Component.TypeName);
+
+        if (mapComponentStartTag)
+        {
+            var nonGenericTypeName = TypeNameHelper.GetNonGenericTypeName(node.Component.TypeName, out var genericTypeParameterList);
+            WriteComponentTypeName(context, node.Component, nonGenericTypeName);
+            context.CodeWriter.Write(genericTypeParameterList);
+        }
+        else
+        {
+            context.CodeWriter.Write(node.Component.TypeName);
+        }
+
         context.CodeWriter.Write(">(");
         context.CodeWriter.Write("seq");
         context.CodeWriter.Write(");");
@@ -227,7 +238,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     break;
 
                 case ReferenceCaptureIntermediateNode capture:
-                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, capture.IsComponentCapture ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture);
+                    var methodName = capture.IsComponentCapture
+                        ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture
+                        : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture;
+
+                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, methodName);
                     context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 
@@ -371,7 +386,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             {
                 var attributeSourceSpan = (SourceSpan)(attribute.PropertySpan ?? attribute.OriginalAttributeSpan);
                 var requiresEscaping = attribute.PropertyName.IdentifierRequiresEscaping();
-                using (context.CodeWriter.BuildEnhancedLinePragma(attributeSourceSpan, context, characterOffset: requiresEscaping ? 1 : 0))
+                using (context.BuildEnhancedLinePragma(attributeSourceSpan, characterOffset: requiresEscaping ? 1 : 0))
                 {
                     context.CodeWriter.WriteIdentifierEscapeIfNeeded(attribute.PropertyName);
                     context.CodeWriter.WriteLine(attribute.PropertyName);
@@ -523,6 +538,42 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         else
         {
             TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+        }
+    }
+
+    protected static void WriteComponentTypeName(CodeRenderingContext context, ComponentIntermediateNode node, ReadOnlyMemory<char> nonGenericTypeName)
+    {
+        // The type name we are given may or may not be globally qualified, and we want to map it to the component start
+        // tag, which may or may not be fully qualified. ie "global::My.Fun.Component" could map to just "Component"
+
+        // Write out "global::" if it's present, and trim it off
+        var lastColon = nonGenericTypeName.Span.LastIndexOf(':');
+        if (lastColon > -1)
+        {
+            lastColon++;
+            context.CodeWriter.Write(nonGenericTypeName[0..lastColon]);
+            nonGenericTypeName = nonGenericTypeName.Slice(lastColon);
+        }
+
+        // If the start tag is shorter than the type name, then it must not be a fully qualified tag, so write out
+        // the namespace parts and trim. Razor components don't support nested types, so this logic doesn't either.
+        if (node.StartTagSpan.Length < nonGenericTypeName.Length)
+        {
+            var lastDot = nonGenericTypeName.Span.LastIndexOf('.');
+            if (lastDot > -1)
+            {
+                lastDot++;
+                context.CodeWriter.Write(nonGenericTypeName[0..lastDot]);
+                nonGenericTypeName = nonGenericTypeName.Slice(lastDot);
+            }
+        }
+
+        var offset = nonGenericTypeName.Span.StartsWith('@')
+            ? 1
+            : 0;
+        using (context.BuildEnhancedLinePragma(node.StartTagSpan, offset))
+        {
+            context.CodeWriter.Write(nonGenericTypeName);
         }
     }
 

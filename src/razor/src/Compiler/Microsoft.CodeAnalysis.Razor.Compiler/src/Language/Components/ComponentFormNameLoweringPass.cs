@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,7 +12,10 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
     // Run after component lowering pass
     public override int Order => 50;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -21,8 +25,8 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
-            if (node.TagHelper.IsFormNameTagHelper())
+            var node = reference.Node;
+            if (node.TagHelper.Kind == TagHelperKind.FormName)
             {
                 var parent = reference.Parent;
 

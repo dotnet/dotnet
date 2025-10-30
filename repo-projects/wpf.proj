@@ -13,4 +13,8 @@
     <RepositoryReference Include="winforms" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EnvironmentVariables Include="DisableNativeToolsetInstalls=1"  Condition="'$(BuildOS)' != 'windows'" />
+  </ItemGroup>
+
 </Project>

@@ -30,6 +30,8 @@
     <CertificatesSignInfo Include="MacDeveloperWithNotarization" MacCertificate="MacDeveloper" MacNotarizationAppName="dotnet" />
     <CertificatesSignInfo Include="MacDeveloperVNextWithNotarization" MacCertificate="MacDeveloperVNext" MacNotarizationAppName="dotnet" />
     <CertificatesSignInfo Include="MacDeveloperVNextHardenWithNotarization" MacCertificate="MacDeveloperVNextHarden" MacNotarizationAppName="dotnet" />
+    <!-- Certificates Which support detached signatures -->
+    <CertificatesSignInfo Include="LinuxSignTar" SupportsDetachedSignature="true" />
   </ItemGroup>
 
   <!-- Only publish packages that contain this build's Target RID in the name.
@@ -69,6 +71,7 @@
     <StrongNameSignInfo Include="StrongName" PublicKeyToken="b03f5f7f11d50a3a" CertificateName="Microsoft400" />
     <!-- Do not include specific key files if full assembly signing is not supported, as they will not be usable when we sign. -->
     <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\Open.snk" PublicKeyToken="cc7b13ffcd2ddd51" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
+    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\AspNetCore.snk" PublicKeyToken="adb9793829ddae60" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
 
     <!--
       Map of file extensions to default certificate name. Files with these extensions are
@@ -103,6 +106,11 @@
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
     <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
+
+    <!-- Explicitly use the "new" LinuxSign cert. -->
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.rpm" />
+    <NewKeyLinuxPackage Include="$(ArtifactsPackagesDir)**/*-newkey-*.deb" />
+    <FileSignInfo Include="@(NewKeyLinuxPackage->'%(Filename)%(Extension)')" CertificateName="LinuxSign500207PGP" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400

@@ -244,16 +244,22 @@ Questo flag è sperimentale e potrebbe non funzionare come previsto.
                      This option is not supported.
                      The maximum number of threads used is determined by the
                      -maxCpuCount switch.
+                     In case of multi-threaded mode on
+                     and MSBUILDFORCEALLTASKSOUTOFPROC=1
+                     maxCpuCount cannot be greater than 256.
                      (Short form: -mt)
     </source>
-        <target state="translated">  -Multithreading
-                     Abilita la modalità multithread SPERIMENTALE in MSBuild.
+        <target state="translated">  -multithreading
+                     Abilitare la modalità multithread SPERIMENTALE in MSBuild.
                      Ciò significa che MSBuild userà più thread
                      per creare progetti in parallelo,
                      invece di più processi.
                      Questa opzione non è supportata.
                      Il numero massimo di thread usati è determinato da
                      Opzione -maxCpuCount.
+                     In caso di modalità multithread su
+                     e MSBUILDFORCEALLTASKSOUTOFPROC=1
+                     maxCpuCount non può essere maggiore di 256.
                      (Forma breve: -mt)
     </target>
         <note />
@@ -282,12 +288,12 @@ Questo flag è sperimentale e potrebbe non funzionare come previsto.
         <source>  -check
                      Enables BuildChecks during the build.
                      BuildCheck enables evaluating rules to ensure properties
-                     of the build. For more info see aka.ms/buildcheck
+                     of the build. For more info see https://aka.ms/buildcheck
 	</source>
         <target state="translated">  -check
                      Abilita BuildChecks durante la compilazione.
                      BuildCheck consente di valutare le regole per garantire le proprietà 
-                     della compilazione. Per altre informazioni, vedere aka.ms/buildcheck
+                     della compilazione. Per altre informazioni, vedere https://aka.ms/buildcheck
 	</target>
         <note>
     {Locked="-check"}{Locked="BuildChecks"}{Locked="BuildCheck"}
@@ -1515,6 +1521,11 @@ Nota: livello di dettaglio dei logger di file
       <trans-unit id="MSBuildDebugPath">
         <source>MSBuild logs and debug information will be at "{0}"</source>
         <target state="translated">I log e le informazioni di debug di MSBuild sono contenuti in "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaxCpuCountTooLargeForMultiThreadedAndForceAllTasksOutOfProc">
+        <source>With multiThreaded mode on and MSBUILDFORCEALLTASKSOUTOFPROC=1, maxCpuCount cannot be greater that {0}.</source>
+        <target state="translated">Con la modalità multithread attivata e MSBUILDFORCEALLTASKSOUTOFPROC=1, maxCpuCount non può essere maggiore di {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingFeatureAvailabilityError">

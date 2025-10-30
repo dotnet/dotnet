@@ -23,7 +23,8 @@
     <PropertyGroup>
       <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
       <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
-      <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' == 'true'">x86</MsiArch>
+      <MsiArch Condition="'$(GenerateExeBundle)' != 'true'">$(InstallerTargetArchitecture)</MsiArch>
     </PropertyGroup>
 
     <Error
@@ -260,6 +261,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <CandleVariables Include="MicrosoftEula" Value="$(MSBuildThisFileDirectory)eula.rtf" />
       <CandleVariables Include="InstallerVersion" Value="$(WixInstallerVersion)" />
     </ItemGroup>
   </Target>
@@ -323,6 +325,8 @@
             RunHeatHarvester">
     <PropertyGroup>
       <WixDependencyKeyName Condition="'$(WixDependencyKeyName)' == ''">$(InstallerName.Replace('-', '_'))</WixDependencyKeyName>
+      <!-- Use backwards compatible GUID generation. -->
+      <WixAdditionalOptions>-bcgg</WixAdditionalOptions>
     </PropertyGroup>
 
     <ItemGroup>
@@ -338,6 +342,7 @@
       <CandleVariables Include="BuildVersion" Value="$(MsiVersionString)" />
       <CandleVariables Include="NugetVersion" Value="$(Version)" />
       <CandleVariables Include="InstallerPlatform" Value="$(MsiArch)" />
+      <CandleVariables Include="Platform" Value="$(InstallerTargetArchitecture)" />
       <CandleVariables Include="TargetArchitectureDescription" Value="$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart)" />
       <CandleVariables Include="UpgradeCode" Value="$(UpgradeCode)" />
       <CandleVariables Include="MajorUpgradeSchedule" Value="$(MajorUpgradeSchedule)" Condition="'$(MajorUpgradeSchedule)' != ''" />
@@ -360,6 +365,7 @@
 
       <_wixArgs>$(_wixArgs) $(AdditionalCandleArgs)</_wixArgs>
       <_wixArgs>$(_wixArgs) $(AdditionalLightArgs)</_wixArgs>
+      <_wixArgs>$(_wixArgs) $(WixAdditionalOptions)</_wixArgs>
       
       <_wixCommand>wix.exe build $(_wixArgs)</_wixCommand>
     </PropertyGroup>
@@ -377,8 +383,8 @@
       IgnoreStandardErrorWarningFormat="true"
       RetryDelayBase="2" />
 
-    <!-- TODO this fails on preprocessor directives -->
     <CreateWixBuildWixpack
+      AdditionalOptions="$(WixAdditionalOptions)"
       Cultures="en-us"
       DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
       Extensions="@(WixExtensions)"
@@ -462,24 +468,10 @@
         ComponentMsiFile=$(CrossArchMsiFile)" />
   </Target>
 
-  <!--
-    Acquire NuGet.exe, if not present.
-  -->
-  <Target Name="_AcquireNuGetExe">
-    <MSBuild
-      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj"
-      Targets="AcquireNuGetExeCore"
-      Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
-                  RepoRoot=$(RepoRoot)">
-      <Output TaskParameter="TargetOutputs" PropertyName="NuGetExeFile" />
-    </MSBuild>
-  </Target>
-  
   <Target Name="GenerateVSInsertionNupkgCore"
           DependsOnTargets="
             _GetTargetOSArchInfo;
             _AcquireWix;
-            _AcquireNuGetExe;
             _GetInstallerProperties;
             GetWixBuildConfiguration">
     <PropertyGroup>
@@ -490,25 +482,12 @@
       <MangledNuspecFile>$(MSBuildThisFileDirectory)vs\VS.Redist.Common.Component.nuspec.txt</MangledNuspecFile>
       <VsInsertionNuspecFile>$(IntermediateOutputPath)vs\VS.Redist.Common.Component.nuspec</VsInsertionNuspecFile>
 
-      <PackProperties />
-      <PackProperties>$(PackProperties)COMPONENT_MSI=$(ComponentMsiFile);</PackProperties>
-      <PackProperties>$(PackProperties)ARCH=$(MsiArch);</PackProperties>
-      <PackProperties>$(PackProperties)COMPONENT_NAME=$(VSInsertionComponentName);</PackProperties>
-      <PackProperties>$(PackProperties)FRIENDLY_NAME=$(ProductBrandName);</PackProperties>
-      <PackProperties>$(PackProperties)PROJECT_URL=$(RepositoryUrl);</PackProperties>
-
-      <PackArgs />
-      <PackArgs>$(PackArgs) $(VsInsertionNuspecFile)</PackArgs>
-      <PackArgs>$(PackArgs) -Version $(Version)</PackArgs>
-      <PackArgs>$(PackArgs) -OutputDirectory $(ArtifactsNonShippingPackagesDir)</PackArgs>
-      <PackArgs>$(PackArgs) -NoDefaultExcludes</PackArgs>
-      <PackArgs>$(PackArgs) -NoPackageAnalysis</PackArgs>
-      <PackArgs>$(PackArgs) -Properties "$(PackProperties)"</PackArgs>
+      <PackProperties>COMPONENT_MSI=$(ComponentMsiFile);ARCH=$(MsiArch);COMPONENT_NAME=$(VSInsertionComponentName);FRIENDLY_NAME=$(ProductBrandName);PROJECT_URL=$(RepositoryUrl)</PackProperties>
     </PropertyGroup>
 
     <Copy SourceFiles="$(MangledNuspecFile)" DestinationFiles="$(VsInsertionNuspecFile)" />
 
-    <Exec Command="$(NuGetExeFile) pack $(PackArgs)" StandardOutputImportance="normal" />
+    <Exec Command="$(DotNetTool) pack &quot;$(VsInsertionNuspecFile)&quot; --property &quot;$(PackProperties)&quot; --version $(Version) -o &quot;$(ArtifactsNonShippingPackagesDir.TrimEnd('\\'))&quot;" StandardOutputImportance="normal" />
 
     <Error
       Condition="!Exists('$(NupkgOutputFile)')"

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -89,4 +87,23 @@ public abstract class IntermediateNodeWriter
     public abstract void BeginWriterScope(CodeRenderingContext context, string writer);
 
     public abstract void EndWriterScope(CodeRenderingContext context);
+
+    protected static void RenderCSharpCode(CodeRenderingContext context, CSharpCodeIntermediateNode node)
+    {
+        var writer = context.CodeWriter;
+
+        foreach (var child in node.Children)
+        {
+            if (child is CSharpIntermediateToken token)
+            {
+                context.AddSourceMappingFor(token);
+                writer.Write(token.Content);
+            }
+            else
+            {
+                // There may be something else inside the expression like an extension node.
+                context.RenderNode(child);
+            }
+        }
+    }
 }

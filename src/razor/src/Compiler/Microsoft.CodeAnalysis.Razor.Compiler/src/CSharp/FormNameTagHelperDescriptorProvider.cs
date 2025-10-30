@@ -3,10 +3,10 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -15,12 +15,12 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
 {
     private static readonly Lazy<TagHelperDescriptor> s_formNameTagHelper = new(CreateFormNameTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
-        var targetSymbol = context.TargetSymbol;
-        if (targetSymbol is not null && targetSymbol.Name != ComponentsApi.AssemblyName)
+        var targetAssembly = context.TargetAssembly;
+        if (targetAssembly is not null && targetAssembly.Name != ComponentsApi.AssemblyName)
         {
             return;
         }
@@ -36,7 +36,8 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
             return;
         }
 
-        if (targetSymbol is not null && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilder.ContainingAssembly))
+        if (targetAssembly is not null &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilder.ContainingAssembly))
         {
             return;
         }
@@ -47,19 +48,19 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
     private static TagHelperDescriptor CreateFormNameTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            kind: ComponentMetadata.FormName.TagHelperKind,
+            kind: TagHelperKind.FormName,
             name: "FormName",
             assemblyName: ComponentsApi.AssemblyName,
             builder: out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.FormNameTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.FormName",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "FormName");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.FormName.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.FormName.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.FormName"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.FormNameTagHelper);
 
         builder.TagMatchingRule(rule =>
         {

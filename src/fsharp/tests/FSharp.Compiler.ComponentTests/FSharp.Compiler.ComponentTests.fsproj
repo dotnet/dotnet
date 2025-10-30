@@ -83,6 +83,7 @@
     <Compile Include="Conformance\GeneratedEqualityHashingComparison\Basic\Basic.fs" />
     <Compile Include="Conformance\GeneratedEqualityHashingComparison\IComparison\IComparison.fs" />
     <Compile Include="Conformance\Expressions\ApplicationExpressions\BasicApplication\BasicApplication.fs" />
+    <Compile Include="Conformance\Expressions\ApplicationExpressions\Ctor.fs" />
     <Compile Include="Conformance\Expressions\BindingExpressions\BindingExpressions.fs" />
     <Compile Include="Conformance\Expressions\ComputationExpressions\ComputationExpressions.fs" />
     <Compile Include="Conformance\Expressions\ObjectExpressions\ObjectExpressions.fs" />
@@ -229,6 +230,7 @@
     <Compile Include="ErrorMessages\UnitOfMeasureTests.fs" />
     <Compile Include="ErrorMessages\AbbreviationTests.fs" />
     <Compile Include="ErrorMessages\NamespaceTests.fs" />
+    <Compile Include="ErrorMessages\NameIsBoundMultipleTimesTests.fs" />
     <Compile Include="Language\IndexerSetterParamArray.fs" />
     <Compile Include="Language\MultiDimensionalArrayTests.fs" />
     <Compile Include="Language\RegressionTests.fs" />

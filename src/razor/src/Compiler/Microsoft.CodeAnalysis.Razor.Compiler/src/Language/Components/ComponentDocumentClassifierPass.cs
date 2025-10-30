@@ -7,18 +7,12 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
+internal sealed class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 {
-    private readonly RazorLanguageVersion _version;
-
-    public ComponentDocumentClassifierPass(RazorLanguageVersion version)
-    {
-        _version = version;
-    }
-
     public const string ComponentDocumentKind = "component.1.0";
 
     /// <summary>
@@ -49,10 +43,8 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         return codeDocument.FileKind.IsComponent();
     }
 
-    protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
-    {
-        return new ComponentCodeTarget(options, _version, TargetExtensions);
-    }
+    protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument)
+        => new ComponentCodeTarget(codeDocument, TargetExtensions);
 
     /// <inheritdoc />
     protected override void OnDocumentStructureCreated(
@@ -82,17 +74,15 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
         if (MangleClassNames)
         {
-            computedClass = ComponentMetadata.MangleClassName(computedClass);
+            computedClass = ComponentHelpers.MangleClassName(computedClass);
         }
 
         @class.NullableContext = true;
 
-        @namespace.Content = computedNamespace;
+        @namespace.Name = computedNamespace;
         @namespace.Source = computedNamespaceSpan;
-        @class.ClassName = computedClass;
-        @class.Modifiers.Clear();
-        @class.Modifiers.Add("public");
-        @class.Modifiers.Add("partial");
+        @class.Name = computedClass;
+        @class.Modifiers = CommonModifiers.PublicPartial;
 
         if (codeDocument.FileKind.IsComponentImport())
         {
@@ -101,11 +91,9 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             @class.BaseType = new BaseTypeWithModel("object");
 
             method.ReturnType = "void";
-            method.MethodName = "Execute";
-            method.Modifiers.Clear();
-            method.Modifiers.Add("protected");
-
-            method.Parameters.Clear();
+            method.Name = "Execute";
+            method.Modifiers = CommonModifiers.Protected;
+            method.Parameters = [];
         }
         else
         {
@@ -117,39 +105,32 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;
 
+            using var typeParameters = new PooledArrayBuilder<TypeParameter>();
+
             foreach (var typeParamReference in documentNode.FindDirectiveReferences(directiveType))
             {
-                var typeParamNode = (DirectiveIntermediateNode)typeParamReference.Node;
+                var typeParamNode = typeParamReference.Node;
                 if (typeParamNode.HasDiagnostics)
                 {
                     continue;
                 }
 
                 // The first token is the type parameter's name, the rest are its constraints, if any.
-                var typeParameter = typeParamNode.Tokens.First();
+                var name = typeParamNode.Tokens.First();
                 var constraints = typeParamNode.Tokens.Skip(1).FirstOrDefault();
 
-                @class.TypeParameters.Add(new TypeParameter()
-                {
-                    ParameterName = typeParameter.Content,
-                    ParameterNameSource = typeParameter.Source,
-                    Constraints = constraints?.Content,
-                    ConstraintsSource = constraints?.Source,
-                });
+                typeParameters.Add(new(name.Content, name.Source, constraints?.Content, constraints?.Source));
             }
 
-            method.ReturnType = "void";
-            method.MethodName = ComponentsApi.ComponentBase.BuildRenderTree;
-            method.Modifiers.Clear();
-            method.Modifiers.Add("protected");
-            method.Modifiers.Add("override");
+            @class.TypeParameters = typeParameters.ToImmutableAndClear();
 
-            method.Parameters.Clear();
-            method.Parameters.Add(new MethodParameter()
-            {
-                ParameterName = ComponentsApi.RenderTreeBuilder.BuilderParameter,
-                TypeName = $"global::{ComponentsApi.RenderTreeBuilder.FullTypeName}",
-            });
+            method.ReturnType = "void";
+            method.Name = ComponentsApi.ComponentBase.BuildRenderTree;
+            method.Modifiers = CommonModifiers.ProtectedOverride;
+
+            method.Parameters = [new(
+                name: ComponentsApi.RenderTreeBuilder.BuilderParameter,
+                type: $"global::{ComponentsApi.RenderTreeBuilder.FullTypeName}")];
         }
     }
 

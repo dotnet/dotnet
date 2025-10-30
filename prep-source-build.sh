@@ -32,6 +32,10 @@ IFS=$'\n\t'
 source="${BASH_SOURCE[0]}"
 REPO_ROOT="$( cd -P "$( dirname "$0" )" && pwd )"
 
+# Load common helper functions
+source "$REPO_ROOT/eng/download-source-built-archive.sh"
+source "$REPO_ROOT/eng/source-build-toolset-init.sh"
+
 function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
@@ -42,7 +46,6 @@ packagesDir="$REPO_ROOT/prereqs/packages"
 defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
-defaultDotnetSdk="$REPO_ROOT/.dotnet"
 defaultPsbDir="$packagesDir/previously-source-built"
 
 # SB prep arguments
@@ -57,14 +60,11 @@ runtime_source_feed='' # IBM requested these to support s390x scenarios
 runtime_source_feed_key='' # IBM requested these to support s390x scenarios
 
 # Binary Tooling arguments
-dotnetSdk=$defaultDotnetSdk
+customSdkDir=''
 psbDir=$defaultPsbDir
 
 artifactsBaseFileName="Private.SourceBuilt.Artifacts"
 artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
-
-sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
-sharedComponentsTarballPattern="$sharedComponentsBaseFileName.*.tar.gz"
 
 prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
 prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
@@ -112,11 +112,15 @@ while :; do
       removeBinaries=false
       ;;
     --with-sdk)
-      dotnetSdk=$2
+      customSdkDir="$(cd -P "$2" && pwd)"
       shift
       ;;
     --with-packages)
-      psbDir=$2
+      psbDir="$(cd -P "$2" && pwd)"
+      if [ ! -d "$psbDir" ]; then
+          echo "Custom previously built packages directory '$psbDir' does not exist"
+          exit 1
+      fi
       shift
       ;;
     *)
@@ -126,136 +130,6 @@ while :; do
 
   shift
 done
-
-# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
-# or a pre-existing .dotnet SDK directory must exist.
-if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ERROR: --no-sdk requires --no-bootstrap or a pre-existing .dotnet SDK directory.  Exiting..."
-  exit 1
-fi
-
-# Check to make sure curl exists to download the archive files
-if ! command -v curl &> /dev/null
-then
-  echo "  ERROR: curl not found.  Exiting..."
-  exit 1
-fi
-
-# Check if Private.SourceBuilt artifacts archive exists
-downloadPsbArtifacts=$downloadArtifacts
-packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
-  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadPsbArtifacts=false
-fi
-
-# Check if shared components archive exists
-downloadSharedComponentsArtifacts=$downloadArtifacts
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
-  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadSharedComponentsArtifacts=false
-fi
-
-# Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
-  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadPrebuilts=false
-fi
-
-# Check if dotnet is installed
-if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ./.dotnet SDK directory exists...it will not be installed"
-  installDotnet=false;
-fi
-
-# Helper to extract a property value from an XML file
-function GetXmlPropertyValue {
-  local propName="$1"
-  local filePath="$2"
-  local value=""
-  local line pattern
-  line=$(grep -m 1 "<$propName>" "$filePath" || :)
-  pattern="<$propName>(.*)</$propName>"
-  if [[ $line =~ $pattern ]]; then
-    value="${BASH_REMATCH[1]}"
-  fi
-  echo "$value"
-}
-
-# Helper to download a file with retries
-function DownloadWithRetries {
-  local url="$1"
-  local targetDir="$2"
-  (
-    cd "$targetDir" &&
-    for i in {1..5}; do
-      if curl -fL --retry 5 -O "$url"; then
-        return 0
-      else
-        case $? in
-          18)
-            sleep 3
-            ;;
-          *)
-            return 1
-            ;;
-        esac
-      fi
-    done
-    return 1
-  )
-}
-
-function DownloadArchive {
-  local label="$1"
-  local propertyName="$2"
-  local isRequired="$3"
-  local artifactsRid="$4"
-  local outputDir="$5"
-  local destinationFilenamePrefix="${6:-}"
-
-  local packageVersionsPath="$REPO_ROOT/eng/Versions.props"
-  local notFoundMessage="No $label found to download..."
-
-  local archiveVersion
-  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$packageVersionsPath")
-  if [[ -z "$archiveVersion" ]]; then
-    if [ "$isRequired" == true ]; then
-      echo "  ERROR: $notFoundMessage"
-      exit 1
-    else
-      echo "  $notFoundMessage"
-      return
-    fi
-  fi
-
-  local archiveUrl
-  if [[ "$propertyName" == "MicrosoftNETSdkVersion" || "$propertyName" == *Artifacts* ]]; then
-    archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Prebuilts* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
-  else
-    echo "  ERROR: Unknown archive property name: $propertyName"
-    exit 1
-  fi
-
-  echo "  Downloading $label from $archiveUrl..."
-  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
-    echo "  ERROR: Failed to download $archiveUrl"
-    exit 1
-  fi
-
-  # Rename the file if a destination filename prefix is provided
-  if [[ -n "$destinationFilenamePrefix" ]]; then
-    local downloadedFilename
-    downloadedFilename=$(basename "$archiveUrl")
-    # Extract the suffix from the downloaded filename
-    local suffix="${downloadedFilename#$artifactsBaseFileName}"
-    local newFilename="$destinationFilenamePrefix$suffix"
-    mv "$outputDir/$downloadedFilename" "$outputDir/$newFilename"
-    echo "  Renamed $downloadedFilename to $newFilename"
-  fi
-}
 
 function BootstrapArtifacts {
   DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
@@ -293,9 +167,47 @@ function BootstrapArtifacts {
   rm -rf "$workingDir"
 }
 
+# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
+# or a pre-existing .dotnet SDK directory must exist.
+if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ]; then
+  echo "  ERROR: --no-sdk requires --no-bootstrap or a pre-existing .dotnet SDK directory.  Exiting..."
+  exit 1
+fi
+
+# Check to make sure curl exists to download the archive files
+if ! command -v curl &> /dev/null
+then
+  echo "  ERROR: curl not found.  Exiting..."
+  exit 1
+fi
+
+# Check if Private.SourceBuilt artifacts archive exists
+downloadPsbArtifacts=$downloadArtifacts
+packagesArchiveDir="$packagesDir/archive/"
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPsbArtifacts=false
+fi
+
+# Check if Private.SourceBuilt prebuilts archive exists
+if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPrebuilts=false
+fi
+
+# Check if dotnet is installed
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
+if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
+  installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
+  if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
+    echo "  Skipping SDK installation - version $expectedSdkVersion detected"
+    installDotnet=false
+  fi
+fi
+
 # Check for the version of dotnet to install
 if [ "$installDotnet" == true ]; then
-  echo "  Installing dotnet..."
+  echo "  Installing .NET SDK $expectedSdkVersion"
   use_installed_dotnet_cli=false
   (source ./eng/common/tools.sh && InitializeDotNetCli true)
 fi
@@ -309,19 +221,14 @@ if [ "$downloadPsbArtifacts" == true ]; then
   fi
 fi
 
-if [ "$downloadSharedComponentsArtifacts" == true ]; then
-  DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "$artifactsRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName"
-fi
-
 if [ "$downloadPrebuilts" == true ]; then
-
   DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
 fi
 
 if [ "$removeBinaries" == true ]; then
 
   originalPackagesDir=$packagesDir
-  # Create working directory for extracking packages
+  # Create working directory for extracting packages
   workingDir=$(mktemp -d)
 
   # If --with-packages is not passed, unpack PSB artifacts
@@ -341,7 +248,10 @@ if [ "$removeBinaries" == true ]; then
     psbDir=$workingDir
   fi
 
-  "$dotnetSdk/dotnet" build \
+  # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
+  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true"
+
+  "$_InitializeBuildTool" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
     "/p:BinariesMode=Clean" \
     "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \

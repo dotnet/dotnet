@@ -13,7 +13,7 @@
 #
 
 # False positive
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/bundle/bundle.wxs|unknown-license-reference
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/bundle/bundle.wxs|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/templates/debian/copyright|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|unknown-license-reference
 
@@ -22,7 +22,7 @@ src/arcade/eng/xcopy-msbuild/msbuild.nuspec|ms-visual-2015-sdk
 src/arcade/src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses/*
 
 # Applies to installer, not source
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/eula.rtf
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/eula.rtf
 
 #
 # aspnetcore
@@ -114,6 +114,9 @@ src/nuget-client/test/TestUtilities/Test.Utility/JsonData.cs
 # roslyn
 #
 
+# Reference to a license, not applicable to source
+src/roslyn/THIRD-PARTY-NOTICES.txt
+
 # Test data
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
@@ -152,6 +155,7 @@ src/runtime/src/libraries/System.Runtime/tests/System.Runtime.Tests/TestModule/R
 # Reference to a license, not applicable to source
 src/runtime/docs/project/copyright.md
 src/runtime/docs/project/licensing-assets.md
+src/runtime/docs/workflow/building/coreclr/ios.md
 src/runtime/src/coreclr/nativeaot/docs/compiling.md|openssl-ssleay
 src/runtime/src/libraries/System.Text.Json/roadmap/images/core-components.txt|unknown-license-reference
 src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-components.txt

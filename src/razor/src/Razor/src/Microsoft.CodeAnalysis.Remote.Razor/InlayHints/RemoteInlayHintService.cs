@@ -26,6 +26,8 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
             => new RemoteInlayHintService(in args);
     }
 
+    private readonly InlayHintCacheWrapperProvider _cacheWrapperProvider = args.ExportProvider.GetExportedValue<InlayHintCacheWrapperProvider>();
+
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -67,9 +69,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         var textDocument = inlayHintParams.TextDocument.WithUri(generatedDocument.CreateUri());
         var range = projectedLinePositionSpan.ToRange();
 
-#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
-        var hints = await InlayHints.GetInlayHintsAsync(generatedDocument, textDocument, range, displayAllOverride, cancellationToken).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
+        var hints = await InlayHints.GetInlayHintsAsync(generatedDocument, textDocument, range, displayAllOverride, _cacheWrapperProvider.GetCache(), cancellationToken).ConfigureAwait(false);
         if (hints is null)
         {
             return null;
@@ -96,7 +96,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                 // Inlay hints in directives are okay, eg '@attribute [Description(description: "Desc")]', but if the hint is going to be
                 // at the very start of the directive, we want to strip any TextEdit as it would make for an invalid document. eg: '// @page template: "/"'
                 if (node?.SpanStart == hostDocumentIndex &&
-                    node.FirstAncestorOrSelf<RazorDirectiveSyntax>(n => n.DirectiveDescriptor.Kind == DirectiveKind.SingleLine) is not null)
+                    node.FirstAncestorOrSelf<RazorDirectiveSyntax>(static n => n.IsDirectiveKind(DirectiveKind.SingleLine)) is not null)
                 {
                     hint.TextEdits = null;
                 }
@@ -131,8 +131,6 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
             .GetGeneratedDocumentAsync(cancellationToken)
             .ConfigureAwait(false);
 
-#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
-        return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, cancellationToken).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
+        return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, _cacheWrapperProvider.GetCache(), cancellationToken).ConfigureAwait(false);
     }
 }

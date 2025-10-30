@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 
@@ -21,35 +20,6 @@ internal static class GreenNodeExtensions
     internal static InternalSyntax.SyntaxList<T> ToGreenList<T>(this GreenNode node) where T : GreenNode
     {
         return new InternalSyntax.SyntaxList<T>(node);
-    }
-
-    public static TNode WithAnnotationsGreen<TNode>(this TNode node, params SyntaxAnnotation[] annotations) where TNode : GreenNode
-    {
-        var newAnnotations = new List<SyntaxAnnotation>();
-        foreach (var candidate in annotations)
-        {
-            if (!newAnnotations.Contains(candidate))
-            {
-                newAnnotations.Add(candidate);
-            }
-        }
-
-        if (newAnnotations.Count == 0)
-        {
-            var existingAnnotations = node.GetAnnotations();
-            if (existingAnnotations == null || existingAnnotations.Length == 0)
-            {
-                return node;
-            }
-            else
-            {
-                return (TNode)node.SetAnnotations(null);
-            }
-        }
-        else
-        {
-            return (TNode)node.SetAnnotations(newAnnotations.ToArray());
-        }
     }
 
     public static TNode WithDiagnosticsGreen<TNode>(this TNode node, RazorDiagnostic[] diagnostics)

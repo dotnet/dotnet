@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
@@ -19,13 +20,16 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 // 1. Adds diagnostics for missing generic type arguments
 // 2. Rewrites the type name of the component to substitute generic type arguments
 // 3. Rewrites the type names of parameters/child content to substitute generic type arguments
-internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after components/eventhandlers/ref/bind/templates. We want to validate every component
     // and it's usage of ChildContent.
     public override int Order => 160;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -382,13 +386,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var capture in node.Captures)
             {
-                if (capture.IsComponentCapture && capture.ComponentCaptureTypeName != null)
+                if (capture.IsComponentCapture)
                 {
-                    capture.ComponentCaptureTypeName = rewriter.Rewrite(capture.ComponentCaptureTypeName);
-                }
-                else if (capture.IsComponentCapture)
-                {
-                    capture.ComponentCaptureTypeName = "System.Object";
+                    capture.UpdateComponentCaptureTypeName(rewriter.Rewrite(capture.ComponentCaptureTypeName));
                 }
             }
 
@@ -414,9 +414,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void CreateTypeInferenceMethod(DocumentIntermediateNode documentNode, ComponentIntermediateNode node, List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes)
         {
-            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Content;
+            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Name;
             @namespace = string.IsNullOrEmpty(@namespace) ? "__Blazor" : "__Blazor." + @namespace;
-            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().ClassName;
+            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().Name;
 
             using var genericTypeConstraints = new PooledArrayBuilder<string>();
 
@@ -451,7 +451,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             {
                 namespaceNode = new NamespaceDeclarationIntermediateNode()
                 {
-                    Content = @namespace,
+                    Name = @namespace,
                     IsGenericTyped = true,
                 };
 
@@ -460,17 +460,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             var classNode = namespaceNode.Children
                 .OfType<ClassDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.ClassName == "TypeInference");
+                .FirstOrDefault(n => n.Name == "TypeInference");
             if (classNode == null)
             {
                 classNode = new ClassDeclarationIntermediateNode()
                 {
-                    ClassName = "TypeInference",
-                    Modifiers =
-                        {
-                            "internal",
-                            "static",
-                        },
+                    Name = "TypeInference",
+                    Modifiers = CommonModifiers.InternalStatic
                 };
                 namespaceNode.Children.Add(classNode);
             }

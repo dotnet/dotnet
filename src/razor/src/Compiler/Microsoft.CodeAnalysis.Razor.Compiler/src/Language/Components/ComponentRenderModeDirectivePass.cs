@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,7 +12,10 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
 {
     private const string GeneratedRenderModeAttributeName = "__PrivateComponentRenderModeAttribute";
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var @namespace = documentNode.FindPrimaryNamespace();
         var @class = documentNode.FindPrimaryClass();
@@ -29,20 +33,20 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
         // We don't need to worry about duplicate attributes as we have already replaced any multiples with MalformedDirective
         Debug.Assert(directives.Length == 1);
 
-        var child = ((DirectiveIntermediateNode)directives[0].Node).Children.FirstOrDefault();
+        var child = directives[0].Node.Children.FirstOrDefault();
         if (child == null)
         {
             return;
         }
 
         // generate the inner attribute class
-        var classDecl = new ClassDeclarationIntermediateNode()
+        var classDecl = new ClassDeclarationIntermediateNode
         {
-            ClassName = GeneratedRenderModeAttributeName,
+            Name = GeneratedRenderModeAttributeName,
             BaseType = new BaseTypeWithModel($"global::{ComponentsApi.RenderModeAttribute.FullTypeName}"),
+            Modifiers = CommonModifiers.PrivateSealed
         };
-        classDecl.Modifiers.Add("private");
-        classDecl.Modifiers.Add("sealed");
+
         classDecl.Children.Add(new CSharpCodeIntermediateNode()
         {
             Children =
@@ -74,9 +78,9 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
 
         // generate the attribute usage on top of the class
         var attributeNode = new CSharpCodeIntermediateNode();
-        var namespaceSeparator = string.IsNullOrEmpty(@namespace.Content) ? string.Empty : ".";
+        var namespaceSeparator = string.IsNullOrEmpty(@namespace.Name) ? string.Empty : ".";
         attributeNode.Children.Add(
-            IntermediateNodeFactory.CSharpToken($"[global::{@namespace.Content}{namespaceSeparator}{@class.ClassName}.{GeneratedRenderModeAttributeName}]"));
+            IntermediateNodeFactory.CSharpToken($"[global::{@namespace.Name}{namespaceSeparator}{@class.Name}.{GeneratedRenderModeAttributeName}]"));
 
         // Insert the new attribute on top of the class
         var childCount = @namespace.Children.Count;

@@ -39,6 +39,23 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SemanticTokensRangeParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
+    protected override async Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, TextDocument razorDocument, CancellationToken cancellationToken)
+    {
+        var result = await HandleRequestAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
+
+        if (result is not null)
+        {
+            // Roslyn uses frozen semantics for semantic tokens, so it could return results from an older project state.
+            // Every time they get a request they queue up a refresh, which will check the project checksums, and if there
+            // hasn't been any changes, will no-op. We call into that same logic here to ensure everything is up to date.
+            // See: https://github.com/dotnet/roslyn/blob/bb57f4643bb3d52eb7626f9863da177d9e219f1e/src/LanguageServer/Protocol/Handler/SemanticTokens/SemanticTokensHelpers.cs#L48-L52
+            var semanticTokensWrapperService = context.GetRequiredService<IRazorSemanticTokensRefreshQueue>();
+            await semanticTokensWrapperService.TryEnqueueRefreshComputationAsync(razorDocument.Project, cancellationToken).ConfigureAwait(false);
+        }
+
+        return result;
+    }
+
     protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
         => HandleRequestAsync(razorDocument, request.Range.ToLinePositionSpan(), cancellationToken);
 

@@ -19,8 +19,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
-    private readonly bool _useNewFormattingEngine = context.UseNewFormattingEngine;
-
     [FormattingTestFact]
     public async Task EmptyDocument()
     {
@@ -91,7 +89,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 """);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task RoslynFormatSpaceAfterDot()
     {
         await RunFormattingTestAsync(
@@ -115,7 +113,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             });
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task RoslynFormatSpaceAfterMethodCall()
     {
         await RunFormattingTestAsync(
@@ -159,7 +157,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             });
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task RoslynFormatSpaceAfterMethodCallAndDecl()
     {
         await RunFormattingTestAsync(
@@ -1874,14 +1872,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     public async Task FormatsShortBlock()
     {
         await RunFormattingTestAsync(
             input: """
+                    <div>
+                    </div>
                     @{<p></p>}
                     """,
             expected: """
+                    <div>
+                    </div>
                     @{
                         <p></p>
                     }
@@ -2571,7 +2573,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue2()
     {
@@ -2689,7 +2691,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue4()
     {
@@ -2741,7 +2743,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipFlipLineEndingInOldEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue5()
     {
@@ -3087,7 +3089,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task FormatEventHandlerAttributes()
     {
         await RunFormattingTestAsync(
@@ -3126,7 +3128,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task FormatEventCallbackAttributes()
     {
         await RunFormattingTestAsync(
@@ -3169,7 +3171,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Component);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task FormatBindAttributes()
     {
         await RunFormattingTestAsync(
@@ -3288,7 +3290,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             .ToString())
 
                     @{
-                    var x = @<p>Hi there!</p>
+                    var x = @<p>Hi there!</p>;
                     }
                     @x()
                     @(@x())
@@ -3331,7 +3333,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             .ToString())
 
                         @{
-                            var x = @<p>Hi there!</p>
+                            var x = @<p>Hi there!</p>;
                         }
                         @x()
                         @(@x())
@@ -3709,8 +3711,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         </div>
                     </section>
                     """,
-            expected: _useNewFormattingEngine
-                ? """
+            expected: """
                     @page
                     @model BlazorApp58.Pages.Index2Model
                     @{
@@ -3726,28 +3727,6 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         <div class="container">
                     @foreach (var item in Model.Images)
                     {
-                                <div>
-                                    <div>
-                                        }
-                                    </div>
-                        </section>
-                    """
-                : """
-                    @page
-                    @model BlazorApp58.Pages.Index2Model
-                    @{
-                    }
-
-                    <section class="section">
-                        <div class="container">
-                            <h1 class="title">Managed pohotos</h1>
-                            <p class="subtitle">@Model.ReferenceNumber</p>
-                        </div>
-                    </section>
-                    <section class="section">
-                        <div class="container">
-                            @foreach (var item in Model.Images)
-                            {
                                 <div>
                                     <div>
                                         }
@@ -5046,8 +5025,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             };
                     }
                     """,
-            expected: _useNewFormattingEngine
-                ? """
+            expected: """
                     @code {
                         private object _x = new()
                         {
@@ -5063,24 +5041,6 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                                     "There"
                                 },
                         };
-                    }
-                    """
-                : """
-                    @code {
-                        private object _x = new()
-                            {
-                                Name = "One",
-                                Goo = new
-                                {
-                                    First = 1,
-                                    Second = 2
-                                },
-                                Bar = new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                },
-                            };
                     }
                     """);
     }
@@ -5188,8 +5148,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         }
                     }
                     """,
-            expected: _useNewFormattingEngine
-                ? """
+            expected: """
                     <p></p>
                     
                     @code {
@@ -5214,34 +5173,6 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                                 Data = Model.WorkOrders,
                                 Title = "Work Orders"
                             };
-                        }
-                    }
-                    """
-                : """
-                    <p></p>
-                    
-                    @code {
-                        private void M()
-                        {
-                            var entries = new string[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                    
-                            object gridOptions = new()
-                                {
-                                    Columns = new GridColumn<WorkOrderModel>[]
-                                {
-                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
-                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
-                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
-                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
-                                },
-                                    Data = Model.WorkOrders,
-                                    Title = "Work Orders"
-                                };
                         }
                     }
                     """);
@@ -5356,8 +5287,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         }
                     }
                     """,
-            expected: _useNewFormattingEngine
-                ? """
+            expected: """
                     @code {
                         private void M()
                         {
@@ -5366,18 +5296,6 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                                 First = 1,
                                 Second = 2
                             };
-                        }
-                    }
-                    """
-                : """
-                    @code {
-                        private void M()
-                        {
-                            object entries = new()
-                                {
-                                    First = 1,
-                                    Second = 2
-                                };
                         }
                     }
                     """);
@@ -6082,7 +6000,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/9254")]
     public async Task RenderFragmentPresent()
     {
@@ -6127,7 +6045,144 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9254")]
+    public async Task RenderFragmentPresent2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            . Select(s => s.Trim())
+                            . ToArray();
+
+                    RenderFragment     R      =>      @<div></div>;
+                    }
+                    """,
+            expected: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                        string[] S(string s) =>
+                                s.Split(',')
+                                .Select(s => s.Trim())
+                                .ToArray();
+
+                        RenderFragment R => @<div></div>;
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9254")]
+    public async Task RenderFragmentPresent3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            . Select(s => s.Trim())
+                            . ToArray();
+
+                    RenderFragment R=>@<div></div>;
+                    }
+                    """,
+            expected: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                        string[] S(string s) =>
+                                s.Split(',')
+                                .Select(s => s.Trim())
+                                .ToArray();
+
+                        RenderFragment R => @<div></div>;
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9254")]
+    public async Task RenderFragmentPresent4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            . Select(s => s.Trim())
+                            . ToArray();
+
+                    RenderFragment R =>
+                        @<div></div>;
+                    }
+                    """,
+            expected: """
+                    @page "/"
+                    @code
+                    {
+                        void T()
+                        {
+                            S("first"
+                                + "second"
+                                + "third");
+                        }
+
+                        string[] S(string s) =>
+                                s.Split(',')
+                                .Select(s => s.Trim())
+                                .ToArray();
+
+                        RenderFragment R =>
+                            @<div></div>;
+                    }
+                    """);
+    }
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6150")]
     public async Task RenderFragment_InLambda()
     {
@@ -6172,6 +6227,422 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         );
                     }
                     """);
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment() =>
+                        @<text>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </text>;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() =>
+                        @<text>
+                            @if (true)
+                            {
+                                    <div class="test"
+                                         accesskey="k">
+                                        Hello
+                                        @if (true)
+                                        {
+                                            <span>World</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not World</span>
+                                        }
+                                    </div>
+                            }
+                        </text>;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline2(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment() =>
+                        @<PageTitle>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </PageTitle>;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() =>
+                        @<PageTitle>
+                            @if (true)
+                            {
+                                    <div class="test"
+                                         accesskey="k">
+                                        Hello
+                                        @if (true)
+                                        {
+                                            <span>World</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not World</span>
+                                        }
+                                    </div>
+                            }
+                        </PageTitle>;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline3(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment() => @<text>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </text>;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() => @<text>
+                        @if (true)
+                        {
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
+                        }
+                    </text>;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline4(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment()=>@<text>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </text>;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() => @<text>
+                        @if (true)
+                        {
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
+                        }
+                    </text>;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline5(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected     RenderFragment     RootFragment()      =>     @<text>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </text>;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() => @<text>
+                        @if (true)
+                        {
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
+                        }
+                    </text>;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline6(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment() =>
+                        @<text>
+                        @if (true)
+                        {
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
+                        }
+                        </text>
+                        ;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() =>
+                        @<text>
+                            @if (true)
+                            {
+                                    <div class="test"
+                                         accesskey="k">
+                                        Hello
+                                        @if (true)
+                                        {
+                                            <span>World</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not World</span>
+                                        }
+                                    </div>
+                            }
+                            </text>
+                        ;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/12310")]
+    public async Task RenderFragment_Multiline7(bool newLineBeforeBraceInLambda)
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @page "/"
+
+                @code{
+                    protected RenderFragment RootFragment() =>
+                        @<div>
+                            <div class="test"
+                                accesskey="k">
+                                Hello
+                                <div>
+                                    <span>World</span>
+                                </div>
+                            </div>
+                        </div>
+                        ;
+                }
+                """,
+            expected: """
+                @page "/"
+
+                @code {
+                    protected RenderFragment RootFragment() =>
+                        @<div>
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    <div>
+                                        <span>World</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ;
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = newLineBeforeBraceInLambda
+                    ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                    : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+            });
     }
 
     [FormattingTestFact]
@@ -6247,7 +6718,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/9711")]
     public async Task Directives()
     {
@@ -6378,7 +6849,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 """);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task PartialTagHelper()
     {
         await RunFormattingTestAsync(
@@ -6411,7 +6882,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             fileKind: RazorFileKind.Legacy);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     public async Task MultilineExplicitExpression()
     {
         await RunFormattingTestAsync(
@@ -6510,7 +6981,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: code);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11622")]
     public async Task TextArea()
     {
@@ -6588,7 +7059,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             debugAssertsEnabled: false
             );
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11873")]
     public Task NestedExplicitExpression1()
         => RunFormattingTestAsync(
@@ -6641,7 +7112,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 }
                 """);
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11873")]
     public Task NestedExplicitExpression1_Stable()
     {

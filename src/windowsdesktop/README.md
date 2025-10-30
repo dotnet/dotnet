@@ -5,7 +5,7 @@ supported platforms.
 
 ## Getting started
 
-* [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet)
+* [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet)
 * [Windows Forms repository](https://github.com/dotnet/winforms)
 * [WPF repository](https://github.com/dotnet/wpf)
 

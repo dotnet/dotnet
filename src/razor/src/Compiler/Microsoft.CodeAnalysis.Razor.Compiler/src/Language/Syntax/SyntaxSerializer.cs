@@ -178,8 +178,7 @@ internal abstract partial class SyntaxSerializer(StringBuilder builder) : Syntax
 
     protected virtual void WriteSpanEditHandlers(SyntaxNode node)
     {
-        var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
-        if (annotation?.Data is SpanEditHandler handler)
+        if (node.GetEditHandler() is SpanEditHandler handler)
         {
             WriteSeparator();
             WriteValue(handler);

@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -14,7 +14,7 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
 {
     private static readonly Lazy<TagHelperDescriptor> s_keyTagHelper = new(CreateKeyTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -28,7 +28,8 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilderType.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilderType.ContainingAssembly))
         {
             return;
         }
@@ -39,17 +40,17 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
     private static TagHelperDescriptor CreateKeyTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
+            TagHelperKind.Key, "Key", ComponentsApi.AssemblyName,
             out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.Key",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "Key");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.Key.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.Key.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.Key"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
 
         builder.TagMatchingRule(rule =>
         {

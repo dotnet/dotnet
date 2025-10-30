@@ -36,6 +36,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
     private readonly RazorCompletionListProvider _razorCompletionListProvider = args.ExportProvider.GetExportedValue<RazorCompletionListProvider>();
     private readonly CompletionListCache _completionListCache = args.ExportProvider.GetExportedValue<CompletionListCache>();
+    private readonly CompletionListCacheWrapperProvder _cacheWrapperProvider = args.ExportProvider.GetExportedValue<CompletionListCacheWrapperProvder>();
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = args.ExportProvider.GetExportedValue<CompletionTriggerAndCommitCharacters>();
     private readonly IRazorFormattingService _formattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
@@ -148,6 +149,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionContext,
                 razorCompletionOptions,
                 correlationId,
+                positionInfo.ProvisionalTextEdit,
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -190,6 +192,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         CompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
+        TextEdit? provisionalTextEdit,
         CancellationToken cancellationToken)
     {
         var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
@@ -204,16 +207,15 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         VSInternalCompletionList? completionList = null;
         using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, Constants.ExternalAccessServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
         {
-#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
             completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
                 generatedDocument,
                 mappedLinePosition,
                 completionContext,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionSetting,
+                _cacheWrapperProvider.GetCache(),
                 cancellationToken)
                 .ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         if (completionList is null)
@@ -236,7 +238,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             mappedPosition,
             razorCompletionOptions);
 
-        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, RazorLanguageKind.CSharp, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, RazorLanguageKind.CSharp, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data, provisionalTextEdit);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, clientCapabilities);
 
@@ -326,18 +328,17 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             }
 
             var documentSnapshot = context.Snapshot;
-            var generatedDocument = await documentSnapshot.GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
+            var generatedDocument = await GetCSharpGeneratedDocumentAsync(documentSnapshot, resolutionContext.ProvisionalTextEdit, cancellationToken).ConfigureAwait(false);
 
             var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
             var completionListSetting = clientCapabilities.TextDocument?.Completion;
-#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
             var result = await ExternalAccess.Razor.Cohost.Handlers.Completion.ResolveCompletionItemAsync(
                 request,
                 generatedDocument,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionListSetting ?? new(),
+                _cacheWrapperProvider.GetCache(),
                 cancellationToken).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
 
             var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
 

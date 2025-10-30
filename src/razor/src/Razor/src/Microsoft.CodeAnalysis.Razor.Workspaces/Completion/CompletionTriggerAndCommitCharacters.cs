@@ -44,7 +44,9 @@ internal class CompletionTriggerAndCommitCharacters
         // HTML trigger characters (include '@' + HTML trigger characters)
         var htmlTriggerCharacters = new HashSet<char>() { TransitionCharacter };
 
-        if (languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters)
+        // In VS Code we want to use a smaller set of Html trigger characters, and rather than have another
+        // flag for it, we can just re-use the flag we have for commit characters
+        if (languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters)
         {
             htmlTriggerCharacters.UnionWith(s_vsCodeHtmlTriggerCharacters);
         }
@@ -75,7 +77,7 @@ internal class CompletionTriggerAndCommitCharacters
         // We shouldn't specify commit characters for VSCode.
         // It doesn't appear to need them and they interfere with normal item commit.
         // E.g. see https://github.com/dotnet/vscode-csharp/issues/7678
-        AllCommitCharacters = languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters ? [] : s_commitCharacters;
+        AllCommitCharacters = languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters ? [] : s_commitCharacters;
         AllTriggerCharacters = allTriggerCharacters.SelectAsArray(static c => c.ToString());
     }
 
