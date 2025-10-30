@@ -24,9 +24,15 @@ jobs:
       /p:TargetArchitecture=${{ parameters.targetArchitecture }}
       /p:SkipTests=${{ parameters.skipTests }}
   - name: MsbuildSigningArguments
-    value: /p:DotNetSignType=$(SignType)
+    value: /p:DotNetSignType=$(_SignType)
   - name: TargetArchitecture
     value: ${{ parameters.targetArchitecture }}
+  - name: InternalRuntimeDownloadArgs
+    value: >-
+      -RuntimeSourceFeed https://ci.dot.net/internal
+      -RuntimeSourceFeedKey $(dotnetbuilds-internal-container-read-token-base64)
+      /p:DotNetRuntimeSourceFeed=https://ci.dot.net/internal
+      /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
 
   templateContext:
     outputs:
@@ -37,20 +43,19 @@ jobs:
       artifactName: Logs-${{ parameters.name }}-$(_BuildConfig)
   steps:
   - template: /eng/common/templates-official/steps/enable-internal-sources.yml
+  - template: /eng/common/templates-official/steps/enable-internal-runtimes.yml
 
-  - task: MicroBuildSigningPlugin@4
-    displayName: Install MicroBuild plugin for Signing
-    inputs:
-      signType: $(SignType)
-      zipSources: false
-      feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-    continueOnError: false
-    condition: and(succeeded(), in(variables['SignType'], 'real', 'test'))
-
+  - template: /eng/common/core-templates/steps/install-microbuild.yml
+    parameters:
+      enableMicrobuild: true
+      microbuildUseESRP: true
+      continueOnError: false
+  
   - script: >-
       eng/common/cibuild.cmd
       $(CommonMSBuildArgs)
       $(MsbuildSigningArguments)
+      $(InternalRuntimeDownloadArgs)
     displayName: Build
 
     # Generate SBOM
