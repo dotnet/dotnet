@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     public async Task FormatsComponentTags()
     {
         var tagHelpers = GetComponents();
@@ -307,7 +307,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         @{
                             RenderFragment fragment =
                             @<Component1 Id="Comp1"
-                                         Caption="Title">
+                                             Caption="Title">
                             </Component1>;
                         }
                     </Component1>
@@ -363,7 +363,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
             tagHelpers: GetComponents());
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6211")]
     public async Task FormatCascadingValueWithCascadingTypeParameter()
     {
