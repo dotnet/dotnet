@@ -276,9 +276,14 @@ if (CLR_CMAKE_HOST_UNIX)
   #-fms-compatibility      Enable full Microsoft Visual C++ compatibility
   #-fms-extensions         Accept some non-standard constructs supported by the Microsoft compiler
 
-  # Make signed arithmetic overflow of addition, subtraction, and multiplication wrap around
+  # Make signed overflow well-defined. Implies the following flags in clang-20 and above.
+  # -fwrapv - Make signed arithmetic overflow of addition, subtraction, and multiplication wrap around
   # using twos-complement representation (this is normally undefined according to the C++ spec).
-  add_compile_options(-fwrapv)
+  # -fwrapv-pointer - The same as -fwrapv but for pointers.
+  add_compile_options(-fno-strict-overflow)
+
+  # Suppress C++ strict aliasing rules. This matches our use of MSVC.
+  add_compile_options(-fno-strict-aliasing)
 
   if(CLR_CMAKE_HOST_OSX)
     # We cannot enable "stack-protector-strong" on OS X due to a bug in clang compiler (current version 7.0.2)
