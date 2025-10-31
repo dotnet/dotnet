@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using Roslyn.Test.Utilities;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -12,8 +11,15 @@ internal static class HoverAssertions
     public static void VerifyContents(this LspHover hover, object expected)
     {
         var markup = hover.Contents.Fourth;
-        Assert.Equal(MarkupKind.PlainText, markup.Kind);
-        AssertEx.EqualOrDiff(expected.ToString(), markup.Value.TrimEnd('\r', '\n'));
+
+        var actual = markup.Value.TrimEnd('\r', '\n');
+        if (markup.Kind == MarkupKind.Markdown)
+        {
+            // Remove any horizontal rules we may have added to separate HTML and Razor content
+            actual = actual.Replace("\n\n---\n\n", string.Empty);
+        }
+
+        AssertEx.EqualOrDiff(expected.ToString(), actual);
     }
 
     // Our VS Code test only produce plain text hover content, so these methods are complete overkill,

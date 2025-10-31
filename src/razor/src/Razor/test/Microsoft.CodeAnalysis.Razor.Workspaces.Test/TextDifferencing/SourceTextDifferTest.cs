@@ -9,13 +9,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
-public class SourceTextDifferTest : ToolingTestBase
+public class SourceTextDifferTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public SourceTextDifferTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Theory]
     [InlineData("asdf", ";lkj")]
     [InlineData("asdf", ";asd")]
@@ -37,18 +32,41 @@ public class SourceTextDifferTest : ToolingTestBase
         var oldText = CreateSourceText(oldStr, fixLineEndings: false);
         var newText = CreateSourceText(newStr, fixLineEndings: false);
 
-        // Act 1
+        // Act
         var characterChanges = SourceTextDiffer.GetMinimalTextChanges(oldText, newText, DiffKind.Char);
 
-        // Assert 1
+        // Assert
         var changedText = oldText.WithChanges(characterChanges);
         Assert.Equal(newStr, changedText.ToString());
+    }
 
-        // Act 2
-        var lineChanges = SourceTextDiffer.GetMinimalTextChanges(oldText, newText, DiffKind.Char);
+    [Theory]
+    [InlineData("asdf", ";lkj")]
+    [InlineData("asdf", ";asd")]
+    [InlineData("", "")]
+    [InlineData("", "a")]
+    [InlineData("a", "b")]
+    [InlineData("a", "a")]
+    [InlineData("a", "")]
+    [InlineData("aabd", "a")]
+    [InlineData("trtrt4 5rtt()", "atbd")]
+    [InlineData(@"trtrt4\n5rtt()", "atb\nd")]
+    [InlineData("Hello\r\nWorld\r\n123", "Hola\r\nWorld\r\n\r\n1234")]
+    [InlineData("Hello\r\nWorld\r\n123", "Hola   World   456")]
+    [InlineData("Hello\tWorld\t123", "Hola  Earth  456")]
+    [InlineData("\t<div class=\"/*~*/\"/>", "    <div class=\"/*~*/\" />")]
+    [InlineData("\t<div class=\"~\"/>", "    <div class=\"~\" />")]
+    public void GetMinimalTextChanges_ReturnsAccurateResults_WordDiffer(string oldStr, string newStr)
+    {
+        // Arrange
+        var oldText = CreateSourceText(oldStr, fixLineEndings: false);
+        var newText = CreateSourceText(newStr, fixLineEndings: false);
 
-        // Assert 2
-        changedText = oldText.WithChanges(lineChanges);
+        // Act
+        var wordChanges = SourceTextDiffer.GetMinimalTextChanges(oldText, newText, DiffKind.Word);
+
+        // Assert
+        var changedText = oldText.WithChanges(wordChanges);
         Assert.Equal(newStr, changedText.ToString());
     }
 
@@ -82,6 +100,13 @@ public class SourceTextDifferTest : ToolingTestBase
         // Assert 2
         var change = Assert.Single(lineChanges);
         Assert.Equal(new TextChange(TextSpan.FromBounds(7, 17), "  Hola!\r\n"), change);
+
+        // Act 3
+        var wordChanges = SourceTextDiffer.GetMinimalTextChanges(oldText, newText, DiffKind.Word);
+
+        // Assert 3
+        Assert.Collection(wordChanges,
+            change => Assert.Equal(new TextChange(TextSpan.FromBounds(9, 15), "Hola!"), change));
     }
 
     [Fact]
@@ -123,6 +148,16 @@ public class SourceTextDifferTest : ToolingTestBase
         Assert.Collection(lineChanges,
             change => Assert.Equal(new TextChange(TextSpan.FromBounds(0, 7), "THESE\r\n"), change),
             change => Assert.Equal(new TextChange(TextSpan.FromBounds(12, 33), "MULTIPLE\r\nLINES\r\nOF\r\n"), change));
+
+        // Act 3
+        var wordChanges = SourceTextDiffer.GetMinimalTextChanges(oldText, newText, DiffKind.Word);
+
+        // Assert 3
+        Assert.Collection(wordChanges,
+            change => Assert.Equal(new TextChange(TextSpan.FromBounds(0, 5), "THESE"), change),
+            change => Assert.Equal(new TextChange(TextSpan.FromBounds(12, 20), "MULTIPLE"), change),
+            change => Assert.Equal(new TextChange(TextSpan.FromBounds(22, 27), "LINES"), change),
+            change => Assert.Equal(new TextChange(TextSpan.FromBounds(29, 31), "OF"), change));
     }
 
     private static SourceText CreateSourceText(string input, bool fixLineEndings = true)
