@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "dependencyDashboard": false,
+  "commitMessagePrefix": "chore:",
+  "labels": ["dependencies"],
+  "npm": {
+    "ignorePaths": [
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "docs/**"
+    ]
+  },
+  "ignorePaths": [
+    "resources/scripts/**",
+    "docs/**"
+  ]
+}

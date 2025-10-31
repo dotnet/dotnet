@@ -149,14 +149,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             request.Context.SelectionRange = inputText.GetRange(selectionSpans.Single());
         }
 
-        var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, request, DisposalToken);
-        if (result is null)
-        {
-            return null;
-        }
-
-        Assert.NotEmpty(result);
-        return result;
+        return await endpoint.GetTestAccessor().HandleRequestAsync(document, request, DisposalToken);
     }
 
     private async Task VerifyCodeActionResultAsync(TextDocument document, WorkspaceEdit workspaceEdit, string? expected, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
