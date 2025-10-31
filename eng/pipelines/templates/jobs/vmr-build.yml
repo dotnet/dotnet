@@ -397,8 +397,8 @@ jobs:
             artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
             artifactName: ${{ reuseBuildArtifacts }}_Artifacts
             downloadFilePatterns: |
-              **/Private.SourceBuilt.Artifacts.*.tar.gz
-              **/dotnet-sdk-*.tar.gz
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
             copyDestination: $(sourcesPath)/prereqs/packages/archive/
             flattenDirs: true
 
