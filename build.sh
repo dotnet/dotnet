@@ -398,6 +398,9 @@ if [[ "$sourceOnly" == "true" ]]; then
         SetOfficialBuildId "$officialBuildId"
       fi
     fi
+  # else, running tests
+  else
+    properties+=( "/p:DisableSharedComponentValidation=true" )
   fi
 
   # Support custom source built package locations
