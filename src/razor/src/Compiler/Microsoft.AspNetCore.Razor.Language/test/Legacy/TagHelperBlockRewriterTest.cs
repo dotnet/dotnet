@@ -2472,4 +2472,104 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
             builder.AllowCSharpInMarkupAttributeArea = false;
         });
     }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void TagHelper_AttributeAfterRazorComment()
+    {
+        // Arrange
+        var descriptors = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly")
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("attribute-1")
+                    .PropertyName("Attribute1")
+                    .TypeName(typeof(string).FullName))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("not-visible")
+                    .PropertyName("NotVisible")
+                    .TypeName(typeof(bool).FullName))
+                .Build());
+
+        // Act & Assert
+        EvaluateData(descriptors, """
+            <p
+              attribute-1="true"
+              @* visible *@
+              not-visible>
+            </p>
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void TagHelper_MultipleAttributesAfterRazorComment()
+    {
+        // Arrange
+        var descriptors = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly")
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("attr-1")
+                    .PropertyName("Attr1")
+                    .TypeName(typeof(string).FullName))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("attr-2")
+                    .PropertyName("Attr2")
+                    .TypeName(typeof(string).FullName))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("attr-3")
+                    .PropertyName("Attr3")
+                    .TypeName(typeof(string).FullName))
+                .Build());
+
+        // Act & Assert
+        EvaluateData(descriptors, """
+            <p attr-1="first" @* comment *@ attr-2="second" attr-3="third"></p>
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void TagHelper_MultipleInterleavedRazorComments()
+    {
+        // Arrange
+        var descriptors = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.CreateTagHelper("InputTagHelper", "TestAssembly")
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("type")
+                    .PropertyName("Type")
+                    .TypeName(typeof(string).FullName))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("value")
+                    .PropertyName("Value")
+                    .TypeName(typeof(string).FullName))
+                .Build());
+
+        // Act & Assert
+        EvaluateData(descriptors, """
+            <input @* comment1 *@ type="text" @* comment2 *@ value="test" @* comment3 *@ />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void TagHelper_MinimizedAttributeAfterRazorComment()
+    {
+        // Arrange
+        var descriptors = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.CreateTagHelper("InputTagHelper", "TestAssembly")
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("type")
+                    .PropertyName("Type")
+                    .TypeName(typeof(string).FullName))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("checked")
+                    .PropertyName("Checked")
+                    .TypeName(typeof(bool).FullName))
+                .Build());
+
+        // Act & Assert
+        EvaluateData(descriptors, """
+            <input type="checkbox" @* comment *@ checked />
+            """);
+    }
 }

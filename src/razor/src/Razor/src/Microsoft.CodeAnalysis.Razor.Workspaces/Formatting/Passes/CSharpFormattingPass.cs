@@ -1,4 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+﻿
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -28,15 +29,17 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         // Process changes from previous passes
         var changedText = context.SourceText.WithChanges(changes);
         var changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
+        context.Logger?.LogObject("SourceMappings", changedContext.CodeDocument.GetRequiredCSharpDocument().SourceMappings);
 
         // To format C# code we generate a C# document that represents the indentation semantics the user would be
         // expecting in their Razor file. See the doc comments on CSharpDocumentGenerator for more info
         var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, context.Options);
 
         var generatedCSharpText = generatedDocument.SourceText;
-        _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
+        context.Logger?.LogSourceText("FormattingDocument", generatedCSharpText);
+        context.Logger?.LogObject("FormattingDocumentLineInfo", generatedDocument.LineInfo);
         var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options, cancellationToken).ConfigureAwait(false);
-        _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
+        context.Logger?.LogSourceText("FormattedFormattingDocument", formattedCSharpText);
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
         // document as they come from very different places. What we want to do is go through each line of the generated document,
@@ -111,6 +114,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                                 iFormatted++;
                                 if (iFormatted >= formattedCSharpText.Lines.Count)
                                 {
+                                    context.Logger?.LogMessage($"Ran out of formatted lines. iFormatted={iFormatted}, formattedLineCount={formattedCSharpText.Lines.Count}, iOriginal={iOriginal}, originalLineCount={changedText.Lines.Count}");
                                     _logger.LogError($"Ran out of formatted lines while trying to process formatted changes after {iOriginal} lines. Abandoning further formatting to not corrupt the source file, please report this issue.");
                                     break;
                                 }
@@ -125,6 +129,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                                 iOriginal++;
                                 if (iOriginal >= changedText.Lines.Count)
                                 {
+                                    context.Logger?.LogMessage($"Ran out of original lines. iFormatted={iFormatted}, formattedLineCount={formattedCSharpText.Lines.Count}, iOriginal={iOriginal}, originalLineCount={changedText.Lines.Count}");
                                     _logger.LogError("Ran out of lines while trying to process formatted changes. Abandoning further formatting to not corrupt the source file, please report this issue.");
                                     break;
                                 }
@@ -144,10 +149,11 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             else if (lineInfo.SkipNextLineIfBrace)
             {
                 // If the next line is a brace, we skip it. This is used to skip the opening brace of a class
-                // that we insert, but Roslyn settings might place on the same like as the class declaration.
-                if (iFormatted + 1 < formattedCSharpText.Lines.Count &&
-                    formattedCSharpText.Lines[iFormatted + 1] is { Span.Length: > 0 } nextLine &&
-                    nextLine.CharAt(0) == '{')
+                // that we insert, but Roslyn settings might place on the same line as the class declaration,
+                // or skip the opening brace of a lambda definition we insert, but Roslyn might place it on the
+                // next line. In that case, we can't place it on the next line ourselves because Roslyn doesn't
+                // adjust the indentation of opening braces of lambdas in that scenario.
+                if (NextLineIsOnlyAnOpenBrace(formattedCSharpText, iFormatted))
                 {
                     iFormatted++;
                 }
@@ -156,10 +162,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 // it up to the previous line, so we would want to skip the next line in the original document
                 // in that case. Fortunately its illegal to have `@code {\r\n {` in a Razor file, so there can't
                 // be false positives here.
-                if (iOriginal + 1 < changedText.Lines.Count &&
-                    changedText.Lines[iOriginal + 1] is { } nextOriginalLine &&
-                    nextOriginalLine.GetFirstNonWhitespaceOffset() is { } firstChar &&
-                    nextOriginalLine.CharAt(firstChar) == '{')
+                if (NextLineIsOnlyAnOpenBrace(changedText, iOriginal))
                 {
                     iOriginal++;
                 }
@@ -199,7 +202,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 {
                     // To avoid overlapping changes, which Roslyn will throw on, we just have to drop this change. It gives the user
                     // something at least, and hopefully they'll report a bug for this case so we can find it.
-                    _logger.LogTestOnly($"Skipping a change that would have overlapped an existing change, starting at {start} for {length} chars, overlapping a change at {formattingChanges[iChanges].Span}");
+                    context.Logger?.LogMessage($"Skipping a change that would have overlapped an existing change, starting at {start} for {length} chars, overlapping a change at {formattingChanges[iChanges].Span}. iFormatted={iFormatted}, iChanges={iChanges}");
                     continue;
                 }
 
@@ -207,14 +210,23 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             }
         }
 
-        changedText = changedText.WithChanges(formattingChanges.ToArray());
-        _logger.LogTestOnly($"Final formatted document:\r\n{changedText}");
+        var finalFormattingChanges = formattingChanges.ToArray();
+        context.Logger?.LogObject("FinalFormattingChanges", finalFormattingChanges);
+        changedText = changedText.WithChanges(finalFormattingChanges);
+        context.Logger?.LogSourceText("FinalFormattedDocument", changedText);
 
         // And we're done, we have a final set of changes to apply. BUT these are changes to the document after Html and Razor
         // formatting, and the return from this method must be changes relative to the original passed in document. The algorithm
         // above is fairly naive anyway, and a lot of them will be no-ops, so it's nice to have this final step as a filter.
         return SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char);
     }
+
+    private static bool NextLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
+        => lineNumber + 1 < text.Lines.Count &&
+            text.Lines[lineNumber + 1] is { Span.Length: > 0 } nextLine &&
+            nextLine.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
+            nextLine.Start + firstNonWhitespace == nextLine.End - 1 &&
+            nextLine.CharAt(firstNonWhitespace) == '{';
 
     private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorFormattingOptions options, CancellationToken cancellationToken)
     {

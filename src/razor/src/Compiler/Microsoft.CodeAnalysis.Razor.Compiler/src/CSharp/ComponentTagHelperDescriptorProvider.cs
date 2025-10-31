@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -17,56 +18,56 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
         var compilation = context.Compilation;
-        var targetSymbol = context.TargetSymbol;
+        var targetAssembly = context.TargetAssembly;
 
-        var collector = new Collector(compilation, targetSymbol);
-        collector.Collect(context);
+        var collector = new Collector(compilation, targetAssembly);
+        collector.Collect(context, cancellationToken);
     }
 
-    private sealed class Collector(Compilation compilation, ISymbol? targetSymbol)
-        : TagHelperCollector<Collector>(compilation, targetSymbol)
+    private sealed class Collector(
+        Compilation compilation,
+        IAssemblySymbol? targetAssembly)
+        : TagHelperCollector<Collector>(compilation, targetAssembly)
     {
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => ComponentDetectionConventions.IsComponent(type, ComponentsApi.IComponent.MetadataName);
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new ComponentTypeVisitor(types);
+            // Components have very simple matching rules.
+            // 1. The type name (short) matches the tag name.
+            // 2. The fully qualified name matches the tag name.
 
-            visitor.Visit(symbol);
+            // First, compute the relevant properties for this type so that we
+            // don't need to compute them twice.
+            var properties = GetProperties(type);
 
-            foreach (var type in types)
+            var shortNameMatchingDescriptor = CreateShortNameMatchingDescriptor(type, properties);
+            results.Add(shortNameMatchingDescriptor);
+
+            // If the component is in the global namespace, skip adding this descriptor which will be the same as the short name one.
+            TagHelperDescriptor? fullyQualifiedNameMatchingDescriptor = null;
+            if (!type.ContainingNamespace.IsGlobalNamespace)
             {
-                // Components have very simple matching rules.
-                // 1. The type name (short) matches the tag name.
-                // 2. The fully qualified name matches the tag name.
+                fullyQualifiedNameMatchingDescriptor = CreateFullyQualifiedNameMatchingDescriptor(type, properties);
+                results.Add(fullyQualifiedNameMatchingDescriptor);
+            }
 
-                // First, compute the relevant properties for this type so that we
-                // don't need to compute them twice.
-                var properties = GetProperties(type);
-
-                var shortNameMatchingDescriptor = CreateShortNameMatchingDescriptor(type, properties);
-                results.Add(shortNameMatchingDescriptor);
-
-                // If the component is in the global namespace, skip adding this descriptor which will be the same as the short name one.
-                TagHelperDescriptor? fullyQualifiedNameMatchingDescriptor = null;
-                if (!type.ContainingNamespace.IsGlobalNamespace)
+            foreach (var childContent in shortNameMatchingDescriptor.GetChildContentProperties())
+            {
+                // Synthesize a separate tag helper for each child content property that's declared.
+                results.Add(CreateChildContentDescriptor(shortNameMatchingDescriptor, childContent));
+                if (fullyQualifiedNameMatchingDescriptor is not null)
                 {
-                    fullyQualifiedNameMatchingDescriptor = CreateFullyQualifiedNameMatchingDescriptor(type, properties);
-                    results.Add(fullyQualifiedNameMatchingDescriptor);
-                }
-
-                foreach (var childContent in shortNameMatchingDescriptor.GetChildContentProperties())
-                {
-                    // Synthesize a separate tag helper for each child content property that's declared.
-                    results.Add(CreateChildContentDescriptor(shortNameMatchingDescriptor, childContent));
-                    if (fullyQualifiedNameMatchingDescriptor is not null)
-                    {
-                        results.Add(CreateChildContentDescriptor(fullyQualifiedNameMatchingDescriptor, childContent));
-                    }
+                    results.Add(CreateChildContentDescriptor(fullyQualifiedNameMatchingDescriptor, childContent));
                 }
             }
         }
@@ -753,32 +754,6 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             ChildContent,
             Delegate,
             EventCallback,
-        }
-
-        private class ComponentTypeVisitor(List<INamedTypeSymbol> results) : SymbolVisitor
-        {
-            private readonly List<INamedTypeSymbol> _results = results;
-
-            public override void VisitNamedType(INamedTypeSymbol symbol)
-            {
-                if (ComponentDetectionConventions.IsComponent(symbol, ComponentsApi.IComponent.MetadataName))
-                {
-                    _results.Add(symbol);
-                }
-            }
-
-            public override void VisitNamespace(INamespaceSymbol symbol)
-            {
-                foreach (var member in symbol.GetMembers())
-                {
-                    Visit(member);
-                }
-            }
-
-            public override void VisitAssembly(IAssemblySymbol symbol)
-            {
-                Visit(symbol.GlobalNamespace);
-            }
         }
     }
 }

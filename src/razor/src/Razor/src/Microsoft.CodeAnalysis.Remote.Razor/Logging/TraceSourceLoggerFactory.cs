@@ -6,7 +6,10 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
 
-internal sealed partial class TraceSourceLoggerFactory(TraceSource traceSource) : AbstractLoggerFactory([new LoggerProvider(traceSource)])
+internal sealed partial class TraceSourceLoggerFactory(TraceSource traceSource)
+    : AbstractLoggerFactory([
+        new LoggerProvider(traceSource),
+        new MemoryLoggerProvider()])
 {
     public TraceSource TraceSource { get; } = traceSource;
 }

@@ -1,11 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -13,18 +12,24 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRazorDocumentClassifierPass
 {
+    private ImmutableArray<ICodeTargetExtension> _targetExtensions;
+
     protected abstract string DocumentKind { get; }
 
-    protected IReadOnlyList<ICodeTargetExtension> TargetExtensions { get; private set; }
+    protected ImmutableArray<ICodeTargetExtension> TargetExtensions
+        => _targetExtensions.NullToEmpty();
 
     protected override void OnInitialized()
     {
-        TargetExtensions = Engine.TryGetFeature(out IRazorTargetExtensionFeature feature)
-            ? feature.TargetExtensions.ToArray()
-            : Array.Empty<ICodeTargetExtension>();
+        _targetExtensions = Engine.TryGetFeature(out IRazorTargetExtensionFeature? feature)
+            ? feature.TargetExtensions.ToImmutable()
+            : [];
     }
 
-    protected sealed override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected sealed override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.DocumentKind != null)
         {
@@ -37,7 +42,7 @@ public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRa
         }
 
         documentNode.DocumentKind = DocumentKind;
-        documentNode.Target = CreateTarget(codeDocument, documentNode.Options);
+        documentNode.Target = CreateTarget(codeDocument);
         if (documentNode.Target == null)
         {
             throw new InvalidOperationException($"{nameof(CreateTarget)} must return a non-null {nameof(CodeTarget)}.");
@@ -94,23 +99,11 @@ public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRa
     protected abstract bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode);
 
     // virtual to allow replacing the code target wholesale.
-    protected virtual CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
-    {
-        return CodeTarget.CreateDefault(codeDocument, options, (builder) =>
+    protected virtual CodeTarget CreateTarget(RazorCodeDocument codeDocument)
+        => CodeTarget.CreateDefault(codeDocument, builder =>
         {
-            for (var i = 0; i < TargetExtensions.Count; i++)
-            {
-                builder.TargetExtensions.Add(TargetExtensions[i]);
-            }
-
-            ConfigureTarget(builder);
+            builder.TargetExtensions.AddRange(TargetExtensions);
         });
-    }
-
-    protected virtual void ConfigureTarget(CodeTargetBuilder builder)
-    {
-        // Intentionally empty.
-    }
 
     protected virtual void OnDocumentStructureCreated(
         RazorCodeDocument codeDocument,
