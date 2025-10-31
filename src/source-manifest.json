@@ -25,10 +25,10 @@
       "commitSha": "97c64b5dfcc39b3babf6b3dfa828aa737860c145"
     },
     {
-      "barId": 289181,
+      "barId": 289192,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "76dd37aadfb70d8e2dc4f6cd15c72faa0b2fc38d"
+      "commitSha": "49b30fd652e2e1c4d8567551a824d41cf177c86d"
     },
     {
       "barId": 284344,
