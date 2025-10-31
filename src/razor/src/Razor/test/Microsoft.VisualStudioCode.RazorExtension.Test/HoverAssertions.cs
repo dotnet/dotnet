@@ -12,14 +12,7 @@ internal static class HoverAssertions
     {
         var markup = hover.Contents.Fourth;
 
-        var actual = markup.Value.TrimEnd('\r', '\n');
-        if (markup.Kind == MarkupKind.Markdown)
-        {
-            // Remove any horizontal rules we may have added to separate HTML and Razor content
-            actual = actual.Replace("\n\n---\n\n", string.Empty);
-        }
-
-        AssertEx.EqualOrDiff(expected.ToString(), actual);
+        AssertEx.EqualOrDiff(expected.ToString(), markup.Value.TrimEnd('\r', '\n'));
     }
 
     // Our VS Code test only produce plain text hover content, so these methods are complete overkill,
@@ -61,4 +54,7 @@ internal static class HoverAssertions
 
     public static string WhiteSpace(string text)
         => text;
+
+    public static string HorizontalRule
+        => "\n\n---\n\n";
 }
