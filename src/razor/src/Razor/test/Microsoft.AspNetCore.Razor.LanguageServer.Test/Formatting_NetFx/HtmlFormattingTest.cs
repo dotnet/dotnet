@@ -307,7 +307,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         @{
                             RenderFragment fragment =
                             @<Component1 Id="Comp1"
-                                         Caption="Title">
+                                             Caption="Title">
                             </Component1>;
                         }
                     </Component1>
