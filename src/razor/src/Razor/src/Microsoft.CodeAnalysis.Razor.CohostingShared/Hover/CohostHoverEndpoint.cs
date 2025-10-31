@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Roslyn.Text.Adornments;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -54,7 +55,7 @@ internal sealed class CohostHoverEndpoint(
     {
         var position = LspFactory.CreatePosition(request.Position.ToLinePosition());
 
-        var response = await _remoteServiceInvoker
+        var razorResponse = await _remoteServiceInvoker
             .TryInvokeAsync<IRemoteHoverService, RemoteResponse<LspHover?>>(
                 razorDocument.Project.Solution,
                 (service, solutionInfo, cancellationToken) =>
@@ -62,21 +63,79 @@ internal sealed class CohostHoverEndpoint(
                 cancellationToken)
             .ConfigureAwait(false);
 
-        if (response.Result is LspHover hover)
+        if (razorResponse.StopHandling)
         {
-            return hover;
+            return razorResponse.Result;
         }
 
-        if (response.StopHandling)
-        {
-            return null;
-        }
-
-        return await _requestInvoker.MakeHtmlLspRequestAsync<TextDocumentPositionParams, LspHover>(
+        var htmlHover = await _requestInvoker.MakeHtmlLspRequestAsync<TextDocumentPositionParams, LspHover>(
             razorDocument,
             Methods.TextDocumentHoverName,
             request,
             cancellationToken).ConfigureAwait(false);
+
+        return MergeHtmlAndRazorHoverResponses(razorResponse.Result, htmlHover);
+    }
+
+    private static LspHover? MergeHtmlAndRazorHoverResponses(LspHover? razorHover, LspHover? htmlHover)
+    {
+        if (razorHover is null)
+        {
+            return htmlHover;
+        }
+
+        if (htmlHover is null
+            || htmlHover.Range != razorHover.Range)
+        {
+            return razorHover;
+        }
+
+        var htmlStringResponse = htmlHover.Contents.Match(
+            static s => s,
+            static markedString => null,
+            static stringOrMarkedStringArray => null,
+            static markupContent => markupContent.Value
+        );
+
+        if (htmlStringResponse is not null)
+        {
+            // This logic is to prepend HTML hover content to the razor hover content if both exist.
+            // The razor content comes through as a ContainerElement, while the html content comes
+            // through as MarkupContent. We need to extract the html content and insert it at the
+            // start of the combined ContainerElement.
+            if (razorHover is VSInternalHover razorVsInternalHover
+                && razorVsInternalHover.RawContent is ContainerElement razorContainerElement)
+            {
+                var htmlStringClassifiedTextElement = ClassifiedTextElement.CreatePlainText(htmlStringResponse);
+                var verticalSpacingTextElement = ClassifiedTextElement.CreatePlainText(string.Empty);
+                var htmlContainerElement = new ContainerElement(
+                    ContainerElementStyle.Stacked,
+                    [htmlStringClassifiedTextElement, verticalSpacingTextElement]);
+
+                // Modify the existing hover's RawContent to prepend the HTML content.
+                razorVsInternalHover.RawContent = new ContainerElement(razorContainerElement.Style, [htmlContainerElement, .. razorContainerElement.Elements]);
+            }
+            else
+            {
+                var razorStringResponse = razorHover.Contents.Match(
+                    static s => s,
+                    static markedString => null,
+                    static stringOrMarkedStringArray => null,
+                    static markupContent => markupContent.Value
+                );
+
+                if (razorStringResponse is not null)
+                {
+                    razorHover.Contents = new MarkupContent()
+                    {
+                        Kind = MarkupKind.Markdown,
+                        Value = htmlStringResponse + "\n\n---\n\n" + razorStringResponse
+                    };
+                }
+            }
+        }
+
+        return razorHover;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);
