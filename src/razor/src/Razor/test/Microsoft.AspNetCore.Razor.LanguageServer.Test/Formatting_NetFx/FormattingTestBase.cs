@@ -347,6 +347,9 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
                 return CreateDocumentSnapshot(
                     path, fileKind, codeDocument, projectEngine, imports, importDocuments, tagHelpers, inGlobalNamespace);
             });
+        snapshotMock
+            .Setup(d => d.GetCSharpSyntaxTreeAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument.GetOrParseCSharpSyntaxTree(CancellationToken.None));
 
         return snapshotMock.Object;
     }

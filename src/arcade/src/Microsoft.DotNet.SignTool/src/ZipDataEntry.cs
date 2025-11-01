@@ -66,6 +66,8 @@ namespace Microsoft.DotNet.SignTool
 
         public ImmutableArray<byte> ContentHash => _contentHash;
 
+        public uint? UnixFileMode { get; set; }
+
         public void WriteToFile(string path)
         {
             using var fs = File.Create(path);

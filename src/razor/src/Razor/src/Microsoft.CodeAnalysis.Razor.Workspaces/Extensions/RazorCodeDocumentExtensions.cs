@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
@@ -42,6 +43,11 @@ internal static partial class RazorCodeDocumentExtensions
     ///  Retrieves a cached Roslyn <see cref="SyntaxTree"/> from the generated C# document.
     ///  If a tree has not yet been cached, a new one will be parsed and added to the cache.
     /// </summary>
+    /// <remarks>
+    /// If possible, prefer calling <see cref="IDocumentSnapshot.GetCSharpSyntaxTreeAsync(CancellationToken)" />
+    /// because it will either call this method, or in cohosting get the syntax tree from Roslyn, where the cached
+    /// tree can be shared with many more features.
+    /// </remarks>
     public static SyntaxTree GetOrParseCSharpSyntaxTree(this RazorCodeDocument document, CancellationToken cancellationToken)
         => GetCachedData(document).GetOrParseCSharpSyntaxTree(cancellationToken);
 
