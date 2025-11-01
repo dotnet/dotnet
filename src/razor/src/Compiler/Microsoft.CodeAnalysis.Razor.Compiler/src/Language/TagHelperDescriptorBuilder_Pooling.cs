@@ -9,7 +9,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public partial class TagHelperDescriptorBuilder
 {
-    private static readonly ObjectPool<TagHelperDescriptorBuilder> s_pool = DefaultPool.Create(Policy.Instance);
+    private static readonly ObjectPool<TagHelperDescriptorBuilder> s_pool =
+        DefaultPool.Create(static () => new TagHelperDescriptorBuilder());
 
     internal static TagHelperDescriptorBuilder GetInstance(string name, string assemblyName)
         => GetInstance(TagHelperKind.ITagHelper, name, assemblyName);
@@ -44,17 +45,6 @@ public partial class TagHelperDescriptorBuilder
         AllowedChildTags.Clear();
         BoundAttributes.Clear();
         TagMatchingRules.Clear();
-    }
-
-    private sealed class Policy : PooledBuilderPolicy<TagHelperDescriptorBuilder>
-    {
-        public static readonly Policy Instance = new();
-
-        private Policy()
-        {
-        }
-
-        public override TagHelperDescriptorBuilder Create() => new();
     }
 
     /// <summary>

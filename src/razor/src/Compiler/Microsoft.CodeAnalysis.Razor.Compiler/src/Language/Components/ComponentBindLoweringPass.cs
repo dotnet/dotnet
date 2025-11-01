@@ -217,7 +217,7 @@ internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePass
         ref PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode>> references,
         ref PooledArrayBuilder<IntermediateNodeReference<TagHelperDirectiveAttributeParameterIntermediateNode>> parameterReferences)
     {
-        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+        using var _ = SpecializedPools.GetPooledReferenceEqualityHashSet<IntermediateNode>(out var parents);
 
         foreach (var reference in references)
         {
@@ -307,7 +307,7 @@ internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePass
         // If we still have duplicates at this point then they are genuine conflicts.
         // Use a hash set to quickly determine whether there are any duplicates.
         // If so, we need to do a more expensive pass to identify and remove them.
-        using var _ = StringHashSetPool.Ordinal.GetPooledObject(out var duplicates);
+        using var _ = SpecializedPools.GetPooledStringHashSet(out var duplicates);
 
         foreach (var child in children)
         {
@@ -329,7 +329,7 @@ internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePass
         {
             var children = node.Children;
 
-            using var _ = StringDictionaryPool<ImmutableArray<AttributeInfo>.Builder>.Ordinal.GetPooledObject(out var duplicates);
+            using var _ = SpecializedPools.GetPooledStringDictionary<ImmutableArray<AttributeInfo>.Builder>(out var duplicates);
 
             for (var i = 0; i < children.Count; i++)
             {
