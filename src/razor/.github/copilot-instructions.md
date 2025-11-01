@@ -46,6 +46,7 @@ Razor documents contain multiple languages:
 - Prefer raw string literals over verbatim strings
 - Ideally we test the end user scenario, not implementation details
 - Consider cross-platform compatibility by testing path handling and case sensitivity where applicable
+- For tooling, "Cohosting" is the new architecture we're moving towards, so always create tests in the src\Razor\test\Microsoft.VisualStudioCode.RazorExtension.Test project
 
 ### Architecture Considerations
 
@@ -57,7 +58,7 @@ Razor documents contain multiple languages:
 ## Build and Development
 
 ### Prerequisites
-- .NET 8.0+ SDK (latest version specified in `global.json`)
+- .NET 9.0+ SDK (latest version specified in `global.json`)
 - Visual Studio 2026 (Windows) or VS Code with C# extension (Windows, macOS or Linux)
 - PowerShell (for Windows build scripts)
 
