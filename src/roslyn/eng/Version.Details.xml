@@ -153,5 +153,9 @@
       <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
       <Sha>596f8f422003d89b65e2bd50dc5a1aea7ce4ce91</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25503.1">
+      <Uri>https://github.com/dotnet/arcade-services</Uri>
+      <Sha>cc62b9386f210bc9e9498ee2fc55f3005c90db30</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
