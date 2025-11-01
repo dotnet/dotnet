@@ -76,15 +76,11 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
         var htmlEdits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces, tabSize);
 
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
-
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-        clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine });
-
         var span = input.TryGetNamedSpans(string.Empty, out var spans)
             ? spans.First()
             : default;
-        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager, csharpSyntaxFormattingOptions);
+
+        var edits = await GetFormattingEditsAsync(document, htmlEdits, span, codeBlockBraceOnNextLine, insertSpaces, tabSize, csharpSyntaxFormattingOptions);
 
         if (edits is null)
         {
@@ -97,6 +93,17 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var finalText = inputText.WithChanges(changes);
 
         AssertEx.EqualOrDiff(expected, finalText.ToString());
+    }
+
+    private protected async Task<TextEdit[]?> GetFormattingEditsAsync(TextDocument document, TextEdit[]? htmlEdits, TextSpan span, bool codeBlockBraceOnNextLine, bool insertSpaces, int tabSize, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
+    {
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
+
+        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
+        clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine });
+
+        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager, csharpSyntaxFormattingOptions);
+        return edits;
     }
 
     private protected async Task RunOnTypeFormattingTestAsync(
