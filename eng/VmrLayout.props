@@ -43,6 +43,7 @@
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
+    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
     <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
@@ -95,6 +96,13 @@
     <DefaultPackageVersionPropertySuffixes Include="$(PackageVersionPropertySuffix);$(PackageVersionPropertyAlternateSuffix)" />
     <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
   </ItemGroup>
+
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
 
   <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
   <ItemGroup>

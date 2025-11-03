@@ -195,7 +195,7 @@
       <IncludeOutputGroupsInVSIX>PublishProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly></IncludeOutputGroupsInVSIXLocalOnly>
       <Private>false</Private>
-      <AdditionalProperties>PublishReadyToRun=false</AdditionalProperties>
+      <AdditionalProperties>PublishReadyToRun=false;TargetFramework=$(NetVS)</AdditionalProperties>
       <VSIXSubPath>ServiceHubCore</VSIXSubPath>
       
     </ProjectReference>
