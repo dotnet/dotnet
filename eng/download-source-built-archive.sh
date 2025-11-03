@@ -56,6 +56,7 @@ function DownloadArchive {
   local destinationFileNamePrefix="${6:-}"
   local versionPropertyOverride="${7:-}"
   local useCILocation="${8:-false}"
+  local storageKey="${9:-}"
 
   local notFoundMessage="No $label found to download..."
 
@@ -89,16 +90,28 @@ function DownloadArchive {
     versionDelimiter="-"
   fi
 
+  local isServicingArchiveVersion=false
+  if [[ "$archiveVersion" == *"servicing"* ]]; then
+    isServicingArchiveVersion=true
+  fi
+
   # Assets for the default RID are hosted in builds.dotnet.microsoft.com
-  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
+  if [[ $artifactsRid == $defaultArtifactsRid && $isServicingArchiveVersion == false ]]; then
     useCILocation=false
   fi
 
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
   baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
+  local useStorageKey=false
   if [[ "$useCILocation" == true ]]; then
-    baseUrl="https://ci.dot.net/public/source-build"
+    # Determine CI location based on version suffix
+    if [[ $isServicingArchiveVersion == true ]]; then
+      baseUrl="https://ci.dot.net/internal/source-build"
+      useStorageKey=true
+    else
+      baseUrl="https://ci.dot.net/public/source-build"
+    fi
   fi
 
   if [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
@@ -112,16 +125,26 @@ function DownloadArchive {
     return 1
   fi
 
-  echo "  Downloading $label from $archiveUrl..."
+  local displayUrl="$archiveUrl"
+  local downloadedFilename=$(basename "$archiveUrl")
+
+  # Append decoded storage key query string if provided
+  # This is only used for internal CI location with servicing builds
+  if [[ "$useStorageKey" == true && -n "$storageKey" ]]; then
+    local decodedKey
+    decodedKey=$(echo "$storageKey" | base64 -d)
+    displayUrl="${archiveUrl}?[redacted]"
+    archiveUrl="${archiveUrl}?${decodedKey}"
+  fi
+
+  echo "  Downloading $label from $displayUrl..."
   if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
-    echo "  ERROR: Failed to download $archiveUrl"
+    echo "  ERROR: Failed to download $displayUrl"
     return 1
   fi
 
   # Rename the file if a destination filename prefix is provided
   if [[ -n "$destinationFileNamePrefix" ]]; then
-    local downloadedFilename
-    downloadedFilename=$(basename "$archiveUrl")
     # Extract the suffix from the downloaded filename
     local baseFilenameForSuffix="$artifactsBaseFileName"
     if [[ "$propertyName" == *Prebuilts* ]]; then
