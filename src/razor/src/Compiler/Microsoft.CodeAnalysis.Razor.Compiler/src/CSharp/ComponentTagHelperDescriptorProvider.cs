@@ -125,7 +125,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             {
                 metadata.IsGeneric = true;
 
-                using var cascadeGenericTypeAttributes = new PooledHashSet<string>(StringHashSetPool.Ordinal);
+                using var cascadeGenericTypeAttributes = new PooledHashSet<string>(StringComparer.Ordinal);
 
                 foreach (var attribute in type.GetAttributes())
                 {
@@ -610,7 +610,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
         // - are not indexers
         private static ImmutableArray<(IPropertySymbol property, PropertyKind kind)> GetProperties(INamedTypeSymbol type)
         {
-            using var names = new PooledHashSet<string>(StringHashSetPool.Ordinal);
+            using var names = new PooledHashSet<string>(StringComparer.Ordinal);
             using var results = new PooledArrayBuilder<(IPropertySymbol, PropertyKind)>();
 
             var currentType = type;

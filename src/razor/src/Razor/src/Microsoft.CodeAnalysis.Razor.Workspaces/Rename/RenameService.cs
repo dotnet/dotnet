@@ -95,7 +95,7 @@ internal class RenameService(
     private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
     {
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot>();
-        using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
+        using var _ = SpecializedPools.GetPooledStringHashSet(out var documentPaths);
 
         foreach (var project in solutionQueryOperations.GetProjects())
         {

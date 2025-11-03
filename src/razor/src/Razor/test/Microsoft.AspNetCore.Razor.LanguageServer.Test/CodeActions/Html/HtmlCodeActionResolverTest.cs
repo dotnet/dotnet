@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -85,15 +87,9 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
         Assert.NotNull(action.Edit);
         Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
         Assert.Equal(documentPath, documentEdits[0].TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath);
-        // Edit should be converted to 2 edits, to remove the tags
-        Assert.Collection(documentEdits[0].Edits,
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            },
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            });
+
+        var text = SourceText.From(contents);
+        var changed = text.WithChanges(documentEdits[0].Edits.Select(e => text.GetTextChange((TextEdit)e)));
+        Assert.Equal("Goo @(DateTime.Now) Bar", changed.ToString());
     }
 }
