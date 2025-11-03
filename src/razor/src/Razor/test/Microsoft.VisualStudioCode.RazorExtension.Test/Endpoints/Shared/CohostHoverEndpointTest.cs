@@ -106,8 +106,7 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
                     Container(
                         ClassifiedText(
                             Text(BodyDescription)),
-                        ClassifiedText(
-                            Text(string.Empty))),
+                        HorizontalRule),
                     Container(
                         Image,
                         ClassifiedText(

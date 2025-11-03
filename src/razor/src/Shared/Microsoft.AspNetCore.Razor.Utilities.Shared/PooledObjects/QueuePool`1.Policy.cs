@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal partial class StackPool<T>
+internal partial class QueuePool<T>
 {
     private sealed class Policy : PooledObjectPolicy
     {
@@ -28,17 +28,17 @@ internal partial class StackPool<T>
             return new(maximumObjectSize.GetValueOrDefault(DefaultMaximumObjectSize));
         }
 
-        public override Stack<T> Create() => new();
+        public override Queue<T> Create() => new();
 
-        public override bool Return(Stack<T> stack)
+        public override bool Return(Queue<T> queue)
         {
-            var count = stack.Count;
+            var count = queue.Count;
 
-            stack.Clear();
+            queue.Clear();
 
             if (count > _maximumObjectSize)
             {
-                stack.TrimExcess();
+                queue.TrimExcess();
             }
 
             return true;
