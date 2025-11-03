@@ -20,6 +20,14 @@
     <FSBuildVersion>0</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>
     <!-- -->
+    <!-- F# Version components - override specific to the 10.0.2xx branch. Reason is, the content comes from F#'s main which is already branded as NET11. We override it here in the VMR only -->
+    <FSMajorVersion>10</FSMajorVersion>
+    <FSMinorVersion>0</FSMinorVersion>
+    <FSBuildVersion>200</FSBuildVersion>
+    <FSRevisionVersion>0</FSRevisionVersion>
+    <FSharpPreReleaseIteration></FSharpPreReleaseIteration>
+    <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
+    <!-- End of the custom override related just to 10.0.2xx branch in the VMR -->
     <!-- F# Language version -->
     <FSLanguageVersion>$(FSMajorVersion).$(FSMinorVersion)</FSLanguageVersion>
     <!-- -->
