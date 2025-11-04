@@ -23,9 +23,8 @@ internal sealed class FormattingContentValidationPass(ILoggerFactory loggerFacto
     public Task<bool> IsValidAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var text = context.SourceText;
-        var changedText = text.WithChanges(changes);
 
-        if (!text.NonWhitespaceContentEquals(changedText))
+        if (!text.NonWhitespaceContentEquals(changes))
         {
             // Looks like we removed some non-whitespace content as part of formatting. Oops.
             // Discard this formatting result.

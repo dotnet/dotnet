@@ -8,8 +8,6 @@ using System.Buffers;
 using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.ObjectPool;
 
 // PERFORMANCE: Care has been taken to avoid using IncrementalHash on .NET Framework, which can cause
 // threadpool starvation. Essentially, on .NET Framework, IncrementalHash ends up using the OS implementation
@@ -31,7 +29,7 @@ internal sealed partial record Checksum
 {
     internal readonly ref partial struct Builder
     {
-        private static readonly ObjectPool<HashingType> s_hashPool = DefaultPool.Create(Policy.Instance);
+        private static readonly HashingTypePool s_hashPool = HashingTypePool.Default;
 
         private enum TypeKind : byte
         {

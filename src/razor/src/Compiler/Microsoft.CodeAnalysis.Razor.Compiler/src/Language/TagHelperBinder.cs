@@ -56,7 +56,7 @@ internal sealed partial class TagHelperBinder
         using var catchAllToAdd = new MemoryBuilder<TagHelperDescriptor>(initialCapacity: descriptors.Length, clearArray: true);
 
         // The builders are indexed using a map of "tag name" to the index of the builder in the array.
-        using var _1 = StringDictionaryPool<int>.OrdinalIgnoreCase.GetPooledObject(out var tagNameToBuilderIndexMap);
+        using var _1 = SpecializedPools.GetPooledStringDictionary<int>(ignoreCase: true, out var tagNameToBuilderIndexMap);
         using var _2 = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var tagHelperSet);
 
 #if NET

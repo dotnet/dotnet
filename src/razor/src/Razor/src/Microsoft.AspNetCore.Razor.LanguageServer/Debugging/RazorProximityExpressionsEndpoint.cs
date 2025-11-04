@@ -68,7 +68,7 @@ internal class RazorProximityExpressionsEndpoint(
         }
 
         // Now ask Roslyn to adjust the breakpoint to a valid location in the code
-        var syntaxTree = codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
+        var syntaxTree = await documentContext.Snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var expressions = RazorCSharpProximityExpressionResolverService.GetProximityExpressions(syntaxTree, projectedIndex, cancellationToken)?.ToList();
         if (expressions == null)
         {

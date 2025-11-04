@@ -443,8 +443,11 @@ namespace Microsoft.DotNet.SignTool.Tests
             Directory.CreateDirectory(controlLayout);
             Directory.CreateDirectory(dataLayout);
 
-            ZipData.ExtractTarballContents(dataArchive, dataLayout, skipSymlinks: false);
-            ZipData.ExtractTarballContents(controlArchive, controlLayout);
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+
+            ZipData.ExtractTarballContents(fakeLog, dataArchive, dataLayout, skipSymlinks: false);
+            ZipData.ExtractTarballContents(fakeLog, controlArchive, controlLayout);
 
             string md5sumsContents = File.ReadAllText(Path.Combine(controlLayout, "md5sums"));
 
@@ -500,7 +503,9 @@ namespace Microsoft.DotNet.SignTool.Tests
             string layout = Path.Combine(tempDir, "layout");
             Directory.CreateDirectory(layout);
 
-            ZipData.ExtractRpmPayloadContents(rpmPackage, layout);
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+            ZipData.ExtractRpmPayloadContents(fakeLog, rpmPackage, layout);
 
             // Checks:
             // Expected files are present
@@ -2773,7 +2778,7 @@ $@"
                 }),
                 new TaskItem("DetachedArchiveCert", new Dictionary<string, string>
                 {
-                    { "DetachedSignature", "true" }
+                    { "SupportsDetachedSignature", "true" }
                 }),
             };
 
