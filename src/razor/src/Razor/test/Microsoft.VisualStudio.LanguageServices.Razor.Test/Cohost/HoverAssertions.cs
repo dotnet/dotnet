@@ -5,11 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.CodeAnalysis.Text;
 using Roslyn.Text.Adornments;
 using Xunit;
 
@@ -17,14 +14,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal static class HoverAssertions
 {
-    public static async Task VerifyRangeAsync(this Hover hover, TextSpan expected, TextDocument document)
-    {
-        var text = await document.GetTextAsync();
-        Assert.NotNull(hover.Range);
-        Assert.Equal(text.GetLinePositionSpan(expected), hover.Range.ToLinePositionSpan());
-    }
-
-    public static void VerifyRawContent(this Hover hover, Action<object?> verifier)
+    public static void VerifyContents(this LspHover hover, Action<object?> verifier)
     {
         var vsHover = Assert.IsType<VSInternalHover>(hover);
         verifier(vsHover.RawContent);
@@ -84,6 +74,9 @@ internal static class HoverAssertions
     public static Action<ClassifiedTextRun> Keyword(string text)
         => Run(text, ClassificationTypeNames.Keyword);
 
+    public static Action<ClassifiedTextRun> Namespace(string text)
+        => Run(text, ClassificationTypeNames.NamespaceName);
+
     public static Action<ClassifiedTextRun> LocalName(string text)
         => Run(text, ClassificationTypeNames.LocalName);
 
@@ -101,4 +94,7 @@ internal static class HoverAssertions
 
     public static Action<ClassifiedTextRun> WhiteSpace(string text)
         => Run(text, ClassificationTypeNames.WhiteSpace);
+
+    public static Action<object?> HorizontalRule
+        => o => { };
 }

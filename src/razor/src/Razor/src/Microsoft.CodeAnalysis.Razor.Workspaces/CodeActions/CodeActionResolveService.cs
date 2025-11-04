@@ -152,7 +152,7 @@ internal class CodeActionResolveService(
     private static FrozenDictionary<string, T> CreateResolverMap<T>(IEnumerable<T> codeActionResolvers)
         where T : ICodeActionResolver
     {
-        using var _ = StringDictionaryPool<T>.GetPooledObject(out var resolverMap);
+        using var _ = SpecializedPools.GetPooledStringDictionary<T>(out var resolverMap);
 
         foreach (var resolver in codeActionResolvers)
         {

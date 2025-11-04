@@ -38,9 +38,12 @@
     <PreviouslySourceBuiltPackageVersionsPropsFile>$(PreviouslySourceBuiltPackagesPath)PackageVersions.props</PreviouslySourceBuiltPackageVersionsPropsFile>
     <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'shared-components'))</SharedComponentsArtifactsPath>
     <SharedComponentsArtifactsPath Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomSharedComponentsArtifactsPath)'))</SharedComponentsArtifactsPath>
+    <SharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</SharedComponentAssetManifests>
+    <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
+    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
     <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
@@ -93,6 +96,13 @@
     <DefaultPackageVersionPropertySuffixes Include="$(PackageVersionPropertySuffix);$(PackageVersionPropertyAlternateSuffix)" />
     <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
   </ItemGroup>
+
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
 
   <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
   <ItemGroup>

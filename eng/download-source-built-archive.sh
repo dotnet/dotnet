@@ -5,8 +5,8 @@
 # Get the repository root directory
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Define the path to Versions.props once
 PACKAGE_VERSIONS_PATH="$REPO_ROOT/eng/Versions.props"
+PACKAGE_VERSION_DETAILS_PATH="$REPO_ROOT/eng/Version.Details.props"
 
 # Helper to extract a property value from an XML file
 function GetXmlPropertyValue {
@@ -53,12 +53,21 @@ function DownloadArchive {
   local isRequired="$3"
   local artifactsRid="$4"
   local outputDir="$5"
-  local destinationFilenamePrefix="${6:-}"
+  local destinationFileNamePrefix="${6:-}"
+  local versionPropertyOverride="${7:-}"
+  local useCILocation="${8:-false}"
 
   local notFoundMessage="No $label found to download..."
 
   local archiveVersion
-  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$PACKAGE_VERSIONS_PATH")
+  local versionsPath
+  local versionProperty="${versionPropertyOverride:-$propertyName}"
+  if [[ "$versionProperty" == "MicrosoftNETSdkPackageVersion" ]]; then
+    versionsPath="$PACKAGE_VERSION_DETAILS_PATH"
+  else
+    versionsPath="$PACKAGE_VERSIONS_PATH"
+  fi
+  archiveVersion=$(GetXmlPropertyValue "$versionProperty" "$versionsPath")
   if [[ -z "$archiveVersion" ]]; then
     if [ "$isRequired" == true ]; then
       echo "  ERROR: $notFoundMessage"
@@ -72,16 +81,32 @@ function DownloadArchive {
   local archiveUrl
   local artifactsBaseFileName="Private.SourceBuilt.Artifacts"
   local prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
+  local sdkBaseFileName="dotnet-sdk"
   local defaultArtifactsRid='centos.10-x64'
 
-  if [[ "$propertyName" == "MicrosoftNETSdkVersion" ]]; then
-    archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Prebuilts* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Artifacts* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Sdk* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/sdks/dotnet-sdk-$archiveVersion-$artifactsRid.tar.gz"
+  local versionDelimiter="."
+  if [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
+    versionDelimiter="-"
+  fi
+
+  # Assets for the default RID are hosted in builds.dotnet.microsoft.com
+  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
+    useCILocation=false
+  fi
+
+  archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
+
+  baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
+  if [[ "$useCILocation" == true ]]; then
+    baseUrl="https://ci.dot.net/public/source-build"
+  fi
+
+  if [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
+    archiveUrl="${baseUrl}/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
+  elif [[ "$propertyName" == "PrivateSourceBuiltArtifactsVersion" ]]; then
+    archiveUrl="${baseUrl}/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+  elif [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
+    archiveUrl="${baseUrl}/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     return 1
@@ -94,12 +119,18 @@ function DownloadArchive {
   fi
 
   # Rename the file if a destination filename prefix is provided
-  if [[ -n "$destinationFilenamePrefix" ]]; then
+  if [[ -n "$destinationFileNamePrefix" ]]; then
     local downloadedFilename
     downloadedFilename=$(basename "$archiveUrl")
     # Extract the suffix from the downloaded filename
-    local suffix="${downloadedFilename#$artifactsBaseFileName}"
-    local newFilename="$destinationFilenamePrefix$suffix"
+    local baseFilenameForSuffix="$artifactsBaseFileName"
+    if [[ "$propertyName" == *Prebuilts* ]]; then
+      baseFilenameForSuffix="$prebuiltsBaseFileName"
+    elif [[ "$propertyName" == *Sdk* ]]; then
+      baseFilenameForSuffix="$sdkBaseFileName"
+    fi
+    local suffix="${downloadedFilename#$baseFilenameForSuffix}"
+    local newFilename="$destinationFileNamePrefix$suffix"
     mv "$outputDir/$downloadedFilename" "$outputDir/$newFilename"
     echo "  Renamed $downloadedFilename to $newFilename"
   fi

@@ -11,6 +11,11 @@ public sealed class TagHelperIntermediateNode : IntermediateNode
     public required TagMode TagMode { get; init; }
     public required string TagName { get; init; }
 
+    /// <summary>
+    /// The source span of the start tag of the component that this tag helper represents, or null for an Mvc tag helper
+    /// </summary>
+    public SourceSpan? StartTagSpan { get; init; }
+
     public ImmutableArray<TagHelperDescriptor> TagHelpers { get; init => field = value.NullToEmpty(); } = [];
 
     public override IntermediateNodeCollection Children { get => field ??= []; }

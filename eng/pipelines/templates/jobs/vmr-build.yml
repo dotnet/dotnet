@@ -186,6 +186,10 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
+  
+  - ${{ if parameters.buildSourceOnly }}:
+    - name: sharedComponentsDir
+      value: $(Agent.TempDirectory)/shared-components
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
@@ -393,8 +397,8 @@ jobs:
             artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
             artifactName: ${{ reuseBuildArtifacts }}_Artifacts
             downloadFilePatterns: |
-              **/Private.SourceBuilt.Artifacts.*.tar.gz
-              **/dotnet-sdk-*.tar.gz
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
             copyDestination: $(sourcesPath)/prereqs/packages/archive/
             flattenDirs: true
 
@@ -411,10 +415,20 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
-  - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        # Download the 1xx source-built SDK
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" true
+      displayName: Download 1xx SDK
+
+  - ${{ if parameters.excludeRuntimeDependentJobs }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        mkdir -p "$(sharedComponentsDir)"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" true
+        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758
@@ -453,7 +467,6 @@ jobs:
           isOfficialBuild: true
           serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
           serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
-          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
 
     - script: build.cmd
@@ -504,16 +517,22 @@ jobs:
           customPrepArgs=""
           prepSdk=true
 
+          if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            prepSdk=false
+          fi
+
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Using previous SDK implies we do not want to bootstrap.
-            customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
+            # Using source-built SDK implies we do not want to bootstrap.
+            customPrepArgs="${customPrepArgs} --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            customPrepArgs="${customPrepArgs} --no-artifacts"
             prepSdk=false
           fi
 
           if [[ "$prepSdk" == "false" ]]; then
+            customPrepArgs="${customPrepArgs} --no-sdk"
+            rm -rf $(sourcesPath)/.dotnet
             mkdir $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
@@ -548,6 +567,10 @@ jobs:
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
+            fi
+
+            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
             fi
           fi
 
