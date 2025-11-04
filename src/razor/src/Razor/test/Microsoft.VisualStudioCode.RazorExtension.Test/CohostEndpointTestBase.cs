@@ -87,8 +87,9 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true)
     {
-        return CreateProjectAndRazorDocument(LocalWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
+        return CreateProjectAndRazorDocument(LocalWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile, addDefaultImports);
     }
 }
