@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 287844,
+      "barId": 289159,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "16f3dcc641eb529fa7324ea2d1d236bf2ca57dd0"
+      "commitSha": "d8816877a6b0e6cb39cb57d92557ad4952715a2e"
     },
     {
-      "barId": 287809,
+      "barId": 289175,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d4349298d046f24282a6030d8935e81aa2440141"
+      "commitSha": "b6a3871dd2108fe761498e6cac41efc23567ab99"
     },
     {
       "barId": 277712,
@@ -25,22 +25,22 @@
       "commitSha": "0b4618bc860374941e605d8eb1d2bc29c32801db"
     },
     {
-      "barId": 284345,
+      "barId": 288748,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
+      "commitSha": "84ccc0553245e90355f32ea8ddcf169d9bd8f640"
     },
     {
-      "barId": 288394,
+      "barId": 288647,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "d4961a0eaa599e14f815f50985b986148bdabc1b"
+      "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 287743,
+      "barId": 289151,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "a025407ace99e28b1364d0d3254051dd479c9e63"
+      "commitSha": "38e81e167cc5ba1bfdf2c9318382edaea1183539"
     },
     {
       "barId": 285755,
@@ -67,10 +67,10 @@
       "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
     },
     {
-      "barId": 288204,
+      "barId": 289279,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "bb9fc372e43cdc6be177b1a3b2153c91203877ed"
+      "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
     },
     {
       "barId": 286437,
@@ -79,10 +79,10 @@
       "commitSha": "a01d6a0838430706cea74ad38e054c2877ffbfa1"
     },
     {
-      "barId": 288338,
+      "barId": 288963,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "dac11e0f02a96ecfab5fbc2214a484c0a5effed8"
+      "commitSha": "d3b36cce4f334dac2e6b5c6a6100025f4d35e8ce"
     },
     {
       "barId": 277711,
@@ -91,22 +91,22 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 288013,
+      "barId": 288443,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ffaba7534225db5528a00d45be71127f3f871843"
+      "commitSha": "65384c6536d6c6f6afa9c13dc023b1848f0ef69e"
     },
     {
-      "barId": 287497,
+      "barId": 289153,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "0eed3a94644603ef1c0095bc3f1bff525fff876e"
+      "commitSha": "cf1505e3e160ba04a35d996cd88dbb7c7bcadb3e"
     },
     {
-      "barId": 277912,
+      "barId": 289117,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "9b949eeb2d5dba635c06ae936b50d2141b0aabe2"
+      "commitSha": "25fdaee99efa095bdeeb1c0f7bda13a10ed7c8d5"
     },
     {
       "barId": 287040,
@@ -133,10 +133,10 @@
       "commitSha": "9f2ae28ea4f111e6a336682484e5aa412e114f3c"
     },
     {
-      "barId": 288259,
+      "barId": 289291,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "e68e2fec260cf78b082f2a23c9fb77e961002650"
+      "commitSha": "f2ca50c26f7a03c26da48ee406d95216602c82d3"
     },
     {
       "barId": 283721,
@@ -155,7 +155,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "b2b9072ecbe874f5937054653ef8f2731eb0f010"
+      "commitSha": "17d335d7c7f15d989516255471c3d7f5d204308d"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -210,7 +210,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "68fcfe0de4c0602b1c4d4c3cf58ea70e9f06388c"
+      "commitSha": "3c2156268ca56c3712c0c4b304b16ca52fee1c7f"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",

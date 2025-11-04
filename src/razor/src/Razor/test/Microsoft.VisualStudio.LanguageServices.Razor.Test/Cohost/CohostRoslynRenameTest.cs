@@ -148,7 +148,7 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
                 """,
            useLsp);
 
-    private protected override TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
+    private protected override TestComposition ConfigureLocalComposition(TestComposition composition)
     {
         return composition
             .AddParts(typeof(RazorSourceGeneratedDocumentSpanMappingService))
@@ -169,8 +169,7 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
 
         var compilation = await project.GetCompilationAsync(DisposalToken);
 
-        Assert.True(razorDocument.TryComputeHintNameFromRazorDocument(out var hintName));
-        var generatedDocument = await project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var generatedDocument = await project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
 
         var node = await GetSyntaxNodeAsync(generatedDocument.AssumeNotNull(), razorFile.Position, razorDocument);
 
@@ -227,10 +226,9 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
         AssertEx.EqualOrDiff(expectedCSharpFile, csharpText.ToString());
 
         // Normally in VS, TryApplyChanges would be called, and that calls into our edit mapping service.
-        Assert.True(razorDocument.TryComputeHintNameFromRazorDocument(out var hintName));
-        var generatedDoc = await project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var generatedDoc = await project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
         Assert.NotNull(generatedDoc);
-        var renamedGeneratedDoc = await solution.GetRequiredProject(project.Id).TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var renamedGeneratedDoc = await solution.GetRequiredProject(project.Id).TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
         Assert.NotNull(renamedGeneratedDoc);
 
         // It could be argued this class is really a RazorSourceGeneratedDocumentSpanMappingService test :)
@@ -253,7 +251,7 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
     {
         // Normally in cohosting tests we directly construct and invoke the endpoints, but in this scenario Roslyn is going to do it
         // using a service in their MEF composition, so we have to jump through an extra hook to hook up our test invoker.
-        var invoker = RoslynDevenvExportProvider.AssumeNotNull().GetExportedValue<ExportableRemoteServiceInvoker>();
+        var invoker = LocalExportProvider.AssumeNotNull().GetExportedValue<ExportableRemoteServiceInvoker>();
         invoker.SetInvoker(RemoteServiceInvoker);
 
         var tree = node.SyntaxTree;

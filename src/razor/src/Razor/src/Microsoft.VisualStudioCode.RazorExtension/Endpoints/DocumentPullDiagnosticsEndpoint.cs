@@ -77,5 +77,13 @@ internal sealed class DocumentPullDiagnosticsEndpoint(
             ResultId = Guid.NewGuid().ToString()
         };
     }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(DocumentPullDiagnosticsEndpoint instance)
+    {
+        public Task<LspDiagnostic[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+            => instance.GetDiagnosticsAsync(razorDocument, cancellationToken);
+    }
 }
 

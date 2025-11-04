@@ -31,16 +31,6 @@ internal sealed class FormattingTestCase : XunitTestCase
             (_shouldFlipLineEndings ? " (LF)" : " (CRLF)");
     }
 
-    protected override string GetSkipReason(IAttributeInfo factAttribute)
-    {
-        if (_shouldFlipLineEndings && factAttribute.GetNamedArgument<bool>(nameof(FormattingTestFactAttribute.SkipFlipLineEnding)))
-        {
-            return "Some tests fail with LF line endings";
-        }
-
-        return base.GetSkipReason(factAttribute);
-    }
-
     public override Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
         Debug.Assert(constructorArguments.Length >= 1 && constructorArguments[0] is FormattingTestContext, $"{TestMethod.TestClass.Class.Name}.{TestMethod.Method.Name} uses a formatting test attribute in a class without a FormattingTestContext parameter?");

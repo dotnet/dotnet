@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -14,12 +13,22 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 /// Instances originating from this pool are intended to be short-lived and are suitable
 /// for temporary work. Do not return them as the results of methods or store them in fields.
 /// </remarks>
-internal static partial class ListPool<T>
+internal sealed partial class ListPool<T> : CustomObjectPool<List<T>>
 {
-    public static readonly ObjectPool<List<T>> Default = DefaultPool.Create(Policy.Instance);
+    public static readonly ListPool<T> Default = Create();
 
-    public static ObjectPool<List<T>> Create(int size = 20)
-        => DefaultPool.Create(Policy.Instance, size);
+    private ListPool(PooledObjectPolicy policy, Optional<int> poolSize)
+        : base(policy, poolSize)
+    {
+    }
+
+    public static ListPool<T> Create(
+        Optional<int> maximumObjectSize = default,
+        Optional<int> poolSize = default)
+        => new(Policy.Create(maximumObjectSize), poolSize);
+
+    public static ListPool<T> Create(PooledObjectPolicy policy, Optional<int> poolSize = default)
+        => new(policy, poolSize);
 
     public static PooledObject<List<T>> GetPooledObject()
         => Default.GetPooledObject();
