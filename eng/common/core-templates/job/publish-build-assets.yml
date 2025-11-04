@@ -38,10 +38,6 @@ parameters:
   # Optional: A minimatch pattern for the asset manifests to publish to BAR
   assetManifestsPattern: '*/manifests/**/*.xml'
 
-  repositoryAlias: self
-
-  officialBuildId: ''
-
 jobs:
 - job: Asset_Registry_Publish
 
@@ -64,11 +60,6 @@ jobs:
       value: false
     # unconditional - needed for logs publishing (redactor tool version)
     - template: /eng/common/core-templates/post-build/common-variables.yml
-  - name: OfficialBuildId
-    ${{ if ne(parameters.officialBuildId, '') }}:
-      value: ${{ parameters.officialBuildId }}
-    ${{ else }}:
-      value: $(Build.BuildNumber)
 
   pool:
     # We don't use the collection uri here because it might vary (.visualstudio.com vs. dev.azure.com)
@@ -87,7 +78,7 @@ jobs:
     - 'Illegal entry point, is1ESPipeline is not defined. Repository yaml should not directly reference templates in core-templates folder.': error
 
   - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - checkout: ${{ parameters.repositoryAlias }}
+    - checkout: self
       fetchDepth: 3
       clean: true
 
@@ -126,12 +117,12 @@ jobs:
         azureSubscription: "Darc: Maestro Production"
         scriptType: ps
         scriptLocation: scriptPath
-        scriptPath: $(System.DefaultWorkingDirectory)/eng/common/sdk-task.ps1
+        scriptPath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
         arguments: -task PublishBuildAssets -restore -msbuildEngine dotnet
           /p:ManifestsPath='$(Build.StagingDirectory)/AssetManifests'
           /p:IsAssetlessBuild=${{ parameters.isAssetlessBuild }}
           /p:MaestroApiEndpoint=https://maestro.dot.net
-          /p:OfficialBuildId=$(OfficialBuildId)
+          /p:OfficialBuildId=$(Build.BuildNumber)
       condition: ${{ parameters.condition }}
       continueOnError: ${{ parameters.continueOnError }}
     
@@ -146,7 +137,7 @@ jobs:
           Add-Content -Path $filePath -Value "$(DefaultChannels)"
           Add-Content -Path $filePath -Value $(IsStableBuild)
 
-          $symbolExclusionfile = "$(System.DefaultWorkingDirectory)/eng/SymbolPublishingExclusionsFile.txt"
+          $symbolExclusionfile = "$(Build.SourcesDirectory)/eng/SymbolPublishingExclusionsFile.txt"
           if (Test-Path -Path $symbolExclusionfile)
           {
             Write-Host "SymbolExclusionFile exists"
@@ -186,7 +177,7 @@ jobs:
           azureSubscription: "Darc: Maestro Production"
           scriptType: ps
           scriptLocation: scriptPath
-          scriptPath: $(System.DefaultWorkingDirectory)/eng/common/post-build/publish-using-darc.ps1
+          scriptPath: $(Build.SourcesDirectory)/eng/common/post-build/publish-using-darc.ps1
           arguments: >
             -BuildId $(BARBuildId)
             -PublishingInfraVersion 3
