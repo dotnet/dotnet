@@ -55,6 +55,16 @@
     <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
   </PropertyGroup>
 
+  <PropertyGroup Label="VSIX Settings">
+    <RazorVSSDKTargetPlatformRegRootSuffix>RoslynDev</RazorVSSDKTargetPlatformRegRootSuffix>
+    <RazorExtensionInstallationRoot>CommonExtensions</RazorExtensionInstallationRoot>
+    <!-- Base folder for Razor Language Services content inside CommonExtensions -->
+    <RazorExtensionInstallationFolderBase>Microsoft\RazorLanguageServices</RazorExtensionInstallationFolderBase>
+    <!-- Sub-folder used by ServiceHub core components -->
+    <RazorServiceHubCoreSubFolder>ServiceHubCore</RazorServiceHubCoreSubFolder>
+    <RazorVisualStudioInsertionComponent>Microsoft.VisualStudio.RazorExtension</RazorVisualStudioInsertionComponent>
+  </PropertyGroup>
+
   <!--
     There are effectively three modes that are needed for our source build TFMs and this is where
     we calculate them

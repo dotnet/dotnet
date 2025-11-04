@@ -48,6 +48,42 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, options.ToRazorFormattingOptions().CSharpSyntaxFormattingOptions.AssumeNotNull());
     }
 
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12416")]
+    public Task MixedIndentation()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        return VerifyMixedIndentationAsync(contents, htmlChangesFile);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12416")]
+    public Task RealWorldMixedIndentation()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        return VerifyMixedIndentationAsync(contents, htmlChangesFile);
+    }
+
+    private async Task VerifyMixedIndentationAsync(string contents, string htmlChangesFile)
+    {
+        var document = CreateProjectAndRazorDocument(contents);
+
+        var options = new TempRazorFormattingOptions();
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+
+        var htmlChanges = JsonSerializer.Deserialize<RazorTextChange[]>(htmlChangesFile, JsonHelpers.JsonSerializerOptions);
+        var sourceText = await document.GetTextAsync();
+        var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
+
+        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, options.ToRazorFormattingOptions().CSharpSyntaxFormattingOptions.AssumeNotNull());
+    }
+
     private string GetResource(string name, [CallerMemberName] string? testName = null)
     {
         var baselineFileName = $@"TestFiles\FormattingLog\{testName}\{name}";

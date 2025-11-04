@@ -28,6 +28,41 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12416")]
+    public async Task MixedIndentation()
+    {
+        // This doesn't actually fail because the Html formatter in Web Tools doesn't produce "bad" edits
+        // like VS Code does, but thought I'd put it here just in case. Tests in FormattingLogTest validate
+        // the same scenario with VS Code edits.
+
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                @switch (true)
+                {
+                    case true:
+                		@if (true)
+                		{
+                		}
+                        break;
+                }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @switch (true)
+                    {
+                        case true:
+                            @if (true)
+                            {
+                            }
+                            break;
+                    }
+                </div>
+                """);
+    }
+
+    [FormattingTestFact]
     public async Task RangeFormatOpenBrace()
     {
         await RunFormattingTestAsync(
