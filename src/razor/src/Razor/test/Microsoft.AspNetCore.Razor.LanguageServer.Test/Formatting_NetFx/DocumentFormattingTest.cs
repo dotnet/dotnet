@@ -7303,4 +7303,21 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </span>
                 }
                 """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12445")]
+    public Task TypeParameterAttribute()
+     => RunFormattingTestAsync(
+         input: """
+                <div>
+                <InputSelect TValue="Guid?">
+                </InputSelect>
+                </div>
+                """,
+         expected: """
+                <div>
+                    <InputSelect TValue="Guid?">
+                    </InputSelect>
+                </div>
+                """);
 }
