@@ -132,10 +132,15 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, linePositionSpanAfterFormatting);
-        var cleanedText = formattedText.WithChanges(cleanupChanges);
-        context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+        var cleanedText = formattedText;
 
-        changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        if (!cleanupChanges.IsEmpty)
+        {
+            cleanedText = formattedText.WithChanges(cleanupChanges);
+            context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+
+            changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        }
 
         // At this point we should have applied all edits that adds/removes newlines.
         // Let's now ensure the indentation of each of those lines is correct.
@@ -207,7 +212,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
             if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
             {
-                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(context.CodeDocument, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
+                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
                 var usingStatementChanges = usingStatementEdits.Select(context.CodeDocument.Source.Text.GetTextChange);
                 finalChanges = [.. usingStatementChanges, .. finalChanges];
             }
@@ -635,7 +640,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             }
             else if (owner is CSharpTransitionSyntax &&
                 owner.Parent is RazorDirectiveSyntax containingDirective &&
-                containingDirective.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive)
+                containingDirective.IsDirective(SectionDirective.Directive))
             {
                 // Section directives are a challenge because they have Razor indentation (we want to indent their contents one level)
                 // and their contents will have Html indentation, and the generated code for them is indented (contents are in a lambda)
@@ -704,7 +709,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // For @section blocks we have special handling to add a fake source mapping/significant location at the end of the
             // section, to return the indentation back to before the start of the section block.
             if (scopeOwner?.Parent?.Parent?.Parent is RazorDirectiveSyntax containingDirective &&
-                containingDirective.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive &&
+                containingDirective.IsDirective(SectionDirective.Directive) &&
                 !sourceMappingIndentations.ContainsKey(containingDirective.EndPosition - 1))
             {
                 // We want the indentation for the end point to be whatever the indentation was before the start point. For
@@ -1036,7 +1041,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@using |System;
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax { DirectiveDescriptor: null });
+                n => n is RazorDirectiveSyntax { HasDirectiveDescriptor: false });
         }
 
         bool IsAttributeDirective()
@@ -1046,10 +1051,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@attribute |[System.Obsolete]
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax directive &&
-                    directive.DirectiveDescriptor != null &&
-                    directive.DirectiveDescriptor.Kind == DirectiveKind.SingleLine &&
-                    directive.DirectiveDescriptor.Directive.Equals(AttributeDirective.Directive.Directive, StringComparison.Ordinal));
+                static n => n is RazorDirectiveSyntax directive && directive.IsDirective(AttributeDirective.Directive));
         }
 
         bool IsTypeParamDirective()
@@ -1059,10 +1061,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@typeparam |T where T : IDisposable
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax directive &&
-                    directive.DirectiveDescriptor != null &&
-                    directive.DirectiveDescriptor.Kind == DirectiveKind.SingleLine &&
-                    directive.DirectiveDescriptor.Directive.Equals(ComponentTypeParamDirective.Directive.Directive, StringComparison.Ordinal));
+               static n => n is RazorDirectiveSyntax directive && directive.IsDirective(ComponentTypeParamDirective.Directive));
         }
 
         bool IsInSingleLineDirective()
@@ -1072,7 +1071,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@inject |SomeType SomeName` - true
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax directive && directive.DirectiveDescriptor.Kind == DirectiveKind.SingleLine);
+                static n => n is RazorDirectiveSyntax directive && directive.IsDirectiveKind(DirectiveKind.SingleLine));
         }
 
         bool IsImplicitExpression()
@@ -1081,7 +1080,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             //
             // `@|foo` - true
             //
-            return owner.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax);
+            return owner.AncestorsAndSelf().Any(static n => n is CSharpImplicitExpressionSyntax);
         }
 
         bool IsSingleLineExplicitExpression()
@@ -1119,7 +1118,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // we effectively pretend it doesn't exist so the formatting engine can handle both forms.
             if (owner is CSharpStatementLiteralSyntax literal &&
                 owner.Parent?.Parent?.Parent is RazorDirectiveSyntax directive3 &&
-                directive3.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive)
+                directive3.IsDirective(SectionDirective.Directive))
             {
                 return true;
             }
@@ -1136,7 +1135,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 (owner == codeBlock.Children[3] || owner == codeBlock.Children[^1]) &&
                 // CSharpCodeBlock -> RazorDirectiveBody -> RazorDirective
                 codeBlock.Parent?.Parent is RazorDirectiveSyntax directive2 &&
-                directive2.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive)
+                directive2.IsDirective(SectionDirective.Directive))
             {
                 return true;
             }

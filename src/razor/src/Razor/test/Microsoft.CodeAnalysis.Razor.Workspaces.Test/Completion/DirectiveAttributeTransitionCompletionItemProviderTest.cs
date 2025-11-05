@@ -327,7 +327,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
         }
     }
 
-    private static RazorSyntaxTree GetSyntaxTree(string text, RazorFileKind? fileKind = null)
+    private static RazorCodeDocument GetCodeDocument(string text, RazorFileKind? fileKind = null)
     {
         var fileKindValue = fileKind ?? RazorFileKind.Component;
 
@@ -340,17 +340,16 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
             });
         });
 
-        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
-
-        return codeDocument.GetRequiredSyntaxTree();
+        return projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
     }
 
     private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, RazorFileKind? fileKind = null)
     {
-        var syntaxTree = GetSyntaxTree(documentContent, fileKind);
+        var codeDocument = GetCodeDocument(documentContent, fileKind);
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
 
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
     }
 }

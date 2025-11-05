@@ -116,7 +116,7 @@ internal class DelegatedCompletionListProvider(
             ? DelegatedCompletionHelper.RewriteCSharpResponse(delegatedResponse, absoluteIndex, codeDocument, positionInfo.Position, razorCompletionOptions)
             : DelegatedCompletionHelper.RewriteHtmlResponse(delegatedResponse, razorCompletionOptions);
 
-        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, positionInfo.LanguageKind, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, positionInfo.LanguageKind, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data, provisionalTextEdit);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, clientCapabilities);
 

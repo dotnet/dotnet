@@ -69,7 +69,7 @@ internal class DefaultDirectiveSyntaxTreePass : RazorEngineFeatureBase, IRazorSy
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
-            if (node.DirectiveDescriptor?.Directive != SectionDirective.Directive.Directive)
+            if (!node.IsDirective(SectionDirective.Directive))
             {
                 // We only want to track the nesting of section directives.
                 return base.VisitRazorDirective(node);

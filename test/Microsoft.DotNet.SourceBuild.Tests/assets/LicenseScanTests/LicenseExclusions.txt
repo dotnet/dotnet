@@ -114,6 +114,9 @@ src/nuget-client/test/TestUtilities/Test.Utility/JsonData.cs
 # roslyn
 #
 
+# Reference to a license, not applicable to source
+src/roslyn/THIRD-PARTY-NOTICES.txt
+
 # Test data
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
@@ -152,6 +155,7 @@ src/runtime/src/libraries/System.Runtime/tests/System.Runtime.Tests/TestModule/R
 # Reference to a license, not applicable to source
 src/runtime/docs/project/copyright.md
 src/runtime/docs/project/licensing-assets.md
+src/runtime/docs/workflow/building/coreclr/ios.md
 src/runtime/src/coreclr/nativeaot/docs/compiling.md|openssl-ssleay
 src/runtime/src/libraries/System.Text.Json/roadmap/images/core-components.txt|unknown-license-reference
 src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-components.txt
@@ -167,8 +171,6 @@ src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.10.0/content/*/.t
 # Build asset, not applicable to source
 src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-library
 
-# Configuration, doesn't apply to source directly
-
 #
 # source-build-reference-packages
 #
@@ -178,6 +180,7 @@ src/source-build-reference-packages/src/externalPackages/src/application-insight
 src/source-build-reference-packages/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/microsoft.aspnetcore.app.ref/8.0.0/THIRD-PARTY-NOTICES.TXT|unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
@@ -187,8 +190,6 @@ src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.i
 # Contains references to licenses which are not applicable to the source
 src/source-build-reference-packages/src/packageSourceGenerator/PackageSourceGeneratorTask/RewriteNuspec.cs|unknown-license-reference,ms-net-library-2018-11
 src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/windowsdesktop/1033/PresentationCore.xml|proprietary-license
-
-# Configuration, doesn't apply to source directly
 
 #
 # sourcelink

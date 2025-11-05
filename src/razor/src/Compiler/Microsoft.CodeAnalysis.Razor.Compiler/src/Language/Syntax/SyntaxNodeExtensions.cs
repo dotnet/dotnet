@@ -12,50 +12,6 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class SyntaxNodeExtensions
 {
-    public static TNode WithAnnotations<TNode>(this TNode node, params SyntaxAnnotation[] annotations) where TNode : SyntaxNode
-    {
-        return (TNode)node.Green.SetAnnotations(annotations).CreateRed(node.Parent, node.Position);
-    }
-
-    public static object GetAnnotationValue<TNode>(this TNode node, string key)
-        where TNode : SyntaxNode
-    {
-        if (!node.ContainsAnnotations)
-        {
-            return null;
-        }
-
-        var annotations = node.GetAnnotations();
-        foreach (var annotation in annotations)
-        {
-            if (annotation.Kind == key)
-            {
-                return annotation.Data;
-            }
-        }
-
-        return null;
-    }
-
-    public static object GetAnnotationValue(this SyntaxToken token, string key)
-    {
-        if (!token.ContainsAnnotations)
-        {
-            return null;
-        }
-
-        var annotations = token.GetAnnotations();
-        foreach (var annotation in annotations)
-        {
-            if (annotation.Kind == key)
-            {
-                return annotation.Data;
-            }
-        }
-
-        return null;
-    }
-
     public static TNode WithDiagnostics<TNode>(this TNode node, params RazorDiagnostic[] diagnostics) where TNode : SyntaxNode
     {
         return (TNode)node.Green.SetDiagnostics(diagnostics).CreateRed(node.Parent, node.Position);

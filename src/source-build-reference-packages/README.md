@@ -1,6 +1,7 @@
 # .NET Source Build Assets
 
 This repository contains source, tools, and infrastructure for auxilary packages required to [build .NET from source](https://github.com/dotnet/source-build).
+This repository is often referred to as `SBRP`.
 
 This repo supports the following package types:
 
@@ -44,6 +45,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 ### External
 
 #### Adding a New External Component
+
 1. Add the repo as a submodule to `./src/externalPackages/src`
 
     ```bash
@@ -52,7 +54,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
     ```
 
 1. Define a [project](src/externalPackages/projects) for the new component.
-   The project is responsible for building the submodule with the appropriate configuration for source build. 
+   The project is responsible for building the submodule with the appropriate configuration for source build.
    See the [existing projects](src/externalPackages/projects) for examples.
 
 1. [Build](#building) locally and resolve any build errors.
@@ -63,6 +65,12 @@ to .NET. The following sections describe how to add/upgrade the various types of
    See the contents of `./artifacts/packages/<build_configuration>/Shipping`.
 
 1. If the original binaries have strong name signatures, validate the source built ones have them as well.
+
+1. Open a PR.
+
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+   This will validate the new external will build without adding prebuilts.
+   It will also ensure the external does not contain prohibited checked-in binaries.
 
 #### Updating an External Component to a Newer Version
 
@@ -92,6 +100,12 @@ to .NET. The following sections describe how to add/upgrade the various types of
 1. Validate the version of the NuGet packages and binaries produced by the build.
    See the contents of `./artifacts/packages/<build_configuration>/Shipping`.
 
+1. Open a PR.
+
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+   This will validate the new version will build without adding prebuilts.
+   It will also ensure the new version does not contain prohibited checked-in binaries.
+
 1. After the PR is merged to update a component, coordination is often needed in the darc dependency flows.
    The source-build-reference-packages source may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
    Sometimes it can be easier to add the new upgraded version along side the older version and then delete the old version after all product repos have been upgraded to the new version.
@@ -109,7 +123,7 @@ the maintenance burden when [updating a component to a newer version](#updating-
 
     1. From the root directory of the submodule, run [extract-patches.sh](src/externalPackages/patches/extract-patches.sh)/[extract-patches.ps1](src/externalPackages/patches/extract-patches.ps1).
        The script will prepare a patch based on the base sha of the submodule and the latest committed changes.
-       The patch will be added to patches/<component>/*.patch
+       The patch will be added to `patches/<component>/*.patch`
 
 1. To apply a patch, or multiple patches, use `git am` while inside the submodule directory.
    For example, to apply *all* `humanizer` patches:

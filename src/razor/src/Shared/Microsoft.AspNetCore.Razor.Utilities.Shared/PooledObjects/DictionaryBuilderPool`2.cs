@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -15,17 +14,28 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 /// Instances originating from this pool are intended to be short-lived and are suitable
 /// for temporary work. Do not return them as the results of methods or store them in fields.
 /// </remarks>
-internal static partial class DictionaryBuilderPool<TKey, TValue>
+internal sealed partial class DictionaryBuilderPool<TKey, TValue> : CustomObjectPool<ImmutableDictionary<TKey, TValue>.Builder>
     where TKey : notnull
 {
-    public static readonly ObjectPool<ImmutableDictionary<TKey, TValue>.Builder> Default = DefaultPool.Create(Policy.Instance);
+    public static readonly DictionaryBuilderPool<TKey, TValue> Default = Create();
 
-    public static ObjectPool<ImmutableDictionary<TKey, TValue>.Builder> Create(IEqualityComparer<TKey> comparer)
-        => DefaultPool.Create(new Policy(comparer));
+    private DictionaryBuilderPool(PooledObjectPolicy policy, Optional<int> poolSize)
+        : base(policy, poolSize)
+    {
+    }
+
+    public static DictionaryBuilderPool<TKey, TValue> Create(
+        Optional<IEqualityComparer<TKey>?> keyComparer = default,
+        Optional<int> poolSize = default)
+        => new(Policy.Create(keyComparer), poolSize);
+
+    public static DictionaryBuilderPool<TKey, TValue> Create(PooledObjectPolicy policy, Optional<int> poolSize = default)
+        => new(policy, poolSize);
 
     public static PooledObject<ImmutableDictionary<TKey, TValue>.Builder> GetPooledObject()
         => Default.GetPooledObject();
 
-    public static PooledObject<ImmutableDictionary<TKey, TValue>.Builder> GetPooledObject(out ImmutableDictionary<TKey, TValue>.Builder builder)
+    public static PooledObject<ImmutableDictionary<TKey, TValue>.Builder> GetPooledObject(
+        out ImmutableDictionary<TKey, TValue>.Builder builder)
         => Default.GetPooledObject(out builder);
 }
