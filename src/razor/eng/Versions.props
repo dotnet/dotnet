@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <!-- Opt-in arcade features -->
   <PropertyGroup>

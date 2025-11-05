@@ -64,7 +64,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
         }
 
         // Use ordinal dictionary because attributes are case sensitive when matching
-        using var _ = StringDictionaryPool<HashSet<BoundAttributeDescriptionInfo>>.Ordinal.GetPooledObject(out var attributeCompletions);
+        using var _ = SpecializedPools.GetPooledStringDictionary<HashSet<BoundAttributeDescriptionInfo>>(out var attributeCompletions);
 
         foreach (var descriptor in descriptorsForTag)
         {
