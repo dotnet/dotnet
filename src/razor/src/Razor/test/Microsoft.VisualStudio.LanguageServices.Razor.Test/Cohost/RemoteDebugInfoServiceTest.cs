@@ -174,6 +174,104 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
         await VerifyBreakpointRangeAsync(input);
     }
 
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentStartTag()
+    {
+        var input = """
+                <div></div>
+
+                <Page$$Title>Hello</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentAttribute()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <InputText Val$$ue="@caption" />
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <PageTitle>@[|cap$$tion|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartOfLine()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                $$<PageTitle>@[|caption|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartOfLine_WithAttribute()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                $$<InputText Value="@caption" />@[|caption|]
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartTag()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <PageT$$itle>@[|caption|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
     private async Task VerifyProximityExpressionsAsync(TestCode input, string[] extraExpressions)
     {
         var document = CreateProjectAndRazorDocument(input.Text);

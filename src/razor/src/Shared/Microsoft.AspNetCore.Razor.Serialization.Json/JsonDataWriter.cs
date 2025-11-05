@@ -19,9 +19,9 @@ internal delegate void WriteValue<T>(JsonDataWriter writer, T value);
 ///  This is an abstraction used to write JSON data. Currently, this
 ///  wraps a <see cref="JsonWriter"/> from JSON.NET.
 /// </summary>
-internal partial class JsonDataWriter
+internal partial class JsonDataWriter : IPoolableObject
 {
-    private static readonly ObjectPool<JsonDataWriter> s_pool = DefaultPool.Create(Policy.Instance);
+    private static readonly ObjectPool<JsonDataWriter> s_pool = DefaultPool.Create(() => new JsonDataWriter());
 
     public static JsonDataWriter Get(JsonWriter writer)
     {
@@ -33,6 +33,11 @@ internal partial class JsonDataWriter
 
     public static void Return(JsonDataWriter dataWriter)
         => s_pool.Return(dataWriter);
+
+    void IPoolableObject.Reset()
+    {
+        _writer = null;
+    }
 
     [AllowNull]
     private JsonWriter _writer;
