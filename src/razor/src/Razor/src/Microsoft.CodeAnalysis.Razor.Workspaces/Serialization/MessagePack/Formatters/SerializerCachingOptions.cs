@@ -2,17 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using MessagePack;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal partial class SerializerCachingOptions(MessagePackSerializerOptions copyFrom) : MessagePackSerializerOptions(copyFrom), IDisposable
 {
-    private static readonly ObjectPool<Dictionary<string, int>> s_stringPool
-        = StringDictionaryPool<int>.Ordinal;
+    private static readonly DictionaryPool<string, int> s_stringPool = SpecializedPools.StringDictionary<int>.Ordinal;
 
     private ReferenceMap<string>? _stringMap;
 

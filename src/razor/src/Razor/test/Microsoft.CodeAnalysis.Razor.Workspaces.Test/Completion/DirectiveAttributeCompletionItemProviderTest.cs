@@ -220,6 +220,19 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     }
 
     [Fact]
+    public void GetAttributeCompletions_NonIndexer_ReturnsCompletionWithEqualsCommitInsertFalse()
+    {
+        // Arrange
+        var owner = GetOwner("<input @$$></input>");
+
+        // Act
+        var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions(owner, "@", "input", [], _defaultTagHelperContext, _defaultRazorCompletionOptions);
+
+        // Assert
+        AssertContains(completions, "bind=\"$0\"", "@bind", [new RazorCommitCharacter("=", Insert: false), new RazorCommitCharacter(":")]);
+    }
+
+    [Fact]
     public void GetAttributeCompletions_WithNoAutoQuotesOption_ReturnsNonQuotedSnippet()
     {
         // Arrange
@@ -271,7 +284,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions(owner, "@", "input", [], _defaultTagHelperContext, _defaultRazorCompletionOptions);
 
         // Assert
-        AssertContains(completions, "bind-", "@bind-...", []);
+        AssertContains(completions, "bind-", "@bind-...", ImmutableArray<string>.Empty);
     }
 
     [Fact]
@@ -321,6 +334,17 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
             RazorCompletionItemKind.DirectiveAttribute == completion.Kind);
     }
 
+    private static void AssertContains(ImmutableArray<RazorCompletionItem> completions, string insertText, string displayText, ImmutableArray<RazorCommitCharacter> commitCharacters)
+    {
+        displayText ??= insertText;
+
+        Assert.Contains(completions, completion =>
+            insertText == completion.InsertText &&
+            displayText == completion.DisplayText &&
+            commitCharacters.SequenceEqual(completion.CommitCharacters) &&
+            RazorCompletionItemKind.DirectiveAttribute == completion.Kind);
+    }
+
     private static void AssertDoesNotContain(IReadOnlyList<RazorCompletionItem> completions, string insertText, string displayText)
     {
         displayText ??= insertText;
@@ -339,7 +363,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var owner = syntaxTree.Root.FindInnermostNode(testCode.Position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, testCode.Position);
 
-        return new RazorCompletionContext(testCode.Position, owner, syntaxTree, tagHelperContext);
+        return new RazorCompletionContext(codeDocument, testCode.Position, owner, syntaxTree, tagHelperContext);
     }
 
     private RazorSyntaxNode GetOwner(string testCodeText)

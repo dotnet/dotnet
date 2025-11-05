@@ -130,9 +130,19 @@ namespace Microsoft.DotNet.SignTool
         public ITaskItem[] CertificatesSignInfo { get; set; }
 
         /// <summary>
-        /// Path to dotnet executable. Required if <see cref="DryRun"/> is <c>false</c>.
+        /// Path to dotnet executable for running MicroBuild.
+        /// Must match the .NET version required by MicroBuild.
+        /// Required if <see cref="DryRun"/> is <c>false</c>.
         /// </summary>
-        public string DotNetPath { get; set; }
+        public string DotNetPathMicroBuild { get; set; }
+
+
+        /// <summary>
+        /// Path to dotnet executable for running tooling tasks.
+        /// Must match the .NET version required by the .NET Arcade SDK.
+        /// </summary>
+        [Required]
+        public string DotNetPathTooling { get; set; }
 
         /// <summary>
         /// Verbosity level for MSBuild.
@@ -213,11 +223,17 @@ namespace Microsoft.DotNet.SignTool
                     message: $"An empty list of files to sign was passed as parameter.");
             }
 
+            if (!File.Exists(DotNetPathTooling))
+            {
+                Log.LogError($"DotNet for tooling was not found at this path: '{DotNetPathTooling}'.");
+                return;
+            }
+
             if (!DryRun)
             {
-                if (!File.Exists(DotNetPath))
+                if (!File.Exists(DotNetPathMicroBuild))
                 {
-                    Log.LogError($"DotNet was not found at this path: '{DotNetPath}'.");
+                    Log.LogError($"DotNet for MicroBuild was not found at this path: '{DotNetPathMicroBuild}'.");
                     return;
                 }
 
@@ -253,7 +269,21 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, Wix3ToolsPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
+            var signToolArgs = new SignToolArgs(
+                TempDir,
+                MicroBuildCorePath,
+                TestSign,
+                DotNetPathMicroBuild,
+                DotNetPathTooling,
+                MSBuildVerbosity,
+                LogDir,
+                enclosingDir,
+                SNBinaryPath,
+                Wix3ToolsPath,
+                WixToolsPath,
+                TarToolPath,
+                PkgToolPath,
+                DotNetTimeout);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();
@@ -269,6 +299,7 @@ namespace Microsoft.DotNet.SignTool
                     extensionSignInfo,
                     dualCertificates,
                     filesToSkip3rdPartyCheck,
+                    dotNetPathTooling: DotNetPathTooling,
                     tarToolPath: TarToolPath,
                     pkgToolPath: PkgToolPath,
                     snPath: SNBinaryPath,
@@ -336,6 +367,8 @@ namespace Microsoft.DotNet.SignTool
                     var macSigningOperation = certificateSignInfo.GetMetadata("MacCertificate");
                     var macNotarizationAppName = certificateSignInfo.GetMetadata("MacNotarizationAppName");
                     var collisionPriorityId = certificateSignInfo.GetMetadata(SignToolConstants.CollisionPriorityId);
+                    var detachedSignatureCertificate = certificateSignInfo.GetMetadata("DetachedSignature");
+                    bool detachedSignatureCertificateValue = false;
 
                     if (string.IsNullOrEmpty(macSigningOperation) != string.IsNullOrEmpty(macNotarizationAppName))
                     {
@@ -348,11 +381,18 @@ namespace Microsoft.DotNet.SignTool
                         continue;
                     }
 
+                    if (!string.IsNullOrEmpty(detachedSignatureCertificate) && !bool.TryParse(detachedSignatureCertificate, out detachedSignatureCertificateValue))
+                    {
+                        Log.LogError($"DetachedSignature must be 'true' or 'false");
+                        continue;
+                    }
+
                     var additionalCertInfo = new AdditionalCertificateInformation
                     {
                         DualSigningAllowed = dualSignAllowedValue,
                         MacSigningOperation = macSigningOperation,
                         MacNotarizationAppName = macNotarizationAppName,
+                        GeneratesDetachedSignature = detachedSignatureCertificateValue,
                         CollisionPriorityId = collisionPriorityId
                     };
 

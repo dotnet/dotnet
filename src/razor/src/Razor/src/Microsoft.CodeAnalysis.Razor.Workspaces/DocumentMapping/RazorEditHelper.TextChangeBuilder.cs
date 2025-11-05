@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
@@ -24,7 +23,7 @@ internal static partial class RazorEditHelper
 {
     private sealed class TextChangeBuilder : IDisposable
     {
-        private ObjectPool<ImmutableArray<RazorTextChange>.Builder> Pool => ArrayBuilderPool<RazorTextChange>.Default;
+        private static ArrayBuilderPool<RazorTextChange> Pool => ArrayBuilderPool<RazorTextChange>.Default;
         private readonly ImmutableArray<RazorTextChange>.Builder _builder;
         private readonly IDocumentMappingService _documentMappingService;
 
@@ -163,10 +162,10 @@ internal static partial class RazorEditHelper
                 var root = codeDocument.GetRequiredSyntaxRoot();
                 var nodeToInsertAfter = root
                     .DescendantNodes()
-                    .LastOrDefault(t => t is RazorDirectiveSyntax { DirectiveDescriptor: var descriptor }
-                    && (descriptor == ComponentPageDirective.Directive
-                        || descriptor == NamespaceDirective.Directive
-                        || descriptor == PageDirective.Directive));
+                    .LastOrDefault(t => t is RazorDirectiveSyntax directiveNode
+                    && (directiveNode.IsDirective(ComponentPageDirective.Directive)
+                        || directiveNode.IsDirective(NamespaceDirective.Directive)
+                        || directiveNode.IsDirective(PageDirective.Directive)));
 
                 if (nodeToInsertAfter is null)
                 {

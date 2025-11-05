@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <PackageVersion>17.12.50</PackageVersion>
+    <AssemblyName>Microsoft.Build</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.build.framework/17.12.50/Microsoft.Build.Framework.17.12.50.csproj" />
+    <ProjectReference Include="../../microsoft.net.stringtools/17.12.50/Microsoft.NET.StringTools.17.12.50.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/8.0.0/System.Configuration.ConfigurationManager.8.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadataloadcontext/8.0.0/System.Reflection.MetadataLoadContext.8.0.0.csproj" />
+    <ProjectReference Include="../../system.collections.immutable/8.0.0/System.Collections.Immutable.8.0.0.csproj" />
+    <ProjectReference Include="../../system.reflection.metadata/8.0.0/System.Reflection.Metadata.8.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

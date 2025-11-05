@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public partial class RequiredAttributeDescriptorBuilder
 {
-    internal static readonly ObjectPool<RequiredAttributeDescriptorBuilder> Pool = DefaultPool.Create(Policy.Instance);
+    internal static readonly ObjectPool<RequiredAttributeDescriptorBuilder> Pool =
+        DefaultPool.Create(static () => new RequiredAttributeDescriptorBuilder());
 
     internal static RequiredAttributeDescriptorBuilder GetInstance(TagMatchingRuleDescriptorBuilder parent)
     {
@@ -28,16 +29,5 @@ public partial class RequiredAttributeDescriptorBuilder
         NameComparison = default;
         Value = null;
         ValueComparison = default;
-    }
-
-    private sealed class Policy : PooledBuilderPolicy<RequiredAttributeDescriptorBuilder>
-    {
-        public static readonly Policy Instance = new();
-
-        private Policy()
-        {
-        }
-
-        public override RequiredAttributeDescriptorBuilder Create() => new();
     }
 }

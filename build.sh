@@ -398,15 +398,14 @@ if [[ "$sourceOnly" == "true" ]]; then
         SetOfficialBuildId "$officialBuildId"
       fi
     fi
+  # else, running tests
+  else
+    properties+=( "/p:DisableSharedComponentValidation=true" )
   fi
 
   # Support custom source built package locations
   if [ "$customPackagesDir" != "" ]; then
-    if [ "$test" == "true" ]; then
-      properties+=( "/p:CustomSourceBuiltPackagesPath=$customPackagesDir" )
-    else
-      properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir" )
-    fi
+    properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir" )
   fi
 
   if [ ! -d "$scriptroot/.git" ]; then
