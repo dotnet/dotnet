@@ -79,10 +79,10 @@
       "commitSha": "68a9207cafc10bb08d345e32f06dd1a91ab7a6a2"
     },
     {
-      "barId": 289429,
+      "barId": 289574,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "f24c0d6a62bd64157506ff1158a4c671d988f4b3"
+      "commitSha": "ec71a92abbaf210611a819ea8b57117b041b6f70"
     },
     {
       "barId": 277711,
@@ -109,10 +109,10 @@
       "commitSha": "307eb51fb9878894d4812276b85ac94293cd7b16"
     },
     {
-      "barId": 287040,
+      "barId": 289561,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "ee968d4a1bf717f4bba3a4ffc3f93b5c9870b117"
+      "commitSha": "4ea649c272581be7b15c19e6b4f1aa58a8296254"
     },
     {
       "barId": 287390,
