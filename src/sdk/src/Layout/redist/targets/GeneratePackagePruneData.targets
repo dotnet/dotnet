@@ -40,7 +40,7 @@
     </CollatePackageDownloads>
   </Target>
 
-  <Target Name="GeneratePackagePruneData" DependsOnTargets="GetTargetingPacksForPruneData">
+  <Target Name="GeneratePackagePruneData" DependsOnTargets="AddTargetingPacksForPruneDataAsPackageDownloads">
     <ItemGroup>
       <PrunePackageCopyData Include="@(TargetingPackForPruneData)"
         Source="$(NuGetPackageRoot)$([MSBuild]::ValueOrDefault('%(PackageName)', '').ToLower())\%(Version)\data\PackageOverrides.txt"
