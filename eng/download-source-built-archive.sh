@@ -96,7 +96,7 @@ function DownloadArchive {
 
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
-  baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
+  baseUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets"
   if [[ "$useCILocation" == true ]]; then
     baseUrl="https://ci.dot.net/public/source-build"
   fi
