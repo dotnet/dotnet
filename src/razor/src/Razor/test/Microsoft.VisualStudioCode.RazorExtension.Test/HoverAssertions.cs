@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using Roslyn.Test.Utilities;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -12,7 +11,7 @@ internal static class HoverAssertions
     public static void VerifyContents(this LspHover hover, object expected)
     {
         var markup = hover.Contents.Fourth;
-        Assert.Equal(MarkupKind.PlainText, markup.Kind);
+
         AssertEx.EqualOrDiff(expected.ToString(), markup.Value.TrimEnd('\r', '\n'));
     }
 
@@ -55,4 +54,7 @@ internal static class HoverAssertions
 
     public static string WhiteSpace(string text)
         => text;
+
+    public static string HorizontalRule
+        => "\n\n---\n\n";
 }

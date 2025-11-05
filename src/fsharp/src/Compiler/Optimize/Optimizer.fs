@@ -34,8 +34,6 @@ open FSharp.Compiler.TypeRelations
 open System.Collections.Generic
 open System.Collections.ObjectModel
 
-let OptimizerStackGuardDepth = GetEnvInteger "FSHARP_Optimizer" 50
-
 let i_ldlen = [ I_ldlen; (AI_conv DT_I4) ] 
 
 /// size of a function call 
@@ -347,7 +345,7 @@ type OptimizationSettings =
           reportFunctionSizes = false
           reportHasEffect = false
           reportTotalSizes = false
-          processingMode = OptimizationProcessingMode.Sequential
+          processingMode = OptimizationProcessingMode.Parallel
         }
 
     /// Determines if JIT optimizations are enabled
@@ -4405,7 +4403,7 @@ let OptimizeImplFile (settings, ccu, tcGlobals, tcVal, importMap, optEnv, isIncr
           localInternalVals=Dictionary<Stamp, ValInfo>(10000)
           emitTailcalls=emitTailcalls
           casApplied=Dictionary<Stamp, bool>() 
-          stackGuard = StackGuard(OptimizerStackGuardDepth, "OptimizerStackGuardDepth")
+          stackGuard = StackGuard("OptimizerStackGuardDepth")
           realsig = tcGlobals.realsig
         }
 

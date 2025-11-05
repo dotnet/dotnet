@@ -143,6 +143,129 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
             // Should have 4 total sources (3 original + 1 added transport)
             modifiedConfig.GetPackageSourceCount().Should().Be(4, "should not duplicate existing sources");
         }
+
+        [Fact]
+        public async Task ConfigWithDotNetEng_AddsDotNetEngInternal()
+        {
+            // Arrange
+            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
+    <add key=""dotnet-eng"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json"" />
+  </packageSources>
+</configuration>";
+            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+
+            // Act
+            var result = await _scriptRunner.RunScript(configPath);
+
+            // Assert
+            result.exitCode.Should().Be(0, "Script should succeed, but got error: {0}", result.error);
+            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+
+            modifiedConfig.ShouldContainPackageSource("dotnet-eng-internal",
+                "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-eng-internal/nuget/v3/index.json",
+                "should add dotnet-eng-internal feed");
+
+            // Should have 3 total sources (2 original + 1 added internal)
+            modifiedConfig.GetPackageSourceCount().Should().Be(3, "should add internal feed");
+        }
+
+        [Fact]
+        public async Task ConfigWithDotNetTools_AddsDotNetToolsInternal()
+        {
+            // Arrange
+            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
+    <add key=""dotnet-tools"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json"" />
+  </packageSources>
+</configuration>";
+            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+
+            // Act
+            var result = await _scriptRunner.RunScript(configPath);
+
+            // Assert
+            result.exitCode.Should().Be(0, "Script should succeed, but got error: {0}", result.error);
+            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+
+            modifiedConfig.ShouldContainPackageSource("dotnet-tools-internal",
+                "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-tools-internal/nuget/v3/index.json",
+                "should add dotnet-tools-internal feed");
+
+            // Should have 3 total sources (2 original + 1 added internal)
+            modifiedConfig.GetPackageSourceCount().Should().Be(3, "should add internal feed");
+        }
+
+        [Fact]
+        public async Task ConfigWithDotNetEngAndTools_AddsBothInternalFeeds()
+        {
+            // Arrange
+            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
+    <add key=""dotnet-eng"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json"" />
+    <add key=""dotnet-tools"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json"" />
+  </packageSources>
+</configuration>";
+            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+
+            // Act
+            var result = await _scriptRunner.RunScript(configPath);
+
+            // Assert
+            result.exitCode.Should().Be(0, "Script should succeed, but got error: {0}", result.error);
+            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+
+            modifiedConfig.ShouldContainPackageSource("dotnet-eng-internal",
+                "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-eng-internal/nuget/v3/index.json",
+                "should add dotnet-eng-internal feed");
+
+            modifiedConfig.ShouldContainPackageSource("dotnet-tools-internal",
+                "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-tools-internal/nuget/v3/index.json",
+                "should add dotnet-tools-internal feed");
+
+            // Should have 5 total sources (3 original + 2 added internal)
+            modifiedConfig.GetPackageSourceCount().Should().Be(5, "should add both internal feeds");
+        }
+
+        [Fact]
+        public async Task ConfigWithoutDotNetEngOrTools_DoesNotAddInternalFeeds()
+        {
+            // Arrange
+            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
+    <add key=""dotnet9"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json"" />
+  </packageSources>
+</configuration>";
+            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+
+            // Act
+            var result = await _scriptRunner.RunScript(configPath);
+
+            // Assert
+            result.exitCode.Should().Be(0, "Script should succeed, but got error: {0}", result.error);
+            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+
+            modifiedConfig.ShouldNotContainPackageSource("dotnet-eng-internal",
+                "should not add dotnet-eng-internal when dotnet-eng is not present");
+            modifiedConfig.ShouldNotContainPackageSource("dotnet-tools-internal",
+                "should not add dotnet-tools-internal when dotnet-tools is not present");
+
+            // Should add dotnet9 internal feeds
+            modifiedConfig.ShouldContainPackageSource("dotnet9-internal");
+            modifiedConfig.ShouldContainPackageSource("dotnet9-internal-transport");
+        }
     }
 }
 

@@ -64,7 +64,7 @@ internal class MemoryCache<TKey, TValue>
 
     protected virtual void Compact()
     {
-        var kvps = _dict.OrderBy(x => x.Value.LastAccess).ToArray();
+        var kvps = _dict.ToArray().OrderBy(x => x.Value.LastAccess).ToArray();
 
         for (var i = 0; i < _sizeLimit / 2; i++)
         {

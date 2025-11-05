@@ -94,4 +94,7 @@ internal static class HoverAssertions
 
     public static Action<ClassifiedTextRun> WhiteSpace(string text)
         => Run(text, ClassificationTypeNames.WhiteSpace);
+
+    public static Action<object?> HorizontalRule
+        => o => { };
 }
