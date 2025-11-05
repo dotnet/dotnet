@@ -120,17 +120,23 @@ jobs:
           }
 
           try {
-            // verify the comment user is a repo collaborator
+            // verify the comment user has write access to the repo
             try {
-              await github.rest.repos.checkCollaborator({
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
                 owner: repo_owner,
                 repo: repo_name,
                 username: comment_user
               });
-              console.log(`Verified ${comment_user} is a repo collaborator.`);
+
+              const writePermissions = ['admin', 'write'];
+              if (!writePermissions.includes(permission.permission)) {
+                throw new Error(`Insufficient permissions: ${permission.permission}`);
+              }
+
+              console.log(`Verified ${comment_user} has ${permission.permission} access to the repo.`);
             } catch (error) {
               console.log(error);
-              throw new Error(`Error: @${comment_user} is not a repo collaborator, backporting is not allowed. If you're a collaborator please make sure your ${repo_owner} team membership visibility is set to Public on https://github.com/orgs/${repo_owner}/people?query=${comment_user}`);
+              throw new Error(`Error: @${comment_user} does not have write access to this repo, backporting is not allowed. Required permissions: write or admin.`);
             }
 
             try { await exec.exec(`git ls-remote --exit-code --heads origin ${target_branch}`) } catch { throw new Error(`Error: The specified backport target branch "${target_branch}" wasn't found in the repo.`); }
