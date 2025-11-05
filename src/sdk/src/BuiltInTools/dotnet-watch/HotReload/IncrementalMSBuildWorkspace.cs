@@ -76,7 +76,7 @@ internal sealed class IncrementalMSBuildWorkspace : Workspace
                 continue;
             }
 
-            newSolution = WatchHotReloadService.WithProjectInfo(newSolution, ProjectInfo.Create(
+            newSolution = HotReloadService.WithProjectInfo(newSolution, ProjectInfo.Create(
                 oldProjectId,
                 newProjectInfo.Version,
                 newProjectInfo.Name,
