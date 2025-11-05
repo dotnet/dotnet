@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="wpf" Sha="7b29526f2107416f68578bcb9deaca74fcfcf7f0" BarId="288435" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="wpf" Sha="ba86126261026d26f7c30cd3434680d3965a88cf" BarId="289152" />
   <ProductDependencies>
     <Dependency Name="Microsoft.Private.Winforms" Version="10.0.0-rtm.25523.113">
       <Uri>https://github.com/dotnet/dotnet</Uri>
