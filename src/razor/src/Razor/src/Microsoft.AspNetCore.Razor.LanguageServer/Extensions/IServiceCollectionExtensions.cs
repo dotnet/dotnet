@@ -153,6 +153,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, ExtractToComponentCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ComponentAccessibilityCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, CreateComponentCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, UnboundDirectiveAttributeAddUsingCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, AddUsingsCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, GenerateMethodCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, GenerateMethodCodeActionResolver>();
