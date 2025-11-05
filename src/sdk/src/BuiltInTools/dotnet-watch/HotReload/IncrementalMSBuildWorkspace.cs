@@ -4,7 +4,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.ExternalAccess.Watch.Api;
+using Microsoft.CodeAnalysis.ExternalAccess.HotReload.Api;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.Text;

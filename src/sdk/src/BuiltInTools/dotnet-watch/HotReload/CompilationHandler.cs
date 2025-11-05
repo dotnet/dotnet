@@ -299,7 +299,7 @@ namespace Microsoft.DotNet.Watch
         }
 
         public async ValueTask<(
-                ImmutableArray<WatchHotReloadService.Update> projectUpdates,
+                ImmutableArray<HotReloadService.Update> projectUpdates,
                 ImmutableArray<string> projectsToRebuild,
                 ImmutableArray<string> projectsToRedeploy,
                 ImmutableArray<RunningProject> projectsToRestart)> HandleManagedCodeChangesAsync(
