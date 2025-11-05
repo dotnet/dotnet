@@ -426,7 +426,7 @@ jobs:
           storageKey=""
         fi
         # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" true $storageKey
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
@@ -438,7 +438,7 @@ jobs:
           storageKey=""
         fi
         mkdir -p "$(sharedComponentsDir)"
-        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" true $storageKey
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
         tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
         rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts

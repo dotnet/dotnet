@@ -32,9 +32,14 @@ function DownloadWithRetries {
       if curl -fL --retry 5 -O "$url"; then
         return 0
       else
-        case $? in
+        local exitCode=$?
+        case $exitCode in
           18)
             sleep 3
+            ;;
+          22)
+            # HTTP error (including 404)
+            return 22
             ;;
           *)
             return 1
@@ -55,8 +60,7 @@ function DownloadArchive {
   local outputDir="$5"
   local destinationFileNamePrefix="${6:-}"
   local versionPropertyOverride="${7:-}"
-  local useCILocation="${8:-false}"
-  local storageKey="${9:-}"
+  local storageKey="${8:-}"
 
   local notFoundMessage="No $label found to download..."
 
@@ -90,56 +94,72 @@ function DownloadArchive {
     versionDelimiter="-"
   fi
 
-  local isServicingArchiveVersion=false
-  if [[ "$archiveVersion" == *"servicing"* ]]; then
-    isServicingArchiveVersion=true
-  fi
-
-  # Assets for the default RID are hosted in builds.dotnet.microsoft.com
-  if [[ $artifactsRid == $defaultArtifactsRid && $isServicingArchiveVersion == false ]]; then
-    useCILocation=false
-  fi
-
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
-  baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
-  local useStorageKey=false
-  if [[ "$useCILocation" == true ]]; then
-    # Determine CI location based on version suffix
-    if [[ $isServicingArchiveVersion == true ]]; then
-      baseUrl="https://ci.dot.net/internal/source-build"
-      useStorageKey=true
-    else
-      baseUrl="https://ci.dot.net/public/source-build"
-    fi
+  # Build array of base URLs to try in order
+  local baseUrls=()
+  
+  # Assets for the default RID are hosted in builds.dotnet.microsoft.com first
+  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
+    baseUrls+=("https://builds.dotnet.microsoft.com/dotnet/source-build")
+  fi
+  
+  # Always try public CI location
+  baseUrls+=("https://ci.dot.net/public/source-build")
+  
+  # Try internal CI location if storage key is provided
+  if [[ -n "$storageKey" ]]; then
+    baseUrls+=("https://ci.dot.net/internal/source-build")
   fi
 
+  # Determine the archive filename based on property name
+  local archiveFileName
   if [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
-    archiveUrl="${baseUrl}/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
+    archiveFileName="${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltArtifactsVersion" ]]; then
-    archiveUrl="${baseUrl}/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveFileName="${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
-    archiveUrl="${baseUrl}/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveFileName="${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     return 1
   fi
 
-  local displayUrl="$archiveUrl"
-  local downloadedFilename=$(basename "$archiveUrl")
+  local archiveUrl
+  local displayUrl
+  local downloadedFilename=$(basename "${archiveFileName}")
+  local downloadSucceeded=false
 
-  # Append decoded storage key query string if provided
-  # This is only used for internal CI location with servicing builds
-  if [[ "$useStorageKey" == true && -n "$storageKey" ]]; then
-    local decodedKey
-    decodedKey=$(echo "$storageKey" | base64 -d)
-    displayUrl="${archiveUrl}?[redacted]"
-    archiveUrl="${archiveUrl}?${decodedKey}"
-  fi
+  # Try each base URL in order
+  for baseUrl in "${baseUrls[@]}"; do
+    archiveUrl="${baseUrl}/${archiveFileName}"
+    displayUrl="$archiveUrl"
+    
+    # Use storage key only for internal CI location
+    if [[ "$baseUrl" == *"ci.dot.net/internal"* && -n "$storageKey" ]]; then
+      local decodedKey
+      decodedKey=$(echo "$storageKey" | base64 -d)
+      displayUrl="${archiveUrl}?[redacted]"
+      archiveUrl="${archiveUrl}?${decodedKey}"
+    fi
+    
+    echo "  Downloading $label from $displayUrl..."
+    if DownloadWithRetries "$archiveUrl" "$outputDir"; then
+      downloadSucceeded=true
+      break
+    else
+      local downloadResult=$?
+      # Only continue to next URL if it was a 404
+      if [[ $downloadResult -ne 22 ]]; then
+        echo "  ERROR: Failed to download $displayUrl"
+        return 1
+      fi
+      echo "  Not found, trying next location..."
+    fi
+  done
 
-  echo "  Downloading $label from $displayUrl..."
-  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
-    echo "  ERROR: Failed to download $displayUrl"
+  if [[ "$downloadSucceeded" == false ]]; then
+    echo "  ERROR: Failed to download from all available locations"
     return 1
   fi
 
