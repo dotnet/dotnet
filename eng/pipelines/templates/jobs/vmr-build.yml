@@ -415,8 +415,7 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+  - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
   - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
