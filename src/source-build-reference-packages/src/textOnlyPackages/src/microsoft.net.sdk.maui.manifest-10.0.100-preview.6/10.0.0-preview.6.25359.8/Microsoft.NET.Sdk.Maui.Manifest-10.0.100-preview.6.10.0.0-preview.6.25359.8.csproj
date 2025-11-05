@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>10.0.0-preview.6.25359.8</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.Maui.Manifest-10.0.100-preview.6</AssemblyName>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>18.5.10415-net10-p6</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.tvOS.Manifest-10.0.100-preview.6</AssemblyName>
+  </PropertyGroup>
+
+</Project>

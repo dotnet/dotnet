@@ -146,6 +146,11 @@
 
   <PropertyGroup Label="Workload manifest package versions">
     <MauiFeatureBand>10.0.100-preview.6</MauiFeatureBand>
+
+    <!--
+      Updates to any of these versions will require the updating of that package version in the
+      source-build-reference-packages repo as a text-only package.
+    -->
     <MauiWorkloadManifestVersion>10.0.0-preview.6.25359.8</MauiWorkloadManifestVersion>
     <XamarinAndroidWorkloadManifestVersion>36.0.0-preview.6.169</XamarinAndroidWorkloadManifestVersion>
     <XamarinIOSWorkloadManifestVersion>18.5.10415-net10-p6</XamarinIOSWorkloadManifestVersion>

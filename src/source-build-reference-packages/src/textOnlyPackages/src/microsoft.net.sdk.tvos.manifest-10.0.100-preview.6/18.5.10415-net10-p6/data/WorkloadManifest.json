@@ -1,0 +1,59 @@
+{
+	"version": "18.5.10415-net10-p6",
+	"workloads": {
+		"tvos": {
+			"description": ".NET SDK Workload for building tvOS applications.",
+			"packs": [
+				"Microsoft.tvOS.Sdk.net10.0_18.5",
+				"Microsoft.tvOS.Sdk.net9.0_18.0",
+				"Microsoft.tvOS.Ref.net10.0_18.5",
+				"Microsoft.tvOS.Runtime.tvos.net10.0_18.5",
+				"Microsoft.tvOS.Runtime.tvos-arm64.net10.0_18.5",
+				"Microsoft.tvOS.Runtime.tvossimulator-x64.net10.0_18.5",
+				"Microsoft.tvOS.Runtime.tvossimulator-arm64.net10.0_18.5",
+				"Microsoft.tvOS.Templates.net9"
+			],
+			"extends": [
+				"microsoft-net-runtime-tvos",
+				"microsoft-net-runtime-tvos-net9",
+			]
+		},
+	},
+	"packs": {
+		"Microsoft.tvOS.Sdk.net10.0_18.5": {
+			"kind": "sdk",
+			"version": "18.5.10415-net10-p6",
+		},
+		"Microsoft.tvOS.Sdk.net9.0_18.0": {
+			"kind": "sdk",
+			"version": "18.0.9617",
+		},
+		"Microsoft.tvOS.Ref.net10.0_18.5": {
+			"kind": "framework",
+			"version": "18.5.10415-net10-p6"
+		},
+		"Microsoft.tvOS.Runtime.tvos.net10.0_18.5": {
+			"kind": "framework",
+			"version": "18.5.10415-net10-p6"
+		},
+		"Microsoft.tvOS.Runtime.tvos-arm64.net10.0_18.5": {
+			"kind": "framework",
+			"version": "18.5.10415-net10-p6"
+		},
+		"Microsoft.tvOS.Runtime.tvossimulator-x64.net10.0_18.5": {
+			"kind": "framework",
+			"version": "18.5.10415-net10-p6"
+		},
+		"Microsoft.tvOS.Runtime.tvossimulator-arm64.net10.0_18.5": {
+			"kind": "framework",
+			"version": "18.5.10415-net10-p6"
+		},
+		"Microsoft.tvOS.Templates.net9": {
+			"kind": "template",
+			"version": "18.5.10415-net10-p6",
+			"alias-to": {
+				"any": "Microsoft.tvOS.Templates",
+			}
+		}
+	}
+}

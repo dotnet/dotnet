@@ -1,0 +1,15 @@
+{
+  "microsoft.net.sdk.macos": {
+    "workload": {
+      "alias": [ "macos" ],
+      "version": "15.5.10415-net10-p6"
+    },
+    "xcode": {
+      "version": "[16.4,)",
+      "recommendedVersion": "16.4"
+    },
+    "sdk": {
+      "version": "15.5"
+    }
+  }
+}
