@@ -1,18 +1,14 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
+public sealed class CohostDataTipRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
     [Fact]
     public async Task Handle_CSharpInHtml_DataTipRange_FirstExpression()
@@ -67,43 +63,24 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
 
     private async Task VerifyDataTipRangeAsync(TestCode input, VSInternalDataTipTags dataTipTags = 0)
     {
-        // Arrange
-        var codeDocument = CreateCodeDocument(input.Text);
-        var razorFilePath = "C:/path/to/file.razor";
+        var document = CreateProjectAndRazorDocument(input.Text);
+        var inputText = await document.GetTextAsync(DisposalToken);
+        var position = inputText.GetPosition(input.Position);
 
-        // Act
-        var result = await GetDataTipRangeAsync(codeDocument, razorFilePath, input.Position);
+        var endpoint = new CohostDataTipRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
-        // Assert
+        var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, DisposalToken);
+
+        Assumes.NotNull(result);
+
         var expectedExpressionSpan = input.GetNamedSpans("expression")[0];
-        var expectedExpressionRange = codeDocument.Source.Text.GetRange(expectedExpressionSpan);
-        Assert.Equal(expectedExpressionRange, result!.ExpressionRange);
+        var expectedExpressionRange = inputText.GetRange(expectedExpressionSpan);
+        Assert.Equal(expectedExpressionRange, result.ExpressionRange);
 
         var expectedHoverSpan = input.GetNamedSpans("hover")[0];
-        var expectedHoverRange = codeDocument.Source.Text.GetRange(expectedHoverSpan);
+        var expectedHoverRange = inputText.GetRange(expectedHoverSpan);
         Assert.Equal(expectedHoverRange, result.HoverRange);
 
         Assert.Equal(dataTipTags, result.DataTipTags);
-    }
-
-    private async Task<VSInternalDataTip?> GetDataTipRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, int position)
-    {
-        await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
-
-        var endpoint = new DataTipRangeHandlerEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
-
-        var request = new TextDocumentPositionParams
-        {
-            TextDocument = new TextDocumentIdentifier
-            {
-                DocumentUri = new(new Uri(razorFilePath))
-            },
-            Position = codeDocument.Source.Text.GetPosition(position)
-        };
-
-        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
-        var requestContext = CreateRazorRequestContext(documentContext, LspServices.Empty);
-
-        return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 }
