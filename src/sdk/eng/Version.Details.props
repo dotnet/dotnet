@@ -44,7 +44,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>5.0.0-2.25502.107</MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>10.0.0-preview.25502.107</MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-2.25502.107</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-2.25502.107</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-2.25502.107</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>    
+    <MicrosoftCodeAnalysisExternalAccessHotReloadPackageVersion>5.0.0-2.25502.107</MicrosoftCodeAnalysisExternalAccessHotReloadPackageVersion>
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.25502.107</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <MicrosoftDiaSymReaderPackageVersion>2.2.0-beta.25502.107</MicrosoftDiaSymReaderPackageVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-rc.2.25502.107</MicrosoftDotNetWebItemTemplates100PackageVersion>
