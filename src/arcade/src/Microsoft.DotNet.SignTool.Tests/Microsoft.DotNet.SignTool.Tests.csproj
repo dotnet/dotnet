@@ -80,10 +80,4 @@
       <Content Include="@(_PkgToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\pkg\%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
   </Target>
-
-  <ItemGroup>
-    <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetPathTooling">
-      <Value>$(DotNetTool)</Value>
-    </RuntimeHostConfigurationOption>
-  </ItemGroup>
 </Project>
