@@ -17,6 +17,8 @@ stages:
           manifests: true
       enableSourceBuild: true
       sourceBuildParameters:
+        # These directories need to be kept in-sync with the 'componentGovernance/ignoreDirectories'
+        # specified in ../../builds/ci.yml
         cgIgnoreDirectories:
         - src/referencePackages
         - artifacts/source-build/self
