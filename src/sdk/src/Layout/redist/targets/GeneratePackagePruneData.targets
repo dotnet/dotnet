@@ -32,7 +32,7 @@
 
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.CollatePackageDownloads" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
   <Target Name="AddTargetingPacksForPruneDataAsPackageDownloads"
-          BeforeTargets="CollectPackageDownloads"
+          AfterTargets="CollectPackageDownloads"
           DependsOnTargets="GetTargetingPacksForPruneData">
     <CollatePackageDownloads Packages="@(TargetingPackForPruneData->Metadata('PackageName'))"
                              Condition="'@(TargetingPackForPruneData)' != ''">
@@ -40,7 +40,7 @@
     </CollatePackageDownloads>
   </Target>
 
-  <Target Name="GeneratePackagePruneData" DependsOnTargets="AddTargetingPacksForPruneDataAsPackageDownloads">
+  <Target Name="GeneratePackagePruneData" DependsOnTargets="GetTargetingPacksForPruneData">
     <ItemGroup>
       <PrunePackageCopyData Include="@(TargetingPackForPruneData)"
         Source="$(NuGetPackageRoot)$([MSBuild]::ValueOrDefault('%(PackageName)', '').ToLower())\%(Version)\data\PackageOverrides.txt"
