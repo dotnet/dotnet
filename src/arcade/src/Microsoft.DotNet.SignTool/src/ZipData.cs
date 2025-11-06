@@ -376,6 +376,15 @@ namespace Microsoft.DotNet.SignTool
 
         private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string dotNetPathTooling, string pkgToolPath)
         {
+#if NET472
+            throw new NotImplementedException("PKG manipulation is not supported on .NET Framework");
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                log.LogError("Pkg/AppBundle repackaging is not supported on Windows.");
+                return;
+            }
+
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
@@ -395,8 +404,12 @@ namespace Microsoft.DotNet.SignTool
                         continue;
                     }
 
-                    log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}.");
+                    // Preserve the original file mode from the PKG/App. The sign cache might bring if from an entry in an archive with different perms.
+                    UnixFileMode extractedFileMode = File.GetUnixFileMode(path);
+
+                    log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath} (perms: {Convert.ToString((uint)extractedFileMode, 8)}).");
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
+                    File.SetUnixFileMode(path, extractedFileMode);
                 }
 
                 if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", dotNetPathTooling, pkgToolPath))
@@ -411,6 +424,7 @@ namespace Microsoft.DotNet.SignTool
                     Directory.Delete(extractDir, recursive: true);
                 }
             }
+#endif
         }
 
 #if NETFRAMEWORK
@@ -515,8 +529,7 @@ namespace Microsoft.DotNet.SignTool
                             entry.DataStream = signedStream;
                             entry.DataStream.Position = 0;
                             writer.WriteEntry(entry);
-
-                            log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName}.");
+                            log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativeName} (perms: {Convert.ToString((uint)entry.Mode, 8)}).");
                             continue;
                         }
 
