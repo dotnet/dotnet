@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.ProjectModel

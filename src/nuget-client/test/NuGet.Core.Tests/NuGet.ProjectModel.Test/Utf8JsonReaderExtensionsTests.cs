@@ -3,6 +3,7 @@
 
 using System.Text;
 using System.Text.Json;
+using NuGet.Shared;
 using Xunit;
 
 namespace NuGet.ProjectModel.Test

@@ -290,7 +290,7 @@ public class TestPackageSpecFactory
 
         internal TestTargetFramework ToTargetFramework()
         {
-            SimulateDotnetSdk(_properties, _items);
+            SimulateDotnetSdk(_properties);
 
             // Create a new TestTargetFramework with the accumulated properties and items
             return new TestTargetFramework
@@ -299,7 +299,7 @@ public class TestPackageSpecFactory
                 Items = _items ?? new Dictionary<string, List<IItem>>(StringComparer.OrdinalIgnoreCase)
             };
 
-            void SimulateDotnetSdk(Dictionary<string, string> properties, Dictionary<string, List<IItem>>? items)
+            void SimulateDotnetSdk(Dictionary<string, string> properties)
             {
                 if (!properties.TryGetValue("TargetFramework", out var targetFramework) || string.IsNullOrWhiteSpace(targetFramework))
                 {

@@ -19,7 +19,7 @@ steps:
   - task: PowerShell@1
     inputs:
       scriptName: "$(Build.Repository.LocalPath)\\scripts\\cibuild\\ConfigureVstsBuild.ps1"
-      arguments: "-BuildRTM $(BuildRTM) -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(Build.SourceBranchName) -CommitHash $(Build.SourceVersion) -BuildNumber $(Build.BuildNumber)"
+      arguments: "-BuildRTM $(BuildRTM) -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(SourceBranch) -CommitHash $(Build.SourceVersion) -BuildNumber $(Build.BuildNumber)"
     displayName: "Configure VSTS CI Environment"
 
   - task: PowerShell@1
@@ -333,7 +333,7 @@ steps:
     displayName: "Generate .runsettings files"
     inputs:
       solution: 'build\runsettings.proj'
-      msbuildArguments: '/restore:false /property:OutputPath="$(Build.Repository.LocalPath)\artifacts\RunSettings" /property:TestDrop="RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)" /property:ProfilingInputsDrop="ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)" /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateRunSettings.binlog'
+      msbuildArguments: '/restore:false /property:OutputPath="$(Build.Repository.LocalPath)\artifacts\RunSettings" /property:TestDrop="RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)" /property:ProfilingInputsDrop="ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)" /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateRunSettings.binlog'
     condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
   - task: PowerShell@1
@@ -400,7 +400,7 @@ steps:
       scriptType: ps
       scriptLocation: inlineScript
       inlineScript: |
-        $(Agent.TempDirectory)/dotnet/dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(Build.SourceBranchName) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
+        $(Agent.TempDirectory)/dotnet/dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(SourceBranch) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
       workingDirectory: cli
       failOnStderr: true
     env:

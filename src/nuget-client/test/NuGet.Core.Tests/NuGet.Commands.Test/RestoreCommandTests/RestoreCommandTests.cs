@@ -1855,7 +1855,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Act
             var rootNode = await DoWalkAsync(walker, "A", framework);
-            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, logger, framework);
+            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, logger, framework.GetShortFolderName(), framework);
 
             await RestoreCommand.LogDowngradeWarningsOrErrorsAsync(new List<RestoreTargetGraph>() { restoreTargetGraph }, logger);
 
@@ -3104,8 +3104,8 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(false);
             projectInformationEvent["NETSdkVersion"].Should().Be(NuGetVersion.Parse("10.0.100"));
             projectInformationEvent["Pruning.FrameworksEnabled.Count"].Should().Be(0);
-            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(1);
-            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
             projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
         }
@@ -3460,10 +3460,10 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
 
         /// <summary>
-        /// Verifies that the <see cref="RestoreCommand.CreateFrameworkRuntimePairs(PackageSpec, ISet{string})" /> method returns pairs with frameworks with no runtimes first, then pairs with frameworks and runtimes after.
+        /// Verifies that the <see cref="RestoreCommand.CreateFrameworkRuntimeDefinitions(PackageSpec, ISet{string})" /> method returns pairs with frameworks with no runtimes first, then pairs with frameworks and runtimes after.
         /// </summary>
         [Fact]
-        public void CreateFrameworkRuntimePairs_ReturnsPairsInExpectedOrder()
+        public void CreateFrameworkRuntimeDefinitions_ReturnsPairsInExpectedOrder()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -3477,7 +3477,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Act
             var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
-            var pairs = RestoreCommand.CreateFrameworkRuntimePairs(request.Project, runtimeIds).ToList();
+            var pairs = RestoreCommand.CreateFrameworkRuntimeDefinitions(request.Project, runtimeIds).ToList();
 
             // Assert
             pairs[0].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net472);

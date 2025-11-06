@@ -10,7 +10,7 @@ steps:
   - task: MicroBuildSwixPlugin@4
     displayName: "Install Swix Plugin"
     inputs:
-      dropName: "Tests/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildId)"
+      dropName: "Tests/$(System.TeamProject)/$(Build.DefinitionName)/$(SourceBranch)/$(Build.BuildId)"
   - task: PowerShell@1
     displayName: "Run Configure.ps1"
     inputs:
@@ -45,7 +45,7 @@ steps:
   - task: PowerShell@1
     inputs:
       scriptName: "$(Build.Repository.LocalPath)\\scripts\\cibuild\\ConfigureVstsBuild.ps1"
-      arguments: "-BuildRTM false -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(Build.SourceBranchName) -CommitHash $(Build.SourceVersion) -BuildNumber $(NuGetVersion)"
+      arguments: "-BuildRTM false -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(SourceBranch) -CommitHash $(Build.SourceVersion) -BuildNumber $(NuGetVersion)"
     displayName: "Configure VSTS CI Environment"
 
   - task: PowerShell@1
@@ -214,7 +214,7 @@ steps:
           Write-Host "Base Build Drop: $buildDrop"
           Write-Host "##vso[task.setvariable variable=BaseBuildDrop;isOutput=true]$buildDrop"
 
-          $runSettingsDrop = "RunSettings/${env:System_TeamProject}/${env:Build_DefinitionName}/${env:Build_SourceBranchName}/${env:Build_BuildId}"
+          $runSettingsDrop = "RunSettings/${env:System_TeamProject}/${env:Build_DefinitionName}/${env:SourceBranch}/${env:Build_BuildId}"
           Write-Host "Run Settings Drop: $runSettingsDrop"
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop]$runSettingsDrop"
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop;isOutput=true]$runSettingsDrop"

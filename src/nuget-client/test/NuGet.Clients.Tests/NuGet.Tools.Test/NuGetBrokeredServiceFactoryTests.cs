@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
@@ -87,8 +86,8 @@ namespace NuGet.Tools.Test
         {
             using (await NuGetBrokeredServiceFactory.ProfferServicesAsync(this))
             {
-                Assert.Equal(ServicesAndFactories.Count(), _serviceFactories.Count);
-                Assert.Equal(ServicesAndAuthorizingFactories.Count(), _authorizingServiceFactories.Count);
+                Assert.Equal(ServicesAndFactories.Count, _serviceFactories.Count);
+                Assert.Equal(ServicesAndAuthorizingFactories.Count, _authorizingServiceFactories.Count);
             }
         }
 

@@ -33,14 +33,6 @@ namespace NuGet.Commands
             // NuGetLogCode -> LibraryId -> Set of Frameworks.
             var warningProperties = new PackageSpecificWarningProperties();
 
-            foreach (var dependency in packageSpec.Dependencies)
-            {
-                foreach (var framework in packageSpec.TargetFrameworks)
-                {
-                    warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework.FrameworkName);
-                }
-            }
-
             foreach (var framework in packageSpec.TargetFrameworks)
             {
                 foreach (var dependency in framework.Dependencies)
@@ -63,11 +55,6 @@ namespace NuGet.Commands
         {
             // NuGetLogCode -> LibraryId -> Set of Frameworks.
             var warningProperties = new PackageSpecificWarningProperties();
-
-            foreach (var dependency in packageSpec.Dependencies)
-            {
-                warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework);
-            }
 
             var targetFrameworkInformation = packageSpec.GetTargetFramework(framework);
 

@@ -61,10 +61,10 @@
       "commitSha": "5480b47bbc592c6feedca7c57c9863ba01e0c52c"
     },
     {
-      "barId": 284434,
+      "barId": 288424,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "28eeb0947095a716b98b5c34454625708cb3ac76"
+      "commitSha": "b5efdd1f17df11700c9383def6ece79a40218ccd"
     },
     {
       "barId": 285013,

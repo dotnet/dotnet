@@ -7,16 +7,16 @@ using FluentAssertions;
 using NuGet.Versioning;
 using Xunit;
 
-using Pkg = NuGet.CommandLine.XPlat.Commands.Package.Update.Package;
+using Pkg = NuGet.CommandLine.XPlat.Commands.Package.PackageWithVersionRange;
 
-namespace NuGet.CommandLine.Xplat.Tests.Commands.Package.Update
+namespace NuGet.CommandLine.Xplat.Tests.Commands.Package
 {
-    public class PackageTests
+    public class PackageWithVersionRangeTests
     {
         private RootCommand _command;
         private Argument<IReadOnlyList<Pkg>> _packagesArgument;
 
-        public PackageTests()
+        public PackageWithVersionRangeTests()
         {
             _command = new RootCommand();
 

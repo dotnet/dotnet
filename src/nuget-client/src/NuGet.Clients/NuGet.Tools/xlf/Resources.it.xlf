@@ -113,8 +113,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Il progetto non è idoneo per la migrazione perché non è basato su project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Il progetto non è idoneo per la migrazione. Il progetto non è basato su packages.config o non supporta ancora PackageReference.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">

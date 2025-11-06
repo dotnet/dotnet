@@ -11,6 +11,7 @@ resources:
         include:
         - dev
         - release-*
+        - release/*
         exclude:
         - release-6.0.x
         - release-6.3.x
@@ -143,7 +144,7 @@ stages:
         }
         catch {
           Write-Host $_
-          Write-Error "Failed to set SourceBranchName pipeline variable"
+          Write-Error "Failed to set RunSettingsURI pipeline variable"
           throw
         }
       displayName: 'Set RunSettingsURI variable'
@@ -179,10 +180,10 @@ stages:
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Bootstrapper\Get-BootstrapperURL.ps1
         arguments: -BootstrapperInfoJsonURI '$(Build.StagingDirectory)\MicroBuild\Output\BootstrapperInfo.json' -VSBranch '$(VSBranch)' -OutVariableName 'VisualStudio.InstallationUnderTest.BootstrapperURL'
     - task: artifactDropTask@0
-      displayName: "Upload VSTS Drop"
+      displayName: "Upload VS Bootstrapper"
       inputs:
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+        buildNumber: '$(MicroBuild.ManifestDropName)'
         sourcePath: "$(Pipeline.Workspace)\\ComponentBuildUnderTest\\VS15"
         toLowerCase: false
         usePat: true
