@@ -12,9 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataConvert_ProjectSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataConvert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)JsonDataReader.Policy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataWriter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)JsonDataWriter.Policy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonReaderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectJsonConverter`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectReaders_ProjectSystem.cs" />

@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
@@ -29,7 +28,11 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
     private const int TokenSize = 5;
 
     // Use a custom pool as these lists commonly exceed the size threshold for returning into the default ListPool.
-    private static readonly ObjectPool<List<SemanticRange>> s_pool = DefaultPool.Create(Policy.Instance, size: 8);
+    // These lists are significantly larger than DefaultPool.MaximumObjectSize as these arrays are commonly large.
+    // The 2048 limit should be large enough for nearly all semantic token requests, while still
+    // keeping the backing arrays off the LOH.
+
+    private static readonly ListPool<SemanticRange> s_pool = ListPool<SemanticRange>.Create(maximumObjectSize: 2048, poolSize: 8);
 
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
