@@ -32,10 +32,14 @@ src/aspnetcore/src/*.woff
 src/aspnetcore/src/*.woff2
 src/aspnetcore/src/Components/Web.JS/dist/Release/blazor.*.js # JavaScript files with a null bytes
 src/aspnetcore/src/ProjectTemplates/Web.ProjectTemplates/**/app.db
+src/aspnetcore/src/Servers/IIS/AspNetCoreModuleV2/AspNetCore/HtmlResponses.rc # UTF16-LE text file
 src/aspnetcore/src/submodules/spa-templates/**/app.db
 
 src/fsharp/**/signedtests/*
 src/fsharp/src/fsi/fsi.res # Icon
+src/fsharp/vsintegration/src/FSharp.LanguageService/VSPackage.resx # UTF16-LE text file
+
+src/installer/src/finalizer/native.rc # UTF16-LE text file
 
 src/msbuild/src/Tasks.UnitTests/*
 
@@ -51,7 +55,9 @@ src/runtime/src/mono/wasm/testassets/*
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 
 src/sdk/src/Assets/TestProjects/*
+src/sdk/src/GenAPI/genapi.slnf # UTF16-LE text file
 
+src/source-build-externals/src/application-insights/BASE/.PreReleaseVersion # UTF16-LE text file
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
 src/source-build-externals/src/humanizer/src/Humanizer.Tests*

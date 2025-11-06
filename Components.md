@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@7479c6a](https://github.com/dotnet/installer/tree/7479c6a8e4e042278b92c6dfdf1a43ebc529021a)*
+*[dotnet/installer@a6696bc](https://github.com/dotnet/installer/tree/a6696bc528c622f4b8fb12957c72e23a74a67775)*
 - `src/msbuild`  
 *[dotnet/msbuild@f0cbb13](https://github.com/dotnet/msbuild/tree/f0cbb13971c30ad15a3f252a8d0171898a01ec11)*
 - `src/nuget-client`  
@@ -76,7 +76,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@4f39ba9](https://github.com/dotnet/source-build-reference-packages/tree/4f39ba9e117ece1679a2bd4f2e8c188f914078e1)*
+*[dotnet/source-build-reference-packages@4491483](https://github.com/dotnet/source-build-reference-packages/tree/449148366d9105de8a6470ebc4ba198926e9a30a)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@94eaac3](https://github.com/dotnet/sourcelink/tree/94eaac3385cafff41094454966e1af1d1cf60f00)*
 - `src/symreader`  
