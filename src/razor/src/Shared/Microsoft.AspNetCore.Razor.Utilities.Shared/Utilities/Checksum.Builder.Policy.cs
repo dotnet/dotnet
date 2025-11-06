@@ -1,7 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.Extensions.ObjectPool;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 #if NET5_0_OR_GREATER
 using System.Diagnostics;
 #endif
@@ -19,28 +19,38 @@ internal sealed partial record Checksum
 {
     internal readonly ref partial struct Builder
     {
-        private sealed class Policy : IPooledObjectPolicy<HashingType>
+        private sealed class HashingTypePool : CustomObjectPool<HashingType>
         {
-            public static readonly Policy Instance = new();
+            public static readonly HashingTypePool Default = new(Policy.Instance, DefaultPoolSize);
 
-            private Policy()
+            private HashingTypePool(PooledObjectPolicy policy, Optional<int> poolSize)
+                : base(policy, poolSize)
             {
             }
 
-            public HashingType Create()
+            private sealed class Policy : PooledObjectPolicy
+            {
+                public static readonly Policy Instance = new();
+
+                private Policy()
+                {
+                }
+
+                public override HashingType Create()
 #if NET5_0_OR_GREATER
-                => HashingType.CreateHash(HashAlgorithmName.SHA256);
+                    => HashingType.CreateHash(HashAlgorithmName.SHA256);
 #else
                 => HashingType.Create();
 #endif
 
-            public bool Return(HashingType hash)
-            {
+                public override bool Return(HashingType hash)
+                {
 #if NET5_0_OR_GREATER
-                Debug.Assert(hash.AlgorithmName == HashAlgorithmName.SHA256);
+                    Debug.Assert(hash.AlgorithmName == HashAlgorithmName.SHA256);
 #endif
 
-                return true;
+                    return true;
+                }
             }
         }
     }

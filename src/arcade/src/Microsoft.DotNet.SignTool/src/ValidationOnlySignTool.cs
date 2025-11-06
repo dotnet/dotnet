@@ -73,11 +73,6 @@ namespace Microsoft.DotNet.SignTool
 
         public override SigningStatus VerifySignedVSIX(string filePath) => SigningStatus.Signed;
 
-        public override SigningStatus VerifySignedPkgOrAppBundle(
-            TaskLoggingHelper log,
-            string filePath,
-            string dotNetPathTooling,
-            string pkgToolPath)
-            => SigningStatus.Signed;
+        public override SigningStatus VerifySignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath) => SigningStatus.Signed;
     }
 }

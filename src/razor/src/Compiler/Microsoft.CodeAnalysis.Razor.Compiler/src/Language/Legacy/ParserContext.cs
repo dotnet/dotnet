@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -38,7 +37,7 @@ internal sealed partial class ParserContext : IDisposable
         _errorSinkStack = StackPool<ErrorSink>.Default.Get();
         _errorSinkStack.Push(new ErrorSink());
 
-        _seenDirectivesSet = StringHashSetPool.Ordinal.Get();
+        _seenDirectivesSet = SpecializedPools.StringHashSet.Ordinal.Get();
 
         Source = new SeekableTextReader(SourceDocument);
     }
@@ -52,7 +51,7 @@ internal sealed partial class ParserContext : IDisposable
         }
 
         StackPool<ErrorSink>.Default.Return(_errorSinkStack);
-        StringHashSetPool.Ordinal.Return(_seenDirectivesSet);
+        SpecializedPools.StringHashSet.Ordinal.Return(_seenDirectivesSet);
     }
 
     public ErrorSink ErrorSink => _errorSinkStack.Peek();
@@ -74,7 +73,7 @@ internal sealed partial class ParserContext : IDisposable
 // Debug Helpers
 
 #if DEBUG
-[DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
+[System.Diagnostics.DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
 internal partial class ParserContext
 {
     private string Unparsed

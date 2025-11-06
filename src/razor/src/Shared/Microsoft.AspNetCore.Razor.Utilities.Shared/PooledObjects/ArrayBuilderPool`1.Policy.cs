@@ -2,31 +2,57 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal static partial class ArrayBuilderPool<T>
+internal partial class ArrayBuilderPool<T>
 {
-    private class Policy : IPooledObjectPolicy<ImmutableArray<T>.Builder>
+    private sealed class Policy : PooledObjectPolicy
     {
-        public static readonly Policy Instance = new();
+        // This is the default initial capacity for ImmutableArray<T>.Builder.
+        private const int DefaultInitialCapacity = 8;
 
-        private Policy()
+        public static readonly Policy Default = new(DefaultInitialCapacity, DefaultMaximumObjectSize);
+
+        private readonly int _initialCapacity;
+        private readonly int _maximumObjectSize;
+
+        private Policy(int initialCapacity, int maximumObjectSize)
         {
+            ArgHelper.ThrowIfNegative(initialCapacity);
+            ArgHelper.ThrowIfNegative(maximumObjectSize);
+
+            _initialCapacity = initialCapacity;
+            _maximumObjectSize = maximumObjectSize;
         }
 
-        public ImmutableArray<T>.Builder Create() => ImmutableArray.CreateBuilder<T>();
+        public static Policy Create(
+            Optional<int> initialCapacity = default,
+            Optional<int> maximumObjectSize = default)
+        {
+            if ((!initialCapacity.HasValue || initialCapacity.Value == Default._initialCapacity) &&
+                (!maximumObjectSize.HasValue || maximumObjectSize.Value == Default._maximumObjectSize))
+            {
+                return Default;
+            }
 
-        public bool Return(ImmutableArray<T>.Builder builder)
+            return new(
+                initialCapacity.GetValueOrDefault(DefaultInitialCapacity),
+                maximumObjectSize.GetValueOrDefault(DefaultMaximumObjectSize));
+        }
+
+        public override ImmutableArray<T>.Builder Create()
+            => ImmutableArray.CreateBuilder<T>();
+
+        public override bool Return(ImmutableArray<T>.Builder builder)
         {
             var count = builder.Count;
 
             builder.Clear();
 
-            if (count > DefaultPool.MaximumObjectSize)
+            if (count > _maximumObjectSize)
             {
-                builder.Capacity = DefaultPool.MaximumObjectSize;
+                builder.Capacity = _maximumObjectSize;
             }
 
             return true;
