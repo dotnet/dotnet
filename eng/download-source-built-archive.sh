@@ -96,7 +96,8 @@ function DownloadArchive {
 
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
-  # Build array of base URLs to try in order
+  # Build array of base URL entries to try in order
+  # Each entry is in the format "url" or "url=storageKey"
   local baseUrls=()
   
   # Assets for the default RID are hosted in builds.dotnet.microsoft.com first
@@ -109,7 +110,7 @@ function DownloadArchive {
   
   # Try internal CI location if storage key is provided
   if [[ -n "$storageKey" ]]; then
-    baseUrls+=("https://ci.dot.net/internal/source-build")
+    baseUrls+=("https://ci.dot.net/internal/source-build=$storageKey")
   fi
 
   # Determine the archive filename based on property name
@@ -131,16 +132,23 @@ function DownloadArchive {
   local downloadSucceeded=false
 
   # Try each base URL in order
-  for baseUrl in "${baseUrls[@]}"; do
+  for entry in "${baseUrls[@]}"; do
+    # Parse the entry: "url" or "url=storageKey"
+    local baseUrl="${entry%%=*}"
+    local entryStorageKey=""
+    if [[ "$entry" == *"="* ]]; then
+      entryStorageKey="${entry#*=}"
+    fi
+    
     archiveUrl="${baseUrl}/${archiveFileName}"
     displayUrl="$archiveUrl"
     
-    # Use storage key only for internal CI location
-    if [[ "$baseUrl" == *"ci.dot.net/internal"* && -n "$storageKey" ]]; then
+    # Append storage key as query parameter if present
+    if [[ -n "$entryStorageKey" ]]; then
       local decodedKey
-      decodedKey=$(echo "$storageKey" | base64 -d)
-      displayUrl="${archiveUrl}?[redacted]"
+      decodedKey=$(echo "$entryStorageKey" | base64 -d)
       archiveUrl="${archiveUrl}?${decodedKey}"
+      displayUrl="${displayUrl}?[redacted]"
     fi
     
     echo "  Downloading $label from $displayUrl..."
