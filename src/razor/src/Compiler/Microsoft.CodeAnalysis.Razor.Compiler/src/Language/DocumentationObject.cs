@@ -30,22 +30,22 @@ internal readonly record struct DocumentationObject
         switch (Object)
         {
             case DocumentationDescriptor descriptor:
-                builder.AppendData((int)descriptor.Id);
+                builder.Append((int)descriptor.Id);
 
                 foreach (var arg in descriptor.Args)
                 {
                     switch (arg)
                     {
                         case string s:
-                            builder.AppendData(s);
+                            builder.Append(s);
                             break;
 
                         case int i:
-                            builder.AppendData(i);
+                            builder.Append(i);
                             break;
 
                         case bool b:
-                            builder.AppendData(b);
+                            builder.Append(b);
                             break;
 
                         case null:
@@ -60,7 +60,7 @@ internal readonly record struct DocumentationObject
                 break;
 
             case string s:
-                builder.AppendData(s);
+                builder.Append(s);
                 break;
 
             case null:

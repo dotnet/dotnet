@@ -47,14 +47,14 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
     private static readonly Func<Checksum> s_falseValue = () =>
     {
         var builder = new Checksum.Builder();
-        builder.AppendData(false);
+        builder.Append(false);
         return builder.FreeAndGetChecksum();
     };
 
     private static readonly Func<Checksum> s_trueValue = () =>
     {
         var builder = new Checksum.Builder();
-        builder.AppendData(true);
+        builder.Append(true);
         return builder.FreeAndGetChecksum();
     };
 
@@ -63,7 +63,7 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
         return () =>
         {
             var builder = new Checksum.Builder();
-            builder.AppendData(value);
+            builder.Append(value);
             return builder.FreeAndGetChecksum();
         };
     }
@@ -73,7 +73,7 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
         return () =>
         {
             var builder = new Checksum.Builder();
-            builder.AppendData(value);
+            builder.Append(value);
             return builder.FreeAndGetChecksum();
         };
     }
@@ -83,7 +83,7 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
         return () =>
         {
             var builder = new Checksum.Builder();
-            builder.AppendData(value);
+            builder.Append(value);
             return builder.FreeAndGetChecksum();
         };
     }
@@ -95,7 +95,7 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
             var builder = new Checksum.Builder();
             foreach (var producer in producers)
             {
-                builder.AppendData(producer());
+                builder.Append(producer());
             }
 
             return builder.FreeAndGetChecksum();
@@ -150,10 +150,10 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
         object? largeString = RazorTestResources.GetResourceText("FormattingTest.razor");
 
         var builder = new Checksum.Builder();
-        builder.AppendData(largeString);
+        builder.Append(largeString);
 
         var result = builder.FreeAndGetChecksum();
 
-        Assert.NotNull(result);
+        Assert.NotEqual(result, Checksum.Null);
     }
 }
