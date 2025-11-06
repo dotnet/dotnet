@@ -60,6 +60,10 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -85,6 +89,10 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -111,6 +119,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -136,6 +148,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -161,6 +177,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -186,6 +206,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: ./build.sh
                 --ci
                 --prepareMachine
@@ -212,6 +236,10 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - script: build.cmd
                 -ci
                 -prepareMachine
@@ -237,6 +265,10 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - script: build.cmd
                 -ci
                 -prepareMachine
