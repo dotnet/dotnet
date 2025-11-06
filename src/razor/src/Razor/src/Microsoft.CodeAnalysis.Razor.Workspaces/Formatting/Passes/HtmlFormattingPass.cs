@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Linq;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +24,52 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
 
         if (changes.Length > 0)
         {
+            // There is a lot of uncertainty when we're dealing with edits that come from the Html formatter
+            // because we are not responsible for it. It could make all sorts of strange edits, and it could
+            // structure those edits is all sorts of ways. eg, it could have individual character edits, or
+            // it could have a single edit that replaces a whole section of text, or the whole document.
+            // Since the Html formatter doesn't understand Razor, and in fact doesn't even format the actual
+            // Razor document directly (all C# is replaced), we have to be selective about what edits we will
+            // actually use, but being selective is tricky because we might be missing some intentional edits
+            // that the formatter made.
+            //
+            // To solve this, and work around various issues due to the Html formatter seeing a much simpler
+            // document that we are actually dealing with, the first thing we do is take the changes it suggests
+            // and apply them to the document it saw, then use our own algorithm to produce a set of changes
+            // that more closely match what we want to get out of it. Specifically, we only want to see changes
+            // to whitespace, or Html, not changes that include C#. Fortunately since we encode all C# as tildes
+            // it means we can do a word-based diff, and all C# will essentially be equal to all other C#, so
+            // won't appear in the diff.
+            //
+            // So we end up with a set of changes that are only ever to whitespace, or legitimate Html (though
+            // in reality the formatter doesn't change that anyway).
+
+            // Avoid computing a minimal diff if we don't need to. Slightly wasteful if we've come from one
+            // of the other overloads, but worth it if we haven't (and worth it for them to validate before
+            // doing the work to convert edits to changes).
+            if (changes.Any(static e => e.NewText?.Contains('~') ?? false))
+            {
+                var htmlSourceText = context.CodeDocument.GetHtmlSourceText();
+                context.Logger?.LogSourceText("HtmlSourceText", htmlSourceText);
+                var htmlWithChanges = htmlSourceText.WithChanges(changes);
+
+                changes = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, htmlWithChanges, DiffKind.Word);
+                if (changes.Length == 0)
+                {
+                    return [];
+                }
+            }
+
+            // Now that the changes are on our terms, we can apply our own filtering without having to worry
+            // that we're missing something important. We could still, in theory, be missing something the Html
+            // formatter intentionally did, but we also know the Html formatter made its decisions without an
+            // awareness of Razor anyway, so it's not a reliable source.
             var filteredChanges = await FilterIncomingChangesAsync(context, changes, cancellationToken).ConfigureAwait(false);
+            if (filteredChanges.Length == 0)
+            {
+                return [];
+            }
+
             changedText = changedText.WithChanges(filteredChanges);
 
             context.Logger?.LogSourceText("AfterHtmlFormatter", changedText);
@@ -49,6 +95,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
             var comment = node?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
             if (comment is not null && change.Span.Start > comment.SpanStart)
             {
+                context.Logger?.LogMessage($"Dropping change {change} because it's in a Razor comment");
                 continue;
             }
 
@@ -75,6 +122,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
                     sourceText[change.Span.Start - 1] == '@' &&
                     sourceText[change.Span.Start] == '<')
                 {
+                    context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# template");
                     continue;
                 }
 
@@ -110,6 +158,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
                     csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
                     csharpNode is CSharp.Syntax.LiteralExpressionSyntax or CSharp.Syntax.InterpolatedStringTextSyntax)
                 {
+                    context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# string literal");
                     continue;
                 }
             }
