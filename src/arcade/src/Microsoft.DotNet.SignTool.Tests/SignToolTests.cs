@@ -268,6 +268,20 @@ namespace Microsoft.DotNet.SignTool.Tests
             _output = output;
         }
 
+        private string GetWix3ToolPath()
+        {
+            return Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "wix3");
+        }
+
+        private string GetWixToolPath()
+        {
+            return Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "wix", "net472", "x64");
+        }
+
+        private static string s_snPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "sn", "sn.exe");
+        private static string s_tarToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "tar", "Microsoft.Dotnet.Tar.dll");
+        private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.Dotnet.MacOsPkg.dll");
+
         private string GetResourcePath(string name, string relativePath = null)
         {
             var srcPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "Resources", name);
@@ -327,37 +341,11 @@ namespace Microsoft.DotNet.SignTool.Tests
             // The path to DotNet will always be null in these tests, this will force
             // the signing logic to call our FakeBuildEngine.BuildProjectFile with a path
             // to the XML that store the content of the would be Microbuild sign request.
-            var signToolArgs = new SignToolArgs(
-                _tmpDir,
-                microBuildCorePath: "MicroBuildCorePath",
-                testSign: true,
-                dotNetPathMicroBuild: null,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                msbuildVerbosity: "quiet",
-                _tmpDir,
-                enclosingDir: "",
-                "",
-                wix3ToolsPath: wix3ToolsPath,
-                wixToolsPath: wixToolsPath,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                dotnetTimeout: -1);
+            var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wix3ToolsPath: wix3ToolsPath, wixToolsPath: wixToolsPath, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
 
             var signTool = new FakeSignTool(signToolArgs, task.Log);
             // Passing null for the 3rd party check skip as this doesn't affect the generated project.
-            var configuration = new Configuration(
-                signToolArgs.TempDir,
-                itemsToSign,
-                strongNameSignInfo,
-                fileSignInfo,
-                extensionsSignInfo,
-                additionalCertificateInfo,
-                null,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                snPath: Config.SNPath,
-                task.Log);
+            var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log);
             var signingInput = configuration.GenerateListOfFiles();
             var util = new BatchSignUtil(
                 task.BuildEngine,
@@ -404,19 +392,8 @@ namespace Microsoft.DotNet.SignTool.Tests
         {
             var engine = new FakeBuildEngine();
             var task = new SignToolTask { BuildEngine = engine };
-            var signingInput = new Configuration(
-                _tmpDir,
-                itemsToSign,
-                strongNameSignInfo,
-                fileSignInfo,
-                extensionsSignInfo,
-                additionalCertificateInfo,
-                skip3rdPartyCheckFiles,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                snPath: Config.SNPath,
-                task.Log).GenerateListOfFiles();
+            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo,
+                skip3rdPartyCheckFiles, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Select(f => f.ToString()).Should().BeEquivalentTo(expected);
             signingInput.FilesToCopy.Select(f => $"{f.Key} -> {f.Value}").Should().BeEquivalentTo(expectedCopyFiles ?? Array.Empty<string>());
@@ -557,20 +534,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>();
 
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
-            var signingInput = new Configuration(
-                _tmpDir,
-                itemsToSign,
-                strongNameSignInfo,
-                fileSignInfo,
-                s_fileExtensionSignInfo,
-                null,
-                null,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                snPath: Config.SNPath,
-                task.Log
-            ).GenerateListOfFiles();
+            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, null, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Should().BeEmpty();
             signingInput.ZipDataMap.Should().BeEmpty();
@@ -589,10 +553,9 @@ namespace Microsoft.DotNet.SignTool.Tests
                 TempDir = "TempDir",
                 DryRun = false,
                 TestSign = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 SNBinaryPath = CreateTestResource("fake.sn.exe"),
-                PkgToolPath = Config.PkgToolPath,
+                PkgToolPath = s_pkgToolPath,
             };
 
             task.Execute().Should().BeTrue();
@@ -610,11 +573,10 @@ namespace Microsoft.DotNet.SignTool.Tests
                 TempDir = "TempDir",
                 DryRun = false,
                 TestSign = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
-                PkgToolPath = Config.PkgToolPath,
+                PkgToolPath = s_pkgToolPath,
             };
 
             task.Execute().Should().BeTrue();
@@ -1103,8 +1065,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "PackageWi
   <Authenticode>NuGet</Authenticode>
 </FilesToSign>"
             },
-            wix3ToolsPath: Config.Wix3ToolPath,
-            wixToolsPath: Config.WixToolPath);
+            wix3ToolsPath: GetWix3ToolPath(),
+            wixToolsPath: GetWixToolPath());
         }
 
 
@@ -2122,8 +2084,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
   <Authenticode>Microsoft400</Authenticode>
 </FilesToSign>"
             },
-            wix3ToolsPath: Config.Wix3ToolPath,
-            wixToolsPath: Config.WixToolPath);
+            wix3ToolsPath: GetWix3ToolPath(),
+            wixToolsPath: GetWixToolPath());
 
         }
 
@@ -2175,8 +2137,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
   <Authenticode>Microsoft400</Authenticode>
 </FilesToSign>"
             },
-            wix3ToolsPath: Config.Wix3ToolPath,
-            wixToolsPath: Config.WixToolPath);
+            wix3ToolsPath: GetWix3ToolPath(),
+            wixToolsPath: GetWixToolPath());
 
         }
 
@@ -2215,8 +2177,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
   <Authenticode>Microsoft400</Authenticode>
 </FilesToSign>"
             },
-            wix3ToolsPath: Config.Wix3ToolPath,
-            wixToolsPath: Config.WixToolPath);
+            wix3ToolsPath: GetWix3ToolPath(),
+            wixToolsPath: GetWixToolPath());
         }
 
         /// <summary>
@@ -2225,7 +2187,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
         [WindowsOnlyFact]
         public void BadWixToolsetPath()
         {
-            var badPath = Path.Combine(Config.WixToolPath, "badpath");
+            var badPath = Path.Combine(GetWixToolPath(), "badpath");
 
             var fakeBuildEngine = new FakeBuildEngine(_output);
             var task = new SignToolTask
@@ -2237,11 +2199,10 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
                 LogDir = "LogDir",
                 TempDir = "TempDir",
                 DryRun = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
-                Wix3ToolsPath = Config.Wix3ToolPath,
+                Wix3ToolsPath = GetWix3ToolPath(),
                 WixToolsPath = badPath
             };
 
@@ -2793,13 +2754,12 @@ $@"
                 LogDir = "LogDir",
                 TempDir = "TempDir",
                 DryRun = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 MicroBuildCorePath = "MicroBuildCorePath",
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
-                TarToolPath = Config.TarToolPath,
-                PkgToolPath = Config.PkgToolPath,
+                TarToolPath = s_tarToolPath,
+                PkgToolPath = s_pkgToolPath,
             };
 
             task.Execute().Should().BeTrue();
@@ -2833,8 +2793,7 @@ $@"
                 LogDir = "LogDir",
                 TempDir = "TempDir",
                 DryRun = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
             };
@@ -3170,10 +3129,9 @@ $@"
                 new Dictionary<string, List<SignInfo>>(),
                 new(),
                 null,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                snPath: Config.SNPath,
+                tarToolPath: s_tarToolPath,
+                pkgToolPath: s_pkgToolPath,
+                snPath: s_snPath,
                 task.Log)
                 .GenerateListOfFiles();
 
@@ -3222,10 +3180,9 @@ $@"
                 extensionSignInfo,
                 new(),
                 null,
-                dotNetPathTooling: Config.DotNetPathTooling,
-                tarToolPath: Config.TarToolPath,
-                pkgToolPath: Config.PkgToolPath,
-                snPath: Config.SNPath,
+                tarToolPath: s_tarToolPath,
+                pkgToolPath: s_pkgToolPath,
+                snPath: s_snPath,
                 task.Log)
                 .GenerateListOfFiles();
 
@@ -3270,7 +3227,7 @@ $@"
 
             const string expectedExe = "MsiBootstrapper5.exe";
             const string wixPack = "MsiBootstrapper5.exe.wixpack.zip";
-            var wixToolsPath = Config.WixToolPath;
+            var wixToolsPath = GetWixToolPath();
             var wixpackPath = GetResourcePath(wixPack);
             var tempDir = Path.GetTempPath();
             string workingDir = Path.Combine(tempDir, "extract", Guid.NewGuid().ToString());
@@ -3450,8 +3407,8 @@ $@"
         [WindowsOnlyFact]
         public void ValidStrongNameSignaturesValidateWithFallback()
         {
-            StrongNameHelper.IsSigned_Legacy(GetResourcePath("SignedLibrary.dll"), Config.SNPath).Should().BeTrue();
-            StrongNameHelper.IsSigned_Legacy(GetResourcePath("StrongNamedWithEcmaKey.dll"), Config.SNPath).Should().BeTrue();
+            StrongNameHelper.IsSigned_Legacy(GetResourcePath("SignedLibrary.dll"), s_snPath).Should().BeTrue();
+            StrongNameHelper.IsSigned_Legacy(GetResourcePath("StrongNamedWithEcmaKey.dll"), s_snPath).Should().BeTrue();
         }
 
         [ConditionalTheory(nameof(PlatformSupportsStrongNameAlgorithm))]
@@ -3466,7 +3423,7 @@ $@"
             StrongNameHelper.IsSigned(resourcePath).Should().BeTrue();
 
             // Legacy sn verification works on on Windows only
-            StrongNameHelper.IsSigned_Legacy(resourcePath, Config.SNPath).Should().Be(
+            StrongNameHelper.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
         }
 
@@ -3478,10 +3435,10 @@ $@"
         {
             // Make sure this is unique
             string resourcePath = GetResourcePath(file, Guid.NewGuid().ToString());
-            StrongNameHelper.IsSigned_Legacy(resourcePath, Config.SNPath).Should().Be(initiallySigned);
+            StrongNameHelper.IsSigned_Legacy(resourcePath, s_snPath).Should().Be(initiallySigned);
             // Unset the strong name bit first
             StrongNameHelper.ClearStrongNameSignedBit(resourcePath);
-            StrongNameHelper.Sign_Legacy(resourcePath, GetResourcePath(key), Config.SNPath).Should().BeTrue();
+            StrongNameHelper.Sign_Legacy(resourcePath, GetResourcePath(key), s_snPath).Should().BeTrue();
             StrongNameHelper.IsSigned(resourcePath).Should().BeTrue();
         }
 
@@ -3538,8 +3495,7 @@ $@"
                 TempDir = "TempDir",
                 DryRun = true,
                 TestSign = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 AllowEmptySignList = true
             };
             
@@ -3564,8 +3520,7 @@ $@"
                 TempDir = "TempDir", 
                 DryRun = true,
                 TestSign = true,
-                DotNetPathMicroBuild = CreateTestResource("dotnet.mb.fake"),
-                DotNetPathTooling = CreateTestResource("dotnet.tool.fake"),
+                DotNetPath = CreateTestResource("dotnet.fake"),
                 AllowEmptySignList = true
             };
             
@@ -3581,8 +3536,7 @@ $@"
                 tempPath: _tmpDir,
                 microBuildCorePath: "MockPath",
                 testSign: true,  // This is the key - TestSign should be true
-                dotNetPathMicroBuild: "MockDotNetPathMicroBuild",
-                dotNetPathTooling: "MockdotNetPathTooling",
+                dotnetPath: "MockDotNetPath",
                 msbuildVerbosity: "quiet",
                 logDir: "MockLogDir",
                 enclosingDir: "MockEnclosingDir",

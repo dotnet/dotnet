@@ -147,7 +147,7 @@ jobs:
   # 1ES pipeline template requires that the container is specified in the job level.
   # If we are using a container image, we set the container to correct name.
   # Otherwise, we set the container to host so that the job runs on the host agent.
-  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     ${{ if ne(parameters.container.name, '') }}:
       container: ${{ parameters.container.name }}
     ${{ else }}:
