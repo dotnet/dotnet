@@ -357,7 +357,7 @@ namespace Test.Utility
                     "zipEntries.Length should be equal to zipContents.Length");
             }
 
-            var fileInfo = GetFileInfo(path, packageId, packageVersion);
+            var fileInfo = GetFileInfo(path);
 
             using (var zip = new ZipArchive(File.Create(fileInfo.FullName), ZipArchiveMode.Create))
             {
@@ -372,12 +372,10 @@ namespace Test.Utility
             return fileInfo;
         }
 
-        private static FileInfo GetFileInfo(string path, string packageId, string packageVersion)
+        private static FileInfo GetFileInfo(string path)
         {
             var file = Path.Combine(path, Guid.NewGuid() + ".nupkg");
-            var fileInfo = new FileInfo(file);
-
-            return fileInfo;
+            return new FileInfo(file);
         }
 
         public static void SetSimpleNuspec(ZipArchive zip,

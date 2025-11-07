@@ -173,7 +173,7 @@ namespace NuGet.Tests.Apex
             return package;
         }
 
-        public static void AssertPackageReferenceExists(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
+        public static void AssertPackageReferenceExists(ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
             logger.WriteMessage($"Checking for PackageReference {packageName} {packageVersion}");
 
@@ -187,7 +187,7 @@ namespace NuGet.Tests.Apex
             matches.Any().Should().BeTrue($"A PackageReference with {packageName}/{packageVersion} was not found in {project.FullPath}");
         }
 
-        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
+        public static void AssertPackageReferenceDoesNotExist(ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
             logger.WriteMessage($"Checking for PackageReference {packageName} {packageVersion}");
 
@@ -201,7 +201,7 @@ namespace NuGet.Tests.Apex
             matches.Any().Should().BeFalse($"A PackageReference with {packageName}/{packageVersion} was found in {project.FullPath}");
         }
 
-        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ITestLogger logger)
+        public static void AssertPackageReferenceDoesNotExist(ProjectTestExtension project, string packageName, ITestLogger logger)
         {
             logger.WriteMessage($"Checking for PackageReference {packageName}");
 
@@ -320,7 +320,7 @@ namespace NuGet.Tests.Apex
             using (var file = File.Create(configurationPath))
             {
                 var info = Encoding.UTF8.GetBytes(configurationContent);
-                file.Write(info, 0, info.Count());
+                file.Write(info, 0, info.Length);
             }
         }
 
@@ -538,7 +538,7 @@ namespace NuGet.Tests.Apex
             }
             else
             {
-                AssertPackageReferenceExists(visualStudio, project, packageName, packageVersion, logger);
+                AssertPackageReferenceExists(project, packageName, packageVersion, logger);
             }
         }
 
@@ -550,7 +550,7 @@ namespace NuGet.Tests.Apex
             }
             else
             {
-                CommonUtility.AssertPackageReferenceDoesNotExist(visualStudio, project, packageName, logger);
+                CommonUtility.AssertPackageReferenceDoesNotExist(project, packageName, logger);
             }
         }
     }

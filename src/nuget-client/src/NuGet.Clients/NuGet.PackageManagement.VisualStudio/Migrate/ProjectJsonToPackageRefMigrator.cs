@@ -12,8 +12,8 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.LibraryModel;
+using NuGet.PackageManagement.VisualStudio.Migrate;
 using NuGet.ProjectManagement.Projects;
-using NuGet.ProjectModel;
 using NuGet.VisualStudio;
 using Task = System.Threading.Tasks.Task;
 
@@ -35,7 +35,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Strings.Error_FileNotExists, projectJsonFilePath));
             }
 
-            var packageSpec = JsonPackageSpecReader.GetPackageSpec(
+            PackageSpecProjectJsonMigrationCandidate packageSpec = ProjectJsonMigrationCandidatePackageSpecReader.GetPackageSpec(
                 Path.GetFileNameWithoutExtension(project.MSBuildProjectPath),
                 projectJsonFilePath);
 
@@ -57,7 +57,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 projectJsonFilePath);
         }
 
-        private static async Task MigrateDependenciesAsync(BuildIntegratedNuGetProject project, PackageSpec packageSpec)
+        private static async Task MigrateDependenciesAsync(BuildIntegratedNuGetProject project, PackageSpecProjectJsonMigrationCandidate packageSpec)
         {
             if (packageSpec.TargetFrameworks.Count > 1)
             {
@@ -83,7 +83,7 @@ namespace NuGet.PackageManagement.VisualStudio
             }
         }
 
-        private static void MigrateRuntimes(PackageSpec packageSpec, Microsoft.Build.Evaluation.Project buildProject)
+        private static void MigrateRuntimes(PackageSpecProjectJsonMigrationCandidate packageSpec, Microsoft.Build.Evaluation.Project buildProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             var runtimes = packageSpec.RuntimeGraph.Runtimes;

@@ -13,13 +13,9 @@ using Xunit;
 
 namespace NuGet.Protocol.Providers.Tests
 {
-    using SemanticVersion = Versioning.SemanticVersion;
-
     public class PackageDetailsUriResourceV3ProviderTests
     {
         private const string ResourceType = "PackageDetailsUriTemplate/5.1.0";
-
-        private static readonly SemanticVersion DefaultVersion = new SemanticVersion(0, 0, 0);
 
         private readonly PackageSource _packageSource;
         private readonly PackageDetailsUriResourceV3Provider _target;

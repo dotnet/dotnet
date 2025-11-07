@@ -167,7 +167,8 @@ namespace NuGet.Commands
                 var target = new LockFileTarget
                 {
                     TargetFramework = targetGraph.Framework,
-                    RuntimeIdentifier = targetGraph.RuntimeIdentifier
+                    RuntimeIdentifier = targetGraph.RuntimeIdentifier,
+                    TargetAlias = targetGraph.TargetAlias,
                 };
 
                 var flattenedFlags = IncludeFlagUtils.FlattenDependencyTypes(_includeFlagGraphs, project, targetGraph);
@@ -392,13 +393,6 @@ namespace NuGet.Commands
 
         private static void AddProjectFileDependenciesForSpec(PackageSpec project, LockFile lockFile)
         {
-            // Use empty string as the key of dependencies shared by all frameworks
-            lockFile.ProjectFileDependencyGroups.Add(new ProjectFileDependencyGroup(
-                string.Empty,
-                project.Dependencies
-                    .Select(group => group.LibraryRange.ToLockFileDependencyGroupString())
-                    .OrderBy(group => group, StringComparer.Ordinal)));
-
             foreach (var frameworkInfo in project.TargetFrameworks
                 .OrderBy(framework => framework.FrameworkName.ToString(),
                     StringComparer.Ordinal))
@@ -420,7 +414,6 @@ namespace NuGet.Commands
                     StringComparer.Ordinal))
             {
                 var dependencies = new List<LibraryRange>();
-                dependencies.AddRange(project.Dependencies.Select(e => e.LibraryRange));
                 dependencies.AddRange(frameworkInfo.Dependencies.Select(e => e.LibraryRange));
 
                 var targetGraph = targetGraphs.SingleOrDefault(graph =>

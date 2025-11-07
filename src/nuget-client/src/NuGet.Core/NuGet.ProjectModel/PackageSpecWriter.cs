@@ -51,11 +51,6 @@ namespace NuGet.ProjectModel
 
             SetMSBuildMetadata(writer, packageSpec, environmentVariableReader);
 
-            if (packageSpec.Dependencies.Count > 0)
-            {
-                SetDependencies(writer, packageSpec.Dependencies);
-            }
-
             SetFrameworks(writer, packageSpec.TargetFrameworks, hashing);
 
             JsonRuntimeFormat.WriteRuntimeGraph(writer, packageSpec.RuntimeGraph);

@@ -24,7 +24,7 @@ namespace NuGet.Frameworks.Test
 
             var results = compatible!.ToArray();
 
-            Assert.Equal(3, results.Count());
+            Assert.Equal(3, results.Length);
             Assert.Equal(win81, results[0]);
             Assert.Equal(fw1, results[1]);
             Assert.Equal(fw2, results[2]);
@@ -46,7 +46,7 @@ namespace NuGet.Frameworks.Test
 
             var results = compatible!.ToArray();
 
-            Assert.Equal(4, results.Count());
+            Assert.Equal(4, results.Length);
             Assert.Equal(win7, results[0]);
             Assert.Equal(win81, results[1]);
             Assert.Equal(win9, results[2]);

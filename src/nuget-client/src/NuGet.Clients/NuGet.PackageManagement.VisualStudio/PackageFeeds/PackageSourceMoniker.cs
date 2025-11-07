@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.VisualStudio
             PackageSourceNames = PackageSources.Select(s => s.Name).ToList();
 
             _stringRepresentation = $"{SourceName}: [{string.Join("; ", PackageSourceNames)}]";
-            _tooltip = PackageSources.Count() == 1
+            _tooltip = PackageSources.Count == 1
                 ? GetTooltip(PackageSources.First())
                 : string.Join("; ", PackageSourceNames);
             PriorityOrder = priorityOrder;
