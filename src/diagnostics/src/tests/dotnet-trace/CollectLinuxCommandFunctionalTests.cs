@@ -48,7 +48,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
         {
             MockConsole console = new(200, 30);
             int exitCode = Run(testArgs, console);
-            if (OperatingSystem.IsLinux())
+            if (CollectLinuxCommandHandler.IsSupported())
             {
                 Assert.Equal((int)ReturnCode.Ok, exitCode);
                 console.AssertSanitizedLinesEqual(CollectLinuxSanitizer, expectedLines);
@@ -57,7 +57,8 @@ namespace Microsoft.Diagnostics.Tools.Trace
             {
                 Assert.Equal((int)ReturnCode.PlatformNotSupportedError, exitCode);
                 console.AssertSanitizedLinesEqual(null, new string[] {
-                    "The collect-linux command is only supported on Linux.",
+                    $"The collect-linux command is not supported on this platform.",
+                    $"For requirements, please visit https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace."
                 });
             }
         }
@@ -68,16 +69,17 @@ namespace Microsoft.Diagnostics.Tools.Trace
         {
             MockConsole console = new(200, 30);
             int exitCode = Run(testArgs, console);
-            if (OperatingSystem.IsLinux())
+            if (CollectLinuxCommandHandler.IsSupported())
             {
-                Assert.Equal((int)ReturnCode.TracingError, exitCode);
+                Assert.Equal((int)ReturnCode.ArgumentError, exitCode);
                 console.AssertSanitizedLinesEqual(null, expectedException);
             }
             else
             {
                 Assert.Equal((int)ReturnCode.PlatformNotSupportedError, exitCode);
                 console.AssertSanitizedLinesEqual(null, new string[] {
-                    "The collect-linux command is only supported on Linux.",
+                    $"The collect-linux command is not supported on this platform.",
+                    $"For requirements, please visit https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace."
                 });
             }
         }
