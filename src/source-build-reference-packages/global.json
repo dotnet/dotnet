@@ -1,4 +1,13 @@
 {
+  "sdk": {
+    "version": "9.0.111",
+    "rollForward": "latestPatch",
+    "paths": [
+      ".dotnet",
+      "$host$"
+    ],
+    "errorMessage": "The required .NET SDK wasn't found. Please run ./eng/common/dotnet.cmd/sh to install it."
+  },
   "tools": {
     "dotnet": "9.0.111"
   },
