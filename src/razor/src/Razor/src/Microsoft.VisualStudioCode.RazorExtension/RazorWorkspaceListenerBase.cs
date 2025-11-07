@@ -186,7 +186,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
             }
 
             // Don't queue work for projects that don't have a dynamic file
-            if (!_projectsWithDynamicFile.TryGetValue(project.Id, out var _))
+            if (!_projectsWithDynamicFile.TryGetValue(project.Id, out _))
             {
                 return;
             }
@@ -199,7 +199,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
             // Remove project is called from Workspace.Changed, while other notifications of _projectsWithDynamicFile
             // are handled with NotifyDynamicFile. Use ImmutableInterlocked here to be sure the updates happen
             // in a thread safe manner since those are not assumed to be the same thread.
-            if (ImmutableInterlocked.TryRemove(ref _projectsWithDynamicFile, project.Id, out var _))
+            if (ImmutableInterlocked.TryRemove(ref _projectsWithDynamicFile, project.Id, out _))
             {
                 var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
                 if (intermediateOutputPath is null)

@@ -514,7 +514,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         {
             // Parsing an end tag.
             var endTagStart = CurrentStart;
-            var endTag = ParseEndTag(mode, out var endTagName, out var _);
+            var endTag = ParseEndTag(mode, out var endTagName, out _);
 
             if (string.Equals(CurrentStartTagName, endTagName, StringComparison.OrdinalIgnoreCase))
             {
