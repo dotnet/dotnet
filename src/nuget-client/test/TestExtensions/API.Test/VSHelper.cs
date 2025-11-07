@@ -142,8 +142,7 @@ namespace API.Test
                 }
             }
 
-            var items = errorTasks.Select(e => e.Description as string).ToArray();
-            return items;
+            return errorTasks.Select(e => e.Description as string).ToArray();
         }
 
         public static string[] GetErrors()
@@ -156,22 +155,7 @@ namespace API.Test
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var errorLevel = vsBuildErrorLevel.vsBuildErrorLevelHigh;
-            var errors = await GetErrorTasksAsync(errorLevel);
-            return errors;
-        }
-
-        public static string[] GetWarnings()
-        {
-            return ThreadHelper.JoinableTaskFactory.Run(() => GetWarningsAsync());
-        }
-
-        private static async Task<string[]> GetWarningsAsync()
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var errorLevel = vsBuildErrorLevel.vsBuildErrorLevelMedium;
-            var warnings = await GetErrorTasksAsync(errorLevel);
-            return warnings;
+            return await GetErrorTasksAsync(errorLevel);
         }
     }
 }

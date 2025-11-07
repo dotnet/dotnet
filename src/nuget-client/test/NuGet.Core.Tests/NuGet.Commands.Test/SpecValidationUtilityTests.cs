@@ -160,11 +160,6 @@ namespace NuGet.Commands.Test
                     ProjectUniqueName = "b"
                 });
 
-            spec.Projects.First().Dependencies.Add(new LibraryDependency()
-            {
-                LibraryRange = new LibraryRange("b", LibraryDependencyTarget.PackageProjectExternal)
-            });
-
             // Act && Assert no errors
             SpecValidationUtility.ValidateDependencySpec(spec);
         }
@@ -446,7 +441,7 @@ namespace NuGet.Commands.Test
             spec.AddProject(project);
 
             // Act && Assert
-            AssertError(spec, "Property 'Dependencies' is not allowed");
+            AssertError(spec, "Property 'dependencies' is not allowed");
         }
 
         [Fact]
