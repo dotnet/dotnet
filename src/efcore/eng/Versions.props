@@ -16,7 +16,7 @@
   <PropertyGroup Label="Arcade settings">
     <UsingToolXliff>False</UsingToolXliff>
   </PropertyGroup>
-  <PropertyGroup Label="MSBuild and Roslyn" Condition="'$(IsServicingBuild)' == 'true'">
+  <PropertyGroup Label="MSBuild and Roslyn" Condition="'$(IsServicingBuild)' != 'true'">
     <!-- For MSBuild and Roslyn packages use the previous stable version until the current stable build is released. -->
     <MicrosoftBuildFrameworkVersion>17.14.28</MicrosoftBuildFrameworkVersion>
     <MicrosoftBuildUtilitiesCoreVersion>17.14.28</MicrosoftBuildUtilitiesCoreVersion>
