@@ -12,7 +12,7 @@ If you believe you have found a security vulnerability in any Microsoft-owned re
 
 Please report them to the Microsoft Security Response Center (MSRC) at [https://msrc.microsoft.com/create-report](https://msrc.microsoft.com/create-report).
 
-You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Additional information can be found at [microsoft.com/msrc](https://www.microsoft.com/msrc).
+You should receive a response within 24 hours. If for some reason you do not, please follow up via the [MSRC Researcher Portal](https://msrc.microsoft.com/report/vulnerability/), using the Message functionality found at the bottom of the Activity tab on your vulnerability report. 
 
 Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope of the possible issue:
 
