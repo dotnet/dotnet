@@ -78,7 +78,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.UseExpressionBody);
     }
 
-    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
+    [Fact]
     public async Task IntroduceLocal()
     {
         var input = """
@@ -90,7 +90,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
             {
                 void M(string[] args)
                 {
-                    if ([|args.First()|].Length > 0)
+                    if (args.First()[||].Length > 0)
                     {
                     }
                     if (args.First().Length > 0)
@@ -110,8 +110,8 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
             {
                 void M(string[] args)
                 {
-                    string v = args.First();
-                    if (v.Length > 0)
+                    int length = args.First().Length;
+                    if (length > 0)
                     {
                     }
                     if (args.First().Length > 0)
@@ -125,7 +125,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable);
     }
 
-    [Fact(Skip = "Roslyn code refactoring provider is not finding the expression")]
+    [Fact]
     public async Task IntroduceLocal_All()
     {
         var input = """
@@ -137,7 +137,7 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
             {
                 void M(string[] args)
                 {
-                    if ([|args.First()|].Length > 0)
+                    if (args.First()[||].Length > 0)
                     {
                     }
                     if (args.First().Length > 0)
@@ -157,11 +157,11 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
             {
                 void M(string[] args)
                 {
-                    string v = args.First();
-                    if (v.Length > 0)
+                    int length = args.First().Length;
+                    if (length > 0)
                     {
                     }
-                    if (v.Length > 0)
+                    if (length > 0)
                     {
                     }
                 }
