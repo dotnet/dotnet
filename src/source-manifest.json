@@ -49,10 +49,10 @@
       "commitSha": "c23cc3527adf1f65d58a2333e0fd206483f5f815"
     },
     {
-      "barId": 289789,
+      "barId": 289816,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "3759e167a71ae30a81b21203bc7f14b60d6aa4eb"
+      "commitSha": "fdb422958deeb2aa06de8290328d57d0cf9e3fd2"
     },
     {
       "barId": 288469,
@@ -97,10 +97,10 @@
       "commitSha": "ce50bec288464cb6b122f137bc68b4661e942851"
     },
     {
-      "barId": 289662,
+      "barId": 289818,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1a2f0445a837808f5e9c824bb1b268ac3c3f2c1b"
+      "commitSha": "dcd0835a5aa7442712fa2c63096422f53249b10d"
     },
     {
       "barId": 287042,
@@ -133,10 +133,10 @@
       "commitSha": "dddb7a4a4a834496cbd3e58c356fc4ff244e29ad"
     },
     {
-      "barId": 289710,
+      "barId": 289847,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "9ee22210291bb4b1aaad469b5bc8f1ae7aef6d0c"
+      "commitSha": "cfb7ae431c71608222c929609782f94324a14bf9"
     },
     {
       "barId": 289752,
