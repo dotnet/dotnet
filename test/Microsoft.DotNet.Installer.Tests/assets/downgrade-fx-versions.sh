@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# This script downgrades the .NET SDK bundled versions in Microsoft.NETCoreSdk.BundledVersions.props
+# file to the versions 2 releases prior. SDK includes the latest servicing versions automatically,
+# which may not be publicly available yet, causing test failures. This script creates a backup of
+# the original props file before making changes.
+
 set -euo pipefail
 
 # Configuration
@@ -65,31 +71,27 @@ replace_version() {
     echo -e "${GREEN}  Replaced ${count} instance(s) of ${old_version} → ${new_version}${NC}"
 }
 
-# Process .NET 9.0
-echo -e "\n${YELLOW}Processing .NET 9.0...${NC}"
-LATEST_9=$(find_latest_version "9.0")
-if [ -n "$LATEST_9" ]; then
-    echo "Found latest version: $LATEST_9"
-    NEW_9=$(decrement_version "$LATEST_9")
-    if [ $? -eq 0 ]; then
-        replace_version "$LATEST_9" "$NEW_9"
-    fi
-else
-    echo -e "${YELLOW}No 9.0.x versions found${NC}"
-fi
+# Function to process a specific .NET version
+process_dotnet_version() {
+    local version=$1
 
-# Process .NET 8.0
-echo -e "\n${YELLOW}Processing .NET 8.0...${NC}"
-LATEST_8=$(find_latest_version "8.0")
-if [ -n "$LATEST_8" ]; then
-    echo "Found latest version: $LATEST_8"
-    NEW_8=$(decrement_version "$LATEST_8")
-    if [ $? -eq 0 ]; then
-        replace_version "$LATEST_8" "$NEW_8"
+    echo -e "\n${YELLOW}Processing .NET ${version}...${NC}"
+    local latest_version=$(find_latest_version "$version")
+
+    if [ -n "$latest_version" ]; then
+        echo "Found latest version: $latest_version"
+        local new_version=$(decrement_version "$latest_version")
+        if [ $? -eq 0 ]; then
+            replace_version "$latest_version" "$new_version"
+        fi
+    else
+        echo -e "${YELLOW}No ${version}.x versions found${NC}"
     fi
-else
-    echo -e "${YELLOW}No 8.0.x versions found${NC}"
-fi
+}
+
+# Process .NET versions
+process_dotnet_version "9.0"
+process_dotnet_version "8.0"
 
 # Verify changes
 echo -e "\n${YELLOW}Verification:${NC}"
