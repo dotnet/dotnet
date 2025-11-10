@@ -6,9 +6,14 @@ schedules:
   branches:
     # For releases branches only run on internal/release branches because that's where dependencies flow.
     # Previews don't have internal/release branches so they must be run from non-internal release branches.
+    # The 2xx, 3xx, 4xx triggers exist to cover the feature band pre-release time periods.
+    # They can be removed once released as the triggers below will handle the branches after release.
     include:
     - main
     - release/*.0.1xx-preview*
+    - release/*.0.2xx*
+    - release/*.0.3xx*
+    - release/*.0.4xx*
     - internal/release/*.0.1xx*
 
 pr: none
@@ -16,10 +21,15 @@ pr: none
 # Always trigger a run when changes are made to the license test implementation or baselines
 trigger:
   branches:
+    # The 2xx, 3xx, 4xx triggers exist to cover the feature band pre-release time periods.
+    # They can be removed once released as the internal/release trigger will handle the branches after release.
     include:
     - main
     - release/*.0.1xx-preview*
-    - internal/release/*.0.1xx*
+    - release/*.0.2xx*
+    - release/*.0.3xx*
+    - release/*.0.4xx*
+    - internal/release/*.0.?xx*
   paths:
     include:
     - test/Microsoft.DotNet.SourceBuild.Tests/LicenseScanTests.cs
