@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -15,6 +17,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -100,9 +103,17 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
                 {string.Join(Environment.NewLine + "    ", result.Select(e => ((RazorVSInternalCodeAction)e.Value!).Name))}
             """);
 
+        // In VS, child code actions use the children property, and are easy
         if (codeActionToRun.Children?.Length > 0)
         {
             codeActionToRun = codeActionToRun.Children[childActionIndex];
+        }
+
+        // In VS Code, the C# extension has some custom code to handle child code actions, which we mimic here
+        if (codeActionToRun.Command is { CommandIdentifier: "roslyn.client.nestedCodeAction", Arguments: [JsonObject data] })
+        {
+            var nestedCodeAction = data["NestedCodeActions"].AssumeNotNull().AsArray()[childActionIndex];
+            codeActionToRun = JsonSerializer.Deserialize<VSInternalCodeAction>(nestedCodeAction, JsonHelpers.JsonSerializerOptions);
         }
 
         Assert.NotNull(codeActionToRun);

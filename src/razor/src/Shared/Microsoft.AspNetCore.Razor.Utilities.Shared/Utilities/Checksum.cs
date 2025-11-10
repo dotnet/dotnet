@@ -2,74 +2,94 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-#if NETCOREAPP && !NET8_0_OR_GREATER
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-#endif
 using System.Runtime.InteropServices;
 
 namespace Microsoft.AspNetCore.Razor.Utilities;
 
-internal sealed partial record Checksum
+/// <summary>
+///  Checksum of data can be used later to see whether two data are same or not
+///  without actually comparing data itself.
+/// </summary>
+[StructLayout(LayoutKind.Explicit, Size = HashSize)]
+internal readonly partial record struct Checksum(
+    [field: FieldOffset(0)] long Data1,
+    [field: FieldOffset(8)] long Data2) : IComparable<Checksum>
 {
-    // Size of SHA-256
-    private const int HashSize = 256 / 8;
+    /// <summary>
+    ///  The intended size of the <see cref="Checksum"/> in bytes.
+    /// </summary>
+    private const int HashSize = 16;
 
-    public static readonly Checksum Null = new(default(HashData));
+#if !NET
+    // Small (HashSize length), per-thread array to use when converting to base64 on non-.NET.
+    [ThreadStatic]
+    private static byte[]? s_bytes;
+#endif
 
-    public readonly HashData Data;
+    /// <summary>
+    ///  Represents a default/null/invalid Checksum, equivalent to <c>default(Checksum)</c>. This value
+    ///  contains all zeroes, which is considered infinitesimally unlikely to ever happen from hashing data
+    ///  (including when hashing null/empty/zero data inputs).
+    /// </summary>
+    public static readonly Checksum Null = default;
 
-    public Checksum(HashData data)
-        => Data = data;
+    public static Checksum From(byte[] bytes)
+        => From(bytes.AsSpan());
 
-    public static Checksum From(ReadOnlySpan<byte> source)
+    public static Checksum From(ImmutableArray<byte> bytes)
+        => From(bytes.AsSpan());
+
+    public static Checksum From(ReadOnlySpan<byte> bytes)
     {
-        if (source.Length == 0)
+        ArgHelper.ThrowIfLessThan(bytes.Length, HashSize);
+
+        if (!MemoryMarshal.TryRead(bytes, out Checksum result))
         {
-            return Null;
+            return ThrowHelper.ThrowInvalidOperationException<Checksum>("Could not read hash data");
         }
 
-        if (source.Length != HashSize)
-        {
-            throw new ArgumentException($"{nameof(source)} size must be equal to {HashSize}", nameof(source));
-        }
-
-        if (!MemoryMarshal.TryRead(source, out HashData hash))
-        {
-            throw new InvalidOperationException("Could not read hash data");
-        }
-
-        return new Checksum(hash);
+        return result;
     }
 
     public string ToBase64String()
     {
-#if NETCOREAPP
+#if NET
         Span<byte> bytes = stackalloc byte[HashSize];
-#if NET8_0_OR_GREATER
-        MemoryMarshal.TryWrite(bytes, in Data);
-#else
-        MemoryMarshal.TryWrite(bytes, ref Unsafe.AsRef(in Data));
-#endif
-
+        WriteTo(bytes);
         return Convert.ToBase64String(bytes);
 #else
-        unsafe
-        {
-            var data = new byte[HashSize];
-            fixed (byte* dataPtr = data)
-            {
-                *(HashData*)dataPtr = Data;
-            }
-
-            return Convert.ToBase64String(data, offset: 0, length: HashSize);
-        }
+        var bytes = s_bytes ??= new byte[HashSize];
+        WriteTo(bytes.AsSpan());
+        return Convert.ToBase64String(bytes);
 #endif
     }
 
     public static Checksum FromBase64String(string value)
-        => value is null
-            ? Null
-            : From(Convert.FromBase64String(value));
+        => From(Convert.FromBase64String(value));
+
+    public void WriteTo(Span<byte> destination)
+    {
+        ArgHelper.ThrowIfDestinationTooShort(destination, HashSize);
+        Unsafe.WriteUnaligned(ref MemoryMarshal.GetReference(destination), this);
+    }
+
+    public bool Equals(Checksum other)
+        => Data1 == other.Data1 &&
+           Data2 == other.Data2;
+
+    public override int GetHashCode()
+    {
+        // The checksum is already a hash. Just read a 4-byte value to get a well-distributed hash code.
+        return (int)Data1;
+    }
+
+    public int CompareTo(Checksum other)
+    {
+        var result = Data1.CompareTo(other.Data1);
+        return result != 0 ? result : Data2.CompareTo(other.Data2);
+    }
 
     public override string ToString()
         => ToBase64String();

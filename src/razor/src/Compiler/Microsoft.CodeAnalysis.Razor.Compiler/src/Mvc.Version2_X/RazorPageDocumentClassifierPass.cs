@@ -126,7 +126,7 @@ public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
             var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
-            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
+            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out _))
             {
                 // The page directive is not the leading directive. Add an error.
                 pageDirective.DirectiveNode.AddDiagnostic(

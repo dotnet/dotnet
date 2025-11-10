@@ -32,7 +32,7 @@ public abstract record MetadataObject
 
     internal void AppendToChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData((byte)Kind);
+        builder.Append((byte)Kind);
 
         BuildChecksum(in builder);
     }

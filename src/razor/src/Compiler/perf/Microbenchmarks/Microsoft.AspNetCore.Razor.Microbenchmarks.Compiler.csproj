@@ -26,8 +26,8 @@
     <None Remove="Resources\**\*.*" />
 
     <EmbeddedResource Include="Resources\**\*.*" />
-    <EmbeddedResource Include="$(SharedFilesRoot)\Tooling\**\*.*" Link="Resources\%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="$(SharedFilesRoot)\Compiler\MSN.cshtml" Link="Resources\%(FileName)%(Extension)" />
+    <EmbeddedResource Include="$(SharedFilesRoot)\Tooling\**\*.*" Link="Resources\Tooling\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SharedFilesRoot)\Compiler\**\*.*" Link="Resources\Compiler\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />

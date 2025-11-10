@@ -14,14 +14,10 @@ internal static partial class ObjectReaders
 
     public static Checksum ReadChecksumFromProperties(JsonDataReader reader)
     {
-        var data1 = reader.ReadInt64(nameof(Checksum.HashData.Data1));
-        var data2 = reader.ReadInt64(nameof(Checksum.HashData.Data2));
-        var data3 = reader.ReadInt64(nameof(Checksum.HashData.Data3));
-        var data4 = reader.ReadInt64(nameof(Checksum.HashData.Data4));
+        var data1 = reader.ReadInt64(nameof(Checksum.Data1));
+        var data2 = reader.ReadInt64(nameof(Checksum.Data2));
 
-        var hashData = new Checksum.HashData(data1, data2, data3, data4);
-
-        return new Checksum(hashData);
+        return new Checksum(data1, data2);
     }
 
     public static RazorConfiguration ReadConfigurationFromProperties(JsonDataReader reader)
