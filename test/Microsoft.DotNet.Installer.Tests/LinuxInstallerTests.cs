@@ -249,7 +249,7 @@ public partial class LinuxInstallerTests : IDisposable
             // This script is used to update the latest known 8.0 and 9.0 framework versions in SDK's
             // Microsoft.NETCoreSdk.BundledVersions.props file to the versions 2 releases prior.
             // This is needed as the SDK automatically picks up servicing versions not yet released, which
-            // is either one or two versions higher than publically available versions, depending on
+            // is either one or two versions higher than publicly available versions, depending on
             // when we run the tests.
             string downgradeScript = Path.Combine(_contextDir, DowngradeFxVersionsScript);
             File.Copy(Path.Combine(GetAssetsDirectory(), DowngradeFxVersionsScript), downgradeScript);
