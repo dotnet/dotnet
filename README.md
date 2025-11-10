@@ -129,6 +129,9 @@ git config --global core.longpaths true
 
         # Build the .NET SDK
         ./build.sh -sb --clean-while-building
+
+        # Non-preview builds require a special flag to produce the stable version strings
+        ./build.sh --sb --branding rtm
         ```
 
     The resulting SDK is placed at `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz` (for Unix) or `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].zip` (for Windows).
