@@ -28,12 +28,12 @@ public class CreateSourceArtifacts : BuildTask
     public required string ArtifactName { get; init; }
 
     /// <summary>
-    /// Sdk version
+    /// The stable sdk version
     /// Should match the sdk tag associated with a release
     /// Used for artifact prefixing
     /// </summary>
     [Required]
-    public required string SdkVersion { get; init; }
+    public required string SdkStableVersion { get; init; }
 
     /// <summary>
     /// The build/non-stable sdk version
@@ -94,7 +94,7 @@ public class CreateSourceArtifacts : BuildTask
         {
             ProcessResult result = await processService.RunProcessAsync(
                 "git",
-                artifactType.GetGitArchiveArgs(artifactFilePath, GitHubRepoName, SdkVersion, SourceCommit),
+                artifactType.GetGitArchiveArgs(artifactFilePath, GitHubRepoName, SdkStableVersion, SourceCommit),
                 environmentVariables: new List<ProcessEnvironmentVariable> { new ProcessEnvironmentVariable("TZ", GitHubTimezone) },
                 workingDirectory: RepoRoot
             );
