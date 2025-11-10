@@ -32,9 +32,14 @@
 
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.CollatePackageDownloads" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
   <Target Name="AddTargetingPacksForPruneDataAsPackageDownloads"
-          AfterTargets="CollectPackageDownloads"
+          BeforeTargets="CollectPackageDownloads"
           DependsOnTargets="GetTargetingPacksForPruneData">
-    <CollatePackageDownloads Packages="@(TargetingPackForPruneData->Metadata('PackageName'))"
+    <ItemGroup>
+      <_ExistingPackageDownload Include="@(PackageDownload)" />
+      <PackageDownload Remove="@(PackageDownload)" />
+    </ItemGroup>
+    
+    <CollatePackageDownloads Packages="@(TargetingPackForPruneData->Metadata('PackageName'));@(_ExistingPackageDownload)"
                              Condition="'@(TargetingPackForPruneData)' != ''">
       <Output TaskParameter="PackageDownloads" ItemName="PackageDownload" />
     </CollatePackageDownloads>
