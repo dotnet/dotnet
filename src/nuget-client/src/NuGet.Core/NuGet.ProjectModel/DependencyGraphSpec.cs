@@ -11,6 +11,7 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Packaging;
+using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {

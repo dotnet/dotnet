@@ -53,7 +53,7 @@ namespace NuGet.XPlat.FuncTest
                 Assert.True(Array.Exists(files, element => element == filename));
             }
 
-            Assert.Equal(files.Count(), TestFileNames.Length);
+            Assert.Equal(files.Length, TestFileNames.Length);
         }
 
         /// <summary>

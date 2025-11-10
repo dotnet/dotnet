@@ -202,7 +202,6 @@ namespace NuGet.Packaging.Test
                 serialNumber,
                 timestamp,
                 accuracy,
-                ordering,
                 nonce,
                 tsa,
                 extensions);

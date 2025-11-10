@@ -42,5 +42,43 @@ namespace NuGet.ProjectModel
 
             return frameworkInfo ?? new ProjectRestoreMetadataFrameworkInfo();
         }
+
+        /// <summary>
+        /// Get the <see cref="TargetFrameworkInformation"/> for the given target alias.
+        /// If there is not a match, null is returned.
+        /// </summary>
+        /// <param name="project">The project</param>
+        /// <param name="targetAlias">The target alias to search for</param>
+        /// <returns>The <see cref="TargetFrameworkInformation"/> if it exists, <see langword="null"/> otherwise. </returns>
+        public static TargetFrameworkInformation GetTargetFramework(this PackageSpec project, string targetAlias)
+        {
+            foreach (var framework in project.TargetFrameworks)
+            {
+                if (framework.TargetAlias.Equals(targetAlias))
+                {
+                    return framework;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get the <see cref="ProjectRestoreMetadataFrameworkInfo"/> for the given target alias.
+        /// If there is not a match, null is returned.
+        /// </summary>
+        /// <param name="project">The project</param>
+        /// <param name="targetAlias">The target alias to search for</param>
+        /// <returns>The <see cref="ProjectRestoreMetadataFrameworkInfo"/> if it exists, <see langword="null"/> otherwise. </returns>
+        public static ProjectRestoreMetadataFrameworkInfo GetRestoreMetadataFramework(this PackageSpec project, string targetAlias)
+        {
+            foreach (var framework in project.RestoreMetadata?.TargetFrameworks)
+            {
+                if (framework.TargetAlias.Equals(targetAlias))
+                {
+                    return framework;
+                }
+            }
+            return null;
+        }
     }
 }

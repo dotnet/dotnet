@@ -37,8 +37,6 @@ namespace NuGet.Commands.Test
 
         public void SaveActivePackageSource(PackageSource source) => throw new NotImplementedException();
 
-        public PackageSource GetPackageSource(string name) => throw new NotImplementedException();
-
         public void RemovePackageSource(string name) => throw new NotImplementedException();
 
         public PackageSource GetPackageSourceByName(string name) => throw new NotImplementedException();
@@ -54,9 +52,5 @@ namespace NuGet.Commands.Test
         public void AddPackageSource(PackageSource source) => throw new NotImplementedException();
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
-
-        public void DisablePackageSource(PackageSource source) => throw new NotImplementedException();
-
-        public bool IsPackageSourceEnabled(PackageSource source) => throw new NotImplementedException();
     }
 }
