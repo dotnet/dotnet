@@ -156,7 +156,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests), Skip = "RPM package metadata test requires https://github.com/dotnet/arcade/pull/16079")]
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -627,7 +627,27 @@ public partial class LinuxInstallerTests : IDisposable
 
     private List<string> GetRpmPackageDependencies(string packagePath)
     {
-        throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
+        try
+        {
+            using FileStream rpmStream = File.OpenRead(packagePath);
+            using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
+
+            string[] requireNames = (string[])rpmPackage.Header.Entries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
+            if (requireNames == null || requireNames.Length == 0)
+            {
+                return [];
+            }
+
+            return requireNames
+                .Where(name => !string.IsNullOrWhiteSpace(name) && !name.StartsWith("rpmlib(", StringComparison.Ordinal))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _outputHelper.WriteLine($"Error parsing RPM package '{packagePath}': {ex}");
+            return [];
+        }
     }
 
     private List<string> GetDebianPackageDependencies(string packagePath)
