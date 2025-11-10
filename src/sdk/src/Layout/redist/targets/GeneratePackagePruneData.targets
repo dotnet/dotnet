@@ -34,8 +34,10 @@
   <Target Name="AddTargetingPacksForPruneDataAsPackageDownloads"
           BeforeTargets="CollectPackageDownloads"
           DependsOnTargets="GetTargetingPacksForPruneData">
+    <!-- TODO: Version metadata overwrite Workaround until a newer bootstrap SDK
+               is picked up with the CollatePackageDowload "[]" trimming fix. -->
     <ItemGroup>
-      <_ExistingPackageDownload Include="@(PackageDownload)" />
+      <_ExistingPackageDownload Include="@(PackageDownload)" Version="$([System.String]::Copy('%(Version)').Trim('[]'))" />
       <PackageDownload Remove="@(PackageDownload)" />
     </ItemGroup>
     
