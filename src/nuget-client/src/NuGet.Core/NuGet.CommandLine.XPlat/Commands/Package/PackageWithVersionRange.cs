@@ -9,21 +9,21 @@ using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
 using NuGet.Versioning;
 
-namespace NuGet.CommandLine.XPlat.Commands.Package.Update
+namespace NuGet.CommandLine.XPlat.Commands.Package
 {
-    internal record Package : IEqualityComparer<Package>
+    internal record PackageWithVersionRange : IEqualityComparer<PackageWithVersionRange>
     {
         public required string Id { get; init; }
         public required VersionRange? VersionRange { get; init; }
 
-        internal static IReadOnlyList<Package> Parse(ArgumentResult result)
+        internal static IReadOnlyList<PackageWithVersionRange> Parse(ArgumentResult result)
         {
             if (result.Tokens.Count == 0)
             {
                 return [];
             }
 
-            List<Package> packages = new List<Package>(result.Tokens.Count);
+            List<PackageWithVersionRange> packages = new List<PackageWithVersionRange>(result.Tokens.Count);
 
             foreach (var token in result.Tokens)
             {
@@ -51,7 +51,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
                     }
                 }
 
-                var package = new Package
+                var package = new PackageWithVersionRange
                 {
                     Id = packageId,
                     VersionRange = newVersion
@@ -62,7 +62,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             return packages;
         }
 
-        public bool Equals(Package? x, Package? y)
+        public bool Equals(PackageWithVersionRange? x, PackageWithVersionRange? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -82,7 +82,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             return VersionRangeComparer.Default.Equals(x.VersionRange, y.VersionRange);
         }
 
-        public int GetHashCode([DisallowNull] Package obj)
+        public int GetHashCode([DisallowNull] PackageWithVersionRange obj)
         {
             HashCode hash = new HashCode();
             hash.Add(obj.Id, StringComparer.OrdinalIgnoreCase);

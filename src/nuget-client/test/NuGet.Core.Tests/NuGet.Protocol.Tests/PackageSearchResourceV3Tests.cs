@@ -195,7 +195,7 @@ namespace NuGet.Protocol.Tests
 
             // Assert
             Assert.Equal(248620082, package.DownloadCount);
-            Assert.Equal(17, versions.Count());
+            Assert.Equal(17, versions.Count);
             Assert.Equal(1267747, versions[0].DownloadCount);
             // Make sure NuGet can handle package download count larger than int.MaxValue
             // EntityFrameworkSearch.json has a 2nd version with download count that is too large for an int32

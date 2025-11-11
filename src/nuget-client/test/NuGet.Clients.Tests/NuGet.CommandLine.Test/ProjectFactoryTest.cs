@@ -745,7 +745,7 @@ namespace Assembly
                     itemGroup.Add(projectReferenceXElement);
                 }
 
-                var projectXElement = Util.CreateProjFileXmlContent(Name);
+                var projectXElement = Util.CreateProjFileXmlContent();
                 projectXElement.Add(itemGroup);
 
                 return projectXElement.ToString();

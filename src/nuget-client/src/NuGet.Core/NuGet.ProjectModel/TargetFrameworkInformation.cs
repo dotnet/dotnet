@@ -21,7 +21,7 @@ namespace NuGet.ProjectModel
         private ImmutableArray<NuGetFramework> _imports;
         private IReadOnlyDictionary<string, PrunePackageReference> _packagesToPrune;
 
-        public string TargetAlias { get; init; }
+        public string TargetAlias { get; init; } = string.Empty;
 
         public NuGetFramework FrameworkName { get; init; }
 

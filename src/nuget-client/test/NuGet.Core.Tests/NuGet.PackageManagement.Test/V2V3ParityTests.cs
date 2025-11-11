@@ -73,7 +73,7 @@ namespace NuGet.Test
                 _output.WriteLine("{0} {1}", entry.NuGetProjectActionType, entry.PackageIdentity.ToString());
             }
 
-            return (xyExcept.Count() == 0 && yxExcept.Count() == 0);
+            return (xyExcept.Count == 0 && yxExcept.Count == 0);
         }
 
         [Fact]

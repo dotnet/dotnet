@@ -59,7 +59,7 @@ namespace NuGet.CommandLine.Test
                 projectB.AddPackageToAllFrameworks(packageX100);
                 solution.Projects.Add(projectB);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Server setup
                 var indexJson = Util.CreateIndexJson();

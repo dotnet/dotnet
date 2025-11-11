@@ -49,6 +49,12 @@ namespace NuGet.CommandLine.XPlat
             return string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidVersionRange, input);
         }
 
+        /// <inheritdoc cref="Strings.Error_InvalidVersion"/>
+        internal static string Error_InvalidVersion(string input)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidVersion, input);
+        }
+
         /// <inheritdoc cref="Strings.Error_PackageSourceMappingNotFound"/>
         internal static string Error_PackageSourceMappingNotFound(string packageId)
         {
