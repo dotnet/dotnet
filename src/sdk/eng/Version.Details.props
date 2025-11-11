@@ -89,6 +89,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderPackageVersion>2.2.0-beta.25523.111</MicrosoftDiaSymReaderPackageVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0</MicrosoftDotNetWebItemTemplates100PackageVersion>
     <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0</MicrosoftDotNetWebProjectTemplates100PackageVersion>
+    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.0-rtm.25523.111</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
+    <MicrosoftDotnetWpfProjectTemplatesPackageVersion>10.0.0-rtm.25523.111</MicrosoftDotnetWpfProjectTemplatesPackageVersion>
     <MicrosoftExtensionsConfigurationIniPackageVersion>10.0.0</MicrosoftExtensionsConfigurationIniPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
@@ -233,6 +235,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderVersion>$(MicrosoftDiaSymReaderPackageVersion)</MicrosoftDiaSymReaderVersion>
     <MicrosoftDotNetWebItemTemplates100Version>$(MicrosoftDotNetWebItemTemplates100PackageVersion)</MicrosoftDotNetWebItemTemplates100Version>
     <MicrosoftDotNetWebProjectTemplates100Version>$(MicrosoftDotNetWebProjectTemplates100PackageVersion)</MicrosoftDotNetWebProjectTemplates100Version>
+    <MicrosoftDotnetWinFormsProjectTemplatesVersion>$(MicrosoftDotnetWinFormsProjectTemplatesPackageVersion)</MicrosoftDotnetWinFormsProjectTemplatesVersion>
+    <MicrosoftDotnetWpfProjectTemplatesVersion>$(MicrosoftDotnetWpfProjectTemplatesVersion)</MicrosoftDotnetWpfProjectTemplatesVersion>
     <MicrosoftExtensionsConfigurationIniVersion>$(MicrosoftExtensionsConfigurationIniPackageVersion)</MicrosoftExtensionsConfigurationIniVersion>
     <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
     <MicrosoftExtensionsFileProvidersAbstractionsVersion>$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)</MicrosoftExtensionsFileProvidersAbstractionsVersion>
