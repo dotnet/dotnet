@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public partial class AllowedChildTagDescriptorBuilder
 {
-    internal static readonly ObjectPool<AllowedChildTagDescriptorBuilder> Pool = DefaultPool.Create(Policy.Instance);
+    internal static readonly ObjectPool<AllowedChildTagDescriptorBuilder> Pool =
+        DefaultPool.Create(static () => new AllowedChildTagDescriptorBuilder());
 
     internal static AllowedChildTagDescriptorBuilder GetInstance(TagHelperDescriptorBuilder parent)
     {
@@ -25,16 +26,5 @@ public partial class AllowedChildTagDescriptorBuilder
 
         Name = null;
         DisplayName = null;
-    }
-
-    private sealed class Policy : PooledBuilderPolicy<AllowedChildTagDescriptorBuilder>
-    {
-        public static readonly Policy Instance = new();
-
-        private Policy()
-        {
-        }
-
-        public override AllowedChildTagDescriptorBuilder Create() => new();
     }
 }

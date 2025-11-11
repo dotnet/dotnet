@@ -147,7 +147,7 @@ jobs:
   # 1ES pipeline template requires that the container is specified in the job level.
   # If we are using a container image, we set the container to correct name.
   # Otherwise, we set the container to host so that the job runs on the host agent.
-  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     ${{ if ne(parameters.container.name, '') }}:
       container: ${{ parameters.container.name }}
     ${{ else }}:
@@ -186,6 +186,10 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
+  
+  - ${{ if parameters.buildSourceOnly }}:
+    - name: sharedComponentsDir
+      value: $(Agent.TempDirectory)/shared-components
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
@@ -425,7 +429,10 @@ jobs:
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" true
+        mkdir -p "$(sharedComponentsDir)"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" true
+        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
@@ -560,6 +567,10 @@ jobs:
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
+            fi
+
+            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
             fi
           fi
 
