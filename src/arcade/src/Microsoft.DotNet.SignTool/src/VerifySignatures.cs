@@ -174,7 +174,7 @@ namespace Microsoft.DotNet.SignTool
                 SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        internal static SigningStatus IsSignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string dotNetPathTooling, string pkgToolPath)
+        internal static SigningStatus IsSignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -182,7 +182,7 @@ namespace Microsoft.DotNet.SignTool
                 return SigningStatus.Unknown;
             }
 
-            return ZipData.RunPkgProcess(filePath, null, "verify", dotNetPathTooling, pkgToolPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
+            return ZipData.RunPkgProcess(filePath, null, "verify", pkgToolPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
         public static SigningStatus IsSignedPE(string filePath)

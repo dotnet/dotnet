@@ -375,7 +375,7 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
     private static void CollectAccessibleProperties(
         INamedTypeSymbol typeSymbol, ref PooledArrayBuilder<IPropertySymbol> properties)
     {
-        using var names = new PooledHashSet<string>(StringHashSetPool.Ordinal);
+        using var names = new PooledHashSet<string>(StringComparer.Ordinal);
 
         // Traverse the type hierarchy to find all accessible properties.
         var currentType = typeSymbol;

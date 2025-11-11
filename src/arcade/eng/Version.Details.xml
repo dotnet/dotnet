@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="c636320f4ab16760a81313f0222af1e4f3740aa9" BarId="288405" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="d9ffe06a35d2ad6ab93f41f7f6a37843d6f686a2" BarId="289373" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -20,13 +20,13 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25524.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25555.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>904bfd153de2a88471c00a7cdd3450948e758db8</Sha>
+      <Sha>86c3a198a81e697e2bfa713cae2c4bea4b0df085</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.25524.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.25555.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>904bfd153de2a88471c00a7cdd3450948e758db8</Sha>
+      <Sha>86c3a198a81e697e2bfa713cae2c4bea4b0df085</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25522.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -144,9 +144,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25501.1">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25530.1">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>ab9d6252be51df9527bf9ddc4c22f64e23c3b12a</Sha>
+      <Sha>95ad2673af041ca5be347930a043eef26cb701e9</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
     <Dependency Name="Microsoft.Build" Version="17.12.50">

@@ -2,29 +2,41 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal static partial class ListPool<T>
+internal partial class ListPool<T>
 {
-    private class Policy : IPooledObjectPolicy<List<T>>
+    private sealed class Policy : PooledObjectPolicy
     {
-        public static readonly Policy Instance = new();
+        public static readonly Policy Default = new(DefaultMaximumObjectSize);
 
-        private Policy()
+        private readonly int _maximumObjectSize;
+
+        private Policy(int maximumObjectSize)
         {
+            _maximumObjectSize = maximumObjectSize;
         }
 
-        public List<T> Create() => new();
+        public static Policy Create(Optional<int> maximumObjectSize = default)
+        {
+            if (!maximumObjectSize.HasValue || maximumObjectSize.Value == Default._maximumObjectSize)
+            {
+                return Default;
+            }
 
-        public bool Return(List<T> list)
+            return new(maximumObjectSize.GetValueOrDefault(DefaultMaximumObjectSize));
+        }
+
+        public override List<T> Create() => [];
+
+        public override bool Return(List<T> list)
         {
             var count = list.Count;
 
             list.Clear();
 
-            if (count > DefaultPool.MaximumObjectSize)
+            if (count > _maximumObjectSize)
             {
                 list.TrimExcess();
             }

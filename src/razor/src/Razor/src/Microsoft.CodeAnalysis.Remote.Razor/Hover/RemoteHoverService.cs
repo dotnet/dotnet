@@ -111,7 +111,8 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
                 }
             }
 
-            return Results(csharpHover);
+            // As there is a C# hover, stop further handling.
+            return new RemoteResponse<Hover?>(StopHandling: true, Result: csharpHover);
         }
 
         if (positionInfo.LanguageKind is not (RazorLanguageKind.Html or RazorLanguageKind.Razor))
@@ -152,7 +153,7 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
     /// <remarks>
     ///  Once Razor moves wholly over to Roslyn.LanguageServer.Protocol, this method can be removed.
     /// </remarks>
-    private Hover ConvertHover(Hover hover)
+    private static Hover ConvertHover(Hover hover)
     {
         // Note: Razor only ever produces a Hover with MarkupContent or a VSInternalHover with RawContents.
         // Both variants return a Range.
