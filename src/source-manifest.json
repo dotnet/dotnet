@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25515.2",
+      "packageVersion": "9.0.0-beta.25555.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6666973b629b24e259162dba03486c23af464bab"
+      "commitSha": "9eaf7b289d5003a94ee23658f057a6c06ddcd570"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "392dcf4997d38a84162b80d1c069897296d5cc13"
+      "commitSha": "42347195a6ffbb1aa45e3272663eb066bf4d5907"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.112-servicing.25520.5",
+      "packageVersion": "9.0.113-servicing.25559.3",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "0258ae6d0b2ca7995f869a0daacbf52563b34e08"
+      "commitSha": "8ea31ecefd2e8e0f06aed0883bb1948d9b1c723b"
     },
     {
       "packageVersion": "1.1.0-rtm.25262.1",
