@@ -25,6 +25,10 @@
             "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
+            "name": "diagnostics",
+            "defaultRemote": "https://github.com/dotnet/diagnostics"
+        },
+        {
             "name": "fsharp",
             "defaultRemote": "https://github.com/dotnet/fsharp"
         },
