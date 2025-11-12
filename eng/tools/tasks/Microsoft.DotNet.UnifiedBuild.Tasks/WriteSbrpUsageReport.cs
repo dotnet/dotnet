@@ -229,7 +229,7 @@ public partial class WriteSbrpUsageReport : Task
                             lockFile.Path,
                             targetingPackName,
                             targetingPackVersion,
-                            new[] { targetFramework.FrameworkName.GetShortFolderName() });
+                            [ targetFramework.FrameworkName.GetShortFolderName() ]);
                     }
                 }
             }
