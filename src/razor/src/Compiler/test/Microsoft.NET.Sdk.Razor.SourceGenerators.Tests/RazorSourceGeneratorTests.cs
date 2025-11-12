@@ -2611,7 +2611,7 @@ namespace AspNetCoreGeneratedDocument
             });
 
             var compilation = await project.GetCompilationAsync();
-            var (driver, additionalTexts, optionsProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project);
+            var (driver, additionalTexts, optionsProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project, trackSteps: true);
 
             // start with the generator suppressed (this is the default state in VS)
             driver = SetSuppressionState(true);
