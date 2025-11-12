@@ -289,7 +289,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(0, files.Count());
+                Assert.Equal(0, files.Length);
             }
         }
 
@@ -337,7 +337,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(1, files.Count());
+                Assert.Equal(1, files.Length);
             }
         }
 
@@ -380,7 +380,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(1, files.Count());
+                Assert.Equal(1, files.Length);
             }
         }
 

@@ -327,6 +327,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 },
                 new TestRemoteWalkContext(),
                 logger,
+                FrameworkConstants.CommonFrameworks.NetStandard16.GetShortFolderName(),
                 FrameworkConstants.CommonFrameworks.NetStandard16);
 
             return graph;

@@ -35,3 +35,10 @@ Any assembly listed in the `.vsixignore` file certainly follows the above advice
 For packages that are only referenced by `src/NuGet.Clients/` projects, it's safe to update as soon as VS's main branch has the updated package/assembly version.
 In that case, it's not necessary to wait until the dependency is updated in a public preview, since it won't affect the .NET SDK.
 For packages/assemblies that we include in the vsix (see the `.vsixinclude` file), it's probably safe to update at any time.
+
+## Ingesting packages from the dotnet-public mirror
+
+The client build uses the dotnet-public mirror for ingesting nuget.org packages. 
+The [mirroring packages](https://github.com/dotnet/arcade/blob/main/Documentation/MirroringPackages.md) document has details about how this ingestion happens and when and how to ingest new packages or package versions.
+
+
