@@ -260,14 +260,17 @@ public partial class WriteSbrpUsageReport : Task
         }
     }
 
+    // Match patterns like net6.0, net7.0, net8.0, net9.0, net10.0, etc.
+    [GeneratedRegex(@"^net(\d+\.\d+)$")]
+    private static partial Regex GetTargetingPackVersionRegex();
+
     /// <summary>
     /// Infers the targeting pack version from a target framework moniker.
     /// For source-build, we map net6.0 -> 6.0.0, net7.0 -> 7.0.0, etc.
     /// </summary>
     private static string? InferTargetingPackVersion(string tfm)
     {
-        // Match patterns like net6.0, net7.0, net8.0, net9.0, net10.0, etc.
-        var match = Regex.Match(tfm, @"^net(\d+\.\d+)$");
+        var match = GetTargetingPackVersionRegex().Match(tfm);
         if (match.Success)
         {
             return $"{match.Groups[1].Value}.0";
