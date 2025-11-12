@@ -8,6 +8,7 @@
     <DebugType>none</DebugType>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
 
     <!-- NuGet -->
     <IsPackable>true</IsPackable>
