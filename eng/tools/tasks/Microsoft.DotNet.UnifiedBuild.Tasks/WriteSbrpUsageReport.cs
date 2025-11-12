@@ -215,6 +215,25 @@ public partial class WriteSbrpUsageReport : Task
                 TrackPackageReference(lockFile.Path, downloadDep.Name, downloadDep.VersionRange.MinVersion?.ToString(), Enumerable.Empty<string>());
             }
 
+            // Track framework references (e.g., Microsoft.NETCore.App, Microsoft.AspNetCore.App)
+            // These correspond to targeting packs like Microsoft.NETCore.App.Ref.6.0.0
+            foreach (var targetFramework in lockFile.PackageSpec.TargetFrameworks)
+            {
+                foreach (var frameworkRef in targetFramework.FrameworkReferences)
+                {
+                    string? targetingPackVersion = InferTargetingPackVersion(targetFramework.FrameworkName.GetShortFolderName());
+                    if (targetingPackVersion != null)
+                    {
+                        string targetingPackName = $"{frameworkRef.Name}.Ref";
+                        TrackPackageReference(
+                            lockFile.Path,
+                            targetingPackName,
+                            targetingPackVersion,
+                            new[] { targetFramework.FrameworkName.GetShortFolderName() });
+                    }
+                }
+            }
+
             if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbrpRepoName))
             {
                 // For SBRP projects, we need to track the project references as well. While project references are included in the targets
@@ -239,6 +258,22 @@ public partial class WriteSbrpUsageReport : Task
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Infers the targeting pack version from a target framework moniker.
+    /// For source-build, we map net6.0 -> 6.0.0, net7.0 -> 7.0.0, etc.
+    /// </summary>
+    private static string? InferTargetingPackVersion(string tfm)
+    {
+        // Match patterns like net6.0, net7.0, net8.0, net9.0, net10.0, etc.
+        var match = Regex.Match(tfm, @"^net(\d+\.\d+)$");
+        if (match.Success)
+        {
+            return $"{match.Groups[1].Value}.0";
+        }
+
+        return null;
     }
 
     private void TrackPackageReference(string lockFilePath, string? name, string? version, IEnumerable<string> tfms)
