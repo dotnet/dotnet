@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 289643,
+      "barId": 290128,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "86c3a198a81e697e2bfa713cae2c4bea4b0df085"
+      "commitSha": "3a7f017be1c42a4ecc516446977cf55d429cf390"
     },
     {
-      "barId": 289364,
+      "barId": 289955,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "48fa7802f4c5fbe4b85a92e0322e41e1614e7b5c"
+      "commitSha": "4ca33c9b9a4666bed75b1a3f538d8123ed127a43"
     },
     {
       "barId": 277712,
@@ -49,10 +49,10 @@
       "commitSha": "19f75d3900324e3bb17a1ff6b34652f1010dfd92"
     },
     {
-      "barId": 289351,
+      "barId": 289781,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "9670f600f7aab99d4b4fe95c41ed83e3e008c489"
+      "commitSha": "726845e18bb622c07d53797d195f5972f26a36d1"
     },
     {
       "barId": 288357,
@@ -79,10 +79,10 @@
       "commitSha": "a01d6a0838430706cea74ad38e054c2877ffbfa1"
     },
     {
-      "barId": 288963,
+      "barId": 290295,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d3b36cce4f334dac2e6b5c6a6100025f4d35e8ce"
+      "commitSha": "5bceb8184fcde55143d2102a65c72bd6233e950b"
     },
     {
       "barId": 277711,
@@ -133,16 +133,16 @@
       "commitSha": "9f2ae28ea4f111e6a336682484e5aa412e114f3c"
     },
     {
-      "barId": 289291,
+      "barId": 290258,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "f2ca50c26f7a03c26da48ee406d95216602c82d3"
+      "commitSha": "f7dc22e65d6daac4dd01a94b737b85f453581ae1"
     },
     {
-      "barId": 288621,
+      "barId": 289750,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "2a554cdb61a7db24323217743cad6f0ff5d3512d"
+      "commitSha": "42f7d5d89b211409b9c11a294bfcd78cbe748664"
     },
     {
       "barId": 278018,
