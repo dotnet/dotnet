@@ -130,7 +130,7 @@ git config --global core.longpaths true
         # Build the .NET SDK
         ./build.sh -sb --clean-while-building
 
-        # Non-preview builds require a special flag to produce the stable version strings
+        # When building RTM and servicing, pass the `--branding` switch to generate stable branding
         ./build.sh --sb --branding rtm
         ```
 
