@@ -191,7 +191,7 @@ namespace NuGet.Commands.FuncTest
             var result2 = await command.ExecuteAsync();
 
             // Assert
-            logger.ErrorMessages.Should().HaveCount(0); // TODO NK: NU1203 - potentially a consequence of direct dependency wins chnages. 73 vs 78 files - Actual discrepancy
+            logger.ErrorMessages.Should().HaveCount(0);
             logger.WarningMessages.Should().HaveCount(0);
             Assert.Equal(result.LockFile, result2.LockFile);
         }
@@ -207,12 +207,13 @@ namespace NuGet.Commands.FuncTest
             using (var projectDir = TestDirectory.Create())
             {
                 var configJson = JObject.Parse(@"{
-                  ""dependencies"": {
-                    ""System.Text.Encoding"": ""4.0.10"",
-                    ""System.Collections"": ""4.0.11-beta-23225""
-                  },
                   ""frameworks"": {
-                    ""uap10.0"": {}
+                    ""uap10.0"": {
+                      ""dependencies"": {
+                        ""System.Text.Encoding"": ""4.0.10"",
+                        ""System.Collections"": ""4.0.11-beta-23225""
+                      }
+                    }
                   }
                 }");
 
@@ -236,6 +237,7 @@ namespace NuGet.Commands.FuncTest
                 Assert.Equal(0, result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
                 Assert.Equal(0, logger.Errors);
                 Assert.Equal(0, logger.Warnings);
+                Assert.Equal(13, result.LockFile.Libraries.Count);
             }
         }
 
@@ -384,12 +386,12 @@ namespace NuGet.Commands.FuncTest
                     ""uwp.10.0.app"": { },
                     ""dnxcore50.app"": { }
                         },
-                  ""dependencies"": {
-                    ""Microsoft.NETCore"": ""5.0.0"",
-                    ""Microsoft.NETCore.Portable.Compatibility"": ""1.0.0""
-                  },
                   ""frameworks"": {
                     ""dotnet"": {
+                        ""dependencies"": {
+                            ""Microsoft.NETCore"": ""5.0.0"",
+                            ""Microsoft.NETCore.Portable.Compatibility"": ""1.0.0""
+                        },
                       ""imports"": ""portable-net452+win81""
                     }
                   }
@@ -400,10 +402,9 @@ namespace NuGet.Commands.FuncTest
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
 
-            //result.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count).Should().Be(0);
-            //logger.ErrorMessages.Should().BeEmpty();
-            //logger.WarningMessages.Should().BeEmpty(); // TODO NK: Actual issue, something about compatibility profiles.
-            //result.GetAllInstalled().Should().HaveCount(86);
+            mainResult.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count).Should().Be(0);
+            mainResult.LogMessages.Should().BeEmpty();
+            mainResult.GetAllInstalled().Should().HaveCount(86);
         }
 
 
@@ -416,19 +417,20 @@ namespace NuGet.Commands.FuncTest
 
             using var pathContext = new SimpleTestPathContext();
             var configJson = JObject.Parse(@"{
-                ""dependencies"": {
-                ""Microsoft.ApplicationInsights"": ""1.0.0"",
-                ""Microsoft.ApplicationInsights.PersistenceChannel"": ""1.0.0"",
-                ""Microsoft.ApplicationInsights.WindowsApps"": ""1.0.0"",
-                ""Microsoft.Azure.ActiveDirectory.GraphClient"": ""2.0.6"",
-                ""Microsoft.IdentityModel.Clients.ActiveDirectory"": ""2.14.201151115"",
-                ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0"",
-                ""Microsoft.Office365.Discovery"": ""1.0.22"",
-                ""Microsoft.Office365.OutlookServices"": ""1.0.35"",
-                ""Microsoft.Office365.SharePoint"": ""1.0.22""
-                },
                 ""frameworks"": {
-                ""uap10.0"": {}
+                ""uap10.0"": {
+                    ""dependencies"": {
+                        ""Microsoft.ApplicationInsights"": ""1.0.0"",
+                        ""Microsoft.ApplicationInsights.PersistenceChannel"": ""1.0.0"",
+                        ""Microsoft.ApplicationInsights.WindowsApps"": ""1.0.0"",
+                        ""Microsoft.Azure.ActiveDirectory.GraphClient"": ""2.0.6"",
+                        ""Microsoft.IdentityModel.Clients.ActiveDirectory"": ""2.14.201151115"",
+                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0"",
+                        ""Microsoft.Office365.Discovery"": ""1.0.22"",
+                        ""Microsoft.Office365.OutlookServices"": ""1.0.35"",
+                        ""Microsoft.Office365.SharePoint"": ""1.0.22""
+                    }
+                }
                 },
                 ""runtimes"": {
                 ""win10-arm"": {},
@@ -443,6 +445,7 @@ namespace NuGet.Commands.FuncTest
             spec.RestoreMetadata.Sources = sources;
 
             (var mainResult, var legacyResult) = await RestoreCommandTests.ValidateRestoreAlgorithmEquivalency(pathContext, spec);
+            mainResult.LockFile.Libraries.Should().HaveCount(124);
         }
 
         private Stream GetResource(string name)

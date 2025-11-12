@@ -154,7 +154,8 @@ namespace NuGet.Configuration
                 PasswordKey,
                 NoProxy,
                 MaxHttpRequestsPerSource,
-                SignatureValidationMode
+                SignatureValidationMode,
+                UpdatePackageLastAccessTime
             };
         }
     }

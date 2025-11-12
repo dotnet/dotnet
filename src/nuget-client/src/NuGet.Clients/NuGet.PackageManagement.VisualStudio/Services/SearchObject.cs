@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
@@ -177,7 +176,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 {
                     searchResult = await _packageFeed.RefreshSearchAsync(searchResult.RefreshToken, cancellationToken);
                 }
-                totalCount += searchResult.Items?.Count() ?? 0;
+                totalCount += searchResult.Items?.Count ?? 0;
                 nextToken = searchResult.NextToken;
             } while (nextToken != null && totalCount < maxCount);
 

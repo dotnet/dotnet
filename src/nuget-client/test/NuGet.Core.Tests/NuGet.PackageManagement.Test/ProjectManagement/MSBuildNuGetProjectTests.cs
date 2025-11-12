@@ -60,7 +60,6 @@ namespace ProjectManagement.Test
                 Assert.Equal(projectTargetFramework, actual.TargetFrameworks[0].FrameworkName);
                 Assert.Empty(actual.TargetFrameworks[0].Imports);
 
-                Assert.Empty(actual.Dependencies);
                 Assert.Empty(actual.TargetFrameworks[0].Dependencies);
                 Assert.Empty(actual.RestoreMetadata.TargetFrameworks.SelectMany(e => e.ProjectReferences));
             }
@@ -2042,11 +2041,6 @@ namespace ProjectManagement.Test
             public TestMSBuildNuGetProject(IMSBuildProjectSystem msbuildNuGetProjectSystem, string folderNuGetProjectPath, string packagesConfigFolderPath) : base(msbuildNuGetProjectSystem, folderNuGetProjectPath, packagesConfigFolderPath)
             {
                 ProjectServices = this;
-            }
-
-            public T GetGlobalService<T>() where T : class
-            {
-                throw new NotImplementedException();
             }
 
             public Task ExecutePackageScriptAsync(PackageIdentity packageIdentity, string packageInstallPath, string scriptRelativePath, INuGetProjectContext projectContext, bool throwOnFailure, CancellationToken token)

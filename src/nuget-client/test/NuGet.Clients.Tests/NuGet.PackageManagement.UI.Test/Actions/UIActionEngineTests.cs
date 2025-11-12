@@ -319,20 +319,20 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.NotNull(lastTelemetryEvent);
             Assert.NotNull(lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>);
             var topLevelPkgSeverities = lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>;
-            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], topLevelPkgSeverities.Count());
+            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], topLevelPkgSeverities.Count);
             Assert.Collection(topLevelPkgSeverities,
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(3, item));
-            Assert.Equal(3, topLevelPkgSeverities.Count());
+            Assert.Equal(3, topLevelPkgSeverities.Count);
 
             var transitivePkgSeverities = lastTelemetryEvent.ComplexData["TransitiveVulnerablePackagesMaxSeverities"] as List<int>;
-            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
-            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count);
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count);
             Assert.Collection(transitivePkgSeverities,
                 item => Assert.Equal(2, item),
                 item => Assert.Equal(3, item));
-            Assert.Equal(2, transitivePkgSeverities.Count());
+            Assert.Equal(2, transitivePkgSeverities.Count);
 
             Assert.Null(lastTelemetryEvent["CreatedTopLevelSourceMappingsCount"]);
             Assert.Null(lastTelemetryEvent["CreatedTransitiveSourceMappingsCount"]);
@@ -420,9 +420,9 @@ namespace NuGet.PackageManagement.UI.Test
         {
             List<TelemetryEvent> telemetryEvents = UIActionEngine.ToTelemetryPackageList(packages);
 
-            Assert.Equal(packages.Count(), telemetryEvents.Count());
+            Assert.Equal(packages.Count, telemetryEvents.Count);
 
-            for (int index = 0; index < telemetryEvents.Count(); index++)
+            for (int index = 0; index < telemetryEvents.Count; index++)
             {
                 Assert.Equal(telemetryEvents[index].GetPiiData().First().Value.ToString(), VSTelemetryServiceUtility.NormalizePackageId(packages[index].Item1));
                 Assert.Equal(telemetryEvents[index]["version"], packages[index].Item2);

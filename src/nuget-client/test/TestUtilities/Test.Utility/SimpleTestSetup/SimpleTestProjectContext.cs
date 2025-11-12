@@ -282,7 +282,7 @@ namespace NuGet.Test.Utility
                 {
                     _packageSpec.RestoreMetadata.ProjectJsonPath = Path.Combine(Path.GetDirectoryName(ProjectPath), "project.json");
                 }
-                if (Frameworks.Count() > 1)
+                if (Frameworks.Count > 1)
                 {
                     _packageSpec.RestoreMetadata.CrossTargeting = true;
                 }

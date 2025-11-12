@@ -5,6 +5,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -26,6 +27,9 @@ namespace NuGet.Common
         private static readonly Lazy<string> _getHome = new Lazy<string>(() => GetHome());
 
         private static string _nuGetTempDirectory = null;
+
+        private static readonly ConcurrentDictionary<NuGetFolderPath, string> Cache = new ConcurrentDictionary<NuGetFolderPath, string>();
+
         internal static string NuGetTempDirectory
         {
             get { return _nuGetTempDirectory ??= GetNuGetTempDirectory(); }
@@ -65,6 +69,12 @@ namespace NuGet.Common
         }
 
         public static string GetFolderPath(NuGetFolderPath folder)
+        {
+            string path = Cache.GetOrAdd(folder, CalculateFolderPath);
+            return path;
+        }
+
+        private static string CalculateFolderPath(NuGetFolderPath folder)
         {
             switch (folder)
             {
