@@ -105,7 +105,7 @@ public class PRCreator
     }
 
     // Return a dictionary using the filename without the 
-    // "Updated" prefix and anything after the first '.' as the key
+    // "updated" prefix (case-insensitive) and anything after the first '.' as the key
     private Dictionary<string, HashSet<string>> GetUpdatedFiles(string updatedFilesDirectory) =>
         Directory
             .GetFiles(updatedFilesDirectory, "*", SearchOption.AllDirectories)
