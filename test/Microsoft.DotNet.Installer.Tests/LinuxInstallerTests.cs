@@ -96,6 +96,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
+    private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -156,7 +157,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests), Skip = "RPM package metadata test requires https://github.com/dotnet/arcade/pull/16079")]
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -243,6 +244,15 @@ public partial class LinuxInstallerTests : IDisposable
             string newNuGetConfig = Path.Combine(_contextDir, "NuGet.config");
             File.Copy(Config.ScenarioTestsNuGetConfigPath, newNuGetConfig);
             InsertLocalPackagesPathToNuGetConfig(newNuGetConfig, "/packages");
+
+            // Copy downgrade-fx-versions.sh script
+            // This script is used to update the latest known 8.0 and 9.0 framework versions in SDK's
+            // Microsoft.NETCoreSdk.BundledVersions.props file to the versions 2 releases prior.
+            // This is needed as the SDK automatically picks up servicing versions not yet released, which
+            // is either one or two versions higher than publicly available versions, depending on
+            // when we run the tests.
+            string downgradeScript = Path.Combine(_contextDir, DowngradeFxVersionsScript);
+            File.Copy(Path.Combine(GetAssetsDirectory(), DowngradeFxVersionsScript), downgradeScript);
 
             // Find the scenario-tests package and unpack it to the context dir, subfolder "scenario-tests"
             string? scenarioTestsPackage = Directory.GetFiles(nugetPackagesDir, "Microsoft.DotNet.ScenarioTests.SdkTemplateTests*.nupkg", SearchOption.AllDirectories).FirstOrDefault();
@@ -456,6 +466,10 @@ public partial class LinuxInstallerTests : IDisposable
         sb.AppendLine($"COPY NuGet.config .");
 
         sb.AppendLine("");
+        sb.AppendLine($"# Copy {DowngradeFxVersionsScript}");
+        sb.AppendLine($"COPY {DowngradeFxVersionsScript} .");
+
+        sb.AppendLine("");
         sb.AppendLine("# Copy scenario-tests content");
         sb.AppendLine($"COPY scenario-tests scenario-tests");
 
@@ -490,6 +504,12 @@ public partial class LinuxInstallerTests : IDisposable
             useAndOperator = true;
         }
         sb.AppendLine("");
+
+        sb.AppendLine("");
+        sb.AppendLine("# Run the script to downgrade 8.0 and 9.0 framework versions");
+        sb.AppendLine("RUN \\");
+        sb.AppendLine($"    chmod +x {DowngradeFxVersionsScript} && \\");
+        sb.AppendLine($"    ./{DowngradeFxVersionsScript}");
 
         // Set environment for nuget.config
         sb.AppendLine("");
@@ -627,7 +647,27 @@ public partial class LinuxInstallerTests : IDisposable
 
     private List<string> GetRpmPackageDependencies(string packagePath)
     {
-        throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
+        try
+        {
+            using FileStream rpmStream = File.OpenRead(packagePath);
+            using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
+
+            string[] requireNames = (string[])rpmPackage.Header.Entries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
+            if (requireNames == null || requireNames.Length == 0)
+            {
+                return [];
+            }
+
+            return requireNames
+                .Where(name => !string.IsNullOrWhiteSpace(name) && !name.StartsWith("rpmlib(", StringComparison.Ordinal))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _outputHelper.WriteLine($"Error parsing RPM package '{packagePath}': {ex}");
+            return [];
+        }
     }
 
     private List<string> GetDebianPackageDependencies(string packagePath)
@@ -804,4 +844,6 @@ public partial class LinuxInstallerTests : IDisposable
 
         return patterns;
     }
+
+    private static string GetAssetsDirectory() => Path.Combine(Directory.GetCurrentDirectory(), "assets");
 }
