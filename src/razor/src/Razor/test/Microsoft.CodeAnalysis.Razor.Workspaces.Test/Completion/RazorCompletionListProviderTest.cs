@@ -55,7 +55,6 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         => [
             new DirectiveCompletionItemProvider(),
             new DirectiveAttributeCompletionItemProvider(),
-            new DirectiveAttributeParameterCompletionItemProvider(),
             new TagHelperCompletionProvider(new TagHelperCompletionService())
         ];
 
@@ -193,7 +192,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeParameter_ReturnsTrue()
     {
         // Arrange
-        var completionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(displayText: "format", insertText: "format", descriptionInfo: null!);
+        var completionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(displayText: "format", insertText: "format", descriptionInfo: null!, commitCharacters: [], isSnippet: false);
 
         // Act
         Assert.True(RazorCompletionListProvider.TryConvert(completionItem, _clientCapabilities, out var converted));
