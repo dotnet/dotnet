@@ -97,10 +97,10 @@
       "commitSha": "65384c6536d6c6f6afa9c13dc023b1848f0ef69e"
     },
     {
-      "barId": 289153,
+      "barId": 290487,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "cf1505e3e160ba04a35d996cd88dbb7c7bcadb3e"
+      "commitSha": "dd1a4140fcc8213a32243b32f86beff7cf32c94f"
     },
     {
       "barId": 289117,
@@ -115,10 +115,10 @@
       "commitSha": "4ea649c272581be7b15c19e6b4f1aa58a8296254"
     },
     {
-      "barId": 289543,
+      "barId": 290401,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e0a861637d9f6f042d0cca8b01a7da3733c64e9b"
+      "commitSha": "661031c86b8feadd89d3defdd6dc38bddda993b2"
     },
     {
       "barId": 285989,
