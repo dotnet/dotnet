@@ -110,7 +110,6 @@
     <SharedRepositoryReference Include="cecil" />
     <SharedRepositoryReference Include="command-line-api" />
     <SharedRepositoryReference Include="deployment-tools" />
-    <SharedRepositoryReference Include="diagnostics" />
     <SharedRepositoryReference Include="efcore" />
     <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />
