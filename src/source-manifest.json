@@ -7,10 +7,10 @@
       "commitSha": "987d1a73ea67d323c0fc7537bce8ec65d87eb43f"
     },
     {
-      "barId": 287630,
+      "barId": 290589,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "7387de91234d3ef751fa50b3d1bfede4130213ff"
+      "commitSha": "050c600096f43128119675f5c3074f4e4db85bbb"
     },
     {
       "barId": 279211,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 289759,
+      "barId": 290532,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "5b87973bc0a3e890ffa9fae3a401fc5eee11e8ff"
+      "commitSha": "bed4f28f82734fb01aea18635af6b527f152960f"
     },
     {
       "barId": 289621,
@@ -91,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 289304,
+      "barId": 290617,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ce50bec288464cb6b122f137bc68b4661e942851"
+      "commitSha": "3820e2785de20dc4d582689a27df0f76c8c90faf"
     },
     {
       "barId": 289818,
@@ -115,10 +115,10 @@
       "commitSha": "4ea649c272581be7b15c19e6b4f1aa58a8296254"
     },
     {
-      "barId": 287390,
+      "barId": 290586,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e3fa6845d03322a83d240e32e693beb34747c074"
+      "commitSha": "ab3f61de6abefd7944d6b06e34f36b3f937be0b1"
     },
     {
       "barId": 289946,
@@ -133,16 +133,16 @@
       "commitSha": "dddb7a4a4a834496cbd3e58c356fc4ff244e29ad"
     },
     {
-      "barId": 289847,
+      "barId": 290308,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "cfb7ae431c71608222c929609782f94324a14bf9"
+      "commitSha": "62f001bbdf5794cda4c36ab34f93f79bf7971278"
     },
     {
-      "barId": 289752,
+      "barId": 290620,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "0e03d81f7e3107763bf890e315f1e1d286143ba2"
+      "commitSha": "d75b8adc3d7b451bc1fdf5489cee601c31d65011"
     },
     {
       "barId": 278018,
