@@ -67,9 +67,18 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" PrivateAssets="compile" />
-    <PackageReference Include="Microsoft.DotNet.FileBasedPrograms" GeneratePathProperty="true" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <PackageReference Include="Microsoft.DotNet.FileBasedPrograms" GeneratePathProperty="true" PrivateAssets="All" />
     <EmbeddedResource
       Include="$(PkgMicrosoft_DotNet_FileBasedPrograms)\contentFiles\cs\any\FileBasedProgramsResources.resx"
+      GenerateSource="true"
+      Namespace="Microsoft.DotNet.FileBasedPrograms" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <Compile Include="$(SolutionDir)..\sdk\src\Cli\Microsoft.DotNet.FileBasedPrograms\**\*.cs" />
+    <EmbeddedResource
+      Include="$(SolutionDir)..\sdk\src\Cli\Microsoft.DotNet.FileBasedPrograms\FileBasedProgramsResources.resx"
       GenerateSource="true"
       Namespace="Microsoft.DotNet.FileBasedPrograms" />
   </ItemGroup>
