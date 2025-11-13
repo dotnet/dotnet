@@ -85,10 +85,10 @@
       "commitSha": "d3b36cce4f334dac2e6b5c6a6100025f4d35e8ce"
     },
     {
-      "barId": 277711,
+      "barId": 290655,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
+      "commitSha": "61c2f9253a455c5d819f5e3cc2ab59e9e8dd60cb"
     },
     {
       "barId": 288443,
