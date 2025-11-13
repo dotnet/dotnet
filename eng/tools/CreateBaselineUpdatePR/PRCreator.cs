@@ -108,7 +108,8 @@ public class PRCreator
     // "Updated" prefix and anything after the first '.' as the key
     private Dictionary<string, HashSet<string>> GetUpdatedFiles(string updatedFilesDirectory) =>
         Directory
-            .GetFiles(updatedFilesDirectory, "Updated*", SearchOption.AllDirectories)
+            .GetFiles(updatedFilesDirectory, "*", SearchOption.AllDirectories)
+            .Where(file => Path.GetFileName(file).StartsWith("updated", StringComparison.OrdinalIgnoreCase))
             .GroupBy(updatedTestsFile => ParseUpdatedFileName(updatedTestsFile).Split('.')[0])
             .ToDictionary(
                 group => group.Key,
@@ -255,7 +256,16 @@ public class PRCreator
         return await ApiRequestWithRetries(() => _client.Git.Blob.Create(_repoOwner, _repoName, blob));
     }
 
-    private string ParseUpdatedFileName(string updatedFile) => updatedFile.Split("Updated")[1];
+    private string ParseUpdatedFileName(string updatedFile)
+    {
+        string fileName = Path.GetFileName(updatedFile);
+        int index = fileName.IndexOf("updated", StringComparison.OrdinalIgnoreCase);
+        if (index >= 0)
+        {
+            return fileName.Substring(index + "updated".Length);
+        }
+        return fileName;
+    }
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
     {

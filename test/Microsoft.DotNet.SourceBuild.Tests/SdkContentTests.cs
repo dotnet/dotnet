@@ -106,7 +106,7 @@ public partial class SdkContentTests : SdkTests
 
             Assert.True(File.Exists(generatedSuppressionPath), $"Generated API diff suppression file does not exist at path: {generatedSuppressionPath}");
 
-            string updatedSuppressionPath = Path.Combine(Config.LogsDirectory, "updatedApiDiff.suppression");
+            string updatedSuppressionPath = Path.Combine(Config.LogsDirectory, "UpdatedApiDiff.suppression");
             File.WriteAllText(updatedSuppressionPath, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(generatedSuppressionPath)));
 
             BaselineHelper.CompareFiles(baselineSuppressionPath, updatedSuppressionPath, OutputHelper);
