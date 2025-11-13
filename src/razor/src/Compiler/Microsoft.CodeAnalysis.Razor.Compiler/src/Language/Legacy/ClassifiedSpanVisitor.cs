@@ -9,9 +9,13 @@ using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal sealed class ClassifiedSpanVisitor : SyntaxWalker
+internal sealed class ClassifiedSpanVisitor : SyntaxWalker, IPoolableObject
 {
-    private static readonly ObjectPool<ClassifiedSpanVisitor> Pool = DefaultPool.Create(Policy.Instance, size: 5);
+    // Significantly larger than DefaultPool.MaximumObjectSize as there shouldn't be much concurrency
+    // of these arrays (we limit the number of pooled items to 5) and they are commonly large
+    public const int MaximumObjectSize = DefaultPool.DefaultMaximumObjectSize * 32;
+
+    private static readonly ObjectPool<ClassifiedSpanVisitor> Pool = DefaultPool.Create(static () => new ClassifiedSpanVisitor(), poolSize: 5);
 
     private readonly ImmutableArray<ClassifiedSpanInternal>.Builder _spans;
 
@@ -433,11 +437,11 @@ internal sealed class ClassifiedSpanVisitor : SyntaxWalker
     private void AddSpan(SourceSpan span, SpanKindInternal kind, AcceptedCharactersInternal acceptedCharacters)
         => _spans.Add(new(span, CurrentBlockSpan, kind, _currentBlockKind, acceptedCharacters));
 
-    private void Reset()
+    void IPoolableObject.Reset()
     {
         _spans.Clear();
 
-        if (_spans.Capacity > Policy.MaximumObjectSize)
+        if (_spans.Capacity > MaximumObjectSize)
         {
             // Differs from ArrayBuilderPool.Policy's behavior as we allow our array to grow significantly larger
             _spans.Capacity = 0;
@@ -447,27 +451,5 @@ internal sealed class ClassifiedSpanVisitor : SyntaxWalker
         _currentBlock = null!;
         _currentBlockSpan = null;
         _currentBlockKind = BlockKindInternal.Markup;
-    }
-
-    private sealed class Policy : IPooledObjectPolicy<ClassifiedSpanVisitor>
-    {
-        public static readonly Policy Instance = new();
-
-        // Significantly larger than DefaultPool.MaximumObjectSize as there shouldn't be much concurrency
-        // of these arrays (we limit the number of pooled items to 5) and they are commonly large
-        public const int MaximumObjectSize = DefaultPool.MaximumObjectSize * 32;
-
-        private Policy()
-        {
-        }
-
-        public ClassifiedSpanVisitor Create() => new();
-
-        public bool Return(ClassifiedSpanVisitor visitor)
-        {
-            visitor.Reset();
-
-            return true;
-        }
     }
 }
