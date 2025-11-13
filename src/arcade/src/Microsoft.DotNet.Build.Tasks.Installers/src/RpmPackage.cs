@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal sealed class RpmPackage(RpmLead lead, RpmHeader<RpmSignatureTag> signature, RpmHeader<RpmHeaderTag> header, MemoryStream archiveStream) : IDisposable
+    public sealed class RpmPackage(RpmLead lead, RpmHeader<RpmSignatureTag> signature, RpmHeader<RpmHeaderTag> header, MemoryStream archiveStream) : IDisposable
     {
         public RpmLead Lead { get; set; } = lead;
         public RpmHeader<RpmSignatureTag> Signature { get; set; } = signature;

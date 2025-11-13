@@ -150,9 +150,13 @@ public abstract class RazorSourceGeneratorTestsBase
             }
         });
         var app = appBuilder.Build();
+        
+        // Create a service scope to properly handle scoped services like IViewBufferScope.
+        // ASP.NET Core's DI validation prevents resolving scoped services from the root provider.
+        using var scope = app.Services.CreateScope();
         var httpContext = new DefaultHttpContext
         {
-            RequestServices = app.Services
+            RequestServices = scope.ServiceProvider
         };
         var requestFeature = new HttpRequestFeature
         {
@@ -184,7 +188,7 @@ public abstract class RazorSourceGeneratorTestsBase
             .ToImmutableArray();
 
         // Render the page.
-        var view = ActivatorUtilities.CreateInstance<RazorView>(app.Services,
+        var view = ActivatorUtilities.CreateInstance<RazorView>(scope.ServiceProvider,
             /* IReadOnlyList<IRazorPage> viewStartPages */ viewStarts,
             /* IRazorPage razorPage */ page);
         await view.RenderAsync(viewContext);

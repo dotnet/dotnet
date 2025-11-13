@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -14,7 +14,7 @@ internal sealed class RefTagHelperDescriptorProvider() : TagHelperDescriptorProv
 {
     private static readonly Lazy<TagHelperDescriptor> s_refTagHelper = new(CreateRefTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -28,7 +28,8 @@ internal sealed class RefTagHelperDescriptorProvider() : TagHelperDescriptorProv
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, elementReference.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, elementReference.ContainingAssembly))
         {
             return;
         }
@@ -39,17 +40,17 @@ internal sealed class RefTagHelperDescriptorProvider() : TagHelperDescriptorProv
     private static TagHelperDescriptor CreateRefTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Ref.TagHelperKind, "Ref", ComponentsApi.AssemblyName,
+            TagHelperKind.Ref, "Ref", ComponentsApi.AssemblyName,
             out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.RefTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.Ref",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "Ref");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.Ref.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.Ref.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.Ref"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.RefTagHelper);
 
         builder.TagMatchingRule(rule =>
         {
@@ -67,9 +68,8 @@ internal sealed class RefTagHelperDescriptorProvider() : TagHelperDescriptorProv
             attribute.Name = "@ref";
 
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(
-                PropertyName("Ref"),
-                IsDirectiveAttribute);
+            attribute.IsDirectiveAttribute = true;
+            attribute.PropertyName = "Ref";
         });
 
         return builder.Build();

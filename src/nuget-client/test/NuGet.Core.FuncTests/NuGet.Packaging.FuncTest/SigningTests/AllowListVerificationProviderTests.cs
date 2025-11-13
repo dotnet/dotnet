@@ -111,8 +111,8 @@ namespace NuGet.Packaging.FuncTest
 
                     // Assert
                     result.IsValid.Should().Be(valid);
-                    resultsWithErrors.Count().Should().Be(resultsWithErrorsCount);
-                    totalErrors.Count().Should().Be(totalErrorsCount);
+                    resultsWithErrors.Count.Should().Be(resultsWithErrorsCount);
+                    totalErrors.Count.Should().Be(totalErrorsCount);
 
                     for (var i = 0; i < totalErrorsCount; i++)
                     {

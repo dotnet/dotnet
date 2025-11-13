@@ -7,6 +7,11 @@
         <target state="translated">Значение не может быть NULL или пустой строкой.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (и обязательные атрибуты...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Создание компонента из тега</target>
@@ -84,11 +89,6 @@
         <target state="translated">Создать обработчик событий "{0}"</target>
         <note />
       </trans-unit>
-      <trans-unit id="IncompatibleProject_MiscFiles">
-        <source>The Razor editor utilizes the Razor Source Generator. {0} appears to not be part of any project, so the source generator is not present and the editing experience will be limited. No more messages will be logged for this scenario.</source>
-        <target state="translated">Редактор Razor использует генератор источника Razor. {0} не является частью какого-либо проекта, поэтому генератор источника отсутствует, а возможности редактирования будут ограничены. Для этого сценария больше не будут регистрироваться сообщения в журнале.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IncompatibleProject_NoAdditionalFiles">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
         <target state="translated">Редактор Razor использует генератор источника Razor, который требует, чтобы файлы *.razor и *.cshtml были файлами AdditionalFile в проекте. {0} поступает из "{1}", где нет документов Razor, которые являются файлами AdditionalFile, поэтому возможности редактирования будут ограничены. Используется ли пакет SDK Razor? Для этого проекта больше не будут регистрироваться сообщения в журнале.</target>
@@ -127,6 +127,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Повысить уровень с использованием директивы до {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="new">Simplify fully qualified component</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

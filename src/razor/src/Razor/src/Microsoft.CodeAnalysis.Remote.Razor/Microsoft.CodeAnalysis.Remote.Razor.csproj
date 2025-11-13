@@ -17,6 +17,9 @@
 
     <!-- Don't warn about restoring ServiceHub assets for .NET Framework when we're compiling against netstandard2.0 -->
     <NoWarn>$(NoWarn);NU1701</NoWarn>
+
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,9 +57,11 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Microbenchmarks" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Cohosting" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" />
   </ItemGroup>
 
   <ItemGroup Label="String Resources">
@@ -67,5 +72,26 @@
 
     <Using Include="$(ProjectName).Resources" />
   </ItemGroup>
+
+  <!-- Special target only consumed at VSIX creation time -->
+  
+  <Target Name="PublishProjectOutputGroup" DependsOnTargets="Publish" Returns="@(_PublishedFiles)">
+    <ItemGroup>
+      <!-- Need to include and then update items (https://github.com/microsoft/msbuild/issues/1053) -->
+
+      <_ExcludedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.*" />
+
+      <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Razor.*" />
+      <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.Razor.*" Exclude="@(_ExcludedFiles)"/>
+      <_PublishedFiles Include="$(PublishDir)**\Microsoft.AspNetCore.*" />
+      <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.ObjectPool.dll" />
+
+      <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.pdb'" />
+      <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.xml'" />
+
+      <!-- Set TargetPath -->
+      <_PublishedFiles Update="@(_PublishedFiles)" TargetPath="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
 
 </Project>

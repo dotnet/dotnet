@@ -519,7 +519,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 using (var server = CreateAndStartMockV3Server(pathContext.WorkingDirectory, out string sourceName))
                 {
                     //Configure push to alternate returning Created and Conflict responses, which correspond to pushing the nupkg and snupkg, respectively.
-                    SetupMockServerCreateNupkgDuplicateSnupkg(server, pathContext.WorkingDirectory, FuncStatus_Alternates_CreatedAndDuplicate());
+                    SetupMockServerCreateNupkgDuplicateSnupkg(server, FuncStatus_Alternates_CreatedAndDuplicate());
                     pathContext.Settings.AddSource(sourceName, sourceName, "true");
                     // Act
 
@@ -754,7 +754,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 using (var server = CreateAndStartMockV3Server(pathContext.WorkingDirectory, out string sourceName))
                 {
                     //Configure push to return a Conflict for the first push, then Created for all remaining pushes.
-                    SetupMockServerCreateNupkgDuplicateSnupkg(server, pathContext.WorkingDirectory, FuncStatus_Duplicate_ThenAlwaysCreated());
+                    SetupMockServerCreateNupkgDuplicateSnupkg(server, FuncStatus_Duplicate_ThenAlwaysCreated());
                     pathContext.Settings.AddSource(sourceName, sourceName, "true");
                     // Act
 
@@ -878,7 +878,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 using (var server = CreateAndStartMockV3Server(pathContext.WorkingDirectory, out string sourceName))
                 {
                     //Configure push to return a Conflict for the first push, then Created for all remaining pushes.
-                    SetupMockServerCreateNupkgDuplicateSnupkg(server, pathContext.WorkingDirectory, FuncStatus_Duplicate_ThenAlwaysCreated());
+                    SetupMockServerCreateNupkgDuplicateSnupkg(server, FuncStatus_Duplicate_ThenAlwaysCreated());
                     pathContext.Settings.AddSource(sourceName, sourceName, "true");
                     // Act
 
@@ -1110,17 +1110,17 @@ namespace NuGet.CommandLine.FuncTest.Commands
         }
 
 
-        private static void SetupMockServerCreateNupkgDuplicateSnupkg(MockServer server,
-                                                              string outputPath,
-                                                              Func<int, HttpStatusCode> responseCodeFunc)
+        private static void SetupMockServerCreateNupkgDuplicateSnupkg(
+            MockServer server,
+            Func<int, HttpStatusCode> responseCodeFunc)
         {
             int packageCounter = 0;
-            server.Put.Add("/push", (Func<HttpListenerRequest, object>)((r) =>
+            server.Put.Add("/push", _ =>
             {
                 packageCounter++;
                 var statusCode = responseCodeFunc(packageCounter);
                 return statusCode;
-            }));
+            });
         }
 
         /// <summary>

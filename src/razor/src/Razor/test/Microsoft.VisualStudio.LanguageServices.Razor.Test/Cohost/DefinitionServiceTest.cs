@@ -61,7 +61,7 @@ public class DefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostE
 
     private async Task VerifyDefinitionAsync(TestCode input, TestCode expectedDocument, params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles: additionalFiles);
 
         var service = OOPExportProvider.GetExportedValue<IDefinitionService>();
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
@@ -71,7 +71,7 @@ public class DefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostE
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(DisposalToken);
         var positionInfo = documentMappingService.GetPositionInfo(codeDocument, input.Position);
 
-        var location = await service.GetDefinitionAsync(
+        var locations = await service.GetDefinitionAsync(
             documentSnapshot,
             positionInfo,
             solutionQueryOperations: documentSnapshot.ProjectSnapshot.SolutionSnapshot,
@@ -79,7 +79,8 @@ public class DefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostE
             includeMvcTagHelpers: true,
             DisposalToken);
 
-        Assert.NotNull(location);
+        Assert.NotNull(locations);
+        var location = Assert.Single(locations);
 
         var text = SourceText.From(expectedDocument.Text);
         var range = text.GetRange(expectedDocument.Span);

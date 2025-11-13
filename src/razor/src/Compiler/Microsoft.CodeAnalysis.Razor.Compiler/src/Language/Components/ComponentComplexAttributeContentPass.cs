@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,12 +12,15 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 //
 // This is where a lot of the complexity in the Razor/TagHelpers model creeps in and we
 // might be able to avoid it if these features aren't needed.
-internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentComplexAttributeContentPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run before other Component passes
     public override int Order => -1000;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -34,12 +38,12 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
         for (var i = node.Children.Count - 1; i >= 0; i--)
         {
             if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, propertyNode, propertyNode.AttributeName);
             }
             else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, htmlNode, htmlNode.AttributeName);
             }

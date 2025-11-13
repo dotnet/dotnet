@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,14 +65,15 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
 
         // Act
         var i = 3;
-        SyntaxToken[] previousTokens = null;
-        var tokenFound = tokenizer.LookaheadUntil((s, p) =>
+        SyntaxToken[]? previousTokens = null;
+        var tokenFound = tokenizer.LookaheadUntil((s, ref readonly p) =>
         {
             previousTokens = p.ToArray();
             return --i == 0;
         });
 
         // Assert
+        Assert.NotNull(previousTokens);
         Assert.Equal(4, previousTokens.Length);
 
         // For the very first element, there will be no previous items, so null is expected
@@ -93,7 +92,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
 
         // Act
         var tokens = new Stack<SyntaxToken>();
-        var tokenFound = tokenizer.LookaheadUntil((s, p) =>
+        var tokenFound = tokenizer.LookaheadUntil((s, ref readonly p) =>
         {
             tokens.Push(s);
             return false;
@@ -115,7 +114,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
 
         // Act
         var tokens = new Stack<SyntaxToken>();
-        var tokenFound = tokenizer.LookaheadUntil((s, p) =>
+        var tokenFound = tokenizer.LookaheadUntil((s, ref readonly p) =>
         {
             tokens.Push(s);
             return s.Kind == SyntaxKind.DoubleHyphen;
@@ -216,7 +215,7 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
             base.Dispose();
         }
 
-        internal new bool LookaheadUntil(Func<SyntaxToken, IEnumerable<SyntaxToken>, bool> condition)
+        internal new bool LookaheadUntil(LookaheadUntilCondition condition)
         {
             return base.LookaheadUntil(condition);
         }

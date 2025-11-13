@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using RazorSyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -39,12 +38,6 @@ internal class RenameService(
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
         if (!documentContext.FileKind.IsComponent())
-        {
-            return null;
-        }
-
-        // If we're in C# then there is no point checking for a component tag, because there won't be one
-        if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
             return null;
         }
@@ -102,7 +95,7 @@ internal class RenameService(
     private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
     {
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot>();
-        using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
+        using var _ = SpecializedPools.GetPooledStringHashSet(out var documentPaths);
 
         foreach (var project in solutionQueryOperations.GetProjects())
         {
@@ -182,10 +175,10 @@ internal class RenameService(
         foreach (var originTagHelper in originTagHelpers)
         {
             var editedName = newName;
-            if (originTagHelper.IsComponentFullyQualifiedNameMatch)
+            if (originTagHelper.IsFullyQualifiedNameMatch)
             {
                 // Fully qualified binding, our "new name" needs to be fully qualified.
-                var @namespace = originTagHelper.GetTypeNamespace();
+                var @namespace = originTagHelper.TypeNamespace;
                 if (@namespace == null)
                 {
                     return;
@@ -242,7 +235,7 @@ internal class RenameService(
         }
 
         // Can only have 1 component TagHelper belonging to an element at a time
-        var primaryTagHelper = binding.Descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+        var primaryTagHelper = binding.Descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (primaryTagHelper is null)
         {
             return default;
@@ -297,7 +290,7 @@ internal class RenameService(
 
     private static TagHelperDescriptor? FindAssociatedTagHelper(TagHelperDescriptor tagHelper, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        var typeName = tagHelper.GetTypeName();
+        var typeName = tagHelper.TypeName;
         var assemblyName = tagHelper.AssemblyName;
         foreach (var currentTagHelper in tagHelpers)
         {
@@ -307,7 +300,7 @@ internal class RenameService(
                 continue;
             }
 
-            if (typeName != currentTagHelper.GetTypeName())
+            if (typeName != currentTagHelper.TypeName)
             {
                 continue;
             }

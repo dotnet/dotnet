@@ -90,7 +90,7 @@ public class FormattingContentValidationPassTest(ITestOutputHelper testOutput) :
             documentSnapshot,
             codeDocument,
             options,
-            useNewFormattingEngine: false);
+            logger: null);
         return context;
     }
 
@@ -114,7 +114,7 @@ public class FormattingContentValidationPassTest(ITestOutputHelper testOutput) :
             });
         });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers);
 
         var documentSnapshot = new StrictMock<IDocumentSnapshot>();
         documentSnapshot

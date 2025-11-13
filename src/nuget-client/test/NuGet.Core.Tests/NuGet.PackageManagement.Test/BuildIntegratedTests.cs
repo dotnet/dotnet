@@ -1933,11 +1933,6 @@ namespace NuGet.Test
 
             public PackageSpec PackageSpec { get; set; }
 
-            public TestNonBuildIntegratedNuGetProject()
-                : base()
-            {
-            }
-
             public Task<IReadOnlyList<IDependencyGraphProject>> GetDirectProjectReferencesAsync(DependencyGraphCacheContext context)
             {
                 return Task.FromResult<IReadOnlyList<IDependencyGraphProject>>(ProjectReferences

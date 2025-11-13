@@ -4,17 +4,21 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     public override int Order => 50;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -32,7 +36,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         // For each event handler *usage* we need to rewrite the tag helper node to map to basic constructs.
         // Each usage will be represented by a tag helper property that is a descendant of either
         // a component or element.
-        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+        using var _ = SpecializedPools.GetPooledReferenceEqualityHashSet<IntermediateNode>(out var parents);
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
 
         foreach (var reference in references)
@@ -55,7 +59,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
             if (!reference.Parent.Children.Contains(node))
             {
@@ -63,7 +67,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
                 continue;
             }
 
-            if (node.TagHelper.IsEventHandlerTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.EventHandler)
             {
                 reference.Replace(RewriteUsage(reference.Parent, node));
             }
@@ -71,7 +75,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
         foreach (var parameterReference in parameterReferences)
         {
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
+            var node = parameterReference.Node;
 
             if (!parameterReference.Parent.Children.Contains(node))
             {
@@ -79,7 +83,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
                 continue;
             }
 
-            if (node.TagHelper.IsEventHandlerTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.EventHandler)
             {
                 parameterReference.Replace(RewriteParameterUsage(node));
             }
@@ -97,13 +101,13 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         {
             if (parent.Children[i] is TagHelperPropertyIntermediateNode eventHandler &&
                 eventHandler.TagHelper != null &&
-                eventHandler.TagHelper.IsEventHandlerTagHelper())
+                eventHandler.TagHelper.Kind == TagHelperKind.EventHandler)
             {
                 for (var j = 0; j < parent.Children.Count; j++)
                 {
                     if (parent.Children[j] is ComponentAttributeIntermediateNode componentAttribute &&
                         componentAttribute.TagHelper != null &&
-                        componentAttribute.TagHelper.IsComponentTagHelper &&
+                        componentAttribute.TagHelper.Kind == TagHelperKind.Component &&
                         componentAttribute.AttributeName == eventHandler.AttributeName)
                     {
                         // Found a duplicate - remove the 'fallback' in favor of the component's own handling.
@@ -117,7 +121,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         // If we still have duplicates at this point then they are genuine conflicts.
         var duplicates = parent.Children
             .OfType<TagHelperDirectiveAttributeIntermediateNode>()
-            .Where(p => p.TagHelper?.IsEventHandlerTagHelper() ?? false)
+            .Where(p => p.TagHelper?.Kind == TagHelperKind.EventHandler)
             .GroupBy(p => p.AttributeName)
             .Where(g => g.Count() > 1);
 
@@ -136,7 +140,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
         var parameterDuplicates = parent.Children
             .OfType<TagHelperDirectiveAttributeParameterIntermediateNode>()
-            .Where(p => p.TagHelper?.IsEventHandlerTagHelper() ?? false)
+            .Where(p => p.TagHelper.Kind == TagHelperKind.EventHandler)
             .GroupBy(p => p.AttributeName)
             .Where(g => g.Count() > 1);
 
@@ -170,7 +174,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         //
         // This method is overloaded on string and T, which means that it will put the code in the
         // correct context for intellisense when typing in the attribute.
-        var eventArgsType = node.TagHelper.GetEventArgsType();
+        var eventArgsType = node.TagHelper.GetEventArgsType().AssumeNotNull();
 
         using var tokens = new PooledArrayBuilder<IntermediateToken>(capacity: original.Length + 2);
 
@@ -209,20 +213,17 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         }
         else
         {
-            var result = new ComponentAttributeIntermediateNode(node)
-            {
-                OriginalAttributeName = node.OriginalAttributeName,
-            };
-
-            result.Children.Clear();
+            var result = ComponentAttributeIntermediateNode.From(node, addChildren: false);
+            result.OriginalAttributeName = node.OriginalAttributeName;
 
             var expressionNode = new CSharpExpressionIntermediateNode();
-            result.Children.Add(expressionNode);
 
             foreach (var token in tokens)
             {
                 expressionNode.Children.Add(token);
             }
+
+            result.Children.Add(expressionNode);
 
             return result;
         }
@@ -276,13 +277,9 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
             return node;
         }
 
-        var result = new ComponentAttributeIntermediateNode(node)
-        {
-            OriginalAttributeName = node.OriginalAttributeName,
-            AddAttributeMethodName = eventHandlerMethod,
-        };
-
-        result.Children.Clear();
+        var result = ComponentAttributeIntermediateNode.From(node, addChildren: false);
+        result.OriginalAttributeName = node.OriginalAttributeName;
+        result.AddAttributeMethodName = eventHandlerMethod;
 
         if (node.AttributeStructure != AttributeStructure.Minimized)
         {

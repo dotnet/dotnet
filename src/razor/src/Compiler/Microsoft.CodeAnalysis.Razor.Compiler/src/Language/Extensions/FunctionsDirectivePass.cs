@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -12,7 +13,10 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
 {
     private static readonly Comparer<int?> s_nullableIntComparer = Comparer<int?>.Default;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var @class = documentNode.FindPrimaryClass();
         if (@class == null)
@@ -20,7 +24,7 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
             return;
         }
 
-        using var directiveNodes = new PooledArrayBuilder<IntermediateNodeReference>();
+        using var directiveNodes = new PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>>();
 
         documentNode.CollectDirectiveReferences(FunctionsDirective.Directive, ref directiveNodes.AsRef());
 
@@ -43,7 +47,9 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
             directiveReference.Remove();
         }
 
-        static int CompareAbsoluteIndices(IntermediateNodeReference n1, IntermediateNodeReference n2)
+        static int CompareAbsoluteIndices(
+            IntermediateNodeReference<DirectiveIntermediateNode> n1,
+            IntermediateNodeReference<DirectiveIntermediateNode> n2)
         {
             return s_nullableIntComparer.Compare(n1.Node.Source?.AbsoluteIndex, n2.Node.Source?.AbsoluteIndex);
         }

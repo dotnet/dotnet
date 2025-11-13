@@ -1,44 +1,32 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class MethodDeclarationIntermediateNode : MemberDeclarationIntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public string? Name { get; set; }
+    public string? ReturnType { get; set; }
 
-    public IList<string> Modifiers { get; } = new List<string>();
+    public ImmutableArray<string> Modifiers { get; set => field = value.NullToEmpty(); } = [];
+    public ImmutableArray<MethodParameter> Parameters { get; set => field = value.NullToEmpty(); } = [];
 
-    public string MethodName { get; set; }
+    public bool IsPrimaryMethod { get; init; }
 
-    public IList<MethodParameter> Parameters { get; } = new List<MethodParameter>();
-
-    public string ReturnType { get; set; }
-
-    public bool IsPrimaryMethod { get; set; }
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
-    {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
-        visitor.VisitMethodDeclaration(this);
-    }
+        => visitor.VisitMethodDeclaration(this);
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {
-        formatter.WriteContent(MethodName);
+        formatter.WriteContent(Name);
 
-        formatter.WriteProperty(nameof(MethodName), MethodName);
+        formatter.WriteProperty(nameof(Name), Name);
         formatter.WriteProperty(nameof(Modifiers), string.Join(", ", Modifiers));
         formatter.WriteProperty(nameof(Parameters), string.Join(", ", Parameters.Select(FormatMethodParameter)));
         formatter.WriteProperty(nameof(ReturnType), ReturnType);
@@ -46,17 +34,18 @@ public sealed class MethodDeclarationIntermediateNode : MemberDeclarationInterme
 
     private static string FormatMethodParameter(MethodParameter parameter)
     {
-        var builder = new StringBuilder();
-        for (var i = 0; i < parameter.Modifiers.Count; i++)
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        foreach (var modifier in parameter.Modifiers)
         {
-            builder.Append(parameter.Modifiers[i]);
+            builder.Append(modifier);
             builder.Append(' ');
         }
 
-        builder.Append(parameter.TypeName);
+        builder.Append(parameter.Type);
         builder.Append(' ');
 
-        builder.Append(parameter.ParameterName);
+        builder.Append(parameter.Name);
 
         return builder.ToString();
     }

@@ -13,27 +13,31 @@ namespace Microsoft.DotNet.Watch
         MockBrowser = 1 << 1,
 
         /// <summary>
-        /// Elevates the severity of <see cref="MessageDescriptor.WaitingForChanges"/> from <see cref="MessageSeverity.Output"/>.
-        /// </summary>
-        ElevateWaitingForChangesMessageSeverity = 1 << 2,
-
-        /// <summary>
         /// Instead of using <see cref="Console.ReadKey()"/> to watch for Ctrl+C, Ctlr+R, and other keys, read from standard input.
         /// This allows tests to trigger key based events.
         /// </summary>
-        ReadKeyFromStdin = 1 << 3,
+        ReadKeyFromStdin = 1 << 2,
+
+        /// <summary>
+        /// Redirects the output of the launched browser process to watch output.
+        /// </summary>
+        RedirectBrowserOutput = 1 << 3,
     }
 
     internal sealed record EnvironmentOptions(
         string WorkingDirectory,
         string MuxerPath,
-        TimeSpan ProcessCleanupTimeout,
+        TimeSpan? ProcessCleanupTimeout,
         bool IsPollingEnabled = false,
         bool SuppressHandlingStaticContentFiles = false,
         bool SuppressMSBuildIncrementalism = false,
         bool SuppressLaunchBrowser = false,
         bool SuppressBrowserRefresh = false,
         bool SuppressEmojis = false,
+        bool RestartOnRudeEdit = false,
+        string? AutoReloadWebSocketHostName = null,
+        int? AutoReloadWebSocketPort = null,
+        string? BrowserPath = null,
         TestFlags TestFlags = TestFlags.None,
         string TestOutput = "")
     {
@@ -48,9 +52,18 @@ namespace Microsoft.DotNet.Watch
             SuppressLaunchBrowser: EnvironmentVariables.SuppressLaunchBrowser,
             SuppressBrowserRefresh: EnvironmentVariables.SuppressBrowserRefresh,
             SuppressEmojis: EnvironmentVariables.SuppressEmojis,
+            RestartOnRudeEdit: EnvironmentVariables.RestartOnRudeEdit,
+            AutoReloadWebSocketHostName: EnvironmentVariables.AutoReloadWSHostName,
+            AutoReloadWebSocketPort: EnvironmentVariables.AutoReloadWSPort,
+            BrowserPath: EnvironmentVariables.BrowserPath,
             TestFlags: EnvironmentVariables.TestFlags,
             TestOutput: EnvironmentVariables.TestOutputDir
         );
+
+        public TimeSpan GetProcessCleanupTimeout(bool isHotReloadEnabled)
+            // If Hot Reload mode is disabled the process is restarted on every file change.
+            // Waiting for graceful termination would slow down the turn around.
+            => ProcessCleanupTimeout ?? (isHotReloadEnabled ? TimeSpan.FromSeconds(5) : TimeSpan.FromSeconds(0));
 
         private int _uniqueLogId;
 

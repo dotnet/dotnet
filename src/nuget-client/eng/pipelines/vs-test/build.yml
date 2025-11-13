@@ -7,15 +7,15 @@ steps:
     signType: "Test"
   displayName: "Install Signing Plugin"
 
-- task: MicroBuildSwixPlugin@4
-  displayName: "Install Swix Plugin"
-  inputs:
-    dropName: "Tests/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildId)"
-- task: PowerShell@1
-  displayName: "Run Configure.ps1"
-  inputs:
-    scriptName: "$(Build.Repository.LocalPath)\\configure.ps1"
-    arguments: "-Force"
+  - task: MicroBuildSwixPlugin@4
+    displayName: "Install Swix Plugin"
+    inputs:
+      dropName: "Tests/$(System.TeamProject)/$(Build.DefinitionName)/$(SourceBranch)/$(Build.BuildId)"
+  - task: PowerShell@1
+    displayName: "Run Configure.ps1"
+    inputs:
+      scriptName: "$(Build.Repository.LocalPath)\\configure.ps1"
+      arguments: "-Force"
 
 - task: PowerShell@1
   displayName: "Set build variables"
@@ -42,6 +42,11 @@ steps:
         throw $_
       }
 
+  - task: PowerShell@1
+    inputs:
+      scriptName: "$(Build.Repository.LocalPath)\\scripts\\cibuild\\ConfigureVstsBuild.ps1"
+      arguments: "-BuildRTM false -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(SourceBranch) -CommitHash $(Build.SourceVersion) -BuildNumber $(NuGetVersion)"
+    displayName: "Configure VSTS CI Environment"
 
 - task: PowerShell@1
   inputs:
@@ -83,10 +88,136 @@ steps:
             Write-Host "Git remote url already correct"
           }
         }
-        else
-        {
-          Write-Host "git remote add github $nugetUrl"
-          & git remote add github $nugetUrl
+
+  - task: MSBuild@1
+    displayName: "Restore"
+    inputs:
+      solution: "NuGet.sln"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore:false /target:Restore /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+
+  - task: MSBuild@1
+    displayName: "Build"
+    inputs:
+      solution: "NuGet.sln"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore:false /target:Build /property:GitRepositoryRemoteName=github /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
+
+  - task: MSBuild@1
+    displayName: "Pack VSIX"
+    inputs:
+      solution: "build\\build.proj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore:false /target:BuildVSIX /property:ExcludeTestProjects=false /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.PackVSIX.binlog"
+
+  - template: /eng/common/templates/steps/generate-sbom.yml@self
+    parameters:
+      PackageName: "NuGet.Client"
+      PackageVersion: "$(NuGetVersion)"
+
+  - task: MSBuild@1
+    displayName: "Generate Build Tools package"
+    inputs:
+      solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/property:BuildNumber=$(BuildNumber) /property:IsVsixBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\08.BuildToolsVSIX.binlog"
+
+  - task: MSBuild@1
+    displayName: "Sign"
+    inputs:
+      solution: "build\\sign.proj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore /p:DryRunSigning=false /p:DotNetSignType=test /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignPackages.binlog"
+
+  - task: MicroBuildCodesignVerify@3
+    displayName: Verify Assembly Signatures and StrongName for the VSIX & exes
+    inputs:
+      TargetFolders: '$(Build.Repository.LocalPath)\\artifacts\\VS15'
+      ApprovalListPathForCerts: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
+      ApprovalListPathForSigs: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
+
+  - task: MSBuild@1
+    displayName: "Generate VSMAN file for NuGet Core VSIX"
+    inputs:
+      solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
+
+  - task: MSBuild@1
+    displayName: "Generate VSMAN file for Build Tools VSIX"
+    inputs:
+      solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
+
+  - task: MSBuild@1
+    displayName: "Create EndToEnd Test Package"
+    inputs:
+      solution: "$(Build.Repository.LocalPath)\\test\\TestUtilities\\CreateEndToEndTestPackage\\CreateEndToEndTestPackage.proj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/property:EndToEndPackageOutputPath=$(Build.StagingDirectory)\\E2ETests /property:BuildProjectReferences=false /binarylogger:$(Build.StagingDirectory)\\binlog\\12.CreateEndToEndTestPackage.binlog"
+
+  - task: CopyFiles@2
+    displayName: "Copy NuGet.exe for E2E Tests"
+    inputs:
+      SourceFolder: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+      Contents: "NuGet.exe"
+      TargetFolder: "$(Build.StagingDirectory)\\E2ETests"
+
+  - task: NuGetToolInstaller@1
+
+  - task: NuGetCommand@2
+    displayName: "Add the VSEng package source"
+    inputs:
+      command: "custom"
+      arguments: 'sources add -Name VS -Source $(VsPackageFeedUrl) -UserName $(VsPackageFeedUsername) -Password $(VsPackageFeedPassword) -ConfigFile $(System.DefaultWorkingDirectory)\NuGet.config'
+
+  - task: NuGetCommand@2
+    displayName: "Install the NuGet package for building .runsettingsproj files"
+    inputs:
+      command: "custom"
+      arguments: 'install Microsoft.DevDiv.Validation.TestPlatform.Settings.Tasks -Version 1.0.655 -Source $(VsPackageFeedUrl) -ConfigFile $(System.DefaultWorkingDirectory)\NuGet.config -OutputDirectory $(System.DefaultWorkingDirectory)\packages'
+
+  - task: MicroBuildBuildVSBootstrapper@3
+    displayName: "Build a Visual Studio bootstrapper for tests"
+    inputs:
+      azureSubscription: "VSEng-VSDrop-MI"
+      channelName: "$(VsTargetChannelForTests)"
+      vsMajorVersion: "$(VsTargetMajorVersion)"
+      manifests: '$(Build.Repository.LocalPath)\artifacts\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
+      outputFolder: '$(Build.Repository.LocalPath)\artifacts\VS15'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  - task: PowerShell@1
+    displayName: "Set DartLab variables for tests"
+    name: "dartlab_variables"
+    inputs:
+      scriptType: "inlineScript"
+      # MicroBuildOutputFolderOverride defined by template and redirects MicroBuildBuildVSBootstrapper output https://dev.azure.com/devdiv/1ESPipelineTemplates/_git/MicroBuildTemplate?path=/azure-pipelines/Jobs/Job.yml&version=GBrelease&line=21&lineEnd=22&lineStartColumn=1&lineEndColumn=36&lineStyle=plain&_a=contents
+      inlineScript: |
+        try {
+          $json = Get-Content "${env:Build_StagingDirectory}\MicroBuild\Output\Bootstrapperinfo.json" | ConvertFrom-Json
+
+          $bootstrapperUrl = $json[0].bootstrapperUrl;
+          Write-Host "Bootstrapper URL: $bootstrapperUrl"
+          Write-Host "##vso[task.setvariable variable=bootstrapperUrl;isOutput=true]$bootstrapperUrl"
+
+          $qBuildSessionId = $json[0].QBuildSessionId;
+          Write-Host "CloudBuild Session ID: $qBuildSessionId"
+          Write-Host "##vso[task.setvariable variable=QBuildSessionId;isOutput=true]$qBuildSessionId"
+
+          $buildDrop = $json[0].BuildDrop;
+          Write-Host "Base Build Drop: $buildDrop"
+          Write-Host "##vso[task.setvariable variable=BaseBuildDrop;isOutput=true]$buildDrop"
+
+          $runSettingsDrop = "RunSettings/${env:System_TeamProject}/${env:Build_DefinitionName}/${env:SourceBranch}/${env:Build_BuildId}"
+          Write-Host "Run Settings Drop: $runSettingsDrop"
+          Write-Host "##vso[task.setvariable variable=RunSettingsDrop]$runSettingsDrop"
+          Write-Host "##vso[task.setvariable variable=RunSettingsDrop;isOutput=true]$runSettingsDrop"
+        } catch {
+          Write-Host "##vso[task.LogIssue type=error;]Unable to set variables for DartLab: $_"
+          exit 1
         }
       } catch {
         Write-Host "##vso[task.LogIssue type=error;]$Error[0]"
@@ -185,10 +316,13 @@ steps:
 - task: MicroBuildBuildVSBootstrapper@3
   displayName: 'Build a Visual Studio bootstrapper for tests'
   inputs:
+    azureSubscription: 'VSEng-VSDrop-MI'
     channelName: "$(VsTargetChannelForTests)"
     vsMajorVersion: "$(VsTargetMajorVersion)"
     manifests: '$(Build.Repository.LocalPath)\artifacts\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
     outputFolder: '$(Build.Repository.LocalPath)\artifacts\VS15'
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
 - task: PowerShell@1
   displayName: "Set DartLab variables for tests"

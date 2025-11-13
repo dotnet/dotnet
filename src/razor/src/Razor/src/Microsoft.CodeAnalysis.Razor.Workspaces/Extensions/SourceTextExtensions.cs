@@ -60,8 +60,32 @@ internal static class SourceTextExtensions
         return new string(charBuffer, 0, span.Length);
     }
 
-    public static bool NonWhitespaceContentEquals(this SourceText text, SourceText other)
-        => NonWhitespaceContentEquals(text, other, 0, text.Length, 0, other.Length);
+    public static bool NonWhitespaceContentEquals(this SourceText text, ImmutableArray<TextChange> changes)
+    {
+        if (changes.IsEmpty)
+        {
+            return true;
+        }
+
+        // Determine the affected spans in the original and changed source texts
+        var firstChangeSpan = changes[0].Span;
+        var textStart = firstChangeSpan.Start;
+        var textEnd = firstChangeSpan.End;
+
+        for (var i = 1; i < changes.Length; i++)
+        {
+            var changeSpan = changes[i].Span;
+
+            textStart = Math.Min(textStart, changeSpan.Start);
+            textEnd = Math.Max(textEnd, changeSpan.End);
+        }
+
+        var changedText = text.WithChanges(changes);
+        var changedStart = textStart;
+        var changedEnd = textEnd + (changedText.Length - text.Length);
+
+        return text.NonWhitespaceContentEquals(changedText, textStart, textEnd, changedStart, changedEnd);
+    }
 
     public static bool NonWhitespaceContentEquals(
         this SourceText text,
@@ -317,13 +341,12 @@ internal static class SourceTextExtensions
 
         foreach (var line in text.Lines)
         {
-            var lineBreakSpan = TextSpan.FromBounds(line.End, line.EndIncludingLineBreak);
-            var lineBreak = line.Text?.ToString(lineBreakSpan) ?? string.Empty;
-            if (lineBreak == "\r\n")
+            var lineBreakLength = line.EndIncludingLineBreak - line.End;
+            if (lineBreakLength == 2)
             {
                 crlfCount++;
             }
-            else if (lineBreak == "\n")
+            else if (lineBreakLength != 0)
             {
                 lfCount++;
             }
@@ -332,6 +355,16 @@ internal static class SourceTextExtensions
         return lfCount > crlfCount;
     }
 
+    /// <summary>
+    /// Wrapper for Roslyn's GetTextChanges method that returns an immutable array
+    /// </summary>
+    /// <remarks>
+    /// Roslyn has a ChangedText class, which doesn't realise changes to a SourceText, but instead just keeps track
+    /// of them. It also adds an optimization to the GetTextChanges method that means it will not necessarily compute changes
+    /// but rather re-use the existing tracked changes. Those things combined means the exact nature of individual changes
+    /// made to a SourceText can affect the output of this method. For consistent results across multiple systems, consider
+    /// calling our SourceTextDiffer instead.
+    /// </remarks>
     public static ImmutableArray<TextChange> GetTextChangesArray(this SourceText newText, SourceText oldText)
     {
         var list = newText.GetTextChanges(oldText);

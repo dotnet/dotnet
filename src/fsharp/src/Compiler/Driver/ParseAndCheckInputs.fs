@@ -215,7 +215,7 @@ let PostParseModuleSpec (_i, defaultNamespace, isLastCompiland, fileName, intf) 
 
         SynModuleOrNamespaceSig(lid, isRecursive, kind, decls, xmlDoc, attributes, None, range, trivia)
 
-let private finishPreprocessing lexbuf diagnosticOptions isScript submoduleRanges =
+let FinishPreprocessing lexbuf diagnosticOptions isScript submoduleRanges =
     WarnScopes.MergeInto diagnosticOptions isScript submoduleRanges lexbuf
     LineDirectives.add lexbuf.StartPos.FileIndex (LineDirectiveStore.GetLineDirectives lexbuf)
 
@@ -276,7 +276,7 @@ let PostParseModuleImpls
 
     let isScript = IsScript fileName
 
-    finishPreprocessing lexbuf diagnosticOptions isScript (getImplSubmoduleRanges impls)
+    FinishPreprocessing lexbuf diagnosticOptions isScript (getImplSubmoduleRanges impls)
 
     let trivia = collectParsedInputTrivia lexbuf
 
@@ -310,7 +310,7 @@ let PostParseModuleSpecs
         identifiers: Set<string>
     ) =
 
-    finishPreprocessing lexbuf diagnosticOptions false (getSpecSubmoduleRanges specs)
+    FinishPreprocessing lexbuf diagnosticOptions false (getSpecSubmoduleRanges specs)
 
     let trivia = collectParsedInputTrivia lexbuf
 
@@ -1786,7 +1786,7 @@ let CheckMultipleInputsUsingGraphMode
                 (idx, friendlyFileName))
             |> Graph.writeMermaidToFile graphFile)
 
-    let _ = ctok // TODO Use it
+    ignore ctok // TODO Use it
     let diagnosticsLogger = DiagnosticsThreadStatics.DiagnosticsLogger
 
     // In the first linear part of parallel checking, we use a 'checkForErrors' that checks either for errors
@@ -1881,7 +1881,11 @@ let CheckClosedInputSet (ctok, checkForErrors, tcConfig: TcConfig, tcImports, tc
     // tcEnvAtEndOfLastFile is the environment required by fsi.exe when incrementally adding definitions
     let results, tcState =
         match tcConfig.typeCheckingConfig.Mode with
-        | TypeCheckingMode.Graph when (not tcConfig.isInteractive && not tcConfig.compilingFSharpCore) ->
+        | TypeCheckingMode.Graph when
+            (not tcConfig.isInteractive
+             && not tcConfig.compilingFSharpCore
+             && not tcConfig.deterministic)
+            ->
             CheckMultipleInputsUsingGraphMode(
                 ctok,
                 checkForErrors,

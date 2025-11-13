@@ -47,6 +47,7 @@
       <TestXmlOutputPath>$(ScenarioTestsResultsDir)$([System.DateTime]::Now.ToString("yyyy-MM-dd_HH_mm_ss")).xml</TestXmlOutputPath>
       <ScenarioTestsAdditionalArgs>--xml $(TestXmlOutputPath) --target-rid $(TargetRid) --portable-rid $(PortableTargetRid) --no-cleanup --no-traits Category=MultiTFM</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNonTargetRidPackages</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == 'true'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresPortableAssets</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnlyUnofficialBuild</ScenarioTestsAdditionalArgs>
     </PropertyGroup>
 

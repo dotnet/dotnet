@@ -187,13 +187,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
     private static void PostProcessImportedDirectives(DocumentIntermediateNode document)
     {
-        using var _ = ReferenceEqualityHashSetPool<DirectiveDescriptor>.GetPooledObject(out var seenDirectives);
-        var directives = document.FindDescendantReferences<DirectiveIntermediateNode>();
+        using var _ = SpecializedPools.GetPooledReferenceEqualityHashSet<DirectiveDescriptor>(out var seenDirectives);
+        var references = document.FindDescendantReferences<DirectiveIntermediateNode>();
 
-        for (var i = directives.Length - 1; i >= 0; i--)
+        for (var i = references.Length - 1; i >= 0; i--)
         {
-            var reference = directives[i];
-            var directive = (DirectiveIntermediateNode)reference.Node;
+            var reference = references[i];
+            var directive = reference.Node;
             var descriptor = directive.Directive;
             var seenDirective = !seenDirectives.Add(descriptor);
 
@@ -595,12 +595,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.Prefix?.LiteralTokens,
                 node.Value?.LiteralTokens);
 
-            var rewritten = node.Prefix?.Update(valueTokens, node.Prefix.ChunkGenerator) ?? node.Value?.Update(valueTokens, node.Value.ChunkGenerator);
+            var rewritten = node.Prefix?.Update(valueTokens) ?? node.Value?.Update(valueTokens);
+
             rewritten = (MarkupTextLiteralSyntax)rewritten?.Green.CreateRed(node, node.Position);
 
-            if (rewritten.GetEditHandler() is { } originalEditHandler)
+            if (rewritten.EditHandler is { } originalEditHandler)
             {
-                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance).WithEditHandler(originalEditHandler);
+                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance, originalEditHandler);
             }
 
             return rewritten;
@@ -633,7 +634,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             if (!_options.AllowConditionalDataDashAttributes && name.StartsWith("data-", StringComparison.OrdinalIgnoreCase))
@@ -658,14 +660,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             builder.AddRange(mergedValue.LiteralTokens);
                         }
 
-                        var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
+                        var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList());
 
                         var mergedLiterals = MergeTokenLists(
                             prefix?.LiteralTokens,
                             rewritten.LiteralTokens,
                             node.ValueSuffix?.LiteralTokens);
 
-                        var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                        var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals).Green.CreateRed(node.Parent, node.Position);
                         Visit(mergedAttribute);
 
                         return;
@@ -704,7 +706,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NamePrefix?.LiteralTokens,
                 node.Name?.LiteralTokens);
 
-            var literal = SyntaxFactory.MarkupTextLiteral(literals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+            var literal = SyntaxFactory.MarkupTextLiteral(literals).Green.CreateRed(node.Parent, node.Position);
 
             Visit(literal);
         }
@@ -889,7 +891,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -1032,13 +1034,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 TagName = tagName,
                 TagMode = info.TagMode,
-                Source = BuildSourceSpanFromNode(node)
+                Source = BuildSourceSpanFromNode(node),
+                TagHelpers = info.BindingResult.Descriptors
             };
-
-            foreach (var tagHelper in info.BindingResult.Descriptors)
-            {
-                tagHelperNode.TagHelpers.Add(tagHelper);
-            }
 
             _builder.Push(tagHelperNode);
 
@@ -1084,34 +1082,25 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    var associatedAttributeDescriptor = associatedDescriptor.BoundAttributes.First(a =>
-                    {
-                        return TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, a);
-                    });
-
-                    var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-
-                    if (!expectsBooleanValue)
+                    if (!match.ExpectsBooleanValue)
                     {
                         // We do not allow minimized non-boolean bound attributes.
                         return;
                     }
 
-                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
                         AttributeName = attributeName,
-                        BoundAttribute = associatedAttributeDescriptor,
-                        TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = null,
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Add(setTagHelperProperty);
@@ -1136,31 +1125,18 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var attributeName = node.Name.GetContent();
             var attributeValueNode = node.Value;
 
-            using var associatedDescriptorsWithSatisfyingAttribute = new PooledArrayBuilder<(TagHelperDescriptor, BoundAttributeDescriptor)>();
-            foreach (var descriptor in descriptors)
-            {
-                foreach (var attributeDescriptor in descriptor.BoundAttributes)
-                {
-                    if (TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor))
-                    {
-                        associatedDescriptorsWithSatisfyingAttribute.Add((descriptor, attributeDescriptor));
-                        break;
-                    }
-                }
-            }
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
 
-            if (associatedDescriptorsWithSatisfyingAttribute.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var (associatedDescriptor, associatedAttributeDescriptor) in associatedDescriptorsWithSatisfyingAttribute)
+                foreach (var match in matches)
                 {
-                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
                         AttributeName = attributeName,
-                        BoundAttribute = associatedAttributeDescriptor,
-                        TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = BuildSourceSpanFromNode(attributeValueNode),
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Push(setTagHelperProperty);
@@ -1210,7 +1186,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(mergedValue.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
@@ -1222,7 +1198,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
@@ -1234,12 +1210,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var literal in expressionLiteralArray)
                 {
                     generator = literal.ChunkGenerator;
-                    editHandler = literal.GetEditHandler();
+                    editHandler = literal.EditHandler;
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
-                rewritten = editHandler != null ? rewritten.WithEditHandler(editHandler) : rewritten;
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator, editHandler).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else
@@ -1406,7 +1381,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 new SyntaxTokenList(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             _builder.Push(new HtmlAttributeIntermediateNode()
@@ -1428,7 +1404,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NamePrefix?.LiteralTokens,
                 node.Name.LiteralTokens);
 
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var position = node.NamePrefix?.Position ?? node.Name.Position;
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, position);
 
             var name = node.Name.GetContent();
             _builder.Add(new HtmlAttributeIntermediateNode()
@@ -1518,7 +1495,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            var context = node.GetEditHandler();
+            var context = node.EditHandler;
             if (node.ChunkGenerator == SpanChunkGenerator.Null)
             {
                 return;
@@ -1725,7 +1702,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -1775,13 +1752,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 TagName = tagName,
                 TagMode = info.TagMode,
-                Source = BuildSourceSpanFromNode(node)
+                Source = BuildSourceSpanFromNode(node),
+                TagHelpers = info.BindingResult.Descriptors,
+                StartTagSpan = node.StartTag.Name.GetSourceSpan(SourceDocument)
             };
-
-            foreach (var tagHelper in info.BindingResult.Descriptors)
-            {
-                tagHelperNode.TagHelpers.Add(tagHelper);
-            }
 
             if (node.StartTag != null &&
                 // We only want this error during the second phase of the two phase compilation.
@@ -1856,43 +1830,29 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out _,
-                        out _))
+                    if (!match.ExpectsBooleanValue)
                     {
-                        var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-
-                        if (!expectsBooleanValue)
-                        {
-                            // We do not allow minimized non-boolean bound attributes.
-                            return;
-                        }
-
-                        var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
-                        {
-                            AttributeName = attributeName,
-                            BoundAttribute = associatedAttributeDescriptor,
-                            TagHelper = associatedDescriptor,
-                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                            Source = null,
-                            IsIndexerNameMatch = indexerMatch,
-                        };
-
-                        setTagHelperProperty.OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name);
-
-                        _builder.Add(setTagHelperProperty);
+                        // We do not allow minimized non-boolean bound attributes.
+                        return;
                     }
+
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
+                    {
+                        AttributeName = attributeName,
+                        AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                        Source = null,
+                        OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                    };
+
+                    _builder.Add(setTagHelperProperty);
                 }
             }
             else
@@ -1919,72 +1879,40 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var element = node.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.FullName;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                var directiveAttributeName = new DirectiveAttributeName(attributeName);
+
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out var parameterMatch,
-                        out var associatedAttributeParameterDescriptor))
+                    if (!match.ExpectsBooleanValue)
                     {
-                        // Directive attributes should start with '@' unless the descriptors are misconfigured.
-                        // In that case, we would have already logged an error.
-                        var actualAttributeName = attributeName.StartsWith("@", StringComparison.Ordinal) ? attributeName.Substring(1) : attributeName;
-
-                        IntermediateNode attributeNode;
-                        if (parameterMatch &&
-                            TagHelperMatchingConventions.TryGetBoundAttributeParameter(actualAttributeName, out var attributeNameWithoutParameter))
-                        {
-                            var expectsBooleanValue = associatedAttributeParameterDescriptor.IsBooleanProperty;
-                            if (!expectsBooleanValue)
-                            {
-                                // We do not allow minimized non-boolean bound attributes.
-                                return;
-                            }
-
-                            attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
-                                OriginalAttributeName = attributeName,
-                                BoundAttributeParameter = associatedAttributeParameterDescriptor,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                IsIndexerNameMatch = indexerMatch,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = null,
-                            };
-                        }
-                        else
-                        {
-                            var expectsBooleanValue = associatedAttributeDescriptor.ExpectsBooleanValue(attributeName);
-                            if (!expectsBooleanValue)
-                            {
-                                // We do not allow minimized non-boolean bound attributes.
-                                return;
-                            }
-
-                            attributeNode = new TagHelperDirectiveAttributeIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                OriginalAttributeName = attributeName,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = null,
-                                IsIndexerNameMatch = indexerMatch,
-                            };
-                        }
-
-                        _builder.Add(attributeNode);
+                        // We do not allow minimized non-boolean bound attributes.
+                        return;
                     }
+
+                    IntermediateNode attributeNode = match.IsParameterMatch && directiveAttributeName.HasParameter
+                        ? new TagHelperDirectiveAttributeParameterIntermediateNode(match)
+                        {
+                            AttributeName = directiveAttributeName.Text,
+                            AttributeNameWithoutParameter = directiveAttributeName.TextWithoutParameter,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = null
+                        }
+                        : new TagHelperDirectiveAttributeIntermediateNode(match)
+                        {
+                            AttributeName = directiveAttributeName.Text,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = null,
+                        };
+
+                    _builder.Add(attributeNode);
                 }
             }
             else
@@ -2005,37 +1933,25 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
             var attributeValueNode = node.Value;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
+
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out _,
-                        out _))
+                    var setTagHelperProperty = new TagHelperPropertyIntermediateNode(match)
                     {
-                        var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
-                        {
-                            AttributeName = attributeName,
-                            BoundAttribute = associatedAttributeDescriptor,
-                            TagHelper = associatedDescriptor,
-                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                            Source = BuildSourceSpanFromNode(attributeValueNode),
-                            IsIndexerNameMatch = indexerMatch,
-                        };
+                        AttributeName = attributeName,
+                        AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                        Source = BuildSourceSpanFromNode(attributeValueNode),
+                        OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                    };
 
-                        setTagHelperProperty.OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name);
-
-                        _builder.Push(setTagHelperProperty);
-                        VisitAttributeValue(attributeValueNode);
-                        _builder.Pop();
-                    }
+                    _builder.Push(setTagHelperProperty);
+                    VisitAttributeValue(attributeValueNode);
+                    _builder.Pop();
                 }
             }
             else
@@ -2059,62 +1975,37 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var attributeName = node.FullName;
             var attributeValueNode = node.Value;
 
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
+            using var matches = new PooledArrayBuilder<TagHelperAttributeMatch>();
+            TagHelperMatchingConventions.GetAttributeMatches(descriptors, attributeName, ref matches.AsRef());
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            if (matches.Any() && _renderedBoundAttributeNames.Add(attributeName))
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                var directiveAttributeName = new DirectiveAttributeName(attributeName);
+
+                foreach (var match in matches)
                 {
-                    if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        associatedDescriptor,
-                        attributeName,
-                        out var associatedAttributeDescriptor,
-                        out var indexerMatch,
-                        out var parameterMatch,
-                        out var associatedAttributeParameterDescriptor))
-                    {
-                        // Directive attributes should start with '@' unless the descriptors are misconfigured.
-                        // In that case, we would have already logged an error.
-                        var actualAttributeName = attributeName.StartsWith("@", StringComparison.Ordinal) ? attributeName.Substring(1) : attributeName;
-
-                        IntermediateNode attributeNode;
-                        if (parameterMatch &&
-                            TagHelperMatchingConventions.TryGetBoundAttributeParameter(actualAttributeName, out var attributeNameWithoutParameter))
+                    IntermediateNode attributeNode = match.IsParameterMatch && directiveAttributeName.HasParameter
+                        ? new TagHelperDirectiveAttributeParameterIntermediateNode(match)
                         {
-                            attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
-                                OriginalAttributeName = attributeName,
-                                BoundAttributeParameter = associatedAttributeParameterDescriptor,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                IsIndexerNameMatch = indexerMatch,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = BuildSourceSpanFromNode(attributeValueNode),
-                                OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
-                            };
+                            AttributeName = directiveAttributeName.Text,
+                            AttributeNameWithoutParameter = directiveAttributeName.TextWithoutParameter,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = BuildSourceSpanFromNode(attributeValueNode),
+                            OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
                         }
-                        else
+                        : new TagHelperDirectiveAttributeIntermediateNode(match)
                         {
-                            attributeNode = new TagHelperDirectiveAttributeIntermediateNode()
-                            {
-                                AttributeName = actualAttributeName,
-                                OriginalAttributeName = attributeName,
-                                BoundAttribute = associatedAttributeDescriptor,
-                                TagHelper = associatedDescriptor,
-                                AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
-                                Source = BuildSourceSpanFromNode(attributeValueNode),
-                                IsIndexerNameMatch = indexerMatch,
-                                OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
-                            };
-                        }
+                            AttributeName = directiveAttributeName.Text,
+                            OriginalAttributeName = attributeName,
+                            AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
+                            Source = BuildSourceSpanFromNode(attributeValueNode),
+                            OriginalAttributeSpan = BuildSourceSpanFromNode(node.Name)
+                        };
 
-                        _builder.Push(attributeNode);
-                        VisitAttributeValue(attributeValueNode);
-                        _builder.Pop();
-                    }
+                    _builder.Push(attributeNode);
+                    VisitAttributeValue(attributeValueNode);
+                    _builder.Pop();
                 }
             }
             else
@@ -2159,7 +2050,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     valueTokens.AddRange(mergedValue.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<MarkupTextLiteralSyntax>(out var markupLiteralArray))
@@ -2171,7 +2062,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
@@ -2183,16 +2074,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var literal in expressionLiteralArray)
                 {
                     generator = literal.ChunkGenerator;
-                    editHandler = literal.GetEditHandler();
+                    editHandler = literal.EditHandler;
                     builder.AddRange(literal.LiteralTokens);
                 }
 
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
-
-                if (editHandler != null)
-                {
-                    rewritten = rewritten.WithEditHandler(editHandler);
-                }
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator, editHandler).Green.CreateRed(node.Parent, position);
 
                 Visit(rewritten);
             }
@@ -2223,6 +2109,22 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     source.EndCharacterIndex);
             }
         }
+    }
+
+    private ref struct DirectiveAttributeName(string original)
+    {
+        // Directive attributes should start with '@' unless the descriptors are misconfigured.
+        // In that case, we would have already logged an error.
+        public readonly ReadOnlySpan<char> Span = original.StartsWith('@') ? original.AsSpan()[1..] : original;
+
+        public string Text => field ??= (Span.Length < original.Length ? Span.ToString() : original);
+
+        private bool? _hasParameter;
+
+        public bool HasParameter => _hasParameter ??= Span.IndexOf(':') >= 0;
+
+        public string TextWithoutParameter
+            => field ??= Span.IndexOf(':') is int index && index >= 0 ? Span[..index].ToString() : Text;
     }
 
     private class ComponentImportFileKindVisitor : LoweringVisitor

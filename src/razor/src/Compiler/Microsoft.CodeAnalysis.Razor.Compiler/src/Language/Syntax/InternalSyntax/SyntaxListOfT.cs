@@ -5,9 +5,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
+[CollectionBuilder(typeof(SyntaxList), methodName: "Create")]
 internal struct SyntaxList<TNode> : IEquatable<SyntaxList<TNode>>
     where TNode : GreenNode
 {

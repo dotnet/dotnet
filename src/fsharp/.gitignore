@@ -74,6 +74,7 @@ launchSettings.json
 *.jrs
 *.chk
 *.bak
+*.out
 *.vserr
 *.err
 *.orig
@@ -141,7 +142,19 @@ positive.exe
 
 # Test result files
 tests/**/TestResults/*.trx
+TestResults/*.trx
 
 # Standard output/error files in root directory
 StandardOutput.txt
 StandardError.txt
+**/TestResults/
+
+# CompilerCompat test project generated files
+tests/projects/CompilerCompat/**/nuget.config
+tests/projects/CompilerCompat/**/global.json
+tests/projects/CompilerCompat/**/*.deps.json
+tests/projects/CompilerCompat/**/*.xml
+tests/projects/CompilerCompat/local-nuget-packages/
+tests/projects/CompilerCompat/lib-output-*/
+tests/projects/CompilerCompat/**/bin/
+tests/projects/CompilerCompat/**/obj/

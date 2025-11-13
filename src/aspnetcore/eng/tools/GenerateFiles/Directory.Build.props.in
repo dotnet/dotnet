@@ -1,8 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <DefaultNetCoreTargetFramework>${DefaultNetCoreTargetFramework}</DefaultNetCoreTargetFramework>
-    <ArtifactsShippingPackagesDir>${ArtifactsShippingPackagesDir}</ArtifactsShippingPackagesDir>
-    <TreatWarningsAsErrors Condition="'$(BuildingInsideVisualStudio)' != 'true'">true</TreatWarningsAsErrors>
-    <LibNetHostAppPackVersion Condition=" '$(LibNetHostAppPackVersion)' == '' ">${LibNetHostAppPackVersion}</LibNetHostAppPackVersion>
-  </PropertyGroup>
-</Project>

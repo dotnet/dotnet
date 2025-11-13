@@ -25,7 +25,7 @@ internal sealed class TestProjectSnapshot : IProjectSnapshot
     public static TestProjectSnapshot Create(string filePath, ProjectWorkspaceState? projectWorkspaceState = null)
     {
         var hostProject = TestHostProject.Create(filePath);
-        var state = ProjectState.Create(hostProject, RazorCompilerOptions.None, ProjectEngineFactories.DefaultProvider);
+        var state = ProjectState.Create(hostProject, ProjectEngineFactories.DefaultProvider);
 
         if (projectWorkspaceState is not null)
         {

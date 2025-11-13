@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">모두</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">HTTP 원본으로 푸시할 수 있습니다(안전하지 않음).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -95,6 +95,11 @@
       <trans-unit id="App_FullName">
         <source>NuGet Command Line</source>
         <target state="translated">NuGet Command Line</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -164,7 +169,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0}(예/아니요) </target>
+        <target state="translated">{0}(y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +251,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">'{0}'에 대한 PackageReference를 추가하지 못했습니다. 동일한 이름의 ProjectReference가 이미 존재하며, 이름이 같은 패키지는 프로젝트에 추가할 수 없습니다.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">'{0}'에 대해 확인된 패키지를 찾을 수 없습니다. 도구 오류입니다. https://github.com/NuGet/Home에서 문제를 제출하세요.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -278,6 +283,12 @@
         <source>Failed to obtain a search resource.</source>
         <target state="translated">검색 리소스를 가져오지 못했습니다.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="translated">{0}: 패키지 {1}은(는) SDK에 의해 암시적으로 추가되며 독립적으로 업그레이드할 수 없습니다.</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
       </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
@@ -323,8 +334,8 @@ Do not translate "PackageVersion"</note>
       <trans-unit id="Error_HttpServerUsage_MultipleSources">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">{1} 'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다.
-NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+        <target state="translated">'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다. {1}
+NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -341,6 +352,11 @@ NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.C
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
         <target state="translated">지정된 소스 '{0}'이(가) 올바르지 않습니다. 유효한 소스를 제공하세요.</target>
         <note>0 - The invalid source.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidVersion">
+        <source>Invalid version value '{0}'.</source>
+        <target state="new">Invalid version value '{0}'.</target>
+        <note>0 - package version</note>
       </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
         <source>Invalid version range '{0}'</source>
@@ -387,11 +403,10 @@ NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.C
         <target state="translated">`{0}` 프로젝트는 NuGet 패키지에 대한 package.config를 사용합니다. 명령은 패키지 참조 프로젝트에서만 작동합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">프로젝트 {0}에서 패키지 {1}을(를) 참조하지 않습니다.</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="translated">패키지 원본 매핑이 사용하도록 설정되어 있지만 패키지 {0}에 대한 매핑을 찾을 수 없습니다. 자세한 내용은 https://aka.ms/nuget/psm을 참조하세요.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -400,7 +415,7 @@ NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.C
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
         <source>The specified path '{0}' does not exist.</source>
-        <target state="translated">지정된 경로 '{0}'이(가) 없습니다.</target>
+        <target state="translated">지정한 경로 '{0}'이(가) 없습니다.</target>
         <note>0 - path</note>
       </trans-unit>
       <trans-unit id="Error_PkgMissingArgument">
@@ -573,7 +588,7 @@ NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.C
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
-        <target state="translated">'--outdated', '--deprecated' 및 '--vulnerable' 옵션은 함께 사용할 수 없습니다.</target>
+        <target state="translated">옵션 '--outdated', '--deprecated' 및 '--vulnerable'는 결합할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOutputFormat">
@@ -886,10 +901,35 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">프로젝트, 솔루션 파일 또는 디렉터리의 경로입니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
+        <source>Upgrade packages with known vulnerabilities.</source>
+        <target state="translated">알려진 취약점이 있는 패키지를 업그레이드하세요.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
         <source>All packages are already up to date.</source>
-        <target state="new">All packages are already up to date.</target>
+        <target state="translated">모든 패키지가 이미 최신 상태입니다.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
+        <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
+        <target state="translated">패키지 {0}의 모든 버전에는 보안 권고가 있습니다. 업데이트할 취약하지 않은 버전을 찾을 수 없습니다.</target>
+        <note>{0}: package id</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AlreadyUpToDate">
+        <source>All packages are up to date</source>
+        <target state="translated">모든 패키지가 최신 상태입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditDisabled">
+        <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">이 명령을 사용하려면 현재 NuGetAudit을 사용하도록 설정해야 합니다. 자세한 내용은 https://aka.ms/nuget/audit를 참조하세요.</target>
+        <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditModeIsDirect">
+        <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">NuGetAuditMode가 direct로 설정되어 있어, 알려진 취약점이 있는 전이적 패키지는 업데이트되지 않습니다. 자세한 내용은 https://aka.ms/nuget/audit를 참조하세요.</target>
+        <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
@@ -905,6 +945,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
         <target state="translated">프로젝트를 로드하는 중입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_NoVulnerablePackages">
+        <source>No upgradable packages have known vulnerabilities.</source>
+        <target state="translated">알려진 취약성이 있는 업그레이드 가능한 패키지가 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -923,8 +968,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
-        <source>Updated {0} {1} to {2}.</source>
-        <target state="translated">{0} {1}에서 {2}(으)로 업데이트되었습니다.</target>
+        <source>Updating {0} {1} to {2}.</source>
+        <target state="translated">{0} {1}을(를) {2}(으)로 업데이트하는 중입니다.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -933,6 +978,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <source>Updating outdated packages in {0}.</source>
         <target state="translated">{0}에서 오래된 패키지를 업데이트하는 중입니다.</target>
         <note>{0}: the project or solution that is being updated</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
+        <source>Updating packages with security advisories in {0}</source>
+        <target state="translated">{0}에서 보안 권고가 있는 패키지를 업데이트하는 중</target>
+        <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
@@ -1256,11 +1306,6 @@ The search is a case-insensitive string comparison using the supplied value, whi
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">제거할 기존 신뢰할 수 있는 서명자의 이름입니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">지원되지 않음: 패키지 원본 매핑을 사용하는 프로젝트는 아직 지원되지 않음</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">

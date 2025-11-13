@@ -38,7 +38,7 @@ namespace NuGet.Resolver.Test
             var packages = resolver.Resolve(context, CancellationToken.None).ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(3, packages.Count());
+            Assert.Equal(3, packages.Count);
             Assert.Equal("1.0.0", packages["A"].Version.ToNormalizedString());
             Assert.Equal("2.0.0", packages["B"].Version.ToNormalizedString());
             Assert.Equal("3.0.0", packages["C"].Version.ToNormalizedString());
@@ -295,7 +295,7 @@ namespace NuGet.Resolver.Test
             var packages = resolver.Resolve(context, CancellationToken.None).ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(4, packages.Count());
+            Assert.Equal(4, packages.Count);
             Assert.NotNull(packages["A"]);
             Assert.NotNull(packages["B"]);
             Assert.NotNull(packages["C"]);
@@ -332,7 +332,7 @@ namespace NuGet.Resolver.Test
             var packages = resolver.Resolve(context, CancellationToken.None).ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(4, packages.Count());
+            Assert.Equal(4, packages.Count);
             Assert.NotNull(packages["A"]);
             Assert.NotNull(packages["B"]);
             Assert.NotNull(packages["C"]);
@@ -358,7 +358,7 @@ namespace NuGet.Resolver.Test
             var packages = resolver.Resolve(context, CancellationToken.None).ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(1, packages.Count());
+            Assert.Equal(1, packages.Count);
             Assert.NotNull(packages["A"]);
         }
 
@@ -390,7 +390,7 @@ namespace NuGet.Resolver.Test
             var packages = resolver.Resolve(context, CancellationToken.None).ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(4, packages.Count());
+            Assert.Equal(4, packages.Count);
             Assert.NotNull(packages["A"]);
             Assert.NotNull(packages["B"]);
             Assert.NotNull(packages["C"]);
@@ -435,7 +435,7 @@ namespace NuGet.Resolver.Test
             var packages = solution.ToDictionary(p => p.Id);
 
             // Assert
-            Assert.Equal(5, packages.Count());
+            Assert.Equal(5, packages.Count);
 
             Assert.Equal("1.0.0", packages["A"].Version.ToNormalizedString());
             Assert.Equal("1.0.0", packages["B"].Version.ToNormalizedString());
@@ -781,7 +781,7 @@ namespace NuGet.Resolver.Test
             var context = CreatePackageResolverContext(DependencyBehavior.Lowest, target, possible);
             var solution = resolver.Resolve(context, CancellationToken.None).ToList();
 
-            Assert.Equal(2, solution.Count());
+            Assert.Equal(2, solution.Count);
         }
 
         [Fact]

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -40,7 +41,7 @@ public class RazorTagHelperParsingBenchmark
         BlazorServerTagHelpersDemoFile = fileSystem.GetItem(Path.Combine(blazorServerTagHelpersFilePath), RazorFileKind.Component);
 
         ComponentDirectiveVisitor = new ComponentDirectiveVisitor();
-        ComponentDirectiveVisitor.Initialize(blazorServerTagHelpersFilePath, tagHelpers, currentNamespace: null);
+        ComponentDirectiveVisitor.Initialize(tagHelpers, blazorServerTagHelpersFilePath, currentNamespace: null);
         var codeDocument = ProjectEngine.ProcessDesignTime(BlazorServerTagHelpersDemoFile);
         SyntaxTree = codeDocument.GetRequiredSyntaxTree();
     }
@@ -68,12 +69,12 @@ public class RazorTagHelperParsingBenchmark
         return JsonDataConvert.DeserializeTagHelperArray(reader);
     }
 
-    private sealed class StaticTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
+    private sealed class StaticTagHelperFeature(IReadOnlyList<TagHelperDescriptor> descriptors)
+        : RazorEngineFeatureBase, ITagHelperFeature
     {
-        public StaticTagHelperFeature(IReadOnlyList<TagHelperDescriptor> descriptors) => Descriptors = descriptors;
+        public IReadOnlyList<TagHelperDescriptor> Descriptors { get; } = descriptors;
 
-        public IReadOnlyList<TagHelperDescriptor> Descriptors { get; }
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors() => Descriptors;
+        public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
+            => Descriptors;
     }
 }

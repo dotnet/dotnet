@@ -141,7 +141,7 @@ namespace NuGet.Packaging.Test
                 var reader = new PackagesConfigReader(xml);
 
                 var packages = reader.GetPackages().ToArray();
-                Assert.Equal("1", packages.Count().ToString());
+                Assert.Equal("1", packages.Length.ToString());
                 Assert.Equal("packageA", packages[0].PackageIdentity.Id);
                 Assert.Equal("2.0.0", packages[0].PackageIdentity.Version.ToNormalizedString());
                 Assert.Equal("portable-net45+win8", packages[0].TargetFramework.GetShortFolderName());
@@ -181,7 +181,7 @@ namespace NuGet.Packaging.Test
                 var reader = new PackagesConfigReader(xml);
 
                 var packages = reader.GetPackages().ToArray();
-                Assert.Equal("1", packages.Count().ToString());
+                Assert.Equal("1", packages.Length.ToString());
                 Assert.Equal("packageA", packages[0].PackageIdentity.Id);
                 Assert.Equal("3.0.1", packages[0].PackageIdentity.Version.ToNormalizedString());
                 Assert.Equal("dnxcore50", packages[0].TargetFramework.GetShortFolderName());
@@ -231,7 +231,7 @@ namespace NuGet.Packaging.Test
                 // Assert
 
                 var packages = reader.GetPackages().ToArray();
-                Assert.Equal("1", packages.Count().ToString());
+                Assert.Equal("1", packages.Length.ToString());
                 Assert.Equal("packageA", packages[0].PackageIdentity.Id);
                 Assert.Equal("3.0.1", packages[0].PackageIdentity.Version.ToNormalizedString());
                 Assert.Equal("dnxcore50", packages[0].TargetFramework.GetShortFolderName());
@@ -296,7 +296,7 @@ namespace NuGet.Packaging.Test
                 var reader = new PackagesConfigReader(xml);
 
                 var packages = reader.GetPackages().ToArray();
-                Assert.Equal("1", packages.Count().ToString());
+                Assert.Equal("1", packages.Length.ToString());
                 Assert.Equal("packageA", packages[0].PackageIdentity.Id);
                 Assert.Equal("1.0.1", packages[0].PackageIdentity.Version.ToNormalizedString());
                 Assert.Equal("net45", packages[0].TargetFramework.GetShortFolderName());

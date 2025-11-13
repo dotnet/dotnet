@@ -84,7 +84,7 @@ stages:
         LclSource: lclFilesfromPackage
         LclPackageId: 'LCL-JUNO-PROD-NuGetClient'
         MirrorRepo: 'NuGet.Client'
-        MirrorBranch: ${{ variables['Build.SourceBranchName'] }}
+        MirrorBranch: ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}
         GitHubOrg: 'NuGet'
 
 - stage: StaticSourceAnalysis
@@ -173,7 +173,7 @@ stages:
         displayName: 'Publish the .runsettings files to artifact services'
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)'
+        buildNumber: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
         sourcePath: 'artifacts\RunSettings'
         toLowerCase: false
         usePat: true
@@ -185,7 +185,7 @@ stages:
         displayName: 'OptProfV2:  publish profiling inputs to artifact services'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)'
+        buildNumber: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
         sourcePath: '$(Build.ArtifactStagingDirectory)\OptProf\ProfilingInputs'
         toLowerCase: false
         usePat: true
@@ -208,7 +208,7 @@ stages:
         displayName: 'Upload VSTS Drop'
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildNumber)'
         sourcePath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         toLowerCase: false
         usePat: true
@@ -217,7 +217,7 @@ stages:
       - output: pipelineArtifact
         displayName: 'LocValidation: Publish Logs as an artifact'
         condition: "succeededOrFailed()"
-        artifactName: LocValidationLogs
+        artifactName: LocValidationLogs - Attempt $(System.JobAttempt)
         targetPath: "$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs"
         sbomEnabled: true
 

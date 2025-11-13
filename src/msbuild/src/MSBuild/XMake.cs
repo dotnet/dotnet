@@ -716,6 +716,9 @@ namespace Microsoft.Build.CommandLine
 #endif
 
                 GatherAllSwitches(commandLine, out var switchesFromAutoResponseFile, out var switchesNotFromAutoResponseFile, out _);
+
+                CommunicationsUtilities.Trace($"Command line parameters: {commandLine}");
+
                 bool buildCanBeInvoked = ProcessCommandLineSwitches(
                                             switchesFromAutoResponseFile,
                                             switchesNotFromAutoResponseFile,
@@ -1251,6 +1254,8 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private static uint? s_originalConsoleMode = null;
 
+        private const int MAX_MULTITHREADED_CPU_COUNT_FOR_TASK_HOST = 256;
+
         /// <summary>
         /// Initializes the build engine, and starts the project building.
         /// </summary>
@@ -1301,6 +1306,12 @@ namespace Microsoft.Build.CommandLine
             string[] commandLine)
 #endif
         {
+            // Set limitation for multithreaded and MSBUILDFORCEALLTASKSOUTOFPROC=1. Max is 256 because of unique task host id generation.
+            if (multiThreaded && Traits.Instance.ForceAllTasksOutOfProcToTaskHost)
+            {
+                ErrorUtilities.VerifyThrowArgument(cpuCount <= MAX_MULTITHREADED_CPU_COUNT_FOR_TASK_HOST, "MaxCpuCountTooLargeForMultiThreadedAndForceAllTasksOutOfProc", MAX_MULTITHREADED_CPU_COUNT_FOR_TASK_HOST);
+            }
+
             if (FileUtilities.IsVCProjFilename(projectFile) || FileUtilities.IsDspFilename(projectFile))
             {
                 InitializationException.Throw(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("XMake.ProjectUpgradeNeededToVcxProj", projectFile), null);
@@ -1321,8 +1332,6 @@ namespace Microsoft.Build.CommandLine
 
                 // Targeted perf optimization for the case where we only have our own parallel console logger, and verbosity is quiet. In such a case
                 // we know we won't emit any messages except for errors and warnings, so the engine should not bother even logging them.
-                // If we're using the original serial console logger we can't do this, as it shows project started/finished context
-                // around errors and warnings.
                 // Telling the engine to not bother logging non-critical messages means that typically it can avoid loading any resources in the successful
                 // build case.
                 if (loggers.Length == 1 &&
@@ -1330,7 +1339,6 @@ namespace Microsoft.Build.CommandLine
                     verbosity == LoggerVerbosity.Quiet &&
                     loggers[0].Parameters != null &&
                     loggers[0].Parameters.IndexOf("ENABLEMPLOGGING", StringComparison.OrdinalIgnoreCase) != -1 &&
-                    loggers[0].Parameters.IndexOf("DISABLEMPLOGGING", StringComparison.OrdinalIgnoreCase) == -1 &&
                     loggers[0].Parameters.IndexOf("V=", StringComparison.OrdinalIgnoreCase) == -1 &&                // Console logger could have had a verbosity
                     loggers[0].Parameters.IndexOf("VERBOSITY=", StringComparison.OrdinalIgnoreCase) == -1)          // override with the /clp switch
                 {
@@ -1382,9 +1390,19 @@ namespace Microsoft.Build.CommandLine
                 bool isPreprocess = preprocessWriter != null;
                 bool isTargets = targetsWriter != null;
 
+                ILogger[] evaluationLoggers =
+                    [
+                        // all of the loggers that are single-node only
+                        .. loggers,
+                        // all of the central loggers for multi-node systems. These need to be resilient to multiple calls
+                        // to Initialize
+                        .. distributedLoggerRecords.Select(d => d.CentralLogger)
+                    ];
+
                 projectCollection = new ProjectCollection(
                     globalProperties,
-                    loggers,
+                    // When using the switch -preprocess, the project isn't built. No logger is needed to pass to avoid the crash when loading project.
+                    isPreprocess ? null : evaluationLoggers,
                     null,
                     toolsetDefinitionLocations,
                     cpuCount,

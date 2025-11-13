@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -27,7 +25,6 @@ using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
@@ -729,22 +726,16 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     private static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelperDescriptors(string assemblyName, string namespaceName, string tagName)
     {
         var fullyQualifiedName = $"{namespaceName}.{tagName}";
-        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
+        var builder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
+        builder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
         builder.TagMatchingRule(rule => rule.TagName = tagName);
-        builder.SetMetadata(
-            TypeName(fullyQualifiedName),
-            TypeNameIdentifier(tagName),
-            TypeNamespace(namespaceName));
 
         yield return builder.Build();
 
-        var fullyQualifiedBuilder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
+        var fullyQualifiedBuilder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
+        fullyQualifiedBuilder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
         fullyQualifiedBuilder.TagMatchingRule(rule => rule.TagName = fullyQualifiedName);
-        fullyQualifiedBuilder.SetMetadata(
-            TypeName(fullyQualifiedName),
-            TypeNameIdentifier(tagName),
-            TypeNamespace(namespaceName),
-            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch));
+        fullyQualifiedBuilder.IsFullyQualifiedNameMatch = true;
 
         yield return fullyQualifiedBuilder.Build();
     }

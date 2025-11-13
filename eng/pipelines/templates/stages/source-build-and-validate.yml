@@ -16,7 +16,25 @@ parameters:
   type: boolean
   default: true
 
+# True when the build is a build run from the production pipeline
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
+- name: desiredSigning
+  type: string
+  default: ''
+
 - name: desiredFinalVersionKind
+  type: string
+  default: ''
+
+# Indicates whether runtime dependent jobs are excluded.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
+- name: extraProperties
   type: string
   default: ''
 
@@ -28,6 +46,8 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
   - ${{ each leg in parameters.legs }}:
@@ -39,17 +59,17 @@ stages:
           container:
             name: ${{ variables.centOSStreamContainerName }}
             image: ${{ variables.centOSStreamContainerImage }}
+          artifactsRid: ${{ variables.centOSStreamX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-            artifactsRid: ${{ variables.centOSStreamX64Rid }}
         # Fedora
         ${{ elseif eq(leg.distro, 'fedora') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}
           container:
             name: ${{ variables.fedoraContainerName }}
             image: ${{ variables.fedoraContainerImage }}
+          artifactsRid: ${{ variables.fedoraX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.fedoraName) }}
@@ -64,6 +84,10 @@ stages:
             container:
               name: ${{ variables.ubuntuContainerName }}
               image: ${{ variables.ubuntuContainerImage }}
+          ${{ if eq(leg.targetArchitecture, 'arm64') }}:
+            artifactsRid: ${{ variables.ubuntuArm64Rid }}
+          ${{ else }}:
+            artifactsRid: ${{ variables.ubuntuX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
@@ -73,20 +97,22 @@ stages:
           container:
             name: ${{ variables.almaLinuxContainerName }}
             image: ${{ variables.almaLinuxContainerImage }}
+          artifactsRid: ${{ variables.almaLinuxX64Rid }}
+          targetRid: ${{ variables.almaLinuxX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          targetRid: ${{ variables.almaLinuxX64Rid }}
         # Alpine
         ${{ elseif eq(leg.distro, 'alpine') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.alpineName) }}
           container:
             name: ${{ variables.alpineContainerName }}
             image: ${{ variables.alpineContainerImage }}
+          artifactsRid: ${{ variables.alpineX64Rid }}
+          targetRid: ${{ variables.alpineX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          targetRid: ${{ variables.alpineX64Rid }}
         
         targetArchitecture: ${{ leg.targetArchitecture }}
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
@@ -103,10 +129,17 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
+        createSourceArtifacts: ${{ leg.createSourceArtifacts }}
+        ${{ if eq(leg.disableSigning, false) }}:
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+        excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
-          extraProperties: /p:DotNetSourceOnlyPublishArtifacts=true
+          extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
+        ${{ else }}:
+          extraProperties: ${{ leg.extraProperties }}
 
 - ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
@@ -129,12 +162,14 @@ stages:
             container:
               name: ${{ variables.centOSStreamContainerName }}
               image: ${{ variables.centOSStreamContainerImage }}
+            artifactsRid: ${{ variables.centOSStreamX64Rid }}
           # Fedora
           ${{ elseif eq(leg.distro, 'fedora') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_Validation
             container:
               name: ${{ variables.fedoraContainerName }}
               image: ${{ variables.fedoraContainerImage }}
+            artifactsRid: ${{ variables.fedoraX64Rid }}
           # Ubuntu
           ${{ elseif eq(leg.distro, 'ubuntu') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_Validation
@@ -142,16 +177,19 @@ stages:
               container:
                 name: ${{ variables.ubuntuArmContainerName }}
                 image: ${{ variables.ubuntuArmContainerImage }}
+              artifactsRid: ${{ variables.ubuntuArm64Rid }}
             ${{ else }}:
               container:
                 name: ${{ variables.ubuntuContainerName }}
                 image: ${{ variables.ubuntuContainerImage }}
+              artifactsRid: ${{ variables.ubuntuX64Rid }}
           # AlmaLinux
           ${{ elseif eq(leg.distro, 'almalinux') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_Validation
             container:
               name: ${{ variables.almaLinuxContainerName }}
               image: ${{ variables.almaLinuxContainerImage }}
+            artifactsRid: ${{ variables.almaLinuxX64Rid }}
             targetRid: ${{ variables.almaLinuxX64Rid }}
           # Alpine
           ${{ elseif eq(leg.distro, 'alpine') }}:
@@ -159,6 +197,7 @@ stages:
             container:
               name: ${{ variables.alpineContainerName }}
               image: ${{ variables.alpineContainerImage }}
+            artifactsRid: ${{ variables.alpineX64Rid }}
             targetRid: ${{ variables.alpineX64Rid }}
 
           targetArchitecture: ${{ leg.targetArchitecture }}
@@ -173,9 +212,11 @@ stages:
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >
+            ${{ leg.extraProperties }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
+          excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
           
           testInitSteps:
           # Ensure the artifacts staging directory exists so that even if no files get placed there, it won't fail
@@ -198,13 +239,14 @@ stages:
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
-          - template: ../steps/download-artifacts.yml
-            parameters:
-              artifactDescription: Microsoft WASM Packages
-              artifactName: Browser_Shortstack_wasm_Artifacts
-              downloadFilePatterns: packages/Release/Shipping/**
-              copyDestination: $(Pipeline.Workspace)/msft-pkgs
-              flattenDirs: true
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - template: ../steps/download-artifacts.yml
+              parameters:
+                artifactDescription: Microsoft WASM Packages
+                artifactName: Browser_Shortstack_wasm_Artifacts
+                downloadFilePatterns: packages/Release/Shipping/**
+                copyDestination: $(Pipeline.Workspace)/msft-pkgs
+                flattenDirs: true
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Microsoft Windows Packages

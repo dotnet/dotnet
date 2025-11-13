@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -175,34 +176,44 @@ internal static class TagHelperMatchingConventions
         return true;
     }
 
-    public static bool TryGetFirstBoundAttributeMatch(
-        TagHelperDescriptor descriptor,
+    /// <summary>
+    ///  Gets all attribute matches from the specified tag helpers for the given attribute name.
+    /// </summary>
+    /// <param name="tagHelpers">The collection of tag helper descriptors to search through.</param>
+    /// <param name="name">The attribute name to match against.</param>
+    /// <param name="matches">A pooled array builder that will be populated with matching attribute descriptors.</param>
+    /// <remarks>
+    ///  This method iterates through all provided tag helpers and attempts to find bound attribute matches
+    ///  for the specified attribute name. Each successful match is added to the provided matches collection.
+    /// </remarks>
+    public static void GetAttributeMatches(
+        ImmutableArray<TagHelperDescriptor> tagHelpers,
         string name,
-        out BoundAttributeDescriptor? boundAttribute,
-        out bool indexerMatch,
-        out bool parameterMatch,
-        out BoundAttributeParameterDescriptor? boundAttributeParameter)
+        ref PooledArrayBuilder<TagHelperAttributeMatch> matches)
     {
-        indexerMatch = false;
-        parameterMatch = false;
-        boundAttribute = null;
-        boundAttributeParameter = null;
+        foreach (var tagHelper in tagHelpers)
+        {
+            if (TryGetFirstBoundAttributeMatch(tagHelper, name, out var match))
+            {
+                matches.Add(match);
+            }
+        }
+    }
 
+    public static bool TryGetFirstBoundAttributeMatch(TagHelperDescriptor descriptor, string name, out TagHelperAttributeMatch match)
+    {
         if (descriptor == null || name.IsNullOrEmpty())
         {
+            match = default;
             return false;
         }
 
         // First, check if we have a bound attribute descriptor that matches the parameter if it exists.
         foreach (var attribute in descriptor.BoundAttributes)
         {
-            boundAttributeParameter = GetSatisfyingBoundAttributeWithParameter(attribute, name);
-
-            if (boundAttributeParameter != null)
+            if (GetSatisfyingBoundAttributeWithParameter(attribute, name) is { } parameter)
             {
-                boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
-                parameterMatch = true;
+                match = new(name, attribute, parameter);
                 return true;
             }
         }
@@ -213,13 +224,13 @@ internal static class TagHelperMatchingConventions
         {
             if (CanSatisfyBoundAttribute(name, attribute))
             {
-                boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
+                match = new(name, attribute, parameter: null);
                 return true;
             }
         }
 
         // No matches found.
+        match = default;
         return false;
     }
 
