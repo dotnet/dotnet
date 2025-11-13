@@ -259,10 +259,9 @@ public class PRCreator
     private string ParseUpdatedFileName(string updatedFile)
     {
         string fileName = Path.GetFileName(updatedFile);
-        int index = fileName.IndexOf("updated", StringComparison.OrdinalIgnoreCase);
-        if (index >= 0)
+        if (fileName.StartsWith("updated", StringComparison.OrdinalIgnoreCase))
         {
-            return fileName.Substring(index + "updated".Length);
+            return fileName.Substring("updated".Length);
         }
         return fileName;
     }
