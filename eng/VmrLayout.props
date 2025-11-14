@@ -113,7 +113,6 @@
     <SharedRepositoryReference Include="efcore" />
     <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />
-    <SharedRepositoryReference Include="sourcelink" />
     <SharedRepositoryReference Include="symreader" />
     <SharedRepositoryReference Include="windowsdesktop" />
     <SharedRepositoryReference Include="winforms" />
