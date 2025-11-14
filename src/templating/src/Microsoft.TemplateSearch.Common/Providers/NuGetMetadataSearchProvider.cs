@@ -161,7 +161,6 @@ namespace Microsoft.TemplateSearch.Common.Providers
             return true;
         }
 
-
         /// <summary>
         /// Attempt to get the search metadata file from cloud storage and place it in the expected search location.
         /// Return true on success, false on failure.
