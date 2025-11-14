@@ -1104,4 +1104,8 @@ Do not translate "PackageVersion"</comment>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
     <value>Argument cannot be null or empty.</value>
   </data>
+  <data name="Error_InvalidVersion" xml:space="preserve">
+    <value>Invalid version value '{0}'.</value>
+    <comment>0 - package version</comment>
+  </data>
 </root>

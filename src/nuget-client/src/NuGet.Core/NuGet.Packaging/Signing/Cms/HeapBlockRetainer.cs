@@ -26,17 +26,6 @@ namespace NuGet.Packaging.Signing
             return hBlock.DangerousGetHandle();
         }
 
-        public IntPtr Alloc(int howMany, int cbElement)
-        {
-            if (cbElement < 0 || howMany < 0)
-            {
-                throw new OverflowException();
-            }
-
-            var cbSize = checked(howMany * cbElement);
-            return Alloc(cbSize);
-        }
-
         public IntPtr AllocAsciiString(string s)
         {
             var b = Encoding.ASCII.GetBytes(s);
@@ -47,11 +36,6 @@ namespace NuGet.Packaging.Signing
                 ((byte*)pb)[b.Length] = 0; // NUL termination.
             }
             return pb;
-        }
-
-        public IntPtr AllocBytes(byte[] data)
-        {
-            return Alloc(data.Length);
         }
 
         public void Dispose()

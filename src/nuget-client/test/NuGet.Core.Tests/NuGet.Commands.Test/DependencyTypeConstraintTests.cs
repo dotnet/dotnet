@@ -90,16 +90,11 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
               ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""packageA"": ""1.0.0""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""packageA"": ""1.0.0""
+                  }
                 }
               }
             }";
@@ -107,11 +102,6 @@ namespace NuGet.Commands.Test
             var packageBProjectJson = @"
             {
               ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }
@@ -178,6 +168,7 @@ namespace NuGet.Commands.Test
                 var packageBLib = lockFile.GetLibrary("packageB", NuGetVersion.Parse("1.0.0"));
                 Assert.NotNull(packageBLib);
                 Assert.Equal(LibraryType.Project, packageBLib.Type);
+                Assert.Equal(2, lockFile.Libraries.Count);
             }
         }
 
@@ -391,19 +382,14 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
               ""version"": ""1.0.0"",
-              ""description"": """",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""packageA"": {
-                    ""version"": ""1.0.0"",
-                    ""target"": ""project""
-                }
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""packageA"": {
+                        ""version"": ""1.0.0"",
+                        ""target"": ""project""
+                    }
+                  }
                 }
               }
             }";

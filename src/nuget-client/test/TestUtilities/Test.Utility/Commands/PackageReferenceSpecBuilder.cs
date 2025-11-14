@@ -40,7 +40,7 @@ namespace Test.Utility.Commands
 
         public PackageReferenceSpecBuilder WithTargetFrameworks(IEnumerable<string> targetFrameworks)
         {
-            _targetFrameworks.AddRange(targetFrameworks?.Select(e => new TargetFrameworkInformation { FrameworkName = NuGetFramework.Parse(e) }) ?? throw new ArgumentNullException(nameof(targetFrameworks)));
+            _targetFrameworks.AddRange(targetFrameworks?.Select(e => new TargetFrameworkInformation { FrameworkName = NuGetFramework.Parse(e), TargetAlias = e }) ?? throw new ArgumentNullException(nameof(targetFrameworks)));
             return this;
         }
 
@@ -99,7 +99,7 @@ namespace Test.Utility.Commands
                 CentralPackageTransitivePinningEnabled = _centralPackageTransitivePinningEnabled,
             };
 
-            packageSpec.RestoreMetadata.TargetFrameworks.AddRange(packageSpec.TargetFrameworks.Select(e => new ProjectRestoreMetadataFrameworkInfo { FrameworkName = e.FrameworkName }));
+            packageSpec.RestoreMetadata.TargetFrameworks.AddRange(packageSpec.TargetFrameworks.Select(e => new ProjectRestoreMetadataFrameworkInfo { FrameworkName = e.FrameworkName, TargetAlias = e.TargetAlias }));
 
             return packageSpec;
         }

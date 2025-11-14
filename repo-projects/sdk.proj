@@ -19,7 +19,7 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PgoInstrument=true</BuildArgs>
     <BuildArgs Condition="'$(EnablePoison)' == 'true' or '$(SkipUsingCrossgen)' == 'true'">$(BuildArgs) /p:SkipUsingCrossgen=true</BuildArgs>
 
-    <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
+    <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true /p:PublishingWorkloadMsiInternal=true</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

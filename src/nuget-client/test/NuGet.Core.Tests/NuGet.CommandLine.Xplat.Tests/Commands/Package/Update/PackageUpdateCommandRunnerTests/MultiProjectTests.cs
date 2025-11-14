@@ -19,7 +19,7 @@ using Xunit;
 
 namespace NuGet.CommandLine.Xplat.Tests.Commands.Package.Update.PackageUpdateCommandRunnerTests;
 
-using Pkg = XPlat.Commands.Package.Update.Package;
+using Pkg = XPlat.Commands.Package.PackageWithVersionRange;
 
 public class MultiProjectTests
 {
@@ -30,15 +30,15 @@ public class MultiProjectTests
         var solutionDirectory = RuntimeEnvironmentHelper.IsWindows
             ? @"S:\path\to\repo\src"
             : @"/path/to/repo/src";
-        var project1Path = Path.Combine(solutionDirectory, "Project1", "Project1.csproj");
+        var project1Path = Path.Combine(solutionDirectory, "ConsoleApp1", "ConsoleApp1.csproj");
         var project1 = new TestPackageSpecFactory(project1Path, builder =>
         {
             builder.WithProperty("TargetFramework", "net9.0")
                    .WithItem("PackageReference", "Test.Package", [new("Version", "1.0.0")])
-                   .WithItem("ProjectReference", @"..\Project2\Project2.csproj", []);
+                   .WithItem("ProjectReference", @"..\ClassLib1\ClassLib1.csproj", []);
         }).Build();
 
-        var project2Path = Path.Combine(solutionDirectory, "Project2", "Project2.csproj");
+        var project2Path = Path.Combine(solutionDirectory, "ClassLib1", "ClassLib1.csproj");
         var project2 = new TestPackageSpecFactory(project2Path, builder =>
         {
             builder.WithProperty("TargetFramework", "net9.0");

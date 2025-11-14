@@ -16,13 +16,13 @@ namespace NuGet.ProjectModel.Test
         {
             JObject configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""netstandard1.2"": {
                             ""imports"": [""dotnet5.3"",""portable-net452+win81"",""futureFramework""],
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
@@ -37,20 +37,20 @@ namespace NuGet.ProjectModel.Test
         {
             JObject configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""netstandard1.2"": {
                             ""imports"": """",
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }   
                         }
                     }
                 }");
 
             // Act
             PackageSpec spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", "project.json");
-            System.Collections.Generic.List<NuGetFramework> importFramework = spec.TargetFrameworks.First().Imports.ToList();
+            System.Collections.Generic.List<NuGetFramework> importFramework = [.. spec.TargetFrameworks.First().Imports];
 
             // Assert
             Assert.Equal(0, importFramework.Count);
@@ -61,13 +61,13 @@ namespace NuGet.ProjectModel.Test
         {
             JObject configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""netstandard1.2"": {
                             ""imports"": [""dotnet5.3""],
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
