@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="de" original="../Resources.resx">
+    <body>
+      <trans-unit id="MustEndWithDirectorySeparator">
+        <source>{0} must end with a directory separator: '{1}'</source>
+        <target state="translated">"{0}" muss auf ein Verzeichnistrennzeichen enden: "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustNotContainWildcard">
+        <source>{0} must not contain wildcard '*': '{1}'</source>
+        <target state="translated">"{0}" darf nicht den Platzhalter "*" enthalten: "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainSingleWildcard">
+        <source>{0} must contain a single wildcard '*': '{1}'"</source>
+        <target state="translated">"{0}" muss einen einzelnen Platzhalter "*" enthalten: "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsEmpty">
+        <source>{0} is empty: '{1}'</source>
+        <target state="translated">"{0}" ist leer: "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingToSourceLinkFile">
+        <source>Error writing to source link file '{0}': {1}</source>
+        <target state="translated">Fehler beim Schreiben in die Quellverknüpfungsdatei "{0}": {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceControlInformationIsNotAvailableGeneratedSourceLinkEmpty">
+        <source>Source control information is not available - the generated source link is empty.</source>
+        <target state="translated">Es sind keine Informationen zur Quellcodeverwaltung verfügbar. Die generierte Quellverknüpfung ist leer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyDeletingExistingFile">
+        <source>Source Link is empty, deleting existing file: '{0}'.</source>
+        <target state="translated">Quellenverknüpfung ist leer, vorhandene Datei wird gelöscht: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyNoExistingFile">
+        <source>Source Link is empty, file '{0}' does not exist.</source>
+        <target state="translated">Der Quelllink ist leer, die Datei '{0}' ist nicht vorhanden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpToDate">
+        <source>Source Link file '{0}' is up-to-date.</source>
+        <target state="translated">Die Quellverknüpfungsdatei '{0}' ist aktuell.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpdated">
+        <source>Updating Source Link file '{0}'.</source>
+        <target state="translated">Quellverknüpfungsdatei wird '{0}' aktualisiert.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
