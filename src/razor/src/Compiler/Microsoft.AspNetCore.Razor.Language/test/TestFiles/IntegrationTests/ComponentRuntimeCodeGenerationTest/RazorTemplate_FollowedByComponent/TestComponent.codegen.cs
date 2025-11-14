@@ -28,15 +28,7 @@ namespace Test
 
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (2,51)-(2,62) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-                >(1);
+                __builder2.OpenComponent<global::Test.MyComponent>(1);
                 __builder2.AddComponentParameter(2, nameof(global::Test.MyComponent.
 #nullable restore
 #line (2,63)-(2,67) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -65,15 +57,7 @@ person.Name
 #line hidden
 #nullable disable
 
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (4,2)-(4,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Test.MyComponent>(3);
             __builder.AddAttribute(4, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
 #nullable restore
 #line (5,3)-(5,18) 25 "x:\dir\subdir\Test\TestComponent.cshtml"

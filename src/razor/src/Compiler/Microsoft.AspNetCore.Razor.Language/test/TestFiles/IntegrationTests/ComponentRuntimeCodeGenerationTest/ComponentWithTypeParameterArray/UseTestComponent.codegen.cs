@@ -83,15 +83,7 @@ namespace __Blazor.Test.UseTestComponent
     {
         public static void CreateTestComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem[] __arg0, int __seq1, global::System.Collections.Generic.List<TItem[]> __arg1, int __seq2, global::System.Func<TItem[]> __arg2, int __seq3, global::Microsoft.AspNetCore.Components.RenderFragment<TItem[]> __arg3)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,15) "x:\dir\subdir\Test\UseTestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem>.
 #nullable restore
 #line (2,16)-(2,22) "x:\dir\subdir\Test\UseTestComponent.cshtml"

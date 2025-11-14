@@ -37,15 +37,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateMyComponent_0<T, T2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-        <object, object>>(seq);
+        __builder.OpenComponent<global::Test.MyComponent<object, object>>(seq);
         __builder.AddComponentParameter(__seq0, "OnClick", __arg0);
         __builder.CloseComponent();
         }

@@ -22,15 +22,7 @@ using Microsoft.AspNetCore.Components
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,5) "x:\dir\subdir\Test\TestComponent.cshtml"
-Col
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.Col>(0);
             __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddContent(2, "in markup");
             }
@@ -44,15 +36,7 @@ Col
 #line hidden
 #nullable disable
 
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (5,6)-(5,9) "x:\dir\subdir\Test\TestComponent.cshtml"
-Col
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Test.Col>(3);
             __builder.CloseComponent();
 #nullable restore
 #line (5,10)-(6,31) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -64,15 +48,7 @@ in code block</Col>
 #nullable disable
 
             (__builder2) => {
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (6,33)-(6,36) "x:\dir\subdir\Test\TestComponent.cshtml"
-Col
-
-#line default
-#line hidden
-#nullable disable
-                >(4);
+                __builder2.OpenComponent<global::Test.Col>(4);
                 __builder2.CloseComponent();
             }
 #nullable restore

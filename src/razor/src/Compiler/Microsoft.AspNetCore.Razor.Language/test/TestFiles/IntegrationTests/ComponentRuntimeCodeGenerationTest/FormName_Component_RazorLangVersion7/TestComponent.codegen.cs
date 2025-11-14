@@ -23,15 +23,7 @@ using Microsoft.AspNetCore.Components.Web
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.TestComponent>(0);
             __builder.AddAttribute(1, "method", (object)("post"));
             __builder.AddAttribute(2, "onsubmit", (object)(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
@@ -45,15 +37,7 @@ TestComponent
             __builder.AddAttribute(3, "@formname", (object)("named-form-handler"));
             __builder.CloseComponent();
             __builder.AddMarkupContent(4, "\r\n");
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(5);
+            __builder.OpenComponent<global::Test.TestComponent>(5);
             __builder.AddAttribute(6, "method", (object)("post"));
             __builder.AddAttribute(7, "onsubmit", (object)(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
