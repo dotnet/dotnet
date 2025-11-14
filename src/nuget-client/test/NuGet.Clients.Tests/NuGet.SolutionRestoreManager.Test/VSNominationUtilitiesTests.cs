@@ -16,8 +16,6 @@ namespace NuGet.SolutionRestoreManager.Test
 {
     public class VSNominationUtilitiesTests
     {
-        private static readonly IReadOnlyDictionary<string, string> EmptyMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
         [Fact]
         public void GetRestoreAuditProperties_WithoutSuppressions_ReturnsNull()
         {

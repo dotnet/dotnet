@@ -141,7 +141,7 @@ namespace NuGet.ProjectModel
         {
             try
             {
-                var lockFile = JsonUtility.LoadJson(stream, Utf8JsonReaderExtensions.LockFileConverter, flags);
+                var lockFile = JsonUtility.LoadJson(stream, Utf8JsonStreamLockFileConverters.LockFileConverter, flags);
                 lockFile.Path = path;
                 return lockFile;
             }

@@ -195,12 +195,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.Diagnostics.NETCore.Client, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/Extensions/Microsoft.Diagnostics.NETCore.Client.dll</Left>
-    <Right>/sb/sdk/x.y.z/Extensions/Microsoft.Diagnostics.NETCore.Client.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
     <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
@@ -210,30 +204,6 @@
     <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=f23a46de0be5d6f3</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.Build.NuGetSdkResolver, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>NuGet.Build.Tasks.Console, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/NuGet.Build.Tasks.Console.dll</Left>
-    <Right>/sb/sdk/x.y.z/NuGet.Build.Tasks.Console.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>NuGet.Build.Tasks, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/NuGet.Build.Tasks.dll</Left>
-    <Right>/sb/sdk/x.y.z/NuGet.Build.Tasks.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>NuGet.Build.Tasks.resources, Version=x.y.z, Culture=cs, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/zh-Hant/NuGet.Build.Tasks.resources.dll</Left>
-    <Right>/sb/sdk/x.y.z/zh-Hant/NuGet.Build.Tasks.resources.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>

@@ -124,7 +124,7 @@ namespace NuGet.Test.Utility
         /// <summary>
         /// Create an entire solution and projects, this will adjust the paths as needed
         /// </summary>
-        public void Create(string solutionFolder = null)
+        public void Create()
         {
             Save();
 

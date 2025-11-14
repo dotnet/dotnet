@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Resources.resx">
+    <body>
+      <trans-unit id="MustEndWithDirectorySeparator">
+        <source>{0} must end with a directory separator: '{1}'</source>
+        <target state="translated">{0} musí končit oddělovačem adresářů: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustNotContainWildcard">
+        <source>{0} must not contain wildcard '*': '{1}'</source>
+        <target state="translated">{0} nesmí obsahovat zástupný znak *: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainSingleWildcard">
+        <source>{0} must contain a single wildcard '*': '{1}'"</source>
+        <target state="translated">{0} musí obsahovat jeden zástupný znak *: {1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsEmpty">
+        <source>{0} is empty: '{1}'</source>
+        <target state="translated">{0} je prázdný: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingToSourceLinkFile">
+        <source>Error writing to source link file '{0}': {1}</source>
+        <target state="translated">Chyba při zápisu do zdrojového souboru propojení {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceControlInformationIsNotAvailableGeneratedSourceLinkEmpty">
+        <source>Source control information is not available - the generated source link is empty.</source>
+        <target state="translated">Informace o řízení zdrojů nejsou k dispozici - vygenerovaný odkaz na zdroj je prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyDeletingExistingFile">
+        <source>Source Link is empty, deleting existing file: '{0}'.</source>
+        <target state="translated">Source Link je prázdný, odstraňuje se existující soubor: „{0}“.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyNoExistingFile">
+        <source>Source Link is empty, file '{0}' does not exist.</source>
+        <target state="translated">Source Link je prázdný, soubor „{0}“ neexistuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpToDate">
+        <source>Source Link file '{0}' is up-to-date.</source>
+        <target state="translated">Soubor Source Link „{0}“ je aktuální.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpdated">
+        <source>Updating Source Link file '{0}'.</source>
+        <target state="translated">Aktualizuje se soubor Source Link „{0}“.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

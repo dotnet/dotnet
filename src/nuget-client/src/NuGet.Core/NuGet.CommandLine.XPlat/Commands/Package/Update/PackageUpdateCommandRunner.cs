@@ -81,9 +81,7 @@ internal static class PackageUpdateCommandRunner
             return ExitCodes.Error;
         }
 
-        PackageSpec projectSpec = dgSpec.Projects.Count == 1
-            ? dgSpec.Projects[0]
-            : dgSpec.GetProjectSpec(dgSpec.Restore[0]);
+        PackageSpec projectSpec = dgSpec.GetProjectSpec(dgSpec.Restore[0]);
 
         // 2. Find suitable version of package(s) to update
         // Source provider will be needed to find the package version and to restore, so create it here.
@@ -141,7 +139,7 @@ internal static class PackageUpdateCommandRunner
             }
         }
 
-        var projectName = Path.GetFileNameWithoutExtension(dgSpec.Projects[0].FilePath);
+        var projectName = Path.GetFileNameWithoutExtension(projectSpec.FilePath);
         logger.LogInformation($"  {projectName}:");
 
         foreach (var packageResult in packagesToUpdateResult)
@@ -154,7 +152,7 @@ internal static class PackageUpdateCommandRunner
 
         // 3. Preview restore to validate changes
         logger.LogDebug(Strings.PackageUpdate_PreviewRestore);
-        var updatedDgSpec = GetUpdatedDependencyGraphSpec(dgSpec, packagesToUpdateResult);
+        var updatedDgSpec = GetUpdatedDependencyGraphSpec(projectSpec, dgSpec, packagesToUpdateResult);
         var restorePreviewResult = await packageUpdateIO.PreviewUpdatePackageReferenceAsync(updatedDgSpec, logger, cancellationToken);
 
         if (!restorePreviewResult.Success)
@@ -165,7 +163,7 @@ internal static class PackageUpdateCommandRunner
 
         // 4. Update MSBuild files
 
-        var updatedPackageSpec = updatedDgSpec.Projects[0];
+        var updatedPackageSpec = updatedDgSpec.GetProjectSpec(projectSpec.FilePath);
         int updatedCount = 0;
 
         foreach (var packageResult in packagesToUpdateResult)
@@ -184,7 +182,7 @@ internal static class PackageUpdateCommandRunner
     }
 
     private static async Task<(List<PackageUpdateResult> vulnerablePackages, int packagesScanned)> SelectVulnerablePackagesToUpdateAsync(
-        IReadOnlyList<Package>? packages,
+        IReadOnlyList<PackageWithVersionRange>? packages,
         DependencyGraphSpec dgSpec,
         ILoggerWithColor logger,
         IPackageUpdateIO packageUpdateIO,
@@ -248,7 +246,7 @@ internal static class PackageUpdateCommandRunner
                         {
                             Id = packageIdentity.Id,
                             CurrentVersion = new VersionRange(packageIdentity.Version),
-                            NewVersion = new VersionRange(nonVulnerableVersion)
+                            NewVersion = VersionRange.Parse(nonVulnerableVersion.OriginalVersion!)
                         },
                         TargetFrameworkAliases = tfmAliases
                     });
@@ -285,7 +283,7 @@ internal static class PackageUpdateCommandRunner
     }
 
     internal static async Task<List<PackageUpdateResult>> SelectPackagesToUpdateAsync(
-        IReadOnlyList<Package> packages,
+        IReadOnlyList<PackageWithVersionRange> packages,
         PackageSpec project,
         ILoggerWithColor logger,
         IPackageUpdateIO packageUpdateIO,
@@ -341,7 +339,7 @@ internal static class PackageUpdateCommandRunner
                     continue;
                 }
 
-                upgradeVersion = new VersionRange(latestVersion);
+                upgradeVersion = VersionRange.Parse(latestVersion.OriginalVersion!);
                 if (upgradeVersion == existingVersion)
                 {
                     logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, latestVersion.OriginalVersion, project.FilePath), ConsoleColor.Yellow);
@@ -478,7 +476,7 @@ internal static class PackageUpdateCommandRunner
                 continue;
             }
 
-            var upgradeVersion = new VersionRange(latestVersion);
+            var upgradeVersion = VersionRange.Parse(latestVersion.OriginalVersion!);
             if (upgradeVersion.ToString() == package.identity.VersionRange.ToString())
             {
                 // Already using the highest version.
@@ -501,7 +499,7 @@ internal static class PackageUpdateCommandRunner
         return successful ? (packagesToUpdate, allProjectPackages.Count) : (null, allProjectPackages.Count);
     }
 
-    private static List<(Package identity, List<string> tfms)>? GetAllPackagesReferencedByProject(PackageSpec project, ILoggerWithColor logger)
+    private static List<(PackageWithVersionRange identity, List<string> tfms)>? GetAllPackagesReferencedByProject(PackageSpec project, ILoggerWithColor logger)
     {
         var allPackages = new Dictionary<string, (VersionRange version, List<string> tfms, bool hasError)>(StringComparer.OrdinalIgnoreCase);
         bool hasErrors = false;
@@ -545,19 +543,19 @@ internal static class PackageUpdateCommandRunner
             return null;
         }
 
-        List<(Package package, List<string> tfms)> result = new(allPackages.Count);
+        List<(PackageWithVersionRange package, List<string> tfms)> result = new(allPackages.Count);
         foreach (var kvp in allPackages)
         {
-            var package = new Package { Id = kvp.Key, VersionRange = kvp.Value.version };
+            var package = new PackageWithVersionRange { Id = kvp.Key, VersionRange = kvp.Value.version };
             result.Add((package, kvp.Value.tfms));
         }
 
         return result;
     }
 
-    private static DependencyGraphSpec GetUpdatedDependencyGraphSpec(DependencyGraphSpec currentDgSpec, List<PackageUpdateResult> packagesToUpdate)
+    private static DependencyGraphSpec GetUpdatedDependencyGraphSpec(PackageSpec projectSpec, DependencyGraphSpec currentDgSpec, List<PackageUpdateResult> packagesToUpdate)
     {
-        var updatedPackageSpec = currentDgSpec.Projects[0].Clone();
+        var updatedPackageSpec = projectSpec.Clone();
 
         foreach (var packageResult in packagesToUpdate)
         {

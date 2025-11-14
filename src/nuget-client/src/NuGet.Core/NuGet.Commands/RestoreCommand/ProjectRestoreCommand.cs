@@ -42,6 +42,7 @@ namespace NuGet.Commands
 
         public async Task<Tuple<bool, List<RestoreTargetGraph>, RuntimeGraph>> TryRestoreAsync(LibraryRange projectRange,
             IEnumerable<FrameworkRuntimePair> frameworkRuntimePairs,
+            IDictionary<NuGetFramework, string> frameworkToAlias,
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteDependencyWalker remoteWalker,
@@ -62,8 +63,11 @@ namespace NuGet.Commands
             foreach (var pair in runtimesByFramework)
             {
                 _logger.LogVerbose(string.Format(CultureInfo.CurrentCulture, Strings.Log_RestoringPackages, pair.Key.DotNetFrameworkName));
+                string targetAlias = null;
+                frameworkToAlias?.TryGetValue(pair.Key, out targetAlias);
 
                 frameworkTasks.Add(WalkDependenciesAsync(projectRange,
+                    targetAlias,
                     pair.Key,
                     remoteWalker,
                     context,
@@ -248,12 +252,14 @@ namespace NuGet.Commands
         }
 
         private Task<RestoreTargetGraph> WalkDependenciesAsync(LibraryRange projectRange,
+            string targetAlias,
             NuGetFramework framework,
             RemoteDependencyWalker walker,
             RemoteWalkContext context,
             CancellationToken token)
         {
             return WalkDependenciesAsync(projectRange,
+                targetAlias,
                 framework,
                 runtimeIdentifier: null,
                 runtimeGraph: RuntimeGraph.Empty,
@@ -263,6 +269,7 @@ namespace NuGet.Commands
         }
 
         private async Task<RestoreTargetGraph> WalkDependenciesAsync(LibraryRange projectRange,
+            string targetAlias,
             NuGetFramework framework,
             string runtimeIdentifier,
             RuntimeGraph runtimeGraph,
@@ -287,7 +294,7 @@ namespace NuGet.Commands
             await _logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_ResolvingConflicts, name));
 
             // Flatten and create the RestoreTargetGraph to hold the packages
-            return RestoreTargetGraph.Create(runtimeGraph, graphs, context, _logger, framework, runtimeIdentifier);
+            return RestoreTargetGraph.Create(runtimeGraph, graphs, context, _logger, targetAlias, framework, runtimeIdentifier);
         }
 
         internal async Task<bool> ResolutionSucceeded(IEnumerable<RestoreTargetGraph> graphs, IList<DownloadDependencyResolutionResult> downloadDependencyResults, RemoteWalkContext context, CancellationToken token)
@@ -459,6 +466,7 @@ namespace NuGet.Commands
                 _logger.LogVerbose(string.Format(CultureInfo.CurrentCulture, Strings.Log_RestoringPackages, FrameworkRuntimePair.GetTargetGraphName(graph.Framework, runtimeName)));
 
                 resultGraphs.Add(WalkDependenciesAsync(projectRange,
+                    graph.TargetAlias,
                     graph.Framework,
                     runtimeName,
                     runtimes,

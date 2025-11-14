@@ -140,12 +140,6 @@ namespace Test.Utility
         public void AddPackageSource(PackageSource source) => throw new NotImplementedException();
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
-
-        // TODO: Remove depracted APIs
-
-        public void DisablePackageSource(PackageSource source) => throw new NotImplementedException();
-
-        public bool IsPackageSourceEnabled(PackageSource source) => throw new NotImplementedException();
     }
 
     public static class TestPackageSourceSettings

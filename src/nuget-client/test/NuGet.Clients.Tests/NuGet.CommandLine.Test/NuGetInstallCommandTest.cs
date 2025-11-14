@@ -2070,7 +2070,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath)!, "packages.config");
             var args = new string[]
@@ -2116,7 +2116,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]
@@ -2165,7 +2165,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]

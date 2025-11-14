@@ -1985,7 +1985,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var args = new[]
             {
@@ -2058,7 +2058,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var args = new[]
             {

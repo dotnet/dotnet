@@ -406,7 +406,7 @@ namespace NuGet.Tests.Apex.Daily
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             solutionService.Build();
 
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, TestPackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
 
@@ -449,7 +449,7 @@ namespace NuGet.Tests.Apex.Daily
 
             // Assert
             VisualStudio.AssertNoErrors();
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, transitivePackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, transitivePackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
         }
 
@@ -481,7 +481,7 @@ namespace NuGet.Tests.Apex.Daily
             uiwindow.InstallPackageFromUI(transitivePackageName, TestPackageVersionV1);
             solutionService.Build();
 
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, transitivePackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, transitivePackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
 
             // Act
@@ -490,7 +490,7 @@ namespace NuGet.Tests.Apex.Daily
 
             // Assert
             VisualStudio.AssertNoErrors();
-            CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, project, transitivePackageName, Logger);
+            CommonUtility.AssertPackageReferenceDoesNotExist(project, transitivePackageName, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
         }
@@ -517,7 +517,7 @@ namespace NuGet.Tests.Apex.Daily
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             solutionService.Build();
 
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, TestPackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
 
@@ -551,7 +551,7 @@ namespace NuGet.Tests.Apex.Daily
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             solutionService.Build();
 
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, TestPackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
 
@@ -591,7 +591,7 @@ namespace NuGet.Tests.Apex.Daily
             VisualStudio.AssertNoErrors();
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, TestPackageName, TestPackageVersionV1, Logger);
         }
 
         [TestMethod]
@@ -616,7 +616,7 @@ namespace NuGet.Tests.Apex.Daily
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             solutionService.Build();
 
-            CommonUtility.AssertPackageReferenceExists(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageReferenceExists(project, TestPackageName, TestPackageVersionV1, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
 
@@ -627,7 +627,7 @@ namespace NuGet.Tests.Apex.Daily
             // Assert
             VisualStudio.AssertNoErrors();
             uiwindow.AssertPackageListIsNullOrEmpty();
-            CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, project, TestPackageName, Logger);
+            CommonUtility.AssertPackageReferenceDoesNotExist(project, TestPackageName, Logger);
         }
 
         [TestMethod]
