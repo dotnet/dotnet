@@ -246,10 +246,16 @@ if [ "$removeBinaries" == true ]; then
     tar -xzf "$sourceBuiltArchive" -C "$workingDir"
 
     psbDir=$workingDir
+  else
+    echo "  Using previously source-built packages from $psbDir"
+    toolsetInitProperties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$psbDir" )
   fi
 
+  toolsetInitProperties+=( "/p:DotNetBuildSourceOnly=true" )
+  toolsetInitProperties+=( "/p:DisableSharedComponentValidation=true" )
+
   # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
-  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true" "/p:DisableSharedComponentValidation=true"
+  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "${toolsetInitProperties[@]}"
 
   "$_InitializeBuildTool" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
