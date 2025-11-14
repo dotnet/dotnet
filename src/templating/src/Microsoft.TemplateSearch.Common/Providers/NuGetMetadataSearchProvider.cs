@@ -140,9 +140,7 @@ namespace Microsoft.TemplateSearch.Common.Providers
                 DateTime utcNow = DateTime.UtcNow;
                 DateTime lastWriteTimeUtc = _environmentSettings.Host.FileSystem.GetLastWriteTimeUtc(metadataFileTargetLocation);
                 _logger.LogDebug("The search cache was updated on {0}", lastWriteTimeUtc);
-        
                 string unit = CachedFileValidityInHours == 1 ? "hour" : "hours";
-        
                 if (lastWriteTimeUtc.AddHours(CachedFileValidityInHours) > utcNow)
                 {
                     _logger.LogDebug(
@@ -150,13 +148,11 @@ namespace Microsoft.TemplateSearch.Common.Providers
                         CachedFileValidityInHours, unit);
                     return false;
                 }
-        
                 _logger.LogDebug(
                     "The search cache was updated more than {0} {1} ago, and needs to be updated.",
                     CachedFileValidityInHours, unit);
                 return true;
             }
-        
             _logger.LogDebug("The search cache file {0} doesn't exist, and needs to be created.", metadataFileTargetLocation);
             return true;
         }
