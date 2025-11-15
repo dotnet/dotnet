@@ -86,15 +86,7 @@ namespace __Blazor.Test.UseTestComponent
             where TItem2 : global::ITag
             where TItem3 : global::Image, new()
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,15) "x:\dir\subdir\Test\UseTestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <TItem1, TItem2, TItem3>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<TItem1, TItem2, TItem3>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
 #nullable restore
 #line (2,16)-(2,21) "x:\dir\subdir\Test\UseTestComponent.cshtml"

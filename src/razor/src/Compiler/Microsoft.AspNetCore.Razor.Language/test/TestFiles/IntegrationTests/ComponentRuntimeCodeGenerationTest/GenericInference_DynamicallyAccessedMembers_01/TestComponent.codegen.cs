@@ -73,15 +73,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateInputRadioGroup_0<[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(unchecked((global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes)0xffffffff))] TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<TValue> __arg1, int __seq2, global::System.Linq.Expressions.Expression<global::System.Func<TValue>> __arg2, int __seq3, global::Microsoft.AspNetCore.Components.RenderFragment __arg3)
         {
-        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.
-#nullable restore
-#line (3,2)-(3,17) "x:\dir\subdir\Test\TestComponent.cshtml"
-InputRadioGroup
-
-#line default
-#line hidden
-#nullable disable
-        <TValue>>(seq);
+        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.InputRadioGroup<TValue>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Microsoft.AspNetCore.Components.Forms.InputRadioGroup<TValue>.
 #nullable restore
 #line (3,24)-(3,29) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -98,15 +90,7 @@ Value
         }
         public static void CreateInputRadio_1<[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(unchecked((global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes)0xffffffff))] TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0)
         {
-        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.
-#nullable restore
-#line (4,6)-(4,16) "x:\dir\subdir\Test\TestComponent.cshtml"
-InputRadio
-
-#line default
-#line hidden
-#nullable disable
-        <TValue>>(seq);
+        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.InputRadio<TValue>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Microsoft.AspNetCore.Components.Forms.InputRadio<TValue>.
 #nullable restore
 #line (4,17)-(4,22) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -120,15 +104,7 @@ Value
         }
         public static void CreateInputRadio_2<[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(unchecked((global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes)0xffffffff))] TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0)
         {
-        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.
-#nullable restore
-#line (5,6)-(5,16) "x:\dir\subdir\Test\TestComponent.cshtml"
-InputRadio
-
-#line default
-#line hidden
-#nullable disable
-        <TValue>>(seq);
+        __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Forms.InputRadio<TValue>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Microsoft.AspNetCore.Components.Forms.InputRadio<TValue>.
 #nullable restore
 #line (5,17)-(5,22) "x:\dir\subdir\Test\TestComponent.cshtml"

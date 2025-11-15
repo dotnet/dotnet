@@ -36,15 +36,7 @@ using System.Reflection
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::New.Test.
-#nullable restore
-#line (2,2)-(2,10) "x:\dir\subdir\Test\Pages/Counter.razor"
-Counter2
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::New.Test.Counter2>(0);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -143,14 +142,12 @@ internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase,
 
     private static ComponentIntermediateNode RewriteAsComponent(TagHelperIntermediateNode node, TagHelperDescriptor tagHelper)
     {
-        Debug.Assert(node.StartTagSpan.HasValue, "Component tags should always have a start tag span.");
         var component = new ComponentIntermediateNode()
         {
             Component = tagHelper,
             Source = node.Source,
             TagName = node.TagName,
             TypeName = tagHelper.TypeName,
-            StartTagSpan = node.StartTagSpan.AssumeNotNull(),
         };
 
         component.AddDiagnosticsFromNode(node);
