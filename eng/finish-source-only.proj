@@ -248,7 +248,8 @@
     <CreateSourceArtifacts
         SourceCommit="$(RepositoryCommit)"
         ArtifactName="$(SourceBuiltSourceArtifactName)"
-        ArtifactVersion="$(SourceBuiltSdkNonStableVersion)"
+        SdkStableVersion="$(SourceBuiltSdkVersion)"
+        SdkNonStableVersion="$(SourceBuiltSdkNonStableVersion)"
         RepoRoot="$(RepoRoot)"
         OutputDirectory="$(ArtifactsAssetsDir)" />
   </Target>

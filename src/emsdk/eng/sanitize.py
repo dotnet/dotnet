@@ -40,6 +40,9 @@ upgrade = True
 # npm can find it when doing the updating or pruning
 os.environ["PATH"] = os.path.join(node_paths[0], "bin") + os.pathsep + os.environ["PATH"]
 
+# Set root .npmrc file as the config to make sure we use AzDO feed
+os.environ["npm_config_userconfig"] = os.path.join(os.getcwd(), ".npmrc")
+
 def update_npm(path):
     try:
         os.chdir(os.path.join(path, "lib"))
