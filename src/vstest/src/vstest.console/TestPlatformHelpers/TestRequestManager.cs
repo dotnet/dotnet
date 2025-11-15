@@ -845,6 +845,11 @@ internal class TestRequestManager : ITestRequestManager
         settingsUpdated |= AddOrUpdateBuiltInLoggers(document, runConfiguration, loggerRunSettings);
         settingsUpdated |= AddOrUpdateBatchSize(document, runConfiguration, isDiscovery);
 
+        if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING))
+        {
+            settingsUpdated |= UpdateCollectCoverageSettings(document, runConfiguration);
+        }
+
         updatedRunSettingsXml = navigator.OuterXml;
 
         return settingsUpdated;
@@ -1244,6 +1249,11 @@ internal class TestRequestManager : ITestRequestManager
         }
 
         return false;
+    }
+
+    internal static bool UpdateCollectCoverageSettings(XmlDocument xmlDocument, RunConfiguration _)
+    {
+        return InferRunSettingsHelper.UpdateCollectCoverageSettings(xmlDocument);
     }
 
     private void RunTests(
