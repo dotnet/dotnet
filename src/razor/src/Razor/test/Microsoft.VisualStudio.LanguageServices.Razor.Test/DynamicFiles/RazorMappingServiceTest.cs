@@ -27,7 +27,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 ");
 
         var state = ProjectState
-            .Create(_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(_hostProject, ProjectEngineFactoryProvider)
             .AddDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText));
         var project = new ProjectSnapshot(state);
 
@@ -61,7 +61,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 ";
 
         var state = ProjectState
-            .Create(_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(_hostProject, ProjectEngineFactoryProvider)
             .AddDocument(_hostDocument, TestMocks.CreateTextLoader(code));
         var project = new ProjectSnapshot(state);
 
@@ -96,7 +96,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 ";
 
         var state = ProjectState
-            .Create(_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(_hostProject, ProjectEngineFactoryProvider)
             .AddDocument(_hostDocument, TestMocks.CreateTextLoader(code));
         var project = new ProjectSnapshot(state);
 
@@ -130,7 +130,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 ";
 
         var state = ProjectState
-            .Create(_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(_hostProject, ProjectEngineFactoryProvider)
             .AddDocument(_hostDocument, TestMocks.CreateTextLoader(code));
         var project = new ProjectSnapshot(state);
 

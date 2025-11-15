@@ -2,19 +2,13 @@
 // Each development repository has a mapping record which says where the remote repo is,
 // what files are in/excluded from the sync, etc.
 //
-// This file does not contain information about what version of sources is synchronized.
+// This file does not contain information about what version of sources are synchronized in the VMR.
 // Please check the source-manifest.json file for that purpose.
 //
 // More details on this file's mechanics:
-// https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#repository-source-mappings
+// https://github.com/dotnet/dotnet/blob/main/docs/VMR-Full-Code-Flow.md#repository-source-mappings
 {
-    "sourceMappingsPath": "src/source-mappings.json",
-
     "thirdPartyNoticesTemplatePath": "eng/THIRD-PARTY-NOTICES.template.txt",
-
-    // Some files are copied outside of the src/ directory into other locations
-    // This is no longer needed with the full code flow between the repos and the VMR
-    "additionalMappings": [],
 
     // These defaults are added to all mappings unless `ignoreDefaults: true` is specified
     // When no "include" filter is specified, "**/*" is used
@@ -31,32 +25,8 @@
             "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
-            "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore"
-        },
-        {
-            "name": "cecil",
-            "defaultRemote": "https://github.com/dotnet/cecil"
-        },
-        {
-            "name": "command-line-api",
-            "defaultRemote": "https://github.com/dotnet/command-line-api"
-        },
-        {
-            "name": "deployment-tools",
-            "defaultRemote": "https://github.com/dotnet/deployment-tools"
-        },
-        {
             "name": "diagnostics",
             "defaultRemote": "https://github.com/dotnet/diagnostics"
-        },
-        {
-            "name": "efcore",
-            "defaultRemote": "https://github.com/dotnet/efcore"
-        },
-        {
-            "name": "emsdk",
-            "defaultRemote": "https://github.com/dotnet/emsdk"
         },
         {
             "name": "fsharp",
@@ -80,24 +50,12 @@
             "defaultRemote": "https://github.com/dotnet/roslyn"
         },
         {
-            "name": "roslyn-analyzers",
-            "defaultRemote": "https://github.com/dotnet/roslyn-analyzers"
-        },
-        {
-            "name": "runtime",
-            "defaultRemote": "https://github.com/dotnet/runtime"
-        },
-        {
             "name": "scenario-tests",
-            "defaultRemote": "https://github.com/dotnet/scenario-tests",
+            "defaultRemote": "https://github.com/dotnet/scenario-tests"
         },
         {
             "name": "sdk",
-            "defaultRemote": "https://github.com/dotnet/sdk",
-            "exclude": [
-              // Exclude the VMR content as this is copied to the root of VMR via the synchronization process.
-              "src/SourceBuild/content/**/*"
-            ]
+            "defaultRemote": "https://github.com/dotnet/sdk"
         },
         {
             "name": "source-build-reference-packages",
@@ -105,11 +63,7 @@
         },
         {
             "name": "sourcelink",
-            "defaultRemote": "https://github.com/dotnet/sourcelink",
-        },
-        {
-            "name": "symreader",
-            "defaultRemote": "https://github.com/dotnet/symreader"
+            "defaultRemote": "https://github.com/dotnet/sourcelink"
         },
         {
             "name": "templating",
@@ -124,29 +78,6 @@
                 "src/package/licenses/LICENSE_VS.txt",
                 "test/Microsoft.TestPlatform.CoreUtilities.UnitTests/TestAssets/dotnetWinX86.exe"
             ]
-        },
-        {
-            "name": "xdt",
-            "defaultRemote": "https://github.com/dotnet/xdt"
-        },
-        {
-            "name": "winforms",
-            "defaultRemote": "https://github.com/dotnet/winforms",
-            "exclude": [
-                // Non-OSS license - https://github.com/dotnet/source-build/issues/3772
-                "src/test/integration/DesignSurface/**/*.cs",
-                "src/test/integration/DesignSurface/**/*.ico",
-                "src/test/integration/DesignSurface/**/*.resx",
-                "src/test/integration/DesignSurface/THIRD-PARTY-NOTICE.txt"
-            ]
-        },
-        {
-            "name": "wpf",
-            "defaultRemote": "https://github.com/dotnet/wpf"
-        },
-        {
-            "name": "windowsdesktop",
-            "defaultRemote": "https://github.com/dotnet/windowsdesktop"
         }
     ]
 }

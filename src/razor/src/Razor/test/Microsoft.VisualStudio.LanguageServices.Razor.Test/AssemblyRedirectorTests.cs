@@ -34,4 +34,14 @@ public class AssemblyRedirectorTests
         // Something not in the list doesn't get redirected
         Assert.Null(redirector.RedirectPath("goo.dll"));
     }
+
+    [Fact]
+    public void AssemblyRedirector_RedirectOlderAssembly()
+    {
+        // test that we correctly redirect the old generator assembly to the new named one
+        var redirector = new RazorAnalyzerAssemblyRedirector();
+        var actualPath = redirector.RedirectPath("Microsoft.NET.Sdk.Razor.SourceGenerators.dll");
+        Assert.NotNull(actualPath);
+        Assert.EndsWith("Microsoft.CodeAnalysis.Razor.Compiler.dll", actualPath, StringComparison.OrdinalIgnoreCase);
+    }
 }

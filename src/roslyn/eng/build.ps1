@@ -266,7 +266,6 @@ function BuildSolution() {
   $roslynUseHardLinks = if ($ci) { "/p:ROSLYNUSEHARDLINKS=true" } else { "" }
 
   try {
-    # TODO: Remove DotNetBuildRepo property when roslyn is on Arcade 10
     MSBuild $toolsetBuildProj `
       $bl `
       /p:Configuration=$configuration `
@@ -287,7 +286,6 @@ function BuildSolution() {
       /p:IbcOptimizationDataDir=$ibcDir `
       /p:VisualStudioIbcDrop=$ibcDropName `
       /p:VisualStudioDropAccessToken=$officialVisualStudioDropAccessToken `
-      /p:DotNetBuildRepo=$productBuild `
       /p:DotNetBuild=$productBuild `
       /p:DotNetBuildFromVMR=$fromVMR `
       $suppressExtensionDeployment `
@@ -309,15 +307,7 @@ function GetIbcSourceBranchName() {
   }
 
   function calculate {
-    $fallback = "main"
-
-    $branchData = GetBranchPublishData $officialSourceBranchName
-    if ($branchData -eq $null) {
-      Write-LogIssue -Type "warning" -Message "Branch $officialSourceBranchName is not listed in PublishData.json. Using IBC data from '$fallback'."
-      Write-Host "Override by setting IbcDrop build variable." -ForegroundColor Yellow
-      return $fallback
-    }
-
+    $branchData = GetBranchPublishData
     return $branchData.vsBranch
   }
 
@@ -758,6 +748,19 @@ try {
 
   if ($restore) {
     &(Ensure-DotNetSdk) tool restore
+  }
+
+  # Above InitializeDotNetCli or Ensure-DotNetSdk may have installed a local .NET SDK.
+  # $global:_DotNetInstallDir will point to the correct global or local SDK location.
+  # We need to make sure DOTNET_HOST_PATH points to that SDK as a workaround for older MSBuild
+  # which will not set it correctly.  Removal is tracked by https://github.com/dotnet/roslyn/issues/80742
+  if (-not $env:DOTNET_HOST_PATH -and (Test-Path variable:global:_DotNetInstallDir)) {
+    $env:DOTNET_HOST_PATH = Join-Path $global:_DotNetInstallDir 'dotnet'
+    if (-not (Test-Path $env:DOTNET_HOST_PATH)) {
+      $env:DOTNET_HOST_PATH = "$($env:DOTNET_HOST_PATH).exe"
+    }
+
+    Write-Host "Setting DOTNET_HOST_PATH to $env:DOTNET_HOST_PATH"
   }
 
   if ($bootstrap -and $bootstrapDir -eq "") {

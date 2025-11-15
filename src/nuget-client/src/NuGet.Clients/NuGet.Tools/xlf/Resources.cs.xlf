@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
-        <target state="translated">Operace se nepovedla.</target>
+        <target state="translated">Operace se nepovedla</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Projekt nemá nárok na migraci, protože není založený na project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Projekt nejde migrovat. Projekt není založený na souboru packages.config nebo zatím nepodporuje formát PackageReference.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Tato nastavení jsou uložená v %NuGet.Config% souborech.</target>
+        <target state="translated">Tato nastavení jsou uložena v souborech %NuGet.Config%.</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Povolit nezabezpečená připojení</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">

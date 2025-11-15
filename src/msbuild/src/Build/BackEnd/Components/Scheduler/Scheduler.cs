@@ -11,10 +11,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Execution;
-using Microsoft.Build.ProjectCache;
 using Microsoft.Build.Framework;
+using Microsoft.Build.ProjectCache;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.Debugging;
+using Microsoft.Build.Shared.FileSystem;
 using BuildAbortedException = Microsoft.Build.Exceptions.BuildAbortedException;
 using ILoggingService = Microsoft.Build.BackEnd.Logging.ILoggingService;
 using NodeLoggingContext = Microsoft.Build.BackEnd.Logging.NodeLoggingContext;
@@ -1036,8 +1037,16 @@ namespace Microsoft.Build.BackEnd
         {
             if (idleNodes.Contains(InProcNodeId))
             {
-                SchedulableRequest[] unscheduledRequests = RentPooledBuffer(
-                    _schedulingData.UnscheduledRequestsWhichCanBeScheduled, _schedulingData.UnscheduledRequestsCount, out int numRead);
+                SchedulableRequest[] unscheduledRequests = _requestBufferPool.Rent(_schedulingData.UnscheduledRequestsCount);
+
+                int numRead = 0;
+                SchedulingData.UnscheduledRequestsWhichCanBeScheduledEnumerator unscheduledRequestsRead = _schedulingData.UnscheduledRequestsWhichCanBeScheduled.GetEnumerator();
+                while (numRead < _schedulingData.UnscheduledRequestsCount && unscheduledRequestsRead.MoveNext())
+                {
+                    unscheduledRequests[numRead] = unscheduledRequestsRead.Current;
+                    numRead++;
+                }
+
                 foreach (SchedulableRequest request in new ReadOnlySpan<SchedulableRequest>(unscheduledRequests, 0, numRead))
                 {
                     if (CanScheduleRequestToNode(request, InProcNodeId) && shouldBeScheduled(request))
@@ -2695,7 +2704,7 @@ namespace Microsoft.Build.BackEnd
                         bool shouldWriteHeader = _debugDumpIsFirstWrite;
                         if (shouldWriteHeader)
                         {
-                            shouldWriteHeader = !File.Exists(string.Format(CultureInfo.CurrentCulture, Path.Combine(_debugDumpPath, "SchedulerState_{0}.txt"), EnvironmentUtilities.CurrentProcessId));
+                            shouldWriteHeader = !FileSystems.Default.FileExists(string.Format(CultureInfo.CurrentCulture, Path.Combine(_debugDumpPath, "SchedulerState_{0}.txt"), EnvironmentUtilities.CurrentProcessId));
                             _debugDumpIsFirstWrite = false;
                         }
                         using StreamWriter file = FileUtilities.OpenWrite(string.Format(CultureInfo.CurrentCulture, Path.Combine(_debugDumpPath, "SchedulerState_{0}.txt"), EnvironmentUtilities.CurrentProcessId), append: true);

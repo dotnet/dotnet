@@ -26,6 +26,9 @@ internal sealed class ProjectLoadTelemetryReporter(ILoggerFactory loggerFactory,
         public ImmutableArray<CommandLineReference> MetadataReferences { get; init; }
         public OutputKind OutputKind { get; init; }
         public bool IsSdkStyle { get; init; }
+        public bool HasSolutionFile { get; init; }
+        public bool IsFileBasedProgram { get; init; }
+        public bool IsMiscellaneousFile { get; init; }
     }
 
     /// <summary>
@@ -77,7 +80,10 @@ internal sealed class ProjectLoadTelemetryReporter(ILoggerFactory loggerFactory,
                 References: hashedReferences,
                 FileExtensions: fileCounts.Keys,
                 FileCounts: fileCounts.Values,
-                SdkStyleProject: isSdkStyleProject);
+                SdkStyleProject: isSdkStyleProject,
+                HasSolutionFile: telemetryInfo.HasSolutionFile,
+                IsFileBasedProgram: telemetryInfo.IsFileBasedProgram,
+                IsMiscellaneousFile: telemetryInfo.IsMiscellaneousFile);
 
             await ReportEventAsync(projectEvent, cancellationToken);
         }
@@ -103,8 +109,7 @@ internal sealed class ProjectLoadTelemetryReporter(ILoggerFactory loggerFactory,
         var sourceFiles = projectFileInfo.Documents
             .Concat(projectFileInfo.AdditionalDocuments)
             .Concat(projectFileInfo.AnalyzerConfigDocuments)
-            .Where(d => !d.IsGenerated)
-            .SelectAsArray(d => d.FilePath);
+            .SelectAsArray(d => !d.IsGenerated, d => d.FilePath);
         var allFiles = contentFiles.Concat(sourceFiles);
         var fileCounts = new Dictionary<string, int>();
         foreach (var file in allFiles)

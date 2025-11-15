@@ -1,35 +1,48 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
-public class IntermediateToken : IntermediateNode
+public abstract class IntermediateToken : IntermediateNode
 {
+    public bool IsLazy { get; }
+
+    private object _content;
+
+    public string Content
+        => _content is LazyContent lazy ? lazy.Value : (string)_content;
+
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
-    public virtual string Content { get; set; }
+    protected IntermediateToken(string content, SourceSpan? source)
+    {
+        _content = content;
+        IsLazy = false;
 
-    public bool IsCSharp => Kind == TokenKind.CSharp;
+        if (source != null)
+        {
+            Source = source;
+        }
+    }
 
-    public bool IsHtml => Kind == TokenKind.Html;
+    private protected IntermediateToken(LazyContent content, SourceSpan? source)
+    {
+        _content = content;
+        IsLazy = true;
 
-    public TokenKind Kind { get; set; } = TokenKind.Unknown;
+        if (source != null)
+        {
+            Source = source;
+        }
+    }
 
-    public static IntermediateToken CreateCSharpToken(string content, SourceSpan? location = null) => new IntermediateToken() { Content = content, Kind = TokenKind.CSharp, Source = location };
+    public void UpdateContent(string content)
+    {
+        _content = content;
+    }
 
     public override void Accept(IntermediateNodeVisitor visitor)
-    {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
-        visitor.VisitToken(this);
-    }
+        => visitor.VisitToken(this);
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {

@@ -29,6 +29,7 @@
     <Project Path="src/Microsoft.DotNet.NuGetRepack/tests/Microsoft.DotNet.NuGetRepack.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.PackageTesting.Tests/Microsoft.DotNet.PackageTesting.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.RemoteExecutor/tests/Microsoft.DotNet.RemoteExecutor.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.SetupNugetSources.Tests/Microsoft.DotNet.SetupNugetSources.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
@@ -45,6 +46,7 @@
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
+  <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed/Microsoft.DotNet.Build.Tasks.Feed.csproj" />

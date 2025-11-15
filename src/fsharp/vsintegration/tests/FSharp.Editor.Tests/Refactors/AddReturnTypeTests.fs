@@ -5,6 +5,10 @@ open Xunit
 open FSharp.Editor.Tests.Refactors.RefactorTestFramework
 open FSharp.Test.ProjectGeneration
 open FSharp.Editor.Tests.Helpers
+open Microsoft.CodeAnalysis
+open Microsoft.CodeAnalysis.Text
+open Microsoft.CodeAnalysis.CodeRefactorings
+open Microsoft.CodeAnalysis.CodeActions
 
 [<Theory>]
 [<InlineData(":int")>]
@@ -298,7 +302,7 @@ let ``Binding linq function doesnt crash`` () =
     let code =
         $"""
 let skip1 elements = 
-    System.Linq.Enumerable.Skip(elements, 1)
+    System.Linq.Enumerable.Skip(elements, 1).GetEnumerator()
         """
 
     use context = TestContext.CreateWithCode code
@@ -309,8 +313,8 @@ let skip1 elements =
 
     let expectedCode =
         $"""
-let skip1 elements : System.Collections.Generic.IEnumerable<'a> = 
-    System.Linq.Enumerable.Skip(elements, 1)
+let skip1 elements : System.Collections.Generic.IEnumerator<'a> = 
+    System.Linq.Enumerable.Skip(elements, 1).GetEnumerator()
         """
 
     let resultText = newDoc.GetTextAsync() |> GetTaskResult
@@ -325,7 +329,7 @@ let ``Handle already existing opens on Linq`` () =
 open System
 
 let skip1 elements = 
-    Linq.Enumerable.Skip(elements, 1)
+    Linq.Enumerable.Skip(elements, 1).GetEnumerator()
         """
 
     use context = TestContext.CreateWithCode code
@@ -338,8 +342,8 @@ let skip1 elements =
         $"""
 open System
 
-let skip1 elements : Collections.Generic.IEnumerable<'a> = 
-    Linq.Enumerable.Skip(elements, 1)
+let skip1 elements : Collections.Generic.IEnumerator<'a> = 
+    Linq.Enumerable.Skip(elements, 1).GetEnumerator()
         """
 
     let resultText = newDoc.GetTextAsync() |> GetTaskResult
@@ -355,7 +359,7 @@ open System
 open System.Linq
 
 let skip1 elements = 
-    Enumerable.Skip(elements, 1)
+    Enumerable.Skip(elements, 1).GetEnumerator()
         """
 
     use context = TestContext.CreateWithCode code
@@ -369,8 +373,37 @@ let skip1 elements =
 open System
 open System.Linq
 
-let skip1 elements : Collections.Generic.IEnumerable<'a> = 
-    Enumerable.Skip(elements, 1)
+let skip1 elements : Collections.Generic.IEnumerator<'a> = 
+    Enumerable.Skip(elements, 1).GetEnumerator()
+        """
+
+    let resultText = newDoc.GetTextAsync() |> GetTaskResult
+    Assert.Equal(expectedCode, resultText.ToString())
+
+[<Fact>]
+let ``Handle seq`` () =
+    let symbolName = "skip1"
+
+    let code =
+        $"""
+open System
+
+let skip1 elements =
+    Linq.Enumerable.Skip(elements, 1)
+        """
+
+    use context = TestContext.CreateWithCode code
+
+    let spanStart = code.IndexOf symbolName
+
+    let newDoc = tryRefactor code spanStart context (new AddReturnType())
+
+    let expectedCode =
+        $"""
+open System
+
+let skip1 elements : 'a seq =
+    Linq.Enumerable.Skip(elements, 1)
         """
 
     let resultText = newDoc.GetTextAsync() |> GetTaskResult
@@ -450,3 +483,42 @@ let sum a b : MyType = {Value=a+b}
 
     let resultText = newDoc.GetTextAsync() |> GetTaskResult
     Assert.Equal(expectedCode.Trim(' ', '\r', '\n'), resultText.ToString().Trim(' ', '\r', '\n'))
+
+[<Fact>]
+let ``Should not throw when file is not properly configured`` () =
+    let symbolName = "sum"
+
+    let code =
+        """
+let sum a b = a + b
+        """
+
+    use context = TestContext.CreateWithCode code
+
+    let spanStart = code.IndexOf symbolName
+
+    // Create a document that's not in the F# project options by adding it to solution
+    // but not to the project's source files list. This simulates the race condition
+    // where a file is copied but project options haven't been refreshed yet.
+    let project = context.Solution.Projects |> Seq.head
+    let newDocId = DocumentId.CreateNewId(project.Id)
+
+    let newDoc =
+        context.Solution.AddDocument(newDocId, "NotInProject.fs", code, filePath = "C:\\NotInProject.fs")
+
+    let documentNotInProject = newDoc.GetDocument(newDocId)
+
+    let refactoringActions = new System.Collections.Generic.List<CodeAction>()
+
+    let refactoringContext =
+        CodeRefactoringContext(documentNotInProject, TextSpan(spanStart, 1), (fun a -> refactoringActions.Add a), context.CancellationToken)
+
+    let refactorProvider = new AddReturnType()
+
+    // This should not throw even though the document is not in the project options
+    let computeTask = refactorProvider.ComputeRefactoringsAsync refactoringContext
+
+    computeTask.Wait(context.CancellationToken)
+
+    // The test passes if no exception was thrown
+    Assert.True(true)

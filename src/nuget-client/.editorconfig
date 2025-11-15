@@ -137,7 +137,7 @@ dotnet_naming_rule.static_fields_rule.style = pascal_case_style
 ; Naming rule: Private members must be camel-cased and prefixed with underscore
 dotnet_naming_style.private_member_style.capitalization = camel_case
 dotnet_naming_style.private_member_style.required_prefix = _
-dotnet_naming_symbols.private_field_symbols.applicable_kinds = field,event
+dotnet_naming_symbols.private_field_symbols.applicable_kinds = field
 dotnet_naming_symbols.private_field_symbols.applicable_accessibilities = private,protected,internal
 dotnet_naming_rule.private_field_rule.severity = warning
 dotnet_naming_rule.private_field_rule.symbols  = private_field_symbols
@@ -207,7 +207,7 @@ dotnet_diagnostic.CA1824.severity = none
 dotnet_diagnostic.CA1825.severity = warning
 dotnet_diagnostic.CA1826.severity = none
 dotnet_diagnostic.CA1828.severity = none
-dotnet_diagnostic.CA1829.severity = none
+dotnet_diagnostic.CA1829.severity = error
 dotnet_diagnostic.CA2002.severity = none
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2008.severity = none

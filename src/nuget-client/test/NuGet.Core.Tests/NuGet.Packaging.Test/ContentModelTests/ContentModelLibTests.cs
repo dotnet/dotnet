@@ -158,7 +158,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
             var group = collection.FindBestItemGroup(criteria, conventions.Patterns.RuntimeAssemblies);
 
             // Assert
-            Assert.Equal(1, group.Items.Count());
+            Assert.Equal(1, group.Items.Count);
         }
 
         [Fact]

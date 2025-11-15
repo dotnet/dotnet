@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="ilmerge.props" />
 
   <PropertyGroup>
@@ -68,7 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="ILRepack" PrivateAssets="all" />
     <PackageReference Include="System.Memory" />
     <None Include="$(BuildCommonDirectory)\NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
@@ -95,9 +95,9 @@
       <DependentUpon>NuGetResources.resx</DependentUpon>
     </Compile>
     <!-- nuget.exe localized assemblies -->
-    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" />
+    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" Condition="'$(CI)' == 'true'" />
     <!-- NuGet.Commands localized assemblies -->
-    <LocResource Include="$(OutputPath)\**\NuGet.Commands.resources.dll" />
+    <LocResource Include="$(OutputPath)\**\NuGet.Commands.resources.dll" Condition="'$(CI)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
@@ -122,8 +122,9 @@
       <PathToMergedNuGetExe>$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe</PathToMergedNuGetExe>
     </PropertyGroup>
     <ItemGroup>
-      <!-- Dependent assemblies -->
-      <BuildArtifacts Include="$(OutputPath)\*.dll" />
+      <!-- Dependent assemblies. Make sure NuGet.Core.dll is last. -->
+      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="$(OutputPath)\NuGet.Core.dll" />
+      <BuildArtifacts Include="$(OutputPath)\NuGet.Core.dll" />
     </ItemGroup>
     <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetExe)" Importance="High" />
   </Target>
@@ -138,11 +139,12 @@
           Outputs="$(PathToMergedNuGetExe)"
           Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(SkipILMergeOfNuGetExe)' != 'true'" >
     <PropertyGroup>
-      <IlmergeCommand>$(ILMergeConsolePath) /lib:$(OutputPath) /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt</IlmergeCommand>
+      <IlmergeCommand>$(ILRepack) /lib:$(OutputPath) /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt /allowduplicateresources</IlmergeCommand>
       <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) /delaysign /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) $(PathToBuiltNuGetExe) @(BuildArtifacts->'%(fullpath)', ' ')</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) @(LocResource->'%(fullpath)', ' ')</IlmergeCommand>
     </PropertyGroup>
+    <Error Condition="'$(ILRepack)' == ''" Text="ILRepack not found" />
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
   </Target>

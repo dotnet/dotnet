@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>NuGet's understanding of packages. Reading nuspec, nupkgs and package signing.</Description>
-    <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
     <NoWarn>$(NoWarn);CS1591;CS1574;CS1573;CS1572;RS0041</NoWarn>
     <NoWarn Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">$(NoWarn);CS0414</NoWarn>

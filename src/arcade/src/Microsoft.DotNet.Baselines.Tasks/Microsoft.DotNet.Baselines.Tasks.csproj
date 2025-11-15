@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetToolCurrent)</TargetFrameworks>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <Nullable>enable</Nullable>
+    <PackageDescription>MSBuild tasks for dealing with baselines in .NET</PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="Octokit" />
+  </ItemGroup>
+
+</Project>

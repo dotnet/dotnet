@@ -11,13 +11,13 @@ namespace NuGetConsole.Implementation.Console
 {
     internal class WpfConsoleCompletionSource : ObjectWithFactory<WpfConsoleService>, ICompletionSource
     {
-        private ITextBuffer TextBuffer { get; set; }
+        private readonly ITextBuffer _textBuffer;
 
         public WpfConsoleCompletionSource(WpfConsoleService factory, ITextBuffer textBuffer)
             : base(factory)
         {
             UtilityMethods.ThrowIfArgumentNull(textBuffer);
-            this.TextBuffer = textBuffer;
+            this._textBuffer = textBuffer;
         }
 
         private WpfConsole _console;
@@ -28,7 +28,7 @@ namespace NuGetConsole.Implementation.Console
             {
                 if (_console == null)
                 {
-                    TextBuffer.Properties.TryGetProperty<WpfConsole>(typeof(IConsole), out _console);
+                    _textBuffer.Properties.TryGetProperty<WpfConsole>(typeof(IConsole), out _console);
                     Debug.Assert(_console != null);
                 }
 

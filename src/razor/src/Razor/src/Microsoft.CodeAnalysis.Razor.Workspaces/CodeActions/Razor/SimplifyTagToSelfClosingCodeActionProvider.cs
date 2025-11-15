@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -100,7 +101,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         }
 
         // Get symbols for the markup element
-        var boundTagHelper = descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+        var boundTagHelper = descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (boundTagHelper == null)
         {
             return false;

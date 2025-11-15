@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,8 +37,12 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput) : Respon
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
-        // Line 19: __o = DateTime
-        var textEditRange = LspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
+
+        var codeDocument = CreateCodeDocument(documentContent);
+        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var start = csharpSourceText.ToString().IndexOf("DateTime");
+        var textEditRange = csharpSourceText.GetRange(start, start + 8);
+
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
         var expectedRange = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
 
@@ -59,8 +64,12 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput) : Respon
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
-        // Line 19: __o = DateTime
-        var textEditRange = LspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
+
+        var codeDocument = CreateCodeDocument(documentContent);
+        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var start = csharpSourceText.ToString().IndexOf("DateTime");
+        var textEditRange = csharpSourceText.GetRange(start, start + 8);
+
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
         delegatedCompletionList.ItemDefaults = new CompletionListItemDefaults()
         {

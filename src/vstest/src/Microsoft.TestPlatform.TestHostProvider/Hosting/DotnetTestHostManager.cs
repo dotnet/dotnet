@@ -231,6 +231,29 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         EqtTrace.Verbose($"DotnetTestHostmanager.GetTestHostProcessStartInfo: Platform environment '{_platformEnvironment.Architecture}' target architecture '{_architecture}' framework '{_targetFramework}' OS '{_platformEnvironment.OperatingSystem}'");
 
         var startInfo = new TestProcessStartInfo();
+        startInfo.EnvironmentVariables = environmentVariables ?? new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+
+        string? dotnetRootPath = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_PATH");
+        string? dotnetRootArchitecture = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_ARCHITECTURE");
+
+        if (!StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
+        {
+            if (StringUtils.IsNullOrWhiteSpace(dotnetRootArchitecture))
+            {
+                throw new InvalidOperationException("'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE' must be both always set. If you are seeing this error, this is a bug in dotnet SDK that sets those variables.");
+            }
+
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH={dotnetRootPath}");
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE={dotnetRootArchitecture}");
+
+            if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS))
+            {
+                // Set DOTNET_ROOT_<ARCH> for any run, so it gets propagated to testhost and its child processes, like dotnet run does it. This allows executables that start under testhost to find the path to dotnet
+                // from which we called dotnet test. Before this change we only expected testhost.exe to be in this situation, but with xunit v3 running separate exe under testhost, the need for setting architecture
+                // specific DOTNET_ROOT increases and makes this necessary for users to have good experience.
+                SetDotnetRootForArchitecture(startInfo, dotnetRootPath!, dotnetRootArchitecture);
+            }
+        }
 
         // .NET core host manager is not a shared host. It will expect a single test source to be provided.
         // TODO: Throw an exception when we get 0 or more than 1 source, that explains what happened, instead of .Single throwing a generic exception?
@@ -506,29 +529,14 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         // G:\nuget-package-path\microsoft.testplatform.testhost\version\**\testhost.dll
         // G:\tmp\netcore-test\bin\Debug\netcoreapp1.0\netcore-test.dll
         startInfo.Arguments = args;
-        startInfo.EnvironmentVariables = environmentVariables ?? new Dictionary<string, string?>();
 
         // If we're running using custom apphost we need to set DOTNET_ROOT/DOTNET_ROOT(x86)
         // We're setting it inside SDK to support private install scenario.
         // i.e. I've got only private install and no global installation, in this case apphost needs to use env var to locate runtime.
         if (testHostExeFound)
         {
-            // This change needs to happen first on vstest side, and then on dotnet/sdk, so prefer this approach and fallback to the old one.
-            // VSTEST_DOTNET_ROOT v2
-            string? dotnetRootPath = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_PATH");
-            if (!StringUtils.IsNullOrWhiteSpace(dotnetRootPath))
+            if (!StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
             {
-                // This is v2 of the environment variables that we are passing, we are in new dotnet sdk. So also grab the architecture.
-                string? dotnetRootArchitecture = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_ARCHITECTURE");
-
-                if (StringUtils.IsNullOrWhiteSpace(dotnetRootArchitecture))
-                {
-                    throw new InvalidOperationException("'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE' must be both always set. If you are seeing this error, this is a bug in dotnet SDK that sets those variables.");
-                }
-
-                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH={dotnetRootPath}");
-                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE={dotnetRootArchitecture}");
-
                 // The parent process is passing to us the path in which the dotnet.exe is and is passing the architecture of the dotnet.exe,
                 // so if the child process (testhost) is the same architecture it can pick up that dotnet.exe location and run. This is to allow
                 // local installations of dotnet/sdk to work with testhost.
@@ -560,21 +568,11 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     //
                     // We ship just testhost.exe and testhost.x86.exe if the architecture is different we won't find the testhost*.exe and
                     // won't reach this code, but let's write this in a generic way anyway, to avoid breaking if we add more variants of testhost*.exe.
-                    var environmentVariableName = $"DOTNET_ROOT_{_architecture.ToString().ToUpperInvariant()}";
-
-                    var existingDotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(environmentVariableName);
-                    if (!StringUtilities.IsNullOrWhiteSpace(existingDotnetRoot))
+                    //
+                    // If the feature flag is set, revert to previous behavior of setting DOTNET_ROOT_<ARCH> only on Windows after we found testhost.exe.
+                    if (FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS))
                     {
-                        // The variable is already set in the surrounding environment, don't set it, because we want to keep what user provided.
-                    }
-                    else
-                    {
-                        var architectureFromEnv = (Architecture)Enum.Parse(typeof(Architecture), dotnetRootArchitecture, ignoreCase: true);
-                        if (architectureFromEnv == _architecture)
-                        {
-                            // Set the architecture specific variable to the environment of the process so it is picked up.
-                            startInfo.EnvironmentVariables.Add(environmentVariableName, dotnetRootPath);
-                        }
+                        SetDotnetRootForArchitecture(startInfo, dotnetRootPath!, dotnetRootArchitecture!);
                     }
                 }
                 else
@@ -583,7 +581,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     // to avoid setting DOTNET_ROOT that points to x64 but is picked up by x86 host.
                     //
                     // Also avoid setting it if we are already getting it from the surrounding environment.
-                    var architectureFromEnv = (Architecture)Enum.Parse(typeof(Architecture), dotnetRootArchitecture, ignoreCase: true);
+                    var architectureFromEnv = (Architecture)Enum.Parse(typeof(Architecture), dotnetRootArchitecture!, ignoreCase: true);
                     if (architectureFromEnv == _architecture)
                     {
                         if (_architecture == Architecture.X86)
@@ -603,28 +601,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                             }
                         }
                     }
-                }
-            }
-            else
-            {
-                // Fallback, can delete this once the change is in dotnet sdk. because they are always used together.
-                string prefix = "VSTEST_WINAPPHOST_";
-                string dotnetRootEnvName = $"{prefix}DOTNET_ROOT(x86)";
-                var dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
-                if (dotnetRoot is null)
-                {
-                    dotnetRootEnvName = $"{prefix}DOTNET_ROOT";
-                    dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
-                }
-
-                if (dotnetRoot != null)
-                {
-                    EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Found '{dotnetRootEnvName}' in env variables, value '{dotnetRoot}', forwarding to '{dotnetRootEnvName.Replace(prefix, string.Empty)}'");
-                    startInfo.EnvironmentVariables.Add(dotnetRootEnvName.Replace(prefix, string.Empty), dotnetRoot);
-                }
-                else
-                {
-                    EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Prefix '{prefix}*' not found in env variables");
                 }
             }
         }
@@ -729,6 +705,26 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
             }
 
             return false;
+        }
+    }
+
+    private void SetDotnetRootForArchitecture(TestProcessStartInfo startInfo, string dotnetRootPath, string dotnetRootArchitecture)
+    {
+        var environmentVariableName = $"DOTNET_ROOT_{dotnetRootArchitecture.ToUpperInvariant()}";
+
+        var existingDotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(environmentVariableName);
+        if (!StringUtilities.IsNullOrWhiteSpace(existingDotnetRoot))
+        {
+            EqtTrace.Verbose($"DotnetTestHostManager.SetDotnetRootForArchitecture: The variable {environmentVariableName} is already set in the surrounding environment, don't add it to testhost start info, because we want to keep what user provided externally.");
+        }
+        else
+        {
+            startInfo.EnvironmentVariables ??= new Dictionary<string, string?>();
+
+            // Set the architecture specific variable to the environment of the process so it is picked up.
+            startInfo.EnvironmentVariables.Add(environmentVariableName, dotnetRootPath);
+
+            EqtTrace.Verbose($"DotnetTestHostManager.SetDotnetRootForArchitecture: Adding {environmentVariableName}={dotnetRootPath} to testhost start info.");
         }
     }
 
@@ -837,7 +833,15 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
             || (_customTestHostLauncher.IsDebug
                 && _customTestHostLauncher is ITestHostLauncher2))
         {
-            EqtTrace.Verbose("DotnetTestHostManager: Starting process '{0}' with command line '{1}'", testHostStartInfo.FileName, testHostStartInfo.Arguments);
+            if (EqtTrace.IsVerboseEnabled)
+            {
+                var dotnetEnvVars = testHostStartInfo.EnvironmentVariables?
+                    .Where(kvp => kvp.Key.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase))
+                    .Select(kvp => $"{kvp.Key}={kvp.Value}")
+                    .ToArray() ?? Array.Empty<string>();
+
+                EqtTrace.Verbose($"DotnetTestHostManager: Starting process '{0}' with command line '{1}' and DOTNET environment: {string.Join(", ", dotnetEnvVars)} ", testHostStartInfo.FileName, testHostStartInfo.Arguments);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 

@@ -28,6 +28,13 @@ parameters:
   default: '$(Build.ArtifactStagingDirectory)/SigningValidation'
 
 steps:
+- ${{ if eq(parameters.OS, 'Darwin') }}:
+  - script: |
+      xcrun simctl runtime delete all
+    displayName: Reclaim disk space from unused simulator runtimes
+
+# Include "**SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*"
+# once https://github.com/dotnet/arcade/issues/16034 has been resolved.
 - task: DownloadPipelineArtifact@2
   displayName: Download Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
@@ -38,6 +45,8 @@ steps:
       **AzureLinux*_Artifacts/**
       **OSX_*_Artifacts/**
       **Windows_*_Artifacts/**
+      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
+      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
@@ -58,7 +67,8 @@ steps:
         /p:ArtifactDownloadDirectory=${{ parameters.signCheckFilesDirectory }} `
         /p:SourceBranch='$(Build.SourceBranch)' `
         /p:DotNetRootDirectory=$(Build.SourcesDirectory) `
-        /p:OutputLogsDirectory=${{ parameters.outputDirectory }}
+        /p:OutputLogsDirectory=${{ parameters.outputDirectory }} `
+        /bl:${{ parameters.outputDirectory }}/outer-signing-validation.binlog
 
     displayName: Validate Signing
     continueOnError: ${{ parameters.continueOnError }}
@@ -75,7 +85,8 @@ steps:
         /p:ArtifactDownloadDirectory=${{ parameters.signCheckFilesDirectory }} \
         /p:SourceBranch='$(Build.SourceBranch)' \
         /p:DotNetRootDirectory=$(Build.SourcesDirectory) \
-        /p:OutputLogsDirectory=${{ parameters.outputDirectory }}
+        /p:OutputLogsDirectory=${{ parameters.outputDirectory }} \
+        /bl:${{ parameters.outputDirectory }}/outer-signing-validation.binlog
 
     displayName: Validate Signing
     continueOnError: ${{ parameters.continueOnError }}

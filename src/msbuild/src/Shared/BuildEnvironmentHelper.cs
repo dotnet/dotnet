@@ -477,6 +477,7 @@ namespace Microsoft.Build.Shared
             // Tests which specifically test the BuildEnvironmentHelper need it to be able to act as if it is not running tests
             s_runningTests = runningTests ?? CheckIfRunningTests;
 
+            _runningTests = null;
             BuildEnvironmentHelperSingleton.s_instance = Initialize();
         }
 
@@ -486,6 +487,7 @@ namespace Microsoft.Build.Shared
         internal static void ResetInstance_ForUnitTestsOnly(BuildEnvironment buildEnvironment)
         {
             BuildEnvironmentHelperSingleton.s_instance = buildEnvironment;
+            _runningTests = buildEnvironment.RunningTests;
         }
 
         private static Func<string> s_getProcessFromRunningProcess = GetProcessFromRunningProcess;
@@ -606,12 +608,10 @@ namespace Microsoft.Build.Shared
 
                 // Check for existence of an MSBuild file. Note this is not necessary in a VS installation where we always want to
                 // assume the correct layout.
-                var existsCheck = mode == BuildEnvironmentMode.VisualStudio ? new Func<string, bool>(_ => true) : File.Exists;
+                var existsCheck = mode == BuildEnvironmentMode.VisualStudio ? new Func<string, bool>(_ => true) : FileSystems.Default.FileExists;
 
                 MSBuildToolsDirectory32 = MSBuildToolsDirectoryRoot;
                 MSBuildToolsDirectory64 = existsCheck(potentialAmd64FromX86) ? Path.Combine(MSBuildToolsDirectoryRoot, "amd64") : CurrentMSBuildToolsDirectory;
-                MSBuildToolsDirectoryNET = Environment.GetEnvironmentVariable("MSBuildToolsDirectoryNET") ?? "";
-                MSBuildAssemblyDirectory = Environment.GetEnvironmentVariable("MSBuildAssemblyDirectory") ?? "";
 #if RUNTIME_TYPE_NETCORE
                 // Fall back to "current" for any architecture since .NET SDK doesn't
                 // support cross-arch task invocations.
@@ -663,16 +663,6 @@ namespace Microsoft.Build.Shared
         /// <see langword="null" /> if ARM64 tools are not installed.
         /// </summary>
         internal string MSBuildToolsDirectoryArm64 { get; }
-
-        /// <summary>
-        /// Path to the NET tools directory. It's a temporary solution before path to dotnet is resolved from DOTNET_EXPERIMENTAL_HOST_PATH.
-        /// </summary>
-        internal string MSBuildToolsDirectoryNET { get; }
-
-        /// <summary>
-        /// Path to the MSBuild assembly.
-        /// </summary>
-        internal string MSBuildAssemblyDirectory { get; }
 
         /// <summary>
         /// Path to the Sdks folder for this MSBuild instance.

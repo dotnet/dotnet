@@ -37,6 +37,9 @@ namespace Microsoft.Build.Framework
 
         internal readonly string? MSBuildDisableFeaturesFromVersion = Environment.GetEnvironmentVariable("MSBUILDDISABLEFEATURESFROMVERSION");
 
+        // This will affect all tasks except for MSBuild and CallTarget. Those two have to run in-proc, as they depend on IBuildEngine callbacks.
+        public readonly bool ForceAllTasksOutOfProcToTaskHost = Environment.GetEnvironmentVariable("MSBUILDFORCEALLTASKSOUTOFPROC") == "1";
+
         /// <summary>
         /// Do not expand wildcards that match a certain pattern
         /// </summary>
@@ -138,6 +141,11 @@ namespace Microsoft.Build.Framework
         public readonly bool DebugUnitTests = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildDebugUnitTests"));
 
         public readonly bool InProcNodeDisabled = Environment.GetEnvironmentVariable("MSBUILDNOINPROCNODE") == "1";
+
+        /// <summary>
+        /// Forces execution of tasks coming from a different TaskFactory than AssemblyTaskFactory out of proc.
+        /// </summary>
+        public readonly bool ForceTaskFactoryOutOfProc = Environment.GetEnvironmentVariable("MSBUILDFORCEINLINETASKFACTORIESOUTOFPROC") == "1";
 
         /// <summary>
         /// Variables controlling opt out at the level of not initializing telemetry infrastructure. Set to "1" or "true" to opt out.

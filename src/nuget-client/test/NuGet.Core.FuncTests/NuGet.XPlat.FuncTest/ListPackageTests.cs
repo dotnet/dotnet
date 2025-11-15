@@ -199,7 +199,7 @@ namespace NuGet.XPlat.FuncTest
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             SimpleTestSettingsContext.RemoveSource(pathContext.Settings.XML, "source");
 
@@ -320,7 +320,7 @@ namespace NuGet.XPlat.FuncTest
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx);
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // List package command requires restore to be run before it can list packages.
             await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
@@ -552,7 +552,7 @@ namespace NuGet.XPlat.FuncTest
             project.AddPackageToAllFrameworks(package);
 
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             return solution;
         }
@@ -568,7 +568,7 @@ namespace NuGet.XPlat.FuncTest
             project.AddPackageToAllFrameworks(package);
 
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             return project;
         }

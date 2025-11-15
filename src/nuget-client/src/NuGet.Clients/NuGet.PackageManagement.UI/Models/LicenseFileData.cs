@@ -8,8 +8,8 @@ namespace NuGet.PackageManagement.UI
 {
     public class LicenseFileData : INotifyPropertyChanged
     {
-        private string _header { get; set; }
-        private FlowDocument _content { get; set; }
+        private string _header;
+        private FlowDocument _content;
 
         public string LicenseHeader
         {

@@ -112,7 +112,7 @@ type internal FxResolver
         desiredDotNetSdkVersionForDirectoryCache.GetOrAdd(
             projectDir,
             (fun _ ->
-                match getDotnetHostPath () with
+                match getDotnetHostPath None with
                 | Some dotnetHostPath ->
                     try
                         let workingDir =
@@ -412,7 +412,7 @@ type internal FxResolver
 
         match runningTfmOpt with
         | Some tfm -> tfm
-        | _ -> if isRunningOnCoreClr then "net9.0" else "net472"
+        | _ -> if isRunningOnCoreClr then "net10.0" else "net472"
 
     let trySdkRefsPackDirectory =
         lazy

@@ -874,7 +874,7 @@ namespace NuGet.Test.Utility
                 language,
                 entryModifiedTime,
                 zipEntries,
-                zipContents: Enumerable.Repeat(string.Empty, zipEntries.Count()));
+                zipContents: Enumerable.Repeat(string.Empty, zipEntries.Length));
         }
 
         public static async Task<FileInfo> GeneratePackageAsync(

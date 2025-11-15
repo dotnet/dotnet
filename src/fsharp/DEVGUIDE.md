@@ -102,6 +102,49 @@ Running tests:
 
 You can then open `FSharp.sln` in your editor of choice.
 
+## Working with non-released .NET SDKs
+
+This repository may require a non-released version of the .NET SDK, as specified in the `global.json` file. When the required SDK version is not publicly available through normal channels, you may encounter an error when running `dotnet build` directly:
+
+```
+The .NET SDK could not be found, please run ./eng/common/dotnet.sh.
+```
+
+### Setting up the correct SDK
+
+Before using plain `dotnet build` commands, you need to install the required SDK version locally:
+
+**On Linux/macOS:**
+```shell
+./eng/common/dotnet.sh
+```
+
+**On Windows:**
+```shell
+.\eng\common\dotnet.cmd
+```
+
+This downloads and installs the correct SDK version to a local `.dotnet` directory in the repository root.
+
+### Using dotnet commands with the local SDK
+
+After running the setup script once to install the SDK, you can use regular `dotnet` commands normally:
+
+1. **One-time SDK installation**:
+   ```shell
+   # Linux/macOS
+   ./eng/common/dotnet.sh
+   
+   # Windows
+   .\eng\common\dotnet.cmd
+   ```
+
+2. **Regular dotnet commands** (after SDK installation):
+   ```shell
+   dotnet build FSharp.Compiler.Service.sln
+   dotnet test tests/FSharp.Compiler.Service.Tests/
+   ```
+
 ## Testing from the command line
 
 You can find all test options as separate flags. For example `build -testAll`:
@@ -136,7 +179,7 @@ To use your custom build of `Fsc`, add the `DotnetFscCompilerPath` property to y
 
 ```xml
 <PropertyGroup>
-    <DotnetFscCompilerPath>D:\Git\fsharp\artifacts\bin\fsc\Debug\net9.0\fsc.dll</DotnetFscCompilerPath>
+    <DotnetFscCompilerPath>D:\Git\fsharp\artifacts\bin\fsc\Debug\net10.0\fsc.dll</DotnetFscCompilerPath>
 </PropertyGroup>
 ```
 
@@ -166,6 +209,12 @@ If your changes involve modifying the list of language keywords in any way, (e.g
 ```shell
 dotnet build src\Compiler /t:UpdateXlf
 ```
+or
+```shell
+cd src/Compiler
+dotnet build -t:UpdateXlf
+```
+
 If you are on a Mac, you can run this command from the root of the repository:
 
 ```shell
@@ -277,9 +326,9 @@ dotnet test tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fs
 These are IL baseline tests for the core assemblies of the compiler (FSharp.Core and FSharp.Compiler.Service). The baselines are located in the `tests/ILVerify` folder and look like:
 
 ```
-ilverify_FSharp.Compiler.Service_Debug_net9.0.bsl
+ilverify_FSharp.Compiler.Service_Debug_net10.0.bsl
 ilverify_FSharp.Compiler.Service_Debug_netstandard2.0.bsl
-ilverify_FSharp.Compiler.Service_Release_net9.0.bsl
+ilverify_FSharp.Compiler.Service_Release_net10.0.bsl
 ilverify_FSharp.Compiler.Service_Release_netstandard2.0.bsl
 ilverify_FSharp.Core_Debug_netstandard2.0.bsl
 ilverify_FSharp.Core_Debug_netstandard2.1.bsl

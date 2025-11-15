@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -13,27 +12,33 @@ namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
 public class RuntimeNodeWriter : IntermediateNodeWriter
 {
-    public virtual string WriteCSharpExpressionMethod { get; set; } = "Write";
+    public static readonly RuntimeNodeWriter Instance = new RuntimeNodeWriter();
 
-    public virtual string WriteHtmlContentMethod { get; set; } = "WriteLiteral";
+    public virtual string WriteCSharpExpressionMethod => "Write";
 
-    public virtual string BeginWriteAttributeMethod { get; set; } = "BeginWriteAttribute";
+    public virtual string WriteHtmlContentMethod => "WriteLiteral";
 
-    public virtual string EndWriteAttributeMethod { get; set; } = "EndWriteAttribute";
+    public virtual string BeginWriteAttributeMethod => "BeginWriteAttribute";
 
-    public virtual string WriteAttributeValueMethod { get; set; } = "WriteAttributeValue";
+    public virtual string EndWriteAttributeMethod => "EndWriteAttribute";
 
-    public virtual string PushWriterMethod { get; set; } = "PushWriter";
+    public virtual string WriteAttributeValueMethod => "WriteAttributeValue";
 
-    public virtual string PopWriterMethod { get; set; } = "PopWriter";
+    public virtual string PushWriterMethod => "PushWriter";
 
-    public string TemplateTypeName { get; set; } = "Microsoft.AspNetCore.Mvc.Razor.HelperResult";
+    public virtual string PopWriterMethod => "PopWriter";
+
+    public const string TemplateTypeName = "Microsoft.AspNetCore.Mvc.Razor.HelperResult";
+
+    protected RuntimeNodeWriter()
+    {
+    }
 
     public override void WriteUsingDirective(CodeRenderingContext context, UsingDirectiveIntermediateNode node)
     {
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildEnhancedLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: true))
+            using (context.BuildEnhancedLinePragma(sourceSpan, suppressLineDefaultAndHidden: true))
             {
                 context.CodeWriter.WriteUsing(node.Content, endLine: node.HasExplicitSemicolon);
             }
@@ -103,9 +108,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
     {
         for (var i = 0; i < children.Count; i++)
         {
-            if (children[i] is IntermediateToken token && token.IsCSharp)
+            if (children[i] is CSharpIntermediateToken token)
             {
-                using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
+                using (context.BuildEnhancedLinePragma(token.Source))
                 {
                     context.CodeWriter.Write(token.Content);
                 }
@@ -136,13 +141,13 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteParameterSeparator()
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator()
             .WriteStringLiteral(node.Suffix)
             .WriteParameterSeparator()
-            .Write(suffixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(suffixLocation)
             .WriteParameterSeparator()
-            .Write(valuePieceCount.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valuePieceCount)
             .WriteEndMethodInvocation();
 
         context.RenderChildren(node);
@@ -161,13 +166,13 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         // Write content
         for (var i = 0; i < node.Children.Count; i++)
         {
-            if (node.Children[i] is IntermediateToken token && token.IsHtml)
+            if (node.Children[i] is HtmlIntermediateToken token)
             {
                 context.CodeWriter.WriteStringLiteral(token.Content);
             }
@@ -180,9 +185,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(true)
             .WriteEndMethodInvocation();
@@ -190,12 +195,12 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteCSharpExpressionAttributeValue(CodeRenderingContext context, CSharpExpressionAttributeValueIntermediateNode node)
     {
-        var prefixLocation = node.Source.Value.AbsoluteIndex.ToString(CultureInfo.InvariantCulture);
+        var prefixLocation = node.Source.Value.AbsoluteIndex;
         context.CodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation)
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         WriteCSharpChildren(node.Children, context);
@@ -204,9 +209,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         var valueLength = node.Source.Value.Length - node.Prefix.Length;
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(false)
             .WriteEndMethodInvocation();
@@ -223,7 +228,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         context.CodeWriter.WriteStartNewObject(TemplateTypeName);
@@ -239,9 +244,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(false)
             .WriteEndMethodInvocation();
@@ -256,7 +261,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         var length = 0;
         foreach (var child in node.Children)
         {
-            if (child is IntermediateToken token && token.IsHtml)
+            if (child is HtmlIntermediateToken token)
             {
                 var htmlContent = token.Content.AsMemory();
 

@@ -2,55 +2,56 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 public sealed class DefaultTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
         var compilation = context.Compilation;
 
-        var tagHelperTypeSymbol = compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
-        if (tagHelperTypeSymbol == null || tagHelperTypeSymbol.TypeKind == TypeKind.Error)
+        var iTagHelperType = compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
+        if (iTagHelperType == null || iTagHelperType.TypeKind == TypeKind.Error)
         {
             // Could not find attributes we care about in the compilation. Nothing to do.
             return;
         }
 
-        var targetSymbol = context.TargetSymbol;
+        var targetAssembly = context.TargetAssembly;
         var factory = new DefaultTagHelperDescriptorFactory(context.IncludeDocumentation, context.ExcludeHidden);
-        var collector = new Collector(compilation, targetSymbol, factory, tagHelperTypeSymbol);
-        collector.Collect(context);
+        var collector = new Collector(compilation, targetAssembly, factory, iTagHelperType);
+        collector.Collect(context, cancellationToken);
     }
 
     private class Collector(
-        Compilation compilation, ISymbol? targetSymbol, DefaultTagHelperDescriptorFactory factory, INamedTypeSymbol tagHelperTypeSymbol)
-        : TagHelperCollector<Collector>(compilation, targetSymbol)
+        Compilation compilation,
+        IAssemblySymbol? targetAssembly,
+        DefaultTagHelperDescriptorFactory factory,
+        INamedTypeSymbol iTagHelperType)
+        : TagHelperCollector<Collector>(compilation, targetAssembly)
     {
         private readonly DefaultTagHelperDescriptorFactory _factory = factory;
-        private readonly INamedTypeSymbol _tagHelperTypeSymbol = tagHelperTypeSymbol;
+        private readonly INamedTypeSymbol _iTagHelperType = iTagHelperType;
 
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => type.IsTagHelper(_iTagHelperType);
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new TagHelperTypeVisitor(_tagHelperTypeSymbol, types);
+            var descriptor = _factory.CreateDescriptor(type);
 
-            visitor.Visit(symbol);
-
-            foreach (var type in types)
+            if (descriptor != null)
             {
-                var descriptor = _factory.CreateDescriptor(type);
-
-                if (descriptor != null)
-                {
-                    results.Add(descriptor);
-                }
+                results.Add(descriptor);
             }
         }
     }

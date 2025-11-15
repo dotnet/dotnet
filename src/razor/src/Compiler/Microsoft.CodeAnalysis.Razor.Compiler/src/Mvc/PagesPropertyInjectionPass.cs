@@ -1,16 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
+using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
+public sealed class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.DocumentKind != RazorPageDocumentClassifierPass.RazorPageDocumentKind)
         {
@@ -25,35 +28,29 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
         var visitor = new Visitor();
         visitor.Visit(documentNode);
 
-        var @class = visitor.Class;
+        var @class = visitor.Class.AssumeNotNull();
 
         var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType.Content}>";
         var vddProperty = new CSharpCodeIntermediateNode();
-        vddProperty.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = nullableEnable(nullableEnabled, $"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData"),
-        });
+        vddProperty.Children.Add(
+            IntermediateNodeFactory.CSharpToken(nullableEnable(nullableEnabled, $"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData")));
         @class.Children.Add(vddProperty);
 
         if (codeDocument.CodeGenerationOptions.DesignTime || !razor9OrHigher)
         {
             var modelProperty = new CSharpCodeIntermediateNode();
-            modelProperty.Children.Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = nullableEnable(nullableEnabled, $"public {modelType.Content} Model => ViewData.Model"),
-            });
+            modelProperty.Children.Add(
+                IntermediateNodeFactory.CSharpToken(nullableEnable(nullableEnabled, $"public {modelType.Content} Model => ViewData.Model")));
             @class.Children.Add(modelProperty);
         }
         else
         {
             @class.Children.Add(new PropertyDeclarationIntermediateNode()
             {
-                Modifiers = { "public" },
-                PropertyName = "Model",
-                PropertyType = modelType,
-                PropertyExpression = "ViewData.Model"
+                Modifiers = CommonModifiers.Public,
+                Name = "Model",
+                Type = modelType,
+                ExpressionBody = "ViewData.Model"
             });
         }
 
@@ -70,14 +67,11 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
 
     private class Visitor : IntermediateNodeWalker
     {
-        public ClassDeclarationIntermediateNode Class { get; private set; }
+        public ClassDeclarationIntermediateNode? Class { get; private set; }
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
-            if (Class == null)
-            {
-                Class = node;
-            }
+            Class ??= node;
 
             base.VisitClassDeclaration(node);
         }

@@ -27,9 +27,9 @@ stages:
         inputs:
           packageType: runtime
           version: 8.x
-          installationPath: $(Build.SourcesDirectory)/.dotnet
+          installationPath: $(System.DefaultWorkingDirectory)/.dotnet
 
-      - script: $(Build.SourcesDirectory)/.dotnet/dotnet.exe tool restore
+      - script: $(System.DefaultWorkingDirectory)/.dotnet/dotnet.exe tool restore
         displayName: Restore dotnet tools
 
       - task: AzureCLI@2

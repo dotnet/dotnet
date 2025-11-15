@@ -2,6 +2,7 @@
 
 namespace FSharp.Compiler.UnitTests
 
+open System
 open System.Collections.Immutable
 open Xunit
 open FSharp.Test
@@ -156,7 +157,7 @@ Test.OverloadedMethodTakingNullableOptionals(x = 6) |> ignore
             |> MetadataReference.CreateFromFile
 
         let cs =
-            CompilationUtil.CreateCSharpCompilation(csSrc, CSharpLanguageVersion.CSharp8, TargetFramework.NetCoreApp31, additionalReferences = ImmutableArray.CreateRange [fsharpCoreAssembly])
+            CompilationUtil.CreateCSharpCompilation(csSrc, CSharpLanguageVersion.CSharp8, TargetFramework.Current, additionalReferences = ImmutableArray.CreateRange [fsharpCoreAssembly])
             |> CompilationReference.Create
 
         let fs = Compilation.Create(fsSrc, CompileOutput.Exe, options = [| $"--langversion:{langVersion}" |], cmplRefs = [cs])

@@ -42,10 +42,26 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         }
     };
 
+    private static readonly VSInternalClientCapabilities s_vsClientCapabilities = new()
+    {
+        SupportsVisualStudioExtensions = true,
+        TextDocument = new()
+        {
+            Completion = new VSInternalCompletionSetting()
+            {
+                CompletionList = new()
+                {
+                    Data = true,
+                }
+            }
+        }
+    };
+
     private static readonly RazorCompletionOptions s_defaultRazorCompletionOptions = new(
         SnippetsSupported: true,
         AutoInsertAttributeQuotes: true,
-        CommitElementsWithSpace: true);
+        CommitElementsWithSpace: true,
+        UseVsCodeCompletionCommitCharacters: false);
 
     private readonly DelegatedCompletionParams _csharpCompletionParams;
     private readonly DelegatedCompletionParams _htmlCompletionParams;
@@ -75,7 +91,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
             ShouldIncludeSnippets: false,
             CorrelationId: Guid.Empty);
 
-        _lazyFormattingService = AsyncLazy.Create(_ => TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory));
+        _lazyFormattingService = AsyncLazy.Create(_ => TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper));
 
         var projectManager = CreateProjectSnapshotManager();
         _componentAvailabilityService = new ComponentAvailabilityService(projectManager);
@@ -135,7 +151,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
             Data = expectedData,
         };
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item], Data = new object() };
-        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, new object());
+        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, new object(), ProvisionalTextEdit: null);
 
         // Act
         await resolver.ResolveAsync(
@@ -160,7 +176,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item], Data = new object() };
-        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, expectedData);
+        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, expectedData, ProvisionalTextEdit: null);
 
         // Act
         await resolver.ResolveAsync(item, containingCompletionList, originalRequestContext, s_clientCapabilities, _componentAvailabilityService, DisposalToken);
@@ -266,7 +282,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
 
         Assert.NotNull(item);
 
-        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, containingCompletionList.Data);
+        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, containingCompletionList.Data, ProvisionalTextEdit: null);
         var resolvedItem = await resolver.ResolveAsync(
             item, containingCompletionList, originalRequestContext, s_clientCapabilities, _componentAvailabilityService, DisposalToken);
 
@@ -318,7 +334,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item] };
-        var originalRequestContext = new DelegatedCompletionResolutionContext(_htmlCompletionParams.Identifier, _htmlCompletionParams.ProjectedKind, new object());
+        var originalRequestContext = new DelegatedCompletionResolutionContext(_htmlCompletionParams.Identifier, _htmlCompletionParams.ProjectedKind, new object(), ProvisionalTextEdit: null);
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
@@ -347,7 +363,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var resolver = new DelegatedCompletionItemResolver(documentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var containingCompletionList = await GetCompletionListAndOriginalParamsAsync(cursorPosition, codeDocument, csharpServer);
 
-        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, containingCompletionList.Data);
+        var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, containingCompletionList.Data, ProvisionalTextEdit: null);
         var item = containingCompletionList.Items.FirstOrDefault(item => item.Label == itemToResolve);
 
         if (item is null)
@@ -356,7 +372,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         }
 
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, s_clientCapabilities, _componentAvailabilityService, cancellationToken);
+            item, containingCompletionList, originalRequestContext, supportsVisualStudioExtensions ? s_vsClientCapabilities : s_clientCapabilities, _componentAvailabilityService, cancellationToken);
 
         return resolvedItem;
     }

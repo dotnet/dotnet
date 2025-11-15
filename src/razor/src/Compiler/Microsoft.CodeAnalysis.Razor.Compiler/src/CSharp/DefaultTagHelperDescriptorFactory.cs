@@ -10,8 +10,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -31,18 +29,15 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
             return null;
         }
 
-        var typeName = type.GetFullName();
+        var typeName = TypeNameObject.From(type);
         var assemblyName = type.ContainingAssembly.Identity.Name;
 
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            typeName, assemblyName,
+            typeName.FullName.AssumeNotNull(), assemblyName,
             out var descriptorBuilder);
 
-        descriptorBuilder.SetMetadata(
-            RuntimeName(TagHelperConventions.DefaultKind),
-            TypeName(typeName),
-            TypeNamespace(type.ContainingNamespace.GetFullName()),
-            TypeNameIdentifier(type.Name));
+        descriptorBuilder.SetTypeName(typeName);
+        descriptorBuilder.RuntimeKind = RuntimeKind.ITagHelper;
 
         AddBoundAttributes(type, descriptorBuilder);
         AddTagMatchingRules(type, descriptorBuilder);
@@ -207,7 +202,7 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
             : (false, HtmlConventions.ToHtmlCase(property.Name));
 
         builder.TypeName = property.Type.GetFullName();
-        builder.SetMetadata(PropertyName(property.Name));
+        builder.PropertyName = property.Name;
 
         var hasPublicSetter = HasPublicSetter(property);
 
@@ -380,7 +375,7 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
     private static void CollectAccessibleProperties(
         INamedTypeSymbol typeSymbol, ref PooledArrayBuilder<IPropertySymbol> properties)
     {
-        using var names = new PooledHashSet<string>(StringHashSetPool.Ordinal);
+        using var names = new PooledHashSet<string>(StringComparer.Ordinal);
 
         // Traverse the type hierarchy to find all accessible properties.
         var currentType = typeSymbol;

@@ -3,9 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -17,6 +16,7 @@ internal sealed partial class ParserContext : IDisposable
     public RazorSourceDocument SourceDocument { get; }
     public SeekableTextReader Source { get; }
     public RazorParserOptions Options { get; }
+    public CancellationToken CancellationToken { get; }
 
     public bool WhiteSpaceIsSignificantToAncestorBlock { get; set; }
     public bool NullGenerateWhitespaceAndNewLine { get; set; }
@@ -25,18 +25,19 @@ internal sealed partial class ParserContext : IDisposable
     public bool MakeMarkerNode { get; set; } = true;
     public AcceptedCharactersInternal CurrentAcceptedCharacters { get; set; } = AcceptedCharactersInternal.Any;
 
-    public ParserContext(RazorSourceDocument source, RazorParserOptions options)
+    public ParserContext(RazorSourceDocument source, RazorParserOptions options, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(source);
         ArgHelper.ThrowIfNull(options);
 
         SourceDocument = source;
         Options = options;
+        CancellationToken = cancellationToken;
 
         _errorSinkStack = StackPool<ErrorSink>.Default.Get();
         _errorSinkStack.Push(new ErrorSink());
 
-        _seenDirectivesSet = StringHashSetPool.Ordinal.Get();
+        _seenDirectivesSet = SpecializedPools.StringHashSet.Ordinal.Get();
 
         Source = new SeekableTextReader(SourceDocument);
     }
@@ -50,7 +51,7 @@ internal sealed partial class ParserContext : IDisposable
         }
 
         StackPool<ErrorSink>.Default.Return(_errorSinkStack);
-        StringHashSetPool.Ordinal.Return(_seenDirectivesSet);
+        SpecializedPools.StringHashSet.Ordinal.Return(_seenDirectivesSet);
     }
 
     public ErrorSink ErrorSink => _errorSinkStack.Peek();
@@ -72,7 +73,7 @@ internal sealed partial class ParserContext : IDisposable
 // Debug Helpers
 
 #if DEBUG
-[DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
+[System.Diagnostics.DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
 internal partial class ParserContext
 {
     private string Unparsed

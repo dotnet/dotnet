@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isAsync = target.IsAsync;
             bool isIterator = target.IsIterator;
 
-            if ((isAsync || isIterator) && !target.GetIsNewExtensionMember())
+            if ((isAsync || isIterator) && !target.IsExtensionBlockMember())
             {
                 // The async state machine type is not synthesized until the async method body is rewritten. If we are
                 // only emitting metadata the method body will not have been rewritten, and the async state machine
@@ -230,6 +230,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_CompilerFeatureRequiredAttribute__ctor,
                     ImmutableArray.Create(new TypedConstant(compilation.GetSpecialType(SpecialType.System_String), TypedConstantKind.Primitive, nameof(CompilerFeatureRequiredFeatures.UserDefinedCompoundAssignmentOperators)))
                     ));
+            }
+
+            if (target.IsExtensionBlockMember())
+            {
+                AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeExtensionMarkerAttribute(target, ((SourceNamedTypeSymbol)target.ContainingType).ExtensionMarkerName));
             }
         }
 

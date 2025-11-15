@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using Microsoft.Build.Graph;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Watch;
 
@@ -31,23 +32,11 @@ internal sealed class EvaluationResult(IReadOnlyDictionary<string, FileItem> fil
         fileWatcher.WatchFiles(BuildFiles);
     }
 
-    /// <summary>
-    /// Loads project graph and performs design-time build.
-    /// </summary>
-    public static EvaluationResult? TryCreate(
-        string rootProjectPath,
-        IEnumerable<string> buildArguments,
-        IReporter reporter,
-        GlobalOptions options,
-        EnvironmentOptions environmentOptions,
-        bool restore,
-        CancellationToken cancellationToken)
+    public static ImmutableDictionary<string, string> GetGlobalBuildOptions(IEnumerable<string> buildArguments, EnvironmentOptions environmentOptions)
     {
-        var buildReporter = new BuildReporter(reporter, options, environmentOptions);
-
         // See https://github.com/dotnet/project-system/blob/main/docs/well-known-project-properties.md
 
-        var globalOptions = CommandLineOptions.ParseBuildProperties(buildArguments)
+        return CommandLineOptions.ParseBuildProperties(buildArguments)
             .ToImmutableDictionary(keySelector: arg => arg.key, elementSelector: arg => arg.value)
             .SetItem(PropertyNames.DotNetWatchBuild, "true")
             .SetItem(PropertyNames.DesignTimeBuild, "true")
@@ -55,11 +44,25 @@ internal sealed class EvaluationResult(IReadOnlyDictionary<string, FileItem> fil
             .SetItem(PropertyNames.ProvideCommandLineArgs, "true")
             // F# targets depend on host path variable:
             .SetItem("DOTNET_HOST_PATH", environmentOptions.MuxerPath);
+    }
 
-        var projectGraph = ProjectGraphUtilities.TryLoadProjectGraph(
+    /// <summary>
+    /// Loads project graph and performs design-time build.
+    /// </summary>
+    public static EvaluationResult? TryCreate(
+        ProjectGraphFactory factory,
+        string rootProjectPath,
+        ILogger logger,
+        GlobalOptions options,
+        EnvironmentOptions environmentOptions,
+        bool restore,
+        CancellationToken cancellationToken)
+    {
+        var buildReporter = new BuildReporter(logger, options, environmentOptions);
+
+        var projectGraph = factory.TryLoadProjectGraph(
             rootProjectPath,
-            globalOptions,
-            reporter,
+            logger,
             projectGraphRequired: true,
             cancellationToken);
 
@@ -76,7 +79,7 @@ internal sealed class EvaluationResult(IReadOnlyDictionary<string, FileItem> fil
             {
                 if (!rootNode.ProjectInstance.Build([TargetNames.Restore], loggers))
                 {
-                    reporter.Error($"Failed to restore project '{rootProjectPath}'.");
+                    logger.LogError("Failed to restore project '{Path}'.", rootProjectPath);
                     loggers.ReportOutput();
                     return null;
                 }
@@ -104,7 +107,7 @@ internal sealed class EvaluationResult(IReadOnlyDictionary<string, FileItem> fil
             {
                 if (!projectInstance.Build([TargetNames.Compile, .. customCollectWatchItems], loggers))
                 {
-                    reporter.Error($"Failed to build project '{projectInstance.FullPath}'.");
+                    logger.LogError("Failed to build project '{Path}'.", projectInstance.FullPath);
                     loggers.ReportOutput();
                     return null;
                 }

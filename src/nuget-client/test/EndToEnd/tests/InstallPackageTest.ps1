@@ -395,7 +395,7 @@ function Test-InstallComplexPackageStructure {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package MyFirstPackage -Project $p.Name -Source $context.RepositoryPath
@@ -2884,22 +2884,6 @@ function Test-InstallPackageWithScriptAddImportFile
     # Assert
     $errorlist = Get-Errors
     Assert-AreEqual 0 $errorlist.Count
-}
-
-# Temporarily disable this test
-function Disable-Test-InstallPackageInCpsApp
-{
-    param($context)
-
-    # Arrange
-    $p = New-CpsApp "CpsProject"
-
-    #Act
-    $p | Install-Package GoogleAnalyticsTracker.Core -version 3.2.0
-
-    # Assert
-    $item = Get-ProjectItem $p packages.config
-    Assert-NotNull $item
 }
 
 function Test-InstallPackageWithEscapedSymbolInPath()

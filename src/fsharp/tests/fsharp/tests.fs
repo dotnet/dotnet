@@ -27,6 +27,8 @@ let FSI = FSI_NETFX
 #endif
 // ^^^^^^^^^^^^ To run these tests in F# Interactive , 'build net40', then send this chunk, then evaluate body of a test ^^^^^^^^^^^^
 
+let log = printfn
+
 module CoreTests =
 
 
@@ -2279,9 +2281,6 @@ module TypecheckTests =
 
     [<Fact>]
     let ``type check neg49`` () = singleNegTest (testConfig "typecheck/sigs") "neg49"
-
-    [<Fact>]
-    let ``type check neg56_a`` () = singleNegTest (testConfig "typecheck/sigs") "neg56_a"   
 
     [<Fact>]
     let ``type check neg94`` () = singleNegTest (testConfig "typecheck/sigs") "neg94" 

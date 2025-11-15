@@ -3,9 +3,9 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -27,7 +27,7 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
             => new RemoteGoToDefinitionService(in args);
     }
 
-    private readonly IRazorComponentDefinitionService _componentDefinitionService = args.ExportProvider.GetExportedValue<IRazorComponentDefinitionService>();
+    private readonly IDefinitionService _definitionService = args.ExportProvider.GetExportedValue<IDefinitionService>();
     private readonly IWorkspaceProvider _workspaceProvider = args.WorkspaceProvider;
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
@@ -55,22 +55,44 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
             return NoFurtherHandling;
         }
 
+        // Adjust position if on a component end tag to use the start tag position
+        hostDocumentIndex = codeDocument.AdjustPositionForComponentEndTag(hostDocumentIndex);
+
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
+
+        // First, see if this is a tag helper. We ignore component attributes here, because they're better served by the C# handler.
+        var componentLocations = await _definitionService.GetDefinitionAsync(
+            context.Snapshot,
+            positionInfo,
+            context.GetSolutionQueryOperations(),
+            ignoreComponentAttributes: true,
+            includeMvcTagHelpers: true,
+            cancellationToken)
+            .ConfigureAwait(false);
+
+        if (componentLocations is { Length: > 0 })
+        {
+            return Results(componentLocations);
+        }
+
+        // Check if we're in a string literal with a file path (before calling C# which would navigate to String class)
+        if (positionInfo.LanguageKind is RazorLanguageKind.CSharp)
+        {
+            var stringLiteralLocations = await _definitionService.TryGetDefinitionFromStringLiteralAsync(
+                context.Snapshot,
+                positionInfo.Position,
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            if (stringLiteralLocations is { Length: > 0 })
+            {
+                return Results(stringLiteralLocations);
+            }
+        }
 
         if (positionInfo.LanguageKind is RazorLanguageKind.Html or RazorLanguageKind.Razor)
         {
-            // First, see if this is a Razor component. We ignore attributes here, because they're better served by the C# handler.
-            var componentLocation = await _componentDefinitionService
-                .GetDefinitionAsync(context.Snapshot, positionInfo, context.GetSolutionQueryOperations(), ignoreAttributes: true, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (componentLocation is not null)
-            {
-                // Convert from VS LSP Location to Roslyn. This can be removed when Razor moves fully onto Roslyn's LSP types.
-                return Results([LspFactory.CreateLocation(componentLocation.DocumentUri.GetRequiredParsedUri(), componentLocation.Range.ToLinePositionSpan())]);
-            }
-
-            // If it isn't a Razor component, and it isn't C#, let the server know to delegate to HTML.
+            // If it isn't a Razor construct, and it isn't C#, let the server know to delegate to HTML.
             return CallHtml;
         }
 

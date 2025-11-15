@@ -1,0 +1,100 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <?include "..\variables.wxi" ?>
+
+  <Bundle
+    Name="$(var.ProductName)"
+    Manufacturer="$(var.Manufacturer)"
+    Version="$(var.DisplayVersion)"
+    UpgradeCode="$(var.UpgradeCode)"
+    AboutUrl="https://dot.net/core"
+    Compressed="yes">
+
+    <bal:Condition Message="#(loc.FailureNotSupportedCurrentOperatingSystem)"
+                   Condition="((VersionNT &gt; v6.1) OR (VersionNT = v6.1 AND ServicePackLevel &gt;= 1))" />
+
+    <?if $(var.Platform)=x64?>
+      <bal:Condition Message="#(loc.FailureNotSupportedX86OperatingSystem)" Condition="VersionNT64" />
+    <?endif?>
+    <?if $(var.Platform)=arm64?>
+      <bal:Condition Message="#(loc.FailureNotSupportedX86OperatingSystem)" Condition="VersionNT64" />
+    <?endif?>
+
+    <!-- Search references for upgrade policy keys -->
+    <util:RegistrySearchRef Id="RemovePreviousVersionRegistryKeySearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeyExistsSearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeySearch"/>
+
+    <!--
+      List of bundles that this bundle is an upgrade for. Used to support upgrade from bundles
+      that were produced before UpdateCode was standardized per major-minor channel.
+    -->
+    <?ifdef RelatedDotNetBundleIds?>
+      <?foreach relatedId in $(var.RelatedDotNetBundleIds)?>
+        <RelatedBundle Action="upgrade" Id="$(var.relatedId)"/>
+      <?endforeach?>
+    <?endif?>
+
+    <?if $(var.BootstrapperApplicationFlavor) = "Foundation" ?>
+      <BootstrapperApplication>
+        <bal:WixStandardBootstrapperApplication
+          LicenseFile="$(var.DotNetDummyEulaFile)"
+          LocalizationFile="$(var.BundleThmDir)\theme\1033\bundle.wxl"
+          SuppressDowngradeFailure="yes"
+          ShowVersion="yes"
+          SuppressOptionsUI="yes"
+          Theme="rtfLicense"
+          ThemeFile="$(var.BundleThmDir)\bundle.thm" />
+
+        <PayloadGroupRef Id="DotnetCoreBAPayloads" />
+      </BootstrapperApplication>
+    <?elseif $(var.BootstrapperApplicationFlavor) = "HyperlinkLicense" ?>
+      <BootstrapperApplication>
+        <bal:WixStandardBootstrapperApplication LicenseUrl="https://go.microsoft.com/fwlink/?LinkId=329770"
+                                                LogoFile="$(var.DotNetLogoBmpFile)"
+                                                SuppressDowngradeFailure="yes"
+                                                SuppressOptionsUI="yes"
+                                                Theme="hyperlinkLicense" />
+        <PayloadGroupRef Id="DotnetCoreBAPayloads"/>
+      </BootstrapperApplication>
+    <?endif?>
+
+    <?if $(var.Platform)=x64?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
+    <?endif?>
+    <?if $(var.Platform)=arm64?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFiles64Folder]dotnet" />
+    <?endif?>
+    <?if $(var.Platform)=x86?>
+      <SoftwareTag Regid="microsoft.com" InstallPath="[ProgramFilesFolder]dotnet" />
+    <?endif?>
+
+    <!-- Variables used solely for localization. -->
+    <Variable Name="BUNDLEMONIKER" Type="string" Value="$(var.ProductMoniker) ($(var.TargetArchitectureDescription))" bal:Overridable="no" />
+    <Variable Name="PRODUCT_NAME" Type="string" Value="$(var.ProductName)" bal:Overridable="no" />
+    <Variable Name="LINK_PREREQ_PAGE" Type="string" Value="https://go.microsoft.com/fwlink/?linkid=846817" bal:Overridable="no" />
+
+    <?ifdef WixThemeFile ?>
+    <?include $(var.WixThemeFile) ?>
+    <?endif?>
+
+    <Chain DisableSystemRestore="yes" ParallelCache="yes">
+      <PackageGroupRef Id="PG_DotNet"/>
+    </Chain>
+  </Bundle>
+
+  <Fragment>
+    <PayloadGroup Id="DotnetCoreBAPayloads">
+      <Payload Name="dotnet.ico" Compressed="yes" SourceFile="$(var.DotNetIcoFile)" />
+      <Payload Name="DotNetLogo_256x.png" Compressed="yes" SourceFile="$(var.DotNetLogoPngFile)" />
+
+      <?foreach langLCID in $(var.LcidList)?>
+        <Payload Id="thm_$(langLCID)" Compressed="yes" Name="$(langLCID)\thm.wxl" SourceFile="$(var.BundleThmDir)\theme\$(langLCID)\bundle.wxl" />
+      <?endforeach?>
+
+    </PayloadGroup>
+  </Fragment>
+
+</Wix>

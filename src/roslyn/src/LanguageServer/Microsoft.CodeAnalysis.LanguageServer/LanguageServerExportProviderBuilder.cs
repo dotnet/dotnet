@@ -74,8 +74,8 @@ internal sealed class LanguageServerExportProviderBuilder : ExportProviderBuilde
         return exportProvider;
     }
 
-    protected override void LogError(string message)
-        => _logger.LogError(message);
+    protected override void LogError(string message, Exception exception)
+        => _logger.LogError(exception, message);
 
     protected override void LogTrace(string message)
         => _logger.LogTrace(message);
@@ -89,13 +89,13 @@ internal sealed class LanguageServerExportProviderBuilder : ExportProviderBuilde
         return base.CreateExportProviderAsync(cancellationToken);
     }
 
-    protected override bool ContainsUnexpectedErrors(IEnumerable<string> erroredParts, ImmutableList<PartDiscoveryException> partDiscoveryExceptions)
+    protected override bool ContainsUnexpectedErrors(IEnumerable<string> erroredParts)
     {
         // Verify that we have exactly the MEF errors that we expect.  If we have less or more this needs to be updated to assert the expected behavior.
         var expectedErrorPartsSet = new HashSet<string>(["CSharpMapCodeService", "PythiaSignatureHelpProvider", "CopilotSemanticSearchQueryExecutor"]);
         var hasUnexpectedErroredParts = erroredParts.Any(part => !expectedErrorPartsSet.Contains(part));
 
-        return hasUnexpectedErroredParts || !partDiscoveryExceptions.IsEmpty;
+        return hasUnexpectedErroredParts;
     }
 
     protected override Task WriteCompositionCacheAsync(string compositionCacheFile, CompositionConfiguration config, CancellationToken cancellationToken)

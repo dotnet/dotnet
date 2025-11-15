@@ -7,11 +7,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using NuGet.Frameworks;
 using NuGet.PackageManagement;
 using NuGet.ProjectManagement;
-using NuGet.ProjectManagement.Projects;
 using NuGet.Test.Utility;
 using NuGet.ProjectModel;
 
@@ -100,56 +98,6 @@ namespace Test.Utility
             NuGetProjects.Add(msBuildNuGetProject);
             return msBuildNuGetProject;
         }
-
-        public NuGetProject AddBuildIntegratedProject(string projectName = null, NuGetFramework projectTargetFramework = null, JObject json = null)
-        {
-            var existingProject = Task.Run(async () => await GetNuGetProjectAsync(projectName));
-            existingProject.Wait();
-            if (existingProject.IsCompleted && existingProject.Result != null)
-            {
-                throw new ArgumentException("Project with " + projectName + " already exists");
-            }
-
-            projectName = string.IsNullOrEmpty(projectName) ? Guid.NewGuid().ToString() : projectName;
-            var projectFullPath = Path.Combine(SolutionDirectory, projectName);
-            Directory.CreateDirectory(projectFullPath);
-
-            var projectJsonPath = Path.Combine(projectFullPath, "project.json");
-            CreateConfigJson(projectJsonPath, json?.ToString() ?? BasicConfig.ToString());
-
-            projectTargetFramework = projectTargetFramework ?? NuGetFramework.Parse("net46");
-            var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(projectTargetFramework, new TestNuGetProjectContext(),
-                projectFullPath, projectName);
-
-            var projectFilePath = Path.Combine(projectFullPath, $"{msBuildNuGetProjectSystem.ProjectName}.csproj");
-            NuGetProject nuGetProject = new ProjectJsonNuGetProject(projectJsonPath, projectFilePath);
-            NuGetProjects.Add(nuGetProject);
-
-            return nuGetProject;
-        }
-
-        private static void CreateConfigJson(string path, string config)
-        {
-            using (var writer = new StreamWriter(path))
-            {
-                writer.Write(config);
-            }
-        }
-
-        private static JObject BasicConfig => new JObject
-        {
-            ["dependencies"] = new JObject
-            {
-                new JProperty("entityframework", "7.0.0-beta-*")
-            },
-
-            ["frameworks"] = new JObject
-            {
-                ["net46"] = new JObject()
-            },
-
-            ["runtimes"] = JObject.Parse("{ \"win-anycpu\": { } }")
-        };
 
         public Task<NuGetProject> GetNuGetProjectAsync(string nuGetProjectSafeName)
         {

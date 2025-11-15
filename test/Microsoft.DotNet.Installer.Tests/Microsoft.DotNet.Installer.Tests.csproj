@@ -16,6 +16,21 @@
     <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" AdditionalProperties="SkipScenarioTestsDependencies=true" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)">
+      <HintPath>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.installers\$(MicrosoftDotNetBuildTasksInstallersVersion)\tools\net\Microsoft.DotNet.Build.Tasks.Installers.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <Target Name="SetRuntimeConfigOptions"
           BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
     <ItemGroup>
@@ -43,6 +58,15 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).KeepDockerImages">
         <Value>$(KeepDockerImages)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetBuildSharedComponents">
+        <Value>$(DotNetBuildSharedComponents)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).Sdk1xxVersion">
+        <Value>$(MicrosoftNETSdkVersion)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetFrameworkVersion">
+        <Value>$(_TargetFrameworkVersionWithoutV)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

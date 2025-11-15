@@ -805,18 +805,11 @@ type TcConfigBuilder =
             doTLR = false
             doFinalSimplify = false
             optsOn = false
-            optSettings =
-                { OptimizationSettings.Defaults with
-                    processingMode =
-                        if FSharpExperimentalFeaturesEnabledAutomatically then
-                            OptimizationProcessingMode.Parallel
-                        else
-                            OptimizationProcessingMode.Sequential
-                }
+            optSettings = OptimizationSettings.Defaults
             emitTailcalls = true
             deterministic = false
             parallelParsing = true
-            parallelIlxGen = FSharpExperimentalFeaturesEnabledAutomatically
+            parallelIlxGen = true
             emitMetadataAssembly = MetadataAssemblyGeneration.None
             preferredUiLang = None
             lcid = None
@@ -858,15 +851,11 @@ type TcConfigBuilder =
             sdkDirOverride = sdkDirOverride
             xmlDocInfoLoader = None
             exiter = QuitProcessExiter
-            parallelReferenceResolution = ParallelReferenceResolution.Off
+            parallelReferenceResolution = ParallelReferenceResolution.On
             captureIdentifiersWhenParsing = false
             typeCheckingConfig =
                 {
-                    TypeCheckingConfig.Mode =
-                        if FSharpExperimentalFeaturesEnabledAutomatically then
-                            TypeCheckingMode.Graph
-                        else
-                            TypeCheckingMode.Sequential
+                    TypeCheckingConfig.Mode = TypeCheckingMode.Graph
                     DumpGraph = false
                 }
             dumpSignatureData = false
@@ -1084,7 +1073,13 @@ type TcConfigBuilder =
                 | ErrorReportType.Error -> errorR (Error(error, m)))
 
         let dm =
-            dependencyProvider.TryFindDependencyManagerInPath(tcConfigB.compilerToolPaths, output, reportError, path)
+            dependencyProvider.TryFindDependencyManagerInPath(
+                tcConfigB.compilerToolPaths,
+                output,
+                tcConfigB.sdkDirOverride,
+                reportError,
+                path
+            )
 
         match dm with
         // #r "Assembly"

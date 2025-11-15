@@ -1,21 +1,23 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
-public class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationPass
+public sealed class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     public override int Order => DefaultFeatureOrder;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.Options.DesignTime)
         {
@@ -39,24 +41,16 @@ public class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationP
         var endContextMethodName = "EndContext"; // ORIGINAL: EndContextMethodName
 
         var beginNode = new CSharpCodeIntermediateNode();
-        beginNode.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = string.Format(
-                CultureInfo.InvariantCulture,
-                "{0}({1}, {2}, {3});",
-                beginContextMethodName,
-                item.Source.AbsoluteIndex.ToString(CultureInfo.InvariantCulture),
-                item.Source.Length.ToString(CultureInfo.InvariantCulture),
-                item.IsLiteral ? "true" : "false")
-        });
+
+        var absoluteIndex = item.Source.AbsoluteIndex.ToString(CultureInfo.InvariantCulture);
+        var length = item.Source.Length.ToString(CultureInfo.InvariantCulture);
+        var isLiteral = item.IsLiteral ? "true" : "false";
+
+        beginNode.Children.Add(
+            IntermediateNodeFactory.CSharpToken($"{beginContextMethodName}({absoluteIndex}, {length}, {isLiteral});"));
 
         var endNode = new CSharpCodeIntermediateNode();
-        endNode.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = string.Format(CultureInfo.InvariantCulture, "{0}();", endContextMethodName)
-        });
+        endNode.Children.Add(IntermediateNodeFactory.CSharpToken($"{endContextMethodName}();"));
 
         var nodeIndex = item.Parent.Children.IndexOf(item.Node);
         item.Parent.Children.Insert(nodeIndex, beginNode);
@@ -90,7 +84,7 @@ public class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationP
         {
             if (node.Source != null)
             {
-                Items.Add(new InstrumentationItem(node, Parent, isLiteral: true, source: node.Source.Value));
+                Items.Add(new InstrumentationItem(node, Parent!, isLiteral: true, source: node.Source.Value));
             }
 
             VisitDefault(node);
@@ -100,7 +94,7 @@ public class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationP
         {
             if (node.Source != null)
             {
-                Items.Add(new InstrumentationItem(node, Parent, isLiteral: false, source: node.Source.Value));
+                Items.Add(new InstrumentationItem(node, Parent!, isLiteral: false, source: node.Source.Value));
             }
 
             VisitDefault(node);
@@ -110,7 +104,7 @@ public class InstrumentationPass : IntermediateNodePassBase, IRazorOptimizationP
         {
             if (node.Source != null)
             {
-                Items.Add(new InstrumentationItem(node, Parent, isLiteral: false, source: node.Source.Value));
+                Items.Add(new InstrumentationItem(node, Parent!, isLiteral: false, source: node.Source.Value));
             }
 
             // Inside a tag helper we only want to visit inside of the body (skip all of the attributes and properties).

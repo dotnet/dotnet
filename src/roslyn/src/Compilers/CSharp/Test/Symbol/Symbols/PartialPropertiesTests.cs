@@ -2549,7 +2549,7 @@ public partial class C
         public void InInterface_Virtual(
             [CombinatorialValues("", "public", "private", "protected", "internal", "protected internal", "private protected")] string access,
             [CombinatorialValues("", "virtual", "sealed")] string virt,
-            [CombinatorialValues(LanguageVersion.CSharp13, LanguageVersion.Preview, LanguageVersionFacts.CSharpNext)] LanguageVersion langVersion)
+            [CombinatorialValues(LanguageVersion.CSharp13, LanguageVersion.Preview, LanguageVersion.CSharp14)] LanguageVersion langVersion)
         {
             var source1 = $$"""
                 using System;
@@ -2700,7 +2700,7 @@ public partial class C
         public void InInterface_StaticVirtual(
             [CombinatorialValues("", "public", "private", "protected", "internal", "protected internal", "private protected")] string access,
             [CombinatorialValues("", "virtual", "sealed")] string virt,
-            [CombinatorialValues(LanguageVersion.CSharp13, LanguageVersion.Preview, LanguageVersionFacts.CSharpNext)] LanguageVersion langVersion)
+            [CombinatorialValues(LanguageVersion.CSharp13, LanguageVersion.Preview, LanguageVersion.CSharp14)] LanguageVersion langVersion)
         {
             var source1 = $$"""
                 partial interface I
@@ -5530,6 +5530,31 @@ public partial class C
     }
 } // end of class S1
 """.Replace("[mscorlib]", ExecutionConditionUtil.IsMonoOrCoreClr ? "[netstandard]" : "[mscorlib]"));
+        }
+
+        [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/80509")]
+        public void CS8659_ReadonlyPartialPropertyWithSetter()
+        {
+            var source = """
+                using System;
+
+                var x = new X();
+                x.V = 9;
+                Console.WriteLine(x.V);
+
+                public partial struct X
+                {
+                    public readonly partial int V { get; set; }
+                    public readonly partial int V { get => field * 100; set; }
+                }
+                """;
+
+            var comp = CreateCompilation(source);
+            comp.VerifyEmitDiagnostics(
+                // (9,33): error CS8659: Auto-implemented property 'X.V' cannot be marked 'readonly' because it has a 'set' accessor.
+                //     public readonly partial int V { get; set; }
+                Diagnostic(ErrorCode.ERR_AutoPropertyWithSetterCantBeReadOnly, "V").WithArguments("X.V").WithLocation(9, 33)
+                );
         }
     }
 }

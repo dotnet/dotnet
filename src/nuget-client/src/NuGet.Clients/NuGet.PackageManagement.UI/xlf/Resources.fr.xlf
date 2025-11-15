@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">Certains packages NuGet sont manquants dans cette solution. Cliquez pour les restaurer à partir de vos sources de package en ligne.</target>
+        <target state="translated">Certains packages NuGet sont absents de cette solution. Cliquez pour effectuer une restauration à partir de vos sources de package en ligne.</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Une nouvelle version de NuGet Package Manager est disponible.</target>
+        <target state="translated">Une nouvelle version du Gestionnaire de package NuGet est disponible.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet exige des sources HTTPS. Pour utiliser une source HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config.</target>
+        <target state="translated">NuGet nécessite des sources HTTPS. Pour utiliser une source HTTP, vous devez définir explicitement « allowInsecureConnections » sur true dans votre fichier NuGet.Config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -449,12 +449,12 @@
       </trans-unit>
       <trans-unit id="Hyperlink_ProjectUrl">
         <source>Project URL</source>
-        <target state="translated">URL du projet</target>
+        <target state="translated">URL de projet</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_Readme">
         <source>Readme</source>
-        <target state="translated">Lisez-moi</target>
+        <target state="translated">Readme</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
         <source>Ignore for now</source>
-        <target state="translated">Ignorer pour l'instant</target>
+        <target state="translated">Ignorer pour le moment</target>
         <note />
       </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
@@ -509,7 +509,7 @@
       </trans-unit>
       <trans-unit id="Label_Deprecated">
         <source>Deprecated</source>
-        <target state="translated">Déprécié</target>
+        <target state="translated">Déconseillé</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_DeprecationAlternatePackage">
@@ -779,7 +779,7 @@
       </trans-unit>
       <trans-unit id="Link_configuration">
         <source>Common NuGet configurations; How settings are applied.</source>
-        <target state="translated">Configurations NuGet courantes : comment les paramètres sont appliqués.</target>
+        <target state="translated">Configurations NuGet courantes : mode d’application des paramètres.</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrator_PackageIdColumnHeader">
@@ -844,7 +844,7 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">Une erreur s'est produite lors de la tentative de restauration des packages :</target>
+        <target state="translated">Une erreur s'est produite lors de la tentative de restauration des packages :</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">Nous n’avons pas pu effacer des caches NuGet de {0}. 
-Erreur :{1}
-Consultez https://aka.ms/troubleshoot_nuget_cache pour obtenir de l’aide.</target>
+Erreur : {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Pour plus d'informations, consultez</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Consultez https://aka.ms/troubleshoot_nuget_cache pour obtenir de l’aide.</tar
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">Chargement de README...</target>
+        <target state="translated">Chargement du fichier README...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Consultez https://aka.ms/troubleshoot_nuget_cache pour obtenir de l’aide.</tar
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Aucun FICHIER README n’est disponible pour la version de package sélectionnée. Pour plus d’informations, visitez [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Aucun fichier README n’est disponible pour la version de package sélectionnée. Pour plus d’informations, consultez [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1315,7 +1318,7 @@ Consultez https://aka.ms/troubleshoot_nuget_cache pour obtenir de l’aide.</tar
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">Effacer toutes les ressources NuGet locales ?</target>
+        <target state="translated">Effacer toutes les ressources NuGet locales ?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">
@@ -1375,7 +1378,7 @@ Consultez https://aka.ms/troubleshoot_nuget_cache pour obtenir de l’aide.</tar
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">
         <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
-        <target state="translated">La ressource AllowInsecureConnections est activée et autorise l’accès http. Remarque : cette méthode n’est pas sécurisée. Si vous souhaitez découvrir des options sécurisées, consultez https://aka.ms/nuget-https-everywhere pour obtenir plus d’informations.</target>
+        <target state="translated">La ressource AllowInsecureConnections est activée et autorise l’accès http. Remarque : cette méthode n’est pas sécurisée. Si vous souhaitez découvrir des options sécurisées, consultez https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ProjectJson">

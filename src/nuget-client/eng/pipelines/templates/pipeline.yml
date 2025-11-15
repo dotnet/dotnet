@@ -2,13 +2,10 @@ parameters:
 - name: isOfficialBuild
   type: boolean
   default: false
-- name: NuGetLocalizationType
-  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
-  type: string
-  default: Full
-  values:
-  - Full
-  - Pseudo
+- name: RunOneLocBuild
+  displayName: Run OneLocBuild
+  type: boolean
+  default: false
 - name: RunBuildForPublishing
   displayName: Build bits for publishing
   type: boolean
@@ -77,6 +74,18 @@ stages:
       os: windows
     steps:
     - template: /eng/pipelines/templates/Initialize_Build.yml@self
+
+- ${{ if eq(parameters.RunOneLocBuild, true) }}:
+  - stage: RunOneLocBuild
+    displayName: Run OneLocBuild
+    jobs:
+    - template: /eng/common/templates-official/job/onelocbuild.yml
+      parameters:
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-NuGetClient'
+        MirrorRepo: 'NuGet.Client'
+        MirrorBranch: ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}
+        GitHubOrg: 'NuGet'
 
 - stage: StaticSourceAnalysis
   displayName: Static Source Analysis
@@ -164,7 +173,7 @@ stages:
         displayName: 'Publish the .runsettings files to artifact services'
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)'
+        buildNumber: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
         sourcePath: 'artifacts\RunSettings'
         toLowerCase: false
         usePat: true
@@ -176,7 +185,7 @@ stages:
         displayName: 'OptProfV2:  publish profiling inputs to artifact services'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId)'
+        buildNumber: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
         sourcePath: '$(Build.ArtifactStagingDirectory)\OptProf\ProfilingInputs'
         toLowerCase: false
         usePat: true
@@ -199,7 +208,7 @@ stages:
         displayName: 'Upload VSTS Drop'
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildNumber)'
         sourcePath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         toLowerCase: false
         usePat: true
@@ -208,7 +217,7 @@ stages:
       - output: pipelineArtifact
         displayName: 'LocValidation: Publish Logs as an artifact'
         condition: "succeededOrFailed()"
-        artifactName: LocValidationLogs
+        artifactName: LocValidationLogs - Attempt $(System.JobAttempt)
         targetPath: "$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs"
         sbomEnabled: true
 
@@ -222,14 +231,13 @@ stages:
       - output: pipelineArtifact
         displayName: Publish SBOM manifest
         artifactName: $(ARTIFACT_NAME)
-        targetPath: '$(Build.SourcesDirectory)/artifacts'
+        targetPath: "$(Build.SourcesDirectory)/artifacts/_manifest"
         sbomEnabled: false
 
     steps:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
       parameters:
         BuildRTM: false
-        NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
         SigningType: ${{ parameters.SigningType }}
 
@@ -293,7 +301,6 @@ stages:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
       parameters:
         BuildRTM: true
-        NuGetLocalizationType: Full
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
         SigningType: ${{ parameters.SigningType }}
 

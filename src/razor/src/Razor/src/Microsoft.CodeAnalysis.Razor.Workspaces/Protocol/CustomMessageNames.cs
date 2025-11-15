@@ -37,7 +37,6 @@ internal static class CustomMessageNames
     public const string RazorResolveCodeActionsEndpoint = "razor/resolveCodeActions";
     public const string RazorProvideHtmlColorPresentationEndpoint = "razor/provideHtmlColorPresentation";
     public const string RazorProvideHtmlDocumentColorEndpoint = "razor/provideHtmlDocumentColor";
-    public const string RazorProvideSemanticTokensRangeEndpoint = "razor/provideSemanticTokensRange";
     public const string RazorFoldingRangeEndpoint = "razor/foldingRange";
     public const string RazorHtmlFormattingEndpoint = "razor/htmlFormatting";
     public const string RazorHtmlOnTypeFormattingEndpoint = "razor/htmlOnTypeFormatting";

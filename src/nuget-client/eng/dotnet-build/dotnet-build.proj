@@ -16,9 +16,12 @@
       <_CommonProperties Include="DotNetBuild=$(DotNetBuild)" Condition="'$(DotNetBuild)' != ''" />
       <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
 
-      <!-- NuGet uses a pre-release string that is dependent on the build revision. This is normally set via their
-           YAML. Set based on the parsed version information. -->
-      <_CommonProperties Include="BuildNumber=$(VersionSuffixBuildOfTheDay)" Condition="'$(VersionSuffixBuildOfTheDay)' != ''" />
+      <!-- NuGet typically uses an auto-incremented AzDO variable to set the preview iteration version on its builds. (e.g. 7.0.0-preview.20, where 20 is the
+           number. This is not an approach that .NET uses for its builds, which use a date-varying number. However, the exact suffix is not that
+           important as long as it can be used as part of the assembly version, and does not overlap with NuGet's existing packages or assemblies.
+           One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
+           See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
+      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(_PatchNumber)' != ''" />
     </ItemGroup>
 
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.

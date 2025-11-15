@@ -21,7 +21,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -44,13 +43,9 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
     internal sealed override bool UseTwoPhaseCompilation => true;
 
-    internal sealed override bool DesignTime => true;
-
     private protected FormattingTestBase(FormattingTestContext context, HtmlFormattingService htmlFormattingService, ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        ITestOnlyLoggerExtensions.TestOnlyLoggingEnabled = true;
-
         _htmlFormattingService = htmlFormattingService;
         _context = context;
     }
@@ -113,9 +108,9 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         };
         var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, csharpSyntaxFormattingOptions);
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         var client = new FormattingLanguageServerClient(_htmlFormattingService, LoggerFactory);
@@ -164,14 +159,14 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         var uri = new Uri(path);
         var (codeDocument, documentSnapshot) = CreateCodeDocumentAndSnapshot(razorSourceText, uri.AbsolutePath, tagHelpers, fileKind: fileKindValue, inGlobalNamespace: inGlobalNamespace);
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
 
         var filePathService = new LSPFilePathService(languageServerFeatureOptions);
         var mappingService = new LspDocumentMappingService(
             filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var languageKind = codeDocument.GetLanguageKind(positionAfterTrigger, rightAssociative: false);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper, codeDocument, razorLSPOptions, languageServerFeatureOptions);
         var options = new FormattingOptions()
         {
             TabSize = tabSize,
@@ -224,8 +219,8 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         if (_context.ShouldFlipLineEndings)
         {
             // flip the line endings of the stings (LF to CRLF and vice versa) and run again
-            input = _context.FlipLineEndings(input);
-            expected = _context.FlipLineEndings(expected);
+            input = FormattingTestContext.FlipLineEndings(input);
+            expected = FormattingTestContext.FlipLineEndings(expected);
         }
 
         return (input, expected);
@@ -288,10 +283,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
                 RazorExtensions.Register(builder);
             });
 
-        var designTimeCodeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, [importSource], tagHelpers);
-        var codeDocument = _context.ForceRuntimeCodeGeneration
-            ? projectEngine.Process(sourceDocument, fileKindValue, [importSource], tagHelpers)
-            : designTimeCodeDocument;
+        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, [importSource], tagHelpers);
 
         if (!allowDiagnostics)
         {
@@ -299,7 +291,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         }
 
         var documentSnapshot = CreateDocumentSnapshot(
-            path, fileKindValue, codeDocument, designTimeCodeDocument, projectEngine, [importSnapshotMock.Object], [importSource], tagHelpers, inGlobalNamespace, _context.ForceRuntimeCodeGeneration);
+            path, fileKindValue, codeDocument, projectEngine, [importSnapshotMock.Object], [importSource], tagHelpers, inGlobalNamespace);
 
         return (codeDocument, documentSnapshot);
     }
@@ -308,13 +300,11 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         string path,
         RazorFileKind fileKind,
         RazorCodeDocument codeDocument,
-        RazorCodeDocument designTimeCodeDocument,
         RazorProjectEngine projectEngine,
         ImmutableArray<IDocumentSnapshot> imports,
         ImmutableArray<RazorSourceDocument> importDocuments,
         ImmutableArray<TagHelperDescriptor> tagHelpers,
-        bool inGlobalNamespace,
-        bool forceRuntimeCodeGeneration)
+        bool inGlobalNamespace)
     {
         var projectKey = new ProjectKey(Path.Combine(path, "obj"));
 
@@ -352,19 +342,14 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
                     filePath: path,
                     relativePath: inGlobalNamespace ? Path.GetFileName(path) : path));
 
-                var designTimeCodeDocument = projectEngine.ProcessDesignTime(source, fileKind, importDocuments, tagHelpers);
-                var codeDocument = forceRuntimeCodeGeneration
-                    ? projectEngine.Process(source, fileKind, importDocuments, tagHelpers)
-                    : designTimeCodeDocument;
+                var codeDocument = projectEngine.Process(source, fileKind, importDocuments, tagHelpers);
 
                 return CreateDocumentSnapshot(
-                    path, fileKind, codeDocument, designTimeCodeDocument, projectEngine, imports, importDocuments, tagHelpers, inGlobalNamespace, forceRuntimeCodeGeneration);
+                    path, fileKind, codeDocument, projectEngine, imports, importDocuments, tagHelpers, inGlobalNamespace);
             });
-
-        var generatorMock = snapshotMock.As<IDesignTimeCodeGenerator>();
-        generatorMock
-            .Setup(x => x.GenerateDesignTimeOutputAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(designTimeCodeDocument);
+        snapshotMock
+            .Setup(d => d.GetCSharpSyntaxTreeAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument.GetOrParseCSharpSyntaxTree(CancellationToken.None));
 
         return snapshotMock.Object;
     }

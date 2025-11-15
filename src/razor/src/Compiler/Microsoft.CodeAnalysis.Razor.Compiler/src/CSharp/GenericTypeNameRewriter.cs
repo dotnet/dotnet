@@ -66,7 +66,8 @@ internal class GenericTypeNameRewriter : TypeNameRewriter
                     // compared to leaving the type parameter in place.
                     //
                     // We add our own diagnostics for missing/invalid type parameters anyway.
-                    var replacement = binding?.Value?.Content ?? "object";
+                    var content = binding?.Value?.Content;
+                    var replacement = !string.IsNullOrWhiteSpace(content) ? content : "object";
                     return identifier.Update(SyntaxFactory.Identifier(replacement).WithTriviaFrom(identifier.Identifier));
                 }
             }

@@ -2,42 +2,56 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.CommandLine;
-using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.DotNet.Cli.CommandLine;
 using Microsoft.DotNet.Cli.Extensions;
-using Microsoft.Extensions.Configuration;
+using Command = System.CommandLine.Command;
 
 namespace Microsoft.DotNet.Cli.Commands.Test;
 
 internal static class TestCommandParser
 {
+    private sealed class GlobalJsonModel
+    {
+        [JsonPropertyName("test")]
+        public GlobalJsonTestNode Test { get; set; } = null!;
+    }
+
+    private sealed class GlobalJsonTestNode
+    {
+        [JsonPropertyName("runner")]
+        public string RunnerName { get; set; } = null!;
+    }
+
     public static readonly string DocsLink = "https://aka.ms/dotnet-test";
 
-    public static readonly Option<string> SettingsOption = new ForwardedOption<string>("--settings", "-s")
+    public static readonly Option<string> SettingsOption = new Option<string>("--settings", "-s")
     {
         Description = CliCommandStrings.CmdSettingsDescription,
         HelpName = CliCommandStrings.CmdSettingsFile
     }.ForwardAsSingle(o => $"-property:VSTestSetting={SurroundWithDoubleQuotes(CommandDirectoryContext.GetFullPath(o))}");
 
-    public static readonly Option<bool> ListTestsOption = new ForwardedOption<bool>("--list-tests", "-t")
+    public static readonly Option<bool> ListTestsOption = new Option<bool>("--list-tests", "-t")
     {
         Description = CliCommandStrings.CmdListTestsDescription,
         Arity = ArgumentArity.Zero
     }.ForwardAs("-property:VSTestListTests=true");
 
-    public static readonly Option<string> FilterOption = new ForwardedOption<string>("--filter")
+    public static readonly Option<string> FilterOption = new Option<string>("--filter")
     {
         Description = CliCommandStrings.CmdTestCaseFilterDescription,
         HelpName = CliCommandStrings.CmdTestCaseFilterExpression
     }.ForwardAsSingle(o => $"-property:VSTestTestCaseFilter={SurroundWithDoubleQuotes(o!)}");
 
-    public static readonly Option<IEnumerable<string>> AdapterOption = new ForwardedOption<IEnumerable<string>>("--test-adapter-path")
+    public static readonly Option<IEnumerable<string>> AdapterOption = new Option<IEnumerable<string>>("--test-adapter-path")
     {
         Description = CliCommandStrings.CmdTestAdapterPathDescription,
         HelpName = CliCommandStrings.CmdTestAdapterPath
     }.ForwardAsSingle(o => $"-property:VSTestTestAdapterPath={SurroundWithDoubleQuotes(string.Join(";", o!.Select(CommandDirectoryContext.GetFullPath)))}")
     .AllowSingleArgPerToken();
 
-    public static readonly Option<IEnumerable<string>> LoggerOption = new ForwardedOption<IEnumerable<string>>("--logger", "-l")
+    public static readonly Option<IEnumerable<string>> LoggerOption = new Option<IEnumerable<string>>("--logger", "-l")
     {
         Description = CliCommandStrings.CmdLoggerDescription,
         HelpName = CliCommandStrings.CmdLoggerOption
@@ -49,46 +63,46 @@ internal static class TestCommandParser
     })
     .AllowSingleArgPerToken();
 
-    public static readonly Option<string> OutputOption = new ForwardedOption<string>("--output", "-o")
+    public static readonly Option<string> OutputOption = new Option<string>("--output", "-o")
     {
         Description = CliCommandStrings.CmdOutputDescription,
         HelpName = CliCommandStrings.TestCmdOutputDir
     }
     .ForwardAsOutputPath("OutputPath", true);
 
-    public static readonly Option<string> DiagOption = new ForwardedOption<string>("--diag", "-d")
+    public static readonly Option<string> DiagOption = new Option<string>("--diag", "-d")
     {
         Description = CliCommandStrings.CmdPathTologFileDescription,
         HelpName = CliCommandStrings.CmdPathToLogFile
     }
     .ForwardAsSingle(o => $"-property:VSTestDiag={SurroundWithDoubleQuotes(CommandDirectoryContext.GetFullPath(o))}");
 
-    public static readonly Option<bool> NoBuildOption = new ForwardedOption<bool>("--no-build")
+    public static readonly Option<bool> NoBuildOption = new Option<bool>("--no-build")
     {
         Description = CliCommandStrings.CmdNoBuildDescription,
         Arity = ArgumentArity.Zero
     }.ForwardAs("-property:VSTestNoBuild=true");
 
-    public static readonly Option<string> ResultsOption = new ForwardedOption<string>("--results-directory")
+    public static readonly Option<string> ResultsOption = new Option<string>("--results-directory")
     {
         Description = CliCommandStrings.CmdResultsDirectoryDescription,
         HelpName = CliCommandStrings.CmdPathToResultsDirectory
     }.ForwardAsSingle(o => $"-property:VSTestResultsDirectory={SurroundWithDoubleQuotes(CommandDirectoryContext.GetFullPath(o))}");
 
-    public static readonly Option<IEnumerable<string>> CollectOption = new ForwardedOption<IEnumerable<string>>("--collect")
+    public static readonly Option<IEnumerable<string>> CollectOption = new Option<IEnumerable<string>>("--collect")
     {
         Description = CliCommandStrings.cmdCollectDescription,
         HelpName = CliCommandStrings.cmdCollectFriendlyName
     }.ForwardAsSingle(o => $"-property:VSTestCollect=\"{string.Join(";", GetSemiColonEscapedArgs(o!))}\"")
     .AllowSingleArgPerToken();
 
-    public static readonly Option<bool> BlameOption = new ForwardedOption<bool>("--blame")
+    public static readonly Option<bool> BlameOption = new Option<bool>("--blame")
     {
         Description = CliCommandStrings.CmdBlameDescription,
         Arity = ArgumentArity.Zero
     }.ForwardIfEnabled("-property:VSTestBlame=true");
 
-    public static readonly Option<bool> BlameCrashOption = new ForwardedOption<bool>("--blame-crash")
+    public static readonly Option<bool> BlameCrashOption = new Option<bool>("--blame-crash")
     {
         Description = CliCommandStrings.CmdBlameCrashDescription,
         Arity = ArgumentArity.Zero
@@ -98,7 +112,7 @@ internal static class TestCommandParser
 
     private static Option<string> CreateBlameCrashDumpOption()
     {
-        Option<string> result = new ForwardedOption<string>("--blame-crash-dump-type")
+        Option<string> result = new Option<string>("--blame-crash-dump-type")
         {
             Description = CliCommandStrings.CmdBlameCrashDumpTypeDescription,
             HelpName = CliCommandStrings.CrashDumpTypeArgumentName,
@@ -108,13 +122,13 @@ internal static class TestCommandParser
         return result;
     }
 
-    public static readonly Option<bool> BlameCrashAlwaysOption = new ForwardedOption<bool>("--blame-crash-collect-always")
+    public static readonly Option<bool> BlameCrashAlwaysOption = new Option<bool>("--blame-crash-collect-always")
     {
         Description = CliCommandStrings.CmdBlameCrashCollectAlwaysDescription,
         Arity = ArgumentArity.Zero
     }.ForwardIfEnabled(["-property:VSTestBlameCrash=true", "-property:VSTestBlameCrashCollectAlways=true"]);
 
-    public static readonly Option<bool> BlameHangOption = new ForwardedOption<bool>("--blame-hang")
+    public static readonly Option<bool> BlameHangOption = new Option<bool>("--blame-hang")
     {
         Description = CliCommandStrings.CmdBlameHangDescription,
         Arity = ArgumentArity.Zero
@@ -124,7 +138,7 @@ internal static class TestCommandParser
 
     private static Option<string> CreateBlameHangDumpOption()
     {
-        Option<string> result = new ForwardedOption<string>("--blame-hang-dump-type")
+        Option<string> result = new Option<string>("--blame-hang-dump-type")
         {
             Description = CliCommandStrings.CmdBlameHangDumpTypeDescription,
             HelpName = CliCommandStrings.HangDumpTypeArgumentName
@@ -134,17 +148,13 @@ internal static class TestCommandParser
         return result;
     }
 
-    public static readonly Option<string> BlameHangTimeoutOption = new ForwardedOption<string>("--blame-hang-timeout")
+    public static readonly Option<string> BlameHangTimeoutOption = new Option<string>("--blame-hang-timeout")
     {
         Description = CliCommandStrings.CmdBlameHangTimeoutDescription,
         HelpName = CliCommandStrings.HangTimeoutArgumentName
     }.ForwardAsMany(o => ["-property:VSTestBlameHang=true", $"-property:VSTestBlameHangTimeout={o}"]);
 
-    public static readonly Option<bool> NoLogoOption = new ForwardedOption<bool>("--nologo")
-    {
-        Description = CliCommandStrings.TestCmdNoLogo,
-        Arity = ArgumentArity.Zero
-    }.ForwardIfEnabled("-property:VSTestNoLogo=true");
+    public static readonly Option<bool> NoLogoOption = CommonOptions.NoLogoOption(forwardAs: "--property:VSTestNoLogo=true", description: CliCommandStrings.TestCmdNoLogo);
 
     public static readonly Option<bool> NoRestoreOption = CommonOptions.NoRestoreOption;
 
@@ -164,45 +174,37 @@ internal static class TestCommandParser
         return Command;
     }
 
-    public static string GetTestRunnerName()
+    private static string GetTestRunnerName()
     {
-        var builder = new ConfigurationBuilder();
-
-        string? dotnetConfigPath = GetDotnetConfigPath(Environment.CurrentDirectory);
-        if (!File.Exists(dotnetConfigPath))
+        string? globalJsonPath = GetGlobalJsonPath(Environment.CurrentDirectory);
+        if (!File.Exists(globalJsonPath))
         {
             return CliConstants.VSTest;
         }
 
-        builder.AddIniFile(dotnetConfigPath);
+        string jsonText = File.ReadAllText(globalJsonPath);
 
-        IConfigurationRoot config = builder.Build();
-        var testSection = config.GetSection("dotnet.test.runner");
-
-        if (!testSection.Exists())
+        // This code path is hit exactly once during the whole life of the dotnet process.
+        // So, no concern about caching JsonSerializerOptions.
+        var globalJson = JsonSerializer.Deserialize<GlobalJsonModel>(jsonText, new JsonSerializerOptions()
         {
-            return CliConstants.VSTest;
-        }
+            AllowDuplicateProperties = false,
+            AllowTrailingCommas = false,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+        });
 
-        string? runnerNameSection = testSection["name"];
-
-        if (string.IsNullOrEmpty(runnerNameSection))
-        {
-            return CliConstants.VSTest;
-        }
-
-        return runnerNameSection;
+        return globalJson?.Test?.RunnerName ?? CliConstants.VSTest;
     }
 
-    private static string? GetDotnetConfigPath(string? startDir)
+    private static string? GetGlobalJsonPath(string? startDir)
     {
         string? directory = startDir;
         while (directory != null)
         {
-            string dotnetConfigPath = Path.Combine(directory, "dotnet.config");
-            if (File.Exists(dotnetConfigPath))
+            string globalJsonPath = Path.Combine(directory, "global.json");
+            if (File.Exists(globalJsonPath))
             {
-                return dotnetConfigPath;
+                return globalJsonPath;
             }
 
             directory = Path.GetDirectoryName(directory);
@@ -228,29 +230,33 @@ internal static class TestCommandParser
 
     private static Command GetTestingPlatformCliCommand()
     {
-        var command = new TestingPlatformCommand("test", CliCommandStrings.DotnetTestCommand);
+        var command = new MicrosoftTestingPlatformTestCommand("test", CliCommandStrings.DotnetTestCommandMTPDescription);
         command.SetAction(parseResult => command.Run(parseResult));
-        command.Options.Add(TestingPlatformOptions.ProjectOption);
-        command.Options.Add(TestingPlatformOptions.SolutionOption);
-        command.Options.Add(TestingPlatformOptions.DirectoryOption);
-        command.Options.Add(TestingPlatformOptions.TestModulesFilterOption);
-        command.Options.Add(TestingPlatformOptions.TestModulesRootDirectoryOption);
-        command.Options.Add(TestingPlatformOptions.ResultsDirectoryOption);
-        command.Options.Add(TestingPlatformOptions.MaxParallelTestModulesOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.ProjectOrSolutionOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.SolutionOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.TestModulesFilterOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.TestModulesRootDirectoryOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.ResultsDirectoryOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.ConfigFileOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.DiagnosticOutputDirectoryOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.MaxParallelTestModulesOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.MinimumExpectedTestsOption);
         command.Options.Add(CommonOptions.ArchitectureOption);
+        command.Options.Add(CommonOptions.EnvOption);
         command.Options.Add(CommonOptions.PropertiesOption);
-        command.Options.Add(TestingPlatformOptions.ConfigurationOption);
-        command.Options.Add(TestingPlatformOptions.FrameworkOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.ConfigurationOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.FrameworkOption);
         command.Options.Add(CommonOptions.OperatingSystemOption);
         command.Options.Add(CommonOptions.RuntimeOption(CliCommandStrings.TestRuntimeOptionDescription));
         command.Options.Add(VerbosityOption);
         command.Options.Add(CommonOptions.NoRestoreOption);
-        command.Options.Add(TestingPlatformOptions.NoBuildOption);
-        command.Options.Add(TestingPlatformOptions.NoAnsiOption);
-        command.Options.Add(TestingPlatformOptions.NoProgressOption);
-        command.Options.Add(TestingPlatformOptions.OutputOption);
-        command.Options.Add(TestingPlatformOptions.NoLaunchProfileOption);
-        command.Options.Add(TestingPlatformOptions.NoLaunchProfileArgumentsOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.NoBuildOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.NoAnsiOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.NoProgressOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.OutputOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.ListTestsOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.NoLaunchProfileOption);
+        command.Options.Add(MicrosoftTestingPlatformOptions.NoLaunchProfileArgumentsOption);
         command.Options.Add(MTPTargetOption);
 
         return command;
@@ -258,9 +264,10 @@ internal static class TestCommandParser
 
     private static Command GetVSTestCliCommand()
     {
-        DocumentedCommand command = new("test", DocsLink, CliCommandStrings.TestAppFullName)
+        Command command = new("test", CliCommandStrings.DotnetTestCommandVSTestDescription)
         {
-            TreatUnmatchedTokensAsErrors = false
+            TreatUnmatchedTokensAsErrors = false,
+            DocsLink = DocsLink
         };
 
         // We are on purpose not capturing the solution, project or directory here. We want to pass it to the
@@ -268,7 +275,7 @@ internal static class TestCommandParser
 
         command.Options.Add(SettingsOption);
         command.Options.Add(ListTestsOption);
-        command.Options.Add(CommonOptions.EnvOption);
+        command.Options.Add(CommonOptions.TestEnvOption);
         command.Options.Add(FilterOption);
         command.Options.Add(AdapterOption);
         command.Options.Add(LoggerOption);

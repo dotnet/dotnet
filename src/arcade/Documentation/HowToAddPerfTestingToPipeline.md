@@ -103,7 +103,7 @@ Performance testing has been fully tested in coreclr. Coreclr, corefx and other 
 
     # Test job depends on the corresponding build job
     dependsOn: build_Windows_NT_x64_Release
-    extraSetupParameters: -CoreRootDirectory $(Build.SourcesDirectory)\bin\tests\Windows_NT.x64.Release\Tests\Core_Root -Architecture x64
+    extraSetupParameters: -CoreRootDirectory $(System.DefaultWorkingDirectory)\bin\tests\Windows_NT.x64.Release\Tests\Core_Root -Architecture x64
 
     steps:
     # Download product build
@@ -121,7 +121,7 @@ Performance testing has been fully tested in coreclr. Coreclr, corefx and other 
       inputs:
         sourceFolder: $(System.ArtifactsDirectory)/Windows_NT_x64_Release_build
         contents: '**'
-        targetFolder: $(Build.SourcesDirectory)/bin/Product/Windows_NT.x64.Release
+        targetFolder: $(System.DefaultWorkingDirectory)/bin/Product/Windows_NT.x64.Release
 
     # Create Core_Root
     - script: build-test.cmd Release x64 skipmanaged skipnative

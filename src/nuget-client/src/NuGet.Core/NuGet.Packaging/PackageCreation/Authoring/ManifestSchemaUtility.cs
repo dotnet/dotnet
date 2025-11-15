@@ -18,7 +18,7 @@ namespace NuGet.Packaging
     public static class ManifestSchemaUtility
     {
         /// <summary>
-        /// Baseline schema 
+        /// Baseline schema
         /// </summary>
         internal const string SchemaVersionV1 = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
 
@@ -34,7 +34,7 @@ namespace NuGet.Packaging
 
         /// <summary>
         /// Added 'targetFramework' attribute for 'dependency' elements.
-        /// Allow framework folders under 'content' and 'tools' folders. 
+        /// Allow framework folders under 'content' and 'tools' folders.
         /// </summary>
         internal const string SchemaVersionV4 = "http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd";
 
@@ -90,13 +90,6 @@ namespace NuGet.Packaging
 
                     // Update the xsd with the right schema namespace
                     var assembly = typeof(Manifest).Assembly;
-
-                    var names = assembly.GetManifestResourceNames();
-
-                    foreach (var s in names)
-                    {
-
-                    }
 
                     var stream = assembly.GetManifestResourceStream(schemaResourceName);
                     using (var reader = new StreamReader(stream))

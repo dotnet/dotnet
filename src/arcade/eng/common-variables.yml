@@ -1,3 +1,8 @@
+parameters:
+- name: signType
+  default: Test
+  type: string
+
 variables:
   # Cannot use key:value syntax in root defined variables
   - name: _TeamName
@@ -17,7 +22,7 @@ variables:
     - name: _RunAsInternal
       value: True
     - name: _SignType
-      value: real
+      value: ${{ parameters.signType }}
     # Publish-Build-Assets provides: BotAccount-dotnet-maestro-bot-PAT
     # DotNet-HelixApi-Access provides: HelixApiAccessToken
     - group: Publish-Build-Assets
@@ -25,7 +30,7 @@ variables:
     - group: SDL_Settings
     # DotNetPublishUsingPipelines can be removed when Arcade itself consumes a new Arcade version.
     - name: _InternalBuildArgs
-      value: /p:DotNetSignType=$(_SignType)
+      value: /p:DotNetSignType=${{ parameters.signType }}
         /p:TeamName=$(_TeamName)
         /p:DotNetPublishUsingPipelines=true
         /p:OfficialBuildId=$(BUILD.BUILDNUMBER)

@@ -130,10 +130,15 @@ internal class HtmlTokenizer : Tokenizer
                     break;
             }
         }
-
-        if (tokenLength == 2 && type == SyntaxKind.NewLine)
+        else if (tokenLength == 2)
         {
-            return "\r\n";
+            switch (type)
+            {
+                case SyntaxKind.NewLine:
+                    return "\r\n";
+                case SyntaxKind.DoubleHyphen:
+                    return "--";
+            }
         }
 
         return base.GetTokenContent(type);

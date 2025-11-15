@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <_RuntimeVersion1xx>$(MicrosoftNETCoreAppRefVersion)</_RuntimeVersion1xx>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Sdk" Version="[$(_RuntimeVersion1xx)]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.wasm.Sample.Mono" Version="[$(_RuntimeVersion1xx)]" />
+    <PackageDownload Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="[$(_RuntimeVersion1xx)]" />
+  </ItemGroup>
+</Project>

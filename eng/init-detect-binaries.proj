@@ -17,7 +17,8 @@
 
   <Target Name="DetectBinaries"
           DependsOnTargets="ResolveProjectReferences"
-          BeforeTargets="Build">
+          BeforeTargets="Build"
+          Condition="'$(SkipBinaryScan)' != 'true'">
 
     <BinaryToolTask
       Mode="$(BinariesMode)"

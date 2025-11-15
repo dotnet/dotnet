@@ -9,7 +9,7 @@ function Test-GetPackageRetunsMoreThanServerPagingLimit {
 
 function Test-GetPackageListsInstalledPackages {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package elmah -Project $p.Name -Version 1.1
@@ -26,7 +26,7 @@ function Test-GetPackageWithoutOpenSolutionThrows {
 
 function Test-GetPackageWithUpdatesListsUpdates {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package NuGet.Core -Version 1.6.0 -Project $p.Name
@@ -61,7 +61,7 @@ function Test-GetPackageAcceptsSourceName {
 
 function Test-GetPackageWithUpdatesAcceptsSourceName {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package Antlr -Version 3.1.1 -Project $p.Name -Source $SourceNuGet

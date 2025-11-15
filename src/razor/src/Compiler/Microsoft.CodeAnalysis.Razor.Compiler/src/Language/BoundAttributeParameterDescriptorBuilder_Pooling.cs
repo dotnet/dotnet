@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public partial class BoundAttributeParameterDescriptorBuilder
 {
-    internal static readonly ObjectPool<BoundAttributeParameterDescriptorBuilder> Pool = DefaultPool.Create(Policy.Instance);
+    internal static readonly ObjectPool<BoundAttributeParameterDescriptorBuilder> Pool =
+        DefaultPool.Create(static () => new BoundAttributeParameterDescriptorBuilder());
 
     internal static BoundAttributeParameterDescriptorBuilder GetInstance(BoundAttributeDescriptorBuilder parent)
     {
@@ -28,16 +29,5 @@ public partial class BoundAttributeParameterDescriptorBuilder
 
         Name = null;
         PropertyName = null;
-    }
-
-    private sealed class Policy : PooledBuilderPolicy<BoundAttributeParameterDescriptorBuilder>
-    {
-        public static readonly Policy Instance = new();
-
-        private Policy()
-        {
-        }
-
-        public override BoundAttributeParameterDescriptorBuilder Create() => new();
     }
 }

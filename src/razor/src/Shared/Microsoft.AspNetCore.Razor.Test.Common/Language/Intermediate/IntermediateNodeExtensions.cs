@@ -15,7 +15,7 @@ internal static class IntermediateNodeExtensions
 
         foreach (var child in node.Children)
         {
-            if (child is IntermediateToken { Kind: TokenKind.CSharp } csharpToken)
+            if (child is CSharpIntermediateToken csharpToken)
             {
                 builder.Append(csharpToken.Content);
             }

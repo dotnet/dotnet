@@ -1,4 +1,6 @@
 <Project>
+  <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" />
+
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
   <Target Name="ReportPoisonUsage"
@@ -27,22 +29,14 @@
       <PoisonFileToCheck Include="@(SbrpPackageToCheck)" />
     </ItemGroup>
 
-    <!-- Check for prebuilt and source-built packages. -->
-    <ItemGroup>
-      <PoisonReportDataFile Include="$(PrebuiltPoisonReportDataFile)" />
-      <PoisonReportDataFile Include="$(PreviouslySourceBuiltPoisonReportDataFile)" />
-      <PoisonReportDataFile Include="$(SharedComponentPoisonReportDataFile)" />
-      <PoisonMarkerFile Include="$(PrebuiltPoisonMarkerFile)" />
-      <PoisonMarkerFile Include="$(PreviouslySourceBuiltPoisonMarkerFile)" />
-      <PoisonMarkerFile Include="$(SharedComponentPoisonMarkerFile)" />
-    </ItemGroup>
-
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(PoisonFileToCheck) for poisoned files." />
 
+    <!-- There's an issue where not all of the markers and catalogs are being fed into this check.
+         See https://github.com/dotnet/source-build/issues/5297 -->
     <CheckForPoison FilesToCheck="@(PoisonFileToCheck)"
                     ProjectDirPath="$(RepoRoot)"
-                    HashCatalogFilePaths="@(PoisonReportDataFile)"
-                    MarkerFileNames="@(PoisonMarkerFile)"
+                    HashCatalogFilePath="$(PoisonReportDataFile)"
+                    MarkerFileName="$(PoisonMarkerFile)"
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)" />
 
     <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
@@ -88,17 +82,33 @@
     </PropertyGroup>
   </Target>
 
+  <PropertyGroup>
+    <SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</SharedComponentFilterMode>
+    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
+    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
+      $(CreatePrivateSourceBuiltArtifactsArchiveDependsOn);GetFilteredSharedComponentPackages
+    </CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
+  </PropertyGroup>
+
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
           AfterTargets="Publish"
-          DependsOnTargets="DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive"
+          DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
-          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)"
-          Condition="'$(IsPublishPass2)' != 'true'">
+          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
+    <ItemGroup>
+      <PackageToPublish>
+        <IncludeInSBTarball Condition="'%(PackageToPublish.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
+      </PackageToPublish>
+      <ProducedPackage>
+        <IncludeInSBTarball Condition="'%(ProducedPackage.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
+      </ProducedPackage>
+    </ItemGroup>
+    
     <!-- Copy packages to layout directory. Since there are a large number of files,
           this will use symlinks instead of copying files to make this execute quickly. -->
-    <Copy SourceFiles="@(PackageToPublish)"
+    <Copy SourceFiles="@(PackageToPublish->WithMetadataValue('IncludeInSBTarball','true'));@(SharedComponentFilteredPackages->'%(PackagePath)')"
           DestinationFolder="$(SourceBuiltLayoutDir)"
           UseSymbolicLinksIfPossible="true" />
 
@@ -125,7 +135,7 @@
           UseSymbolicLinksIfPossible="true" />
 
     <!-- Create a PackageVersions.props file that includes entries for all packages. -->
-    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->Metadata('PackageId'))"
+    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->WithMetadataValue('IncludeInSBTarball','true')->Metadata('PackageId'));@(SharedComponentFilteredPackages)"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
@@ -159,6 +169,94 @@
           SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
     </Copy>
+  </Target>
+
+  <Target Name="IncludeSharedComponentsAsArtifacts"
+          AfterTargets="DiscoverArtifacts"
+          DependsOnTargets="GetFilteredSharedComponentPackages"
+          Condition="'$(IsPublishPass2)' != 'true'">
+
+    <ItemGroup>
+      <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
+        <Kind>Package</Kind>
+      </Artifact>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="DiscoverSourceBuiltArtifacts"
+          AfterTargets="DiscoverArtifacts"
+          DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
+
+    <PropertyGroup>
+      <SdkFileNamePrefix>dotnet-sdk-</SdkFileNamePrefix>
+    </PropertyGroup>
+
+     <ItemGroup>
+      <SdkRepoSdkTarball Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')"
+                         Condition="$([System.String]::new('%(ProducedAsset.Filename)').StartsWith('$(SdkFileNamePrefix)')) and $([System.String]::new('%(ProducedAsset.Identity)').EndsWith('$(ArchiveExtension)'))" />
+    </ItemGroup>
+
+    <!-- COMPAT: Our Source-Build partners expect the sdk tarball at the root of the ArtifactsAssetsDir in addition to publishing output
+         This tarball should be versioned in the filename the same as the output of the sdk repo. -->
+    <Copy SourceFiles="@(SdkRepoSdkTarball)"
+          DestinationFolder="$(ArtifactsAssetsDir)"
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+    
+    <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
+      <!-- Add SDK archive to assets root as source-only build partners expect the file to be there. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SdkFileNamePrefix)*$(ArchiveExtension)">
+        <Kind>Blob</Kind>
+        <IsShipping>true</IsShipping>
+      </SourceBuildArtifact>
+      <!-- Add the symbols archives to the publishing output. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)dotnet-symbols-*$(ArchiveExtension)">
+        <Kind>Blob</Kind>
+        <IsShipping>true</IsShipping>
+      </SourceBuildArtifact>
+      <!-- Add the source artifacts to the publishing output. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*">
+        <Kind>Blob</Kind>
+        <IsShipping>true</IsShipping>
+      </SourceBuildArtifact>
+      <!-- Include the prebuilts tarball in the publishing output as well. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltPrebuiltsTarballName).*$(ArchiveExtension)">
+        <Kind>Blob</Kind>
+        <IsShipping>true</IsShipping>
+      </SourceBuildArtifact>
+      <Artifact Include="@(SourceBuildArtifact)">
+        <IsShipping>true</IsShipping>
+        <Kind>Blob</Kind>
+        <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
+      </Artifact>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_SourceBuildArtifactsDir>$(ArtifactsAssetsDir)/source-build/</_SourceBuildArtifactsDir>
+      <SdkNonStableVersionedTarballPath>$(_SourceBuildArtifactsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
+    </PropertyGroup>
+
+    <MakeDir Condition="'$(IsPublishPass2)' == 'true'" Directories="$(_SourceBuildArtifactsDir)" />
+
+    <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
+    <Copy Condition="'$(IsPublishPass2)' == 'true'"
+          SourceFiles="@(SdkRepoSdkTarball)"
+          DestinationFiles="$(SdkNonStableVersionedTarballPath)"
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+
+    <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SourceBuildArtifact Include="$(SdkNonStableVersionedTarballPath)" />
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <Artifact Include="@(SourceBuildArtifact)">
+        <IsShipping>true</IsShipping>
+        <DotNetReleaseShipping Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true'">true</DotNetReleaseShipping>
+        <Kind>Blob</Kind>
+        <RelativeBlobPath>$([System.IO.Path]::GetFileName($(SourceBuiltPublishAssetsDir)))/%(Filename)%(Extension)</RelativeBlobPath>
+      </Artifact>
+    </ItemGroup>
+
   </Target>
 
 </Project>

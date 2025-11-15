@@ -4,18 +4,20 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.ExternalAccess.Watch.Api;
+using Microsoft.CodeAnalysis.ExternalAccess.HotReload.Api;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Watch;
 
-internal class IncrementalMSBuildWorkspace : Workspace
+internal sealed class IncrementalMSBuildWorkspace : Workspace
 {
-    private readonly IReporter _reporter;
+    private readonly ILogger _logger;
+    private int _solutionUpdateId;
 
-    public IncrementalMSBuildWorkspace(IReporter reporter)
+    public IncrementalMSBuildWorkspace(ILogger logger)
         : base(MSBuildMefHostServices.DefaultServices, WorkspaceKind.MSBuild)
     {
 #pragma warning disable CS0618 // https://github.com/dotnet/sdk/issues/49725
@@ -25,15 +27,18 @@ internal class IncrementalMSBuildWorkspace : Workspace
             // MSBuildProjectLoader reports Failures for cases where we can safely continue loading projects
             // (e.g. non-C#/VB project is ignored).
             // https://github.com/dotnet/roslyn/issues/75170
-            reporter.Warn($"msbuild: {diag.Diagnostic}", "⚠");
+            logger.LogWarning($"msbuild: {diag.Diagnostic}");
         };
 #pragma warning restore CS0618
 
-        _reporter = reporter;
+        _logger = logger;
     }
 
     public async Task UpdateProjectConeAsync(string rootProjectPath, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Loading projects ...");
+
+        var stopwatch = Stopwatch.StartNew();
         var oldSolution = CurrentSolution;
 
         var loader = new MSBuildProjectLoader(this);
@@ -71,7 +76,7 @@ internal class IncrementalMSBuildWorkspace : Workspace
                 continue;
             }
 
-            newSolution = WatchHotReloadService.WithProjectInfo(newSolution, ProjectInfo.Create(
+            newSolution = HotReloadService.WithProjectInfo(newSolution, ProjectInfo.Create(
                 oldProjectId,
                 newProjectInfo.Version,
                 newProjectInfo.Name,
@@ -93,12 +98,15 @@ internal class IncrementalMSBuildWorkspace : Workspace
                 .WithCompilationOutputInfo(newProjectInfo.CompilationOutputInfo));
         }
 
-        await ReportSolutionFilesAsync(SetCurrentSolution(newSolution), cancellationToken);
+        await UpdateSolutionAsync(newSolution, operationDisplayName: "project update", cancellationToken);
         UpdateReferencesAfterAdd();
 
+        _logger.LogInformation("Projects loaded in {Time}s.", stopwatch.Elapsed.TotalSeconds.ToString("0.0"));
+
         ProjectReference MapProjectReference(ProjectReference pr)
-            // Only C# and VB projects are loaded by the MSBuildProjectLoader, so some references might be missing:
-            => new(projectIdMap.TryGetValue(pr.ProjectId, out var mappedId) ? mappedId : pr.ProjectId, pr.Aliases, pr.EmbedInteropTypes);
+            // Only C# and VB projects are loaded by the MSBuildProjectLoader, so some references might be missing.
+            // When a new project is added along with a new project reference the old project id is also null.
+            => new(projectIdMap.TryGetValue(pr.ProjectId, out var oldProjectId) && oldProjectId != null ? oldProjectId : pr.ProjectId, pr.Aliases, pr.EmbedInteropTypes);
 
         ImmutableArray<DocumentInfo> MapDocuments(ProjectId mappedProjectId, IReadOnlyList<DocumentInfo> documents)
             => documents.Select(docInfo =>
@@ -140,7 +148,7 @@ internal class IncrementalMSBuildWorkspace : Workspace
 
                 if (textDocument == null)
                 {
-                    _reporter.Verbose($"Could not find document with path '{changedFile.FilePath}' in the workspace.");
+                    _logger.LogDebug("Could not find document with path '{FilePath}' in the workspace.", changedFile.FilePath);
                     continue;
                 }
 
@@ -151,6 +159,8 @@ internal class IncrementalMSBuildWorkspace : Workspace
                 Debug.Assert(oldText.Encoding != null);
 
                 var newText = await GetSourceTextAsync(changedFile.FilePath, oldText.Encoding, oldText.ChecksumAlgorithm, cancellationToken);
+
+                _logger.LogDebug("Updating document text of '{FilePath}'.", changedFile.FilePath);
 
                 updatedSolution = textDocument switch
                 {
@@ -164,7 +174,7 @@ internal class IncrementalMSBuildWorkspace : Workspace
 
         updatedSolution = RemoveDocuments(updatedSolution, documentsToRemove);
 
-        await ReportSolutionFilesAsync(SetCurrentSolution(updatedSolution), cancellationToken);
+        await UpdateSolutionAsync(updatedSolution, operationDisplayName: "document update", cancellationToken);
     }
 
     private static Solution RemoveDocuments(Solution solution, IEnumerable<DocumentId> ids)
@@ -215,12 +225,24 @@ internal class IncrementalMSBuildWorkspace : Workspace
         return null;
     }
 
-    public async Task ReportSolutionFilesAsync(Solution solution, CancellationToken cancellationToken)
+    private Task UpdateSolutionAsync(Solution newSolution, string operationDisplayName, CancellationToken cancellationToken)
+        => ReportSolutionFilesAsync(SetCurrentSolution(newSolution), Interlocked.Increment(ref _solutionUpdateId), operationDisplayName, cancellationToken);
+
+    private async Task ReportSolutionFilesAsync(Solution solution, int updateId, string operationDisplayName, CancellationToken cancellationToken)
     {
-        _reporter.Verbose($"Solution: {solution.FilePath}");
+#if DEBUG
+        _logger.LogDebug("Solution: {Path}", solution.FilePath);
+
+        if (!_logger.IsEnabled(LogLevel.Debug))
+        {
+            return;
+        }
+
+        _logger.LogDebug("Solution after {Operation}: v{Version}", operationDisplayName, updateId);
+
         foreach (var project in solution.Projects)
         {
-            _reporter.Verbose($"  Project: {project.FilePath}");
+            _logger.LogDebug("  Project: {Path}", project.FilePath);
 
             foreach (var document in project.Documents)
             {
@@ -241,7 +263,10 @@ internal class IncrementalMSBuildWorkspace : Workspace
         async ValueTask InspectDocumentAsync(TextDocument document, string kind)
         {
             var text = await document.GetTextAsync(cancellationToken);
-            _reporter.Verbose($"    {kind}: {document.FilePath} [{Convert.ToBase64String(text.GetChecksum().ToArray())}]");
+            _logger.LogDebug("    {Kind}: {FilePath} [{Checksum}]", kind, document.FilePath, Convert.ToBase64String(text.GetChecksum().ToArray()));
         }
+#else
+        await Task.CompletedTask;
+#endif
     }
 }

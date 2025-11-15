@@ -46,6 +46,7 @@
          original package's dependencies and shouldn't get changed here. -->
     <NoWarn>$(NoWarn);NU1510;NU1511</NoWarn>
     <NuGetAudit>false</NuGetAudit>
+    <RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
   </PropertyGroup>
 
   <!-- GenAPI settings -->

@@ -942,6 +942,6 @@ nuget client-certs List</value>
     <comment>{0} - error code</comment>
   </data>
   <data name="PushCommandAllowInsecureConnectionsDescription" xml:space="preserve">
-    <value>Allow pushing to HTTP sources (insecure).</value>
+    <value>Allows pushing to HTTP sources (insecure).</value>
   </data>
 </root>

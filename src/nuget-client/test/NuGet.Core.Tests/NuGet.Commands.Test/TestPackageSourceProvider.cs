@@ -12,14 +12,14 @@ namespace NuGet.Commands.Test
     /// </summary>
     public class TestPackageSourceProvider : IPackageSourceProvider
     {
-        private IEnumerable<PackageSource> PackageSources { get; set; }
+        private IEnumerable<PackageSource> _packageSources;
 
         public TestPackageSourceProvider(IEnumerable<PackageSource> packageSources)
         {
-            PackageSources = packageSources;
+            _packageSources = packageSources;
         }
 
-        public IEnumerable<PackageSource> LoadPackageSources() => PackageSources;
+        public IEnumerable<PackageSource> LoadPackageSources() => _packageSources;
 
         public IReadOnlyList<PackageSource> LoadAuditSources() => Array.Empty<PackageSource>();
 
@@ -27,7 +27,7 @@ namespace NuGet.Commands.Test
 
         public void SavePackageSources(IEnumerable<PackageSource> sources)
         {
-            PackageSources = sources;
+            _packageSources = sources;
             PackageSourcesChanged?.Invoke(this, null);
         }
 
@@ -36,8 +36,6 @@ namespace NuGet.Commands.Test
         public string DefaultPushSource => throw new NotImplementedException();
 
         public void SaveActivePackageSource(PackageSource source) => throw new NotImplementedException();
-
-        public PackageSource GetPackageSource(string name) => throw new NotImplementedException();
 
         public void RemovePackageSource(string name) => throw new NotImplementedException();
 
@@ -54,9 +52,5 @@ namespace NuGet.Commands.Test
         public void AddPackageSource(PackageSource source) => throw new NotImplementedException();
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
-
-        public void DisablePackageSource(PackageSource source) => throw new NotImplementedException();
-
-        public bool IsPackageSourceEnabled(PackageSource source) => throw new NotImplementedException();
     }
 }

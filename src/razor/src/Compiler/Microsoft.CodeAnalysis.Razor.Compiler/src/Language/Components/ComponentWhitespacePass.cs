@@ -3,24 +3,18 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRazorDirectiveClassifierPass
+internal sealed class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRazorDirectiveClassifierPass
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
-        if (codeDocument == null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
-        if (documentNode == null)
-        {
-            throw new ArgumentNullException(nameof(documentNode));
-        }
-
         if (!IsComponentDocument(documentNode))
         {
             return;
@@ -81,7 +75,7 @@ internal class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRaz
 
         foreach (var preserveWhitespaceDirective in documentNode.FindDirectiveReferences(ComponentPreserveWhitespaceDirective.Directive))
         {
-            var token = ((DirectiveIntermediateNode)preserveWhitespaceDirective.Node).Tokens.FirstOrDefault();
+            var token = preserveWhitespaceDirective.Node.Tokens.FirstOrDefault();
             var shouldPreserveWhitespaceContent = token?.Content;
             if (shouldPreserveWhitespaceContent != null)
             {

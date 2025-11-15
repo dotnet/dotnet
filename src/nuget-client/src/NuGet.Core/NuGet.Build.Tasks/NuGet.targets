@@ -80,16 +80,26 @@ Copyright (c) .NET Foundation. All rights reserved.
     <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
   </PropertyGroup>
 
+  <!-- Package pruning is enabled for all projects targeting .NET 10 or greater, including multi-targeted projects. -->
   <PropertyGroup>
+    <!-- We only set the RestoreEnablePackagePruning default for single TFM projects. 
+    For multi-targeted projects that requires knowing the other inner builds, so we rely on RestorePackagePruningDefault. -->
     <RestoreEnablePackagePruning Condition="'$(RestoreEnablePackagePruning)' == ''
                     AND '$(UsingMicrosoftNETSdk)' == 'true'
+                    AND '$(TargetFrameworks)' == ''
                     AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
                     AND '$(SdkAnalysisLevel)' != ''
                     AND $([MSBuild]::VersionGreaterThanOrEquals('$(SdkAnalysisLevel)', '10.0.100'))
-                    AND (('$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '8.0')))
-                        OR ('$(TargetFrameworkIdentifier)' == '.NETStandard' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '2.0'))))"
+                    AND ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0')))"
                     >true</RestoreEnablePackagePruning>
-    <RestoreEnablePackagePruning Condition="$(RestoreEnablePackagePruning) == '' ">false</RestoreEnablePackagePruning>
+    <RestoreEnablePackagePruning Condition="$(RestoreEnablePackagePruning) == '' AND '$(TargetFrameworks)' == ''">false</RestoreEnablePackagePruning>
+    <RestorePackagePruningDefault Condition="'$(UsingMicrosoftNETSdk)' == 'true'
+                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+                    AND '$(SdkAnalysisLevel)' != ''
+                    AND $([MSBuild]::VersionGreaterThanOrEquals('$(SdkAnalysisLevel)', '10.0.100'))
+                    AND ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0')))"
+                    >true</RestorePackagePruningDefault>
+    <RestorePackagePruningDefault Condition="'$(RestorePackagePruningDefault)' == ''">false</RestorePackagePruningDefault>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -1207,6 +1217,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
         <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
         <RestoreEnablePackagePruning>$(RestoreEnablePackagePruning)</RestoreEnablePackagePruning>
+        <RestorePackagePruningDefault>$(RestorePackagePruningDefault)</RestorePackagePruningDefault>
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
       </_RestoreGraphEntry>
     </ItemGroup>

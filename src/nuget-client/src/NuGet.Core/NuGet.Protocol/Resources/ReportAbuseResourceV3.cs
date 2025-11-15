@@ -32,6 +32,8 @@ namespace NuGet.Protocol
         /// <returns>The first URL from the resource, with the URI template applied.</returns>
         public Uri GetReportAbuseUrl(string id, NuGetVersion version)
         {
+            PackageIdValidator.Validate(id);
+
             var uriString = _uriTemplate
 #if NETCOREAPP
                .Replace("{id}", id, StringComparison.OrdinalIgnoreCase)

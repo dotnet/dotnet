@@ -2501,7 +2501,7 @@ public static class E
             var comp = CreateCompilation(source, parseOptions: TestOptions.Regular12);
             verify(comp);
 
-            comp = CreateCompilation(source, parseOptions: useCSharp13 ? TestOptions.RegularNext : TestOptions.RegularPreview);
+            comp = CreateCompilation(source, parseOptions: useCSharp13 ? TestOptions.Regular14 : TestOptions.RegularPreview);
             verify(comp);
 
             static void verify(CSharpCompilation comp)
@@ -19463,6 +19463,10 @@ $@"{s_expressionOfTDelegate1ArgTypeName}[<>f__AnonymousDelegate0`2[System.Int32,
                 			int32[] ys
                 		) cil managed 
                 	{
+                		.param [2]
+                			.custom instance void [{{s_libPrefix}}]System.ParamArrayAttribute::.ctor() = (
+                				01 00 00 00
+                			)
                 		// Method begins at RVA 0x20b0
                 		// Code size 1 (0x1)
                 		.maxstack 8
@@ -19520,6 +19524,10 @@ $@"{s_expressionOfTDelegate1ArgTypeName}[<>f__AnonymousDelegate0`2[System.Int32,
                 		.custom instance void [{{s_libPrefix}}]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = (
                 			01 00 00 00
                 		)
+                		.param [2]
+                			.custom instance void [{{s_libPrefix}}]System.ParamArrayAttribute::.ctor() = (
+                				01 00 00 00
+                			)
                 		// Method begins at RVA 0x2067
                 		// Code size 1 (0x1)
                 		.maxstack 8

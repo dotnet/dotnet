@@ -180,13 +180,12 @@ internal sealed class RemoteServiceInvoker(
                 var initParams = new RemoteClientInitializationOptions
                 {
                     UseRazorCohostServer = _languageServerFeatureOptions.UseRazorCohostServer,
-                    UsePreciseSemanticTokenRanges = _languageServerFeatureOptions.UsePreciseSemanticTokenRanges,
                     HtmlVirtualDocumentSuffix = _languageServerFeatureOptions.HtmlVirtualDocumentSuffix,
                     ReturnCodeActionAndRenamePathsWithPrefixedSlash = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
                     SupportsFileManipulation = _languageServerFeatureOptions.SupportsFileManipulation,
                     ShowAllCSharpCodeActions = _languageServerFeatureOptions.ShowAllCSharpCodeActions,
                     SupportsSoftSelectionInCompletion = _languageServerFeatureOptions.SupportsSoftSelectionInCompletion,
-                    UseVsCodeCompletionTriggerCharacters = _languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters,
+                    UseVsCodeCompletionCommitCharacters = _languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters,
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");
@@ -210,7 +209,7 @@ internal sealed class RemoteServiceInvoker(
 
                 return remoteClient
                     .TryInvokeAsync<IRemoteClientInitializationService>(
-                        (s, ct) => s.InitializeLSPAsync(initParams, ct),
+                        (s, ct) => s.InitializeLspAsync(initParams, ct),
                         _disposeTokenSource.Token)
                     .AsTask();
             }

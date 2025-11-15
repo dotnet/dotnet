@@ -65,6 +65,7 @@ variables:
   RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
   RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
   RunStaticAnalysis: ${{ parameters.RunStaticAnalysis }}
+  SourceBranch: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
@@ -92,7 +93,8 @@ extends:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
         isOfficialBuild: true
-        NuGetLocalizationType: Full
+        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+          RunOneLocBuild: true
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
         RunUnitTestsOnWindows: ${{parameters.RunUnitTestsOnWindows}}

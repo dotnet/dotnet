@@ -136,9 +136,9 @@ namespace NuGetVSExtension
         [Import]
         private Lazy<INuGetUIFactory> UIFactory { get; set; }
 
-        private IDisposable ProjectRetargetingHandler { get; set; }
+        private IDisposable _projectRetargetingHandler;
 
-        private IDisposable ProjectUpgradeHandler { get; set; }
+        private IDisposable _projectUpgradeHandler;
 
         [Import]
         private Lazy<IServiceBrokerProvider> ServiceBrokerProvider { get; set; }
@@ -259,7 +259,7 @@ namespace NuGetVSExtension
 
                 IVsTrackProjectRetargeting vsTrackProjectRetargeting = await this.GetServiceAsync<SVsTrackProjectRetargeting, IVsTrackProjectRetargeting>();
                 IVsMonitorSelection vsMonitorSelection = await this.GetServiceAsync<IVsMonitorSelection, IVsMonitorSelection>(throwOnFailure: false);
-                ProjectRetargetingHandler = new ProjectRetargetingHandler(
+                _projectRetargetingHandler = new ProjectRetargetingHandler(
                     _dte,
                     SolutionManager.Value,
                     this,
@@ -268,7 +268,7 @@ namespace NuGetVSExtension
                     vsMonitorSelection);
 
                 IVsSolution2 vsSolution2 = await this.GetServiceAsync<SVsSolution, IVsSolution2>();
-                ProjectUpgradeHandler = new ProjectUpgradeHandler(
+                _projectUpgradeHandler = new ProjectUpgradeHandler(
                     SolutionManager.Value,
                     vsSolution2);
 
@@ -1019,37 +1019,53 @@ namespace NuGetVSExtension
 
         private void ShowManageLibraryPackageForSolutionDialog(object sender, EventArgs e)
         {
+            PackageManagerShowOptions options = null;
+            if (e is OleMenuCmdEventArgs eventArgs)
+            {
+                if (eventArgs?.InValue is string parameterString)
+                {
+                    options = new PackageManagerShowOptions() { SearchText = parameterString };
+                }
+                else if (eventArgs?.InValue is PackageManagerShowOptions parameterOptions)
+                {
+                    options = parameterOptions;
+                }
+                else
+                {
+                    options = new PackageManagerShowOptions();
+                }
+            }
+
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
             {
-                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-                if (ShouldInitializeSolutionExperiences())
-                {
-                    await InitializeSolutionExperiencesAsync();
-                }
-
-                var windowFrame = await FindExistingSolutionWindowFrameAsync();
-                if (windowFrame == null)
-                {
-                    // Create the window frame
-                    windowFrame = await CreateDocWindowForSolutionAsync();
-                }
-
-                if (windowFrame != null)
-                {
-                    // process search string
-                    string parameterString = null;
-                    var args = e as OleMenuCmdEventArgs;
-                    if (args != null)
-                    {
-                        parameterString = args.InValue as string;
-                    }
-                    var searchText = GetSearchText(parameterString);
-                    Search(windowFrame, searchText);
-
-                    windowFrame.Show();
-                }
+                await ShowManageLibraryPackageForSolutionDialogAsync(options);
             }).PostOnFailure(nameof(NuGetPackage), nameof(ShowManageLibraryPackageForSolutionDialog));
+        }
+
+        private async Task<IVsWindowFrame> ShowManageLibraryPackageForSolutionDialogAsync(PackageManagerShowOptions options)
+        {
+            string searchText = GetSearchText(options.SearchText);
+
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (ShouldInitializeSolutionExperiences())
+            {
+                await InitializeSolutionExperiencesAsync();
+            }
+
+            var windowFrame = await FindExistingSolutionWindowFrameAsync();
+            // Create the window frame
+            windowFrame ??= await CreateDocWindowForSolutionAsync();
+
+            if (windowFrame != null)
+            {
+                SelectActiveItemFilter(windowFrame, options.ItemFilter);
+                SelectFilterOptions(windowFrame, options.PackageFilterOptions);
+                Search(windowFrame, searchText);
+                windowFrame.Show();
+            }
+
+            return windowFrame;
         }
 
         /// <summary>
@@ -1088,6 +1104,31 @@ namespace NuGetVSExtension
 
             var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
             packageManagerControl?.ShowUpdatePackages(updatePackageOptions);
+        }
+
+        private static void SelectActiveItemFilter(IVsWindowFrame windowFrame, UI.ItemFilter? itemFilter)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (itemFilter.HasValue)
+            {
+                var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
+                if (packageManagerControl != null)
+                {
+                    packageManagerControl.ActiveFilter = itemFilter.Value;
+                }
+            }
+        }
+
+        private static void SelectFilterOptions(IVsWindowFrame windowFrame, PackageFilterOptions packageFilterOptions)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (packageFilterOptions != null)
+            {
+                var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
+                packageManagerControl?.SelectPackageFilterOptions(packageFilterOptions);
+            }
         }
 
         // For PowerShell, it's okay to query from the worker thread.
@@ -1420,8 +1461,8 @@ namespace NuGetVSExtension
                     _mcs?.Dispose();
                     _nuGetPowerShellUsageCollector?.Dispose();
                     _semaphore.Dispose();
-                    ProjectRetargetingHandler?.Dispose();
-                    ProjectUpgradeHandler?.Dispose();
+                    _projectRetargetingHandler?.Dispose();
+                    _projectUpgradeHandler?.Dispose();
 
                     GC.SuppressFinalize(this);
                 }

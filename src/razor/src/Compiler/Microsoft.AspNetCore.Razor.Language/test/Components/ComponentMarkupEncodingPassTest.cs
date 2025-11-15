@@ -173,6 +173,25 @@ The time is ");
         Assert.False(node.HasEncodedContent);
     }
 
+    [Fact]
+    public void Execute_MixedHtmlContent_HexadecimalHTMLEntities_DoesNotSetEncoded()
+    {
+        // Arrange
+        var document = CreateDocument(@"
+<div>Symbols &#x41;&#X42;&#x3D;&#X3d; @DateTime.Now</div>");
+        var expected = NormalizeContent("Symbols AB== ");
+
+        var documentNode = Lower(document);
+
+        // Act
+        Pass.Execute(document, documentNode);
+
+        // Assert
+        var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
+        Assert.Equal(expected, GetHtmlContent(node));
+        Assert.False(node.HasEncodedContent);
+    }
+
     private string NormalizeContent(string content)
     {
         // Normalize newlines since we are testing lengths of things.
@@ -212,11 +231,13 @@ The time is ");
     private static string GetHtmlContent(HtmlContentIntermediateNode node)
     {
         var builder = new StringBuilder();
-        var htmlTokens = node.Children.OfType<IntermediateToken>().Where(t => t.IsHtml);
+        var htmlTokens = node.Children.OfType<HtmlIntermediateToken>();
+
         foreach (var htmlToken in htmlTokens)
         {
             builder.Append(htmlToken.Content);
         }
+
         return builder.ToString();
     }
 }

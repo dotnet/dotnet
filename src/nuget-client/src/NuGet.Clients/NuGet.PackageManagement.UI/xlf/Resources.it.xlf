@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">Dalla soluzione mancano alcuni pacchetti NuGet. Fare clic per eseguire il ripristino dalle origini del pacchetto online.</target>
+        <target state="translated">In questa soluzione mancano alcuni pacchetti NuGet. Fare clic per ripristinarli dalle origini dei pacchetti online.</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">È disponibile una nuova versione di NuGet Package Manager.</target>
+        <target state="translated">È disponibile una nuova versione di Gestione pacchetti NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -249,7 +249,7 @@
       </trans-unit>
       <trans-unit id="CheckBox_Selected">
         <source>Selected</source>
-        <target state="translated">Selezionato</target>
+        <target state="translated">Selezionati</target>
         <note />
       </trans-unit>
       <trans-unit id="Checkbox_ForceRemove">
@@ -459,12 +459,12 @@
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
         <source>Report Abuse</source>
-        <target state="translated">Segnala abuso</target>
+        <target state="translated">Segnala uso improprio</target>
         <note />
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
         <source>Ignore for now</source>
-        <target state="translated">Ignora per ora</target>
+        <target state="translated">Ignora per il momento</target>
         <note />
       </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
@@ -844,7 +844,7 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">Si è verificato un errore durante il tentativo di ripristino dei pacchetti:</target>
+        <target state="translated">Si è verificato un errore durante il tentativo di ripristinare i pacchetti:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
-        <target state="translated">La pulizia dello spazio di archiviazione NuGet non è riuscita in {0}. 
-Errore: {1}
-Per altre informazioni, vedere https://aka.ms/troubleshoot_nuget_cache.</target>
+Error: {1}</source>
+        <target state="translated">La pulizia dell'archiviazione NuGet non è riuscita in {0}. 
+Errore: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Per altre informazioni, vedi</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Per altre informazioni, vedere https://aka.ms/troubleshoot_nuget_cache.</target>
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">Caricamento LEGGIMI in corso...</target>
+        <target state="translated">Caricamento del README in corso...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Per altre informazioni, vedere https://aka.ms/troubleshoot_nuget_cache.</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Nessun FILE LEGGIMI disponibile per la versione del pacchetto selezionata. Per altre informazioni, vedere [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Nessun README disponibile per la versione del pacchetto selezionata. Per altre informazioni, visita [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">

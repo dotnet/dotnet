@@ -14,7 +14,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
 
         public ReadmePreviewViewModel ReadmePreviewViewModel { get; private set; }
 
-        private DetailControlModel DetailControlModel { get; set; }
+        private DetailControlModel _detailControlModel;
 
         public ObservableCollection<TitledPageViewModelBase> Tabs { get; private set; }
 
@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
         public void Initialize(DetailControlModel detailControlModel, INuGetPackageFileService nugetPackageFileService, ItemFilter currentFilter, PackageMetadataTab initialSelectedTab, bool isReadmeTabEnabled)
         {
             _readmeTabEnabled = isReadmeTabEnabled;
-            DetailControlModel = detailControlModel;
+            _detailControlModel = detailControlModel;
 
             if (_readmeTabEnabled)
             {
@@ -42,11 +42,11 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 Tabs.Add(ReadmePreviewViewModel);
             }
 
-            Tabs.Add(DetailControlModel);
+            Tabs.Add(_detailControlModel);
 
             SelectedTab = Tabs.FirstOrDefault(t => t.IsVisible && ConvertFromTabType(t) == initialSelectedTab) ?? Tabs.FirstOrDefault(t => t.IsVisible);
 
-            DetailControlModel.PropertyChanged += DetailControlModel_PropertyChanged;
+            _detailControlModel.PropertyChanged += DetailControlModel_PropertyChanged;
 
             foreach (var tab in Tabs)
             {
@@ -69,7 +69,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
             {
                 return;
             }
-            DetailControlModel.PropertyChanged -= DetailControlModel_PropertyChanged;
+            _detailControlModel.PropertyChanged -= DetailControlModel_PropertyChanged;
             foreach (var tab in Tabs)
             {
                 tab.PropertyChanged -= IsVisible_PropertyChanged;
@@ -104,9 +104,9 @@ namespace NuGet.PackageManagement.UI.ViewModels
         private void DetailControlModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (_readmeTabEnabled
-                && e.PropertyName == nameof(DetailControlModel.PackageMetadata))
+                && e.PropertyName == nameof(_detailControlModel.PackageMetadata))
             {
-                ReadmePreviewViewModel.SetPackageMetadataAsync(DetailControlModel.PackageMetadata).PostOnFailure(nameof(PackageDetailsTabViewModel), nameof(DetailControlModel_PropertyChanged));
+                ReadmePreviewViewModel.SetPackageMetadataAsync(_detailControlModel.PackageMetadata).PostOnFailure(nameof(PackageDetailsTabViewModel), nameof(DetailControlModel_PropertyChanged));
             }
         }
     }

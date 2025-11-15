@@ -77,13 +77,23 @@ module TestCaseCustomizations =
             let oldTestClass = oldTestMethod.TestClass
             let oldTestCollection = oldTestMethod.TestClass.TestCollection
 
+            // Create a DETERMINISTIC collection ID based on the test case's unique ID
+            // This ensures the same test case always gets the same collection ID
+            let collectionId = 
+                use sha = System.Security.Cryptography.SHA256.Create()
+                let bytes = System.Text.Encoding.UTF8.GetBytes(testCase.UniqueID)
+                let hash = sha.ComputeHash(bytes)
+                System.Guid(hash.[0..15])  // Take first 16 bytes for GUID
+
+            let newDisplayName = $"{oldTestCollection.DisplayName}_{collectionId:N}"
+
             // Create a new collection with a unique id for the test case.
             let newTestCollection =
                     new TestCollection(
                         oldTestCollection.TestAssembly,
                         oldTestCollection.CollectionDefinition,
-                        oldTestCollection.DisplayName,
-                        Guid.NewGuid()
+                        newDisplayName,
+                        collectionId
                     )
 
             let newTestClass = new TestClass(newTestCollection, oldTestClass.Class)
@@ -175,7 +185,7 @@ type OpenTelemetryExport(testRunName, enable) =
 
             // Configure OpenTelemetry metrics export. Metrics can be viewed in Prometheus or other compatible tools.
             OpenTelemetry.Sdk.CreateMeterProviderBuilder()
-                .AddMeter(CacheMetrics.Meter.Name)
+                .AddMeter(ActivityNames.FscSourceName)
                 .AddMeter("System.Runtime")
                 .ConfigureResource(fun r -> r.AddService(testRunName) |> ignore)
                 .AddOtlpExporter(fun e m ->
@@ -190,33 +200,44 @@ type OpenTelemetryExport(testRunName, enable) =
         member this.Dispose() =
             for p in providers do p.Dispose()
 
+// In some situations, VS can invoke CreateExecutor and RunTestCases many times during testhost lifetime.
+// For example when executing "run until failure" command in Test Explorer.
+// However, we want to ensure that OneTimeSetup is called only once per test run.
+module OneTimeSetup =
+
+    let init =
+        lazy
+    #if !NETCOREAPP
+        // We need AssemblyResolver already here, because OpenTelemetry loads some assemblies dynamically.
+        log "Adding AssemblyResolver"
+        AssemblyResolver.addResolver ()
+    #endif
+        log $"Server GC enabled: {System.Runtime.GCSettings.IsServerGC}"
+        log "Installing TestConsole redirection"
+        TestConsole.install()
+
+        logConfig initialConfig
+
+    let EnsureInitialized() =
+        // Ensure that the initialization is done only once per test run.
+        init.Force()
+
 /// `XunitTestFramework` providing parallel console support and conditionally enabling optional xUnit customizations.
 type FSharpXunitFramework(sink: IMessageSink) =
     inherit XunitTestFramework(sink)
+
+    do OneTimeSetup.EnsureInitialized()
             
     override this.CreateExecutor (assemblyName) =
         { new XunitTestFrameworkExecutor(assemblyName, this.SourceInformationProvider, this.DiagnosticMessageSink) with
             
             // Because xUnit v2 lacks assembly fixture, this is a good place to ensure things get called right at the start of the test run.
-            // This gets executed once per test assembly.
             override x.RunTestCases(testCases, executionMessageSink, executionOptions) =
-
-            #if !NETCOREAPP
-                // We need AssemblyResolver already here, because OpenTelemetry loads some assemblies dynamically.
-                AssemblyResolver.addResolver ()
-            #endif
-
-                // Override cache capacity to reduce memory usage in CI.
-                Cache.OverrideCapacityForTesting()
 
                 let testRunName = $"RunTests_{assemblyName.Name} {Runtime.InteropServices.RuntimeInformation.FrameworkDescription}"
 
-                use _ = new OpenTelemetryExport(testRunName, Environment.GetEnvironmentVariable("FSHARP_OTEL_EXPORT") <> null)   
-                
-                logConfig initialConfig
-                log "Installing TestConsole redirection"
-                TestConsole.install()
-              
+                use _ = new OpenTelemetryExport(testRunName, Environment.GetEnvironmentVariable("FSHARP_OTEL_EXPORT") <> null)                 
+  
                 begin
                     use _ = Activity.startNoTags testRunName
                     // We can't just call base.RunTestCases here, because it's implementation is async void.

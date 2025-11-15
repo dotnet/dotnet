@@ -66,7 +66,7 @@ namespace NuGet.CommandLine.Commands
             }
 
             string packagePath = null;
-            if (Arguments.Count() > 1)
+            if (Arguments.Count > 1)
             {
                 packagePath = Arguments[1];
             }

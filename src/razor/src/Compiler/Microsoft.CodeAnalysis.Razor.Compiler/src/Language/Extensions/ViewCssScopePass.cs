@@ -2,16 +2,20 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after taghelpers are bound
     public override int Order => 110;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var cssScope = codeDocument.CodeGenerationOptions.CssScope;
         if (string.IsNullOrEmpty(cssScope))
@@ -39,16 +43,11 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
         for (var i = 0; i < node.Children.Count; i++)
         {
             var child = node.Children[i];
-            if (child is IntermediateToken token && token.IsHtml)
+            if (child is HtmlIntermediateToken token)
             {
                 if (IsValidElement(token, previousToken))
                 {
-                    node.Children.Insert(i + 1, new IntermediateToken()
-                    {
-                        Content = cssScope,
-                        Kind = TokenKind.Html,
-                        Source = null
-                    });
+                    node.Children.Insert(i + 1, IntermediateNodeFactory.HtmlToken(cssScope));
                     i++;
                 }
 

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -595,7 +594,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers: []);
+        visitor.Initialize(descriptors: [], sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -761,7 +760,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -907,7 +906,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, sourceDocument.FilePath);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -930,7 +929,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         };
 
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor();
-        visitor.Initialize(tagHelpers);
+        visitor.Initialize(tagHelpers, filePath: null);
         var sourceDocument = CreateTestSourceDocument();
         var tree = RazorSyntaxTree.Parse(sourceDocument);
 
@@ -964,7 +963,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null,
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null)
     {
-        return CreateDescriptor(TagHelperConventions.DefaultKind, tagName, typeName, assemblyName, typeNamespace, typeNameIdentifier, attributes, ruleBuilders);
+        return CreateDescriptor(TagHelperKind.ITagHelper, tagName, typeName, assemblyName, typeNamespace, typeNameIdentifier, attributes, ruleBuilders);
     }
     #endregion
 
@@ -984,7 +983,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(@"<Counter />", "C:\\SomeFolder\\SomeProject\\Counter.cshtml");
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1016,7 +1015,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1051,7 +1050,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1089,7 +1088,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1124,7 +1123,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1160,7 +1159,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1190,7 +1189,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1227,7 +1226,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
         var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor();
-        visitor.Initialize(sourceDocument.FilePath, descriptors, currentNamespace);
+        visitor.Initialize(descriptors, sourceDocument.FilePath, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1250,7 +1249,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
     {
         // Arrange & Act
         var descriptor = CreateComponentDescriptor(typeName, typeName, "Test.dll");
-        var tagHelperTypeNamespace = descriptor.GetTypeNamespace();
+        var tagHelperTypeNamespace = descriptor.TypeNamespace;
 
         var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeNamespaceInScope(tagHelperTypeNamespace, currentNamespace);
 
@@ -1263,7 +1262,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
     {
         // Arrange
         var className = "Counter";
-        var typeName = $"SomeProject.SomeNamespace.{ComponentMetadata.MangleClassName(className)}";
+        var typeName = $"SomeProject.SomeNamespace.{ComponentHelpers.MangleClassName(className)}";
         var descriptor = CreateComponentDescriptor(
             tagName: "Counter",
             typeName: typeName,
@@ -1290,17 +1289,17 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         string typeNameIdentifier = null,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null,
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null,
-        string kind = null,
         bool fullyQualified = false,
         bool childContent = false)
     {
-        kind ??= ComponentMetadata.Component.TagHelperKind;
-        return CreateDescriptor(kind, tagName, typeName, assemblyName, typeNamespace, typeNameIdentifier, attributes, ruleBuilders, fullyQualified, childContent);
+        var kind = childContent ? TagHelperKind.ChildContent : TagHelperKind.Component;
+
+        return CreateDescriptor(kind, tagName, typeName, assemblyName, typeNamespace, typeNameIdentifier, attributes, ruleBuilders, fullyQualified);
     }
     #endregion
 
     private static TagHelperDescriptor CreateDescriptor(
-        string kind,
+        TagHelperKind kind,
         string tagName,
         string typeName,
         string assemblyName,
@@ -1308,15 +1307,18 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         string typeNameIdentifier,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null,
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null,
-        bool componentFullyQualified = false,
-        bool componentChildContent = false)
+        bool componentFullyQualified = false)
     {
-        var builder = TagHelperDescriptorBuilder.Create(kind, typeName, assemblyName);
-        using var metadata = builder.GetMetadataBuilder();
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(kind, typeName, assemblyName);
 
-        metadata.Add(TypeName(typeName));
-        metadata.Add(TypeNamespace(typeNamespace ?? (typeName.LastIndexOf('.') == -1 ? "" : typeName[..typeName.LastIndexOf('.')])));
-        metadata.Add(TypeNameIdentifier(typeNameIdentifier ?? (typeName.LastIndexOf('.') == -1 ? typeName : typeName[(typeName.LastIndexOf('.') + 1)..])));
+        if (typeNamespace == null || typeNameIdentifier == null)
+        {
+            var lastDotIndex = typeName.LastIndexOf('.');
+            typeNamespace ??= lastDotIndex >= 0 ? typeName[..lastDotIndex] : "";
+            typeNameIdentifier ??= lastDotIndex >= 0 ? typeName[(lastDotIndex + 1)..] : typeName;
+        }
+
+        builder.SetTypeName(typeName, typeNamespace, typeNameIdentifier);
 
         if (attributes != null)
         {
@@ -1344,15 +1346,8 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
 
         if (componentFullyQualified)
         {
-            metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
+            builder.IsFullyQualifiedNameMatch = true;
         }
-
-        if (componentChildContent)
-        {
-            metadata.Add(SpecialKind(ComponentMetadata.ChildContent.TagHelperKind));
-        }
-
-        builder.SetMetadata(metadata.Build());
 
         var descriptor = builder.Build();
 

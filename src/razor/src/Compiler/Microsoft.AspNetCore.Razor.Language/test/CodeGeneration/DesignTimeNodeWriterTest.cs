@@ -21,7 +21,7 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
     public void WriteUsingDirective_NoSource_WritesContent()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new UsingDirectiveIntermediateNode()
@@ -45,7 +45,7 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
     public void WriteUsingDirective_WithSource_WritesContentWithLinePragmaAndMapping()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var originalSpan = new SourceSpan("test.cshtml", 0, 0, 0, 6);
@@ -81,7 +81,7 @@ using System;
     public void WriteUsingDirective_WithSourceAndLineDirectives_WritesContentWithLinePragmaAndMapping()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var originalSpan = new SourceSpan("test.cshtml", 0, 0, 0, 6);
@@ -120,16 +120,12 @@ using System;
     public void WriteCSharpExpression_SkipsLinePragma_WithoutSource()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -147,7 +143,7 @@ using System;
     public void WriteCSharpExpression_WritesLinePragma_WithSource()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpExpressionIntermediateNode()
@@ -157,11 +153,7 @@ using System;
 
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -186,25 +178,17 @@ __o = i++;
     public void WriteCSharpExpression_WithExtensionNode_WritesPadding()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -223,7 +207,7 @@ __o = i++;
     public void WriteCSharpExpression_WithSource_WritesPadding()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpExpressionIntermediateNode()
@@ -232,19 +216,11 @@ __o = i++;
         };
 
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -270,7 +246,7 @@ __o = i++;
     public void WriteCSharpCode_WhitespaceContentWithSource_WritesContent()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpCodeIntermediateNode()
@@ -279,11 +255,7 @@ __o = i++;
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    "
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    "));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -308,16 +280,12 @@ __o = i++;
     public void WriteCSharpCode_SkipsLinePragma_WithoutSource()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }"
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -335,7 +303,7 @@ __o = i++;
     public void WriteCSharpCode_WritesLinePragma_WithSource()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpCodeIntermediateNode()
@@ -344,11 +312,7 @@ __o = i++;
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -373,7 +337,7 @@ if (true) { }
     public void WriteCSharpCode_WritesPadding_WithSource()
     {
         // Arrange
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new CSharpCodeIntermediateNode()
@@ -382,11 +346,7 @@ if (true) { }
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -410,14 +370,14 @@ if (true) { }
     [Fact]
     public void WriteCSharpExpressionAttributeValue_RendersCorrectly()
     {
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
 
         var content = "<input checked=\"hello-world @false\" />";
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpExpressionAttributeValueIntermediateNode;
+        var node = (CSharpExpressionAttributeValueIntermediateNode)documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1];
 
         using var context = TestCodeRenderingContext.CreateDesignTime(source: source);
 
@@ -443,13 +403,13 @@ if (true) { }
     [Fact]
     public void WriteCSharpCodeAttributeValue_RendersCorrectly()
     {
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         var content = "<input checked=\"hello-world @if(@true){ }\" />";
         var sourceDocument = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(sourceDocument);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
+        var node = (CSharpCodeAttributeValueIntermediateNode)documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1];
 
         using var context = TestCodeRenderingContext.CreateDesignTime(source: sourceDocument);
 
@@ -475,13 +435,13 @@ if (true) { }
     [Fact]
     public void WriteCSharpCodeAttributeValue_WithExpression_RendersCorrectly()
     {
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         var content = "<input checked=\"hello-world @if(@true){ @false }\" />";
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
+        var node = (CSharpCodeAttributeValueIntermediateNode)documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1];
 
         using var context = TestCodeRenderingContext.CreateDesignTime(source: source);
 
@@ -524,7 +484,7 @@ Render Children
     [InlineData(@"\\SERVER/pages\test.cshtml",      @"\\SERVER\pages\test.cshtml")]
     public void LinePragma_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
-        var writer = new DesignTimeNodeWriter();
+        var writer = DesignTimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
@@ -535,11 +495,7 @@ Render Children
         };
 
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         writer.WriteCSharpExpression(context, node);
 
@@ -572,7 +528,7 @@ Render Children
     [InlineData(@"\\SERVER/pages\test.cshtml",      @"\\SERVER\pages\test.cshtml")]
     public void LinePragma_Enhanced_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
-        var writer = new RuntimeNodeWriter();
+        var writer = RuntimeNodeWriter.Instance;
         using var context = TestCodeRenderingContext.CreateDesignTime(source: RazorSourceDocument.Create("", fileName));
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
@@ -581,13 +537,8 @@ Render Children
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-            // Create a fake source span, so we can check it correctly maps in the #line below
-            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2)
-        });
+        // Create a fake source span, so we can check it correctly maps in the #line below
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++", new SourceSpan(fileName, 0, 2, 3, 6, 1, 2)));
 
         writer.WriteCSharpExpression(context, node);
 

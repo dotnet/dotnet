@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +103,7 @@ namespace NuGet.PackageManagement.UI.Test
                         loader: null,
                         loadingMessage: "a",
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: CancellationToken.None);
                 });
 
@@ -112,7 +113,7 @@ namespace NuGet.PackageManagement.UI.Test
         [WpfTheory(Skip = "https://github.com/NuGet/Home/issues/10938")]
         [InlineData(null)]
         [InlineData("")]
-        public async Task LoadItems_LoadingMessageIsNullOrEmpty_Throws(string loadingMessage)
+        public async Task LoadItems_LoadingMessageIsNullOrEmpty_Throws(string? loadingMessage)
         {
             var list = new InfiniteScrollList();
 
@@ -123,7 +124,7 @@ namespace NuGet.PackageManagement.UI.Test
                         Mock.Of<IPackageItemLoader>(),
                         loadingMessage,
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: CancellationToken.None);
                 });
 
@@ -161,7 +162,7 @@ namespace NuGet.PackageManagement.UI.Test
                         Mock.Of<IPackageItemLoader>(),
                         loadingMessage: "a",
                         logger: null,
-                        searchResultTask: Task.FromResult<SearchResultContextInfo>(null),
+                        searchResultTask: Task.FromResult<SearchResultContextInfo?>(null),
                         token: new CancellationToken(canceled: true));
                 });
         }
@@ -226,7 +227,7 @@ namespace NuGet.PackageManagement.UI.Test
             var searchResultTask = Task.FromResult(new SearchResultContextInfo());
 
             var list = new InfiniteScrollList();
-            var taskCompletionSource = new TaskCompletionSource<string>();
+            var taskCompletionSource = new TaskCompletionSource<string?>();
 
             // Despite LoadItems(...) being a synchronous method, the method internally fires an asynchronous task.
             // We'll know when that task completes successfully when the LoadItemsCompleted event fires,

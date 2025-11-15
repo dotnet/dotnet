@@ -33,15 +33,16 @@ internal class RazorFormattingService : IRazorFormattingService
     private readonly ImmutableArray<IFormattingValidationPass> _validationPasses;
     private readonly CSharpOnTypeFormattingPass _csharpOnTypeFormattingPass;
     private readonly HtmlOnTypeFormattingPass _htmlOnTypeFormattingPass;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+
+    private IFormattingLoggerFactory _formattingLoggerFactory;
 
     public RazorFormattingService(
         IDocumentMappingService documentMappingService,
         IHostServicesProvider hostServicesProvider,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
+        IFormattingLoggerFactory formattingLoggerFactory,
         ILoggerFactory loggerFactory)
     {
-        _htmlOnTypeFormattingPass = new HtmlOnTypeFormattingPass(loggerFactory);
+        _htmlOnTypeFormattingPass = new HtmlOnTypeFormattingPass();
         _csharpOnTypeFormattingPass = new CSharpOnTypeFormattingPass(documentMappingService, hostServicesProvider, loggerFactory);
         _validationPasses =
         [
@@ -49,18 +50,12 @@ internal class RazorFormattingService : IRazorFormattingService
             new FormattingContentValidationPass(loggerFactory)
         ];
 
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-        _documentFormattingPasses = _languageServerFeatureOptions.UseNewFormattingEngine
-            ? [
-                new New.HtmlFormattingPass(loggerFactory),
-                new RazorFormattingPass(languageServerFeatureOptions, loggerFactory),
-                new New.CSharpFormattingPass(hostServicesProvider, loggerFactory),
-            ]
-            : [
-                new HtmlFormattingPass(loggerFactory),
-                new RazorFormattingPass(languageServerFeatureOptions, loggerFactory),
-                new CSharpFormattingPass(documentMappingService, hostServicesProvider, loggerFactory),
+        _documentFormattingPasses = [
+                new HtmlFormattingPass(documentMappingService),
+                new RazorFormattingPass(),
+                new CSharpFormattingPass(hostServicesProvider, loggerFactory),
             ];
+        _formattingLoggerFactory = formattingLoggerFactory;
     }
 
     public async Task<ImmutableArray<TextChange>> GetDocumentFormattingChangesAsync(
@@ -70,9 +65,7 @@ internal class RazorFormattingService : IRazorFormattingService
         RazorFormattingOptions options,
         CancellationToken cancellationToken)
     {
-        var codeDocument = !_languageServerFeatureOptions.UseNewFormattingEngine && documentContext.Snapshot is IDesignTimeCodeGenerator generator
-            ? await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false)
-            : await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         // Range formatting happens on every paste, and if there are Razor diagnostics in the file
         // that can make some very bad results. eg, given:
@@ -97,6 +90,12 @@ internal class RazorFormattingService : IRazorFormattingService
             }
         }
 
+        var logger = _formattingLoggerFactory.CreateLogger(documentContext.FilePath, range is null ? "Full" : "Range");
+        logger?.LogObject("Options", options);
+        logger?.LogObject("HtmlChanges", htmlChanges.SelectAsArray(e => e.ToRazorTextChange()));
+        logger?.LogObject("Range", range);
+        logger?.LogSourceText("InitialDocument", sourceText);
+
         var uri = documentContext.Uri;
         var documentSnapshot = documentContext.Snapshot;
         var hostDocumentVersion = documentContext.Snapshot.Version;
@@ -104,7 +103,7 @@ internal class RazorFormattingService : IRazorFormattingService
             documentSnapshot,
             codeDocument,
             options,
-            _languageServerFeatureOptions.UseNewFormattingEngine);
+            logger);
         var originalText = context.SourceText;
 
         var result = htmlChanges;
@@ -116,7 +115,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var filteredChanges = range is not { } linePositionSpan
             ? result
-            : result.Where(e => linePositionSpan.LineOverlapsWith(sourceText.GetLinePositionSpan(e.Span))).ToImmutableArray();
+            : result.WhereAsArray(e => linePositionSpan.LineOverlapsWith(sourceText.GetLinePositionSpan(e.Span)));
 
         var normalizedChanges = NormalizeLineEndings(originalText, filteredChanges);
 
@@ -136,9 +135,7 @@ internal class RazorFormattingService : IRazorFormattingService
     {
         var documentSnapshot = documentContext.Snapshot;
 
-        var codeDocument = documentContext.Snapshot is IDesignTimeCodeGenerator generator
-            ? await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false)
-            : await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         return await ApplyFormattedChangesAsync(
                 documentSnapshot,
@@ -151,6 +148,7 @@ internal class RazorFormattingService : IRazorFormattingService
                 collapseChanges: false,
                 automaticallyAddUsings: false,
                 validate: true,
+                formattingType: "CSharpOnType",
                 cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -172,6 +170,7 @@ internal class RazorFormattingService : IRazorFormattingService
                 collapseChanges: false,
                 automaticallyAddUsings: false,
                 validate: true,
+                formattingType: "HtmlOnType",
                 cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -192,6 +191,7 @@ internal class RazorFormattingService : IRazorFormattingService
             collapseChanges: false,
             automaticallyAddUsings: false,
             validate: true,
+            formattingType: "SingleCSharpEdit",
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         return razorChanges is [{ } change]
@@ -216,6 +216,7 @@ internal class RazorFormattingService : IRazorFormattingService
             collapseChanges: true,
             automaticallyAddUsings: true,
             validate: false,
+            formattingType: "CSharpCodeAction",
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         return razorChanges is [{ } change]
@@ -242,6 +243,7 @@ internal class RazorFormattingService : IRazorFormattingService
             collapseChanges: true,
             automaticallyAddUsings: true,
             validate: false,
+            formattingType: "CSharpSnippet",
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         razorChanges = UnwrapCSharpSnippets(razorChanges);
@@ -274,22 +276,31 @@ internal class RazorFormattingService : IRazorFormattingService
         bool collapseChanges,
         bool automaticallyAddUsings,
         bool validate,
+        string formattingType,
         CancellationToken cancellationToken)
     {
         // If we only received a single edit, let's always return a single edit back.
         // Otherwise, merge only if explicitly asked.
         collapseChanges |= generatedDocumentChanges.Length == 1;
 
+        var logger = _formattingLoggerFactory.CreateLogger(documentSnapshot.FilePath, formattingType);
+        logger?.LogObject("Options", options);
+        logger?.LogObject("Parameters", new { hostDocumentIndex, triggerCharacter, collapseChanges, automaticallyAddUsings, validate });
+        logger?.LogObject("GeneratedDocumentChanges", generatedDocumentChanges);
+        logger?.LogSourceText("InitialDocument", codeDocument.Source.Text);
+
         var context = FormattingContext.CreateForOnTypeFormatting(
             documentSnapshot,
             codeDocument,
             options,
+            logger,
             automaticallyAddUsings: automaticallyAddUsings,
             hostDocumentIndex,
             triggerCharacter);
 
         var result = await formattingPass.ExecuteAsync(context, generatedDocumentChanges, cancellationToken).ConfigureAwait(false);
         var originalText = context.SourceText;
+        result = NormalizeLineEndings(originalText, result);
         var razorChanges = originalText.MinimizeTextChanges(result);
 
         if (validate)
@@ -394,6 +405,11 @@ internal class RazorFormattingService : IRazorFormattingService
         {
             var contentValidationPass = service._validationPasses.OfType<FormattingContentValidationPass>().Single();
             contentValidationPass.DebugAssertsEnabled = debugAssertsEnabled;
+        }
+
+        public void SetFormattingLoggerFactory(IFormattingLoggerFactory factory)
+        {
+            service._formattingLoggerFactory = factory;
         }
     }
 }

@@ -55,7 +55,7 @@ function Test-RemovingPackageWithDependencyFromProjectDoesNotRemoveIfInUse {
 
 function Test-RemovePackageRemovesPackageFromSolutionIfNotInUse {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     Install-Package elmah -ProjectName $p1.Name -Version 1.1
     Assert-Reference $p1 elmah
@@ -69,7 +69,7 @@ function Test-RemovePackageRemovesPackageFromSolutionIfNotInUse {
 
 function Test-UninstallingPackageWithConfigTransformWhenConfigReadOnly {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     Install-Package elmah -ProjectName $p1.Name -Version 1.1
     Assert-Reference $p1 elmah
@@ -348,7 +348,7 @@ function Test-UninstallDoesNotRemoveFolderIfNotEmpty {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package PackageWithFolder -Source $context.RepositoryRoot
 
     # Get the path to the foo folder

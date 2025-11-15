@@ -94,7 +94,7 @@ module internal SymbolHelpers =
         | Item.Value vref  | Item.CustomBuilder (_, vref) -> Some (rangeOfValRef preferFlag vref)
         | Item.UnionCase(ucinfo, _)     -> Some (rangeOfUnionCaseInfo preferFlag ucinfo)
         | Item.ActivePatternCase apref -> Some (rangeOfValRef preferFlag apref.ActivePatternVal)
-        | Item.ExnCase tcref           -> Some tcref.Range
+        | Item.ExnCase tcref           -> Some (rangeOfEntityRef preferFlag tcref)
         | Item.AnonRecdField (_,_,_,m) -> Some m
         | Item.RecdField rfinfo        -> Some (rangeOfRecdFieldInfo preferFlag rfinfo)
         | Item.UnionCaseField (UnionCaseInfo (_, ucref), fieldIndex) -> Some (rangeOfRecdField preferFlag (ucref.FieldByIndex(fieldIndex)))
@@ -407,9 +407,9 @@ module internal SymbolHelpers =
 
           member x.Equals(item1, item2) =
             match item1,item2 with
-            | null,null -> true
-            | null,_ | _,null -> false
-            | item1,item2 ->
+            | Null,Null -> true
+            | Null,_ | _,Null -> false
+            | NonNull item1,NonNull item2 ->
                 // This may explore assemblies that are not in the reference set.
                 // In this case just bail out and assume items are not equal
                 protectAssemblyExploration false (fun () ->

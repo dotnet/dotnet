@@ -38,14 +38,18 @@
     <PreviouslySourceBuiltPackageVersionsPropsFile>$(PreviouslySourceBuiltPackagesPath)PackageVersions.props</PreviouslySourceBuiltPackageVersionsPropsFile>
     <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'shared-components'))</SharedComponentsArtifactsPath>
     <SharedComponentsArtifactsPath Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomSharedComponentsArtifactsPath)'))</SharedComponentsArtifactsPath>
+    <SharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</SharedComponentAssetManifests>
+    <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
+    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
     <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
+    <SourceBuiltSourceArtifactName>dotnet-source</SourceBuiltSourceArtifactName>
     <SourceBuiltSymbolsAllTarballName>dotnet-symbols-all</SourceBuiltSymbolsAllTarballName>
     <SourceBuiltSymbolsSdkTarballName>dotnet-symbols-sdk</SourceBuiltSymbolsSdkTarballName>
 
@@ -65,12 +69,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
-    <PrebuiltPoisonMarkerFile>.prebuilt.xml</PrebuiltPoisonMarkerFile>
-    <PrebuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-prebuilt-catalog.xml</PrebuiltPoisonReportDataFile>
-    <PreviouslySourceBuiltPoisonMarkerFile>.previously-source-built.xml</PreviouslySourceBuiltPoisonMarkerFile>
-    <PreviouslySourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-previously-source-built-catalog.xml</PreviouslySourceBuiltPoisonReportDataFile>
-    <SharedComponentPoisonMarkerFile>.shared-component.xml</SharedComponentPoisonMarkerFile>
-    <SharedComponentPoisonReportDataFile>$(ArtifactsLogDir)poison-shared-component-catalog.xml</SharedComponentPoisonReportDataFile>
+    <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
+    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
     <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
     <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
@@ -97,13 +97,19 @@
     <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
+
   <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
   <ItemGroup>
     <SharedRepositoryReference Include="aspnetcore" />
     <SharedRepositoryReference Include="cecil" />
     <SharedRepositoryReference Include="command-line-api" />
     <SharedRepositoryReference Include="deployment-tools" />
-    <SharedRepositoryReference Include="diagnostics" />
     <SharedRepositoryReference Include="efcore" />
     <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />

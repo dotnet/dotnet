@@ -76,7 +76,6 @@
     which is most likely higher than what is the minimum supported .NET Framework.
   -->
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkRunnerTargetFramework)')) ">
-    <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
@@ -90,7 +89,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Enterprise.AspNetHelper" Version="$(MicrosoftVisualStudioEnterpriseAspNetHelper)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.QualityTools" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.VisualStudio.QualityTools.DataCollectors" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.TestPlatform.Extensions" Version="$(MicrosoftInternalTestPlatformExtensions)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.TraceDataCollector" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
@@ -109,13 +107,11 @@
       <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>
       <NewtonsoftJsonFiles Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJsonFiles>
       <SystemCollectionsImmutableFiles Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*"></SystemCollectionsImmutableFiles>
-      <SystemComponentModelComposition Include="$(PkgSystem_ComponentModel_Composition)\lib\netstandard2.0\**\*"></SystemComponentModelComposition>
       <SystemReflectionMetadataFiles Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*"></SystemReflectionMetadataFiles>
       <MicrosoftInternalDiaFiles Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDiaFiles>
       <MicrosoftInternalIntellitraceFiles Include="$(PkgMicrosoft_Internal_Intellitrace)\tools\net451\**\*"></MicrosoftInternalIntellitraceFiles>
       <MicrosoftInternalIntellitraceExtensionsFiles Include="$(PkgMicrosoft_Internal_Intellitrace_Extensions)\tools\net451\**\*"></MicrosoftInternalIntellitraceExtensionsFiles>
       <MicrosoftVisualStudioQualityToolsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsFiles>
-      <MicrosoftVisualStudioQualityToolsDataCollectorsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools_DataCollectors)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsDataCollectorsFiles>
       <MicrosoftInternalTestPlatformExtensionsFiles Include="$(PkgMicrosoft_Internal_TestPlatform_Extensions)\tools\net451\**\*"></MicrosoftInternalTestPlatformExtensionsFiles>
       <MicrosoftInternalCodeCoverageFiles Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\MS.TP\**\*"></MicrosoftInternalCodeCoverageFiles>
       <MicrosoftVSSDKBuildToolsFiles Include="$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\**\*"></MicrosoftVSSDKBuildToolsFiles>
@@ -131,13 +127,11 @@
     <Copy SourceFiles="@(PlatformAbstractionsDepsJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NewtonsoftJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemCollectionsImmutableFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(SystemComponentModelComposition)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemReflectionMetadataFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalDiaFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalIntellitraceFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalIntellitraceExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsDataCollectorsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools.DataCollectors\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalTestPlatformExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalCodeCoverageFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.CodeCoverage\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVSSDKBuildToolsFiles)" DestinationFolder="$(OutDir)\Microsoft.VSSDK.BuildTools" />

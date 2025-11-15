@@ -11,20 +11,22 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Text;
 using System.Text.RegularExpressions;
 
 #nullable enable
 
 namespace Microsoft.Build.Locator
 {
-    internal static class DotNetSdkLocationHelper
+    internal static partial class DotNetSdkLocationHelper
     {
-        private static readonly Regex VersionRegex = new Regex(@"^(\d+)\.(\d+)\.(\d+)", RegexOptions.Multiline);
-        private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        private static readonly string ExeName = IsWindows ? "dotnet.exe" : "dotnet";
-        private static readonly Lazy<IList<string>> s_dotnetPathCandidates = new(() => ResolveDotnetPathCandidates());
+        [GeneratedRegex(@"^(\d+)\.(\d+)\.(\d+)", RegexOptions.Multiline)]
+        private static partial Regex VersionRegex();
 
-        public static VisualStudioInstance? GetInstance(string dotNetSdkPath)
+        private static string ExeName => OperatingSystem.IsWindows() ? "dotnet.exe" : "dotnet";
+        private static readonly Lazy<List<string>> s_dotnetPathCandidates = new(() => ResolveDotnetPathCandidates());
+
+        public static VisualStudioInstance? GetInstance(string dotNetSdkPath, bool allowQueryAllRuntimeVersions)
         {
             if (string.IsNullOrWhiteSpace(dotNetSdkPath) || !File.Exists(Path.Combine(dotNetSdkPath, "Microsoft.Build.dll")))
             {
@@ -38,7 +40,7 @@ namespace Microsoft.Build.Locator
             }
 
             // Preview versions contain a hyphen after the numeric part of the version. Version.TryParse doesn't accept that.
-            Match versionMatch = VersionRegex.Match(File.ReadAllText(versionPath));
+            Match versionMatch = VersionRegex().Match(File.ReadAllText(versionPath));
 
             if (!versionMatch.Success)
             {
@@ -56,8 +58,9 @@ namespace Microsoft.Build.Locator
             // in the .NET 5 SDK rely on the .NET 5.0 runtime. Assuming the runtime that shipped with a particular SDK has the same version,
             // this ensures that we don't choose an SDK that doesn't work with the runtime of the chosen application. This is not guaranteed
             // to always work but should work for now.
-            if (major > Environment.Version.Major ||
-                (major == Environment.Version.Major && minor > Environment.Version.Minor))
+            if (!allowQueryAllRuntimeVersions &&
+                (major > Environment.Version.Major ||
+                 (major == Environment.Version.Major && minor > Environment.Version.Minor)))
             {
                 return null;
             }
@@ -69,46 +72,101 @@ namespace Microsoft.Build.Locator
                 discoveryType: DiscoveryType.DotNetSdk);
         }
 
-        public static IEnumerable<VisualStudioInstance> GetInstances(string workingDirectory)
-        {            
-            foreach (var basePath in GetDotNetBasePaths(workingDirectory))
-            {
-                var dotnetSdk = GetInstance(basePath);
-                if (dotnetSdk != null)
-                {
-                    yield return dotnetSdk;
-                }
-            }
-        }
-
-        private static IEnumerable<string> GetDotNetBasePaths(string workingDirectory)
+        public static IEnumerable<VisualStudioInstance> GetInstances(string workingDirectory, bool allowQueryAllRuntimes, bool allowAllDotnetLocations)
         {
+            string? bestSdkPath;
+            string[] allAvailableSdks;
             try
             {
                 AddUnmanagedDllResolver();
 
-                string? bestSDK = GetSdkFromGlobalSettings(workingDirectory);
-                if (!string.IsNullOrEmpty(bestSDK))
-                {
-                    yield return bestSDK;
-                }
-
-                string[] dotnetPaths = GetAllAvailableSDKs();
-                // We want to return the newest SDKs first, however, so iterate over the list in reverse order.
-                // If basePath is disqualified because it was later
-                // than the runtime version, this ensures that RegisterDefaults will return the latest valid
-                // SDK instead of the earliest installed.
-                for (int i = dotnetPaths.Length - 1; i >= 0; i--)
-                {
-                    if (dotnetPaths[i] != bestSDK)
-                    {
-                        yield return dotnetPaths[i];
-                    }
-                }
+                bestSdkPath = GetSdkFromGlobalSettings(workingDirectory);
+                allAvailableSdks = GetAllAvailableSDKs(allowAllDotnetLocations).ToArray();
             }
             finally
             {
                 RemoveUnmanagedDllResolver();
+            }
+
+            Dictionary<Version, VisualStudioInstance?> versionInstanceMap = new();
+            foreach (var basePath in allAvailableSdks)
+            {
+                var dotnetSdk = GetInstance(basePath, allowQueryAllRuntimes);
+                if (dotnetSdk != null)
+                {
+                    // We want to return the best SDK first
+                    if (dotnetSdk.VisualStudioRootPath == bestSdkPath)
+                    {
+                        // We will add a null entry to the map to ensure we do not add the same SDK from a different location.
+                        versionInstanceMap[dotnetSdk.Version] = null;
+                        yield return dotnetSdk;
+                    }
+
+                    // Only add an SDK once, even if it's installed in multiple locations.
+                    versionInstanceMap.TryAdd(dotnetSdk.Version, dotnetSdk);
+                }
+            }
+
+            // We want to return the newest SDKs first. Using OfType will remove the null entry added if we found the best SDK.
+            var instances = versionInstanceMap.Values.OfType<VisualStudioInstance>().OrderByDescending(i => i.Version);
+            foreach (var instance in instances)
+            {
+                yield return instance;
+            }
+
+            // Returns the list of all available SDKs ordered by ascending version.
+            static IEnumerable<string> GetAllAvailableSDKs(bool allowAllDotnetLocations)
+            {
+                bool foundSdks = false;
+                int rc = 0;
+                StringBuilder? errorMessage = null;
+                foreach (string dotnetPath in s_dotnetPathCandidates.Value)
+                {
+                    rc = NativeMethods.hostfxr_get_available_sdks(exe_dir: dotnetPath, out string[]? resolvedPaths, out errorMessage);
+
+                    if (resolvedPaths != null)
+                    {
+                        foundSdks = true;
+
+                        foreach (string path in resolvedPaths)
+                        {
+                            yield return path;
+                        }
+
+                        if (resolvedPaths.Length > 0 && !allowAllDotnetLocations)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                // Errors are automatically printed to stderr. We should not continue to try to output anything if we failed.
+                if (!foundSdks)
+                {
+                    throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_get_available_sdks), rc, errorMessage));
+                }
+            }
+
+            // Determines the directory location of the SDK accounting for global.json and multi-level lookup policy.
+            static string? GetSdkFromGlobalSettings(string workingDirectory)
+            {
+                string? resolvedSdk = null;
+                int rc = 0;
+                StringBuilder? errorMessage = null;
+                foreach (string dotnetPath in s_dotnetPathCandidates.Value)
+                {
+                    rc = NativeMethods.hostfxr_resolve_sdk2(exe_dir: dotnetPath, working_dir: workingDirectory, flags: 0, out resolvedSdk, out _, out errorMessage);
+
+                    if (rc == 0)
+                    {
+                        SetEnvironmentVariableIfEmpty("DOTNET_HOST_PATH", Path.Combine(dotnetPath, ExeName));
+                        return resolvedSdk;
+                    }
+                }
+
+                return string.IsNullOrEmpty(resolvedSdk)
+                    ? throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_resolve_sdk2), rc, errorMessage))
+                    : resolvedSdk;
             }
         }
 
@@ -119,7 +177,7 @@ namespace Microsoft.Build.Locator
         private static void ModifyUnmanagedDllResolver(Action<AssemblyLoadContext> resolverAction)
         {
             // For Windows hostfxr is loaded in the process.
-            if (!IsWindows)
+            if (!OperatingSystem.IsWindows())
             {
                 var loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
                 if (loadContext != null)
@@ -138,9 +196,9 @@ namespace Microsoft.Build.Locator
             }
 
             string hostFxrLibName =
-                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                OperatingSystem.IsWindows() ?
                 "hostfxr.dll" :
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "libhostfxr.dylib" : "libhostfxr.so";
+                OperatingSystem.IsMacOS() ? "libhostfxr.dylib" : "libhostfxr.so";
             string hostFxrRoot = string.Empty;
 
             // Get the dotnet path candidates
@@ -157,7 +215,7 @@ namespace Microsoft.Build.Locator
                     };
 
                     var orderedVersions = fileEnumerable.Where(v => v != null).Select(v => v!).OrderByDescending(f => f).ToList();
-                    
+
                     foreach (SemanticVersion hostFxrVersion in orderedVersions)
                     {
                         string hostFxrAssembly = Path.Combine(hostFxrRoot, hostFxrVersion.OriginalValue, hostFxrLibName);
@@ -176,43 +234,15 @@ namespace Microsoft.Build.Locator
             throw new InvalidOperationException(error);
         }
 
-        private static string SdkResolutionExceptionMessage(string methodName) => $"Failed to find all versions of .NET Core MSBuild. Call to {methodName}. There may be more details in stderr.";
-        
-        /// <summary>
-        /// Determines the directory location of the SDK accounting for
-        /// global.json and multi-level lookup policy.
-        /// </summary>
-        private static string? GetSdkFromGlobalSettings(string workingDirectory)
-        {
-            string? resolvedSdk = null;
-            foreach (string dotnetPath in s_dotnetPathCandidates.Value)
-            {
-                int rc = NativeMethods.hostfxr_resolve_sdk2(exe_dir: dotnetPath, working_dir: workingDirectory, flags: 0, result: (key, value) =>
-                {
-                    if (key == NativeMethods.hostfxr_resolve_sdk2_result_key_t.resolved_sdk_dir)
-                    {
-                        resolvedSdk = value;
-                    }
-                });
+        private static string SdkResolutionExceptionMessage(string methodName, int rc, StringBuilder? errorMessage) =>
+            $"Error while calling hostfxr function {methodName}. Error code: {rc} Detailed error: {errorMessage}";
 
-                if (rc == 0)
-                {
-                    SetEnvironmentVariableIfEmpty("DOTNET_HOST_PATH", Path.Combine(dotnetPath, ExeName));
-                    return resolvedSdk;
-                }
-            }
-
-            return string.IsNullOrEmpty(resolvedSdk)
-                ? throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_resolve_sdk2)))
-                : resolvedSdk;
-        }
-
-        private static IList<string> ResolveDotnetPathCandidates()
+        private static List<string> ResolveDotnetPathCandidates()
         {
             var pathCandidates = new List<string>();
             AddIfValid(GetDotnetPathFromROOT());
 
-            string? dotnetExePath = GetCurrentProcessPath();
+            string? dotnetExePath = Environment.ProcessPath;
             bool isRunFromDotnetExecutable = !string.IsNullOrEmpty(dotnetExePath)
                 && Path.GetFileName(dotnetExePath).Equals(ExeName, StringComparison.InvariantCultureIgnoreCase);
 
@@ -224,9 +254,9 @@ namespace Microsoft.Build.Locator
             string? hostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
             if (!string.IsNullOrEmpty(hostPath) && File.Exists(hostPath))
             {
-                if (!IsWindows)
+                if (!OperatingSystem.IsWindows())
                 {
-                    hostPath = realpath(hostPath) ?? hostPath;
+                    hostPath = File.ResolveLinkTarget(hostPath, true)?.FullName ?? hostPath;
                 }
 
                 AddIfValid(Path.GetDirectoryName(hostPath));
@@ -255,11 +285,9 @@ namespace Microsoft.Build.Locator
             // 32-bit architecture has (x86) suffix
             string envVarName = (IntPtr.Size == 4) ? "DOTNET_ROOT(x86)" : "DOTNET_ROOT";
             var dotnetPath = FindDotnetPathFromEnvVariable(envVarName);
-            
+
             return dotnetPath;
         }
-
-        private static string? GetCurrentProcessPath() => Environment.ProcessPath;
 
         private static string? GetDotnetPathFromPATH()
         {
@@ -284,43 +312,10 @@ namespace Microsoft.Build.Locator
             return dotnetPath;
         }
 
-        /// <summary>
-        /// Returns the list of all available SDKs ordered by ascending version.
-        /// </summary>
-        private static string[] GetAllAvailableSDKs()
-        {
-            string[]? resolvedPaths = null;
-            foreach (string dotnetPath in s_dotnetPathCandidates.Value)
-            {
-                int rc = NativeMethods.hostfxr_get_available_sdks(exe_dir: dotnetPath, result: (key, value) => resolvedPaths = value);
-
-                if (rc == 0 && resolvedPaths != null && resolvedPaths.Length > 0)
-                {
-                    break;
-                }
-            }
-
-            // Errors are automatically printed to stderr. We should not continue to try to output anything if we failed.
-            return resolvedPaths ?? throw new InvalidOperationException(SdkResolutionExceptionMessage(nameof(NativeMethods.hostfxr_get_available_sdks)));
-        }
-
-        /// <summary>
-        /// This native method call determines the actual location of path, including
-        /// resolving symbolic links.
-        /// </summary>
-        private static string? realpath(string path)
-        {
-            IntPtr ptr = NativeMethods.realpath(path, IntPtr.Zero);
-            string? result = Marshal.PtrToStringAuto(ptr);
-            NativeMethods.free(ptr);
-
-            return result;
-        }
-
         private static string? FindDotnetPathFromEnvVariable(string environmentVariable)
         {
             string? dotnetPath = Environment.GetEnvironmentVariable(environmentVariable);
-            
+
             return string.IsNullOrEmpty(dotnetPath) ? null : ValidatePath(dotnetPath);
         }
 
@@ -337,9 +332,9 @@ namespace Microsoft.Build.Locator
             string fullPathToDotnetFromRoot = Path.Combine(dotnetPath, ExeName);
             if (File.Exists(fullPathToDotnetFromRoot))
             {
-                if (!IsWindows)
+                if (!OperatingSystem.IsWindows())
                 {
-                    fullPathToDotnetFromRoot = realpath(fullPathToDotnetFromRoot) ?? fullPathToDotnetFromRoot;
+                    fullPathToDotnetFromRoot = File.ResolveLinkTarget(fullPathToDotnetFromRoot, true)?.FullName ?? fullPathToDotnetFromRoot;
                     return File.Exists(fullPathToDotnetFromRoot) ? Path.GetDirectoryName(fullPathToDotnetFromRoot) : null;
                 }
 

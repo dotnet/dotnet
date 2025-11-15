@@ -802,7 +802,7 @@ namespace NuGet.XPlat.FuncTest
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
@@ -889,7 +889,7 @@ namespace NuGet.XPlat.FuncTest
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));

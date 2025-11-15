@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">Ungültige Paket-ID: `{0}`.</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">Der Server hat beim Zugriff auf die Quelle "{0}" mit dem HTTP-Fehler "403 – Verboten" geantwortet. Dies weist darauf hin, dass der Server Ihre Identität authentifiziert hat, Ihnen aber keinen Zugriff auf die angeforderte Ressource gewährt. Geben Sie Anmeldeinformationen mit Berechtigungen zum Anzeigen dieser Ressource an.</target>
@@ -262,12 +267,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="NupkgPath_Invalid">
         <source>'{0}' is not a valid nupkg file.</source>
-        <target state="translated">"{0}" ist keine gültige NUPGK-Datei.</target>
+        <target state="translated">"{0}" ist keine gültige NUPKG-Datei.</target>
         <note />
       </trans-unit>
       <trans-unit id="NupkgPath_InvalidEx">
         <source>'{0}' is not a valid nupkg file. Error: '{1}'.</source>
-        <target state="translated">"{0}" ist keine gültige NUPGK-Datei. Fehler: "{1}".</target>
+        <target state="translated">"{0}" ist keine gültige NUPKG-Datei. Fehler: "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="OneOrMoreUrisMustBeSpecified">
