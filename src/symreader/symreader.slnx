@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/Microsoft.DiaSymReader.Native.Tests/Microsoft.DiaSymReader.Native.UnitTests.csproj" />
+  <Project Path="src/Microsoft.DiaSymReader.Tests/Microsoft.DiaSymReader.UnitTests.csproj" />
+  <Project Path="src/Microsoft.DiaSymReader/Microsoft.DiaSymReader.csproj" />
+  <Project Path="src/PdbTestResources/PdbTestResources.csproj" />
+  <Project Path="src/TestUtilities/TestUtilities.csproj" />
+</Solution>
