@@ -45,15 +45,7 @@ __builder2.AddContent(1, person.Name
 #line hidden
 #nullable disable
 
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(2);
+            __builder.OpenComponent<global::Test.MyComponent>(2);
             __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
 #nullable restore
 #line (2,14)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"

@@ -44,15 +44,7 @@ using Microsoft.AspNetCore.Components.Rendering
             __builder.AddAttribute(4, "TestCssScope");
             __builder.AddMarkupContent(5, "<child TestCssScope></child>\r\n    ");
             __builder.AddMarkupContent(6, "<child has multiple attributes=\"some with values\" TestCssScope>With text</child>\r\n    ");
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (7,6)-(7,24) "x:\dir\subdir\Test\TestComponent.cshtml"
-TemplatedComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(7);
+            __builder.OpenComponent<global::Test.TemplatedComponent>(7);
             __builder.AddAttribute(8, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddMarkupContent(9, "<span id=\"hello\" TestCssScope>This is in child content</span>");
             }

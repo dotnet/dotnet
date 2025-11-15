@@ -19,26 +19,10 @@ namespace Shared
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "Component1 in Shared namespace\r\n");
-            __builder.OpenComponent<global::
-#nullable restore
-#line (2,2)-(2,12) "Shared/Component1.razor"
-Component2
-
-#line default
-#line hidden
-#nullable disable
-            >(1);
+            __builder.OpenComponent<global::Component2>(1);
             __builder.CloseComponent();
             __builder.AddMarkupContent(2, "\r\n");
-            __builder.OpenComponent<global::
-#nullable restore
-#line (3,2)-(3,12) "Shared/Component1.razor"
-Component4
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Component4>(3);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
@@ -214,12 +215,7 @@ internal partial class CSharpFormattingPass
                                 var node = root.FindInnermostNode(originalSpan.AbsoluteIndex);
                                 if (node is CSharpExpressionLiteralSyntax)
                                 {
-                                    // Rather than bother to store more data about the formatted file, since we don't actually know where
-                                    // these will end up in that file once it's all said and done, we are just going to use a simple comment
-                                    // format that we can easily parse.
-                                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
-                                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
-                                    additionalLinesBuilder.AppendLine(";");
+                                    AddAdditionalLineFormattingContent(additionalLinesBuilder, node, originalSpan);
                                 }
 
                                 iMapping++;
@@ -252,6 +248,34 @@ internal partial class CSharpFormattingPass
 
                 _builder.AppendLine();
                 _builder.AppendLine(additionalLinesBuilder.ToString());
+            }
+
+            private void AddAdditionalLineFormattingContent(StringBuilder additionalLinesBuilder, RazorSyntaxNode node, SourceSpan originalSpan)
+            {
+                // Rather than bother to store more data about the formatted file, since we don't actually know where
+                // these will end up in that file once it's all said and done, we are just going to use a simple comment
+                // format that we can easily parse.
+
+                // Special case, for attributes that represent generic type parameters, we want to output something such
+                // that Roslyn knows to format it as a type. For example, the meaning and spacing around "?"s should be
+                // what the user expects.
+                if (node is { Parent.Parent: MarkupTagHelperAttributeSyntax attribute } &&
+                    attribute is { Parent.Parent: MarkupTagHelperElementSyntax element } &&
+                    element.TagHelperInfo.BindingResult.Descriptors is [{ } descriptor] &&
+                    descriptor.IsGenericTypedComponent() &&
+                    descriptor.BoundAttributes.FirstOrDefault(d => d.Name == attribute.TagHelperAttributeInfo.Name) is { } boundAttribute &&
+                    boundAttribute.IsTypeParameterProperty())
+                {
+                    additionalLinesBuilder.AppendLine("F<");
+                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                    additionalLinesBuilder.AppendLine("> x;");
+                    return;
+                }
+
+                additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                additionalLinesBuilder.AppendLine(";");
             }
 
             public override LineInfo Visit(RazorSyntaxNode? node)

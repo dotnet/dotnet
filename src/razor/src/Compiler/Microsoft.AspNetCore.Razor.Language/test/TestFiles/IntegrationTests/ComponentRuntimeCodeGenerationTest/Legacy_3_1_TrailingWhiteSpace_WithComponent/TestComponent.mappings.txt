@@ -1,5 +1,0 @@
-﻿Source Location: (19:2,1 [18] x:\dir\subdir\Test\TestComponent.cshtml)
-|SomeOtherComponent|
-Generated Location: (856:23,0 [18] )
-|SomeOtherComponent|
-

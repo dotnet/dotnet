@@ -16,8 +16,8 @@ public sealed record class ComponentMetadata() : MetadataObject(MetadataKind.Com
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(IsGeneric);
-        builder.AppendData(HasRenderModeDirective);
+        builder.Append(IsGeneric);
+        builder.Append(HasRenderModeDirective);
     }
 
     public ref struct Builder

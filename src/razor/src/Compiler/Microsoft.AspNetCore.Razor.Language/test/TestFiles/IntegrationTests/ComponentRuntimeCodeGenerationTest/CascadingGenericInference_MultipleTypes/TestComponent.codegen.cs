@@ -61,15 +61,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateParent_0<TKey, TValue, TOther>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.Dictionary<TKey, TValue> __arg0, int __seq1, TOther __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment __arg2)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,8) "x:\dir\subdir\Test\TestComponent.cshtml"
-Parent
-
-#line default
-#line hidden
-#nullable disable
-        <TKey, TValue, TOther>>(seq);
+        __builder.OpenComponent<global::Test.Parent<TKey, TValue, TOther>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Parent<TKey, TValue, TOther>.
 #nullable restore
 #line (1,9)-(1,13) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -99,15 +91,7 @@ Other
         }
         public static void CreateChild_1<TOther, TValue, TKey, TChildOnly>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TOther __syntheticArg0, global::System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg1, global::System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg2, int __seq0, global::System.Collections.Generic.ICollection<TChildOnly> __arg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,6)-(2,11) "x:\dir\subdir\Test\TestComponent.cshtml"
-Child
-
-#line default
-#line hidden
-#nullable disable
-        <TOther, TValue, TKey, TChildOnly>>(seq);
+        __builder.OpenComponent<global::Test.Child<TOther, TValue, TKey, TChildOnly>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Child<TOther, TValue, TKey, TChildOnly>.
 #nullable restore
 #line (2,12)-(2,26) "x:\dir\subdir\Test\TestComponent.cshtml"

@@ -66,7 +66,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         Assert.Equal(1, workspaceEdit.DocumentChanges.Value.Count());
 
         var createFileChange = workspaceEdit.DocumentChanges.Value.First();
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         Assert.Equal(2, workspaceEdit.DocumentChanges.Value.Count());
 
         var createFileChange = workspaceEdit.DocumentChanges.Value.First();
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editNewComponentChange = workspaceEdit.DocumentChanges.Value.Last();
         var editNewComponentEdit = editNewComponentChange.First.Edits.First();

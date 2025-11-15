@@ -49,9 +49,9 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData((byte)_flags);
-        builder.AppendData(Name);
-        builder.AppendData(PropertyName);
+        builder.Append((byte)_flags);
+        builder.Append(Name);
+        builder.Append(PropertyName);
 
         TypeNameObject.AppendToChecksum(in builder);
         DocumentationObject.AppendToChecksum(in builder);

@@ -131,7 +131,7 @@
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="new">Simplify fully qualified component</target>
+        <target state="translated">Vereinfachen der vollqualifizierten Komponente</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

@@ -59,15 +59,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateParentOne_0<TOne>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TOne __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,11) "x:\dir\subdir\Test\TestComponent.cshtml"
-ParentOne
-
-#line default
-#line hidden
-#nullable disable
-        <TOne>>(seq);
+        __builder.OpenComponent<global::Test.ParentOne<TOne>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.ParentOne<TOne>.
 #nullable restore
 #line (1,12)-(1,17) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -87,15 +79,7 @@ Value
         }
         public static void CreateParentTwo_1<TTwo>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TTwo __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,6)-(2,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-ParentTwo
-
-#line default
-#line hidden
-#nullable disable
-        <TTwo>>(seq);
+        __builder.OpenComponent<global::Test.ParentTwo<TTwo>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.ParentTwo<TTwo>.
 #nullable restore
 #line (2,16)-(2,21) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -115,15 +99,7 @@ Value
         }
         public static void CreateChild_2<TOne, TTwo>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TOne __syntheticArg0, TTwo __syntheticArg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,10)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-Child
-
-#line default
-#line hidden
-#nullable disable
-        <TOne, TTwo>>(seq);
+        __builder.OpenComponent<global::Test.Child<TOne, TTwo>>(seq);
         __builder.CloseComponent();
         }
     }

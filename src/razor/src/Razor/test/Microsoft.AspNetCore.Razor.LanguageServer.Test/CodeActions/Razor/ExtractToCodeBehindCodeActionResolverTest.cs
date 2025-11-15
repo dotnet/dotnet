@@ -60,7 +60,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -125,7 +125,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -198,7 +198,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -281,7 +281,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -366,7 +366,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -439,7 +439,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
@@ -504,7 +504,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var editCodeDocument));
@@ -571,7 +571,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));
@@ -642,7 +642,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
 
         var documentChanges = workspaceEdit.DocumentChanges.Value.ToArray();
         var createFileChange = documentChanges[0];
-        Assert.True(createFileChange.TryGetSecond(out var _));
+        Assert.True(createFileChange.TryGetSecond(out _));
 
         var editCodeDocumentChange = documentChanges[1];
         Assert.True(editCodeDocumentChange.TryGetFirst(out var textDocumentEdit1));

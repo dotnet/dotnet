@@ -1753,8 +1753,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 TagName = tagName,
                 TagMode = info.TagMode,
                 Source = BuildSourceSpanFromNode(node),
-                TagHelpers = info.BindingResult.Descriptors,
-                StartTagSpan = node.StartTag.Name.GetSourceSpan(SourceDocument)
+                TagHelpers = info.BindingResult.Descriptors
             };
 
             if (node.StartTag != null &&
