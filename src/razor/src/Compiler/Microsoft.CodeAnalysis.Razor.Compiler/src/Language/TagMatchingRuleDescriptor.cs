@@ -44,15 +44,15 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(TagName);
-        builder.AppendData(ParentTag);
-        builder.AppendData((int)TagStructure);
+        builder.Append(TagName);
+        builder.Append(ParentTag);
+        builder.Append((int)TagStructure);
 
-        builder.AppendData(CaseSensitive);
+        builder.Append(CaseSensitive);
 
         foreach (var descriptor in Attributes)
         {
-            builder.AppendData(descriptor.Checksum);
+            builder.Append(descriptor.Checksum);
         }
     }
 

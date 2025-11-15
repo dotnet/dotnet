@@ -74,9 +74,6 @@ internal static class HoverAssertions
     public static Action<ClassifiedTextRun> Keyword(string text)
         => Run(text, ClassificationTypeNames.Keyword);
 
-    public static Action<ClassifiedTextRun> Namespace(string text)
-        => Run(text, ClassificationTypeNames.NamespaceName);
-
     public static Action<ClassifiedTextRun> LocalName(string text)
         => Run(text, ClassificationTypeNames.LocalName);
 

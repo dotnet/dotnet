@@ -42,15 +42,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 #line hidden
 #nullable disable
 
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (8,10)-(8,21) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-        >(0);
+        __builder.OpenComponent<global::Test.MyComponent>(0);
         __builder.CloseComponent();
 #nullable restore
 #line (9,1)-(10,1) "x:\dir\subdir\Test\TestComponent.cshtml"

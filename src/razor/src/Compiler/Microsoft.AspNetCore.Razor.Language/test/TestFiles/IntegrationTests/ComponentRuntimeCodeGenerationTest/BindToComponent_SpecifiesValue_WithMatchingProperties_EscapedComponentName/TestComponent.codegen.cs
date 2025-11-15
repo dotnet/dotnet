@@ -17,15 +17,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,5) 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-@int
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.@int>(0);
             __builder.AddComponentParameter(1, nameof(global::Test.@int.
 #nullable restore
 #line (1,12)-(1,17) "x:\dir\subdir\Test\TestComponent.cshtml"

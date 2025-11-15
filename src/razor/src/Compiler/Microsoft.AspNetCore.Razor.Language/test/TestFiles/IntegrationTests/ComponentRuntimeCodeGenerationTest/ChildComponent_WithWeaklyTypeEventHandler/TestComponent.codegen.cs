@@ -23,15 +23,7 @@ using Microsoft.AspNetCore.Components.Web
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,16) "x:\dir\subdir\Test\TestComponent.cshtml"
-DynamicElement
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.DynamicElement>(0);
             __builder.AddComponentParameter(1, "onclick", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
 #nullable restore
 #line (2,27)-(2,34) "x:\dir\subdir\Test\TestComponent.cshtml"

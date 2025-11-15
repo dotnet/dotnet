@@ -145,7 +145,9 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(
             displayText: "TestItem",
             insertText: "TestItem",
-            _attributeDescription);
+            _attributeDescription,
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 
@@ -235,7 +237,9 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(
             displayText: "TestItem",
             insertText: "TestItem",
-            _attributeDescription);
+            _attributeDescription,
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 

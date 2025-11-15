@@ -76,15 +76,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateTreeNode_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,10) "x:\dir\subdir\Test\TestComponent.cshtml"
-TreeNode
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.TreeNode<TItem>.
 #nullable restore
 #line (1,11)-(1,15) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -104,15 +96,7 @@ Item
         }
         public static void CreateTreeNode_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,6)-(2,14) "x:\dir\subdir\Test\TestComponent.cshtml"
-TreeNode
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.TreeNode<TItem>.
 #nullable restore
 #line (2,15)-(2,19) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -132,15 +116,7 @@ Item
         }
         public static void CreateTreeNode_2<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0, int __seq0, global::Microsoft.AspNetCore.Components.RenderFragment __arg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,10)-(3,18) "x:\dir\subdir\Test\TestComponent.cshtml"
-TreeNode
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, "ChildContent", __arg0);
         __builder.CloseComponent();
         }
@@ -151,15 +127,7 @@ TreeNode
         }
         public static void CreateTreeNode_3<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (4,14)-(4,22) "x:\dir\subdir\Test\TestComponent.cshtml"
-TreeNode
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
         __builder.CloseComponent();
         }
 
@@ -169,15 +137,7 @@ TreeNode
         }
         public static void CreateTreeNode_4<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (7,6)-(7,14) "x:\dir\subdir\Test\TestComponent.cshtml"
-TreeNode
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
         __builder.CloseComponent();
         }
 

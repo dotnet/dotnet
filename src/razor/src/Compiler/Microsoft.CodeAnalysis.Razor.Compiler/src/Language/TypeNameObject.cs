@@ -224,13 +224,13 @@ internal readonly struct TypeNameObject
     {
         if (_index is byte index)
         {
-            builder.AppendData(index);
+            builder.Append(index);
         }
         else if (_info is TypeNameInfo info)
         {
-            builder.AppendData(info.FullName);
-            builder.AppendData(info.Namespace);
-            builder.AppendData(info.Name);
+            builder.Append(info.FullName);
+            builder.Append(info.Namespace);
+            builder.Append(info.Name);
         }
         else
         {

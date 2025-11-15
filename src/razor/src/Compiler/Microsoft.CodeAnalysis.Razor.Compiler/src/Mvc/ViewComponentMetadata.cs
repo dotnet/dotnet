@@ -25,7 +25,7 @@ public sealed record ViewComponentMetadata : MetadataObject
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Name);
+        builder.Append(Name);
     }
 
     public ref struct Builder

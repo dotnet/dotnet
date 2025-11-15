@@ -167,8 +167,8 @@ internal sealed class RemoteMefComposition
         foreach (var assembly in Assemblies)
         {
             var assemblyPath = assembly.Location.AssumeNotNull();
-            checksum.AppendData(Path.GetFileName(assemblyPath));
-            checksum.AppendData(File.GetLastWriteTimeUtc(assemblyPath).ToString("F"));
+            checksum.Append(Path.GetFileName(assemblyPath));
+            checksum.Append(File.GetLastWriteTimeUtc(assemblyPath).ToString("F"));
         }
 
         // Create base64 string of the hash.

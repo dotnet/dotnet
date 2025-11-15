@@ -24,12 +24,14 @@ namespace Microsoft.CodeAnalysis.Razor.Rename;
 
 internal class RenameService(
     IRazorComponentSearchEngine componentSearchEngine,
+    IFileSystem fileSystem,
     LanguageServerFeatureOptions languageServerFeatureOptions) : IRenameService
 {
     private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
+    private readonly IFileSystem _fileSystem = fileSystem;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public async Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(
+    public async Task<RenameResult> TryGetRazorRenameEditsAsync(
         DocumentContext documentContext,
         DocumentPositionInfo positionInfo,
         string newName,
@@ -39,7 +41,7 @@ internal class RenameService(
         // We only support renaming of .razor components, not .cshtml tag helpers
         if (!documentContext.FileKind.IsComponent())
         {
-            return null;
+            return new(Edit: null);
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
@@ -47,7 +49,7 @@ internal class RenameService(
         var originTagHelpers = await GetOriginTagHelpersAsync(documentContext, positionInfo.HostDocumentIndex, cancellationToken).ConfigureAwait(false);
         if (originTagHelpers.IsDefaultOrEmpty)
         {
-            return null;
+            return new(Edit: null);
         }
 
         var originComponentDocumentSnapshot = await _componentSearchEngine
@@ -55,20 +57,23 @@ internal class RenameService(
             .ConfigureAwait(false);
         if (originComponentDocumentSnapshot is null)
         {
-            return null;
+            return new(Edit: null);
         }
 
         var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath;
         var newPath = MakeNewPath(originComponentDocumentFilePath, newName);
-        if (File.Exists(newPath))
+        if (_fileSystem.FileExists(newPath))
         {
-            return null;
+            // We found a tag, but the new name would cause a conflict, so we can't proceed with the rename,
+            // even if C# might have worked.
+            return new(Edit: null, FallbackToCSharp: false);
         }
 
         using var _ = ListPool<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>.GetPooledObject(out var documentChanges);
-        var fileRename = GetFileRenameForComponent(originComponentDocumentSnapshot, newPath);
+        var fileRename = GetRenameFileEdit(originComponentDocumentFilePath, newPath);
         documentChanges.Add(fileRename);
         AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, new(documentContext.Uri), codeDocument);
+        AddAdditionalFileRenames(documentChanges, originComponentDocumentFilePath, newPath);
 
         var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
 
@@ -86,10 +91,10 @@ internal class RenameService(
             }
         }
 
-        return new WorkspaceEdit
+        return new(new WorkspaceEdit
         {
             DocumentChanges = documentChanges.ToArray(),
-        };
+        });
     }
 
     private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
@@ -126,11 +131,26 @@ internal class RenameService(
         return documentSnapshots.ToImmutableAndClear();
     }
 
-    private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
+    private void AddAdditionalFileRenames(List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges, string oldFilePath, string newFilePath)
+    {
+        TryAdd(".cs");
+        TryAdd(".css");
+
+        void TryAdd(string extension)
+        {
+            var changedPath = oldFilePath + extension;
+            if (_fileSystem.FileExists(changedPath))
+            {
+                documentChanges.Add(GetRenameFileEdit(changedPath, newFilePath + extension));
+            }
+        }
+    }
+
+    private RenameFile GetRenameFileEdit(string oldFilePath, string newFilePath)
         => new RenameFile
         {
-            OldDocumentUri = new(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions)),
-            NewDocumentUri = new(LspFactory.CreateFilePathUri(newPath, _languageServerFeatureOptions)),
+            OldDocumentUri = new(LspFactory.CreateFilePathUri(oldFilePath, _languageServerFeatureOptions)),
+            NewDocumentUri = new(LspFactory.CreateFilePathUri(newFilePath, _languageServerFeatureOptions)),
         };
 
     private static string MakeNewPath(string originalPath, string newName)

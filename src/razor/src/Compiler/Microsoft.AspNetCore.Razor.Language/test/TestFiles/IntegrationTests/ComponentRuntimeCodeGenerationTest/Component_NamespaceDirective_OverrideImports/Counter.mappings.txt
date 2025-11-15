@@ -3,8 +3,3 @@
 Generated Location: (145:5,0 [8] )
 |New.Test|
 
-Source Location: (22:1,1 [8] x:\dir\subdir\Test\Pages/Counter.razor)
-|Counter2|
-Generated Location: (1170:41,0 [8] )
-|Counter2|
-

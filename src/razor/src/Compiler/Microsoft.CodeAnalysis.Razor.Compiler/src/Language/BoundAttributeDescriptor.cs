@@ -83,12 +83,12 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData((byte)_flags);
-        builder.AppendData(Name);
-        builder.AppendData(PropertyName);
-        builder.AppendData(IndexerNamePrefix);
-        builder.AppendData(DisplayName);
-        builder.AppendData(ContainingType);
+        builder.Append((byte)_flags);
+        builder.Append(Name);
+        builder.Append(PropertyName);
+        builder.Append(IndexerNamePrefix);
+        builder.Append(DisplayName);
+        builder.Append(ContainingType);
 
         TypeNameObject.AppendToChecksum(in builder);
         IndexerTypeNameObject.AppendToChecksum(in builder);
@@ -96,7 +96,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
 
         foreach (var descriptor in Parameters)
         {
-            builder.AppendData(descriptor.Checksum);
+            builder.Append(descriptor.Checksum);
         }
 
         Metadata.AppendToChecksum(in builder);

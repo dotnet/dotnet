@@ -44,15 +44,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateGrid_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Func<global::System.Collections.Generic.List<T>> __arg0, int __seq1, Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,6) "x:\dir\subdir\Test\TestComponent.cshtml"
-Grid
-
-#line default
-#line hidden
-#nullable disable
-        <T>>(seq);
+        __builder.OpenComponent<global::Test.Grid<T>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Grid<T>.
 #nullable restore
 #line (1,7)-(1,11) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -72,15 +64,7 @@ Data
         }
         public static void CreateGridColumn_1<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Func<global::System.Collections.Generic.List<T>> __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,6)-(2,16) "x:\dir\subdir\Test\TestComponent.cshtml"
-GridColumn
-
-#line default
-#line hidden
-#nullable disable
-        <T>>(seq);
+        __builder.OpenComponent<global::Test.GridColumn<T>>(seq);
         __builder.CloseComponent();
         }
     }

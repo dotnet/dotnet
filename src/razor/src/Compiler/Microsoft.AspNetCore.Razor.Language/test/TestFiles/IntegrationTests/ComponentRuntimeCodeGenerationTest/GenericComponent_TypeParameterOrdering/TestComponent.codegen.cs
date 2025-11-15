@@ -17,15 +17,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-            <
+            __builder.OpenComponent<global::Test.MyComponent<
 #nullable restore
 #line (1,38)-(1,56) "x:\dir\subdir\Test\TestComponent.cshtml"
 IComposedInterface
@@ -62,15 +54,7 @@ _componentValue
             __builder.AddComponentParameter(2, nameof(global::Test.MyComponent<IComposedInterface, string>.ValueChanged), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<string>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<string>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => _componentValue = __value, _componentValue))));
             __builder.CloseComponent();
             __builder.AddMarkupContent(3, "\r\n");
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-            <
+            __builder.OpenComponent<global::Test.MyComponent<
 #nullable restore
 #line (2,24)-(2,42) "x:\dir\subdir\Test\TestComponent.cshtml"
 IComposedInterface

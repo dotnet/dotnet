@@ -378,10 +378,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(ComponentsApi.RenderTreeBuilder.OpenComponent);
             context.CodeWriter.Write("<");
 
-            var nonGenericTypeName = TypeNameHelper.GetNonGenericTypeName(node.TypeName, out _);
-            TypeNameHelper.WriteGlobalPrefixIfNeeded(context.CodeWriter, nonGenericTypeName);
-            WriteComponentTypeName(context, node, nonGenericTypeName);
-
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, TypeNameHelper.GetNonGenericTypeName(node.TypeName));
             if (!node.OrderedTypeArguments.IsDefaultOrEmpty)
             {
                 context.CodeWriter.Write("<");
@@ -543,7 +540,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
     public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
     {
-        WriteComponentTypeInferenceMethod(context, node, returnComponentType: false, allowNameof: true, mapComponentStartTag: true);
+        WriteComponentTypeInferenceMethod(context, node, returnComponentType: false, allowNameof: true);
     }
 
     private void WriteTypeInferenceMethodParameterInnards(CodeRenderingContext context, TypeInferenceMethodParameter parameter)

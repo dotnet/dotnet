@@ -226,13 +226,13 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.Start, out var startIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out _))
         {
             return false;
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.End, out var endIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out _))
         {
             return false;
         }

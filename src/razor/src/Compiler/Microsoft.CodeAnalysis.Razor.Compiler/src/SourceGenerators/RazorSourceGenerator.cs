@@ -173,16 +173,37 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                             return true;
                         }
 
-                        if (oldSymbol is IAssemblySymbol oldAssembly && newSymbol is IAssemblySymbol newAssembly)
+                        if (oldSymbol is not IAssemblySymbol oldAssembly || newSymbol is not IAssemblySymbol newAssembly)
                         {
-                            var oldModuleMVIDs = oldAssembly.Modules.Select(GetMVID);
-                            var newModuleMVIDs = newAssembly.Modules.Select(GetMVID);
-                            return oldModuleMVIDs.SequenceEqual(newModuleMVIDs);
-
-                            static Guid GetMVID(IModuleSymbol m) => m.GetMetadata()?.GetModuleVersionId() ?? Guid.Empty;
+                            return false;
                         }
 
-                        return false;
+                        // Compare the MVIDs of the modules in each assembly. If they aren't present or don't match we don't consider them equal
+                        var oldModules = oldAssembly.Modules.ToArray();
+                        var newModules = newAssembly.Modules.ToArray();
+                        if (oldModules.Length != newModules.Length)
+                        {
+                            return false;
+                        }
+
+                        for (int i = 0; i < oldModules.Length; i++)
+                        {
+                            var oldMetadata = oldModules[i].GetMetadata();
+                            var newMetadata = newModules[i].GetMetadata();
+
+                            if (oldMetadata is null || newMetadata is null)
+                            {
+                                return false;
+                            }
+
+                            if (oldMetadata.GetModuleVersionId() != newMetadata.GetModuleVersionId())
+                            {
+                                return false;
+                            }
+                        }
+
+                        // All module MVIDs matched.
+                        return true;
                     })))
                     {
                         return false;
