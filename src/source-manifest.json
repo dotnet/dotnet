@@ -25,10 +25,10 @@
       "commitSha": "c7b5e07cfed85e88c162dc1c916efaff03742e6e"
     },
     {
-      "barId": 288748,
+      "barId": 290946,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "84ccc0553245e90355f32ea8ddcf169d9bd8f640"
+      "commitSha": "fc1554ce9a8ff286f4f53bc88d53613c2b3f9a32"
     },
     {
       "barId": 288647,
@@ -55,10 +55,10 @@
       "commitSha": "fdb422958deeb2aa06de8290328d57d0cf9e3fd2"
     },
     {
-      "barId": 288469,
+      "barId": 290990,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "149ded8b1c83b130ec8124cb2c52f628b7158a1e"
+      "commitSha": "e22287bf154ea3f7a145a18d21938b0d9c881754"
     },
     {
       "barId": 286446,
@@ -85,10 +85,10 @@
       "commitSha": "765b715223fe612d0e982d9ff3d88ed88a059a65"
     },
     {
-      "barId": 277711,
+      "barId": 291014,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
+      "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
       "barId": 290769,
