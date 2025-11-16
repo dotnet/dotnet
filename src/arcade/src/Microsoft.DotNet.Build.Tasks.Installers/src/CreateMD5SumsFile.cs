@@ -47,7 +47,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 #endif
             }
 
-            InstalledSize = installedSize.ToString();
+            InstalledSize = (installedSize / 1024).ToString();
 
             return true;
         }
