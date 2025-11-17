@@ -3,7 +3,7 @@
   <!-- Opt-in arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    <MicrosoftVSSDKBuildToolsVersion>17.14.1043-preview2</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.3.2094</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
