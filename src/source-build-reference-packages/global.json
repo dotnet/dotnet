@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "8.0.121",
+    "version": "8.0.122",
     "rollForward": "latestPatch",
     "paths": [
       ".dotnet",
@@ -9,10 +9,10 @@
     "errorMessage": "The required .NET SDK wasn't found. Please run ./eng/common/dotnet.cmd/sh to install it."
   },
   "tools": {
-    "dotnet": "8.0.121"
+    "dotnet": "8.0.122"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.25515.1",
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.25562.3",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }
