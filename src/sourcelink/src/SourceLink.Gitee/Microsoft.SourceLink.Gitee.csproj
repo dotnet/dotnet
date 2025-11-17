@@ -1,22 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>net472;$(NetMinimum);$(NetCurrent)</TargetFrameworks>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+
+    <!-- Using an explicit nuspec file due to https://github.com/NuGet/Home/issues/6754 -->
+    <IsPackable>true</IsPackable>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+
     <PackageDescription>Generates source link for Gitee repositories.</PackageDescription>
     <PackageTags>MSBuild Tasks Gitee source link</PackageTags>
-    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
-
   <Import Project="..\Common\GitProvider\Items.props" />
-
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Build.Tasks.Git\Microsoft.Build.Tasks.Git.csproj" Private="false" />
-    <ProjectReference Include="..\SourceLink.Common\Microsoft.SourceLink.Common.csproj" Private="false" />
-  </ItemGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.SourceLink.Gitee.UnitTests" />
     <InternalsVisibleTo Include="Microsoft.SourceLink.Git.IntegrationTests" />
   </ItemGroup>
-
 </Project>
