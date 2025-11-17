@@ -115,10 +115,10 @@
       "commitSha": "4ea649c272581be7b15c19e6b4f1aa58a8296254"
     },
     {
-      "barId": 290805,
+      "barId": 291074,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "a8f9734aad4381da252dccd04aaf9603c46c4ed0"
+      "commitSha": "e67bf6909f8b2d53f614edaf25c65285c2408585"
     },
     {
       "barId": 287819,
@@ -139,10 +139,10 @@
       "commitSha": "62f001bbdf5794cda4c36ab34f93f79bf7971278"
     },
     {
-      "barId": 290620,
+      "barId": 291047,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "d75b8adc3d7b451bc1fdf5489cee601c31d65011"
+      "commitSha": "40f5d516fc562e24365d8443f8e3394d008b2164"
     },
     {
       "barId": 278018,
