@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="b0eeb50560544fa782bd8bbddbe2e964c2ab6388" BarId="283422" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="d499f9cdfd5b7b7bb291f95a3c14417d5edc969f" BarId="287756" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -20,13 +20,13 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25469.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25507.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>6275af47ebda0d394d4a5a401b77bc6f2304204a</Sha>
+      <Sha>4eaa220ea860cee9fa61df42411bbf79394edd23</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25469.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25507.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>6275af47ebda0d394d4a5a401b77bc6f2304204a</Sha>
+      <Sha>4eaa220ea860cee9fa61df42411bbf79394edd23</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25424.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -149,19 +149,19 @@
       <Sha>949759ff23ff663a2c3e105cf504b281fe667d01</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
-    <Dependency Name="Microsoft.Build" Version="17.12.36">
+    <Dependency Name="Microsoft.Build" Version="17.12.50">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="17.12.36">
+    <Dependency Name="Microsoft.Build.Framework" Version="17.12.50">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.12.36">
+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.12.50">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.12.36">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.12.50">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>

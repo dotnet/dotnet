@@ -42,7 +42,7 @@ parameters:
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
-  default: 'Default (repo specifies)'
+  default: 'Stable Final'
   values:
     - Default (repo specifies)
     - Stable Preview
@@ -169,3 +169,6 @@ extends:
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
         scope: full
+        # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+        # This is enabled for all branches except main and 1xx
+        excludeRuntimeDependentJobs: false
