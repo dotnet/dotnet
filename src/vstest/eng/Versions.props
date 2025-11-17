@@ -14,8 +14,8 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>18.0.0</VersionPrefix>
-    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <VersionPrefix>18.0.1</VersionPrefix>
+    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -29,7 +29,7 @@
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
     <!--
         When updating the version of Microsoft.Build.Utilities.Core, go check on nuget.org which TFMs it targets.
-        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.8.3.
+        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.11.48.
         Otherwise it will restore the netstandard2.0 *reference* library into test project bin, and the test project will fail
         with File not found error.
 
@@ -39,7 +39,7 @@
       Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
       avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
     -->
-    <MicrosoftBuildFrameworkPackageVersion>17.8.3</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>17.11.48</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftBuildFrameworkReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkReferenceOnly>
@@ -59,7 +59,7 @@
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
     <MicrosoftVSUtilitiesInternalVersion>16.3.90</MicrosoftVSUtilitiesInternalVersion>
-    <MicrosoftVSSDKBuildToolsVersion>17.14.2117</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.14.2119</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
@@ -67,7 +67,7 @@
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.0.0-preview-1-10911-061</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10911-061</MicrosoftInternalTestPlatformExtensions>
-    <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
+    <TestPlatformMSDiaVersion>18.0.11024.295</TestPlatformMSDiaVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
