@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup>
+    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
+    <Compile Include="$(CommonSrc)RequiredModifierAttributes.cs" />
+  </ItemGroup>
+</Project>

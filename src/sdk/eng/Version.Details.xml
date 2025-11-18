@@ -233,24 +233,19 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>be28ec777bf12db631725399c442448d52093087</Sha>
     </Dependency>
-    <!-- Do not use properties based on:
-         - Microsoft.WindowsDesktop.App.Ref
-         - Microsoft.WindowsDesktop.App.Internal
-         - Microsoft.NET.Sdk.WindowsDesktop
-         - Microsoft.Dotnet.WinForms.ProjectTemplates
-         - Microsoft.DotNet.Wpf.ProjectTemplates
-         In VMR builds on non-Windows, they aren't built. Instead, use the following:
-         - Microsoft.WindowsDesktop.App.Ref - Microsoft.NETCore.App.Ref
-         - Microsoft.WindowsDesktop.App.Internal - Microsoft.NETCore.Platforms
-         - Microsoft.NET.Sdk.WindowsDesktop - Microsoft.NETCore.App.Ref
-         - Microsoft.Dotnet.WinForms.ProjectTemplates - Microsoft.NETCore.Platforms
-         - Microsoft.DotNet.Wpf.ProjectTemplates - Microsoft.NETCore.Platforms
-    -->
     <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0-rc.1.25515.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>be28ec777bf12db631725399c442448d52093087</Sha>
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Internal" Version="10.0.0-rc.1.25515.110">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>be28ec777bf12db631725399c442448d52093087</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="10.0.0-rc.1.25515.110">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>be28ec777bf12db631725399c442448d52093087</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Dotnet.Wpf.ProjectTemplates" Version="10.0.0-rc.1.25515.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>be28ec777bf12db631725399c442448d52093087</Sha>
     </Dependency>
