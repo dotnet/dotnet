@@ -1,14 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Resources\**\*.cs" />
     <Content Include="Resources\**\*.cs" />
     <Content Include="Resources\**\*.cmd" />
     <Content Include="Resources\**\*.txt" />
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\SourceLink.dll">
       <LogicalName>SourceLink.dll</LogicalName>
@@ -17,4 +20,5 @@
       <LogicalName>SourceLink.pdb</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+
 </Project>
