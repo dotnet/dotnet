@@ -30,11 +30,11 @@
     <!-- nuget -->
     <!-- Important: Don't version higher than what's available in the toolset SDK as
          NuGet assemblies aren't redistributed with .NETCoreApp msbuild tasks. -->
-    <NuGetCommandsVersion>6.13.2</NuGetCommandsVersion>
-    <NuGetFrameworksVersion>6.13.2</NuGetFrameworksVersion>
-    <NuGetPackagingVersion>6.13.2</NuGetPackagingVersion>
-    <NuGetProjectModelVersion>6.13.2</NuGetProjectModelVersion>
-    <NuGetVersioningVersion>6.13.2</NuGetVersioningVersion>
+    <NuGetCommandsVersion>6.14.0</NuGetCommandsVersion>
+    <NuGetFrameworksVersion>6.14.0</NuGetFrameworksVersion>
+    <NuGetPackagingVersion>6.14.0</NuGetPackagingVersion>
+    <NuGetProjectModelVersion>6.14.0</NuGetProjectModelVersion>
+    <NuGetVersioningVersion>6.14.0</NuGetVersioningVersion>
     <!-- runtime -->
     <MicrosoftNETCorePlatformsVersion>5.0.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
