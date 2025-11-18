@@ -136,10 +136,6 @@
 
     <!-- // Temporary diagnostic code from https://github.com/dotnet/extensions/pull/4130 for metrics APIs used in test. -->
     <NoWarn>$(NoWarn);TBD</NoWarn>
-
-    <!-- Temporarily resolve "error NETSDK1233: Targeting .NET 10.0 or higher in Visual Studio 2022 17.14 is not supported" 
-          until we can move to VS2026 images. -->
-    <NoWarn Condition="'$(DotNetBuild)' == 'true'">$(NoWarn);NETSDK1233</NoWarn>
   </PropertyGroup>
 
   <!-- Source code settings -->

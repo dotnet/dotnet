@@ -19,12 +19,6 @@
     <WpfArcadeSdkPath>$(MSBuildThisFileDirectory)eng\WpfArcadeSdk\</WpfArcadeSdkPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Temporarily resolve "error NETSDK1233: Targeting .NET 10.0 or higher in Visual Studio 2022 17.14 is not supported" 
-          until we can move to VS2026 images. -->
-    <NoWarn Condition="'$(DotNetBuild)' == 'true'">$(NoWarn);NETSDK1233;</NoWarn>
-  </PropertyGroup>
-
   <!-- Select Sdk.props from test location or eng\WpfArcadeSdk\. If neither exists, then fall back to the use of one 
       obtained using MSBuild's Sdk resolver -->
   <PropertyGroup Condition="Exists('$(WpfArcadeSdkPath)')">
