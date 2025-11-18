@@ -25,6 +25,10 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      componentgovernance:
+        # These directories need to be kept in-sync with the 'componentGovernanceIgnoreDirectories'
+        # specified in ../templates/stages/build.yml
+        ignoreDirectories: "src/referencePackages,artifacts/sb"
       policheck:
         enabled: true
       sourceAnalysisPool:

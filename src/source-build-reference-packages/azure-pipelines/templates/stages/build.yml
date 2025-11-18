@@ -18,6 +18,8 @@ stages:
     steps:
     - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
       parameters:
+        # These directories need to be kept in-sync with the 'componentGovernance/ignoreDirectories'
+        # specified in ../../builds/ci.yml
         componentGovernanceIgnoreDirectories:
         - src/referencePackages
         - artifacts/sb

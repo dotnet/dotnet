@@ -1,5 +1,4 @@
 <Project>
-
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
@@ -10,5 +9,11 @@
     
     <IncludeSymbols Condition="'$(DebugType)' != 'embedded' and '$(UsingMicrosoftNoTargetsSdk)' != 'true'">true</IncludeSymbols>
   </PropertyGroup>
-
+  
+  <!--
+    Workaround for https://github.com/dotnet/sdk/issues/2232: GenerateDepsFile throws ArgumentException.
+  -->
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+  </PropertyGroup>
 </Project>

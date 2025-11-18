@@ -19,7 +19,7 @@ parameters:
   # publishing defaults
   artifacts: ''
   enableMicrobuild: false
-  enableMicrobuildForMacAndLinux: false
+  microbuildUseESRP: true
   enablePublishBuildArtifacts: false
   enablePublishBuildAssets: false
   enablePublishTestResults: false
@@ -128,11 +128,23 @@ jobs:
       - ${{ preStep }}
 
   - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - template: /eng/common/core-templates/steps/install-microbuild.yml
-      parameters:
-        enableMicrobuild: ${{ parameters.enableMicrobuild }}
-        enableMicrobuildForMacAndLinux: ${{ parameters.enableMicrobuildForMacAndLinux }}
+    - ${{ if eq(parameters.enableMicrobuild, 'true') }}:
+      - task: MicroBuildSigningPlugin@4
+        displayName: Install MicroBuild plugin
+        inputs:
+          signType: $(_SignType)
+          zipSources: false
+          feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
+          ${{ if eq(parameters.microbuildUseESRP, true) }}:
+            ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
+              ConnectedPMEServiceName: 6cc74545-d7b9-4050-9dfa-ebefcc8961ea
+            ${{ else }}:
+              ConnectedPMEServiceName: 248d384a-b39b-46e3-8ad5-c2c210d5e7ca
+        env:
+          TeamName: $(_TeamName)
+          MicroBuildOutputFolderOverride: '$(Agent.TempDirectory)'
         continueOnError: ${{ parameters.continueOnError }}
+        condition: and(succeeded(), in(variables['_SignType'], 'real', 'test'), eq(variables['Agent.Os'], 'Windows_NT'))
 
   - ${{ if and(eq(parameters.runAsPublic, 'false'), eq(variables['System.TeamProject'], 'internal')) }}:
     - task: NuGetAuthenticate@1
@@ -154,19 +166,21 @@ jobs:
       inputs:
         languages: ${{ coalesce(parameters.richCodeNavigationLanguage, 'csharp') }}
         environment: ${{ coalesce(parameters.richCodeNavigationEnvironment, 'internal') }}
-        richNavLogOutputDirectory: $(Build.SourcesDirectory)/artifacts/bin
+        richNavLogOutputDirectory: $(System.DefaultWorkingDirectory)/artifacts/bin
         uploadRichNavArtifacts: ${{ coalesce(parameters.richCodeNavigationUploadArtifacts, false) }}
       continueOnError: true
 
   - ${{ each step in parameters.componentGovernanceSteps }}:
     - ${{ step }}
 
-  - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - template: /eng/common/core-templates/steps/cleanup-microbuild.yml
-      parameters:
-        enableMicrobuild: ${{ parameters.enableMicrobuild }}
-        enableMicrobuildForMacAndLinux: ${{ parameters.enableMicrobuildForMacAndLinux }}
+  - ${{ if eq(parameters.enableMicrobuild, 'true') }}:
+    - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - task: MicroBuildCleanup@1
+        displayName: Execute Microbuild cleanup tasks
+        condition: and(always(), in(variables['_SignType'], 'real', 'test'), eq(variables['Agent.Os'], 'Windows_NT'))
         continueOnError: ${{ parameters.continueOnError }}
+        env:
+          TeamName: $(_TeamName)
 
   # Publish test results
   - ${{ if or(and(eq(parameters.enablePublishTestResults, 'true'), eq(parameters.testResultsFormat, '')), eq(parameters.testResultsFormat, 'xunit')) }}:
@@ -175,7 +189,7 @@ jobs:
       inputs:
         testResultsFormat: 'xUnit'
         testResultsFiles: '*.xml'
-        searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+        searchFolder: '$(System.DefaultWorkingDirectory)/artifacts/TestResults/$(_BuildConfig)'
         testRunTitle: ${{ coalesce(parameters.testRunTitle, parameters.name, '$(System.JobName)') }}-xunit
         mergeTestResults: ${{ parameters.mergeTestResults }}
       continueOnError: true
@@ -186,7 +200,7 @@ jobs:
       inputs:
         testResultsFormat: 'VSTest'
         testResultsFiles: '*.trx'
-        searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+        searchFolder: '$(System.DefaultWorkingDirectory)/artifacts/TestResults/$(_BuildConfig)'
         testRunTitle: ${{ coalesce(parameters.testRunTitle, parameters.name, '$(System.JobName)') }}-trx
         mergeTestResults: ${{ parameters.mergeTestResults }}
       continueOnError: true
@@ -230,7 +244,7 @@ jobs:
     - task: CopyFiles@2
       displayName: Gather buildconfiguration for build retry
       inputs:
-        SourceFolder: '$(Build.SourcesDirectory)/eng/common/BuildConfiguration'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/eng/common/BuildConfiguration'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/eng/common/BuildConfiguration'
       continueOnError: true
