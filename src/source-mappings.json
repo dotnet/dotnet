@@ -62,6 +62,10 @@
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages"
         },
         {
+            "name": "sourcelink",
+            "defaultRemote": "https://github.com/dotnet/sourcelink"
+        },
+        {
             "name": "templating",
             "defaultRemote": "https://github.com/dotnet/templating"
         },
