@@ -131,11 +131,11 @@ stages:
           **/manifests/**/*.xml
           !*Sdk_*_Artifacts/**/VerticalManifest.xml
 
-- template: vmr-validation.yml
-  parameters:
-    desiredSigning: ${{ parameters.desiredSigning }}
-    isOfficialBuild: ${{ parameters.isOfficialBuild }}
-
+- ${{ if notin(parameters.scope, 'scout') }}:
+  - template: vmr-validation.yml
+    parameters:
+      desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
 - ${{ if notin(parameters.scope, 'scout') }}:
   - template: source-build-stages.yml
     parameters:
