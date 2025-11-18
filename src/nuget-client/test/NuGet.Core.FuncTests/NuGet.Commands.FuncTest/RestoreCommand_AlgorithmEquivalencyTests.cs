@@ -1655,9 +1655,9 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[2].Version.Should().Be(new NuGetVersion("1.0.0"));
         }
 
-        // Project1 -> Project2 -> X 1.0.0
-        //          -> Project3 -> (PrivateAssets) X 2.0.0 (project)
-        // Package is chosen, since project is suppressed
+        // Project1 -> Project2 -> a 1.0.0
+        //          -> Project3 -> (PrivateAssets) a 2.0.0 (project)
+        // This is an unintuitive scenario because we end up selecting a project that's actually suppressed, but the behavior is equivalent in both algorithms.
         [Fact]
         public async Task RestoreCommand_WithSameTransitiveProjectPackageId_SuppressedProject_ChoosesPackage_VerifiesEquivalency()
         {
@@ -1686,8 +1686,8 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets.Should().HaveCount(1);
             result.LockFile.Targets[0].Libraries.Should().HaveCount(3);
             result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
-            //result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0")); // TODO NK - Unclear to me why suppressed project is getting selected.
-            //result.LockFile.Targets[0].Libraries[0].Type.Should().Be("package");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("2.0.0"));
+            result.LockFile.Targets[0].Libraries[0].Type.Should().Be("project");
             result.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
             result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("Project3");

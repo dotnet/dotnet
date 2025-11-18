@@ -507,8 +507,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 var actualRestoreSpec = packageSpecs.Single();
                 SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
-                //No top level dependencies
-                Assert.Equal(0, actualRestoreSpec.Dependencies.Count);
 
                 var actualDependency = actualRestoreSpec.TargetFrameworks.SingleOrDefault().Dependencies.Single();
                 Assert.NotNull(actualDependency);

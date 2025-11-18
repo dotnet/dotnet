@@ -34,21 +34,6 @@ namespace NuGet.ProjectModel
             var range = dependency.VersionRange;
             var dependencyId = dependency.Id;
 
-            for (var i = 0; i < spec.Dependencies.Count; i++)
-            {
-                var existingDependency = spec.Dependencies[i];
-
-                bool updateVersionOverride = spec.RestoreMetadata?.CentralPackageVersionsEnabled == true && !existingDependency.VersionCentrallyManaged && existingDependency.VersionOverride is not null;
-
-                if (IsMatchingDependencyName(existingDependency, dependencyId))
-                {
-                    var libraryRange = new LibraryRange(existingDependency.LibraryRange) { VersionRange = range };
-                    spec.Dependencies[i] = new LibraryDependency(existingDependency) { LibraryRange = libraryRange, VersionOverride = updateVersionOverride ? range : null };
-
-                    foundExistingDependency = true;
-                }
-            }
-
             for (var i = 0; i < spec.TargetFrameworks.Count; i++)
             {
                 var targetFramework = spec.TargetFrameworks[i];
@@ -81,22 +66,13 @@ namespace NuGet.ProjectModel
 
             if (!foundExistingDependency)
             {
-                if (spec.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference) // PackageReference does not use the `Dependencies` list in the PackageSpec.
+                for (var i = 0; i < spec.TargetFrameworks.Count; i++)
                 {
-                    for (var i = 0; i < spec.TargetFrameworks.Count; i++)
-                    {
-                        var framework = spec.TargetFrameworks[i];
-                        var newDependency = CreateDependency(dependencyId, range, spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false);
-
-                        var newDependencies = framework.Dependencies.Add(newDependency);
-                        spec.TargetFrameworks[i] = new TargetFrameworkInformation(framework) { Dependencies = newDependencies };
-                    }
-                }
-                else
-                {
+                    var framework = spec.TargetFrameworks[i];
                     var newDependency = CreateDependency(dependencyId, range, spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false);
 
-                    spec.Dependencies.Add(newDependency);
+                    var newDependencies = framework.Dependencies.Add(newDependency);
+                    spec.TargetFrameworks[i] = new TargetFrameworkInformation(framework) { Dependencies = newDependencies };
                 }
             }
         }
@@ -121,11 +97,6 @@ namespace NuGet.ProjectModel
 
         public static bool HasPackage(PackageSpec spec, string packageId)
         {
-            if (spec.Dependencies.Any(library => IsMatchingDependencyName(library, packageId)))
-            {
-                return true;
-            }
-
             if (spec.TargetFrameworks.Any(tf => tf.Dependencies.Any(library => IsMatchingDependencyName(library, packageId))))
             {
                 return true;
@@ -213,15 +184,6 @@ namespace NuGet.ProjectModel
         {
             if (spec == null) throw new ArgumentNullException(nameof(spec));
             if (packageId == null) throw new ArgumentNullException(nameof(packageId));
-
-            for (var i = spec.Dependencies.Count - 1; i >= 0; i--)
-            {
-                var dependency = spec.Dependencies[i];
-                if (IsMatchingDependencyName(dependency, packageId))
-                {
-                    spec.Dependencies.RemoveAt(i);
-                }
-            }
 
             for (var i = 0; i < spec.TargetFrameworks.Count; i++)
             {

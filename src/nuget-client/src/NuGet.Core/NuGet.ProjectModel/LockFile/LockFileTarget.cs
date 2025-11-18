@@ -14,7 +14,21 @@ namespace NuGet.ProjectModel
 
         public string RuntimeIdentifier { get; set; }
 
-        public string Name => TargetFramework + (string.IsNullOrEmpty(RuntimeIdentifier) ? "" : "/" + RuntimeIdentifier);
+        public string TargetAlias { get; set; }
+
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                _name ??= TargetFramework + (string.IsNullOrEmpty(RuntimeIdentifier) ? "" : "/" + RuntimeIdentifier);
+                return _name;
+            }
+            init
+            {
+                _name = value;
+            }
+        }
 
         public IList<LockFileTargetLibrary> Libraries { get; set; } = new List<LockFileTargetLibrary>();
 
@@ -32,7 +46,8 @@ namespace NuGet.ProjectModel
 
             if (NuGetFramework.Comparer.Equals(TargetFramework, other.TargetFramework)
                 && string.Equals(RuntimeIdentifier, other.RuntimeIdentifier, StringComparison.Ordinal)
-                && string.Equals(Name, other.Name, StringComparison.Ordinal))
+                && string.Equals(Name, other.Name, StringComparison.Ordinal)
+                && string.Equals(TargetAlias, other.TargetAlias, StringComparison.Ordinal))
             {
                 return Libraries.OrderedEquals(other.Libraries, library => library.Name, StringComparer.OrdinalIgnoreCase);
             }
@@ -52,6 +67,7 @@ namespace NuGet.ProjectModel
             combiner.AddObject(TargetFramework);
             combiner.AddObject(RuntimeIdentifier);
             combiner.AddObject(Name);
+            combiner.AddObject(TargetAlias);
             combiner.AddUnorderedSequence(Libraries);
 
             return combiner.CombinedHash;

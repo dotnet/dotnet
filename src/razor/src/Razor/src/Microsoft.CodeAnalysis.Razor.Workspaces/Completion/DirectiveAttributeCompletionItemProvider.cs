@@ -88,7 +88,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         }
 
         // Use ordinal dictionary because attributes are case sensitive when matching
-        using var _ = StringDictionaryPool<(ImmutableArray<BoundAttributeDescriptionInfo>, ImmutableArray<RazorCommitCharacter>)>.Ordinal.GetPooledObject(out var attributeCompletions);
+        using var _ = SpecializedPools.GetPooledStringDictionary<(ImmutableArray<BoundAttributeDescriptionInfo>, ImmutableArray<RazorCommitCharacter>)>(out var attributeCompletions);
         var inSnippetContext = InSnippetContext(containingAttribute, razorCompletionOptions);
 
         foreach (var descriptor in descriptorsForTag)

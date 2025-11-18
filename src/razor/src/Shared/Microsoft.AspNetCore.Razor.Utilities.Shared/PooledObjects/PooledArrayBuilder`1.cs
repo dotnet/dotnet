@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -34,7 +33,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// </summary>
     private const int InlineCapacity = 4;
 
-    private ObjectPool<ImmutableArray<T>.Builder>? _builderPool;
+    private ArrayBuilderPool<T>? _builderPool;
 
     /// <summary>
     ///  A builder to be used as storage after the first time that the number
@@ -59,7 +58,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// </summary>
     private int _inlineCount;
 
-    public PooledArrayBuilder(int? capacity = null, ObjectPool<ImmutableArray<T>.Builder>? builderPool = null)
+    public PooledArrayBuilder(int? capacity = null, ArrayBuilderPool<T>? builderPool = null)
     {
         _capacity = capacity is > InlineCapacity ? capacity : null;
         _builderPool = builderPool;

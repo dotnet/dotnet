@@ -115,7 +115,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
         AssertEx.EqualOrDiff(output, inputText.ToString());
     }
 
-    private protected override TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
+    private protected override TestComposition ConfigureLocalComposition(TestComposition composition)
     {
         return composition.AddParts(typeof(TestSnippetInfoService));
     }

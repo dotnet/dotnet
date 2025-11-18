@@ -2424,20 +2424,6 @@ Description is required.");
                 "Invalid assembly reference 'baz'. Ensure that a file named 'baz' exists in the lib directory.");
         }
 
-        public static IEnumerable<object[]> InvalidDependencyData
-        {
-            get
-            {
-                var prereleaseVer = NuGetVersion.Parse("1.0.0-a");
-                var version = NuGetVersion.Parse("2.3.0.6232");
-
-                yield return new object[] { new VersionRange(prereleaseVer) };
-                yield return new object[] { new VersionRange(prereleaseVer, true, version) };
-                yield return new object[] { new VersionRange(version, true, prereleaseVer, true) };
-                yield return new object[] { new VersionRange(prereleaseVer, true, prereleaseVer) };
-            }
-        }
-
         [Fact]
         public void PackageBuilderRequireLicenseAcceptedWithoutLicenseUrlThrows()
         {

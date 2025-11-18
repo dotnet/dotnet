@@ -437,7 +437,7 @@ namespace NuGet.Commands.Test
             }
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, projects.ToArray());
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             return projects;
         }

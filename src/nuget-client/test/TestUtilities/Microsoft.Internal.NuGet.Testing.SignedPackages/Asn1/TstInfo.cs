@@ -53,7 +53,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
             BigInteger serialNumber,
             DateTimeOffset timestamp,
             Accuracy? accuracy = default,
-            bool ordering = false,
             BigInteger? nonce = default,
             GeneralName? tsa = null,
             X509ExtensionCollection? extensions = null)

@@ -35,11 +35,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Log(FromLogLevel(message.Level), message.Message);
         }
 
-        public void ReportError(string message)
-        {
-            Log(MessageLevel.Error, message);
-        }
-
         public void ReportError(ILogMessage message)
         {
             Log(MessageLevel.Error, message.Message);

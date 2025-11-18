@@ -346,7 +346,7 @@ namespace Dotnet.Integration.Test
                 List<PackageSource> httpPackageSources = new List<PackageSource>();
                 string expectedError = "";
 
-                for (int i = 0; i < httpSources.Count(); i++)
+                for (int i = 0; i < httpSources.Length; i++)
                 {
                     var source = httpSources[i];
                     httpPackageSources.Add(new PackageSource(source, $"source{i}"));
