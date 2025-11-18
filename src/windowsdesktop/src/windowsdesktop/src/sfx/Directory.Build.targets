@@ -20,7 +20,72 @@
 
   </ItemGroup>
 
+  <!-- Redistribute package content from other nuget packages. -->
   <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Wpf.GitHub" />
+    <PackageReference Include="Microsoft.Private.Winforms" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" />
+  </ItemGroup>
+
+  <!-- Profile is intentionally undefined so that the reference will only be included when no profile is specified i.e. both WPF and WindowsForms are in use https://github.com/dotnet/wpf/blob/bbfc24fd13804a191e20064acd599b0a359092df/packaging/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.props#L45-L46 -->
+  <ItemGroup>
+    <FrameworkListFileClass Include="WindowsFormsIntegration.dll" />
+  </ItemGroup>
+
+  <!-- References that are common to both WinForms and WPF -->
+  <ItemGroup>
+    <FrameworkListFileClass Include="Accessibility.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="Microsoft.Win32.Registry.AccessControl.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="Microsoft.Win32.SystemEvents.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.CodeDom.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Configuration.ConfigurationManager.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Diagnostics.EventLog.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Diagnostics.PerformanceCounter.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.DirectoryServices.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Formats.Nrbf.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.IO.Packaging.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Resources.Extensions.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Security.Cryptography.Pkcs.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Security.Cryptography.ProtectedData.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Security.Cryptography.Xml.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Security.Permissions.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Windows.Extensions.dll" Profile="WindowsForms;WPF" />
+  </ItemGroup>
+
+  <!--
+    Windows Forms specific references
+    see: https://github.com/dotnet/winforms/tree/main/pkg/Microsoft.Private.Winforms/sdk/dotnet-windowsdesktop
+    -->
+  <Import Project="$(PkgMicrosoft_Private_Winforms)\sdk\dotnet-windowsdesktop\System.Windows.Forms.FileClassification.props"
+          Condition="Exists('$(PkgMicrosoft_Private_Winforms)')" />
+
+  <!-- WPF specific references -->
+  <ItemGroup>
+    <FrameworkListFileClass Include="PresentationCore.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Aero.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Aero2.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.AeroLite.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Classic.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Luna.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Royale.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationUI.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="ReachFramework.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Printing.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Controls.Ribbon.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Input.Manipulations.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Presentation.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Windows.Primitives.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="System.Xaml.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationClient.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationClientSideProviders.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationProvider.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="UIAutomationTypes.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="WindowsBase.dll" Profile="WPF" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Templating" />
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Archives" />
   </ItemGroup>
 
@@ -59,6 +124,17 @@
       <WinformsWindowsDesktopPackageLibraries>@(WinformsWindowsDesktopPackageLibrary->'%(PackageId)|%(PackageVersion)', '
 ')</WinformsWindowsDesktopPackageLibraries>
     </PropertyGroup>
+
+    <!-- Every file we add to package overrides must be exposed for FrameworkListFileClass Profile="WindowsForms;WPF"
+         Emit an error if any are not. -->
+    <ItemGroup>
+      <_allProfileFiles Include="%(FrameworkListFileClass.FileName)" Condition="'%(FrameworkListFileClass.Profile)' == 'WindowsForms;WPF'" />
+      <_packageOverrideErrors Include="@(RuntimeWindowsDesktopPackageLibrary->'%(PackageId)');@(WinformsWindowsDesktopPackageLibrary->'%(PackageId)')"
+                              Exclude="@(_allProfileFiles)"/>
+    </ItemGroup>
+
+    <Error Text="Package override(s) '@(_packageOverrideErrors)' must be exposed for Profile='WindowsForms;WPF'.  Please update their FrameworkListFileClass item(s)." 
+           Condition="'@(_packageOverrideErrors)' != ''" />
 
     <ItemGroup>
       <CreatePackageOverridesTemplateProperty Include="RuntimeWindowsDesktopPackageLibraries=$(RuntimeWindowsDesktopPackageLibraries)" />
