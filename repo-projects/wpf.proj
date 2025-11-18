@@ -8,7 +8,7 @@
     <BuildArgs>$(BuildArgs) /p:BuildWithNetFrameworkHostedCompiler=true</BuildArgs>
 
     <!-- Temporary workaround to silence that SDK warning. TODO: Remove this file when a fixed VS 2026 image is used: https://github.com/dotnet/dotnet/issues/3415. -->
-    <BuildArgs Condition="'$(BuildOS) == 'windows'">$(BuildArgs) /p:AfterMicrosoftNETSdkTargets=$(RepositoryEngineeringDir)vs-workaround.targets</BuildArgs>
+    <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) /p:AfterMicrosoftNETSdkTargets=$(RepositoryEngineeringDir)vs-workaround.targets</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
