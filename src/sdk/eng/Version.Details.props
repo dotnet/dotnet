@@ -99,6 +99,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftWin32SystemEventsPackageVersion>10.0.0-rc.1.25515.110</MicrosoftWin32SystemEventsPackageVersion>
     <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.0-rc.1.25515.110</MicrosoftWindowsDesktopAppInternalPackageVersion>
     <MicrosoftWindowsDesktopAppRefPackageVersion>10.0.0-rc.1.25515.110</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
+    <MicrosoftDotnetWpfProjectTemplatesPackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotnetWpfProjectTemplatesPackageVersion>
     <NuGetBuildTasksPackageVersion>7.0.0-preview.1.1610</NuGetBuildTasksPackageVersion>
     <NuGetBuildTasksConsolePackageVersion>7.0.0-preview.1.1610</NuGetBuildTasksConsolePackageVersion>
     <NuGetBuildTasksPackPackageVersion>7.0.0-preview.1.1610</NuGetBuildTasksPackPackageVersion>
