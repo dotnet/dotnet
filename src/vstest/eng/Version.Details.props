@@ -5,6 +5,10 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
+    <!-- _git/vs-code-coverage dependencies -->
+    <MicrosoftInternalCodeCoveragePackageVersion>18.0.6</MicrosoftInternalCodeCoveragePackageVersion>
+    <!-- dotnet/dotnet dependencies -->
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25479.115</MicrosoftDiagnosticsNETCoreClientPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <SystemComponentModelCompositionPackageVersion>4.5.0</SystemComponentModelCompositionPackageVersion>
@@ -18,6 +22,10 @@ This file should be imported by eng/Versions.props
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
+    <!-- _git/vs-code-coverage dependencies -->
+    <MicrosoftInternalCodeCoverageVersion>$(MicrosoftInternalCodeCoveragePackageVersion)</MicrosoftInternalCodeCoverageVersion>
+    <!-- dotnet/dotnet dependencies -->
+    <MicrosoftDiagnosticsNETCoreClientVersion>$(MicrosoftDiagnosticsNETCoreClientPackageVersion)</MicrosoftDiagnosticsNETCoreClientVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
     <SystemComponentModelCompositionVersion>$(SystemComponentModelCompositionPackageVersion)</SystemComponentModelCompositionVersion>
