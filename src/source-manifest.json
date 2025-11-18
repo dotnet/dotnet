@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 289781,
+      "barId": 290962,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "726845e18bb622c07d53797d195f5972f26a36d1"
+      "commitSha": "4396154347e812cffb31b5b5b95fdc2028bb4c8c"
     },
     {
       "barId": 288357,
@@ -43,10 +43,10 @@
       "commitSha": "f3aba8c2bc3c86a45c653b57e78ab663d76fa9ba"
     },
     {
-      "barId": 277711,
+      "barId": 291014,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
+      "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
       "barId": 291226,
@@ -55,16 +55,22 @@
       "commitSha": "6532cd728c63feab9d4459c061458041ab95bc94"
     },
     {
-      "barId": 289818,
+      "barId": 291118,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "dcd0835a5aa7442712fa2c63096422f53249b10d"
+      "commitSha": "49632d61e289d10db866e28221a92963d0193023"
     },
     {
-      "barId": 279652,
+      "barId": null,
+      "path": "sourcelink",
+      "remoteUri": "https://github.com/dotnet/sourcelink",
+      "commitSha": "3b5251dd0be65990d9d0572bfb710f51e6c21c3a"
+    },
+    {
+      "barId": 291192,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "fcc5f2933e4ad7fbfc85a9c4e78d9bfa3e967eb7"
+      "commitSha": "6ac9799bf8d4eaabb3e82dc0aa5fe82ff68c978a"
     },
     {
       "barId": 285868,
