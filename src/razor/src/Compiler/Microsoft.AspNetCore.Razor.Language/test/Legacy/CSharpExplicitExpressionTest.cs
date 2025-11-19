@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -75,5 +76,51 @@ public class CSharpExplicitExpressionTest() : ParserTestBase(layer: TestProject.
     public void ShouldAcceptConsecutiveEscapedQuotesInVerbatimStrings()
     {
         ParseDocumentTest("@(@\"\"\"\"\"\")");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression()
+    {
+        ParseDocumentTest("""
+            <span>@(value switch{
+                10 => "ten",
+                _ => "other"
+            })</span>
+
+            @code{
+                public int value = 10;
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithLessThan()
+    {
+        ParseDocumentTest("""
+            <span>@(value switch{
+                < 10 => "less than",
+                10 => "ten",
+                _ => "other"
+            })</span>
+
+            @code{
+                public int value = 10;
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithHtml()
+    {
+        ParseDocumentTest("""
+            <span>@(value switch{
+                10 => <span>ten</span>,
+                _ => "other"
+            })</span>
+
+            @code{
+                public int value = 10;
+            }
+            """);
     }
 }
