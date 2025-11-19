@@ -42,7 +42,7 @@
     <MicrosoftCodeAnalysisCSharpVersion>4.6.0</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>4.6.0</MicrosoftNetCompilersToolsetVersion>
     <!-- runtime -->
-    <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>6.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>8.0.2</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>6.0.0</MicrosoftExtensionsDependencyInjectionVersion>
     <MicrosoftExtensionsDependencyModelVersion>8.0.0-preview.4.23259.5</MicrosoftExtensionsDependencyModelVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>6.0.0</MicrosoftExtensionsLoggingConsoleVersion>
@@ -80,12 +80,12 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.25427.2</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.25504.1</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
     <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
     <AzureCoreVersion>1.42.0</AzureCoreVersion>
-    <AzureIdentityVersion>1.12.0</AzureIdentityVersion>
+    <AzureIdentityVersion>1.17.0</AzureIdentityVersion>
     <AzureStorageBlobsVersion>12.19.1</AzureStorageBlobsVersion>
     <CommandLineParserVersion>2.5.0</CommandLineParserVersion>
     <CoverletCollectorVersion>1.0.1</CoverletCollectorVersion>

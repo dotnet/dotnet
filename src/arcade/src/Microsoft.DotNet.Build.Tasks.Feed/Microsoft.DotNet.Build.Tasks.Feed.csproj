@@ -24,7 +24,7 @@
          This functionality should eventually be moved into an arcade-services package,
          but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
     <PackageReference Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
-    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
