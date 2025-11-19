@@ -775,17 +775,43 @@ public partial class LinuxInstallerTests : IDisposable
 
         var patterns = new List<string>();
 
-        // Base package prefixes (common to both RPM and DEB)
-        var basePackages = new List<string>
-        {
-            "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
-            "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
-        };
+        List<string> basePackages;
 
-        // Add runtime-deps for DEB only (RPM only has distro-specific variants)
-        if (packageType == PackageType.Deb)
+        if (Config.DotNetBuildSharedComponents)
         {
-            basePackages.Add("dotnet-runtime-deps");
+            // Base package prefixes (common to both RPM and DEB)
+            basePackages =
+            [
+                "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
+                "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
+            ];
+
+            // Add runtime-deps for DEB only (RPM only has distro-specific variants)
+            if (packageType == PackageType.Deb)
+            {
+                basePackages.Add("dotnet-runtime-deps");
+            }
+
+            if (packageType == PackageType.Rpm)
+            {
+                // Runtime deps distro variants (RPM only)
+                string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+                foreach (string distro in distros)
+                {
+                    patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
+
+                    // `azl` deps packages do not have a -newkey- variant
+                    if (distro != "azl.3")
+                    {
+                        patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+                    }
+                }
+            }
+        }
+        else
+        {
+            // When not building shared components, only sdk is expected
+            basePackages = [ "dotnet-sdk" ];
         }
 
         // Standard variants
@@ -806,19 +832,6 @@ public partial class LinuxInstallerTests : IDisposable
             foreach (string package in basePackages)
             {
                 patterns.Add($"{package}-*-azl-{arch}{extension}");
-            }
-
-            // Runtime deps distro variants (RPM only)
-            string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
-            foreach (string distro in distros)
-            {
-                patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
-
-                // `azl` deps packages do not have a -newkey- variant
-                if (distro != "azl.3")
-                {
-                    patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
-                }
             }
         }
 
