@@ -61,10 +61,10 @@
       "commitSha": "49632d61e289d10db866e28221a92963d0193023"
     },
     {
-      "barId": 291276,
+      "barId": 291514,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "4463d12426049697dec14a52e90a57b4ac9cba58"
+      "commitSha": "5e6c2bc06becb8e963dcf8d549bfb46a3fa80444"
     },
     {
       "barId": 291391,
