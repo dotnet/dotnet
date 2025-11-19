@@ -305,7 +305,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                         bool hasErrors = expression.HasErrors;
                         if (commonType is null)
                         {
-                            diagnostics.Add(ErrorCode.ERR_SwitchExpressionNoBestType, exprSyntax.SwitchKeyword.GetLocation());
+                            if (!expr.HasAnyErrors)
+                            {
+                                diagnostics.Add(ErrorCode.ERR_SwitchExpressionNoBestType, exprSyntax.SwitchKeyword.GetLocation());
+                            }
+
                             commonType = CreateErrorType();
                             hasErrors = true;
                         }
@@ -321,18 +325,22 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Debug.Assert(op.NoCommonTypeError != 0);
                             type = CreateErrorType();
                             hasErrors = true;
-                            object trueArg = op.Consequence.Display;
-                            object falseArg = op.Alternative.Display;
-                            if (op.NoCommonTypeError == ErrorCode.ERR_InvalidQM && trueArg is Symbol trueSymbol && falseArg is Symbol falseSymbol)
-                            {
-                                // ERR_InvalidQM is an error that there is no conversion between the two types. They might be the same
-                                // type name from different assemblies, so we disambiguate the display.
-                                SymbolDistinguisher distinguisher = new SymbolDistinguisher(this.Compilation, trueSymbol, falseSymbol);
-                                trueArg = distinguisher.First;
-                                falseArg = distinguisher.Second;
-                            }
 
-                            diagnostics.Add(op.NoCommonTypeError, op.Syntax.Location, trueArg, falseArg);
+                            if (!op.HasAnyErrors)
+                            {
+                                object trueArg = op.Consequence.Display;
+                                object falseArg = op.Alternative.Display;
+                                if (op.NoCommonTypeError == ErrorCode.ERR_InvalidQM && trueArg is Symbol trueSymbol && falseArg is Symbol falseSymbol)
+                                {
+                                    // ERR_InvalidQM is an error that there is no conversion between the two types. They might be the same
+                                    // type name from different assemblies, so we disambiguate the display.
+                                    SymbolDistinguisher distinguisher = new SymbolDistinguisher(this.Compilation, trueSymbol, falseSymbol);
+                                    trueArg = distinguisher.First;
+                                    falseArg = distinguisher.Second;
+                                }
+
+                                diagnostics.Add(op.NoCommonTypeError, op.Syntax.Location, trueArg, falseArg);
+                            }
                         }
 
                         result = ConvertConditionalExpression(op, type, conversionIfTargetTyped: null, diagnostics, hasErrors);
@@ -1556,6 +1564,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <returns>true if managed type-related errors were found, otherwise false.</returns>
         internal static bool CheckManagedAddr(CSharpCompilation compilation, TypeSymbol type, Location location, BindingDiagnosticBag diagnostics, bool errorForManaged = false)
         {
+            // Skip the check for error types that represent truly missing types (not found),
+            // but still report for error types due to other issues (e.g., inaccessibility).
+            if (type is ErrorTypeSymbol { ResultKind: LookupResultKind.Empty })
+                return false;
+
             var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, compilation.Assembly);
             var managedKind = type.GetManagedKind(ref useSiteInfo);
             diagnostics.Add(location, useSiteInfo);
