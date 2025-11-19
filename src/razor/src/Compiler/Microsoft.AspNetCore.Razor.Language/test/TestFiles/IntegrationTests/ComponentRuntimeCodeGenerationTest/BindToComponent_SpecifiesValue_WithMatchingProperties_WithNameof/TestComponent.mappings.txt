@@ -1,16 +1,16 @@
 ﻿Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyComponent|
-Generated Location: (786:22,0 [11] )
+Generated Location: (703:19,49 [11] )
 |MyComponent|
 
 Source Location: (19:0,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (1031:31,0 [5] )
+Generated Location: (884:23,0 [5] )
 |Value|
 
 Source Location: (26:0,26 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |ParentValue|
-Generated Location: (1291:39,0 [11] )
+Generated Location: (1144:31,0 [11] )
 |ParentValue|
 
 Source Location: (50:1,7 [105] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -19,7 +19,7 @@ Source Location: (50:1,7 [105] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public string nameof(string s) => string.Empty;
 |
-Generated Location: (1718:51,0 [105] )
+Generated Location: (1571:43,0 [105] )
 |
     public int ParentValue { get; set; } = 42;
 

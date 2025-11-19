@@ -83,6 +83,27 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
     }
 
     [Fact]
+    public async Task CSharp_RawStringLiteral()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """"
+                @code {
+                    void TestMethod() {
+                        var x = """$$
+                    }
+                }
+                """",
+            output: """""""
+                @code {
+                    void TestMethod() {
+                        var x = """$0"""
+                    }
+                }
+                """"""",
+            triggerCharacter: "\"");
+    }
+
+    [Fact]
     public async Task CSharp_OnForwardSlash()
     {
         await VerifyOnAutoInsertAsync(

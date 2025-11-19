@@ -62,15 +62,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateMyComponent_0<T1, [global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(unchecked((global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes)0x00000028))] T2, [global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(unchecked((global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes)0x00000000))] T3>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, T1 __arg0, int __seq1, T2 __arg1, int __seq2, T3 __arg2)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-        <T1, T2, T3>>(seq);
+        __builder.OpenComponent<global::Test.MyComponent<T1, T2, T3>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<T1, T2, T3>.
 #nullable restore
 #line (1,14)-(1,16) "x:\dir\subdir\Test\TestComponent.cshtml"

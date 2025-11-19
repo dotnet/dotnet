@@ -10,16 +10,16 @@ Generated Location: (1019:30,0 [21] )
 
 Source Location: (32:2,1 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |ParentComponent|
-Generated Location: (2165:56,0 [15] )
+Generated Location: (2082:53,57 [15] )
 |ParentComponent|
 
 Source Location: (48:2,17 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |Parameter|
-Generated Location: (2435:65,0 [9] )
+Generated Location: (2292:57,0 [9] )
 |Parameter|
 
 Source Location: (89:3,5 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildComponent|
-Generated Location: (3179:84,0 [14] )
+Generated Location: (2953:73,57 [14] )
 |ChildComponent|
 

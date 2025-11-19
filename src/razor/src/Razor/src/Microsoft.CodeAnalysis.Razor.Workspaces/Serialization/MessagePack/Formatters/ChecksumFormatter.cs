@@ -8,6 +8,8 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
 internal sealed class ChecksumFormatter : NonCachingFormatter<Checksum>
 {
+    private const int PropertyCount = 2;
+
     public static readonly NonCachingFormatter<Checksum> Instance = new ChecksumFormatter();
 
     private ChecksumFormatter()
@@ -16,27 +18,19 @@ internal sealed class ChecksumFormatter : NonCachingFormatter<Checksum>
 
     public override Checksum Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(4);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
         var data1 = reader.ReadInt64();
         var data2 = reader.ReadInt64();
-        var data3 = reader.ReadInt64();
-        var data4 = reader.ReadInt64();
 
-        var hashData = new Checksum.HashData(data1, data2, data3, data4);
-
-        return new Checksum(hashData);
+        return new Checksum(data1, data2);
     }
 
     public override void Serialize(ref MessagePackWriter writer, Checksum value, MessagePackSerializerOptions options)
     {
-        writer.WriteArrayHeader(4);
+        writer.WriteArrayHeader(PropertyCount);
 
-        var hashData = value.Data;
-
-        writer.Write(hashData.Data1);
-        writer.Write(hashData.Data2);
-        writer.Write(hashData.Data3);
-        writer.Write(hashData.Data4);
+        writer.Write(value.Data1);
+        writer.Write(value.Data2);
     }
 }

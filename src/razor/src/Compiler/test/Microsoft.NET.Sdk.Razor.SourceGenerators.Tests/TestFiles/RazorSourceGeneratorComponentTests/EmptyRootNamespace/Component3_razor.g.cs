@@ -18,15 +18,7 @@
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "Component3 in global namespace\r\n");
-            __builder.OpenComponent<global::
-#nullable restore
-#line (2,2)-(2,19) "Component3.razor"
-Shared.Component1
-
-#line default
-#line hidden
-#nullable disable
-            >(1);
+            __builder.OpenComponent<global::Shared.Component1>(1);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

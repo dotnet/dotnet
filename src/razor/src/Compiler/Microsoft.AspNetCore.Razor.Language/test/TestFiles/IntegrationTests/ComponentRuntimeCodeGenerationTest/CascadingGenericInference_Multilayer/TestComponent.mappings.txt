@@ -5,21 +5,21 @@ Generated Location: (854:23,0 [23] )
 
 Source Location: (46:0,46 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |Passthrough|
-Generated Location: (1279:33,0 [11] )
+Generated Location: (1195:30,58 [11] )
 |Passthrough|
 
 Source Location: (1:0,1 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |Ancestor|
-Generated Location: (2445:62,0 [8] )
+Generated Location: (2206:51,45 [8] )
 |Ancestor|
 
 Source Location: (10:0,10 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (2697:71,0 [5] )
+Generated Location: (2398:55,0 [5] )
 |Items|
 
 Source Location: (59:0,59 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Child|
-Generated Location: (3505:90,0 [5] )
+Generated Location: (3122:71,45 [5] )
 |Child|
 

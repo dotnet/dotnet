@@ -13,7 +13,7 @@ public sealed record EventHandlerMetadata() : MetadataObject(MetadataKind.EventH
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(EventArgsType);
+        builder.Append(EventArgsType);
     }
 
     public ref struct Builder

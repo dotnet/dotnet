@@ -10,21 +10,21 @@ Generated Location: (1345:33,0 [11] )
 
 Source Location: (1:0,1 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Grid|
-Generated Location: (2132:57,0 [4] )
+Generated Location: (2050:54,45 [4] )
 |Grid|
 
 Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (2375:66,0 [5] )
+Generated Location: (2233:58,0 [5] )
 |Items|
 
 Source Location: (42:0,42 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Column|
-Generated Location: (3245:85,0 [6] )
+Generated Location: (3019:74,45 [6] )
 |Column|
 
 Source Location: (49:0,49 [10] x:\dir\subdir\Test\TestComponent.cshtml)
 |SomeLambda|
-Generated Location: (3511:94,0 [10] )
+Generated Location: (3225:78,0 [10] )
 |SomeLambda|
 

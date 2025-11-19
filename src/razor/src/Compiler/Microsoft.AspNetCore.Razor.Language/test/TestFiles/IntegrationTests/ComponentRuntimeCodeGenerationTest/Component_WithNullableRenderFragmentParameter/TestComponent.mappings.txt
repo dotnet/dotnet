@@ -1,23 +1,23 @@
 ﻿Source Location: (1:0,1 [35] x:\dir\subdir\Test\TestComponent.cshtml)
 |ComponentWithNullableRenderFragment|
-Generated Location: (786:22,0 [35] )
+Generated Location: (703:19,49 [35] )
 |ComponentWithNullableRenderFragment|
 
 Source Location: (37:0,37 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Header|
-Generated Location: (1079:31,0 [6] )
+Generated Location: (932:23,0 [6] )
 |Header|
 
 Source Location: (46:0,46 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Header|
-Generated Location: (1293:39,0 [6] )
+Generated Location: (1146:31,0 [6] )
 |Header|
 
 Source Location: (65:1,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 	[Parameter] public RenderFragment Header { get; set; }
 |
-Generated Location: (1538:50,0 [59] )
+Generated Location: (1391:42,0 [59] )
 |
 	[Parameter] public RenderFragment Header { get; set; }
 |

@@ -21,13 +21,13 @@ public sealed record class BindMetadata() : MetadataObject(MetadataKind.Bind)
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(IsFallback);
-        builder.AppendData(ValueAttribute);
-        builder.AppendData(ChangeAttribute);
-        builder.AppendData(ExpressionAttribute);
-        builder.AppendData(TypeAttribute);
-        builder.AppendData(IsInvariantCulture);
-        builder.AppendData(Format);
+        builder.Append(IsFallback);
+        builder.Append(ValueAttribute);
+        builder.Append(ChangeAttribute);
+        builder.Append(ExpressionAttribute);
+        builder.Append(TypeAttribute);
+        builder.Append(IsInvariantCulture);
+        builder.Append(Format);
     }
 
     public ref struct Builder

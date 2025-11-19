@@ -5,16 +5,16 @@ Generated Location: (850:23,0 [23] )
 
 Source Location: (42:0,42 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Column|
-Generated Location: (1271:33,0 [6] )
+Generated Location: (1187:30,58 [6] )
 |Column|
 
 Source Location: (1:0,1 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Grid|
-Generated Location: (2106:58,0 [4] )
+Generated Location: (1868:47,45 [4] )
 |Grid|
 
 Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (2349:67,0 [5] )
+Generated Location: (2051:51,0 [5] )
 |Items|
 

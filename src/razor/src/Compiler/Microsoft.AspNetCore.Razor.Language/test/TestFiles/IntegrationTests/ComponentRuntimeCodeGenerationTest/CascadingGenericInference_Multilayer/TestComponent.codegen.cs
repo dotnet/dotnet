@@ -28,15 +28,7 @@ Array.Empty<DateTime>()
 #nullable disable
                 , out var __typeInferenceArg_0___arg0);
                 global::__Blazor.Test.TestComponent.TypeInference.CreateAncestor_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
-                    __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (1,47)-(1,58) "x:\dir\subdir\Test\TestComponent.cshtml"
-Passthrough
-
-#line default
-#line hidden
-#nullable disable
-                    >(3);
+                    __builder2.OpenComponent<global::Test.Passthrough>(3);
                     __builder2.AddAttribute(4, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
                         global::__Blazor.Test.TestComponent.TypeInference.CreateChild_1(__builder3, 5, __typeInferenceArg_0___arg0);
                     }
@@ -57,15 +49,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateAncestor_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,10) "x:\dir\subdir\Test\TestComponent.cshtml"
-Ancestor
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.Ancestor<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Ancestor<TItem>.
 #nullable restore
 #line (1,11)-(1,16) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -85,15 +69,7 @@ Items
         }
         public static void CreateChild_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,60)-(1,65) "x:\dir\subdir\Test\TestComponent.cshtml"
-Child
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.Child<TItem>>(seq);
         __builder.CloseComponent();
         }
     }

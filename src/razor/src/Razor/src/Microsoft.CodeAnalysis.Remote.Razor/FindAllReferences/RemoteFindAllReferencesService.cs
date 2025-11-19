@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -30,6 +31,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
 
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly IWorkspaceProvider _workspaceProvider = args.WorkspaceProvider;
+    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
@@ -86,6 +88,8 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
             return NoFurtherHandling;
         }
 
+        using var mappedResults = new PooledArrayBuilder<SumType<VSInternalReferenceItem, LspLocation>>(results.Length);
+
         // Map the C# locations back to the Razor file.
         foreach (var result in results)
         {
@@ -99,6 +103,12 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
             }
 
             var (mappedUri, mappedRange) = await DocumentMappingService.MapToHostDocumentUriAndRangeAsync(context.Snapshot, location.DocumentUri.GetRequiredParsedUri(), location.Range.ToLinePositionSpan(), cancellationToken).ConfigureAwait(false);
+
+            if (_filePathService.IsVirtualCSharpFile(mappedUri))
+            {
+                // Couldn't map, so probably a hidden part of the code-gen, let's skip it.
+                continue;
+            }
 
             if (referenceItem is not null)
             {
@@ -118,8 +128,10 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
 
             location.DocumentUri = new(mappedUri);
             location.Range = mappedRange.ToRange();
+
+            mappedResults.Add(result);
         }
 
-        return Results(results);
+        return Results(mappedResults.ToArrayAndClear());
     }
 }

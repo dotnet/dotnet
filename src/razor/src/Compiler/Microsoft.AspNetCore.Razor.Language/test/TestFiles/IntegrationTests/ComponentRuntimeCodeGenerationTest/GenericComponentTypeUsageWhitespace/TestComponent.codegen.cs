@@ -25,15 +25,7 @@ TItem
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (7,2)-(7,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            <
+            __builder.OpenComponent<global::Test.TestComponent<
 #nullable restore
 #line (7,23)-(7,33) "x:\dir\subdir\Test\TestComponent.cshtml"
   string  
