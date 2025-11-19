@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
@@ -27,10 +28,19 @@ public class CreateSourceArtifacts : BuildTask
     public required string ArtifactName { get; init; }
 
     /// <summary>
-    /// Version of the artifact to generate
+    /// The stable sdk version
+    /// Should match the sdk tag associated with a release
+    /// Used for artifact prefixing
     /// </summary>
     [Required]
-    public required string ArtifactVersion { get; init; }
+    public required string SdkStableVersion { get; init; }
+
+    /// <summary>
+    /// The build/non-stable sdk version
+    /// Used for artifact versioning
+    /// </summary>
+    [Required]
+    public required string SdkNonStableVersion { get; init; }
 
     /// <summary>
     /// Path to the root of the repo
@@ -44,6 +54,8 @@ public class CreateSourceArtifacts : BuildTask
     [Required]
     public required string OutputDirectory { get; init; }
 
+    private const string GitHubRepoName = "dotnet";
+    private const string GitHubTimezone = "America/Los_Angeles"; // GitHub uses this timezone for commit timestamps in zip metadata
     private const int GitArchiveTimeout = 5 * 60 * 1000; // 5 minutes
 
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
@@ -74,8 +86,7 @@ public class CreateSourceArtifacts : BuildTask
 
     private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService, ConcurrentQueue<string> errors)
     {
-        string artifactFileName = $"{ArtifactName}-{ArtifactVersion}{artifactType.GetArtifactExtension()}";
-        string artifactFilePath = Path.Combine(OutputDirectory, artifactFileName);
+        string artifactFilePath = Path.Combine(OutputDirectory, $"{ArtifactName}-{SdkNonStableVersion}.{artifactType.GetArtifactExtension()}");
 
         Log.LogMessage(MessageImportance.High, $"Creating {artifactType} source artifact at: {artifactFilePath}");
 
@@ -83,8 +94,10 @@ public class CreateSourceArtifacts : BuildTask
         {
             ProcessResult result = await processService.RunProcessAsync(
                 "git",
-                $"archive -o {artifactFilePath} {SourceCommit}",
-                workingDirectory: RepoRoot);
+                artifactType.GetGitArchiveArgs(artifactFilePath, GitHubRepoName, SdkStableVersion, SourceCommit),
+                environmentVariables: new List<ProcessEnvironmentVariable> { new ProcessEnvironmentVariable("TZ", GitHubTimezone) },
+                workingDirectory: RepoRoot
+            );
 
             if (result.ExitCode != 0)
             {

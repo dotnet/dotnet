@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <!-- Repo Version Information -->
   <PropertyGroup>
@@ -25,12 +25,12 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-rc.1.25451.107</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-rc.1.25451.107</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>17.12.36</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>

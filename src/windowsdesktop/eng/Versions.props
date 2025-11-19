@@ -3,8 +3,8 @@
   <PropertyGroup>
     <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
-    <PatchVersion>0</PatchVersion>
-    <PreReleaseVersionLabel>rtm</PreReleaseVersionLabel>
+    <PatchVersion>1</PatchVersion>
+    <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Enable to remove prerelease label. -->
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
@@ -32,5 +32,9 @@
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
+  <!-- WiX -->
+  <MicrosoftWixToolsetSdkVersion>5.0.2-dotnet.2811440</MicrosoftWixToolsetSdkVersion>
+    
+    <!-- Transport package version for VS insertion packages is defined in Version.Details.props -->
   </PropertyGroup>
 </Project>

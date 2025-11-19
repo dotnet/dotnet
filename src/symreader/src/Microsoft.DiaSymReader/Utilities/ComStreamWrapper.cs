@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the License.txt file in the project root for more information.
 
+using Microsoft.DiaSymReader.Utilities;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -208,8 +209,17 @@ namespace Microsoft.DiaSymReader
                 throw new NotSupportedException("IStream implementation cannot be marshalled");
             }
 
-            public static System.Runtime.InteropServices.ComTypes.IStream ConvertToManaged(IntPtr s)
-                => throw new NotSupportedException("IStream cannot be marshalled to managed");
+            public static System.Runtime.InteropServices.ComTypes.IStream ConvertToManaged(IntPtr native)
+            {
+                IUnsafeComStream marshalledStream = ComInterfaceMarshaller<IUnsafeComStream>.ConvertToManaged((void*)native);
+                if (marshalledStream is null)
+                {
+                    throw new NotSupportedException("IStream cannot be marshalled to managed");
+                }
+
+                // Put the ComWrappers-compatible IUnsafeComStream into a wrapper that also implements the ComWrappers-incompatible IStream
+                return new UnsafeComStreamWrapper(marshalledStream);
+            }
 
             public static void Free(IntPtr unmanaged)
             {
