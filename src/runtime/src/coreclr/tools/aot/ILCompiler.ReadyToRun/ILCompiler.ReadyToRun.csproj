@@ -45,6 +45,9 @@
     <Compile Include="..\..\Common\System\FormattingHelpers.cs" Link="Common\FormattingHelpers.cs" />
     <Compile Include="..\..\Common\TypeSystem\IL\ILProvider.cs" Link="IL\ILProvider.cs" />
     <Compile Include="..\..\Common\TypeSystem\IL\ILReader.cs" Link="IL\ILReader.cs" />
+    <Compile Include="..\..\Common\TypeSystem\IL\Stubs\AsyncResumptionStub.cs" Link="IL\Stubs\AsyncResumptionStub.cs" />
+    <Compile Include="..\..\Common\TypeSystem\IL\Stubs\AsyncResumptionStub.Sorting.cs" Link="IL\Stubs\AsyncResumptionStub.Sorting.cs" />
+    <Compile Include="..\..\Common\TypeSystem\IL\Stubs\AsyncResumptionStub.Mangling.cs" Link="IL\Stubs\AsyncResumptionStub.Mangling.cs" />
     <Compile Include="..\..\Common\TypeSystem\IL\Stubs\ComparerIntrinsics.cs" Link="IL\Stubs\ComparerIntrinsics.cs" />
     <Compile Include="..\..\Common\TypeSystem\IL\Stubs\InterlockedIntrinsics.cs" Link="IL\Stubs\InterlockedIntrinsics.cs" />
     <Compile Include="..\..\Common\TypeSystem\IL\Stubs\RuntimeHelpersIntrinsics.cs" Link="IL\Stubs\RuntimeHelpersIntrinsics.cs" />
@@ -179,7 +182,7 @@
     <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\MethodIsGenericMapNode.cs" />
     <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\ILBodyFixupSignature.cs" />
     <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\ManifestAssemblyMvidHeaderNode.cs" />
-    <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\DelayLoadMethodCallThunkNodeRange.cs" />
+    <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\SymbolNodeRange.cs" />
     <Compile Include="Compiler\CallChainProfile.cs" />
     <Compile Include="Compiler\DependencyAnalysis\ReadyToRun\TypeValidationChecker.cs" />
     <Compile Include="Compiler\Logger.cs" />
