@@ -21,9 +21,9 @@ public static class CommandLineUtilities
 
         try
         {
-            while (true)
+            while (index < args.Length)
             {
-                // skip whitespace
+                // Skip whitespace.
                 while (char.IsWhiteSpace(args[index]))
                 {
                     index++;
@@ -33,42 +33,65 @@ public static class CommandLineUtilities
                 if (args[index] == '#')
                 {
                     index++;
-                    while (args[index] != '\n')
+                    while (index < args.Length && args[index] != '\n')
                     {
                         index++;
                     }
+
+                    // We are done processing comment move to next statement.
                     continue;
                 }
 
-                // do one argument
+                // Read argument until next whitespace (not in quotes).
                 do
                 {
                     if (args[index] == '\\')
                     {
-                        int cSlashes = 1;
+                        // Move to next char.
                         index++;
-                        while (index == args.Length && args[index] == '\\')
-                        {
-                            cSlashes++;
-                        }
 
-                        if (index == args.Length || args[index] != '"')
+                        // If this was the last char then output the slash.
+                        if (index == args.Length)
                         {
-                            currentArg.Append('\\', cSlashes);
+                            currentArg.Append('\\');
+
+                            index++;
+                            continue;
                         }
                         else
                         {
-                            currentArg.Append('\\', (cSlashes >> 1));
-                            if (0 != (cSlashes & 1))
+                            // If the char after '\' is also a '\', output the second '\' and skip over to the next char.
+                            if (args[index] == '\\')
+                            {
+                                currentArg.Append('\\');
+
+                                // We processed the escaped \, move to next char.
+                                index++;
+                                continue;
+                            }
+
+                            // If the char after '\' is a '"', output '"' and skip over to the next char.
+                            if (index <= args.Length && args[index] == '"')
                             {
                                 currentArg.Append('"');
+
+                                // We processed the escaped " move to next char.
+                                index++;
+                                continue;
                             }
-                            else
+
+                            // If the char after '\' is anything else, output the slash. And continue processing the next char.
+                            if (index <= args.Length)
                             {
-                                inQuotes = !inQuotes;
+                                currentArg.Append('\\');
+
+                                // Don't skip to the next char. We outputted the \ because it was not escaping \ or ". Let the next character to be processed by the loop.
+                                // index++;
+                                continue;
                             }
                         }
                     }
+                    // Unescaped quote enters and leaves quoted mode.
                     else if (args[index] == '"')
                     {
                         inQuotes = !inQuotes;
@@ -76,6 +99,7 @@ public static class CommandLineUtilities
                     }
                     else
                     {
+                        // Collect all other characters.
                         currentArg.Append(args[index]);
                         index++;
                     }
