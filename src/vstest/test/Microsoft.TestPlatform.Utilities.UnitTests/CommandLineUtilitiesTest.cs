@@ -10,23 +10,28 @@ namespace Microsoft.TestPlatform.Utilities.Tests;
 [TestClass]
 public class CommandLineUtilitiesTest
 {
-    private static void VerifyCommandLineSplitter(string commandLine, string[] expected)
-    {
-        CommandLineUtilities.SplitCommandLineIntoArguments(commandLine, out var actual);
-
-        Assert.AreEqual(expected.Length, actual.Length);
-        for (int i = 0; i < actual.Length; ++i)
-        {
-            Assert.AreEqual(expected[i], actual[i]);
-        }
-    }
-
     [TestMethod]
-    public void TestCommandLineSplitter()
+    [DataRow("", new string[] { })]
+    [DataRow(" /a:b ", new string[] { "/a:b" })]
+    [DataRow("""
+        /param1
+        /param2:value2
+        /param3:"value with spaces"
+        """, new string[] { "/param1", "/param2:value2", "/param3:value with spaces" })]
+    [DataRow("""/param3 #comment""", new string[] { "/param3" })]
+    [DataRow("""
+        /param3 #comment ends with newline \" \\
+        /param4
+        """, new string[] { "/param3", "/param4" })]
+    [DataRow("""/testadapterpath:"c:\Path" """, new string[] { @"/testadapterpath:c:\Path" })]
+    [DataRow("""/testadapterpath:"c:\Path" /logger:"trx" """, new string[] { @"/testadapterpath:c:\Path", "/logger:trx" })]
+    [DataRow("""/testadapterpath:"c:\Path" /logger:"trx" /diag:"log.txt" """, new string[] { @"/testadapterpath:c:\Path", "/logger:trx", "/diag:log.txt" })]
+    [DataRow("""/Tests:"Test(\"iCT 256\")" """, new string[] { """/Tests:Test("iCT 256")""" })]
+    public void VerifyCommandLineSplitter(string input, string[] expected)
     {
-        VerifyCommandLineSplitter("", []);
-        VerifyCommandLineSplitter("/testadapterpath:\"c:\\Path\"", [@"/testadapterpath:c:\Path"]);
-        VerifyCommandLineSplitter("/testadapterpath:\"c:\\Path\" /logger:\"trx\"", [@"/testadapterpath:c:\Path", "/logger:trx"]);
-        VerifyCommandLineSplitter("/testadapterpath:\"c:\\Path\" /logger:\"trx\" /diag:\"log.txt\"", [@"/testadapterpath:c:\Path", "/logger:trx", "/diag:log.txt"]);
+        CommandLineUtilities.SplitCommandLineIntoArguments(input, out var actual);
+
+        CollectionAssert.AreEqual(expected, actual);
     }
+
 }
