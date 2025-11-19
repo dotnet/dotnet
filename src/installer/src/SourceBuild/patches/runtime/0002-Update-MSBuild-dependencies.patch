@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Nikola Milosavljevic <nikolam@microsoft.com>
-Date: Fri, 18 Apr 2025 18:30:01 +0000
+Date: Tue, 28 Oct 2025 11:06:17 -0700
 Subject: [PATCH] Update MSBuild dependencies
 
 Backport: https://github.com/dotnet/runtime/issues/101395
@@ -10,7 +10,7 @@ Backport: https://github.com/dotnet/runtime/issues/101395
  2 files changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/eng/Version.Details.xml b/eng/Version.Details.xml
-index c0d77ea95ce..f4353aa9cab 100644
+index ae64afc8979..27d773bb036 100644
 --- a/eng/Version.Details.xml
 +++ b/eng/Version.Details.xml
 @@ -414,6 +414,18 @@
@@ -33,7 +33,7 @@ index c0d77ea95ce..f4353aa9cab 100644
        <Uri>https://github.com/dotnet/msbuild</Uri>
        <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
 diff --git a/eng/Versions.props b/eng/Versions.props
-index 08c67394ba7..e125a1882cc 100644
+index 890522fc1a2..4978285b0ee 100644
 --- a/eng/Versions.props
 +++ b/eng/Versions.props
 @@ -183,9 +183,9 @@
