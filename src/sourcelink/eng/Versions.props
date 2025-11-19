@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <!-- This repo version -->
-    <VersionPrefix>10.0.2</VersionPrefix>
+    <VersionPrefix>10.0.102</VersionPrefix>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
