@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
@@ -24,7 +23,7 @@ internal static partial class RazorEditHelper
 {
     private sealed class TextChangeBuilder : IDisposable
     {
-        private ObjectPool<ImmutableArray<RazorTextChange>.Builder> Pool => ArrayBuilderPool<RazorTextChange>.Default;
+        private static ArrayBuilderPool<RazorTextChange> Pool => ArrayBuilderPool<RazorTextChange>.Default;
         private readonly ImmutableArray<RazorTextChange>.Builder _builder;
         private readonly IDocumentMappingService _documentMappingService;
 

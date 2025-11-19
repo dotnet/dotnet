@@ -98,8 +98,8 @@ namespace Microsoft.DotNet.SignTool
 
         private Telemetry _telemetry;
 
-        private string _dotNetPathTooling;
         private string _tarToolPath;
+
         private string _pkgToolPath;
         private string _snPath;
 
@@ -115,7 +115,6 @@ namespace Microsoft.DotNet.SignTool
             Dictionary<string, List<SignInfo>> extensionSignInfo,
             Dictionary<string, List<AdditionalCertificateInformation>> additionalCertificateInformation,
             HashSet<string> itemsToSkip3rdPartyCheck,
-            string dotNetPathTooling,
             string tarToolPath,
             string pkgToolPath,
             string snPath,
@@ -146,7 +145,6 @@ namespace Microsoft.DotNet.SignTool
             _wixPacks = _itemsToSign.Where(w => WixPackInfo.IsWixPack(w.FullPath))?.Select(s => new WixPackInfo(s.FullPath)).ToList();
             _hashToCollisionIdMap = new Dictionary<SignedFileContentKey, string>();
             _telemetry = telemetry;
-            _dotNetPathTooling = dotNetPathTooling;
             _tarToolPath = tarToolPath;
             _pkgToolPath = pkgToolPath;
             _snPath = snPath;
@@ -440,7 +438,7 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsPkg(file.FullPath) || FileSignInfo.IsAppBundle(file.FullPath))
             {
-                isAlreadyAuthenticodeSigned = IsSigned(file, VerifySignatures.IsSignedPkgOrAppBundle(_log, file.FullPath, _dotNetPathTooling, _pkgToolPath));
+                isAlreadyAuthenticodeSigned = IsSigned(file, VerifySignatures.IsSignedPkgOrAppBundle(_log, file.FullPath, _pkgToolPath));
             }
             else if (FileSignInfo.IsNupkg(file.FullPath))
             {
@@ -807,7 +805,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 var nestedParts = new Dictionary<string, ZipPart>();
 
-                foreach (var entry in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _dotNetPathTooling, _tarToolPath, _pkgToolPath))
+                foreach (var entry in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
                 {
                     using (entry)
                     {
@@ -830,19 +828,25 @@ namespace Microsoft.DotNet.SignTool
 
                         // if we already encountered file that has the same content we can reuse its signed version when repackaging the container.
                         var fileName = Path.GetFileName(entry.RelativePath);
+                        string entryPerms = entry.UnixFileMode.HasValue ? Convert.ToString((uint)entry.UnixFileMode.Value, 8) : "default perms";
                         if (!_filesByContentKey.TryGetValue(fileUniqueKey, out var fileSignInfo))
                         {
                             string extractPathRoot = _useHashInExtractionPath ? fileUniqueKey.StringHash : _filesByContentKey.Count().ToString();
                             string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, entry.RelativePath);
-                            _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'.");
+                            _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'. (Caching with perms: {entryPerms})");
 
                             Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
 
                             entry.WriteToFile(tempPath);
+                            ZipData.SetUnixFileMode(_log, entry.UnixFileMode, tempPath);
 
                             _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
                             PathWithHash nestedFile = new PathWithHash(tempPath, entry.ContentHash);
                             fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
+                        }
+                        else
+                        {
+                            _log.LogMessage($"Reusing previously extracted file '{fileName}' for '{archivePath}'. (Archival perms: {entryPerms})");
                         }
 
                         if (fileSignInfo.ShouldTrack)

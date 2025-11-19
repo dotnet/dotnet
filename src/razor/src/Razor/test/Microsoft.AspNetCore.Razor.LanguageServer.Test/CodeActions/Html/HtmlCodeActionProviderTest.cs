@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -123,16 +125,10 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         Assert.NotNull(action.Edit);
         Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
         Assert.Equal(documentPath, documentEdits[0].TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath);
-        // Edit should be converted to 2 edits, to remove the tags
-        Assert.Collection(documentEdits[0].Edits,
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            },
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            });
+
+        var text = SourceText.From(contents);
+        var changed = text.WithChanges(documentEdits[0].Edits.Select(e => text.GetTextChange((TextEdit)e)));
+        Assert.Equal("Goo @(DateTime.Now) Bar", changed.ToString());
     }
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
