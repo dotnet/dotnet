@@ -13,6 +13,7 @@ using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Versioning;
 using Microsoft.DotNet.Cli.Utils.Extensions;
+using Microsoft.DotNet.Cli.CommandLine;
 using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.DotNet.Cli.ShellShim;
 using Microsoft.DotNet.Cli.Commands.Tool.Update;
@@ -96,7 +97,22 @@ internal class ToolInstallGlobalOrToolPathCommand : CommandBase
             NoCache: parseResult.GetValue(ToolCommandRestorePassThroughOptions.NoCacheOption) || parseResult.GetValue(ToolCommandRestorePassThroughOptions.NoHttpCacheOption),
             IgnoreFailedSources: parseResult.GetValue(ToolCommandRestorePassThroughOptions.IgnoreFailedSourcesOption),
             Interactive: parseResult.GetValue(ToolCommandRestorePassThroughOptions.InteractiveRestoreOption));
-        nugetPackageDownloader ??= new NuGetPackageDownloader.NuGetPackageDownloader(tempDir, verboseLogger: new NullLogger(), restoreActionConfig: restoreActionConfig, verbosityOptions: _verbosity, verifySignatures: verifySignatures ?? true);
+        nugetPackageDownloader ??= new NuGetPackageDownloader.NuGetPackageDownloader(tempDir, verboseLogger: new NullLogger(), restoreActionConfig: restoreActionConfig, verbosityOptions: _verbosity, verifySignatures: verifySignatures ?? true, shouldUsePackageSourceMapping: true, currentWorkingDirectory: _currentWorkingDirectory);
+
+        // Perform HTTP source validation early to ensure compatibility with .NET 9 requirements
+        if (_packageId != null)
+        {
+            var packageSourceLocationForValidation = new PackageSourceLocation(
+                nugetConfig: GetConfigFile(),
+                additionalSourceFeeds: _addSource,
+                basePath: _currentWorkingDirectory);
+
+            if (nugetPackageDownloader is NuGetPackageDownloader.NuGetPackageDownloader concreteDownloader)
+            {
+                concreteDownloader.LoadNuGetSources((PackageId)_packageId, packageSourceLocationForValidation);
+            }
+        }
+
         _shellShimTemplateFinder = new ShellShimTemplateFinder(nugetPackageDownloader, tempDir, packageSourceLocation);
         _store = store;
 

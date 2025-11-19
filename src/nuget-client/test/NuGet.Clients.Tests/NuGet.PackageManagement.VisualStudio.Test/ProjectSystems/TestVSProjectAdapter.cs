@@ -12,7 +12,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Moq;
 using NuGet.Frameworks;
 using NuGet.ProjectManagement;
-using NuGet.RuntimeModel;
 using NuGet.VisualStudio;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
@@ -136,16 +135,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         public Task<IEnumerable<string>> GetReferencedProjectsAsync()
         {
             return Task.FromResult(Enumerable.Empty<string>());
-        }
-
-        public Task<IEnumerable<RuntimeDescription>> GetRuntimeIdentifiersAsync()
-        {
-            return Task.FromResult(Enumerable.Empty<RuntimeDescription>());
-        }
-
-        public Task<IEnumerable<CompatibilityProfile>> GetRuntimeSupportsAsync()
-        {
-            return Task.FromResult(Enumerable.Empty<CompatibilityProfile>());
         }
 
         public NuGetFramework GetTargetFramework()

@@ -34,8 +34,6 @@ namespace NuGet.SolutionRestoreManager.Test
     [Collection(DispatcherThreadCollection.CollectionName)]
     public class VsSolutionRestoreServiceTests
     {
-        private static readonly IReadOnlyDictionary<string, string> EmptyProperties = new Dictionary<string, string>();
-
         public VsSolutionRestoreServiceTests()
         {
 #pragma warning disable VSSDK005 // Avoid instantiating JoinableTaskContext

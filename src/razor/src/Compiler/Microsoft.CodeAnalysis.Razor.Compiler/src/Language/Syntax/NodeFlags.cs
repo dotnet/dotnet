@@ -10,8 +10,7 @@ internal enum NodeFlags : byte
 {
     None = 0,
     ContainsDiagnostics = 1 << 0,
-    ContainsAnnotations = 1 << 1,
     IsMissing = 1 << 2,
 
-    InheritMask = ContainsDiagnostics | ContainsAnnotations | IsMissing
+    InheritMask = ContainsDiagnostics | IsMissing
 }

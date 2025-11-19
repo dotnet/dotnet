@@ -81,6 +81,10 @@ public partial class LinuxInstallerTests : IDisposable
     [GeneratedRegex(@"\s*\([^)]*\)", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
+    // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    private static partial Regex RemoveVersionFromPackageNameRegex { get; }
+
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
@@ -92,6 +96,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
+    private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -170,6 +175,18 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
     }
 
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    public void ValidateRpmPackageList()
+    {
+        ValidatePackageList(PackageType.Rpm);
+    }
+
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    public void ValidateDebPackageList()
+    {
+        ValidatePackageList(PackageType.Deb);
+    }
+
     private async Task InitializeContextAsync(PackageType packageType, bool initializeSharedContext = true)
     {
         string packageArchitecture =
@@ -227,6 +244,15 @@ public partial class LinuxInstallerTests : IDisposable
             string newNuGetConfig = Path.Combine(_contextDir, "NuGet.config");
             File.Copy(Config.ScenarioTestsNuGetConfigPath, newNuGetConfig);
             InsertLocalPackagesPathToNuGetConfig(newNuGetConfig, "/packages");
+
+            // Copy downgrade-fx-versions.sh script
+            // This script is used to update the latest known 8.0 and 9.0 framework versions in SDK's
+            // Microsoft.NETCoreSdk.BundledVersions.props file to the versions 2 releases prior.
+            // This is needed as the SDK automatically picks up servicing versions not yet released, which
+            // is either one or two versions higher than publicly available versions, depending on
+            // when we run the tests.
+            string downgradeScript = Path.Combine(_contextDir, DowngradeFxVersionsScript);
+            File.Copy(Path.Combine(GetAssetsDirectory(), DowngradeFxVersionsScript), downgradeScript);
 
             // Find the scenario-tests package and unpack it to the context dir, subfolder "scenario-tests"
             string? scenarioTestsPackage = Directory.GetFiles(nugetPackagesDir, "Microsoft.DotNet.ScenarioTests.SdkTemplateTests*.nupkg", SearchOption.AllDirectories).FirstOrDefault();
@@ -440,6 +466,10 @@ public partial class LinuxInstallerTests : IDisposable
         sb.AppendLine($"COPY NuGet.config .");
 
         sb.AppendLine("");
+        sb.AppendLine($"# Copy {DowngradeFxVersionsScript}");
+        sb.AppendLine($"COPY {DowngradeFxVersionsScript} .");
+
+        sb.AppendLine("");
         sb.AppendLine("# Copy scenario-tests content");
         sb.AppendLine($"COPY scenario-tests scenario-tests");
 
@@ -474,6 +504,12 @@ public partial class LinuxInstallerTests : IDisposable
             useAndOperator = true;
         }
         sb.AppendLine("");
+
+        sb.AppendLine("");
+        sb.AppendLine("# Run the script to downgrade 8.0 and 9.0 framework versions");
+        sb.AppendLine("RUN \\");
+        sb.AppendLine($"    chmod +x {DowngradeFxVersionsScript} && \\");
+        sb.AppendLine($"    ./{DowngradeFxVersionsScript}");
 
         // Set environment for nuget.config
         sb.AppendLine("");
@@ -712,4 +748,82 @@ public partial class LinuxInstallerTests : IDisposable
 
         return results;
     }
+
+    private void ValidatePackageList(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? "*.rpm" : "*.deb";
+        List<string> expectedPatterns = GetExpectedPackagePatterns(packageType).OrderBy(p => p).ToList();
+
+        // Find all packages of the specified type and normalize by removing version numbers
+        List<string> normalizedActual = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
+            .Select(path => RemoveVersionFromPackageNameRegex.Replace(Path.GetFileName(path), "*"))
+            .Distinct()
+            .OrderBy(name => name)
+            .ToList();
+
+        Assert.True(
+            expectedPatterns.SequenceEqual(normalizedActual),
+            $"Package list validation failed for {packageType}:\nExpected:\n{string.Join("\n", expectedPatterns)}\nActual:\n{string.Join("\n", normalizedActual)}"
+        );
+    }
+
+    private List<string> GetExpectedPackagePatterns(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? ".rpm" : ".deb";
+        string arch = Config.Architecture == Architecture.X64 ? "x64" :
+                     (packageType == PackageType.Rpm ? "aarch64" : "arm64");
+
+        var patterns = new List<string>();
+
+        // Base package prefixes (common to both RPM and DEB)
+        var basePackages = new List<string>
+        {
+            "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
+            "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
+        };
+
+        // Add runtime-deps for DEB only (RPM only has distro-specific variants)
+        if (packageType == PackageType.Deb)
+        {
+            basePackages.Add("dotnet-runtime-deps");
+        }
+
+        // Standard variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-{arch}{extension}");
+        }
+
+        // New key variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-newkey-{arch}{extension}");
+        }
+
+        if (packageType == PackageType.Rpm)
+        {
+            // Azure Linux variants
+            foreach (string package in basePackages)
+            {
+                patterns.Add($"{package}-*-azl-{arch}{extension}");
+            }
+
+            // Runtime deps distro variants (RPM only)
+            string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+            foreach (string distro in distros)
+            {
+                patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
+
+                // `azl` deps packages do not have a -newkey- variant
+                if (distro != "azl.3")
+                {
+                    patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+                }
+            }
+        }
+
+        return patterns;
+    }
+
+    private static string GetAssetsDirectory() => Path.Combine(Directory.GetCurrentDirectory(), "assets");
 }

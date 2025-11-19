@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Bcl.Cryptography</name>
+  </assembly>
+  <members>
+    <member name="T:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors">
+      <summary>Provides helper methods to access keys on <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" />.</summary>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.CompositeMLDsa)">
+      <summary>
+        <para>Combines a private key with a certificate containing the associated public key into a new instance that can access the private key.</para>
+      </summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <param name="privateKey">The Composite ML-DSA private key that corresponds to the Composite ML-DSA public key in this certificate.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> or <paramref name="privateKey" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The specified private key doesn't match the public key for this certificate.</exception>
+      <exception cref="T:System.InvalidOperationException">The certificate already has an associated private key.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Combining a certificate and a Composite ML-DSA private key is not supported on this platform.</exception>
+      <returns>
+        <para>A new certificate with the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" /> property set to <see langword="true" />.</para>
+        <para>The current certificate isn't modified.</para>
+      </returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.MLDsa)">
+      <summary>
+        <para>Combines a private key with a certificate containing the associated public key into a new instance that can access the private key.</para>
+      </summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <param name="privateKey">The ML-DSA private key that corresponds to the ML-DSA public key in this certificate.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> or <paramref name="privateKey" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The specified private key doesn't match the public key for this certificate.</exception>
+      <exception cref="T:System.InvalidOperationException">The certificate already has an associated private key.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Combining a certificate and an ML-DSA private key is not supported on this platform.</exception>
+      <returns>
+        <para>A new certificate with the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" /> property set to <see langword="true" />.</para>
+        <para>The current certificate isn't modified.</para>
+      </returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.MLKem)">
+      <summary>
+        <para>Combines a private key with a certificate containing the associated public key into a new instance that can access the private key.</para>
+      </summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <param name="privateKey">The ML-KEM private key that corresponds to the ML-KEM public key in this certificate.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> or <paramref name="privateKey" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The specified private key doesn't match the public key for this certificate.</exception>
+      <exception cref="T:System.InvalidOperationException">The certificate already has an associated private key.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Combining a certificate and an ML-KEM private key is not supported on this platform.</exception>
+      <returns>
+        <para>A new certificate with the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" /> property set to <see langword="true" />.</para>
+        <para>The current certificate isn't modified.</para>
+      </returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.SlhDsa)">
+      <summary>
+        <para>Combines a private key with a certificate containing the associated public key into a new instance that can access the private key.</para>
+      </summary>
+      <param name="certificate">The X509 certificate that contains the public key.</param>
+      <param name="privateKey">The SLH-DSA private key that corresponds to the SLH-DSA public key in this certificate.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> or <paramref name="privateKey" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The specified private key doesn't match the public key for this certificate.</exception>
+      <exception cref="T:System.InvalidOperationException">The certificate already has an associated private key.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Combining a certificate and an SLH-DSA private key is not supported on this platform.</exception>
+      <returns>
+        <para>A new certificate with the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" /> property set to <see langword="true" />.</para>
+        <para>The current certificate isn't modified.</para>
+      </returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetCompositeMLDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.CompositeMLDsa" /> private key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the private key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Retrieving a Composite ML-DSA private key from a certificate is not supported on this platform.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">An error occurred accessing the private key.</exception>
+      <returns>The private key, or <see langword="null" /> if this certificate does not have a Composite ML-DSA private key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetCompositeMLDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.CompositeMLDsa" /> public key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">The certificate has a Composite ML-DSA public key, but the platform does not support Composite ML-DSA.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The public key was invalid, or otherwise could not be imported.</exception>
+      <returns>The public key, or <see langword="null" /> if this certificate does not have a Composite ML-DSA public key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.MLDsa" /> private key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the private key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Retrieving an ML-DSA private key from a certificate is not supported on this platform.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">An error occurred accessing the private key.</exception>
+      <returns>The private key, or <see langword="null" /> if this certificate does not have an ML-DSA private key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.MLDsa" /> public key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">The certificate has an ML-DSA public key, but the platform does not support ML-DSA.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The public key was invalid, or otherwise could not be imported.</exception>
+      <returns>The public key, or <see langword="null" /> if this certificate does not have an ML-DSA public key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLKemPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.MLKem" /> private key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the private key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Retrieving an ML-KEM private key from a certificate is not supported on this platform.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">An error occurred accessing the private key.</exception>
+      <returns>The private key, or <see langword="null" /> if this certificate does not have an ML-KEM private key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLKemPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.MLKem" /> public key from this certificate.</summary>
+      <param name="certificate">The X.509 certificate that contains the public key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">The certificate has an ML-KEM public key, but the platform does not support ML-KEM.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The public key was invalid, or otherwise could not be imported.</exception>
+      <returns>The public key, or <see langword="null" /> if this certificate does not have an ML-KEM public key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetSlhDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.SlhDsa" /> private key from this certificate.</summary>
+      <param name="certificate">The X509 certificate that contains the private key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">Retrieving an SLH-DSA private key from a certificate is not supported on this platform.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">An error occurred accessing the private key.</exception>
+      <returns>The private key, or <see langword="null" /> if this certificate does not have an SLH-DSA private key.</returns>
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetSlhDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Gets the <see cref="T:System.Security.Cryptography.SlhDsa" /> public key from this certificate.</summary>
+      <param name="certificate">The X509 certificate that contains the public key.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">The certificate has an SLH-DSA public key, but the platform does not support SLH-DSA.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The public key was invalid, or otherwise could not be imported.</exception>
+      <returns>The public key, or <see langword="null" /> if this certificate does not have an SLH-DSA public key.</returns>
+    </member>
+  </members>
+</doc>

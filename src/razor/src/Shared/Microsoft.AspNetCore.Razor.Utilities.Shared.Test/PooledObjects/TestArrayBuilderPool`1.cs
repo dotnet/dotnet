@@ -3,17 +3,16 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Utilities.Shared.Test.PooledObjects;
 
 internal static class TestArrayBuilderPool<T>
 {
-    public static ObjectPool<ImmutableArray<T>.Builder> Create(
-        IPooledObjectPolicy<ImmutableArray<T>.Builder>? policy = null, int size = 1)
-        => DefaultPool.Create(policy ?? NoReturnPolicy.Instance, size);
+    public static ArrayBuilderPool<T> Create(
+        ArrayBuilderPool<T>.PooledObjectPolicy? policy = null, int size = 1)
+        => ArrayBuilderPool<T>.Create(policy ?? NoReturnPolicy.Instance, size);
 
-    public sealed class NoReturnPolicy : IPooledObjectPolicy<ImmutableArray<T>.Builder>
+    public sealed class NoReturnPolicy : ArrayBuilderPool<T>.PooledObjectPolicy
     {
         public static readonly NoReturnPolicy Instance = new();
 
@@ -21,10 +20,10 @@ internal static class TestArrayBuilderPool<T>
         {
         }
 
-        public ImmutableArray<T>.Builder Create()
+        public override ImmutableArray<T>.Builder Create()
             => ImmutableArray.CreateBuilder<T>();
 
-        public bool Return(ImmutableArray<T>.Builder obj)
+        public override bool Return(ImmutableArray<T>.Builder obj)
             => false;
     }
 }

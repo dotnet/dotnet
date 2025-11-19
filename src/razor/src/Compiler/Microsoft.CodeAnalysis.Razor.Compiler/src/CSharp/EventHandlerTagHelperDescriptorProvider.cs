@@ -3,16 +3,16 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -24,43 +24,45 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
             return;
         }
 
-        var targetSymbol = context.TargetSymbol;
+        var targetAssembly = context.TargetAssembly;
 
-        var collector = new Collector(compilation, targetSymbol, eventHandlerAttribute);
-        collector.Collect(context);
+        var collector = new Collector(compilation, targetAssembly, eventHandlerAttribute);
+        collector.Collect(context, cancellationToken);
     }
 
-    private class Collector(Compilation compilation, ISymbol? targetSymbol, INamedTypeSymbol eventHandlerAttribute)
-        : TagHelperCollector<Collector>(compilation, targetSymbol)
+    private class Collector(
+        Compilation compilation,
+        IAssemblySymbol? targetAssembly,
+        INamedTypeSymbol eventHandlerAttribute)
+        : TagHelperCollector<Collector>(compilation, targetAssembly)
     {
         private readonly INamedTypeSymbol _eventHandlerAttribute = eventHandlerAttribute;
 
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => type.DeclaredAccessibility == Accessibility.Public &&
+               type.Name == "EventHandlers";
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new EventHandlerDataVisitor(types);
-
-            visitor.Visit(symbol);
-
-            foreach (var type in types)
+            // Not handling duplicates here for now since we're the primary ones extending this.
+            // If we see users adding to the set of event handler constructs we will want to add deduplication
+            // and potentially diagnostics.
+            foreach (var attribute in type.GetAttributes())
             {
-                // Not handling duplicates here for now since we're the primary ones extending this.
-                // If we see users adding to the set of event handler constructs we will want to add deduplication
-                // and potentially diagnostics.
-                foreach (var attribute in type.GetAttributes())
+                if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _eventHandlerAttribute))
                 {
-                    if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _eventHandlerAttribute))
+                    if (!AttributeArgs.TryGet(attribute, out var args))
                     {
-                        if (!AttributeArgs.TryGet(attribute, out var args))
-                        {
-                            // If this occurs, the [EventHandler] was defined incorrectly, so we can't create a tag helper.
-                            continue;
-                        }
-
-                        var typeName = type.GetDefaultDisplayString();
-                        var namespaceName = type.ContainingNamespace.GetFullName();
-                        results.Add(CreateTagHelper(typeName, namespaceName, type.Name, args));
+                        // If this occurs, the [EventHandler] was defined incorrectly, so we can't create a tag helper.
+                        continue;
                     }
+
+                    var typeName = type.GetDefaultDisplayString();
+                    var namespaceName = type.ContainingNamespace.GetFullName();
+                    results.Add(CreateTagHelper(typeName, namespaceName, type.Name, args));
                 }
             }
         }
@@ -246,33 +248,6 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
             });
 
             return builder.Build();
-        }
-
-        private class EventHandlerDataVisitor(List<INamedTypeSymbol> results) : SymbolVisitor
-        {
-            private readonly List<INamedTypeSymbol> _results = results;
-
-            public override void VisitNamedType(INamedTypeSymbol symbol)
-            {
-                if (symbol.DeclaredAccessibility == Accessibility.Public &&
-                    symbol.Name == "EventHandlers")
-                {
-                    _results.Add(symbol);
-                }
-            }
-
-            public override void VisitNamespace(INamespaceSymbol symbol)
-            {
-                foreach (var member in symbol.GetMembers())
-                {
-                    Visit(member);
-                }
-            }
-
-            public override void VisitAssembly(IAssemblySymbol symbol)
-            {
-                Visit(symbol.GlobalNamespace);
-            }
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using NuGet.Common;
+using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {

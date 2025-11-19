@@ -28,6 +28,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
      */
     public class CreateWixBuildWixpack : Task
     {
+        public string AdditionalOptions { get; set; }
+
         public ITaskItem BindTrackingFile { get; set; }
 
         public ITaskItem[] BindPaths { get; set; }
@@ -405,6 +407,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             if (BindTrackingFile != null && !string.IsNullOrEmpty(BindTrackingFile.ItemSpec))
             {
                 commandLineArgs.Add($"-trackingfile {BindTrackingFile.ItemSpec}");
+            }
+
+            // Add AdditionalOptions if specified
+            if (!string.IsNullOrEmpty(AdditionalOptions))
+            {
+                commandLineArgs.Add(AdditionalOptions);
             }
 
             commandLineArgs.Add($"-nologo");

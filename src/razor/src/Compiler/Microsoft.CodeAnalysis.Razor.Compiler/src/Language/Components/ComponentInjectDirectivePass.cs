@@ -1,21 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentInjectDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+internal sealed class ComponentInjectDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
 {
     protected override void ExecuteCore(
         RazorCodeDocument codeDocument,
-        DocumentIntermediateNode documentNode)
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var visitor = new Visitor();
         visitor.Visit(documentNode);
@@ -39,12 +39,12 @@ internal class ComponentInjectDirectivePass : IntermediateNodePassBase, IRazorDi
             var memberName = hasMemberName ? tokens[1].Content : null;
             var memberSpan = hasMemberName ? tokens[1].Source : null;
 
-            if (hasMemberName && !properties.Add(memberName))
+            if (hasMemberName && !properties.Add(memberName!))
             {
                 continue;
             }
 
-            classNode.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName, typeSpan, memberSpan, isMalformed));
+            classNode!.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName, typeSpan, memberSpan, isMalformed));
         }
     }
 

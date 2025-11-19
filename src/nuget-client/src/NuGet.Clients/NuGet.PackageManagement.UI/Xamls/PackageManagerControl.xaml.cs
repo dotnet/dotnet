@@ -197,8 +197,10 @@ namespace NuGet.PackageManagement.UI
                 controller.PackageManagerControl = this;
             }
 
-            var sourceRepositories = sourceRepositoryProvider.GetRepositories();
-            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, _uiLogger);
+            List<SourceRepository> sourceRepositories = sourceRepositoryProvider.GetRepositories().ToList();
+
+            var auditSourceRepositories = Model.Context.SourceService.GetEnabledAuditSources();
+            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, auditSourceRepositories, _uiLogger);
 
             var solutionManager = Model.Context.SolutionManagerService;
             solutionManager.ProjectAdded += OnProjectChanged;
@@ -1074,6 +1076,14 @@ namespace NuGet.PackageManagement.UI
                 {
                     vulnerablePackagesCount++;
                 }
+                else // Fallback to checking audit sources.
+                {
+                    List<PackageVulnerabilityMetadataContextInfo> auditSourceVulnerabilityContextInfo = await _packageVulnerabilityService.GetVulnerabilityInfoAsync(s.Identity, token);
+                    if (auditSourceVulnerabilityContextInfo.Count > 0)
+                    {
+                        vulnerablePackagesCount++;
+                    }
+                }
                 if (d != null)
                 {
                     deprecatedPackagesCount++;
@@ -1557,6 +1567,25 @@ namespace NuGet.PackageManagement.UI
                         _packageList._list.ScrollIntoView(firstSelectedItem);
                     }
                 }
+            }
+        }
+
+        public void SelectPackageFilterOptions(PackageFilterOptions filterOptions)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (filterOptions == null)
+            {
+                return;
+            }
+
+            if (filterOptions.ShowPrerelease.HasValue)
+            {
+                _topPanel.CheckboxPrerelease.IsChecked = filterOptions.ShowPrerelease;
+            }
+
+            if (filterOptions.ShowOnlyVulnerable.HasValue)
+            {
+                _topPanel._checkboxVulnerabilities.IsChecked = filterOptions.ShowOnlyVulnerable;
             }
         }
 

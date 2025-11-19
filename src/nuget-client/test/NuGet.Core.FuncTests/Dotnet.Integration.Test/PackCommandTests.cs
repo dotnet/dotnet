@@ -1055,7 +1055,7 @@ namespace Dotnet.Integration.Test
                             NuGetFrameworkSorter.Instance)
                         .ToList();
 
-                    Assert.Equal(tfmValue.Split(';').Count(),
+                    Assert.Equal(tfmValue.Split(';').Length,
                         dependencyGroups.Count);
                     foreach (var depGroup in dependencyGroups)
                     {
@@ -1132,7 +1132,7 @@ namespace Dotnet.Integration.Test
                             NuGetFrameworkSorter.Instance)
                         .ToList();
 
-                    Assert.Equal(tfmValue.Split(';').Count(),
+                    Assert.Equal(tfmValue.Split(';').Length,
                         dependencyGroups.Count);
                     foreach (var depGroup in dependencyGroups)
                     {
@@ -1217,7 +1217,7 @@ namespace Dotnet.Integration.Test
                             NuGetFrameworkSorter.Instance)
                         .ToList();
 
-                    Assert.Equal(tfmValue.Split(';').Count(),
+                    Assert.Equal(tfmValue.Split(';').Length,
                         dependencyGroups.Count);
                     foreach (var depGroup in dependencyGroups)
                     {
@@ -1901,11 +1901,11 @@ namespace Dotnet.Integration.Test
 
                     if (expectedIncludeString == null)
                     {
-                        Assert.Equal(0, contentFiles.Count());
+                        Assert.Equal(0, contentFiles.Length);
                     }
                     else
                     {
-                        Assert.Equal(1, contentFiles.Count());
+                        Assert.Equal(1, contentFiles.Length);
                         var contentFile = contentFiles[0];
                         Assert.Equal(expectedIncludeString, contentFile.Include);
                         Assert.Equal("Content", contentFile.BuildAction);
@@ -1993,12 +1993,12 @@ namespace Dotnet.Integration.Test
 
                     if (expectedIncludeString == null)
                     {
-                        Assert.Equal(0, contentFiles.Count());
+                        Assert.Equal(0, contentFiles.Length);
                     }
                     else
                     {
                         var expectedStrings = expectedIncludeString.Split(';');
-                        Assert.Equal(2, contentFiles.Count());
+                        Assert.Equal(2, contentFiles.Length);
                         var contentFileSet = contentFiles.Select(p => p.Include);
                         var files = nupkgReader.GetFiles("contentFiles");
                         foreach (var expected in expectedStrings)
@@ -2202,7 +2202,7 @@ namespace Dotnet.Integration.Test
 
                     // Validate the assets.
                     var libItems = nupkgReader.GetFiles("lib").ToList();
-                    Assert.Equal(count, libItems.Count());
+                    Assert.Equal(count, libItems.Count);
 
                     foreach (var framework in frameworksArray)
                     {
@@ -3113,7 +3113,7 @@ namespace ClassLibrary
                     var items = new HashSet<string>(nupkgReader.GetFiles());
                     var expectedPaths = expectedTargetPaths.Split(';');
                     // we add 5 because of the 5 standard files present in the nupkg that won't change.
-                    Assert.Equal(items.Count(), expectedPaths.Length + 5);
+                    Assert.Equal(items.Count, expectedPaths.Length + 5);
                     foreach (var path in expectedPaths)
                     {
                         Assert.Contains(path, items);
@@ -3147,7 +3147,7 @@ namespace ClassLibrary
                 {
                     var xml = XDocument.Load(stream);
                     var frameworkProperty = "TargetFrameworks";
-                    if (targetFrameworks.Split(';').Count() == 1)
+                    if (targetFrameworks.Split(';').Length == 1)
                     {
                         frameworkProperty = "TargetFramework";
                     }
@@ -3260,7 +3260,7 @@ namespace ClassLibrary
                     var nuspecReader = nupkgReader.NuspecReader;
                     var contentFiles = nuspecReader.GetContentFiles().ToArray();
 
-                    Assert.Equal(1, contentFiles.Count());
+                    Assert.Equal(1, contentFiles.Length);
                     var contentFile = contentFiles[0];
                     Assert.Equal(expectedBuildAction, contentFile.BuildAction);
                 }
@@ -4846,7 +4846,7 @@ namespace ClassLibrary
                 {
                     var xml = XDocument.Load(stream);
                     var frameworkProperty = "TargetFrameworks";
-                    if (targetFrameworks.Split(';').Count() == 1)
+                    if (targetFrameworks.Split(';').Length == 1)
                     {
                         frameworkProperty = "TargetFramework";
                     }
