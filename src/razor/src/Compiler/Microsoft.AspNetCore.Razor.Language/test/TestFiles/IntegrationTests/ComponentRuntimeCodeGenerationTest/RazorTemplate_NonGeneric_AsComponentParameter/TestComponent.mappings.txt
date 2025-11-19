@@ -8,6 +8,11 @@ Source Location: (45:0,45 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1012:32,0 [2] )
 |; |
 
+Source Location: (51:1,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1117:38,49 [11] )
+|MyComponent|
+
 Source Location: (72:1,22 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |template|
 Generated Location: (1276:42,0 [8] )

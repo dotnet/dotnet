@@ -18,6 +18,11 @@ Source Location: (159:3,3 [29] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1575:50,25 [29] )
 |System.Math.Max(0, item.Item)|
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2443:70,45 [11] )
+|MyComponent|
+
 Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
 Generated Location: (2659:74,0 [4] )

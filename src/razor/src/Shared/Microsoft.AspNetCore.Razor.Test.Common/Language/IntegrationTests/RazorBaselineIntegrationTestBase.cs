@@ -208,15 +208,8 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
                 }
             }
 
-            // check that the pragmas in the main document have matching span maps and are enhanced
-            var pragmasInDocument = linePragmas.Where(p => p.FilePath == codeDocument.Source.FilePath).ToArray();
-
-            foreach(var pragma in pragmasInDocument)
-            {
-                Assert.True(pragma.IsEnhanced);
-            }
-
-            Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
+            // check that the pragmas in the main document are enhanced
+            Assert.All(linePragmas.Where(p => p.FilePath == codeDocument.Source.FilePath), p => Assert.True(p.IsEnhanced));
         }
     }
 

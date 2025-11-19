@@ -5,6 +5,11 @@ Generated Location: (735:21,0 [45] )
 |
     RenderFragment<Person> p = (person) => |
 
+Source Location: (54:1,50 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (970:30,54 [11] )
+|MyComponent|
+
 Source Location: (66:1,62 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Name|
 Generated Location: (1156:34,0 [4] )

@@ -1,4 +1,9 @@
-﻿Source Location: (37:0,37 [18] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (703:19,49 [11] )
+|MyComponent|
+
+Source Location: (37:0,37 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |IComposedInterface|
 Generated Location: (799:22,0 [18] )
 |IComposedInterface|
@@ -17,6 +22,11 @@ Source Location: (70:0,70 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |_componentValue|
 Generated Location: (1482:47,0 [15] )
 |_componentValue|
+
+Source Location: (92:1,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2224:56,49 [11] )
+|MyComponent|
 
 Source Location: (114:1,23 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |IComposedInterface|

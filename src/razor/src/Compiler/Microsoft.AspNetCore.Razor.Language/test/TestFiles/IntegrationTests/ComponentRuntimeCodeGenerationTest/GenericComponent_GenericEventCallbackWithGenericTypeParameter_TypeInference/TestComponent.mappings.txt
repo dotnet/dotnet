@@ -13,6 +13,11 @@ Source Location: (44:1,31 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1187:36,0 [13] )
 |(int x) => {}|
 
+Source Location: (14:1,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1742:53,45 [11] )
+|MyComponent|
+
 Source Location: (26:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
 Generated Location: (1940:57,0 [4] )

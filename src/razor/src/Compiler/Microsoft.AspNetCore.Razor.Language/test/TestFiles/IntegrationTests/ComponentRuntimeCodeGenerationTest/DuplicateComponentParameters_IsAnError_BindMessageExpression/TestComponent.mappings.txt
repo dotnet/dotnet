@@ -1,4 +1,9 @@
-﻿Source Location: (38:0,38 [17] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (703:19,49 [11] )
+|MyComponent|
+
+Source Location: (38:0,38 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |MessageExpression|
 Generated Location: (884:23,0 [17] )
 |MessageExpression|
