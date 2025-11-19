@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: DevDiv\Net Tools\WebTools
+    path: DevDiv\NET Tools\Web Tools
