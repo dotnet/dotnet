@@ -25,6 +25,10 @@
             "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
+            "name": "diagnostics",
+            "defaultRemote": "https://github.com/dotnet/diagnostics"
+        },
+        {
             "name": "fsharp",
             "defaultRemote": "https://github.com/dotnet/fsharp"
         },
@@ -56,6 +60,10 @@
         {
             "name": "source-build-reference-packages",
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages"
+        },
+        {
+            "name": "sourcelink",
+            "defaultRemote": "https://github.com/dotnet/sourcelink"
         },
         {
             "name": "templating",

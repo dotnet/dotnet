@@ -409,7 +409,7 @@ public class AuditUtilityTests
         }
         else
         {
-            context.Log.Messages.Count().Should().Be(0);
+            context.Log.Messages.Count.Should().Be(0);
         }
 
         auditUtility.DirectPackagesWithAdvisory.Should().BeNullOrEmpty();
@@ -492,7 +492,7 @@ public class AuditUtilityTests
 
             var walkResult = await walker.WalkAsync(restoreTarget, targetFramework, "", RuntimeGraph.Empty, true);
 
-            var graph = RestoreTargetGraph.Create(new[] { walkResult }, walkContext, NullLogger.Instance, targetFramework);
+            var graph = RestoreTargetGraph.Create(new[] { walkResult }, walkContext, NullLogger.Instance, targetFramework.ToString(), targetFramework);
 
             return graph;
         }
@@ -634,7 +634,7 @@ public class AuditUtilityTests
 
                 RestoreTargetGraph[] graphs = new[]
                 {
-                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework)
+                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework.GetShortFolderName(), _framework)
                 };
 
                 return graphs;

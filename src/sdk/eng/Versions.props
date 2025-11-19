@@ -28,7 +28,6 @@
          compiler API targeted by analyzer assemblies. This is mostly an issue on source-build as
          in that build mode analyzer assemblies always target the live compiler API. -->
     <UsingToolMicrosoftNetCompilers Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</UsingToolMicrosoftNetCompilers>
-    <UsingToolVSSDK>true</UsingToolVSSDK>
     <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</FlagNetStandard1XDependencies>
   </PropertyGroup>
   <PropertyGroup Label="Servicing version information">
@@ -88,6 +87,7 @@
     <SystemReflectionMetadataLoadContextToolsetPackageVersion>9.0.0</SystemReflectionMetadataLoadContextToolsetPackageVersion>
     <SystemReflectionMetadataToolsetPackageVersion>9.0.0</SystemReflectionMetadataToolsetPackageVersion>
     <SystemDiagnosticsDiagnosticSourceToolsetPackageVersion>9.0.0</SystemDiagnosticsDiagnosticSourceToolsetPackageVersion>
+    <SystemTextEncodingCodePagesToolsetPackageVersion>8.0.0</SystemTextEncodingCodePagesToolsetPackageVersion>
     <SystemTextJsonToolsetPackageVersion>9.0.0</SystemTextJsonToolsetPackageVersion>
     <SystemThreadingTasksExtensionsToolsetPackageVersion>4.5.4</SystemThreadingTasksExtensionsToolsetPackageVersion>
     <SystemResourcesExtensionsToolsetPackageVersion>8.0.0</SystemResourcesExtensionsToolsetPackageVersion>

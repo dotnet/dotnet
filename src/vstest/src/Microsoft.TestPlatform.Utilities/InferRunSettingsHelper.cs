@@ -718,4 +718,84 @@ public class InferRunSettingsHelper
         return !sourceFramework.Name.Equals(Framework.DefaultFramework.Name, StringComparison.OrdinalIgnoreCase)
                && !sourceFramework.Name.Equals(targetFramework.Name, StringComparison.OrdinalIgnoreCase);
     }
+
+    public static bool UpdateCollectCoverageSettings(XmlDocument xmlDocument)
+    {
+        var root = xmlDocument.DocumentElement;
+
+        var dataCollectorNodes = root?.SelectNodes("DataCollectionRunSettings/DataCollectors/DataCollector");
+        if (dataCollectorNodes == null)
+        {
+            return false;
+        }
+        foreach (XmlNode dataCollectorNode in dataCollectorNodes)
+        {
+            var dataCollectorFound = false;
+            foreach (XmlAttribute attribute in dataCollectorNode.Attributes!)
+            {
+                if (attribute.Name.Equals("friendlyName", StringComparison.OrdinalIgnoreCase) &&
+                    attribute.Value.Equals("Code Coverage", StringComparison.OrdinalIgnoreCase))
+                {
+                    dataCollectorFound = true;
+                    break;
+                }
+
+                if (attribute.Name.Equals("uri", StringComparison.OrdinalIgnoreCase) &&
+                    attribute.Value.Equals(CodeCoverageCollectorUri, StringComparison.OrdinalIgnoreCase))
+                {
+                    dataCollectorFound = true;
+                    break;
+                }
+
+                if (attribute.Name.Equals("assemblyQualifiedName", StringComparison.OrdinalIgnoreCase) &&
+                    attribute.Value.IndexOf("Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    dataCollectorFound = true;
+                    break;
+                }
+            }
+
+            if (dataCollectorFound)
+            {
+                var coverageCollectorNode = dataCollectorNode;
+                // Code coverage settings are present, we should update them.
+
+                var dynamicNativeInstrumentationNode = coverageCollectorNode.SelectSingleNode("Configuration/CodeCoverage/EnableDynamicNativeInstrumentation");
+
+                if (dynamicNativeInstrumentationNode == null)
+                {
+                    // EnableDynamicNativeInstrumentation is not set explicitly, we should set it. Whole tree might not exist.
+
+                    var currentNode = coverageCollectorNode;
+                    var paths = "Configuration/CodeCoverage/EnableDynamicNativeInstrumentation".Split('/');
+                    foreach (var nodeName in paths)
+                    {
+                        var found = false;
+                        foreach (XmlNode childNode in currentNode.ChildNodes)
+                        {
+                            if (childNode.Name == nodeName)
+                            {
+                                currentNode = childNode;
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            var newNode = xmlDocument.CreateElement(nodeName);
+                            currentNode.AppendChild(newNode);
+                            currentNode = newNode;
+                        }
+                    }
+
+                    currentNode.InnerXml = "False";
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

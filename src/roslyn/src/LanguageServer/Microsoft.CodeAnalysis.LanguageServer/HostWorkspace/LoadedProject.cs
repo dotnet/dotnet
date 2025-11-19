@@ -126,6 +126,8 @@ internal sealed class LoadedProject : IDisposable
         return _mostRecentFileInfo.TargetFramework;
     }
 
+    public ProjectId ProjectId => _projectSystemProject.Id;
+
     /// <summary>
     /// Unloads the project and removes it from the workspace.
     /// </summary>
@@ -137,7 +139,7 @@ internal sealed class LoadedProject : IDisposable
         _projectSystemProject.RemoveFromWorkspace();
     }
 
-    public async ValueTask<(ProjectLoadTelemetryReporter.TelemetryInfo, bool NeedsRestore)> UpdateWithNewProjectInfoAsync(ProjectFileInfo newProjectInfo, bool isMiscellaneousFile, ILogger logger)
+    public async ValueTask<(OutputKind OutputKind, ImmutableArray<CommandLineReference> MetadataReferences, bool NeedsRestore)> UpdateWithNewProjectInfoAsync(ProjectFileInfo newProjectInfo, bool isMiscellaneousFile, ILogger logger)
     {
         if (_mostRecentFileInfo != null)
         {
@@ -262,9 +264,7 @@ internal sealed class LoadedProject : IDisposable
         _mostRecentFileInfo = newProjectInfo;
 
         Contract.ThrowIfNull(_projectSystemProject.CompilationOptions, "Compilation options cannot be null for C#/VB project");
-        var outputKind = _projectSystemProject.CompilationOptions.OutputKind;
-        var telemetryInfo = new ProjectLoadTelemetryReporter.TelemetryInfo { OutputKind = outputKind, MetadataReferences = metadataReferences };
-        return (telemetryInfo, needsRestore);
+        return (_projectSystemProject.CompilationOptions.OutputKind, metadataReferences, needsRestore);
 
         // logMessage must have 4 placeholders: project name, number of items, added items count, and removed items count.
         void UpdateProjectSystemProjectCollection<T>(IEnumerable<T> loadedCollection, IEnumerable<T>? oldLoadedCollection, IEqualityComparer<T> comparer, Action<T> addItem, Action<T> removeItem, string logMessage)

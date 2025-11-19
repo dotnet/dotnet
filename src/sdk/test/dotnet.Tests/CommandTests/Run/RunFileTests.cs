@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.DotNet.Cli.Commands;
 using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Utils;
+using Microsoft.DotNet.FileBasedPrograms;
 
 namespace Microsoft.DotNet.Cli.Run.Tests;
 
@@ -135,7 +136,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
     internal static string DirectiveError(string path, int line, string messageFormat, params ReadOnlySpan<object> args)
     {
-        return $"{path}({line}): {CliCommandStrings.DirectiveError}: {string.Format(messageFormat, args)}";
+        return $"{path}({line}): {FileBasedProgramsResources.DirectiveError}: {string.Format(messageFormat, args)}";
     }
 
     /// <summary>
@@ -1363,7 +1364,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     }
 
     /// <summary>
-    /// Default projects include embedded resources by default.
+    /// File-based projects using the default SDK do not include embedded resources by default.
     /// </summary>
     [Fact]
     public void EmbeddedResource()
@@ -1371,6 +1372,21 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         var testInstance = _testAssetsManager.CreateTestDirectory();
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_programReadingEmbeddedResource);
         File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx);
+
+        // By default, with the default SDK, embedded resources are not included.
+        new DotnetCommand(Log, "run", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                Resource not found
+                """);
+
+        // This behavior can be overridden to enable embedded resources.
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
+            #:property EnableDefaultEmbeddedResourceItems=true
+            {s_programReadingEmbeddedResource}
+            """);
 
         new DotnetCommand(Log, "run", "Program.cs")
             .WithWorkingDirectory(testInstance.Path)
@@ -1380,9 +1396,23 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 [MyString, TestValue]
                 """);
 
-        // This behavior can be overridden.
+        // When using a non-default SDK, embedded resources are included by default.
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
-            #:property EnableDefaultEmbeddedResourceItems=false
+            #:sdk Microsoft.NET.Sdk.Web
+            {s_programReadingEmbeddedResource}
+            """);
+
+        new DotnetCommand(Log, "run", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                [MyString, TestValue]
+                """);
+
+        // When using the default SDK explicitly, embedded resources are not included.
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
+            #:sdk Microsoft.NET.Sdk
             {s_programReadingEmbeddedResource}
             """);
 
@@ -1405,7 +1435,10 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         bool considered = ext is "sln" or "slnx" or "csproj";
 
         var testInstance = _testAssetsManager.CreateTestDirectory();
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_programReadingEmbeddedResource);
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
+            #:property EnableDefaultEmbeddedResourceItems=true
+            {s_programReadingEmbeddedResource}
+            """);
         File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx);
         File.WriteAllText(Path.Join(testInstance.Path, $"repo.{ext}"), "");
 
@@ -1529,7 +1562,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErr(DirectiveError(programFile, 1, CliCommandStrings.StaticGraphRestoreNotSupported));
+            .And.HaveStdErr(DirectiveError(programFile, 1, FileBasedProgramsResources.StaticGraphRestoreNotSupported));
     }
 
     [Fact]
@@ -2455,6 +2488,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     [InlineData("../Lib")]
     [InlineData(@"..\Lib\Lib.csproj")]
     [InlineData(@"..\Lib")]
+    [InlineData("$(MSBuildProjectDirectory)/../$(LibProjectName)")]
+    [InlineData(@"$(MSBuildProjectDirectory)/../Lib\$(LibProjectName).csproj")]
     public void ProjectReference(string arg)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
@@ -2483,64 +2518,148 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
         File.WriteAllText(Path.Join(appDir, "Program.cs"), $"""
             #:project {arg}
+            #:property LibProjectName=Lib
             Console.WriteLine(Lib.LibClass.GetMessage());
             """);
+
+        var expectedOutput = "Hello from Lib";
 
         new DotnetCommand(Log, "run", "Program.cs")
             .WithWorkingDirectory(appDir)
             .Execute()
             .Should().Pass()
-            .And.HaveStdOut("Hello from Lib");
+            .And.HaveStdOut(expectedOutput);
+
+        // Running from a different working directory shouldn't affect handling of the relative project paths.
+        new DotnetCommand(Log, "run", "App/Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(expectedOutput);
     }
 
-    [Fact]
-    public void ProjectReference_Errors()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("app")]
+    public void ProjectReference_Errors(string? subdir)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+        var relativeFilePath = Path.Join(subdir, "Program.cs");
+        var filePath = Path.Join(testInstance.Path, relativeFilePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        File.WriteAllText(filePath, """
             #:project wrong.csproj
             """);
 
         // Project file does not exist.
-        new DotnetCommand(Log, "run", "Program.cs")
+        new DotnetCommand(Log, "run", relativeFilePath)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErrContaining(DirectiveError(Path.Join(testInstance.Path, "Program.cs"), 1, CliCommandStrings.InvalidProjectDirective,
-                string.Format(CliStrings.CouldNotFindProjectOrDirectory, Path.Join(testInstance.Path, "wrong.csproj"))));
+            .And.HaveStdErrContaining(DirectiveError(filePath, 1, FileBasedProgramsResources.InvalidProjectDirective,
+                string.Format(FileBasedProgramsResources.CouldNotFindProjectOrDirectory, Path.Join(testInstance.Path, subdir, "wrong.csproj"))));
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+        File.WriteAllText(filePath, """
             #:project dir/
             """);
 
         // Project directory does not exist.
-        new DotnetCommand(Log, "run", "Program.cs")
+        new DotnetCommand(Log, "run", relativeFilePath)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErrContaining(DirectiveError(Path.Join(testInstance.Path, "Program.cs"), 1, CliCommandStrings.InvalidProjectDirective,
-                string.Format(CliStrings.CouldNotFindProjectOrDirectory, Path.Join(testInstance.Path, "dir/"))));
+            .And.HaveStdErrContaining(DirectiveError(filePath, 1, FileBasedProgramsResources.InvalidProjectDirective,
+                string.Format(FileBasedProgramsResources.CouldNotFindProjectOrDirectory, Path.Join(testInstance.Path, subdir, "dir/"))));
 
-        Directory.CreateDirectory(Path.Join(testInstance.Path, "dir"));
+        Directory.CreateDirectory(Path.Join(testInstance.Path, subdir, "dir"));
 
         // Directory exists but has no project file.
-        new DotnetCommand(Log, "run", "Program.cs")
+        new DotnetCommand(Log, "run", relativeFilePath)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErrContaining(DirectiveError(Path.Join(testInstance.Path, "Program.cs"), 1, CliCommandStrings.InvalidProjectDirective,
-                string.Format(CliStrings.CouldNotFindAnyProjectInDirectory, Path.Join(testInstance.Path, "dir/"))));
+            .And.HaveStdErrContaining(DirectiveError(filePath, 1, FileBasedProgramsResources.InvalidProjectDirective,
+                string.Format(FileBasedProgramsResources.CouldNotFindAnyProjectInDirectory, Path.Join(testInstance.Path, subdir, "dir/"))));
 
-        File.WriteAllText(Path.Join(testInstance.Path, "dir", "proj1.csproj"), "<Project />");
-        File.WriteAllText(Path.Join(testInstance.Path, "dir", "proj2.csproj"), "<Project />");
+        File.WriteAllText(Path.Join(testInstance.Path, subdir, "dir", "proj1.csproj"), "<Project />");
+        File.WriteAllText(Path.Join(testInstance.Path, subdir, "dir", "proj2.csproj"), "<Project />");
 
         // Directory exists but has multiple project files.
-        new DotnetCommand(Log, "run", "Program.cs")
+        new DotnetCommand(Log, "run", relativeFilePath)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErrContaining(DirectiveError(Path.Join(testInstance.Path, "Program.cs"), 1, CliCommandStrings.InvalidProjectDirective,
-                string.Format(CliStrings.MoreThanOneProjectInDirectory, Path.Join(testInstance.Path, "dir/"))));
+            .And.HaveStdErrContaining(DirectiveError(filePath, 1, FileBasedProgramsResources.InvalidProjectDirective,
+                string.Format(FileBasedProgramsResources.MoreThanOneProjectInDirectory, Path.Join(testInstance.Path, subdir, "dir/"))));
+
+        // Malformed MSBuild variable syntax.
+        File.WriteAllText(filePath, """
+            #:project $(Test
+            """);
+
+        new DotnetCommand(Log, "run", relativeFilePath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(DirectiveError(filePath, 1, FileBasedProgramsResources.InvalidProjectDirective,
+                string.Format(FileBasedProgramsResources.CouldNotFindProjectOrDirectory, Path.Join(testInstance.Path, subdir, "$(Test"))));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("app")]
+    public void ProjectReference_Duplicate(string? subdir)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        var relativeFilePath = Path.Join(subdir, "Program.cs");
+        var filePath = Path.Join(testInstance.Path, relativeFilePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        Directory.CreateDirectory(Path.Join(testInstance.Path, subdir, "dir"));
+        File.WriteAllText(Path.Join(testInstance.Path, subdir, "dir", "proj1.csproj"), $"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(filePath, """
+            #:project dir/
+            #:project dir/
+            Console.WriteLine("Hello");
+            """);
+
+        new DotnetCommand(Log, "run", relativeFilePath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(DirectiveError(filePath, 2, FileBasedProgramsResources.DuplicateDirective, "#:project dir/"));
+
+        File.WriteAllText(filePath, """
+            #:project dir/
+            #:project dir/proj1.csproj
+            Console.WriteLine("Hello");
+            """);
+
+        // https://github.com/dotnet/sdk/issues/51139: we should detect the duplicate project reference
+        new DotnetCommand(Log, "run", relativeFilePath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("Hello");
+
+        File.WriteAllText(filePath, """
+            #:project dir/
+            #:project $(MSBuildProjectDirectory)/dir/
+            Console.WriteLine("Hello");
+            """);
+
+        // https://github.com/dotnet/sdk/issues/51139: we should detect the duplicate project reference
+        new DotnetCommand(Log, "run", relativeFilePath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("Hello");
     }
 
     [Theory] // https://github.com/dotnet/aspnetcore/issues/63440
@@ -3151,6 +3270,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         var testInstance = _testAssetsManager.CreateTestDirectory();
         var code = $"""
             {(optOut ? "#:property FileBasedProgramCanSkipMSBuild=false" : "")}
+            #:property EnableDefaultEmbeddedResourceItems=true
             {s_programReadingEmbeddedResource}
             """;
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), code);
@@ -3172,42 +3292,11 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     }
 
     /// <summary>
-    /// Combination of <see cref="UpToDate_DefaultItems"/> with <see cref="CscOnly"/> optimization.
-    /// </summary>
-    [Theory, CombinatorialData] // https://github.com/dotnet/sdk/issues/50912
-    public void UpToDate_DefaultItems_CscOnly(bool optOut)
-    {
-        var testInstance = _testAssetsManager.CreateTestDirectory(baseDirectory: OutOfTreeBaseDirectory);
-        var code = $"""
-            {(optOut ? "#:property FileBasedProgramCanSkipMSBuild=false" : "")}
-            {s_programReadingEmbeddedResource}
-            """;
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), code);
-        File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx);
-
-        Build(testInstance, optOut ? BuildLevel.All : BuildLevel.Csc, expectedOutput: optOut ? "[MyString, TestValue]" : "Resource not found");
-
-        // Update the RESX file.
-        File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx.Replace("TestValue", "UpdatedValue"));
-
-        Build(testInstance, optOut ? BuildLevel.All : BuildLevel.None, expectedOutput: optOut ? "[MyString, UpdatedValue]" : "Resource not found");
-
-        // Update the C# file.
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), "//v2\n" + code);
-
-        Build(testInstance, optOut ? BuildLevel.All : BuildLevel.Csc, expectedOutput: optOut ? "[MyString, UpdatedValue]" : "Resource not found");
-
-        Build(testInstance, BuildLevel.All, ["--no-cache"], expectedOutput: "[MyString, UpdatedValue]");
-
-        // Update the C# file.
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), "//v3\n" + code);
-
-        Build(testInstance, optOut ? BuildLevel.All : BuildLevel.Csc, expectedOutput: "[MyString, UpdatedValue]");
-    }
-
-    /// <summary>
     /// Combination of <see cref="UpToDate_DefaultItems"/> with <see cref="CscOnly_AfterMSBuild"/> optimization.
     /// </summary>
+    /// <remarks>
+    /// Note: we cannot test <see cref="CscOnly"/> because that optimization doesn't support neither <c>#:property</c> nor <c>#:sdk</c> which we need to enable default items.
+    /// </remarks>
     [Theory, CombinatorialData] // https://github.com/dotnet/sdk/issues/50912
     public void UpToDate_DefaultItems_CscOnly_AfterMSBuild(bool optOut)
     {
@@ -3215,6 +3304,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         var code = $"""
             #:property Configuration=Release
             {(optOut ? "#:property FileBasedProgramCanSkipMSBuild=false" : "")}
+            #:property EnableDefaultEmbeddedResourceItems=true
             {s_programReadingEmbeddedResource}
             """;
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), code);
@@ -3896,6 +3986,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <FileBasedProgram>true</FileBasedProgram>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
                         <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
+                        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+                        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
                         <OutputType>Exe</OutputType>
                         <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
                         <ImplicitUsings>enable</ImplicitUsings>
@@ -3932,7 +4024,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 [{"Location":{
                 "Path":{{ToJson(programPath)}},
                 "Span":{"Start":{"Line":1,"Character":0},"End":{"Line":1,"Character":30}{{nop}}}{{nop}}},
-                "Message":{{ToJson(CliCommandStrings.CannotConvertDirective)}}}]}
+                "Message":{{ToJson(FileBasedProgramsResources.CannotConvertDirective)}}}]}
                 """.ReplaceLineEndings(""));
     }
 
@@ -3964,6 +4056,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <FileBasedProgram>true</FileBasedProgram>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
                         <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
+                        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+                        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
                         <OutputType>Exe</OutputType>
                         <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
                         <ImplicitUsings>enable</ImplicitUsings>
@@ -4000,7 +4094,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 [{"Location":{
                 "Path":{{ToJson(programPath)}},
                 "Span":{"Start":{"Line":0,"Character":0},"End":{"Line":1,"Character":0}{{nop}}}{{nop}}},
-                "Message":{{ToJson(string.Format(CliCommandStrings.UnrecognizedDirective, "unknown"))}}}]}
+                "Message":{{ToJson(string.Format(FileBasedProgramsResources.UnrecognizedDirective, "unknown"))}}}]}
                 """.ReplaceLineEndings(""));
     }
 

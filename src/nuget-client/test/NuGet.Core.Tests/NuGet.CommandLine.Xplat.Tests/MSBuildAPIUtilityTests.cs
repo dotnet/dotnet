@@ -510,7 +510,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // Act
             var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
@@ -534,7 +534,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // Act
             var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
@@ -558,7 +558,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // Act
             var projectList = MSBuildAPIUtility.GetProjectsFromSolution(solution.SolutionPath);
@@ -586,7 +586,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var slnfContents = $$"""
                 {
@@ -639,7 +639,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var net8 = NuGetFramework.Parse("net8.0");
             var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var projectOptions = new ProjectOptions();
 
@@ -719,7 +719,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var net8 = NuGetFramework.Parse("net8.0");
             var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var projectOptions = new ProjectOptions();
 

@@ -178,7 +178,7 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
             }
         }
 
-        public void Encode(AsnWriter writer, Asn1Tag? tag = null)
+        public void Encode(AsnWriter writer)
         {
             bool wroteValue = false;
 

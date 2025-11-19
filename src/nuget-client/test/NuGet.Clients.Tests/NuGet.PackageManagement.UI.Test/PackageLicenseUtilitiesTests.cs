@@ -58,7 +58,7 @@ namespace NuGet.PackageManagement.UI.Test
                     partsWithLinks.Add(licenseText);
                 }
             }
-            Assert.Equal(linkedText.Count(), partsWithLinks.Count);
+            Assert.Equal(linkedText.Length, partsWithLinks.Count);
             for (var i = 0; i < partsWithLinks.Count; i++)
             {
                 Assert.Equal(linkedText[i], partsWithLinks[i].Text);

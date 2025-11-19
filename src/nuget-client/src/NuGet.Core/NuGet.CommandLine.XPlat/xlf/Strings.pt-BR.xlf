@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="new">Argument cannot be null or empty.</target>
+        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -286,7 +286,7 @@
       </trans-unit>
       <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
         <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
-        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <target state="translated">{0}: o {1} pacote é adicionado implicitamente pelo SDK e não pode ser atualizado independentemente</target>
         <note>{0} - project referencing the package
 {1} - package id</note>
       </trans-unit>
@@ -353,6 +353,11 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <target state="translated">A origem especificada '{0}' é inválida. Forneça uma origem válida.</target>
         <note>0 - The invalid source.</note>
       </trans-unit>
+      <trans-unit id="Error_InvalidVersion">
+        <source>Invalid version value '{0}'.</source>
+        <target state="new">Invalid version value '{0}'.</target>
+        <note>0 - package version</note>
+      </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
         <source>Invalid version range '{0}'</source>
         <target state="translated">Intervalo de versão "{0}" inválido</target>
@@ -400,7 +405,7 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
-        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <target state="translated">O mapeamento de origem do pacote está habilitado, mas nenhum mapeamento para {0} foi encontrado. Consulte https://aka.ms/nuget/psm para obter mais informações.</target>
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
@@ -898,7 +903,7 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
         <source>Upgrade packages with known vulnerabilities.</source>
-        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <target state="translated">Atualize pacotes com vulnerabilidades conhecidas.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
@@ -908,22 +913,22 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
         <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
-        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <target state="translated">Todas as versões do pacote {0} têm comunicados de segurança. Não é possível localizar uma versão não vulnerável para a qual atualizar.</target>
         <note>{0}: package id</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AlreadyUpToDate">
         <source>All packages are up to date</source>
-        <target state="new">All packages are up to date</target>
+        <target state="translated">Todos os pacotes estão atualizados</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditDisabled">
         <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">Este comando requer que o NuGetAudit esteja habilitado no momento. Consulte https://aka.ms/nuget/audit para obter mais informações.</target>
         <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditModeIsDirect">
         <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">NuGetAuditMode é definido como direto, o que significa que pacotes transitivos com vulnerabilidades conhecidas não serão atualizados. Consulte https://aka.ms/nuget/audit para obter mais informações.</target>
         <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -944,7 +949,7 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_NoVulnerablePackages">
         <source>No upgradable packages have known vulnerabilities.</source>
-        <target state="new">No upgradable packages have known vulnerabilities.</target>
+        <target state="translated">Nenhum pacote atualizável tem vulnerabilidades conhecidas.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -964,7 +969,7 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updating {0} {1} to {2}.</source>
-        <target state="new">Updating {0} {1} to {2}.</target>
+        <target state="translated">Atualizando {0}{1} para {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -976,7 +981,7 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
         <source>Updating packages with security advisories in {0}</source>
-        <target state="new">Updating packages with security advisories in {0}</target>
+        <target state="translated">Atualizando pacotes com avisos de segurança em {0}</target>
         <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">

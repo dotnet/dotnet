@@ -1,0 +1,19 @@
+<Project>
+
+  <Import Project="Version.Details.props" />
+
+  <PropertyGroup>
+    <!-- This repo version -->
+    <VersionPrefix>10.2.0</VersionPrefix>
+    <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
+    <!-- Opt-in repo features -->
+    <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- nuget -->
+    <NuGetVersioningVersion>6.12.1</NuGetVersioningVersion>
+    <!-- runtime -->
+    <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
+  </PropertyGroup>
+
+</Project>
