@@ -9,6 +9,12 @@ trigger:
     - release/*
     - internal/release/*
 
+parameters:
+- name: runPrBuild
+  displayName: Run PR Build
+  type: boolean
+  default: false
+
 variables:
 - name: _PublishUsingPipelines
   value: false
@@ -28,13 +34,15 @@ variables:
   value: ''
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - name: _InternalRuntimeDownloadArgs
-    value: /p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal
+    value: /p:DotNetRuntimeSourceFeed=http://ci.dot.net/internal
       /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
       /p:dotnetbuilds-internal-container-read-token-base64=$(dotnetbuilds-internal-container-read-token-base64)
 - template: /eng/common/templates/variables/pool-providers.yml
 # Set the MicroBuild plugin installation directory to the agent temp directory to avoid SDL tool scanning.
 - name: MicroBuildOutputFolderOverride
   value: $(Agent.TempDirectory)
+# Sets: dn-bot-dnceng-artifact-feeds-rw
+- group: AzureDevOps-Artifact-Feeds-Pats
 
 resources:
   repositories:
@@ -102,7 +110,7 @@ extends:
             artifactName: buildConfiguration
 
       # PR-only jobs
-      - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest'), eq(parameters.runPrBuild, true)) }}:
         # Windows
         - template: eng/build.yml@self
           parameters:
@@ -191,7 +199,7 @@ extends:
             runTests: true
 
       # Official/PGO instrumentation Builds
-      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ else }}:
         # Windows
         - template: eng/build.yml@self
           parameters:

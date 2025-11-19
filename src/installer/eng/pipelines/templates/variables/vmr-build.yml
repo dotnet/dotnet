@@ -55,6 +55,6 @@ variables:
   - name: poolImage_Linux
     value: 1es-ubuntu-2204
   - name: poolImage_LinuxArm64
-    value: Mariner-2-Docker-ARM64
+    value: Azure-Linux-3-Arm64
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
