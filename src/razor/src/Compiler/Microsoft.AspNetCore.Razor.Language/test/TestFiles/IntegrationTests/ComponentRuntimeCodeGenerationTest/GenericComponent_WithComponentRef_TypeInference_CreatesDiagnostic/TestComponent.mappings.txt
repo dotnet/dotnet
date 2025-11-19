@@ -19,6 +19,11 @@ Generated Location: (1249:42,0 [90] )
     public void Foo() { System.GC.KeepAlive(_my); }
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1809:59,45 [11] )
+|MyComponent|
+
 Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
 Generated Location: (2007:63,0 [4] )

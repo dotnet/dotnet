@@ -22,4 +22,12 @@ internal interface IRemoteSpanMappingService
         DocumentId generatedDocumentId,
         ImmutableArray<TextSpan> spans,
         CancellationToken cancellationToken);
+
+    ValueTask<RemoteExcerptResult?> TryExcerptAsync(
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        DocumentId id,
+        TextSpan span,
+        RazorExcerptMode mode,
+        RazorClassificationOptionsWrapper options,
+        CancellationToken cancellationToken);
 }

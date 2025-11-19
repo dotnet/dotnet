@@ -86,6 +86,70 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             (FilePath("OtherClass.cs"), otherClass));
     }
 
+    [Fact]
+    public async Task Component_DefinedInCSharp()
+    {
+        TestCode input = """
+            <[|Surv$$eyPrompt|] Title="InputValue" />
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class [|SurveyPrompt|] : ComponentBase
+            {
+                [Parameter]
+                public string Title { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.cs"), surveyPrompt));
+    }
+
+    [Fact]
+    public async Task ComponentEndTag_DefinedInCSharp()
+    {
+        TestCode input = """
+            <[|SurveyPrompt|] Title="InputValue"></Surv$$eyPrompt>
+            """;
+
+        // lang=c#-test
+        TestCode surveyPrompt = """
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace SomeProject;
+
+            public class [|SurveyPrompt|] : ComponentBase
+            {
+                [Parameter]
+                public string Title { get; set; } = "Hello";
+
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddContent(1, Title + " from a C#-defined component!");
+                    builder.CloseElement();
+                }
+            }
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.cs"), surveyPrompt));
+    }
+
     private async Task VerifyFindAllReferencesAsync(TestCode input, params (string fileName, TestCode testCode)[] additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);

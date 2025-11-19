@@ -22,6 +22,11 @@ Generated Location: (1343:48,0 [31] )
     private string s = "x";
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2163:64,45 [11] )
+|MyComponent|
+
 Source Location: (13:0,13 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 |P1|
 Generated Location: (2371:68,0 [2] )

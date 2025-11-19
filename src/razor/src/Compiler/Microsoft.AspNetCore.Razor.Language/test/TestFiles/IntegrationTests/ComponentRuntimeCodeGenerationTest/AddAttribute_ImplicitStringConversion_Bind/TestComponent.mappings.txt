@@ -27,6 +27,11 @@ Generated Location: (1731:56,0 [42] )
     private MyClass<string> c = new();
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2452:72,45 [11] )
+|MyComponent|
+
 Source Location: (40:1,4 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |BoolParameter|
 Generated Location: (2632:76,0 [13] )

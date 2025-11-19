@@ -7,8 +7,10 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.DocumentExcerpt;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -30,6 +32,54 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
     private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
     private readonly ITelemetryReporter _telemetryReporter = args.ExportProvider.GetExportedValue<ITelemetryReporter>();
 
+    public ValueTask<RemoteExcerptResult?> TryExcerptAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId generatedDocumentId, TextSpan span, RazorExcerptMode mode, RazorClassificationOptionsWrapper options, CancellationToken cancellationToken)
+        => RunServiceAsync(
+            solutionInfo,
+            solution => TryExcerptAsync(solution, generatedDocumentId, span, mode, options, cancellationToken),
+            cancellationToken);
+
+    private async ValueTask<RemoteExcerptResult?> TryExcerptAsync(Solution solution, DocumentId generatedDocumentId, TextSpan span, RazorExcerptMode mode, RazorClassificationOptionsWrapper options, CancellationToken cancellationToken)
+    {
+        var generatedDocument = await solution.GetSourceGeneratedDocumentAsync(generatedDocumentId, cancellationToken).ConfigureAwait(false);
+        if (generatedDocument is null)
+        {
+            return null;
+        }
+
+        var razorDocument = await TryGetRazorDocumentForGeneratedDocumentAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
+        if (razorDocument is null)
+        {
+            return null;
+        }
+
+        var documentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+
+        var mappedSpans = MapSpans(codeDocument, [span]);
+        if (mappedSpans is not [{ IsDefault: false } mappedSpan])
+        {
+            return null;
+        }
+
+        var razorDocumentText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var razorDocumentSpan = razorDocumentText.GetTextSpan(mappedSpan.LinePositionSpan);
+
+        // First compute the range of text we want to we to display relative to the primary document.
+        var excerptSpan = DocumentExcerptHelper.ChooseExcerptSpan(razorDocumentText, razorDocumentSpan, mode);
+
+        // Then we'll classify the spans based on the primary document, since that's the coordinate
+        // space that our output mappings use.
+        var mappings = codeDocument.GetRequiredCSharpDocument().SourceMappings;
+        var classifiedSpans = await DocumentExcerptHelper.ClassifyPreviewAsync(
+            excerptSpan,
+            generatedDocument,
+            mappings,
+            options,
+            cancellationToken).ConfigureAwait(false);
+
+        return new RemoteExcerptResult(razorDocument.Id, razorDocumentSpan, excerptSpan, classifiedSpans.ToImmutable(), span);
+    }
+
     public ValueTask<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId generatedDocumentId, ImmutableArray<TextSpan> spans, CancellationToken cancellationToken)
        => RunServiceAsync(
             solutionInfo,
@@ -45,12 +95,17 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
         }
 
         var documentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
-        var output = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        var source = output.Source.Text;
+        return MapSpans(codeDocument, spans);
+    }
 
-        var csharpDocument = output.GetRequiredCSharpDocument();
-        var filePath = output.Source.FilePath.AssumeNotNull();
+    private static ImmutableArray<RazorMappedSpanResult> MapSpans(RazorCodeDocument codeDocument, ImmutableArray<TextSpan> spans)
+    {
+        var source = codeDocument.Source.Text;
+
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+        var filePath = codeDocument.Source.FilePath.AssumeNotNull();
 
         using var results = new PooledArrayBuilder<RazorMappedSpanResult>();
 
@@ -118,6 +173,11 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
             return null;
         }
 
+        return await TryGetRazorDocumentForGeneratedDocumentAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<TextDocument?> TryGetRazorDocumentForGeneratedDocumentAsync(SourceGeneratedDocument generatedDocument, CancellationToken cancellationToken)
+    {
         var identity = RazorGeneratedDocumentIdentity.Create(generatedDocument);
         if (!identity.IsRazorSourceGeneratedDocument())
         {

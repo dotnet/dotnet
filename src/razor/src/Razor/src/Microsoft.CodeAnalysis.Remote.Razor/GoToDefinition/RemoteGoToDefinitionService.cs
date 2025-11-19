@@ -60,6 +60,21 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
 
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
 
+        // First, see if this is a tag helper. We ignore component attributes here, because they're better served by the C# handler.
+        var componentLocations = await _definitionService.GetDefinitionAsync(
+            context.Snapshot,
+            positionInfo,
+            context.GetSolutionQueryOperations(),
+            ignoreComponentAttributes: true,
+            includeMvcTagHelpers: true,
+            cancellationToken)
+            .ConfigureAwait(false);
+
+        if (componentLocations is { Length: > 0 })
+        {
+            return Results(componentLocations);
+        }
+
         // Check if we're in a string literal with a file path (before calling C# which would navigate to String class)
         if (positionInfo.LanguageKind is RazorLanguageKind.CSharp)
         {
@@ -77,21 +92,6 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
 
         if (positionInfo.LanguageKind is RazorLanguageKind.Html or RazorLanguageKind.Razor)
         {
-            // First, see if this is a tag helper. We ignore component attributes here, because they're better served by the C# handler.
-            var componentLocations = await _definitionService.GetDefinitionAsync(
-                context.Snapshot,
-                positionInfo,
-                context.GetSolutionQueryOperations(),
-                ignoreComponentAttributes: true,
-                includeMvcTagHelpers: true,
-                cancellationToken)
-                .ConfigureAwait(false);
-
-            if (componentLocations is { Length: > 0 })
-            {
-                return Results(componentLocations);
-            }
-
             // If it isn't a Razor construct, and it isn't C#, let the server know to delegate to HTML.
             return CallHtml;
         }
