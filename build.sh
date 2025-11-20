@@ -350,6 +350,7 @@ initDistroRidGlobal "$os" "$arch" ""
 
 properties+=( "/p:BuildRid=$__DistroRid" )
 
+# if targetOS and targetArch were provided, recompute __PortableTargetOS
 if [[ -n "$targetOS" && -n "$targetArch" ]]; then
   initDistroRidGlobal "$targetOS" "$targetArch" ""
 fi
