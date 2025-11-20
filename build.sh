@@ -110,6 +110,7 @@ clean=false
 test=false
 
 # Source-only settings
+prep=false
 sourceOnly=false
 releaseManifest=''
 sourceRepository=''
@@ -243,9 +244,8 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -prep)
-      "$scriptroot/prep-source-build.sh"
+      prep=true
       ;;
-
     # Advanced settings
     -build-repo-tests)
       properties+=( "/p:DotNetBuildTests=true" )
@@ -358,6 +358,11 @@ properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
+  # Run prep if requested
+  if [[ "$prep" == true ]]; then
+    "$scriptroot/prep-source-build.sh" --configuration "$configuration"
+  fi
+
   # For build purposes, we need to make sure we have all the SourceLink information
   if [ "$test" != "true" ]; then
     get_property() {
