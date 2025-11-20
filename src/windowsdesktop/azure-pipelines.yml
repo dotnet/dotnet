@@ -1,39 +1,16 @@
+variables:
+  - name: _PublishUsingPipelines
+    value: false
+  - template: /eng/common/templates-official/variables/pool-providers.yml@self
+
 trigger:
   batch: true
   branches:
     include:
-    - main
-    - release/*
-    - internal/release/*
-    - experimental/*
+      - main
+      - release/*
 
-name: $(Date:yyyyMMdd)$(Rev:.r)
-
-variables:
-- name: TeamName
-  value: dotnet-core-acquisition
-  # Skip Running CI tests
-- name: SkipTests
-  value: true
-  # Set Official Build Id
-- name: OfficialBuildId
-  value: $(Build.BuildNumber)
-- ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), eq(variables['Build.Reason'], 'Manual')) }}:
-  - name: PostBuildSign
-    value: false
-- ${{ else }}:
-  - name: PostBuildSign
-    value: true
-
-  # Set the target blob feed for package publish during official and validation builds.
-- name: _DotNetArtifactsCategory
-  value: .NETCore
-- name: _DotNetValidationArtifactsCategory
-  value: .NETCoreValidation
-
-  # Produce test-signed build for PR and Public builds
-- name: SignType
-  value: $[ coalesce(variables.OfficialSignType, 'real') ]
+pr: none
 
 resources:
   repositories:
@@ -45,62 +22,20 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     sdl:
-      policheck:
-        enabled: true
-      tsa:
-        enabled: true
-        configFile: '$(Build.SourcesDirectory)/eng/pipelines/tsaoptions.json'
-    featureFlags:
-      autoBaseline: true
-    pool:
-      name: NetCore1ESPool-Internal
-      image: 1es-windows-2022
-      os: windows
-    customBuildTags:
-    - ES365AIMigrationTooling
+      createAdoIssuesForJustificationsForDisablement: false
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
     stages:
-    - stage: Build
+    - stage: build
+      displayName: Build
       jobs:
-
-      # Windows x64
-      - template: /eng/pipelines/jobs/windows-build.yml@self
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
         parameters:
-          name: win_x64
-          displayName: win-x64
-          targetArchitecture: x64
-
-      # Windows x86
-      - template: /eng/pipelines/jobs/windows-build.yml@self
-        parameters:
-          name: win_x86
-          displayName: win-x86
-          targetArchitecture: x86
-
-      # Windows arm64
-      - template: /eng/pipelines/jobs/windows-build.yml@self
-        parameters:
-          name: win_arm64
-          displayName: win-arm64
-          targetArchitecture: arm64
-
-      # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
-      - template: /eng/common/templates-official/job/publish-build-assets.yml@self
-        parameters:
-          publishUsingPipelines: true
+          enablePublishBuildArtifacts: true
+          enablePublishBuildAssets: false
+          enablePublishTestResults: false
           publishAssetsImmediately: true
-          dependsOn:
-            - win_x64
-            - win_x86
-            - win_arm64
-          pool:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2022preview.amd64
-
-    # Stages-based publishing entry point
-    - template: /eng/common/templates-official/post-build/post-build.yml@self
-      parameters:
-        enableSymbolValidation: false
-        enableSigningValidation: false
-        enableNugetValidation: false
-        enableSourceLinkValidation: false
-        publishAssetsImmediately: true
+          isAssetlessBuild: true
+          enableTelemetry: true

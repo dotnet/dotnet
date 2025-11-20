@@ -7,7 +7,7 @@
     <PublishReadyToRun Condition="'$(PublishReadyToRun)' == '' and '$(PlatformPackageType)' == 'RuntimePack' and '$(Configuration)' == 'Release'">true</PublishReadyToRun>
     <!-- For .NET 6 and higher, default to using Crossgen2 in non-composite mode if PublishReadyToRun == true -->
     <PublishReadyToRunUseCrossgen2 Condition="'$(PublishReadyToRunUseCrossgen2)' == '' and '$(PublishReadyToRun)' == 'true' and '$(_TargetFrameworkVersionWithoutV)' >= '6.0'">true</PublishReadyToRunUseCrossgen2>
-    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
+    <PublishReadyToRunEmitSymbols Condition="'$(PublishReadyToRunEmitSymbols)' == ''">true</PublishReadyToRunEmitSymbols>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     <AllowedOutputExtensionsInSymbolsPackageBuildOutputFolder>$(AllowedOutputExtensionsInSymbolsPackageBuildOutputFolder);.map;.r2rmap;.dbg;.debug;.dwarf</AllowedOutputExtensionsInSymbolsPackageBuildOutputFolder>
     <_DefaultHostJsonTargetPath>runtimes/$(RuntimeIdentifier)/lib/$(TargetFramework)</_DefaultHostJsonTargetPath>
