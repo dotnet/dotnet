@@ -526,7 +526,7 @@ jobs:
       - script: |
           set -ex
 
-          customPrepArgs=""
+          customPrepArgs="-c ${{ parameters.configuration }}"
           prepSdk=true
 
           if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
