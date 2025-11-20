@@ -149,10 +149,12 @@ while [[ $# > 0 ]]; do
       ;;
     -os|-target-os)
       properties+=( "/p:TargetOS=$2" )
+      targetOS="$2"
       shift
       ;;
     -arch|-target-arch)
       properties+=( "/p:TargetArchitecture=$2" )
+      targetArch="$2"
       shift
       ;;
     -branding)
@@ -339,9 +341,8 @@ if [[ "$clean" == true ]]; then
 fi
 
 # Initialize __DistroRid and __PortableTargetOS
-source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
-initDistroRidGlobal "$os" "$arch" ""
+initDistroRidGlobal "$targetOS" "$targetArch" ""
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
