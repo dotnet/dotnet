@@ -3,12 +3,11 @@
   <Import Project="Version.Details.props" />
 
   <PropertyGroup>
-    <VersionPrefix>3.2.1</VersionPrefix>
+    <VersionPrefix>3.2.2</VersionPrefix>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
-    <DotNetFinalVersionKind>
-    </DotNetFinalVersionKind>
+    <DotNetFinalVersionKind></DotNetFinalVersionKind>
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
