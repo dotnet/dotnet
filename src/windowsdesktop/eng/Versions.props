@@ -9,8 +9,7 @@
     <PreReleaseVersionLabel>rc</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>3</PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
-    <DotNetFinalVersionKind>
-    </DotNetFinalVersionKind>
+    <DotNetFinalVersionKind></DotNetFinalVersionKind>
   </PropertyGroup>
 
   <PropertyGroup>

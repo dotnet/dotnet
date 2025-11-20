@@ -1,13 +1,17 @@
 <Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
+
+  <Import Project="Version.Details.props" />
+
   <PropertyGroup>
     <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <SkipPackagePublishingVersionChecks>true</SkipPackagePublishingVersionChecks>
-    <!-- Opt-out repo features -->
+
+    <!-- Arcade features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
+
   <!-- External package versions -->
   <PropertyGroup>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
@@ -17,10 +21,12 @@
     <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
     <SpectreConsoleReleaseVersion>0.52.0</SpectreConsoleReleaseVersion>
   </PropertyGroup>
+
   <PropertyGroup>
     <!-- NuGet dependencies -->
     <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>
+
 </Project>

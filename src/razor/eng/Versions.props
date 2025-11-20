@@ -1,29 +1,27 @@
-﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
-  <!-- Opt-in arcade features -->
+﻿<Project>
+
+  <Import Project="Version.Details.props" />
+
+  <!-- Arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <MicrosoftVSSDKBuildToolsVersion>17.3.2094</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
-  </PropertyGroup>
-  <!-- Opt out Arcade features -->
-  <PropertyGroup>
     <UsingToolXliff>true</UsingToolXliff>
   </PropertyGroup>
+
   <!-- Versioning for assemblies/packages -->
   <PropertyGroup>
     <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <!--
-        When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
-    -->
-    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
-    <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
+    <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
+    <DotNetFinalVersionKind></DotNetFinalVersionKind>
   </PropertyGroup>
+
   <!--
     Versioning for tooling releases.
 
@@ -37,11 +35,8 @@
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' == ''">$(AddinVersion).42424242.42</AddinVersion>
   </PropertyGroup>
-  <!--
-    Versions below this comment are not managed by automation and can be changed as needed.
-  -->
-  <PropertyGroup Label="Manual">
-    <!-- dotnet/runtime packages -->
+
+  <PropertyGroup>
     <MicrosoftNETSdkRazorPackageVersion>6.0.0-alpha.1.21072.5</MicrosoftNETSdkRazorPackageVersion>
     <!--
       These are properties that control the versions of the various packages that are used in arcade. They control
@@ -50,6 +45,7 @@
     <XUnitVersion>2.9.2</XUnitVersion>
     <XUnitAnalyzersVersion>1.7.0</XUnitAnalyzersVersion>
   </PropertyGroup>
+
   <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <MicrosoftIORedistVersion>6.1.0</MicrosoftIORedistVersion>
@@ -59,4 +55,5 @@
     <MicrosoftIORedistVersion>6.1.3</MicrosoftIORedistVersion>
     <SystemThreadingTasksExtensionsVersion>4.6.3</SystemThreadingTasksExtensionsVersion>
   </PropertyGroup>
+
 </Project>
