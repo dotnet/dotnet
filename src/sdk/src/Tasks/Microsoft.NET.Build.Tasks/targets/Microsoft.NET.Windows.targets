@@ -90,7 +90,7 @@ Copyright (c) .NET Foundation. All rights reserved.
                         Include="Microsoft.Windows.SDK.NET.Ref.CsWinRT3.Xaml" />
   </ItemGroup>
 
-  <!-- If WindowsSdkPackageVersion is specified and it is an older version before profile support was added, 
+  <!-- If WindowsSdkPackageVersion is specified and it is an older version before profile support was added,
        add the non profile framework reference. -->
   <ItemGroup Condition=" '$(IncludeWindowsSDKRefFrameworkReferences)' == 'true'
                         and '$(WindowsSdkPackageVersion)' != ''
@@ -138,11 +138,11 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <Target Name="RemoveManagedWinRTComponentWinMDReferences"
           AfterTargets="ResolveProjectReferences">
-    
+
     <ItemGroup>
       <!-- Before we remove them from _ResolvedProjectReferencePaths, grab the implementation .dll's path -->
-      <ManagedWinRTComponentImplementations 
-        Include="@(_ResolvedProjectReferencePaths->'%(ManagedImplementation)')" 
+      <ManagedWinRTComponentImplementations
+        Include="@(_ResolvedProjectReferencePaths->'%(ManagedImplementation)')"
         Condition="('%(_ResolvedProjectReferencePaths.Extension)' == '.winmd') And ('%(_ResolvedProjectReferencePaths.Implementation)' == 'WinRT.Host.dll')"
       />
     </ItemGroup>
@@ -154,11 +154,11 @@ Copyright (c) .NET Foundation. All rights reserved.
                                       Condition="('%(_ResolvedProjectReferencePaths.Extension)' == '.winmd') And ('%(_ResolvedProjectReferencePaths.Implementation)' == 'WinRT.Host.dll')"
                                       />
     </ItemGroup>
-    
+
   </Target>
 
   <Target Name="AddWinRTComponentImplementationReference" AfterTargets="ResolveProjectReferences" DependsOnTargets="RemoveManagedWinRTComponentWinMDReferences" Condition="'@(ManagedWinRTComponentImplementations)' != ''">
-    
+
     <ItemGroup>
       <Reference Include="@(ManagedWinRTComponentImplementations)"/>
     </ItemGroup>
@@ -263,7 +263,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         Include="@(ReferencePath)"
         Condition="'%(Filename)%(Extension)' == 'WinRT.Runtime.dll'" />
     </ItemGroup>
-    
+
     <!-- Compute the implicit '\tools' path, and use that if 'CsWinRTToolsDirectory' isn't set -->
     <PropertyGroup>
       <_WinRTRuntimeDllDirectory>$([System.IO.Path]::GetDirectoryName('%(_WinRTRuntimeDllReferencePath.FullPath)'))</_WinRTRuntimeDllDirectory>
@@ -310,7 +310,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     Runs 'cswinrtgen' to produce the 'WinRT.Interop.dll' assembly.
     ============================================================
   -->
-  <UsingTask Condition="'$(CsWinRTGeneratorTasksOverriden)' != 'true'" TaskName="RunCsWinRTGenerator" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
+  <UsingTask Condition="'$(CsWinRTGeneratorTasksOverriden)' != 'true'" TaskName="RunCsWinRTGenerator" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Runtime="NET" />
   <Target
     Name="_RunCsWinRTGenerator"
     DependsOnTargets="CoreCompile;$(GetTargetPathDependsOn);$(GetTargetPathWithTargetPlatformMonikerDependsOn);_ComputeRunCsWinRTGeneratorCache"

@@ -14,7 +14,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <UsingTask TaskName="ValidateParameter" AssemblyFile="$(_PublishTaskAssemblyFullPath)"/>
+  <UsingTask TaskName="ValidateParameter" AssemblyFile="$(_PublishTaskAssemblyFullPath)" Runtime="NET" />
   <UsingTask TaskName="KuduDeploy" AssemblyFile="$(_PublishTaskAssemblyFullPath)"/>
 
 

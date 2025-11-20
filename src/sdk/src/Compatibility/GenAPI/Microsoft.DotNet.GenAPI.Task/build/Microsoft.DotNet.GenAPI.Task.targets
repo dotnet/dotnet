@@ -10,20 +10,20 @@
       $(TargetsTriggeredByCompilation);
       GenAPIGenerateReferenceAssemblySource
     </TargetsTriggeredByCompilation>
-    
+
     <GenAPIGenerateReferenceAssemblySourceDependsOn>$(GenAPIGenerateReferenceAssemblySourceDependsOn);_GenAPIDontBuildProjectReferences;FindReferenceAssembliesForReferences</GenAPIGenerateReferenceAssemblySourceDependsOn>
   </PropertyGroup>
 
   <!-- Only run this target when the GenAPIGenerateReferenceAssemblySource target is invoked directly
        which means that GenAPIGenerateReferenceAssemblySource property is false. -->
-  <Target Name="_GenAPIDontBuildProjectReferences" 
+  <Target Name="_GenAPIDontBuildProjectReferences"
           Condition="'$(GenAPIGenerateReferenceAssemblySource)' != 'true'">
     <PropertyGroup>
       <BuildProjectReferences>false</BuildProjectReferences>
     </PropertyGroup>
   </Target>
 
-  <UsingTask TaskName="Microsoft.DotNet.GenAPI.Task.GenAPITask" AssemblyFile="$(DotNetGenAPITaskAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.GenAPI.Task.GenAPITask" AssemblyFile="$(DotNetGenAPITaskAssembly)" Runtime="NET"  />
 
   <Target Name="GenAPIGenerateReferenceAssemblySource"
           DependsOnTargets="$(GenAPIGenerateReferenceAssemblySourceDependsOn)">
