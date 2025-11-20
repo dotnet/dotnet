@@ -85,7 +85,7 @@ while :; do
       print_help
       exit 0
       ;;
-    -configuration|-c)
+    --configuration|-c)
       configuration=$2
       shift
       ;;
