@@ -341,8 +341,16 @@ if [[ "$clean" == true ]]; then
 fi
 
 # Initialize __DistroRid and __PortableTargetOS
+source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
+
 initDistroRidGlobal "$targetOS" "$targetArch" ""
+
+properties+=( "/p:BuildRid=$__DistroRid" )
+
+initDistroRidGlobal "$targetOS" "$targetArch" ""
+
+properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
