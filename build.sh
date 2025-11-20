@@ -348,7 +348,9 @@ source $scriptroot/eng/common/native/init-distro-rid.sh
 
 initDistroRidGlobal "$os" "$arch" ""
 
-properties+=( "/p:BuildRid=$__DistroRid" )
+if [[ -n "$__DistroRid" ]]; then
+  properties+=( "/p:BuildRid=$__DistroRid" )
+fi
 
 # if targetOS and targetArch were provided, recompute __PortableTargetOS
 if [[ -n "$targetOS" && -n "$targetArch" ]]; then
