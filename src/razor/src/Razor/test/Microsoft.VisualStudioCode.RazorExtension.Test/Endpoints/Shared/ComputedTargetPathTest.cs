@@ -17,8 +17,8 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
 {
     // What the source generator would produce for TestProjectData.SomeProjectPath
     private static readonly string s_hintNamePrefix = PlatformInformation.IsWindows
-        ? "c__users_example_src_SomeProject"
-        : "_home_example_SomeProject";
+        ? "c_/users/example/src/SomeProject"
+        : "_home/example/SomeProject";
 
     [Theory]
     [InlineData(true, false)]
@@ -45,7 +45,7 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
 
         var generatedDocument = await document.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(document, DisposalToken);
         Assert.NotNull(generatedDocument);
-        Assert.Equal($"{s_hintNamePrefix}_File1_razor.g.cs", generatedDocument.HintName);
+        Assert.Equal($"{s_hintNamePrefix}/File1_razor.g.cs", generatedDocument.HintName);
     }
 
     [Theory]
@@ -70,11 +70,11 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
 
         var generatedDocument = await doc1.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc1, DisposalToken);
         Assert.NotNull(generatedDocument);
-        Assert.Equal($"Pages_Index_razor.g.cs", generatedDocument.HintName);
+        Assert.Equal($"Pages/Index_razor.g.cs", generatedDocument.HintName);
 
         generatedDocument = await doc2.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc2, DisposalToken);
         Assert.NotNull(generatedDocument);
-        Assert.Equal($"Components_Index_razor.g.cs", generatedDocument.HintName);
+        Assert.Equal($"Components/Index_razor.g.cs", generatedDocument.HintName);
     }
 
     [Theory]
@@ -102,10 +102,42 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
 
         var generatedDocument = await doc1.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc1, DisposalToken);
         Assert.NotNull(generatedDocument);
-        Assert.Equal($"{s_hintNamePrefix}_Pages_Index_razor.g.cs", generatedDocument.HintName);
+        Assert.Equal($"{s_hintNamePrefix}/Pages/Index_razor.g.cs", generatedDocument.HintName);
 
         generatedDocument = await doc2.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc2, DisposalToken);
         Assert.NotNull(generatedDocument);
-        Assert.Equal($"{s_hintNamePrefix}_Components_Index_razor.g.cs", generatedDocument.HintName);
+        Assert.Equal($"{s_hintNamePrefix}/Components/Index_razor.g.cs", generatedDocument.HintName);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    public async Task TwoDocumentsWithTheSameBaseHintName(bool projectPath, bool generateConfigFile)
+    {
+        var builder = new RazorProjectBuilder
+        {
+            ProjectFilePath = projectPath ? TestProjectData.SomeProject.FilePath : null,
+            GenerateGlobalConfigFile = generateConfigFile,
+            GenerateAdditionalDocumentMetadata = false,
+            GenerateMSBuildProjectDirectory = false
+        };
+
+        var doc1Id = builder.AddAdditionalDocument(FilePath(@"Pages\Index.razor"), SourceText.From(""));
+        var doc2Id = builder.AddAdditionalDocument(FilePath(@"Pages_Index.razor"), SourceText.From(""));
+
+        var solution = LocalWorkspace.CurrentSolution;
+        solution = builder.Build(solution);
+
+        var doc1 = solution.GetAdditionalDocument(doc1Id).AssumeNotNull();
+        var doc2 = solution.GetAdditionalDocument(doc2Id).AssumeNotNull();
+
+        var generatedDocument = await doc1.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc1, DisposalToken);
+        Assert.NotNull(generatedDocument);
+        Assert.Equal($"{s_hintNamePrefix}/Pages/Index_razor.g.cs", generatedDocument.HintName);
+
+        generatedDocument = await doc2.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(doc2, DisposalToken);
+        Assert.NotNull(generatedDocument);
+        Assert.Equal($"{s_hintNamePrefix}/Pages_Index_razor.g.cs", generatedDocument.HintName);
     }
 }
