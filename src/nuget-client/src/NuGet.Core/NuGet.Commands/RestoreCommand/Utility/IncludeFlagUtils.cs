@@ -38,18 +38,11 @@ namespace NuGet.Commands
             FlattenDependencyTypesUnified(targetGraph, result);
 
             // Override flags for direct dependencies
-            var directDependencies = spec.Dependencies.ToList();
-
-            // Add dependencies defined under the framework node
             var specFramework = spec.GetTargetFramework(targetGraph.Framework);
-            if (specFramework?.Dependencies != null)
-            {
-                directDependencies.AddRange(specFramework.Dependencies);
-            }
 
             // Override the flags for direct dependencies. This lets the
             // user take control when needed.
-            foreach (var dependency in directDependencies)
+            foreach (var dependency in specFramework?.Dependencies)
             {
                 LibraryIncludeFlags includeType = IsDependencyPruned(dependency, specFramework?.PackagesToPrune) ?
                     LibraryIncludeFlags.None :

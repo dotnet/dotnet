@@ -286,8 +286,6 @@ namespace NuGet.Commands.Test
                 var dgSpec = new DependencyGraphSpec();
                 var configJson = @"
                 {
-                    ""dependencies"": {
-                    },
                      ""frameworks"": {
                         ""net45"": { }
                     }
@@ -342,8 +340,6 @@ namespace NuGet.Commands.Test
             var dgSpec = new DependencyGraphSpec();
             var configJson = @"
                 {
-                    ""dependencies"": {
-                    },
                      ""frameworks"": {
                         ""net45"": { }
                     }

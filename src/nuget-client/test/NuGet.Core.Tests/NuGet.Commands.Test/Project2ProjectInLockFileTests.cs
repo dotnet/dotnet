@@ -28,8 +28,6 @@ namespace NuGet.Commands.Test
             var projectJson = @"
             {
                 ""version"": ""2.0.0"",
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                     ""net45"": {}
                 }
@@ -38,16 +36,11 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
               ""version"": ""2.0.0-*"",
-              ""description"": ""Proj2 Class Library"",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""project3"": ""2.0.0-*""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""project3"": ""2.0.0-*""
+                  }
                 }
               }
             }";
@@ -55,11 +48,6 @@ namespace NuGet.Commands.Test
             var project3Json = @"
             {
               ""version"": ""2.0.0-*"",
-              ""description"": ""Proj3 Class Library"",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }
@@ -133,8 +121,6 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
                 ""version"": ""1.0.0"",
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                     ""net45"": {}
                 }
@@ -143,11 +129,12 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
                 ""version"": ""1.0.0"",
-                ""dependencies"": {
-                    ""Microsoft.VisualBasic"": ""10.0.0""
-                },
                 ""frameworks"": {
-                    ""net45"": {}
+                    ""net45"": {
+                        ""dependencies"": {
+                            ""Microsoft.VisualBasic"": ""10.0.0""
+                        }
+                    }
                 }
             }";
 

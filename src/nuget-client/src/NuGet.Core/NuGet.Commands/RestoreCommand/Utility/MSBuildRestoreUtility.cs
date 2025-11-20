@@ -632,8 +632,7 @@ namespace NuGet.Commands
             var frameworkInfo = spec.TargetFrameworks[index];
             var dependencies = frameworkInfo.Dependencies;
 
-            if (!spec.Dependencies
-                            .Concat(dependencies)
+            if (!dependencies
                             .Select(d => d.Name)
                             .Contains(dependency.Name, StringComparer.OrdinalIgnoreCase))
             {

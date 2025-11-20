@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Resources;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.CodeAnalysis.CommandLine;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.BuildTasks
@@ -47,8 +47,12 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         /// explicitly overridden.  So, if both ToolPath is unset and
         /// ToolExe == ToolName, we know nothing is overridden, and
         /// we can use our own csc.
+        /// <para />
+        /// We want to continue using the builtin tool if user sets <see cref="ToolTask.ToolExe"/> = <c>csc.exe</c>,
+        /// regardless of whether apphosts will be used or not (in the former case, <see cref="ToolName"/> could be <c>csc.dll</c>),
+        /// hence we also compare <see cref="ToolTask.ToolExe"/> with <see cref="AppHostToolName"/> in addition to <see cref="ToolName"/>.
         /// </remarks>
-        protected bool UsingBuiltinTool => string.IsNullOrEmpty(ToolPath) && ToolExe == ToolName;
+        protected bool UsingBuiltinTool => string.IsNullOrEmpty(ToolPath) && (ToolExe == ToolName || ToolExe == AppHostToolName);
 
         /// <summary>
         /// Is the builtin tool executed by this task running on .NET Core?
@@ -73,6 +77,8 @@ namespace Microsoft.CodeAnalysis.BuildTasks
                 return useAppHost;
             }
         }
+
+        internal bool UseAppHost_TestOnly { set => _useAppHost = value; }
 
         protected ManagedToolTask(ResourceManager resourceManager)
             : base(resourceManager)
@@ -143,6 +149,12 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         {
             if (UsingBuiltinTool)
             {
+                // Even if we return full path to tool as "C:\Program Files\dotnet\dotnet.exe" for example,
+                // an MSBuild logic (caller of this function) can turn that into "C:\Program Files\dotnet\csc.exe" if `ToolExe` is set explicitly to "csc.exe".
+                // Resetting `ToolExe` to `null` skips that logic. That is a correct thing to do since we already checked `UsingBuiltinTool`
+                // which means `ToolExe` is not really overridden by user (yes, the user sets it but basically to its default value).
+                ToolExe = null;
+
                 return UseAppHost ? PathToBuiltInTool : RuntimeHostInfo.GetDotNetPathOrDefault();
             }
 
@@ -161,7 +173,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         /// <remarks>
         /// ToolName is only used in cases where <see cref="UsingBuiltinTool"/> returns true.
         /// It returns the name of the managed assembly, which might not be the path returned by
-        /// GenerateFullPathToTool, which can return the path to e.g. the dotnet executable.
+        /// <see cref="GenerateFullPathToTool"/>, which can return the path to e.g. the dotnet executable.
         /// </remarks>
         protected sealed override string ToolName
         {
@@ -209,7 +221,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
             return items;
         }
 
-        private static string GetToolDirectory()
+        internal static string GetToolDirectory()
         {
             var buildTaskDirectory = GetBuildTaskDirectory();
 #if NET
@@ -239,10 +251,18 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         protected override bool ValidateParameters()
         {
             // Set DOTNET_ROOT so that the apphost executables launch properly.
-            if (RuntimeHostInfo.GetToolDotNetRoot() is { } dotNetRoot)
+            // Unset all other DOTNET_ROOT* variables so for example DOTNET_ROOT_X64 does not override ours.
+            if (RuntimeHostInfo.GetToolDotNetRoot(Log.LogMessage) is { } dotNetRoot)
             {
                 Log.LogMessage("Setting {0} to '{1}'", RuntimeHostInfo.DotNetRootEnvironmentName, dotNetRoot);
-                EnvironmentVariables = [.. EnvironmentVariables ?? [], $"{RuntimeHostInfo.DotNetRootEnvironmentName}={dotNetRoot}"];
+                EnvironmentVariables =
+                [
+                    .. EnvironmentVariables?.Where(static e => !e.StartsWith(RuntimeHostInfo.DotNetRootEnvironmentName, StringComparison.OrdinalIgnoreCase)) ?? [],
+                    .. Environment.GetEnvironmentVariables().Cast<System.Collections.DictionaryEntry>()
+                        .Where(e => ((string)e.Key).StartsWith(RuntimeHostInfo.DotNetRootEnvironmentName, StringComparison.OrdinalIgnoreCase))
+                        .Select(e => $"{e.Key}="),
+                    $"{RuntimeHostInfo.DotNetRootEnvironmentName}={dotNetRoot}",
+                ];
             }
 
             return base.ValidateParameters();

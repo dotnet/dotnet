@@ -6,7 +6,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
 
 namespace NuGet.ProjectModel
 {
@@ -17,18 +16,11 @@ namespace NuGet.ProjectModel
     {
         private string _newLine;
 
-        public NoAllocNewLineStreamWriter(Stream stream, Encoding encoding, int bufferSize, bool leaveOpen) :
-            base(stream, encoding, bufferSize, leaveOpen)
-        {
-            _newLine = new string(CoreNewLine);
-        }
-
         public NoAllocNewLineStreamWriter(Stream stream) :
             base(stream)
         {
             _newLine = new string(CoreNewLine);
         }
-
 
         /// <summary>
         /// Gets or sets the line terminator string used by the current TextWriter.
@@ -48,7 +40,7 @@ namespace NuGet.ProjectModel
         ///         {
         ///             value = "\r\n";
         ///         }
-        /// 
+        ///
         ///         CoreNewLine = value.ToCharArray();
         ///     }
         /// }

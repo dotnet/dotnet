@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using NuGet.Frameworks;
+using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {
@@ -32,7 +33,7 @@ namespace NuGet.ProjectModel
             lockFileTarget.RuntimeIdentifier = runTimeFramework;
 
             reader.Read();
-            lockFileTarget.Libraries = reader.ReadObjectAsList(Utf8JsonReaderExtensions.LockFileTargetLibraryConverter);
+            lockFileTarget.Libraries = reader.ReadObjectAsList(Utf8JsonStreamLockFileConverters.LockFileTargetLibraryConverter);
 
             return lockFileTarget;
         }

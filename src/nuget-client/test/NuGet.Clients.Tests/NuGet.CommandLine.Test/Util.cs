@@ -566,12 +566,11 @@ namespace NuGet.CommandLine.Test
             string[] references = null,
             string[] contentFiles = null)
         {
-            var project = CreateProjFileXmlContent(projectName, targetFrameworkVersion, references, contentFiles);
+            var project = CreateProjFileXmlContent(targetFrameworkVersion, references, contentFiles);
             return project.ToString();
         }
 
         public static XElement CreateProjFileXmlContent(
-            string projectName = "proj1",
             string targetFrameworkVersion = "v4.7.2",
             string[] references = null,
             string[] contentFiles = null)
