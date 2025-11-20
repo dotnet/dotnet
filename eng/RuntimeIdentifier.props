@@ -54,7 +54,7 @@
     <PortableBuild Condition="'$(PortableBuild)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(BuildOS)-$(BuildArchitecture)' == '$(TargetOS)-$(TargetArchitecture)'">false</PortableBuild>
     <PortableBuild Condition="'$(PortableBuild)' == ''">true</PortableBuild>
 
-    <PortableTargetRid Condition="'$(__PortableTargetOS)' != ''">$(__PortableTargetOS)-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetOS)' != ''">$(PortableTargetOS)-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'linux'">linux-$(TargetArchitecture)</PortableTargetRid>
