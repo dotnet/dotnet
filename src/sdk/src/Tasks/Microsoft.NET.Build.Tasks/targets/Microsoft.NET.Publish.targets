@@ -1281,7 +1281,8 @@ Copyright (c) .NET Foundation. All rights reserved.
     ============================================================
     -->
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.GetEmbeddedApphostPaths"
-          AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Runtime="NET" />
+          AssemblyFile="$(MicrosoftNETBuildTasksAssembly)"
+          Runtime="NET" />
   <Target Name="ComputeEmbeddedApphostPaths" Condition="'$(PackAsTool)' == 'true'">
 
     <ItemGroup>
@@ -1335,7 +1336,8 @@ Copyright (c) .NET Foundation. All rights reserved.
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.GetPublishItemsOutputGroupOutputs"
-          AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" Runtime="NET" />
+          AssemblyFile="$(MicrosoftNETBuildTasksAssembly)"
+          Runtime="NET" />
 
   <Target Name="PublishItemsOutputGroup" DependsOnTargets="$(PublishItemsOutputGroupDependsOn)" Returns="@(PublishItemsOutputGroupOutputs)">
     <GetPublishItemsOutputGroupOutputs
