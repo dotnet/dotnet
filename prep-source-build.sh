@@ -144,6 +144,7 @@ source "$REPO_ROOT/eng/common/tools.sh"
 
 # Default properties
 properties=( "/p:Configuration=$configuration" )
+properties+=( "/p:DotNetBuildSourceOnly=true" )
 
 function BootstrapArtifacts {
   DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
@@ -247,7 +248,6 @@ if [ "$removeBinaries" == true ]; then
   workingDir=$(mktemp -d)
 
   toolsetInitProperties=( "${properties[@]}" )
-  toolsetInitProperties+=( "/p:DotNetBuildSourceOnly=true" )
   toolsetInitProperties+=( "/p:DisableSharedComponentValidation=true" )
 
   # If --with-packages is not passed, unpack PSB artifacts
