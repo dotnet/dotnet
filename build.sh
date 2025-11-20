@@ -127,6 +127,8 @@ exclude_ci_binary_log=''
 node_reuse=''
 prepare_machine=''
 warn_as_error=''
+targetOS=''
+targetArch=''
 
 properties=()
 while [[ $# > 0 ]]; do
@@ -344,11 +346,13 @@ fi
 source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
 
-initDistroRidGlobal "$targetOS" "$targetArch" ""
+initDistroRidGlobal "$os" "$arch" ""
 
 properties+=( "/p:BuildRid=$__DistroRid" )
 
-initDistroRidGlobal "$targetOS" "$targetArch" ""
+if [[ -n "$targetOS" && -n "$targetArch" ]]; then
+  initDistroRidGlobal "$targetOS" "$targetArch" ""
+fi
 
 properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
 
