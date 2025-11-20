@@ -41,6 +41,7 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltArtifactsVersion>
+    <DotNet1xxWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
