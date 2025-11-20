@@ -131,7 +131,7 @@ stages:
           **/manifests/**/*.xml
           !*Sdk_*_Artifacts/**/VerticalManifest.xml
 
-- ${{ if in(parameters.scope, 'full') }}:
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), in(parameters.scope, 'full')) }}:
   - template: vmr-validation.yml
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
