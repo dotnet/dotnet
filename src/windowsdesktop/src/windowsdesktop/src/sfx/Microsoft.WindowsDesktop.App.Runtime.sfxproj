@@ -14,32 +14,12 @@
     <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" />
   </ItemGroup>
 
-  <!-- References that are common to both WinForms and WPF -->
+  <!-- Runtime only files that are common to both WinForms and WPF -->
   <ItemGroup>
     <FrameworkListFileClass Include="System.Diagnostics.EventLog.Messages.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms;WPF" />
   </ItemGroup>
 
-  <!-- Windows Forms specific references -->
-  <ItemGroup>
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.Forms.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.Common.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.Editors.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Primitives.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Primitives.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Private.Windows.GdiPlus.dll" Profile="WindowsForms" />
-  </ItemGroup>
-
-  <!-- WPF specific references -->
+  <!-- WPF specific runtime-only files -->
   <ItemGroup>
     <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WPF" />
     <FrameworkListFileClass Include="DirectWriteForwarder.dll" Profile="WPF" />
