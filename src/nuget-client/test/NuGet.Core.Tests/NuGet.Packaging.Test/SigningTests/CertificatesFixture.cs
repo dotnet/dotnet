@@ -99,18 +99,6 @@ namespace NuGet.Packaging.Test
         internal X509Certificate2 GetRsaSsaPssCertificate() => Clone(_rsaSsaPssCertificate);
         internal X509Certificate2 GetSelfIssuedCertificate() => Clone(_selfIssuedCertificate);
 
-        internal DisposableList<X509Certificate2> GetCyclicCertificateChain()
-        {
-            var list = new DisposableList<X509Certificate2>();
-
-            foreach (var certificate in _cyclicChain)
-            {
-                list.Add(Clone(certificate));
-            }
-
-            return list;
-        }
-
         private static X509Certificate2 Clone(X509Certificate2 certificate)
         {
             return new X509Certificate2(certificate);

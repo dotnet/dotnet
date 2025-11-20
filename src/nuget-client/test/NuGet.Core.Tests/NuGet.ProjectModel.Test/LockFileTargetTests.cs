@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NuGet.Frameworks;
@@ -62,6 +63,82 @@ namespace NuGet.ProjectModel.Test
             }
         }
 
+        [Theory]
+        [InlineData("net6.0", "net6.0", true)]
+        [InlineData("net6.0", "net7.0", false)]
+        [InlineData("", "", true)]
+        [InlineData(null, null, true)]
+        [InlineData("net6.0", null, false)]
+        [InlineData("net6.0", "", false)]
+        [InlineData("MyAlias", "MyAlias", true)]
+        [InlineData("MyAlias", "MYALIAS", false)]
+        public void Equals_WithTargetAlias(string left, string right, bool expected)
+        {
+            var leftSide = new LockFileTarget()
+            {
+                TargetAlias = left
+            };
+
+            var rightSide = new LockFileTarget()
+            {
+                TargetAlias = right
+            };
+
+            // Act & Assert
+            if (expected)
+            {
+                leftSide.Should().Be(rightSide);
+            }
+            else
+            {
+                leftSide.Should().NotBe(rightSide);
+            }
+        }
+
+        [Theory]
+        [InlineData("net6.0", "net6.0", true)]
+        [InlineData("net6.0", "net7.0", false)]
+        [InlineData("", "", true)]
+        [InlineData(null, null, true)]
+        [InlineData("net6.0", null, false)]
+        [InlineData("net6.0", "", false)]
+        [InlineData("MyAlias", "MyAlias", true)]
+        [InlineData("MyAlias", "MYALIAS", false)]
+        public void GetHashCode_WithTargetAlias(string left, string right, bool expected)
+        {
+            var leftSide = new LockFileTarget()
+            {
+                TargetAlias = left
+            };
+
+            var rightSide = new LockFileTarget()
+            {
+                TargetAlias = right
+            };
+
+            // Act & Assert
+            if (expected)
+            {
+                leftSide.GetHashCode().Should().Be(rightSide.GetHashCode());
+            }
+            else
+            {
+                leftSide.GetHashCode().Should().NotBe(rightSide.GetHashCode());
+            }
+        }
+
+        [Fact]
+        public void TargetAlias_SetAndGet_ShouldReturnCorrectValue()
+        {
+            var target = new LockFileTarget();
+            string expectedAlias = "my-custom-alias";
+
+            // Act
+            target.TargetAlias = expectedAlias;
+
+            // Assert
+            target.TargetAlias.Should().Be(expectedAlias);
+        }
 
         [Theory]
         [InlineData("project", "project", true)]
@@ -89,6 +166,64 @@ namespace NuGet.ProjectModel.Test
             {
                 leftSide.Should().NotBe(rightSide);
             }
+        }
+
+        [Fact]
+        public void Equals_WithAllPropertiesSet_IncludingTargetAlias_ShouldBeEqual()
+        {
+            var leftSide = new LockFileTarget()
+            {
+                TargetFramework = NuGetFramework.Parse("net6.0"),
+                RuntimeIdentifier = "win-x64",
+                TargetAlias = "net6.0-windows",
+                Libraries = new List<LockFileTargetLibrary>
+                {
+                    new LockFileTargetLibrary() { Name = "TestPackage" }
+                }
+            };
+
+            var rightSide = new LockFileTarget()
+            {
+                TargetFramework = NuGetFramework.Parse("net6.0"),
+                RuntimeIdentifier = "win-x64",
+                TargetAlias = "net6.0-windows",
+                Libraries = new List<LockFileTargetLibrary>
+                {
+                    new LockFileTargetLibrary() { Name = "TestPackage" }
+                }
+            };
+
+            // Act & Assert
+            leftSide.Should().Be(rightSide);
+        }
+
+        [Fact]
+        public void Equals_WithOnlyTargetAliasDifferent_ShouldNotBeEqual()
+        {
+            var leftSide = new LockFileTarget()
+            {
+                TargetFramework = NuGetFramework.Parse("net6.0"),
+                RuntimeIdentifier = "win-x64",
+                TargetAlias = "net6.0-windows",
+                Libraries = new List<LockFileTargetLibrary>
+                {
+                    new LockFileTargetLibrary() { Name = "TestPackage" }
+                }
+            };
+
+            var rightSide = new LockFileTarget()
+            {
+                TargetFramework = NuGetFramework.Parse("net6.0"),
+                RuntimeIdentifier = "win-x64",
+                TargetAlias = "net6.0-android", // Only this is different
+                Libraries = new List<LockFileTargetLibrary>
+                {
+                    new LockFileTargetLibrary() { Name = "TestPackage" }
+                }
+            };
+
+            // Act & Assert
+            leftSide.Should().NotBe(rightSide);
         }
     }
 }

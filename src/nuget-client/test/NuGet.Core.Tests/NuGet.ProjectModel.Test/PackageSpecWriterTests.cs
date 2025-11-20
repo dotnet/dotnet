@@ -27,12 +27,6 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""b"": {
-                            ""version"": ""[1.0.0, )"",
-                            ""autoReferenced"": true
-                        }
-                    },
                   ""frameworks"": {
                     ""net46"": {
                         ""dependencies"": {
@@ -97,14 +91,15 @@ namespace NuGet.ProjectModel.Test
             // Arrange
             var json = @"{
   ""version"": ""1.2.3"",
-  ""dependencies"": {
-    ""packageA"": {
-      ""suppressParent"": ""All"",
-      ""target"": ""Project""
-    }
-  },
   ""frameworks"": {
-    ""net46"": {}
+    ""net46"": {
+        ""dependencies"": {
+            ""packageA"": {
+                ""suppressParent"": ""All"",
+                ""target"": ""Project""
+            }
+        }
+    }
   }
 }";
             // Act & Assert
@@ -199,7 +194,7 @@ namespace NuGet.ProjectModel.Test
             var actualJson = GetJsonString(packageSpec);
 
             // Assert
-            Assert.Equal(expectedJson, actualJson);
+            actualJson.Should().Be(expectedJson);
         }
 
         [Fact]
@@ -211,7 +206,7 @@ namespace NuGet.ProjectModel.Test
             var actualJson = GetJsonString(packageSpec);
 
             // Assert
-            expectedJson.Should().Be(actualJson);
+            actualJson.Should().Be(expectedJson);
         }
 
         [Fact]
@@ -351,14 +346,6 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""b"": {
-                                ""version"": ""[1.0.0, )"",
-                        },
-                        ""a"": {
-                            ""version"": ""[1.0.0, )"",
-                        }
-                    },
                   ""frameworks"": {
                     ""net46"": {
                         ""dependencies"": {
@@ -386,10 +373,6 @@ namespace NuGet.ProjectModel.Test
                 }";
 
             var expectedJson = @"{
-                  ""dependencies"": {
-                    ""a"": ""[1.0.0, )"",
-                    ""b"": ""[1.0.0, )""
-                  },
                   ""frameworks"": {
                     ""net46"": {
                       ""dependencies"": {
@@ -420,11 +403,6 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""a"": {
-                                ""version"": ""1.0.0"",
-                        },
-                    },
                   ""frameworks"": {
                     ""net46"": {
                         ""dependencies"": {
@@ -440,9 +418,6 @@ namespace NuGet.ProjectModel.Test
                 }";
 
             var expectedJson = @"{
-                  ""dependencies"": {
-                    ""a"": ""[1.0.0, )""
-                  },
                   ""frameworks"": {
                     ""net46"": {
                       ""dependencies"": {
@@ -826,7 +801,6 @@ namespace NuGet.ProjectModel.Test
 
             var packageSpec = new PackageSpec()
             {
-                Dependencies = new List<LibraryDependency>() { libraryDependency, libraryDependencyWithNoWarnGlobal },
                 Name = "name",
                 FilePath = "filePath",
                 RestoreMetadata = new ProjectRestoreMetadata()
@@ -882,14 +856,14 @@ namespace NuGet.ProjectModel.Test
 
             packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation()
             {
-                Dependencies = [],
+                Dependencies = [libraryDependency, libraryDependencyWithNoWarnGlobal],
                 FrameworkName = nugetFramework,
                 Imports = [nugetFramework],
             });
 
             packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation()
             {
-                Dependencies = [libraryDependencyWithNoWarn],
+                Dependencies = [libraryDependencyWithNoWarn, libraryDependency, libraryDependencyWithNoWarnGlobal],
                 FrameworkName = nugetFrameworkWithNoWarn,
                 Imports = [nugetFrameworkWithNoWarn],
                 Warn = true

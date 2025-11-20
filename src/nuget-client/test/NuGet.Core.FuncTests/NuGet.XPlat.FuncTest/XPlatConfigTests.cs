@@ -271,6 +271,7 @@ namespace NuGet.XPlat.FuncTest
         [Theory]
         [InlineData("signatureValidationMode", "accept")]
         [InlineData("maxHttpRequestsPerSource", "64")]
+        [InlineData("updatePackageLastAccessTime", "true")]
         public void ConfigSetCommand_WithConfigFileArg_AddsSetting(string key, string value)
         {
             // Arrange & Act

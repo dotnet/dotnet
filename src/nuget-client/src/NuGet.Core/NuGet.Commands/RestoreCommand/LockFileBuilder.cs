@@ -167,7 +167,8 @@ namespace NuGet.Commands
                 var target = new LockFileTarget
                 {
                     TargetFramework = targetGraph.Framework,
-                    RuntimeIdentifier = targetGraph.RuntimeIdentifier
+                    RuntimeIdentifier = targetGraph.RuntimeIdentifier,
+                    TargetAlias = targetGraph.TargetAlias,
                 };
 
                 var flattenedFlags = IncludeFlagUtils.FlattenDependencyTypes(_includeFlagGraphs, project, targetGraph);
@@ -282,7 +283,7 @@ namespace NuGet.Commands
 
             PopulatePackageFolders(localRepositories.Select(repo => repo.RepositoryRoot).Distinct(), lockFile);
 
-            AddCentralTransitiveDependencyGroupsForPackageReference(project, lockFile, targetGraphs);
+            AddCentralTransitiveDependencyGroupsForPackageReference(project, lockFile, targetGraphs, _logger);
 
             // Add the original package spec to the lock file.
             lockFile.PackageSpec = project;
@@ -392,13 +393,6 @@ namespace NuGet.Commands
 
         private static void AddProjectFileDependenciesForSpec(PackageSpec project, LockFile lockFile)
         {
-            // Use empty string as the key of dependencies shared by all frameworks
-            lockFile.ProjectFileDependencyGroups.Add(new ProjectFileDependencyGroup(
-                string.Empty,
-                project.Dependencies
-                    .Select(group => group.LibraryRange.ToLockFileDependencyGroupString())
-                    .OrderBy(group => group, StringComparer.Ordinal)));
-
             foreach (var frameworkInfo in project.TargetFrameworks
                 .OrderBy(framework => framework.FrameworkName.ToString(),
                     StringComparer.Ordinal))
@@ -420,7 +414,6 @@ namespace NuGet.Commands
                     StringComparer.Ordinal))
             {
                 var dependencies = new List<LibraryRange>();
-                dependencies.AddRange(project.Dependencies.Select(e => e.LibraryRange));
                 dependencies.AddRange(frameworkInfo.Dependencies.Select(e => e.LibraryRange));
 
                 var targetGraph = targetGraphs.SingleOrDefault(graph =>
@@ -460,7 +453,7 @@ namespace NuGet.Commands
             }
         }
 
-        private void AddCentralTransitiveDependencyGroupsForPackageReference(PackageSpec project, LockFile lockFile, IEnumerable<RestoreTargetGraph> targetGraphs)
+        private void AddCentralTransitiveDependencyGroupsForPackageReference(PackageSpec project, LockFile lockFile, IEnumerable<RestoreTargetGraph> targetGraphs, ILogger logger)
         {
             if (project.RestoreMetadata == null || !project.RestoreMetadata.CentralPackageVersionsEnabled || !project.RestoreMetadata.CentralPackageTransitivePinningEnabled)
             {
@@ -479,7 +472,7 @@ namespace NuGet.Commands
                 }
 
                 // The transitive dependencies enforced by the central package version management file are written to the assets to be used by the pack task.
-                List<LibraryDependency> centralEnforcedTransitiveDependencies = GetLibraryDependenciesForCentralTransitiveDependencies(targetGraph, targetFrameworkInformation).ToList();
+                List<LibraryDependency> centralEnforcedTransitiveDependencies = GetLibraryDependenciesForCentralTransitiveDependencies(targetGraph, targetFrameworkInformation, logger).ToList();
 
                 if (centralEnforcedTransitiveDependencies.Any())
                 {
@@ -499,8 +492,9 @@ namespace NuGet.Commands
         /// </summary>
         /// <param name="targetGraph">The <see cref="RestoreTargetGraph" /> to get centrally defined transitive dependencies for.</param>
         /// <param name="targetFrameworkInformation">The <see cref="TargetFrameworkInformation" /> for the target framework to get centrally defined transitive dependencies for.</param>
+        /// <param name="logger">An <see cref="ILogger" /> to use for logging.</param>
         /// <returns>An <see cref="IEnumerable{LibraryDependency}" /> representing the centrally defined transitive dependencies for the specified <see cref="RestoreTargetGraph" />.</returns>
-        private IEnumerable<LibraryDependency> GetLibraryDependenciesForCentralTransitiveDependencies(RestoreTargetGraph targetGraph, TargetFrameworkInformation targetFrameworkInformation)
+        private IEnumerable<LibraryDependency> GetLibraryDependenciesForCentralTransitiveDependencies(RestoreTargetGraph targetGraph, TargetFrameworkInformation targetFrameworkInformation, ILogger logger)
         {
             HashSet<GraphNode<RemoteResolveResult>> visitedNodes = new HashSet<GraphNode<RemoteResolveResult>>();
             Queue<GraphNode<RemoteResolveResult>> queue = new Queue<GraphNode<RemoteResolveResult>>();
@@ -511,8 +505,12 @@ namespace NuGet.Commands
 
                 foreach (GraphNode<RemoteResolveResult> node in rootNode.InnerNodes)
                 {
-                    // Only consider nodes that are Accepted, IsCentralTransitive, and have a centrally defined package version
-                    if (node?.Item == null || node.Disposition != Disposition.Accepted || !node.Item.IsCentralTransitive || !targetFrameworkInformation.CentralPackageVersions?.ContainsKey(node.Item.Key.Name) == true)
+                    // Only consider nodes that are not unresolved, Accepted, IsCentralTransitive, and have a centrally defined package version
+                    if (node?.Item == null
+                        || node.Item.Key.Type == LibraryType.Unresolved
+                        || node.Disposition != Disposition.Accepted
+                        || !node.Item.IsCentralTransitive
+                        || !targetFrameworkInformation.CentralPackageVersions?.ContainsKey(node.Item.Key.Name) == true)
                     {
                         continue;
                     }
@@ -535,17 +533,36 @@ namespace NuGet.Commands
                     }
 
                     // If all assets are suppressed then the dependency should not be added
-                    if (suppressParent != LibraryIncludeFlags.All)
+                    if (suppressParent == LibraryIncludeFlags.All)
                     {
-                        yield return new LibraryDependency()
-                        {
-                            LibraryRange = new LibraryRange(centralPackageVersion.Name, centralPackageVersion.VersionRange, LibraryDependencyTarget.Package),
-                            ReferenceType = LibraryDependencyReferenceType.Transitive,
-                            VersionCentrallyManaged = true,
-                            IncludeType = dependenciesIncludeFlags[centralPackageVersion.Name],
-                            SuppressParent = suppressParent,
-                        };
+                        continue;
                     }
+
+                    if (!dependenciesIncludeFlags.TryGetValue(centralPackageVersion.Name, out LibraryIncludeFlags includeType))
+                    {
+                        // This should never happen, if the package was resolved there should be a calculated include type for it
+                        // There have been bugs in the past where getting a value from the dictionary was throwing a KeyNotFoundException
+                        // Log an error with the info needed asking the user to file an issue
+                        logger.Log(
+                            LogMessage.CreateError(
+                                NuGetLogCode.NU1000,
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    Strings.Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType,
+                                    centralPackageVersion.Name,
+                                    node.Item.Key)));
+
+                        continue;
+                    }
+
+                    yield return new LibraryDependency()
+                    {
+                        LibraryRange = new LibraryRange(centralPackageVersion.Name, centralPackageVersion.VersionRange, LibraryDependencyTarget.Package),
+                        ReferenceType = LibraryDependencyReferenceType.Transitive,
+                        VersionCentrallyManaged = true,
+                        IncludeType = includeType,
+                        SuppressParent = suppressParent,
+                    };
                 }
             }
         }

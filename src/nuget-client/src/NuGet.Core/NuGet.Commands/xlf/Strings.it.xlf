@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">La dipendenza aggiunta centralmente ''{0}'' non è stata trovata nel grafico risolto in modo imprevisto per il nodo '{1}'. Segnala un problema all'indirizzo https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">I seguenti elementi PackageReference non possono definire un valore per Version: {0}. I progetti che utilizzano la Gestione pacchetti centrale devono definire un valore Version in un elemento PackageVersion. Per altre informazioni, visita https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">Il {0} PackageReference non verrà eliminato. È consigliabile rimuovere questo pacchetto dalle dipendenze perché probabilmente non è necessario.</target>
+        <target state="translated">{0} PackageReference non verrà rimosso. È consigliabile rimuovere questo pacchetto dalle dipendenze, poiché è probabile che non sia necessario.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Impossibile eliminare ProjectReference, {0}.</target>
+        <target state="translated">Un ProjectReference non può essere rimosso, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -874,7 +879,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="Log_ResolvingConflicts">
         <source>Resolving conflicts for {0}...</source>
-        <target state="translated">Risoluzione dei conflitti per {0}...</target>
+        <target state="translated">Risoluzione dei conflitti per {0} in corso...</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_RestoreComplete">
@@ -1073,7 +1078,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="ReservedPackageNameAll">
         <source>All</source>
-        <target state="translated">Tutti</target>
+        <target state="translated">Tutto</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolverRequest_ToStringFormat">
@@ -1083,7 +1088,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Eliminazione del pacchetto '{0}' come dipendenza di '{1}'. La versione massima eliminabile è '{2}'</target>
+        <target state="translated">Rimozione del pacchetto '{0}' come dipendenza di '{1}'. La versione massima rimovibile è '{2}'</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1458,15 +1463,15 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Di seguito è riportata un'origine "non HTTPS": {0}
-NuGet richiede origini HTTPS. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Di seguito è riportata un'origine 'non HTTPS': {0}
+NuGet richiede origini HTTPS. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Di seguito sono riportate le origini "non HTTPS": {0}
-NuGet richiede origini HTTPS. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Di seguito sono riportate origini 'non HTTPS': {0}
+NuGet richiede origini HTTPS. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

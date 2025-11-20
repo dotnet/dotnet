@@ -4,6 +4,7 @@
 using System;
 using System.CommandLine;
 using System.Linq;
+using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
 using NuGet.CommandLine.XPlat.Commands.Package.Update;
 
 namespace NuGet.CommandLine.XPlat;
@@ -30,6 +31,7 @@ public static class NuGetCommands
         }
 
         PackageUpdateCommand.Register(packageCommand, interactiveOption);
+        PackageDownloadCommand.Register(packageCommand, interactiveOption);
     }
 
     // To delete once the SDK starts using the other overload. Joys of public APIs.

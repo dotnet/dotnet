@@ -72,7 +72,7 @@ namespace NuGet.CommandLine.XPlat
 
                 var prerelease = addpkg.Option(
                     "--prerelease",
-                    Strings.AddPkg_PackagePrerelease,
+                    Strings.Prerelease_Description,
                     CommandOptionType.NoValue);
 
                 addpkg.OnExecute(() =>

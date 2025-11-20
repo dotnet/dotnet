@@ -12,9 +12,12 @@ namespace NuGet.Commands
 {
     public interface IRestoreTargetGraph
     {
-        string Name { get; }
-
         string TargetGraphName { get; }
+
+        /// <summary>
+        /// Gets the target alias used during the restore operation on this graph
+        /// </summary>
+        public string TargetAlias { get; }
 
         /// <summary>
         /// Gets the runtime identifier used during the restore operation on this graph

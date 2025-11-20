@@ -29,12 +29,12 @@
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection">
         <source>Select the NuGet package manager format for {0}</source>
-        <target state="translated">選取 {0} 的 NuGet 套件管理員格式</target>
+        <target state="translated">選取 {0} 的 NuGet 套件管理器格式</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection_Solution">
         <source>Select the NuGet package manager format for this Solution</source>
-        <target state="translated">選取此 Solution 的 NuGet 套件管理員格式</target>
+        <target state="translated">選取此 Solution 的 NuGet 套件管理器格式</target>
         <note />
       </trans-unit>
     </body>

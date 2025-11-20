@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">Die zentral angeheftete Abhängigkeit {0} wurde im aufgelösten Graphen für den Knoten {1} unerwartet nicht gefunden. Melden Sie ein Problem unter https://github.com/NuGet/Home.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Die folgenden PackageReference-Elemente können keinen Wert definieren für Version: {0}. Projekte, die die zentrale Paketverwaltung verwenden, müssen einen Versionswert für ein PackageVersion-Element definieren. Weitere Informationen finden Sie unter https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -215,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle aus: {1}. NuGet erfordert HTTPS-Quellen. Um eine HTTP-Quelle zu verwenden, müssen Sie „allowInsecureConnections“ in Ihrer NuGet.Config-Datei explizit auf TRUE festlegen. Weitere Informationen finden Sie unter https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle, „{1}“, aus. NuGet erfordert HTTPS-Quellen. Um eine HTTP-Quelle zu verwenden, müssen Sie „allowInsecureConnections“ in Ihrer NuGet.Config-Datei explizit auf TRUE festlegen. Weitere Informationen finden Sie unter „https://aka.ms/nuget-https-everywhere“.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} wird nicht löschbar. Erwägen Sie, dieses Paket aus Ihren Abhängigkeiten zu entfernen, da es wahrscheinlich nicht erforderlich ist.</target>
+        <target state="translated">PackageReference {0} wird nicht gekürzt. Erwägen Sie, dieses Paket aus Ihren Abhängigkeiten zu entfernen, da es wahrscheinlich nicht erforderlich ist.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">ProjectReference kann nicht löschbar, {0}.</target>
+        <target state="translated">Ein ProjectReference kann nicht gekürzt werden, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -1083,7 +1088,7 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Das Paket '{0}' als Abhängigkeit von '{1}' gelöscht. Die maximale löschbare Version ist '{2}'</target>
+        <target state="translated">Das Paket „{0}“ wird als Abhängigkeit von „{1}“ gekürzt. Die maximal kürzbare Version ist „{2}“.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1417,7 +1422,7 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
         <source>moderate</source>
-        <target state="translated">moderat</target>
+        <target state="translated">Moderat</target>
         <note>As in "This package has a moderate severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">

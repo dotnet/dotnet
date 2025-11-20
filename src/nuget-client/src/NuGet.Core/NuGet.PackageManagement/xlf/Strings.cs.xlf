@@ -59,17 +59,17 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Byl přidán soubor {0}.</target>
+        <target state="translated">Byl přidaný soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Byl přidán soubor {0} do složky {1}.</target>
+        <target state="translated">Byl přidaný soubor {0} do složky {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Byl odebrán soubor {0}.</target>
+        <target state="translated">Byl odebraný soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Byla odebrána složka {0}.</target>
+        <target state="translated">Byla odebraná složka {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
@@ -259,12 +259,12 @@
       </trans-unit>
       <trans-unit id="PackageHasDependent">
         <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
-        <target state="translated">Nelze odinstalovat balíček {0}, protože na něm závisí {1}.</target>
+        <target state="translated">Nejde odinstalovat balíček {0}, protože na něm závisí {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependents">
         <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
-        <target state="translated">Nelze odinstalovat balíček {0}, protože na něm závisejí {1}.</target>
+        <target state="translated">Nejde odinstalovat balíček {0}, protože na něm závisejí {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFound">
@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Hodnota {0} nemůže být nulová.</target>
+        <target state="translated">{0} nemůže být null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -386,7 +386,7 @@
       </trans-unit>
       <trans-unit id="RestoringPackage">
         <source>Restoring NuGet package {0}.</source>
-        <target state="translated">Probíhá obnovení balíčku NuGet {0}.</target>
+        <target state="translated">Obnovuje se balíček NuGet {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RetrievingPackageStart">
@@ -421,7 +421,7 @@
       </trans-unit>
       <trans-unit id="UnableToFindCompatibleItems">
         <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
-        <target state="translated">Nebylo možné nainstalovat balíček {0}. Pokoušíte se tento balíček nainstalovat do projektu, jehož cílem je {1}, avšak balíček neobsahuje žádné odkazy sestavení nebo soubory obsahu kompatibilní s daným rozhraním. Další informace získáte od autora balíčku.</target>
+        <target state="translated">Nešlo nainstalovat balíček {0}. Pokoušíte se tenhle balíček nainstalovat do projektu, jehož cílem je {1}, ale balíček neobsahuje žádné odkazy sestavení nebo soubory obsahu kompatibilní s daným rozhraním. Další informace dostanete od autora balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindPathInLookupOrList">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="UnknownPackageSpecificVersion">
         <source>Unable to find version '{1}' of package '{0}'.</source>
-        <target state="translated">Nelze nalézt verzi {1} balíčku {0}.</target>
+        <target state="translated">Nenašla se verze {0} balíčku {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedPackageType">
@@ -492,12 +492,12 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">Soubor {0} již existuje. Bude přeskočen...</target>
+        <target state="translated">Soubor {0} už existuje. Přeskakuje se...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">Soubor {0} bude přeskočen, protože byl upraven.</target>
+        <target state="translated">Soubor {0} se přeskočí, protože byl upravený.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

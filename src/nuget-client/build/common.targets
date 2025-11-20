@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0">
 
   <!-- Set AssemblyVersion in targets as it is TFM dependent. -->
-  <PropertyGroup Condition="'$(AssemblyVersion)' == '' and '$(SemanticVersion)' != ''">
+  <PropertyGroup Condition="'$(AssemblyVersion)' == ''">
     <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
     <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(SemanticVersion).0</AssemblyVersion>
   </PropertyGroup>
@@ -180,6 +180,7 @@
   <Target Name="GetNetCoreLocalizedFilesInProjectOutputPath" Returns="@(_LocalizedNetCoreDllsWithRelativeTargetPath)" Condition=" '$(PackProject)' == 'true' ">
     <ItemGroup>
       <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(NETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
+      <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(LatestNETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
       <_LocalizedDllsNetStandard Include="$(OutputPath)$(NetStandardVersion)\**\$(AssemblyName).resources.dll"/>
 
       <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetCoreApp)" Condition=" '@(_LocalizedDllsNetCoreApp)' != '' ">

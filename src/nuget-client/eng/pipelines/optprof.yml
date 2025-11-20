@@ -11,6 +11,7 @@ resources:
         include:
         - dev
         - release-*
+        - release/*
         exclude:
         - release-6.0.x
         - release-6.3.x
@@ -89,6 +90,16 @@ stages:
     - download: ComponentBuildUnderTest
       artifact: BuildInfo
       displayName: 'Download buildinfo.json'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download RunSettings drop metadata'
+      inputs:
+        buildType: 'specific'
+        artifactName: 'DropMetadata-RunSettings'
+        targetPath: $(Pipeline.Workspace)\ComponentBuildUnderTest\DropMetadata-RunSettings
+        project: '$(System.TeamProjectId)'
+        definition: $(System.DefinitionId)
+        buildVersionToDownload: 'specific'
+        pipelineId: $(resources.pipeline.ComponentBuildUnderTest.runId)
     - powershell: |
         try {
           Write-Host "Set VSBranch, VsTargetChannel &  VsTargetMajorVersion variables"
@@ -131,19 +142,27 @@ stages:
       displayName: 'Set VSBranch variable'
     - powershell : |
         try {
-          $branchName = "$(resources.pipeline.ComponentBuildUnderTest.sourceBranch)"
-          $branchName = $branchName.Replace('refs/heads/', '')
-
-          $RunSettingsURI = "https://vsdrop.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.OptProfV2.runsettings"
-          Write-Host "RunSettingsURI: $RunSettingsURI"
-          # non-output variable for VS config in the configure machine job
-          # output variable for test execution job
-          Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
-          Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI
+          $dropMetadata = ConvertFrom-Json (Get-Content "$(Pipeline.Workspace)\ComponentBuildUnderTest\DropMetadata-RunSettings\VSTSDrop.json" -Raw)
+          $dropUri = $dropMetadata.VstsDropBuildArtifact.VstsDropUrl
+          if ($dropUri)
+          {
+            $dropUri = $dropUri -replace '^(.*?)/RunSettings/', 'https://vsdrop.microsoft.com/file/v1/RunSettings/'
+            $RunSettingsURI = "$dropUri;NuGet.OptProfV2.runsettings"
+            Write-Host "RunSettingsURI: $RunSettingsURI"
+            # non-output variable for VS config in the configure machine job
+            # output variable for test execution job
+            Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
+            Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI
+          }
+          else
+          {
+            Write-Error "Drop metadata: $dropMetadata"
+            throw "VSTSDropUrl not found in VSTSDrop.json"
+          }
         }
         catch {
           Write-Host $_
-          Write-Error "Failed to set SourceBranchName pipeline variable"
+          Write-Error "Failed to set RunSettingsURI pipeline variable"
           throw
         }
       displayName: 'Set RunSettingsURI variable'
@@ -166,20 +185,23 @@ stages:
     - task: MicroBuildBuildVSBootstrapper@3
       displayName: 'Build a Visual Studio bootstrapper'
       inputs:
+        azureSubscription: 'VSEng-VSDrop-MI'
         channelName: "$(VsTargetChannel)"
         vsMajorVersion: "$(VsTargetMajorVersion)"
         manifests: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
         outputFolder: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15'
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     - task: PowerShell@2
       displayName: Set 'VisualStudio.InstallationUnderTest.BootstrapperURL'
       inputs:
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Bootstrapper\Get-BootstrapperURL.ps1
         arguments: -BootstrapperInfoJsonURI '$(Build.StagingDirectory)\MicroBuild\Output\BootstrapperInfo.json' -VSBranch '$(VSBranch)' -OutVariableName 'VisualStudio.InstallationUnderTest.BootstrapperURL'
     - task: artifactDropTask@0
-      displayName: "Upload VSTS Drop"
+      displayName: "Upload VS Bootstrapper"
       inputs:
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+        buildNumber: '$(MicroBuild.ManifestDropName)'
         sourcePath: "$(Pipeline.Workspace)\\ComponentBuildUnderTest\\VS15"
         toLowerCase: false
         usePat: true

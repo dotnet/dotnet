@@ -45,7 +45,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Tüm paketler yüklü ve geri yüklenecek bir şey yok.</target>
+        <target state="translated">Tüm paketler zaten yüklendi ve geri yüklenecek bir şey yok.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -84,7 +84,7 @@ Eksik paketler: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">NuGet paketini geri yükleme tamamlandı.</target>
+        <target state="translated">NuGet paket geri yüklemesi tamamlandı.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">

@@ -189,8 +189,7 @@
         <Grid.ColumnDefinitions>
           <ColumnDefinition MaxWidth="320" MinWidth="118"/>
           <ColumnDefinition Width="auto" />
-          <ColumnDefinition MaxWidth="125" />
-          <ColumnDefinition MaxWidth="150"/>
+          <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!-- container of the search control -->
         <Border
@@ -218,39 +217,54 @@
             Width="16" />
         </Button>
 
-        <!-- prerelease checkbox -->
-        <CheckBox
+        <!-- grid for filters -->
+        <Grid
           Grid.Column="2"
-          x:Name="_checkboxPrerelease"
-          AutomationProperties.AutomationId="CheckBox_Prerelease"
-          Margin="3,0"
           VerticalAlignment="Center"
-          Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
-          VerticalContentAlignment="Center"
-          Checked="_checkboxPrerelease_Checked"
-          Unchecked="_checkboxPrerelease_Unchecked"
-          IsChecked="True">
-          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_IncludePrerelease}" />
-        </CheckBox>
+          HorizontalAlignment="Left">
 
-        <!-- show vulnerabilities checkbox -->
-        <CheckBox
-          Grid.Column="3"
-          x:Name="_checkboxVulnerabilities"
-          AutomationProperties.AutomationId="CheckBox_Vulnerabilities"
-          Margin="3,0"
-          VerticalAlignment="Center"
-          Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
-          VerticalContentAlignment="Center"
-          Checked="_checkboxVulnerabilities_Checked"
-          Unchecked="_checkboxVulnerabilities_Unchecked"
-          Visibility="Hidden"
-          IsChecked="False">
-          <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
-        </CheckBox>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <!-- prerelease checkbox -->
+          <CheckBox
+            Grid.Column="0"
+            x:Name="_checkboxPrerelease"
+            AutomationProperties.AutomationId="CheckBox_Prerelease"
+            Margin="3,0"
+            VerticalAlignment="Center"
+            Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+            VerticalContentAlignment="Center"
+            Checked="_checkboxPrerelease_Checked"
+            Unchecked="_checkboxPrerelease_Unchecked"
+            IsChecked="True"
+            ToolTip="{x:Static nuget:Resources.Checkbox_IncludePrerelease}">
+              <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_IncludePrerelease}" />
+            </CheckBox>
+
+          <!-- show vulnerabilities checkbox -->
+          <CheckBox
+            Grid.Column="1"
+            x:Name="_checkboxVulnerabilities"
+            AutomationProperties.AutomationId="CheckBox_Vulnerabilities"
+            Margin="3,0"
+            VerticalAlignment="Center"
+            Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+            VerticalContentAlignment="Center"
+            Checked="_checkboxVulnerabilities_Checked"
+            Unchecked="_checkboxVulnerabilities_Unchecked"
+            Visibility="Hidden"
+            IsChecked="False"
+            ToolTip="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}">
+              <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
+          </CheckBox>
+        </Grid>
       </Grid>
+      
       <Grid
-        Grid.Column="2"
+        Grid.Column="1"
         VerticalAlignment="Center"
         HorizontalAlignment="Right">
 

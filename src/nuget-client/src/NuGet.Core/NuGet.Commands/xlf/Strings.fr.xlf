@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">La dépendance épinglée de manière centralisée « {0} » est introuvable de manière inattendue dans le graphique résolu pour le nœud « {1} ». Veuillez soumettre un problème au https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Les éléments PackageReference suivants ne peuvent pas définir de valeur pour la version : {0}. Les projets utilisant Package Management central doivent définir une valeur de version sur un élément PackageVersion. Pour plus d’informations, visitez https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -336,7 +341,7 @@
       </trans-unit>
       <trans-unit id="Error_NoMatchingCertificate">
         <source>The package signature did not match any of the allowed certificate fingerprints.</source>
-        <target state="translated">La signature de package ne correspond à aucune des empreintes digitales de certificat autorisées.</target>
+        <target state="translated">La signature du package ne correspond à aucune des empreintes digitales de certificat autorisées.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NoMatchingClientCertificate">
@@ -396,7 +401,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
-        <target state="translated">Le paquet '{0}' {1} n'a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
+        <target state="translated">Le paquet '{0}' {1} n’a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
       <trans-unit id="Error_PackageNotSigned">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">Le {0} PackageReference ne sera pas supprimé. Supprimez ce package de vos dépendances, car il est probablement inutile.</target>
+        <target state="translated">Le PackageReference {0} ne sera pas supprimé. Envisagez de retirer ce package de vos dépendances, car il est probablement inutile.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Impossible de nettoyer projectReference, {0}.</target>
+        <target state="translated">Un ProjectReference ne peut pas être nettoyé, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -1083,7 +1088,7 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Le nettoyage du package '{0}' en tant que dépendance de '{1}'. La version de nettoyage maximale est '{2}'</target>
+        <target state="translated">Nettoyage du package « {0} » en tant que dépendance de « {1} ». La version maximale pouvant être nettoyée est « {2} »</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1367,7 +1372,7 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       </trans-unit>
       <trans-unit id="VerifyCommand_Failed">
         <source>Package signature validation failed.</source>
-        <target state="translated">Échec de la validation de la signature de package.</target>
+        <target state="translated">Échec de la validation de la signature du package.</target>
         <note />
       </trans-unit>
       <trans-unit id="VerifyCommand_FinishedWithErrors">
@@ -1422,7 +1427,7 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">Inconnu</target>
+        <target state="translated">inconnue</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">
@@ -1458,15 +1463,15 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Voici une source « Non-HTTPS » : {0}
-NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Ce qui suit est une source « non HTTPS » : {0}
+NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Les sources « Non-HTTPS » sont les suivantes : {0}
-NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Les sources suivantes sont des sources « non HTTPS » : {0}
+NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

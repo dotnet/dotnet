@@ -1,4 +1,1 @@
 #nullable enable
-NuGet.Protocol.HttpSourceException
-~NuGet.Protocol.HttpSourceException.HttpSourceException(string message) -> void
-~NuGet.Protocol.HttpSourceException.HttpSourceException(string message, System.Exception innerException) -> void
