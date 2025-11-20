@@ -4,15 +4,10 @@ trigger:
     include:
     - main
     - release/*
-    - internal/release/*
-    - experimental/*
 
 pr:
 - main
 - release/*
-- experimental/*
-
-name: $(Date:yyyyMMdd)$(Rev:.r)
 
 variables:
   - name: TeamName
@@ -20,13 +15,6 @@ variables:
   # Skip Running CI tests
   - name: SkipTests
     value: false
-
-  # Set the target blob feed for package publish during official and validation builds.
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCoreValidation
-
   # Produce test-signed build for PR and Public builds
   - name: SignType
     value: test
