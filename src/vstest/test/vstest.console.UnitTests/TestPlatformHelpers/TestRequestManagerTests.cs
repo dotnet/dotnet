@@ -2663,6 +2663,147 @@ public class TestRequestManagerTests
         Assert.AreEqual("<RunSettings><RunConfiguration><BatchSize>1000</BatchSize></RunConfiguration></RunSettings>", xmlDocument.OuterXml);
     }
 
+    [TestMethod]
+    public void UpdateCodeCoverageSettings_SetEnableDynamicNativeInstrumentationToFalse_WhenNotPresent()
+    {
+        // Arrange
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <DataCollectionRunSettings>
+                <DataCollectors>
+                  <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+                    <Configuration>
+                      <CoverageLogLevel>All</CoverageLogLevel>
+                      <InstrumentationLogLevel>All</InstrumentationLogLevel>
+                      <ManagedVanguardLogLevel>Verbose</ManagedVanguardLogLevel>
+                      <CoverageFileLogPath>%LOGS_DIR%</CoverageFileLogPath>
+                      <CodeCoverage>
+                        <FileLogPath>%LOGS_DIR%</FileLogPath>
+                        <LogLevel>All</LogLevel>
+                        <UseVerifiableInstrumentation>False</UseVerifiableInstrumentation>
+                        <EnableStaticNativeInstrumentation>False</EnableStaticNativeInstrumentation>
+                      </CodeCoverage>
+                    </Configuration>
+                  </DataCollector>
+                </DataCollectors>
+              </DataCollectionRunSettings>
+            </RunSettings>
+            """);
+        var configuration = new RunConfiguration();
+
+        // Act
+        var result = TestRequestManager.UpdateCollectCoverageSettings(xmlDocument, configuration);
+
+        // Assert
+        Assert.IsTrue(result);
+        StringAssert.Contains(xmlDocument.OuterXml, "<EnableStaticNativeInstrumentation>False</EnableStaticNativeInstrumentation><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>");
+    }
+
+    [TestMethod]
+    public void UpdateCodeCoverageSettings_SetEnableDynamicNativeInstrumentationToFalse_WhenNotPresentAndParentDetailsOfConfigurationAreAlsoNotPresent()
+    {
+        // Arrange
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <DataCollectionRunSettings>
+                <DataCollectors>
+                  <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+                  </DataCollector>
+                </DataCollectors>
+              </DataCollectionRunSettings>
+            </RunSettings>
+            """);
+        var configuration = new RunConfiguration();
+
+        // Act
+        var result = TestRequestManager.UpdateCollectCoverageSettings(xmlDocument, configuration);
+
+        // Assert
+        Assert.IsTrue(result);
+        StringAssert.Contains(xmlDocument.OuterXml, $"<Configuration><CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage></Configuration></DataCollector>");
+    }
+
+    [TestMethod]
+    [DataRow("True")]
+    [DataRow("False")]
+    public void UpdateCodeCoverageSettings_DontSetEnableDynamicNativeInstrumentationToFalse_WhenAlreadyPresent(string setting)
+    {
+        // Arrange
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml($"""
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <DataCollectionRunSettings>
+                <DataCollectors>
+                  <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+                    <Configuration>
+                      <CoverageLogLevel>All</CoverageLogLevel>
+                      <InstrumentationLogLevel>All</InstrumentationLogLevel>
+                      <ManagedVanguardLogLevel>Verbose</ManagedVanguardLogLevel>
+                      <CoverageFileLogPath>%LOGS_DIR%</CoverageFileLogPath>
+                      <CodeCoverage>
+                        <EnableDynamicNativeInstrumentation>{setting}</EnableDynamicNativeInstrumentation>
+                      </CodeCoverage>
+                    </Configuration>
+                  </DataCollector>
+                </DataCollectors>
+              </DataCollectionRunSettings>
+            </RunSettings>
+            """);
+        var configuration = new RunConfiguration();
+
+        // Act
+        var result = TestRequestManager.UpdateCollectCoverageSettings(xmlDocument, configuration);
+
+        // Assert
+        // No matter what user has set, we don't override it.
+        Assert.IsFalse(result);
+        StringAssert.Contains(xmlDocument.OuterXml, $"<CodeCoverage><EnableDynamicNativeInstrumentation>{setting}</EnableDynamicNativeInstrumentation></CodeCoverage>");
+    }
+
+    [TestMethod]
+    [DataRow("friendlyName=\"Code Coverage\"")]
+    [DataRow("friendlyName=\"code coverage\"")]
+    [DataRow("uri=\"datacollector://Microsoft/CodeCoverage/2.0\"")]
+    [DataRow("uri=\"datacollector://microsoft/codecoverage/2.0\"")]
+    [DataRow("assemblyQualifiedName=\"Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"")]
+    public void UpdateCodeCoverageSettings_SetEnableDynamicNativeInstrumentationToFalse_WhenUserUsesImperfectNamesForCollector(string collector)
+    {
+        // Arrange
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml($"""
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <DataCollectionRunSettings>
+                <DataCollectors>
+                  <DataCollector {collector}>
+                    <Configuration>
+                      <CoverageLogLevel>All</CoverageLogLevel>
+                      <InstrumentationLogLevel>All</InstrumentationLogLevel>
+                      <ManagedVanguardLogLevel>Verbose</ManagedVanguardLogLevel>
+                      <CoverageFileLogPath>%LOGS_DIR%</CoverageFileLogPath>
+                      <CodeCoverage>
+                      </CodeCoverage>
+                    </Configuration>
+                  </DataCollector>
+                </DataCollectors>
+              </DataCollectionRunSettings>
+            </RunSettings>
+            """);
+        var configuration = new RunConfiguration();
+
+        // Act
+        var result = TestRequestManager.UpdateCollectCoverageSettings(xmlDocument, configuration);
+
+        // Assert
+        Assert.IsTrue(result);
+        StringAssert.Contains(xmlDocument.OuterXml, $"<CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>");
+    }
+
     private static DiscoveryRequestPayload CreateDiscoveryPayload(string runsettings)
     {
         var discoveryPayload = new DiscoveryRequestPayload

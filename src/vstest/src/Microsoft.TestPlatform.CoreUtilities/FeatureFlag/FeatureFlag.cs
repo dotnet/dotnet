@@ -75,6 +75,10 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable setting DOTNET_ROOT environment variable on non-Windows platforms. We used to set it only only on Windows when we found testhost.exe, now we set it always to allow xunit v3 to run tests in child process.
     public const string VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS = nameof(VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS);
 
+    // Disable turning dynamic code coverage for native code to OFF by default. Setting this to 1 will skip adding the setting.
+    public const string VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING = nameof(VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING);
+
+
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()
