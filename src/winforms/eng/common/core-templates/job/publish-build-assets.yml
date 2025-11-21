@@ -140,7 +140,7 @@ jobs:
           /p:MaestroApiEndpoint=https://maestro.dot.net
           /p:OfficialBuildId=$(OfficialBuildId)
           -runtimeSourceFeed https://ci.dot.net/internal
-          -runtimeSourceFeedKey $(dotnetbuilds-internal-container-read-token-base64)
+          -runtimeSourceFeedKey '$(dotnetbuilds-internal-container-read-token-base64)'
 
       condition: ${{ parameters.condition }}
       continueOnError: ${{ parameters.continueOnError }}
@@ -172,7 +172,7 @@ jobs:
             artifactName: AssetManifests
             displayName: 'Publish Merged Manifest'
             retryCountOnTaskFailure: 10 # for any logs being locked
-            sbomEnabled: false # we don't need SBOM for logs
+            isProduction: false
 
     - template: /eng/common/core-templates/steps/publish-build-artifacts.yml
       parameters:
@@ -210,8 +210,8 @@ jobs:
             -ArtifactsPublishingAdditionalParameters '${{ parameters.artifactsPublishingAdditionalParameters }}'
             -SymbolPublishingAdditionalParameters '${{ parameters.symbolPublishingAdditionalParameters }}'
             -SkipAssetsPublishing '${{ parameters.isAssetlessBuild }}'
-            -runtimeSourceFeed https://ci.dot.net/internal 
-            -runtimeSourceFeedKey $(dotnetbuilds-internal-container-read-token-base64)
+            -runtimeSourceFeed https://ci.dot.net/internal
+            -runtimeSourceFeedKey '$(dotnetbuilds-internal-container-read-token-base64)'
 
     - ${{ if eq(parameters.enablePublishBuildArtifacts, 'true') }}:
       - template: /eng/common/core-templates/steps/publish-logs.yml

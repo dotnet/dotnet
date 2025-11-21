@@ -1,5 +1,0 @@
-<Project>
-  <ItemGroup>
-    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
-  </ItemGroup>
-</Project>
