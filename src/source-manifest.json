@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 290907,
+      "barId": 290962,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "faf7135db655960d71814f566375be9f1a097cf1"
+      "commitSha": "4396154347e812cffb31b5b5b95fdc2028bb4c8c"
     },
     {
       "barId": 288357,
@@ -37,10 +37,10 @@
       "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
     },
     {
-      "barId": 284344,
+      "barId": 291599,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f3aba8c2bc3c86a45c653b57e78ab663d76fa9ba"
+      "commitSha": "eb2ec000c279fdbd3bd7d4e06d61d465ee88081c"
     },
     {
       "barId": 291014,
@@ -49,10 +49,10 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 290890,
+      "barId": 291543,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d04687c325ff9e2cbc8836c14136a7fd49d82dae"
+      "commitSha": "861d938ebab7dc09b74f4fcc92895fd1d9ae7ce8"
     },
     {
       "barId": 291698,
@@ -61,22 +61,22 @@
       "commitSha": "9542aec10b89ebdb52d56813fc1ac07ff375cb71"
     },
     {
-      "barId": null,
+      "barId": 291514,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "3b5251dd0be65990d9d0572bfb710f51e6c21c3a"
+      "commitSha": "5e6c2bc06becb8e963dcf8d549bfb46a3fa80444"
     },
     {
-      "barId": 290817,
+      "barId": 291391,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "ec5f0e074a6aeffe17f15a0ab49f3fd2122add48"
+      "commitSha": "069bda6132d6ac2134cc9b26d651ccb825ff212d"
     },
     {
-      "barId": 285868,
+      "barId": 291277,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "51891d6b33641ad30bc512747652225ca7964386"
+      "commitSha": "4524dcd1e91c0d09d6da6576952f8df05e666e9c"
     }
   ],
   "submodules": [
