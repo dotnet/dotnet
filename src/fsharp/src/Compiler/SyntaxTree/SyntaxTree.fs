@@ -160,7 +160,7 @@ type SynConst =
 
     | Char of char
 
-    | Decimal of System.Decimal
+    | Decimal of Decimal
 
     | UserNum of value: string * suffix: string
 
@@ -306,23 +306,7 @@ type DebugPointAtBinding =
 
 type SeqExprOnly = SeqExprOnly of bool
 
-[<NoEquality; NoComparison; RequireQualifiedAccess>]
-type BlockSeparator =
-    | Semicolon of range: range * position: pos option
-    | Comma of range: range * position: pos option
-    | Offside of range: range * position: pos option
-
-    member this.Range =
-        match this with
-        | Semicolon(range = m)
-        | Comma(range = m)
-        | Offside(range = m) -> m
-
-    member this.Position =
-        match this with
-        | Semicolon(position = p)
-        | Comma(position = p)
-        | Offside(position = p) -> p
+type BlockSeparator = range * pos option
 
 type RecordFieldName = SynLongIdent * bool
 
@@ -1073,7 +1057,7 @@ type SynMatchClause =
 
     member this.IsTrueMatchClause =
         let (SynMatchClause(trivia = trivia)) = this
-        trivia.BarRange.IsSome && trivia.ArrowRange.IsSome
+        trivia.ArrowRange.IsSome
 
     member this.Range =
         match this with

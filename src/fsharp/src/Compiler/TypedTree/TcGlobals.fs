@@ -192,7 +192,7 @@ type TcGlobals(
     checkNullness: bool,
     useReflectionFreeCodeGen: bool,
     // The helper to find system types amongst referenced DLLs
-    tryFindSysTypeCcuHelper: string list -> string -> bool -> FSharp.Compiler.TypedTree.CcuThunk option,
+    tryFindSysTypeCcuHelper: string list -> string -> bool -> CcuThunk option,
     emitDebugInfoInQuotations: bool,
     noDebugAttributes: bool,
     pathMap: PathMap,
@@ -687,7 +687,7 @@ type TcGlobals(
 
   // Build the memoization table for files
   let v_memoize_file =
-      MemoizationTable<int, ILSourceDocument>(compute, keyComparer = HashIdentity.Structural)
+      MemoizationTable<int, ILSourceDocument>("v_memoize_file", compute, keyComparer = HashIdentity.Structural)
 
   let v_and_info =                   makeIntrinsicValRef(fslib_MFIntrinsicOperators_nleref,                    CompileOpName "&"                      , None                 , None          , [],         mk_rel_sig v_bool_ty)
   let v_addrof_info =                makeIntrinsicValRef(fslib_MFIntrinsicOperators_nleref,                    CompileOpName "~&"                     , None                 , None          , [vara],     ([[varaTy]], mkByrefTy varaTy))
@@ -1112,11 +1112,11 @@ type TcGlobals(
 
   member _.noDebugAttributes = noDebugAttributes
 
-  member _.tryFindSysTypeCcuHelper: string list -> string -> bool -> FSharp.Compiler.TypedTree.CcuThunk option = tryFindSysTypeCcuHelper
+  member _.tryFindSysTypeCcuHelper: string list -> string -> bool -> CcuThunk option = tryFindSysTypeCcuHelper
 
   member _.tryRemoveEmbeddedILTypeDefs () = [
       for key in embeddedILTypeDefs.Keys.OrderBy id do
-        match (embeddedILTypeDefs.TryRemove(key)) with
+        match embeddedILTypeDefs.TryRemove(key) with
         | true, ilTypeDef -> yield ilTypeDef
         | false, _ -> ()
       ]

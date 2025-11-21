@@ -201,7 +201,7 @@ type Exception with
         | NoConstructorsAvailableForType(_, _, m) -> Some m
 
         // Strip TargetInvocationException wrappers
-        | :? System.Reflection.TargetInvocationException as e when isNotNull e.InnerException -> (!!e.InnerException).DiagnosticRange
+        | :? TargetInvocationException as e when isNotNull e.InnerException -> (!!e.InnerException).DiagnosticRange
 #if !NO_TYPEPROVIDERS
         | :? TypeProviderError as e -> e.Range |> Some
 #endif
@@ -645,11 +645,11 @@ let OutputTypesNotInEqualityRelationContextInfo contextInfo ty1 ty2 m (os: Strin
             os.AppendString(FSComp.SR.arrayElementHasWrongType (ty1, ty2))
         else
             os.AppendString(FSComp.SR.listElementHasWrongType (ty1, ty2))
-    | ContextInfo.OmittedElseBranch range when equals range m -> os.AppendString(FSComp.SR.missingElseBranch (ty2))
+    | ContextInfo.OmittedElseBranch range when equals range m -> os.AppendString(FSComp.SR.missingElseBranch ty2)
     | ContextInfo.ElseBranchResult range when equals range m -> os.AppendString(FSComp.SR.elseBranchHasWrongType (ty1, ty2))
     | ContextInfo.FollowingPatternMatchClause range when equals range m ->
         os.AppendString(FSComp.SR.followingPatternMatchClauseHasWrongType (ty1, ty2))
-    | ContextInfo.PatternMatchGuard range when equals range m -> os.AppendString(FSComp.SR.patternMatchGuardIsNotBool (ty2))
+    | ContextInfo.PatternMatchGuard range when equals range m -> os.AppendString(FSComp.SR.patternMatchGuardIsNotBool ty2)
     | contextInfo -> fallback contextInfo
 
 type Exception with
@@ -733,21 +733,15 @@ type Exception with
             if m.StartLine <> m2.StartLine then
                 os.AppendString(SeeAlsoE().Format(stringOfRange m))
 
-        | ConstraintSolverTypesNotInEqualityRelation(denv, (TType_measure _ as ty1), (TType_measure _ as ty2), m, m2, _) ->
-            // REVIEW: consider if we need to show _cxs (the type parameter constraints)
-            let ty1, ty2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
-
-            os.AppendString(ConstraintSolverTypesNotInEqualityRelation1E().Format ty1 ty2)
-
-            if m.StartLine <> m2.StartLine then
-                os.AppendString(SeeAlsoE().Format(stringOfRange m))
-
         | ConstraintSolverTypesNotInEqualityRelation(denv, ty1, ty2, m, m2, contextInfo) ->
             // REVIEW: consider if we need to show _cxs (the type parameter constraints)
-            let ty1, ty2, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+            let ty1str, ty2str, _cxs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
 
-            OutputTypesNotInEqualityRelationContextInfo contextInfo ty1 ty2 m os (fun _ ->
-                os.AppendString(ConstraintSolverTypesNotInEqualityRelation2E().Format ty1 ty2))
+            match ty1, ty2 with
+            | TType_measure _, TType_measure _ -> os.AppendString(ConstraintSolverTypesNotInEqualityRelation1E().Format ty1str ty2str)
+            | _ ->
+                OutputTypesNotInEqualityRelationContextInfo contextInfo ty1str ty2str m os (fun _ ->
+                    os.AppendString(ConstraintSolverTypesNotInEqualityRelation2E().Format ty1str ty2str))
 
             if m.StartLine <> m2.StartLine then
                 os.AppendString(SeeAlsoE().Format(stringOfRange m))
@@ -816,11 +810,26 @@ type Exception with
                     os.AppendString(SeeAlsoE().Format(stringOfRange m1))
 
         | ErrorFromAddingTypeEquation(g, denv, ty1, ty2, e, _) ->
-            if not (typeEquiv g ty1 ty2) then
-                let ty1, ty2, tpcs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
+            let e =
+                if not (typeEquiv g ty1 ty2) then
+                    let ty1, ty2, tpcs = NicePrint.minimalStringsOfTwoTypes denv ty1 ty2
 
-                if ty1 <> ty2 + tpcs then
-                    os.AppendString(ErrorFromAddingTypeEquation2E().Format ty1 ty2 tpcs)
+                    if ty1 <> ty2 + tpcs then
+                        os.AppendString(ErrorFromAddingTypeEquation2E().Format ty1 ty2 tpcs)
+
+                    e
+
+                else
+                    // Fix for https://github.com/dotnet/fsharp/issues/18905
+                    // If ty1 = ty2 after the type solving, then ty2 holds an actual type.
+                    // The order of expected and actual types in ConstraintSolverTypesNotInEqualityRelation can be arbitrary
+                    // due to type solving logic.
+                    // If ty1 = ty2 = ty2b, it means ty2b is also an actual type, and it needs to be swapped with ty1b
+                    // to be correctly used in the type mismatch error message based on ConstraintSolverTypesNotInEqualityRelation
+                    match e with
+                    | ConstraintSolverTypesNotInEqualityRelation(env, ty1b, ty2b, m, m2, contextInfo) when typeEquiv g ty2 ty2b ->
+                        ConstraintSolverTypesNotInEqualityRelation(env, ty2b, ty1b, m, m2, contextInfo)
+                    | _ -> e
 
             e.Output(os, suggestNames)
 
@@ -1077,7 +1086,7 @@ type Exception with
                 | _ -> os.AppendString(NonRigidTypar3E().Format tpnm (NicePrint.stringOfTy denv ty2))
 
         | SyntaxError(ctxt, _) ->
-            let ctxt = unbox<Parsing.ParseErrorContext<Parser.token>> (ctxt)
+            let ctxt = unbox<Parsing.ParseErrorContext<Parser.token>> ctxt
 
             let (|EndOfStructuredConstructToken|_|) token =
                 match token with
@@ -1716,7 +1725,7 @@ type Exception with
 
             os.AppendString(LetRecUnsound2E().Format (List.head path).DisplayName (bos.ToString()))
 
-        | LetRecEvaluatedOutOfOrder(_) -> os.AppendString(LetRecEvaluatedOutOfOrderE().Format)
+        | LetRecEvaluatedOutOfOrder _ -> os.AppendString(LetRecEvaluatedOutOfOrderE().Format)
 
         | LetRecCheckedAtRuntime _ -> os.AppendString(LetRecCheckedAtRuntimeE().Format)
 
@@ -2198,7 +2207,7 @@ let CollectFormattedDiagnostics (tcConfig: TcConfig, severity: FSharpDiagnosticS
                         let content =
                             m.FileName
                             |> FileSystem.GetFullFilePathInDirectoryShim tcConfig.implicitIncludeDir
-                            |> System.IO.File.ReadAllLines
+                            |> File.ReadAllLines
 
                         if m.StartLine = m.EndLine then
                             $"\n  {m.StartLine} | {content[m.StartLine - 1]}\n"
@@ -2209,7 +2218,7 @@ let CollectFormattedDiagnostics (tcConfig: TcConfig, severity: FSharpDiagnosticS
                             |> fun lines -> Array.sub lines (m.StartLine - 1) (m.EndLine - m.StartLine - 1)
                             |> Array.fold
                                 (fun (context, lineNumber) line -> (context + $"\n{lineNumber} | {line}", lineNumber + 1))
-                                ("", (m.StartLine))
+                                ("", m.StartLine)
                             |> fst
                             |> Some
                     | None -> None

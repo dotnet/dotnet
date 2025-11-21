@@ -176,6 +176,7 @@ type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, message: str
             | Some symbolEnv ->
 
             match diagnostic.Exception with
+            | ErrorFromAddingConstraint(displayEnv, ConstraintSolverTypesNotInEqualityRelation(_, actualType, expectedType, _, _, contextInfo), _)
             | ErrorFromAddingTypeEquation(_, displayEnv, expectedType, actualType, ConstraintSolverTupleDiffLengths(contextInfo = contextInfo), _)
             | ErrorsFromAddingSubsumptionConstraint(_, displayEnv, expectedType, actualType, _, contextInfo, _) ->
                let context = DiagnosticContextInfo.From(contextInfo)
@@ -187,6 +188,8 @@ type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, message: str
                        ty1, ty2
                    elif not (typeEquiv g ty1 ty2) then
                        ty1, ty2
+                   elif typeEquiv g ty2 ty2b then
+                       ty1b, ty2b
                    else ty2b, ty1b
 
                let context = DiagnosticContextInfo.From(contextInfo)
@@ -297,7 +300,8 @@ type DiagnosticsScope(flatErrors: bool)  =
             | None -> err ""
 
 /// A diagnostics logger that capture diagnostics, filtering them according to warning levels etc.
-type internal CompilationDiagnosticLogger(debugName: string, options: FSharpDiagnosticOptions, ?preprocess: (PhasedDiagnostic -> PhasedDiagnostic)) =
+type internal CompilationDiagnosticLogger(debugName: string, options: FSharpDiagnosticOptions, ?preprocess:
+                                              PhasedDiagnostic -> PhasedDiagnostic) =
     inherit DiagnosticsLogger("CompilationDiagnosticLogger("+debugName+")")
             
     let mutable errorCount = 0

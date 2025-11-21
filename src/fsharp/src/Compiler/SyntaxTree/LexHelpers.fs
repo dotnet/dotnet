@@ -6,7 +6,6 @@ open System
 open System.Text
 
 open Internal.Utilities
-open Internal.Utilities.Library
 open Internal.Utilities.Text.Lexing
 
 open FSharp.Compiler.DiagnosticsLogger
@@ -16,13 +15,10 @@ open FSharp.Compiler.ParseHelpers
 open FSharp.Compiler.Parser
 open FSharp.Compiler.Syntax
 open FSharp.Compiler.Syntax.PrettyNaming
+open FSharp.Compiler.SyntaxTreeOps
 open FSharp.Compiler.Text
 open FSharp.Compiler.Text.Range
 open FSharp.Compiler.UnicodeLexing
-
-/// The "mock" file name used by fsi.exe when reading from stdin.
-/// Has special treatment by the lexer, i.e. __SOURCE_DIRECTORY__ becomes GetCurrentDirectory()
-let stdinMockFileName = "stdin"
 
 /// Lexer args: status of #light processing.  Mutated when a #light
 /// directive is processed. This alters the behaviour of the lexfilter.
@@ -455,7 +451,7 @@ module Keywords =
         | true, v ->
             match v with
             | RESERVED ->
-                warning (ReservedKeyword(FSComp.SR.lexhlpIdentifierReserved (s), lexbuf.LexemeRange))
+                warning (ReservedKeyword(FSComp.SR.lexhlpIdentifierReserved s, lexbuf.LexemeRange))
                 IdentifierToken args lexbuf s
             | _ ->
                 match s with
@@ -466,33 +462,15 @@ module Keywords =
                 | "lsr"
                 | "asr" ->
                     if lexbuf.SupportsFeature LanguageFeature.MLCompatRevisions then
-                        mlCompatWarning (FSComp.SR.mlCompatKeyword (s)) lexbuf.LexemeRange
+                        mlCompatWarning (FSComp.SR.mlCompatKeyword s) lexbuf.LexemeRange
                 | _ -> ()
 
                 v
         | _ ->
             match s with
-            | "__SOURCE_DIRECTORY__" ->
-                let fileName = FileIndex.fileOfFileIndex lexbuf.StartPos.FileIndex
-
-                let dirname =
-                    if String.IsNullOrWhiteSpace(fileName) then
-                        String.Empty
-                    else if fileName = stdinMockFileName then
-                        System.IO.Directory.GetCurrentDirectory()
-                    else
-                        fileName
-                        |> FileSystem.GetFullPathShim (* asserts that path is already absolute *)
-                        |> System.IO.Path.GetDirectoryName
-                        |> (!!)
-
-                if String.IsNullOrEmpty dirname then
-                    dirname
-                else
-                    PathMap.applyDir args.pathMap dirname
-                |> fun dir -> KEYWORD_STRING(s, dir)
-            | "__SOURCE_FILE__" -> KEYWORD_STRING(s, !!System.IO.Path.GetFileName(FileIndex.fileOfFileIndex lexbuf.StartPos.FileIndex))
-            | "__LINE__" -> KEYWORD_STRING(s, string lexbuf.StartPos.Line)
+            | "__SOURCE_DIRECTORY__"
+            | "__SOURCE_FILE__"
+            | "__LINE__" -> KEYWORD_STRING(s, getSourceIdentifierValue args.pathMap s lexbuf.LexemeRange)
             | _ -> IdentifierToken args lexbuf s
 
 /// Arbitrary value
