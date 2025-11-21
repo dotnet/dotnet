@@ -79,10 +79,10 @@
       "commitSha": "6c4a46a31302167b425d5e0a31ea83c9a9aa1d09"
     },
     {
-      "barId": 289639,
+      "barId": 291716,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "138d5fe8f32e954a3a834be6360a834688130d4f"
+      "commitSha": "eef1961c35dd10d02f6dc0b4d23d0334ba0ee35d"
     },
     {
       "barId": 291014,
@@ -91,22 +91,22 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 291347,
+      "barId": 291586,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b7adad29114ef57fabf65324e712753767038626"
+      "commitSha": "39099c84c14d32453662391a18ec7717549e0584"
     },
     {
-      "barId": 291118,
+      "barId": 291840,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "49632d61e289d10db866e28221a92963d0193023"
+      "commitSha": "8a350977e236389714dd5d66be46e31ebb1f51ce"
     },
     {
-      "barId": 287042,
+      "barId": 291471,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "307eb51fb9878894d4812276b85ac94293cd7b16"
+      "commitSha": "f854fc15a677a0a11e4541cfecdc9a33624dbca1"
     },
     {
       "barId": 291125,
@@ -127,16 +127,16 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 291483,
+      "barId": 291724,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "c4bd9302e178ddcdcc5cb3651c3b3890894c0e1b"
+      "commitSha": "b1a104c98368bbf8feaa5d92cbd691cc8c450c2d"
     },
     {
-      "barId": 291181,
+      "barId": 291525,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "2b84c6556398afc04d16e1f3e01923c671178e4a"
+      "commitSha": "b048eab77c022ab125fc620c2ec56c7659b680ee"
     },
     {
       "barId": 291208,
