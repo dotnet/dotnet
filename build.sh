@@ -354,6 +354,7 @@ fi
 
 # if targetOS and targetArch were provided, recompute __PortableTargetOS
 if [[ -n "$targetOS" && -n "$targetArch" ]]; then
+  unset __PortableTargetOS
   initDistroRidGlobal "$targetOS" "$targetArch" ""
 fi
 
