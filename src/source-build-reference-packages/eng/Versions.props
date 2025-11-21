@@ -3,7 +3,7 @@
   <Import Project="Version.Details.props" />
 
   <PropertyGroup>
-    <MajorVersion>10</MajorVersion>
+    <MajorVersion>11</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <SkipPackagePublishingVersionChecks>true</SkipPackagePublishingVersionChecks>
