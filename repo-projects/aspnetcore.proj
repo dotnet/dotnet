@@ -35,6 +35,9 @@
     <!-- PackageValidation fails with desktop msbuild: https://github.com/dotnet/sdk/issues/45004. -->
     <BuildArgs>$(BuildArgs) /p:EnablePackageValidation=false</BuildArgs>
 
+    <!-- Temporary workaround to silence that SDK warning. TODO: Remove this file when a fixed VS 2026 image is used: https://github.com/dotnet/dotnet/issues/3415. -->
+    <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) /p:AfterMicrosoftNETSdkTargets=$(RepositoryEngineeringDir)vs-workaround.targets</BuildArgs>
+
     <!-- Tests are failing to build: https://github.com/dotnet/aspnetcore/issues/60095 -->
     <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
   </PropertyGroup>

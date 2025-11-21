@@ -1,0 +1,8 @@
+<!-- Temporary workaround to silence that SDK warning. This file needs to be imported via the `AfterMicrosoftNETSdkTargets` property.
+     TODO: Remove this file when a fixed VS 2026 image is used: https://github.com/dotnet/dotnet/issues/3415. -->
+
+<Project>
+  
+  <Target Name="_WarnWhenUsingNET10AndVSPriorTo18" />
+
+</Project>
