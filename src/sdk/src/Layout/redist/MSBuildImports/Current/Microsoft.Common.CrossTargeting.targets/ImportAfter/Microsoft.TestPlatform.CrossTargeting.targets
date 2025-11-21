@@ -14,7 +14,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <VSTestTaskAssemblyFile Condition="$(VSTestTaskAssemblyFile) == ''">$(MSBuildExtensionsPath)\Microsoft.TestPlatform.Build.dll</VSTestTaskAssemblyFile>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
-  <UsingTask TaskName="Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask" AssemblyFile="$(VSTestTaskAssemblyFile)" />
+  <UsingTask TaskName="Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask" AssemblyFile="$(VSTestTaskAssemblyFile)" Runtime="NET" />
   <!--
   ===================================================================================
                DispatchToInnerBuildsWithVSTestTarget
@@ -35,7 +35,7 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <Target Name="DispatchToInnerBuildsWithVSTestTarget" Returns="@(InnerOutput)">
     <PropertyGroup>
-      <!-- 
+      <!--
         Emulating technique found in Microsoft.Build.Traversal for deciding whether to run tests in parallel.
         Setting either property will revert to previous behavior of running tests in parallel, but without their
         different TFMs running in parallel.
