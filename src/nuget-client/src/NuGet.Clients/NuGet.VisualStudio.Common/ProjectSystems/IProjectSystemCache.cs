@@ -109,7 +109,7 @@ namespace NuGet.VisualStudio
         /// <param name="projectNames">Primary key.</param>
         /// <param name="projectRestoreInfo">The project restore info including tools.</param>
         /// <returns>True if operation succeeded.</returns>
-        bool AddProjectRestoreInfo(ProjectNames projectNames, DependencyGraphSpec projectRestoreInfo, IReadOnlyList<IAssetsLogMessage> additionalMessages);
+        bool AddProjectRestoreInfo(ProjectNames projectNames, DependencyGraphSpec projectRestoreInfo, IReadOnlyList<IAssetsLogMessage>? additionalMessages);
 
         /// <summary>
         /// Removes a project associated with given name out of the cache.

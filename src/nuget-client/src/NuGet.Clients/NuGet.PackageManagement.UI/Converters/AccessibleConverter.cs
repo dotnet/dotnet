@@ -35,7 +35,7 @@ namespace NuGet.PackageManagement.UI
         {
             // no op
             Debug.Fail("Not Implemented");
-            return null;
+            throw new NotImplementedException();
         }
     }
 }
