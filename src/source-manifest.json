@@ -37,10 +37,10 @@
       "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
     },
     {
-      "barId": 284344,
+      "barId": 291599,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f3aba8c2bc3c86a45c653b57e78ab663d76fa9ba"
+      "commitSha": "eb2ec000c279fdbd3bd7d4e06d61d465ee88081c"
     },
     {
       "barId": 291014,
@@ -61,22 +61,22 @@
       "commitSha": "49632d61e289d10db866e28221a92963d0193023"
     },
     {
-      "barId": 290938,
+      "barId": 291514,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "975752252a57d838d8f6094777ee4038e99bff32"
+      "commitSha": "5e6c2bc06becb8e963dcf8d549bfb46a3fa80444"
     },
     {
-      "barId": 291192,
+      "barId": 291391,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "6ac9799bf8d4eaabb3e82dc0aa5fe82ff68c978a"
+      "commitSha": "069bda6132d6ac2134cc9b26d651ccb825ff212d"
     },
     {
-      "barId": 285868,
+      "barId": 291277,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "51891d6b33641ad30bc512747652225ca7964386"
+      "commitSha": "4524dcd1e91c0d09d6da6576952f8df05e666e9c"
     }
   ],
   "submodules": [
