@@ -7,6 +7,8 @@
 ###   and detecting binaries and removing any non-SB allowed binaries.
 ###
 ### Options:
+###   --configuration <value>     Build configuration: 'Debug' or 'Release' (short: -c)
+###                               Default is Release
 ###   --no-artifacts              Exclude the download of the previously source-built artifacts archive
 ###   --no-bootstrap              Don't replace portable packages in the download source-built artifacts
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
@@ -41,6 +43,9 @@ function print_help () {
 }
 
 packagesDir="$REPO_ROOT/prereqs/packages"
+
+# Common settings
+configuration='Release'
 
 # SB prep default arguments
 defaultArtifactsRid='centos.10-x64'
@@ -79,6 +84,10 @@ while :; do
     "-?"|-h|--help)
       print_help
       exit 0
+      ;;
+    --configuration|-c)
+      configuration=$2
+      shift
       ;;
     --no-bootstrap)
       buildBootstrap=false
@@ -131,6 +140,12 @@ while :; do
   shift
 done
 
+source "$REPO_ROOT/eng/common/tools.sh"
+
+# Default properties
+properties=( "/p:Configuration=$configuration" )
+properties+=( "/p:DotNetBuildSourceOnly=true" )
+
 function BootstrapArtifacts {
   DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
   local tarballDir="$1"
@@ -155,13 +170,14 @@ function BootstrapArtifacts {
   # Copy NuGet.config from the sdk repo to have the right feeds
   cp "$REPO_ROOT/src/sdk/NuGet.config" "$workingDir"
 
-  properties=( "/p:ArchiveDir=$packagesArchiveDir" )
+  local bootstrapProperties=( "${properties[@]}" )
+  bootstrapProperties+=( "/p:ArchiveDir=$packagesArchiveDir" )
   if [[ -n "$bootstrap_rid" ]]; then
-    properties+=( "/p:PortableTargetRid=$bootstrap_rid" )
+    bootstrapProperties+=( "/p:PortableTargetRid=$bootstrap_rid" )
   fi
 
   # Run restore on project to initiate download of bootstrap packages
-  "$DOTNET_SDK_PATH/dotnet" restore "$workingDir/buildBootstrapPreviouslySB.csproj" /bl:artifacts/log/prep-bootstrap.binlog /fileLoggerParameters:LogFile=artifacts/log/prep-bootstrap.log "${properties[@]}"
+  "$DOTNET_SDK_PATH/dotnet" restore "$workingDir/buildBootstrapPreviouslySB.csproj" /bl:$log_dir/prep-bootstrap.binlog /fileLoggerParameters:LogFile=$log_dir/prep-bootstrap.log "${bootstrapProperties[@]}"
 
   # Remove working directory
   rm -rf "$workingDir"
@@ -231,6 +247,9 @@ if [ "$removeBinaries" == true ]; then
   # Create working directory for extracting packages
   workingDir=$(mktemp -d)
 
+  toolsetInitProperties=( "${properties[@]}" )
+  toolsetInitProperties+=( "/p:DisableSharedComponentValidation=true" )
+
   # If --with-packages is not passed, unpack PSB artifacts
   if [[ $psbDir == $defaultPsbDir ]]; then
     echo "  Extracting previously source-built to $workingDir"
@@ -251,19 +270,18 @@ if [ "$removeBinaries" == true ]; then
     toolsetInitProperties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$psbDir" )
   fi
 
-  toolsetInitProperties+=( "/p:DotNetBuildSourceOnly=true" )
-  toolsetInitProperties+=( "/p:DisableSharedComponentValidation=true" )
 
   # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
   source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "${toolsetInitProperties[@]}"
 
   "$_InitializeBuildTool" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
+    "${properties[@]}" \
     "/p:BinariesMode=Clean" \
     "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \
     "/p:BinariesPackagesDir=$psbDir" \
-    "/bl:artifacts/log/prep-remove-binaries.binlog" \
-    "/fileLoggerParameters:LogFile=artifacts/log/prep-remove-binaries.log" \
+    "/bl:$log_dir/prep-remove-binaries.binlog" \
+    "/fileLoggerParameters:LogFile=$log_dir/prep-remove-binaries.log" \
     "${positional_args[@]}"
 
   rm -rf "$workingDir"
