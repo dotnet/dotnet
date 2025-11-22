@@ -49,16 +49,16 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 291543,
+      "barId": 291618,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "861d938ebab7dc09b74f4fcc92895fd1d9ae7ce8"
+      "commitSha": "869251f95f23bd1af7f90a3513d406818adfddc1"
     },
     {
-      "barId": 291118,
+      "barId": 291698,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "49632d61e289d10db866e28221a92963d0193023"
+      "commitSha": "9542aec10b89ebdb52d56813fc1ac07ff375cb71"
     },
     {
       "barId": 291668,
