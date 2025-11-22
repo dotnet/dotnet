@@ -23,7 +23,7 @@ namespace NuGet.Commands.Restore.Utility
     {
         private readonly RestoreAuditProperties? _restoreAuditProperties;
         private readonly string _projectFullPath;
-        private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
+        private readonly List<RestoreTargetGraph> _targetGraphs;
         private readonly IReadOnlyList<IVulnerabilityInformationProvider> _vulnerabilityInfoProviders;
         private readonly ILogger _logger;
         private readonly IList<TargetFrameworkInformation> _targetFrameworks;
@@ -62,7 +62,7 @@ namespace NuGet.Commands.Restore.Utility
         public AuditUtility(
             RestoreAuditProperties? restoreAuditProperties,
             string projectFullPath,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
             IList<TargetFrameworkInformation> targetFrameworks,
             ILogger logger)

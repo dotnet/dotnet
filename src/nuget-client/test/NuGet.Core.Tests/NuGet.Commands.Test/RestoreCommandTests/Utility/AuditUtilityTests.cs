@@ -438,11 +438,11 @@ public class AuditUtilityTests
 
         var vulnerabilityProviders = AuditTestContext.CreateVulnerabilityInformationProviders(vulnerabilityProviderContexts);
 
-        RestoreTargetGraph[] graphs =
-        {
+        List<RestoreTargetGraph> graphs =
+        [
             await createGraphTasks[0],
             await createGraphTasks[1]
-        };
+        ];
 
         var targetFrameworks = new List<TargetFrameworkInformation>
         {
@@ -621,7 +621,7 @@ public class AuditUtilityTests
 
             return audit;
 
-            async Task<RestoreTargetGraph[]> CreateGraphsAsync()
+            async Task<List<RestoreTargetGraph>> CreateGraphsAsync()
             {
                 var walkContext = new TestRemoteWalkContext();
                 walkContext.LocalLibraryProviders.Add(PackagesDependencyProvider);
@@ -630,10 +630,9 @@ public class AuditUtilityTests
 
                 var graph = await walker.WalkAsync(_walkTarget, _framework, "", RuntimeGraph.Empty, true);
 
-                RestoreTargetGraph[] graphs = new[]
-                {
+                List<RestoreTargetGraph> graphs = [
                     RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework.GetShortFolderName(), _framework)
-                };
+                ];
 
                 return graphs;
             }

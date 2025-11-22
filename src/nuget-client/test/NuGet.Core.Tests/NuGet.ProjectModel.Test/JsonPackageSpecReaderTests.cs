@@ -860,7 +860,6 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(expectedResult, dependency.SuppressParent);
         }
 
-        // TODO NK - The whole Error reading, Error Reading thing is dumb.
         [Fact]
 
         public void GetPackageSpec_WhenDependenciesDependencyVersionValueIsInvalid_Throws()

@@ -14,6 +14,11 @@ namespace NuGet.Commands
 {
     public interface IRestoreTargetGraph
     {
+        /// <summary>
+        /// Gets the target graph name.
+        /// The target graph name is two parts; the first part, when there is an alias this is the alias name; otherwise, it's the framework name
+        /// For the second part, when there is a runtime identifier, this is a `/` followed by the runtime identifier; otherwise, it's empty.
+        /// </summary>
         string TargetGraphName { get; }
 
         /// <summary>

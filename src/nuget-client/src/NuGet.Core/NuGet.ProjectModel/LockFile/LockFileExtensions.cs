@@ -33,8 +33,7 @@ namespace NuGet.ProjectModel
             {
                 return assetsFile.Targets;
             }
-
-            return assetsFile.Targets.Where(target => message.TargetGraphs.Contains(target.Name, StringComparer.OrdinalIgnoreCase));
+            return assetsFile.Targets.Where(target => message.TargetGraphs.Contains(target.TargetAlias + (string.IsNullOrEmpty(target.RuntimeIdentifier) ? "" : "/" + target.RuntimeIdentifier), StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>

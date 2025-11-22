@@ -154,7 +154,7 @@ namespace NuGet.Commands
             _lockFileBuilderCache = request.LockFileBuilderCache;
 
             // Validate the lock file version requested
-            if (_request.LockFileVersion < 1 || _request.LockFileVersion > LockFileFormat.Version)
+            if (_request.LockFileVersion < 3 || _request.LockFileVersion > LockFileFormat.Version)
             {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(request),
@@ -249,7 +249,7 @@ namespace NuGet.Commands
 
                 // if success == false, it generates an empty restore graph suitable to create an assets file with errors.
                 // Since the graph is empty, any code that analyzes the graph (like audit) will have nothing to do.
-                (successfulResult, var graphs) = await GenerateRestoreGraphsAsync(telemetry, contextForProject, success, token);
+                (successfulResult, List<RestoreTargetGraph> graphs) = await GenerateRestoreGraphsAsync(telemetry, contextForProject, success, token);
                 success &= successfulResult;
 
                 bool auditRan = false;
@@ -571,9 +571,9 @@ namespace NuGet.Commands
             return new EvaluateLockFileResult(success, isLockFileValid, regenerateLockFile, packagesLockFilePath, packagesLockFile);
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> GenerateRestoreGraphsAsync(TelemetryActivity telemetry, RemoteWalkContext contextForProject, bool success, CancellationToken token)
+        private async Task<(bool, List<RestoreTargetGraph>)> GenerateRestoreGraphsAsync(TelemetryActivity telemetry, RemoteWalkContext contextForProject, bool success, CancellationToken token)
         {
-            IEnumerable<RestoreTargetGraph> graphs = null;
+            List<RestoreTargetGraph> graphs = null;
             if (success)
             {
                 using (telemetry.StartIndependentInterval(GenerateRestoreGraphDuration))
@@ -608,23 +608,25 @@ namespace NuGet.Commands
                 // caller of RestoreCommand to have provided at least one AdditionalMessage in RestoreArgs.
                 // The other scenario is when the lock file is not up to date and we're running locked mode.
                 // In that case we want to write a `target` for each target framework to avoid missing target errors from the SDK build tasks.
-                var frameworkRuntimePair = CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request));
-                graphs = frameworkRuntimePair.Select(e =>
+                var frameworkRuntimePairs = CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request));
+                graphs = new(frameworkRuntimePairs.Count);
+                for (var i = 0; i < frameworkRuntimePairs.Count; i++)
                 {
-                    return RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, _logger, e.TargetAlias, e.Framework, e.RuntimeIdentifier);
-                });
+                    var restoreTargetGraph = RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, _logger, frameworkRuntimePairs[i].TargetAlias, frameworkRuntimePairs[i].Framework, frameworkRuntimePairs[i].RuntimeIdentifier);
+                    graphs.Add(restoreTargetGraph);
+                }
             }
 
             return (success, graphs);
         }
 
-        private async Task<(bool, IEnumerable<MSBuildOutputFile>, string, string, LockFile, IEnumerable<RestoreTargetGraph>, PackagesLockFile, string, CacheFile)> ProcessRestoreResultAsync(TelemetryActivity telemetry,
+        private async Task<(bool, IEnumerable<MSBuildOutputFile>, string, string, LockFile, List<RestoreTargetGraph>, PackagesLockFile, string, CacheFile)> ProcessRestoreResultAsync(TelemetryActivity telemetry,
             List<NuGetv3LocalRepository> localRepositories,
             RemoteWalkContext contextForProject,
             bool isLockFileValid,
             bool regenerateLockFile,
             LockFile assetsFile,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             PackagesLockFile packagesLockFile,
             string packagesLockFilePath,
             CacheFile cacheFile,
@@ -662,9 +664,6 @@ namespace NuGet.Commands
                         success,
                         _logger);
                 }
-
-                // If the request is for a lower lock file version, downgrade it appropriately
-                DowngradeLockFileIfNeeded(assetsFile);
 
                 // Revert to the original case if needed
                 await FixCaseForLegacyReaders(graphs, assetsFile, token);
@@ -758,7 +757,7 @@ namespace NuGet.Commands
         /// <param name="telemetry">The <see cref="TelemetryActivity"/> to log NuGetAudit telemetry to.</param>
         /// <param name="token">A <see cref="CancellationToken"/> to cancel obtaining a vulnerability database. Once the database is downloaded, audit is quick to complete.</param>
         /// <returns>False if no vulnerability database could be found (so packages were not scanned for vulnerabilities), true otherwise.</returns>
-        private async Task<bool> PerformAuditAsync(IEnumerable<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
+        private async Task<bool> PerformAuditAsync(List<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
         {
             var audit = new AuditUtility(
                 _request.Project.RestoreMetadata.RestoreAuditProperties,
@@ -1436,14 +1435,6 @@ namespace NuGet.Commands
             return Path.GetFullPath(projectLockFilePath);
         }
 
-        private void DowngradeLockFileIfNeeded(LockFile lockFile)
-        {
-            if (_request.LockFileVersion <= 1)
-            {
-                DowngradeLockFileToV1(lockFile);
-            }
-        }
-
         private async Task FixCaseForLegacyReaders(
             IEnumerable<RestoreTargetGraph> graphs,
             LockFile lockFile,
@@ -1467,7 +1458,7 @@ namespace NuGet.Commands
         private LockFile BuildAssetsFile(
             LockFile existingLockFile,
             PackageSpec project,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             IReadOnlyList<NuGetv3LocalRepository> localRepositories,
             RemoteWalkContext contextForProject)
         {
@@ -1661,7 +1652,7 @@ namespace NuGet.Commands
             return checkResults;
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> ExecuteLegacyRestoreAsync(
+        private async Task<(bool, List<RestoreTargetGraph>)> ExecuteLegacyRestoreAsync(
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteWalkContext context,
@@ -1675,7 +1666,7 @@ namespace NuGet.Commands
                 await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1001, message));
 
                 success = false;
-                return (success, Enumerable.Empty<RestoreTargetGraph>());
+                return (success, []);
             }
             _logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Log_RestoringPackages, _request.Project.FilePath));
 
@@ -1838,7 +1829,7 @@ namespace NuGet.Commands
             return (success, allGraphs);
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> ExecuteRestoreAsync(
+        private async Task<(bool, List<RestoreTargetGraph>)> ExecuteRestoreAsync(
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteWalkContext context,
@@ -1853,7 +1844,7 @@ namespace NuGet.Commands
 
                 success = false;
 
-                return (success, Enumerable.Empty<RestoreTargetGraph>());
+                return (success, []);
             }
 
             var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
@@ -2055,37 +2046,6 @@ namespace NuGet.Commands
             context.IsMsBuildBased = request.ProjectStyle != ProjectStyle.DotnetCliTool;
 
             return context;
-        }
-
-        private static void DowngradeLockFileToV1(LockFile lockFile)
-        {
-            // Remove projects from the library section
-            var libraryProjects = lockFile.Libraries.Where(lib => lib.Type == LibraryType.Project).ToArray();
-
-            foreach (var library in libraryProjects)
-            {
-                lockFile.Libraries.Remove(library);
-            }
-
-            // Remove projects from the targets section
-            foreach (var target in lockFile.Targets)
-            {
-                var targetProjects = target.Libraries.Where(lib => lib.Type == LibraryType.Project).ToArray();
-
-                foreach (var library in targetProjects)
-                {
-                    target.Libraries.Remove(library);
-                }
-            }
-
-            foreach (var library in lockFile.Targets.SelectMany(target => target.Libraries))
-            {
-                // Null out all target types, these did not exist in v1
-                library.Type = null;
-            }
-
-            // Remove the package spec
-            lockFile.PackageSpec = null;
         }
 
         private static ExternalProjectReference ToExternalProjectReference(PackageSpec project)

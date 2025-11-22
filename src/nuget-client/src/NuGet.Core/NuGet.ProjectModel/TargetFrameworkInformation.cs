@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -25,7 +26,7 @@ namespace NuGet.ProjectModel
 
         public string TargetAlias { get; init; } = string.Empty;
 
-        public NuGetFramework FrameworkName { get; init; }
+        public required NuGetFramework FrameworkName { get; init; }
 
         public ImmutableArray<LibraryDependency> Dependencies
         {
@@ -114,6 +115,7 @@ namespace NuGet.ProjectModel
         /// </summary>
         public string RuntimeIdentifierGraphPath { get; init; }
 
+        [SetsRequiredMembers]
         public TargetFrameworkInformation()
         {
             TargetAlias = string.Empty;
@@ -125,6 +127,7 @@ namespace NuGet.ProjectModel
             PackagesToPrune = ImmutableDictionary<string, PrunePackageReference>.Empty;
         }
 
+        [SetsRequiredMembers]
         public TargetFrameworkInformation(TargetFrameworkInformation cloneFrom)
         {
             TargetAlias = cloneFrom.TargetAlias;

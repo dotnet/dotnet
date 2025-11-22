@@ -52,11 +52,7 @@ namespace NuGet.Commands
 
             if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference)
             {
-                AddProjectFileDependenciesForPackageReference(project, lockFile, targetGraphs);
-            }
-            else
-            {
-                AddProjectFileDependenciesForSpec(project, lockFile);
+                AddProjectFileDependenciesForPackageReference(project, lockFile, targetGraphs.AsList());
             }
 
             // Record all libraries used
@@ -391,20 +387,6 @@ namespace NuGet.Commands
                 ?? new List<NuGetFramework>();
 
             return string.Join(", ", frameworks);
-        }
-
-        private static void AddProjectFileDependenciesForSpec(PackageSpec project, LockFile lockFile)
-        {
-            foreach (var frameworkInfo in project.TargetFrameworks
-                .OrderBy(framework => framework.FrameworkName.ToString(),
-                    StringComparer.Ordinal))
-            {
-                lockFile.ProjectFileDependencyGroups.Add(new ProjectFileDependencyGroup(
-                    frameworkInfo.FrameworkName.ToString(),
-                    frameworkInfo.Dependencies
-                        .Select(x => x.LibraryRange.ToLockFileDependencyGroupString())
-                        .OrderBy(dependency => dependency, StringComparer.Ordinal)));
-            }
         }
 
         private static void AddProjectFileDependenciesForPackageReference(PackageSpec project, LockFile lockFile, IEnumerable<RestoreTargetGraph> targetGraphs)
