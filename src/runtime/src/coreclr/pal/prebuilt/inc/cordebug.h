@@ -10050,7 +10050,8 @@ enum CorDebugUserState
         USER_WAIT_SLEEP_JOIN    = 0x20,
         USER_SUSPENDED  = 0x40,
         USER_UNSAFE_POINT   = 0x80,
-        USER_THREADPOOL = 0x100
+        USER_THREADPOOL = 0x100,
+        USER_INVALID = -1
     }   CorDebugUserState;
 
 
