@@ -1,3 +1,1 @@
 #nullable enable
-NuGet.Packaging.InvalidPackageIdException
-~NuGet.Packaging.InvalidPackageIdException.InvalidPackageIdException(string message) -> void

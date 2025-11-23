@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace NuGet.Protocol.Core.Types
 {
     public class NullSourceCacheContext : SourceCacheContext

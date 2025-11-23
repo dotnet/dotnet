@@ -1,5 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -289,7 +291,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(0, files.Count());
+                Assert.Equal(0, files.Length);
             }
         }
 
@@ -337,7 +339,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(1, files.Count());
+                Assert.Equal(1, files.Length);
             }
         }
 
@@ -380,7 +382,7 @@ namespace NuGet.CommandLine.Test
                 var package = new PackageArchiveReader(File.OpenRead(path));
 
                 var files = package.GetNonPackageDefiningFiles();
-                Assert.Equal(1, files.Count());
+                Assert.Equal(1, files.Length);
             }
         }
 

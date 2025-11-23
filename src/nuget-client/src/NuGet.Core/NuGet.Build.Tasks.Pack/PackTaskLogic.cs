@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -924,10 +926,7 @@ namespace NuGet.Build.Tasks.Pack
                     continue;
                 }
 
-                // First, add each of the generic package dependencies
-                AddDependencies(assetsFile.PackageSpec.Dependencies, dependenciesByFramework, framework, assetsFile, packageSpecificNoWarnProperties);
-
-                // Next, the framework-specific dependencies
+                // First, the framework-specific dependencies
                 var newFrameworkDependencies = AddDependencies(framework.Dependencies, dependenciesByFramework, framework, assetsFile, packageSpecificNoWarnProperties);
                 framework = new TargetFrameworkInformation(framework) { Dependencies = newFrameworkDependencies };
 

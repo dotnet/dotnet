@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -1019,37 +1021,53 @@ namespace NuGetVSExtension
 
         private void ShowManageLibraryPackageForSolutionDialog(object sender, EventArgs e)
         {
+            PackageManagerShowOptions options = null;
+            if (e is OleMenuCmdEventArgs eventArgs)
+            {
+                if (eventArgs?.InValue is string parameterString)
+                {
+                    options = new PackageManagerShowOptions() { SearchText = parameterString };
+                }
+                else if (eventArgs?.InValue is PackageManagerShowOptions parameterOptions)
+                {
+                    options = parameterOptions;
+                }
+                else
+                {
+                    options = new PackageManagerShowOptions();
+                }
+            }
+
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
             {
-                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-                if (ShouldInitializeSolutionExperiences())
-                {
-                    await InitializeSolutionExperiencesAsync();
-                }
-
-                var windowFrame = await FindExistingSolutionWindowFrameAsync();
-                if (windowFrame == null)
-                {
-                    // Create the window frame
-                    windowFrame = await CreateDocWindowForSolutionAsync();
-                }
-
-                if (windowFrame != null)
-                {
-                    // process search string
-                    string parameterString = null;
-                    var args = e as OleMenuCmdEventArgs;
-                    if (args != null)
-                    {
-                        parameterString = args.InValue as string;
-                    }
-                    var searchText = GetSearchText(parameterString);
-                    Search(windowFrame, searchText);
-
-                    windowFrame.Show();
-                }
+                await ShowManageLibraryPackageForSolutionDialogAsync(options);
             }).PostOnFailure(nameof(NuGetPackage), nameof(ShowManageLibraryPackageForSolutionDialog));
+        }
+
+        private async Task<IVsWindowFrame> ShowManageLibraryPackageForSolutionDialogAsync(PackageManagerShowOptions options)
+        {
+            string searchText = GetSearchText(options.SearchText);
+
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (ShouldInitializeSolutionExperiences())
+            {
+                await InitializeSolutionExperiencesAsync();
+            }
+
+            var windowFrame = await FindExistingSolutionWindowFrameAsync();
+            // Create the window frame
+            windowFrame ??= await CreateDocWindowForSolutionAsync();
+
+            if (windowFrame != null)
+            {
+                SelectActiveItemFilter(windowFrame, options.ItemFilter);
+                SelectFilterOptions(windowFrame, options.PackageFilterOptions);
+                Search(windowFrame, searchText);
+                windowFrame.Show();
+            }
+
+            return windowFrame;
         }
 
         /// <summary>
@@ -1088,6 +1106,31 @@ namespace NuGetVSExtension
 
             var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
             packageManagerControl?.ShowUpdatePackages(updatePackageOptions);
+        }
+
+        private static void SelectActiveItemFilter(IVsWindowFrame windowFrame, UI.ItemFilter? itemFilter)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (itemFilter.HasValue)
+            {
+                var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
+                if (packageManagerControl != null)
+                {
+                    packageManagerControl.ActiveFilter = itemFilter.Value;
+                }
+            }
+        }
+
+        private static void SelectFilterOptions(IVsWindowFrame windowFrame, PackageFilterOptions packageFilterOptions)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (packageFilterOptions != null)
+            {
+                var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
+                packageManagerControl?.SelectPackageFilterOptions(packageFilterOptions);
+            }
         }
 
         // For PowerShell, it's okay to query from the worker thread.

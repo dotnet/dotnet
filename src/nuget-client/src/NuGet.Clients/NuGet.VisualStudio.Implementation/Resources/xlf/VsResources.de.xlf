@@ -330,7 +330,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">Es wurde versucht, die Version "{1}" von "{0}" zu installieren, das Projekt enthält jedoch bereits eine andere Version. Der Vorgang wird übersprungen...</target>
+        <target state="translated">Es wird versucht, die Version "{1}" von "{0}" zu installieren, das Projekt enthält aber bereits eine andere Version. Der Vorgang wird übersprungen...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">"{0}" darf nicht Null sein.</target>
+        <target state="translated">„{0}“ darf nicht Null sein.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -360,7 +360,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">In der Projektvorlage wird mindestens ein Paket aufgelistet, in dem für die Attribute "id" oder "version" Werte fehlen oder das leere oder ungültige Werte enthält. Beide Attribute sind erforderlich und müssen gültige Werte besitzen.</target>
+        <target state="translated">In der Projektvorlage wird mindestens ein Paket aufgelistet, in dem für die Attribute "id" oder "version" Werte fehlen oder leer bzw. ungültig sind. Beide Attribute sind erforderlich und müssen gültige Werte aufweisen.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
@@ -375,17 +375,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">Die Projektvorlage ist für die Verwendung eines erweiterungsspezifischen Paketrepositorys konfiguriert, es wurde jedoch keine Erweiterungs-ID angegeben. Geben Sie die Erweiterungs-ID mithilfe des Attributs "repositoryId" an.</target>
+        <target state="translated">Die Projektvorlage ist für die Verwendung eines erweiterungsspezifischen Paketrepositorys konfiguriert, es wurde aber keine Erweiterungs-ID angegeben. Geben Sie die Erweiterungs-ID mithilfe des Attributs "repositoryId" an.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">Die Projektvorlage ist für die Verwendung eines von der Registrierung bereitgestellten Paketrepositorys konfiguriert, der Registrierungswertname wurde jedoch nicht angegeben. Verwenden Sie das Attribut "keyName", um den Registrierungswert anzugeben.</target>
+        <target state="translated">Die Projektvorlage ist für die Verwendung eines von der Registrierung bereitgestellten Paketrepositorys konfiguriert, der Registrierungswertname wurde aber nicht angegeben. Verwenden Sie das Attribut "keyName", um den Registrierungswert anzugeben.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">
         <source>Unable to find package '{0}'.</source>
-        <target state="translated">Das Paket "{0}" kann nicht gefunden werden.</target>
+        <target state="translated">Das Paket "{0}" wurde nicht gefunden.</target>
         <note />
       </trans-unit>
     </body>

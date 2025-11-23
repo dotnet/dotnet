@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -315,7 +317,7 @@ namespace NuGet.Commands
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Strings.PropertyNotAllowed,
-                    nameof(spec.Dependencies));
+                    "dependencies");
 
                 throw RestoreSpecException.Create(message, files);
             }
@@ -409,8 +411,7 @@ namespace NuGet.Commands
 
         private static IEnumerable<LibraryDependency> GetAllDependencies(PackageSpec spec)
         {
-            return spec.Dependencies
-                .Concat(spec.TargetFrameworks.SelectMany(f => f.Dependencies));
+            return spec.TargetFrameworks.SelectMany(f => f.Dependencies);
         }
     }
 }

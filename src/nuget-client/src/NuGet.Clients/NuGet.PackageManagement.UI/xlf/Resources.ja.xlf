@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">このソリューションには一部の NuGet パッケージがありません。クリックしてオンライン パッケージ ソースから復元してください。</target>
+        <target state="translated">このソリューションに一部の NuGet パッケージが見つかりません。クリックするとオンライン パッケージ ソースから復元します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">NuGet Package Manager の新しいバージョンを使用できます。</target>
+        <target state="translated">新しいバージョンの NuGet パッケージ マネージャーを利用できます。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -249,7 +249,7 @@
       </trans-unit>
       <trans-unit id="CheckBox_Selected">
         <source>Selected</source>
-        <target state="translated">選択しました</target>
+        <target state="translated">選択済み</target>
         <note />
       </trans-unit>
       <trans-unit id="Checkbox_ForceRemove">
@@ -284,7 +284,7 @@
       </trans-unit>
       <trans-unit id="Checkbox_Show_Vulnerable_Only">
         <source>Show only vulnerable</source>
-        <target state="translated">脆弱性のみを表示する</target>
+        <target state="translated">脆弱な状態のみを表示する</target>
         <note />
       </trans-unit>
       <trans-unit id="ColumnHeader_InstalledVersion">
@@ -389,7 +389,7 @@
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">プロジェクト {0} はプロジェクト システム キャッシュに存在しません。</target>
+        <target state="translated">プロジェクト {0} がプロジェクト システム キャッシュに存在しません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
@@ -449,17 +449,17 @@
       </trans-unit>
       <trans-unit id="Hyperlink_ProjectUrl">
         <source>Project URL</source>
-        <target state="translated">プロジェクトの URL</target>
+        <target state="translated">プロジェクト URL</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_Readme">
         <source>Readme</source>
-        <target state="translated">お読みください</target>
+        <target state="translated">Readme</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
         <source>Report Abuse</source>
-        <target state="translated">不正使用を報告</target>
+        <target state="translated">不正使用の報告</target>
         <note />
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
@@ -844,12 +844,12 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">パッケージの復元中にエラーが発生しました: </target>
+        <target state="translated">パッケージを復元しようとしているときにエラーが発生しました:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
         <source>Downloading missing packages...</source>
-        <target state="translated">足りないパッケージをダウンロードしています...</target>
+        <target state="translated">見つからないパッケージをダウンロードしています...</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
@@ -894,24 +894,27 @@
       </trans-unit>
       <trans-unit id="RestoreButtonLabel">
         <source>_Restore</source>
-        <target state="translated">再起動(_R)</target>
+        <target state="translated">復元(_R)</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowDetails">
         <source>Show Details</source>
-        <target state="translated">詳細を表示</target>
+        <target state="translated">詳細の表示</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">NuGet ストレージをクリアできませんでした ({0})。
-エラー: {1}
-詳しいヘルプについては、https://aka.ms/troubleshoot_nuget_cache をご覧ください。</target>
+エラー: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">詳細については次を参照してください:</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1045,7 +1048,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">選択したパッケージ バージョンに使用できる README がありません。詳細については、[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme). を参照してください</target>
+        <target state="translated">選択したパッケージ バージョンに使用できる README がありません。詳細については、[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme) を参照してください。</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1130,7 +1133,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">README が読み込まれました</target>
+        <target state="translated">README が読み込まれた</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1310,7 +1313,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">いったん開始すると、この操作を取り消すことはできません。</target>
+        <target state="translated">この操作は開始した後に取り消すことはできません。</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

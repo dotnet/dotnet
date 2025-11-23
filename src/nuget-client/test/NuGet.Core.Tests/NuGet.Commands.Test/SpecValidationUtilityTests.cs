@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -159,11 +161,6 @@ namespace NuGet.Commands.Test
                     ProjectPath = "b.csproj",
                     ProjectUniqueName = "b"
                 });
-
-            spec.Projects.First().Dependencies.Add(new LibraryDependency()
-            {
-                LibraryRange = new LibraryRange("b", LibraryDependencyTarget.PackageProjectExternal)
-            });
 
             // Act && Assert no errors
             SpecValidationUtility.ValidateDependencySpec(spec);
@@ -446,7 +443,7 @@ namespace NuGet.Commands.Test
             spec.AddProject(project);
 
             // Act && Assert
-            AssertError(spec, "Property 'Dependencies' is not allowed");
+            AssertError(spec, "Property 'dependencies' is not allowed");
         }
 
         [Fact]

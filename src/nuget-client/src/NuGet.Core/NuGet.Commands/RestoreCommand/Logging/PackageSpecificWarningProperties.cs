@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using NuGet.Common;
@@ -33,14 +35,6 @@ namespace NuGet.Commands
             // NuGetLogCode -> LibraryId -> Set of Frameworks.
             var warningProperties = new PackageSpecificWarningProperties();
 
-            foreach (var dependency in packageSpec.Dependencies)
-            {
-                foreach (var framework in packageSpec.TargetFrameworks)
-                {
-                    warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework.FrameworkName);
-                }
-            }
-
             foreach (var framework in packageSpec.TargetFrameworks)
             {
                 foreach (var dependency in framework.Dependencies)
@@ -63,11 +57,6 @@ namespace NuGet.Commands
         {
             // NuGetLogCode -> LibraryId -> Set of Frameworks.
             var warningProperties = new PackageSpecificWarningProperties();
-
-            foreach (var dependency in packageSpec.Dependencies)
-            {
-                warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework);
-            }
 
             var targetFrameworkInformation = packageSpec.GetTargetFramework(framework);
 

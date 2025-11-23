@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">此解决方案中缺少某些 NuGet 程序包。单击可从在线程序包源中还原。</target>
+        <target state="translated">此解决方案中缺少某些 NuGet 程序包。单击可从联机程序包源中还原。</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">新版本的 NuGet Package Manager 可用。</target>
+        <target state="translated">新版本的 NuGet 包管理器可用。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -249,7 +249,7 @@
       </trans-unit>
       <trans-unit id="CheckBox_Selected">
         <source>Selected</source>
-        <target state="translated">已选定</target>
+        <target state="translated">已选择</target>
         <note />
       </trans-unit>
       <trans-unit id="Checkbox_ForceRemove">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
         <source>Ignore for now</source>
-        <target state="translated">现在忽略</target>
+        <target state="translated">暂时忽略</target>
         <note />
       </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">未能清理 {0} 处的 NuGet 存储。
-错误: {1}
-请参阅 https://aka.ms/troubleshoot_nuget_cache 以获取更多帮助。</target>
+错误: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">有关详细信息，请参阅</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -960,7 +963,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">作者</target>
+        <target state="translated">提供者</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -970,7 +973,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ByOwner">
         <source>by {0}</source>
-        <target state="translated">作者 {0}</target>
+        <target state="translated">提供者: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_Changes">
@@ -1045,7 +1048,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">没有适用于所选包版本的自述文件。有关详细信息，请访问 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">没有适用于所选包版本的自述文件。有关详细信息，请访问 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)。</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1130,7 +1133,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">README 已加载</target>
+        <target state="translated">已加载自述文件</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1315,7 +1318,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">清除所有本地 NuGet 资源？</target>
+        <target state="translated">清除所有本地 NuGet 资源?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">

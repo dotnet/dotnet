@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1012,7 +1014,7 @@ EndGlobal";
                 //add the packe to the project
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
                 solution.Save();
                 projectA.Save();
 
@@ -1151,7 +1153,7 @@ EndGlobal";
                 projectRoot.Save();
                 solution.Projects.Add(projectRoot);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {projectRoot.ProjectPath}", testOutputHelper: _testOutputHelper);
@@ -1246,7 +1248,7 @@ EndGlobal";
                     child.Save();
                 }
                 projectRoot.Save();
-                var solutionPath = Path.Combine(pathContext.SolutionRoot, "solution.sln");
+                var solutionPath = Path.Combine(pathContext.SolutionRoot, "solution.slnx");
                 _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"new sln -n solution", testOutputHelper: _testOutputHelper);
 
                 foreach (var child in projects.Values)
@@ -1300,7 +1302,7 @@ EndGlobal";
                 //add the packe to the project
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var args = $" --source \"{pathContext.PackageSource}\" ";
@@ -1455,7 +1457,7 @@ EndGlobal";
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName1}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName2}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName3}", testOutputHelper: _testOutputHelper);
-                var targetPath = Path.Combine(testDirectory, "test.sln");
+                var targetPath = Path.Combine(testDirectory, "test.slnx");
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /nologo /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}", environmentVariables, testOutputHelper: _testOutputHelper);
@@ -1508,7 +1510,7 @@ EndGlobal";
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName1}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName2}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName3}", testOutputHelper: _testOutputHelper);
-                var targetPath = Path.Combine(testDirectory, "test.sln");
+                var targetPath = Path.Combine(testDirectory, "test.slnx");
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /nologo /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {targetPath}", environmentVariables, testOutputHelper: _testOutputHelper);
@@ -1739,7 +1741,7 @@ EndGlobal";
         [InlineData("nunit")]
         [InlineData("web")]
         [InlineData("webapi")]
-        [InlineData("webapiaot")]
+        // [InlineData("webapiaot")] Skipping due to failures: https://github.com/NuGet/Home/issues/14523
         [InlineData("webapp")]
         [InlineData("worker")]
         [InlineData("xunit")]
@@ -1803,7 +1805,7 @@ EndGlobal";
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectIntermed);
                 solution.Projects.Add(projectMain);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var args = $" --source \"{pathContext.PackageSource}\" ";
@@ -2020,7 +2022,7 @@ EndGlobal";
             projectA.AddPackageDownloadToAllFrameworks(packageK100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -2098,7 +2100,7 @@ EndGlobal";
             projectA.AddPackageDownloadToAllFrameworks(packageK100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -2174,7 +2176,7 @@ EndGlobal";
             projectA.AddPackageDownloadToAllFrameworks(packageK100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -2253,7 +2255,7 @@ EndGlobal";
             projectA.AddPackageToAllFrameworks(packageY100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -2327,7 +2329,7 @@ EndGlobal";
             projectA.Properties.Add("RestoreSources", $"{packageSource2.FullName};{pathContext.PackageSource}");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2397,7 +2399,7 @@ EndGlobal";
             projectA.Properties.Add("RestoreSources", $"{pathContext.PackageSource}");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2587,7 +2589,7 @@ EndGlobal";
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,

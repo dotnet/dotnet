@@ -5,8 +5,6 @@
 
 #if !NET7_0_OR_GREATER
 
-#nullable enable
-
 using System.Formats.Asn1;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1;

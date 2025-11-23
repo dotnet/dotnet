@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">项目“{0}”不受支持</target>
+        <target state="translated">不支持项目“{0}”</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddGacReference">
@@ -93,7 +93,7 @@
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
         <source>Failed to create parent folder for file '{0}' in project {1}.</source>
-        <target state="translated">无法为项目 {1} 中的文件“{0}”创建父文件夹。</target>
+        <target state="translated">无法在项目 {1} 中创建文件“{0}”的父文件夹。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FileNotExists">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">指定的源无效。</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">必须指定有效的本地或远程路径。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="FailedToAddReference">
         <source>Failed to add reference to '{0}'.</source>
-        <target state="translated">无法添加对“{0}”的引用。</target>
+        <target state="translated">无法将引用添加到“{0}”。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToRemoveReference">
         <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
-        <target state="translated">对要删除的引用“{0}”执行不区分大小写的搜索，返回了多个匹配项。无法执行请求。</target>
+        <target state="translated">对要删除的引用“{0}”执行不区分大小写的搜索时，返回了多个匹配项。无法执行请求。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToUpdateBindingRedirects">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">无法找到项目“{1}”的 {0} MSBuild 属性。</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">正在迁移 project.json 项目...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">迁移成功</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -204,12 +214,12 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">“{0}”不能为 null。</target>
+        <target state="translated">‘{0}’ 不得为 null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 程序包。</target>
+        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 包。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">
@@ -261,22 +271,22 @@
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
         <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
-        <target state="translated">无法在重新启动 Visual Studio 时删除已标记为删除的程序包目录: {0}</target>
+        <target state="translated">未能删除标记以于 Visual Studio 重启时删除的包目录: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
         <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
-        <target state="translated">无法在重新启动 Visual Studio 时删除已标记为删除的程序包目录“{0}”。</target>
+        <target state="translated">未能删除标记以于 Visual Studio 重启时删除的包目录“{0}”。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
         <source>Failed to find match for removing reference '{0}'.</source>
-        <target state="translated">无法找到要删除引用“{0}”的匹配项。</target>
+        <target state="translated">找不到用于删除引用“{0}”的匹配项。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
         <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
-        <target state="translated">无法在重新启动 Visual Studio 时标记要删除的程序包目录“{0}”: {1}</target>
+        <target state="translated">未能标记需在 Visual Studio 重启时删除的包目录“{0}”: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">

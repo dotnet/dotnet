@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">在当前 NuGet 版本中禁用了“project.json”包，并将在将来的版本中永久删除。
-请考虑将“{0}”迁移到“PackageReference”并使用包目标。
-可以将“{1}”环境变量设置为“true”以暂时重新启用此功能。</target>
+        <target state="translated">`project.json` 在当前 NuGet 版本中处于禁用状态，并将在将来的版本中永久移除。
+请考虑将 ‘{0}’ 迁移到 ‘PackageReference’ 并使用包目标。
+可将 ‘{1}’ 环境变量设为 ‘true’ 以暂时重新启用此功能。</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -792,7 +792,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">正在使用配置中的凭据。UserName: {0}</target>
+        <target state="translated">使用配置中的凭据。UserName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -632,8 +634,7 @@ namespace NuGet.Commands
             var frameworkInfo = spec.TargetFrameworks[index];
             var dependencies = frameworkInfo.Dependencies;
 
-            if (!spec.Dependencies
-                            .Concat(dependencies)
+            if (!dependencies
                             .Select(d => d.Name)
                             .Contains(dependency.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -727,7 +728,7 @@ namespace NuGet.Commands
             bool isPruningEnabledGlobally = false;
             foreach (var item in targetFrameworkInfos)
             {
-                if (IsPropertyTrue(item, "_RestorePackagePruningDefault"))
+                if (IsPropertyTrue(item, "RestorePackagePruningDefault"))
                 {
                     isPruningEnabledGlobally = true;
                     break;

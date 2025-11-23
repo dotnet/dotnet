@@ -56,9 +56,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                     // Act: call TryRestoreAsync() that calls WalkDependenciesAsync()
                     await cmd.TryRestoreAsync(
                         projectRange: It.IsAny<LibraryRange>(),
-                        frameworkRuntimePairs: new FrameworkRuntimePair[] {
+                        frameworkRuntimePairs: [
                             new FrameworkRuntimePair(NuGetFramework.Parse("net46"), null),
                             new FrameworkRuntimePair(NuGetFramework.Parse("net47"), null),
+                        ],
+                        frameworkToAlias: new Dictionary<NuGetFramework, string>() {
+                            { NuGetFramework.Parse("net46"), "net46" },
+                            { NuGetFramework.Parse("net47"), "net47" }
                         },
                         userPackageFolder: It.IsAny<NuGetv3LocalRepository>(),
                         fallbackPackageFolders: It.IsAny<IReadOnlyList<NuGetv3LocalRepository>>(),

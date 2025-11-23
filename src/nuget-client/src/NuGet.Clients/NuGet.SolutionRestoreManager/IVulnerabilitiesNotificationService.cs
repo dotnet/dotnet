@@ -4,8 +4,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace NuGet.SolutionRestoreManager
 {
     public interface IVulnerabilitiesNotificationService

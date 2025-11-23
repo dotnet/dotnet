@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">允許推送至 HTTP 來源 (不安全)。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -912,15 +912,15 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">要用來在本機憑證存放區搜尋憑證的憑證 SHA-256、SHA-384 或 SHA-512 指紋。
-憑證存放區可由 -CertificateStoreName 以及 -CertificateStoreLocation 選項指定。</target>
+        <target state="translated">用於搜尋憑證之本機憑證存放區的憑證 SHA-256、SHA-384 或 SHA-512 指紋。
+-CertificateStoreName 和 -CertificateStoreLocation 選項可指定憑證存放區。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
         <source>Password for the certificate, if needed.
 This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
         <target state="translated">憑證的密碼 (視需要)。
-此選項可用來指定憑證的密碼。如果沒有提供密碼，除非傳遞 -NonInteractive 選項，否則命令會在執行時間提示輸入密碼。</target>
+此選項可用來指定憑證的密碼。如果沒有提供密碼，除非傳遞 -NonInteractive 選項，否則命令會在執行階段提示輸入密碼。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePathDescription">
@@ -1054,7 +1054,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">允許將 HTTP 連線用於新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
+        <target state="translated">允許 HTTP 連線用於新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandDescription">

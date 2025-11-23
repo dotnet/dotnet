@@ -101,7 +101,7 @@ namespace NuGet.Tests.Apex
 
                 // Assert
                 VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
+                CommonUtility.AssertPackageReferenceExists(testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
                 StringAssert.Contains(GetPackageManagerOutputWindowPaneText(), $"Installed {packageName} {packageVersion} from {privateRepositoryPath}");
             }
         }
@@ -170,7 +170,7 @@ namespace NuGet.Tests.Apex
 
                 // Assert
                 VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion2, Logger);
+                CommonUtility.AssertPackageReferenceExists(testContext.SolutionService.Projects[0], packageName, packageVersion2, Logger);
                 StringAssert.Contains(GetPackageManagerOutputWindowPaneText(), $"Installed {packageName} {packageVersion2} from {privateRepositoryPath}");
             }
         }
@@ -229,7 +229,7 @@ namespace NuGet.Tests.Apex
                 uiwindow.InstallPackageFromUI(packageName, packageVersion);
 
                 // Assert
-                CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
+                CommonUtility.AssertPackageReferenceDoesNotExist(testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
             }
         }
 

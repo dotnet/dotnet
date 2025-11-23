@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Between">
         <source>Value must be between {0} and {1}.</source>
-        <target state="translated">値は {0} から {1} までの数値でなければなりません。</target>
+        <target state="translated">{0} から {1} の間の値である必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Enum_Member">
@@ -19,27 +19,27 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThan">
         <source>Value must be greater than {0}.</source>
-        <target state="translated">{0} より大きい値を指定してください。</target>
+        <target state="translated">{0} より大きい値にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">{0} 以上の値を指定してください。</target>
+        <target state="translated">{0} 以上の値にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThan">
         <source>Value must be less than {0}.</source>
-        <target state="translated">{0} より小さい値を指定してください。</target>
+        <target state="translated">{0} 未満の値にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThanOrEqualTo">
         <source>Value must be less than or equal to {0}.</source>
-        <target state="translated">{0} 以下の値を指定してください。</target>
+        <target state="translated">{0} 以下の値にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
         <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
-        <target state="translated">値を空の文字列にすることはできません。null または空でない文字列を指定してください。</target>
+        <target state="translated">値は空の文字列にはできません。null または空でない文字列を指定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnsureImportedMessage">

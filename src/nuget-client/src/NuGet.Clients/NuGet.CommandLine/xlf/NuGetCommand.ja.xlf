@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">HTTP ソースへのプッシュを許可します (安全ではありません)。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -912,14 +912,14 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">証明書のローカル証明書ストアの検索に使用される証明書の SHA-256、SHA-384、または SHA-512 フィンガープリントです。
+        <target state="translated">ローカル証明書ストアで証明書を検索するのに使用される証明書の SHA-256、または SHA-384、または SHA-512 フィンガープリントです。
 証明書ストアは、-CertificateStoreName と -CertificateStoreLocation のオプションによって指定できます。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
         <source>Password for the certificate, if needed.
 This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
-        <target state="translated">必要に応じて、証明書のパスワード。
+        <target state="translated">必要な場合の証明書のパスワードです。
 このオプションを使用して、証明書のパスワードを指定できます。パスワードが指定されていない場合、-NonInteractive オプションが渡されない限り、コマンドは実行時にパスワードの入力を求めます。</target>
         <note />
       </trans-unit>

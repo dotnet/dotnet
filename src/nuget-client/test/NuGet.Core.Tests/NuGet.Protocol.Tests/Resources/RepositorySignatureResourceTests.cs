@@ -1,13 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -228,23 +229,6 @@ namespace NuGet.Protocol.Tests
             Assert.True(repositorySignatureInfos.All(p => p.RepositoryCertificateInfos.Count() == 1));
 
             repositorySignatureInfos.ForEach(p => VerifyCertInfo(p.RepositoryCertificateInfos.FirstOrDefault()));
-        }
-
-        public static RepositorySignatureResource GetRepositorySignatureResource()
-        {
-            var certInfo = new Mock<IRepositoryCertificateInfo>();
-
-            var fingerPrints = new Dictionary<string, string>() { { "2.16.840.1.101.3.4.2.1", _fingerprint } };
-
-            certInfo.SetupGet(p => p.Issuer).Returns(_issuer);
-            certInfo.SetupGet(p => p.Fingerprints).Returns(new Fingerprints(fingerPrints));
-            certInfo.SetupGet(p => p.NotBefore).Returns(DateTime.Parse(_notBefore));
-            certInfo.SetupGet(p => p.NotAfter).Returns(DateTime.Parse(_notAfter));
-            certInfo.SetupGet(p => p.Subject).Returns(_subject);
-            certInfo.SetupGet(p => p.ContentUrl).Returns(_contentUrl);
-
-            var certInfos = new List<IRepositoryCertificateInfo>() { certInfo.Object };
-            return new RepositorySignatureResource(allRepositorySigned: false, repositoryCertInfos: certInfos);
         }
 
         internal static void VerifyCertInfo(IRepositoryCertificateInfo certInfo)

@@ -70,7 +70,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">Проекта {0} не существует в кэше системы проектов.</target>
+        <target state="translated">Проект {0} не существует в кэше системы проектов.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNetStandardFramework">
@@ -305,17 +305,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">Не удалось добавить в проект все необходимые пакеты. Не удалось установить следующие пакеты из «{0}»:</target>
+        <target state="translated">Не удалось добавить в проект все необходимые пакеты. Не удалось установить следующие пакеты из "{0}":</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">В предустановленных пакетах используется ссылка на отсутствующее расширение. Не удалось найти расширение с идентификатором «{0}».</target>
+        <target state="translated">В предустановленных пакетах используется ссылка на отсутствующее расширение. Не удалось найти расширение с идентификатором "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">В предустановленных пакетах используется ссылка на отсутствующее значение реестра. Не удалось найти раздел реестра «{0}» в «{1}».</target>
+        <target state="translated">В предустановленных пакетах используется ссылка на отсутствующее значение реестра. Не удалось найти раздел реестра "{0}" в "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -325,12 +325,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">Для предустановленных пакетов настроено использование репозитория пакетов из реестра, но при обращении к разделу реестра «{0}» произошла ошибка.</target>
+        <target state="translated">Для предустановленных пакетов настроено использование репозитория пакетов из реестра, но при обращении к разделу реестра "{0}" произошла ошибка.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">Предпринята попытка установить версию «{1}» «{0}», но в проекте уже есть другая версия. Пропуск...</target>
+        <target state="translated">Предпринята попытка установить версию "{1}" "{0}", но в проекте уже есть другая версия. Пропуск...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">"{0}" не может быть неопределенным.</target>
+        <target state="translated">"{0}" не может иметь значение null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -365,7 +365,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">Недопустимое значение атрибута repository элемента пакета: «{0}». Допустимые значения: «template» или «extension».</target>
+        <target state="translated">Недопустимое значение атрибута repository элемента пакета: "{0}". Допустимые значения: template или extension.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">

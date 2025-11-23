@@ -28,7 +28,7 @@ namespace NuGet.CommandLine.XPlat.Tests
             }
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, projects.ToArray());
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             return projects;
         }

@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">L'impronta digitale del certificato di firma del pacchetto non corrisponde ad alcuna impronta digitale di certificato nell'elenco elementi consentiti.</target>
+        <target state="translated">L'impronta digitale del certificato di firma del pacchetto non corrisponde ad alcuna impronta digitale di certificato nell'elenco Consenti.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -483,7 +483,7 @@
       </trans-unit>
       <trans-unit id="MultiplePackageSignatureFiles">
         <source>The package contains multiple package signature files.</source>
-        <target state="translated">Il pacchetto contiene più file di firma del pacchetto.</target>
+        <target state="translated">Il pacchetto contiene più file di forma del pacchetto.</target>
         <note />
       </trans-unit>
       <trans-unit id="MustContainAbsolutePath">
@@ -959,11 +959,11 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">Il certificato radice X.509 seguente non è attendibile perché non è presente nel bundle di certificati in {0}.  Per altre informazioni, vedere la documentazione per NU3042. 
-
-    Oggetto:  {1}
-    Impronta digitale (SHA-256):  {2}
-    Certificato (PEM):]D;{3}</target>
+        <target state="translated">Il certificato radice X.509 seguente non è attendibile perché non è presente nel bundle di certificati in {0}.  Per altre informazioni, vedi la documentazione per NU3042.
+    Oggetto: {1}
+    Impronta digitale (SHA-256): {2}
+    Certificato (PEM):
+{3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
       </trans-unit>
       <trans-unit id="UntrustedRoot_WithoutCertificateBundle">
@@ -972,9 +972,9 @@
     Fingerprint (SHA-256):  {1}
     Certificate (PEM):
 {2}</source>
-        <target state="translated">Il certificato radice X.509 seguente non è attendibile perché non è stato trovato alcun bundle di certificati.  Per altre informazioni, vedere la documentazione per NU3042.
-    Oggetto:  {0}
-    Impronta digitale (SHA-256):  {1}
+        <target state="translated">Il certificato radice X.509 seguente non è attendibile perché non è stato trovato alcun bundle di certificati.  Per altre informazioni, vedi la documentazione per NU3042.
+    Oggetto: {0}
+    Impronta digitale (SHA-256): {1}
     Certificato (PEM):
 {2}</target>
         <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>

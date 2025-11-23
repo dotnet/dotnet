@@ -320,7 +320,7 @@
       </trans-unit>
       <trans-unit id="InvalidArgument">
         <source>The argument is invalid.</source>
-        <target state="translated">Argument není platný.</target>
+        <target state="translated">Argument je neplatný.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidArgumentCombination">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Hodnota {0} nemůže být nulová.</target>
+        <target state="translated">{0} nemůže být null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -959,7 +959,7 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">Následující kořenový certifikát X.509 je nedůvěryhodný, protože se nenachází v sadě certifikátů v {0}.  Další informace najdete v dokumentaci k NU3042. 
+        <target state="translated">Následující kořenový certifikát X.509 je nedůvěryhodný, protože se nenachází v sadě certifikátů v {0}.  Další informace najdete v dokumentaci k NU3042.
     Předmět:  {1}
     Otisk (SHA-256):  {2}
     Certifikát (PEM):

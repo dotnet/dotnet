@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -89,21 +91,12 @@ namespace NuGet.Commands.FuncTest
             {
                 Directory.CreateDirectory(Path.Combine(projectDir, "TestProject"));
                 var projectSpecPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var projectSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "TestProject", projectSpecPath);
-                projectSpec.Dependencies = new List<LibraryDependency>
-                {
-                    new LibraryDependency()
-                    {
-                        LibraryRange = new LibraryRange(
-                            "ReferencedProject",
-                            VersionRange.Parse("2.0.0-beta1"),
-                            LibraryDependencyTarget.Project)
-                    }
-                };
+                var projectSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "TestProject", projectSpecPath).WithTestRestoreMetadata();
 
                 Directory.CreateDirectory(Path.Combine(projectDir, "ReferencedProject"));
                 var referenceSpecPath = Path.Combine(projectDir, "ReferencedProject", "project.json");
-                var referenceSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "ReferencedProject", referenceSpecPath);
+                var referenceSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "ReferencedProject", referenceSpecPath).WithTestRestoreMetadata();
+                projectSpec = projectSpec.WithTestProjectReference(referenceSpec);
                 referenceSpec.Version = new NuGetVersion("2.0.0-BETA1");
                 PackageSpecWriter.WriteToFile(referenceSpec, referenceSpecPath);
 
@@ -214,11 +207,12 @@ namespace NuGet.Commands.FuncTest
                     specPathB,
                     @"
                     {
-                      ""dependencies"": {
-                        ""microsoft.NETCore.Runtime.CoreCLR"": ""1.0.2-rc2-24027""
-                      },
                       ""frameworks"": {
-                        ""netstandard1.5"": {}
+                        ""netstandard1.5"": {
+                          ""dependencies"": {
+                            ""microsoft.NETCore.Runtime.CoreCLR"": ""1.0.2-rc2-24027""
+                          }
+                        }
                       }
                     }
                     ");
@@ -231,14 +225,16 @@ namespace NuGet.Commands.FuncTest
                     specPathA,
                     @"
                     {
-                      ""dependencies"": {
-                        ""b"": {
-                          ""target"": ""project""
-                        },
-                        ""Microsoft.NETCore.Runtime"": ""1.0.2-rc2-24027""
-                      },
                       ""frameworks"": {
-                        ""netcoreapp1.0"": {}
+                        ""netcoreapp1.0"": {
+                          ""dependencies"": {
+                            ""b"": {
+                              ""target"": ""project"",
+                              ""version"" : ""1.0.0""
+                            },
+                            ""Microsoft.NETCore.Runtime"": ""1.0.2-rc2-24027""
+                          }
+                        }
                       }
                     }
                     ");
@@ -269,6 +265,7 @@ namespace NuGet.Commands.FuncTest
                 var graph = result.RestoreGraphs.First();
                 Assert.Equal(0, graph.Conflicts.Count());
                 Assert.True(result.Success, "The restore should have been successful.");
+                result.RestoreGraphs.First().Flattened.Should().HaveCountGreaterThan(2);
             }
         }
 
@@ -616,13 +613,13 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                     ""frameworks"": {
                         ""dotnet"": {
                             ""imports"": ""portable-net452+win81"",
-                            ""warn"": false
+                            ""warn"": false,
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
                         }
                     }
                 }");
@@ -657,6 +654,7 @@ namespace NuGet.Commands.FuncTest
                 Assert.Equal(0, logger.Errors);
                 Assert.Equal(0, logger.Warnings);
                 Assert.Equal(0, result.GetAllInstalled().Count);
+                Assert.Equal(2, result.RestoreGraphs.First().Flattened.Count);
             }
         }
 
@@ -833,8 +831,6 @@ namespace NuGet.Commands.FuncTest
                     ["net46"] = new JObject()
                 };
 
-                json["dependencies"] = new JObject();
-
                 json["frameworks"] = frameworks;
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
@@ -887,8 +883,6 @@ namespace NuGet.Commands.FuncTest
                 {
                     ["net46"] = new JObject()
                 };
-
-                json["dependencies"] = new JObject();
 
                 json["frameworks"] = frameworks;
 
@@ -1650,11 +1644,12 @@ namespace NuGet.Commands.FuncTest
         public async Task RestoreCommand_PopulatesProjectFileDependencyGroupsCorrectlyAsync()
         {
             const string project = @"{
-    ""dependencies"": {
-        ""Newtonsoft.Json"": ""6.0.4""
-    },
     ""frameworks"": {
-        ""net45"": {}
+        ""net45"": {
+            ""dependencies"": {
+                ""Newtonsoft.Json"": ""6.0.4""
+            }
+        }
     },
     ""supports"": {
     }
@@ -1696,11 +1691,12 @@ namespace NuGet.Commands.FuncTest
         {
             const string project = @"
 {
-    ""dependencies"": {
-        ""Microsoft.OData.Client"": ""6.12.0"",
-    },
     ""frameworks"": {
-        ""net40"": {}
+        ""net40"": {
+            ""dependencies"": {
+                ""Microsoft.OData.Client"": ""6.12.0"",
+            }
+        }
     }
 }
 ";
@@ -1729,6 +1725,7 @@ namespace NuGet.Commands.FuncTest
 
                 // Assert
                 Assert.True(result.Success);
+                result.LockFile.Libraries.Should().HaveCount(4);
             }
         }
 
@@ -1938,11 +1935,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1""
+                            }
+                        }
                     }
                 }");
 
@@ -2065,11 +2063,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1-*""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1-*""
+                            }
+                        }
                     }
                 }");
 
@@ -2115,11 +2114,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.1-*""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.1-*""
+                            }
+                        }
                     }
                 }");
 
@@ -2146,6 +2146,7 @@ namespace NuGet.Commands.FuncTest
 
                     // Assert
                     Assert.True(result.Success);
+                    result.LockFile.Libraries.Should().HaveCount(1);
                 }
             }
         }
@@ -2487,11 +2488,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -2518,6 +2520,7 @@ namespace NuGet.Commands.FuncTest
 
                     // Assert
                     Assert.True(result.Success);
+                    result.LockFile.Libraries.Should().HaveCount(1);
                 }
             }
         }
@@ -2537,11 +2540,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""Newtonsoft.Json"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""Newtonsoft.Json"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -2568,6 +2572,7 @@ namespace NuGet.Commands.FuncTest
 
                     // Assert
                     Assert.True(result.Success);
+                    result.LockFile.Libraries.Should().HaveCount(1);
                 }
             }
         }
@@ -2587,11 +2592,12 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                        ""NewtonSoft.Json"": ""7.0.91""
-                    },
                      ""frameworks"": {
-                        ""net45"": { }
+                        ""net45"": {
+                            ""dependencies"": {
+                                ""NewtonSoft.Json"": ""7.0.91""
+                            }
+                        }
                     }
                 }");
 
@@ -2618,6 +2624,7 @@ namespace NuGet.Commands.FuncTest
 
                     // Assert
                     Assert.True(result.Success);
+                    result.LockFile.Libraries.Should().HaveCount(1);
                 }
             }
         }
@@ -2805,8 +2812,6 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                    },
                      ""frameworks"": {
                         ""net45"": { }
                     }
@@ -2851,8 +2856,6 @@ namespace NuGet.Commands.FuncTest
             {
                 var configJson = JObject.Parse(@"
                 {
-                    ""dependencies"": {
-                    },
                      ""frameworks"": {
                         ""net45"": { }
                     }
@@ -4201,6 +4204,47 @@ namespace NuGet.Commands.FuncTest
             // Assert
             result.Success.Should().BeFalse(because: logger.ShowMessages());
             result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains(httpsSource));
+        }
+
+        [Theory]
+        [InlineData("alias1")]
+        [InlineData("")]
+        public async Task RestoreCommand_WithTargetAlias_RestoreTargetGraphAndLockFileTargetContainsAlias(string alias)
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("a", "1.0.0"));
+
+            var spec = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""a"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        }
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, spec);
+            projectSpec.TargetFrameworks[0] = new TargetFrameworkInformation(projectSpec.TargetFrameworks[0]) { TargetAlias = alias };
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].TargetAlias.Should().Be(alias);
+            RestoreTargetGraph restoreTargetGraph = result.RestoreGraphs.First();
+            restoreTargetGraph.TargetAlias.Should().Be(alias);
         }
 
         private static void CreateFakeProjectFile(PackageSpec project2spec)

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -282,7 +284,7 @@ namespace NuGet.Test.Utility
                 {
                     _packageSpec.RestoreMetadata.ProjectJsonPath = Path.Combine(Path.GetDirectoryName(ProjectPath), "project.json");
                 }
-                if (Frameworks.Count() > 1)
+                if (Frameworks.Count > 1)
                 {
                     _packageSpec.RestoreMetadata.CrossTargeting = true;
                 }

@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Папка "{0}" удалена.</target>
+        <target state="translated">Папка «{0}» удалена.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">Указанный источник недопустим.</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">Необходимо указать допустимый локальный или удаленный путь.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -182,6 +182,16 @@
         <target state="translated">Не удалось найти свойство MSBuild {0} для проекта "{1}".</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
       </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">Миграция проекта project.json...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">Миграция выполнена</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
         <target state="translated">Путь «{0}» к существующему файлу на диске не найден. Не удается добавить в проект «{1}».</target>
@@ -204,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">"{0}" не может быть неопределенным.</target>
+        <target state="translated">"{0}" не может иметь значение null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -256,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Каталог «{0}» не пуст. Пропуск...</target>
+        <target state="translated">Каталог «{0}» не пуст. Пропуск…</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
@@ -271,7 +281,7 @@
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
         <source>Failed to find match for removing reference '{0}'.</source>
-        <target state="translated">Не удалось найти соответствующий элемент для удаления ссылки «{0}».</target>
+        <target state="translated">Не удалось найти совпадение для удаления ссылки «{0}».</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
@@ -281,7 +291,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">"{0}" уже существует. Пропуск...</target>
+        <target state="translated">«{0}» уже существует. Пропуск…</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_NoExactMatchForReference">

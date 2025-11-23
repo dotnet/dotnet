@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">Centrálně připnutá závislost {0} nebyla neočekávaně nalezena ve vyřešeném grafu pro uzel {1}. Nahlaste prosím problém na https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Následující položky PackageReference nemohou definovat hodnotu parametru Version: {0}. Projekty využívající CPM (Central Package Management) musí definovat hodnotu parametru Version pro položku PackageVersion. Další informace najdete na https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">{0} PackageReference nebude vyřazen. Zvažte odebrání tohoto balíčku ze závislostí, protože je pravděpodobně nepotřebný.</target>
+        <target state="translated">PackageReference {0} se nevyřadí. Zvažte odebrání tohoto balíčku ze závislostí, protože je pravděpodobně nepotřebný.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Odkaz ProjectReference nelze vyřadit, {0}.</target>
+        <target state="translated">ProjectReference nelze vyřadit, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -747,7 +752,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="Log_ImportsFallbackWarning">
         <source>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</source>
-        <target state="translated">Balíček {0} se místo cílové architektury projektu {2} obnovil pomocí {1}. Balíček nemusí být plně kompatibilní s vaším projektem.</target>
+        <target state="translated">Balíček {0} se místo cílové verze rozhraní .NET Framework projektu {2} obnovil pomocí {1}. Balíček nemusí být plně kompatibilní s vaším projektem.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_InstalledSummary">
@@ -818,7 +823,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="Log_PackageNotCompatibleWithFx_NoSupports">
         <source>Package {0} {1} does not support any target frameworks.</source>
-        <target state="translated">Balíček {0} {1} nepodporuje žádnou cílovou architekturu.</target>
+        <target state="translated">Balíček {0} {1} nepodporuje žádné cílové rozhraní.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_PackageNotCompatibleWithFx_Supports">
@@ -833,7 +838,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="Log_ProjectDoesNotSpecifyTargetFrameworks">
         <source>The project {0} does not specify any target frameworks in {1}.</source>
-        <target state="translated">Projekt {0} neurčuje žádné cílové architektury v {1}.</target>
+        <target state="translated">Projekt {0} neurčuje žádná cílová rozhraní v {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_ProjectNotCompatibleWithFx">
@@ -843,7 +848,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="Log_ProjectNotCompatibleWithFx_NoSupports">
         <source>Project {0} does not support any target frameworks.</source>
-        <target state="translated">Projekt {0} nepodporuje žádné cílové architektury.</target>
+        <target state="translated">Projekt {0} nepodporuje žádné cílové rozhraní.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_ProjectNotCompatibleWithFx_Supports">
@@ -1083,7 +1088,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Vyřažení balíčku '{0}' jako závislosti '{1}'. Maximální verze, která se dá spustit, je '{2}'</target>
+        <target state="translated">Vyřazuje se balíček {0} jako závislost {1}. Maximální verze, která se dá vyřadit, je {2}.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1189,7 +1194,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="SourcesCommandEnabled">
         <source>Enabled</source>
-        <target state="translated">Povolené</target>
+        <target state="translated">Povoleno</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandInvalidSource">

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -301,36 +303,20 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
 
         private static void CopyPackSdkArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
         {
-            var pathToPackSdk = Path.Combine(pathToSdkInCli, "Sdks", "NuGet.Build.Tasks.Pack");
-
             const string packProjectName = "NuGet.Build.Tasks.Pack";
-            const string packTargetsName = "NuGet.Build.Tasks.Pack.targets";
 
             // Copy the pack SDK.
             var packProjectBinDirectory = Path.Combine(artifactsDirectory, packProjectName, "bin", configuration);
             var tfmToCopy = GetTfmToCopy(packProjectBinDirectory);
-
             var packProjectCoreArtifactsDirectory = new DirectoryInfo(Path.Combine(packProjectBinDirectory, tfmToCopy));
-
-            // We are only copying the CoreCLR assets, since, we're testing only them under Core MSBuild.
-            var targetRuntimeType = "CoreCLR";
-
-            var packAssemblyDestinationDirectory = Path.Combine(pathToPackSdk, targetRuntimeType);
 
             foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
             {
                 File.Copy(
                     sourceFileName: assembly.FullName,
-                    destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
+                    destFileName: Path.Combine(pathToSdkInCli, assembly.Name),
                     overwrite: true);
             }
-
-            // Copy the pack targets
-            var packTargetsSource = Path.Combine(packProjectCoreArtifactsDirectory.FullName, packTargetsName);
-            var targetsDestination = Path.Combine(pathToPackSdk, "build", packTargetsName);
-            var targetsDestinationCrossTargeting = Path.Combine(pathToPackSdk, "buildCrossTargeting", packTargetsName);
-            File.Copy(packTargetsSource, targetsDestination, overwrite: true);
-            File.Copy(packTargetsSource, targetsDestinationCrossTargeting, overwrite: true);
         }
 
         public static void WriteGlobalJson(string path)

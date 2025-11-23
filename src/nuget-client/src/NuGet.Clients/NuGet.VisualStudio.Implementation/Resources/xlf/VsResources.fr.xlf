@@ -300,22 +300,22 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_ExtensionManagerError">
         <source>Error accessing Extension Manager.</source>
-        <target state="translated">Erreur lors de l'accès au gestionnaire des extensions.</target>
+        <target state="translated">Erreur lors de l'accès au Gestionnaire d'extensions.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">Impossible d'ajouter tous les packages requis au projet. Échec de l'installation des packages suivants à partir de « {0} » :</target>
+        <target state="translated">Impossible d'ajouter tous les packages requis au projet. Les packages suivants n'ont pas pu être installés à partir de « {0} » :</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">Les packages préinstallés ont une référence à une extension manquante. Impossible de trouver une extension avec l'ID « {0} ».</target>
+        <target state="translated">Les packages préinstallés font référence à une extension manquante. L'extension avec l'ID '{0}' est introuvable.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">Les packages préinstallés ont une référence à une valeur de Registre manquante. Impossible de trouver une clé de Registre portant le nom « {0} » sous « {1} ».</target>
+        <target state="translated">Les packages préinstallés font référence à une valeur de registre manquante. Clé de Registre avec le nom '{0}' introuvable sous '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -325,12 +325,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">Les packages préinstallés sont configurés pour utiliser un référentiel de packages fourni par le Registre mais une erreur s'est produite lors de l'accès à la clé de Registre « {0} ».</target>
+        <target state="translated">Les packages préinstallés sont configurés pour utiliser un référentiel de packages fourni par le Registre. Une erreur s'est produite lors de l'accès à la clé de Registre '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">Tentative d'installation de la version « {1} » de « {0} » mais le projet comprend déjà une version différente. Ignoré...</target>
+        <target state="translated">Tentative d'installation de la version '{1}' de '{0}' alors que le projet inclut déjà une autre version. Ignoré...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' ne peut pas avoir la valeur null.</target>
+        <target state="translated">« {0} » ne peut pas avoir la valeur nul.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -360,32 +360,32 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">Le modèle de projet répertorie un ou plusieurs packages avec des valeurs manquantes, vides ou non valides pour les attributs "id" ou "version". Ces deux attributs sont requis et doivent avoir des valeurs valides.</target>
+        <target state="translated">Le modèle de projet répertorie un ou plusieurs packages avec des valeurs manquantes, vides ou non valides pour les attributs "id" ou "version". Les deux attributs sont requis et doivent avoir des valeurs valides.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">L'attribut « repository » de l'élément de package a une valeur non valide : « {0} ». Les valeurs valides sont : « template » ou « extension ».</target>
+        <target state="translated">L'attribut "repository" de l'élément de package a une valeur non valide : '{0}'. Les valeurs valides sont 'template' ou 'extension'.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">Cet Assistant Modèle s'applique seulement à des modèles de projet unique ou d'élément de projet.</target>
+        <target state="translated">Cet Assistant Modèle peut être appliqué seulement à des modèles de projet unique ou d'élément de projet.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">Le modèle de projet est configuré pour utiliser un référentiel de package spécifique à une extension mais l'ID d'extension n'a pas été spécifié. Utilisez l'attribut « repositoryId » pour spécifier l'ID d'extension.</target>
+        <target state="translated">Le modèle de projet est configuré pour utiliser un référentiel de packages spécifique d'une extension, mais l'ID d'extension n'a pas été spécifié. Utilisez l'attribut « repositoryId » pour spécifier l'ID d'extension.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">Le modèle de projet est configuré pour utiliser un référentiel de package fourni par un Registre mais la valeur de Registre n'a pas été spécifiée. Utilisez l'attribut « keyName » pour spécifier la valeur de Registre.</target>
+        <target state="translated">Le modèle de projet est configuré pour utiliser un référentiel de packages fourni par le Registre mais le nom de la valeur de Registre n'a pas été spécifié. Utilisez l'attribut « keyName » pour spécifier la valeur de Registre.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">
         <source>Unable to find package '{0}'.</source>
-        <target state="translated">Impossible de trouver le package '{0}'.</target>
+        <target state="translated">Le package '{0}' est introuvable.</target>
         <note />
       </trans-unit>
     </body>

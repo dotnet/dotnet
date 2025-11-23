@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -113,7 +111,7 @@ namespace NuGet.Commands
                 // Create a v3 file system source
                 var pathSource = Repository.Factory.GetCoreV3(path, FeedType.FileSystemV3);
 
-                // Do not throw or warn for global cache 
+                // Do not throw or warn for global cache
                 return new SourceRepositoryDependencyProvider(
                     pathSource,
                     log,

@@ -44,9 +44,9 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
             int? milliseconds = null;
             int? microseconds = null;
 
-            TryReadValue(sequenceReader, Asn1Tag.Integer, seconds);
-            TryReadValue(sequenceReader, Asn1Tags.ContextSpecific0, milliseconds);
-            TryReadValue(sequenceReader, Asn1Tags.ContextSpecific1, microseconds);
+            TryReadValue(sequenceReader, Asn1Tag.Integer);
+            TryReadValue(sequenceReader, Asn1Tags.ContextSpecific0);
+            TryReadValue(sequenceReader, Asn1Tags.ContextSpecific1);
 
             if (sequenceReader.HasData)
             {
@@ -82,15 +82,11 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
             }
         }
 
-        private static void TryReadValue(AsnReader reader, Asn1Tag tag, int? value)
+        private static void TryReadValue(AsnReader reader, Asn1Tag tag)
         {
             if (reader.HasData && reader.PeekTag().HasSameClassAndValue(tag))
             {
-                if (reader.TryReadInt32(out int tmpValue, tag))
-                {
-                    value = tmpValue;
-                }
-                else
+                if (!reader.TryReadInt32(out _, tag))
                 {
                     reader.ThrowIfNotEmpty();
                 }

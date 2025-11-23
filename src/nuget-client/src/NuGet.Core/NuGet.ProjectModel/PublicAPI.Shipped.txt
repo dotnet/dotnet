@@ -10,7 +10,6 @@ NuGet.ProjectModel.AssetsLogMessage.EndLineNumber.set -> void
 ~NuGet.ProjectModel.AssetsLogMessage.Equals(NuGet.ProjectModel.IAssetsLogMessage other) -> bool
 ~NuGet.ProjectModel.AssetsLogMessage.FilePath.get -> string
 ~NuGet.ProjectModel.AssetsLogMessage.FilePath.set -> void
-NuGet.ProjectModel.PackageSpec.IsDefaultVersion.get -> bool
 NuGet.ProjectModel.AssetsLogMessage.Level.get -> NuGet.Common.LogLevel
 ~NuGet.ProjectModel.AssetsLogMessage.LibraryId.get -> string
 ~NuGet.ProjectModel.AssetsLogMessage.LibraryId.set -> void
@@ -127,8 +126,6 @@ NuGet.ProjectModel.LockFile
 ~NuGet.ProjectModel.LockFile.GetLibrary(string name, NuGet.Versioning.NuGetVersion version) -> NuGet.ProjectModel.LockFileLibrary
 ~NuGet.ProjectModel.LockFile.GetTarget(NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> NuGet.ProjectModel.LockFileTarget
 ~NuGet.ProjectModel.LockFile.GetTarget(string frameworkAlias, string runtimeIdentifier) -> NuGet.ProjectModel.LockFileTarget
-~NuGet.ProjectModel.LockFile.IsValidForPackageSpec(NuGet.ProjectModel.PackageSpec spec) -> bool
-~NuGet.ProjectModel.LockFile.IsValidForPackageSpec(NuGet.ProjectModel.PackageSpec spec, int requestLockFileVersion) -> bool
 ~NuGet.ProjectModel.LockFile.Libraries.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileLibrary>
 ~NuGet.ProjectModel.LockFile.Libraries.set -> void
 NuGet.ProjectModel.LockFile.LockFile() -> void
@@ -200,14 +197,23 @@ NuGet.ProjectModel.LockFileItem
 NuGet.ProjectModel.LockFileLibrary
 ~NuGet.ProjectModel.LockFileLibrary.Equals(NuGet.ProjectModel.LockFileLibrary other) -> bool
 ~NuGet.ProjectModel.LockFileLibrary.Files.get -> System.Collections.Generic.IList<string>
+~NuGet.ProjectModel.LockFileLibrary.Files.init -> void
 NuGet.ProjectModel.LockFileLibrary.HasTools.get -> bool
+NuGet.ProjectModel.LockFileLibrary.HasTools.init -> void
 NuGet.ProjectModel.LockFileLibrary.IsServiceable.get -> bool
+NuGet.ProjectModel.LockFileLibrary.IsServiceable.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.MSBuildProject.get -> string
+~NuGet.ProjectModel.LockFileLibrary.MSBuildProject.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.Name.get -> string
+~NuGet.ProjectModel.LockFileLibrary.Name.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.Path.get -> string
+~NuGet.ProjectModel.LockFileLibrary.Path.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.Sha512.get -> string
+~NuGet.ProjectModel.LockFileLibrary.Sha512.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.Type.get -> string
+~NuGet.ProjectModel.LockFileLibrary.Type.init -> void
 ~NuGet.ProjectModel.LockFileLibrary.Version.get -> NuGet.Versioning.NuGetVersion
+~NuGet.ProjectModel.LockFileLibrary.Version.init -> void
 NuGet.ProjectModel.LockFileReadFlags
 NuGet.ProjectModel.LockFileReadFlags.All = NuGet.ProjectModel.LockFileReadFlags.Libraries | NuGet.ProjectModel.LockFileReadFlags.Targets | NuGet.ProjectModel.LockFileReadFlags.ProjectFileDependencyGroups | NuGet.ProjectModel.LockFileReadFlags.PackageFolders | NuGet.ProjectModel.LockFileReadFlags.PackageSpec | NuGet.ProjectModel.LockFileReadFlags.CentralTransitiveDependencyGroups | NuGet.ProjectModel.LockFileReadFlags.LogMessages -> NuGet.ProjectModel.LockFileReadFlags
 NuGet.ProjectModel.LockFileReadFlags.CentralTransitiveDependencyGroups = 32 -> NuGet.ProjectModel.LockFileReadFlags
@@ -287,11 +293,10 @@ NuGet.ProjectModel.PackageDependencyType.Transitive = 1 -> NuGet.ProjectModel.Pa
 NuGet.ProjectModel.PackageSpec
 ~NuGet.ProjectModel.PackageSpec.BaseDirectory.get -> string
 ~NuGet.ProjectModel.PackageSpec.Clone() -> NuGet.ProjectModel.PackageSpec
-~NuGet.ProjectModel.PackageSpec.Dependencies.get -> System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency>
-~NuGet.ProjectModel.PackageSpec.Dependencies.set -> void
 ~NuGet.ProjectModel.PackageSpec.Equals(NuGet.ProjectModel.PackageSpec other) -> bool
 ~NuGet.ProjectModel.PackageSpec.FilePath.get -> string
 ~NuGet.ProjectModel.PackageSpec.FilePath.set -> void
+NuGet.ProjectModel.PackageSpec.IsDefaultVersion.get -> bool
 ~NuGet.ProjectModel.PackageSpec.Name.get -> string
 ~NuGet.ProjectModel.PackageSpec.Name.set -> void
 NuGet.ProjectModel.PackageSpec.PackageSpec() -> void
@@ -672,7 +677,6 @@ static readonly NuGet.ProjectModel.LockFile.DirectorySeparatorChar -> char
 ~static readonly NuGet.ProjectModel.LockFileContentFile.OutputPathProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileContentFile.PPOutputPathProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileFormat.AssetsFileName -> string
-~static readonly NuGet.ProjectModel.LockFileFormat.LockFileName -> string
 static readonly NuGet.ProjectModel.LockFileFormat.Version -> int
 ~static readonly NuGet.ProjectModel.LockFileItem.AliasesProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileRuntimeTarget.AssetTypeProperty -> string

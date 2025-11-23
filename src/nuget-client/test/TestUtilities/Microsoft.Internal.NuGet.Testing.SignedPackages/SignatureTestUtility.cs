@@ -178,7 +178,7 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
             // Shift Central Directory records to the desired position.
             // Because we sorted in the file entry order this will shift
             // the file entries
-            ShiftSignatureToIndex(spec, shiftedCdr, newSignatureFileEntryIndex);
+            ShiftSignatureToIndex(shiftedCdr, newSignatureFileEntryIndex);
 
             // Calculate the change in offsets for the shifted file entries
             var lastEntryEnd = 0L;
@@ -195,7 +195,7 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
             // Shift Central Directory records to the desired position.
             // Because we sorted in the central directory records order this will shift
             // the central directory records
-            ShiftSignatureToIndex(spec, shiftedCdr, newSignatureCentralDirectoryRecordIndex);
+            ShiftSignatureToIndex(shiftedCdr, newSignatureCentralDirectoryRecordIndex);
 
             // Calculate the new indexes for each central directory record
             var lastIndex = 0;
@@ -209,7 +209,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
         }
 
         private static void ShiftSignatureToIndex(
-            SigningSpecifications spec,
             List<CentralDirectoryHeaderMetadata> cdr,
             int index)
         {

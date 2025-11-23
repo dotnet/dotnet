@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +59,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(pkgY);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgX, pkgY);
 
@@ -106,7 +108,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Remove all contents from B to make it invalid for restore.
                 File.Delete(projectB.ProjectPath);
@@ -139,7 +141,7 @@ namespace NuGet.CommandLine.Test
                     NuGetFramework.Parse("net45"));
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Remove all contents from A to make it invalid for restore.
                 File.Delete(projectA.ProjectPath);
@@ -238,7 +240,7 @@ namespace NuGet.CommandLine.Test
                     File.WriteAllText(configPath, doc.ToString());
                 }
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, pathContext.SolutionRoot, expectedExitCode: 0);
@@ -337,7 +339,7 @@ namespace NuGet.CommandLine.Test
                 projectRoot.Save();
                 solution.Projects.Add(projectRoot);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectRoot.ProjectPath, expectedExitCode: 0, additionalArgs: "-Recursive");
@@ -427,7 +429,7 @@ namespace NuGet.CommandLine.Test
 
                 File.WriteAllText(configPath, doc.ToString());
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, project.ProjectPath);
@@ -459,7 +461,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -540,7 +542,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -622,7 +624,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -703,7 +705,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Clear();
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -760,7 +762,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("RestoreProjectStyle", "PackageReference");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 File.WriteAllText(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "project.json"), projectJson.ToString());
 
@@ -816,7 +818,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -879,7 +881,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -939,7 +941,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -991,7 +993,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("ValidateRuntimeIdentifierCompatibility", "true");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1036,7 +1038,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1081,7 +1083,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("ValidateRuntimeIdentifierCompatibility", "true");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1123,7 +1125,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1172,7 +1174,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1221,7 +1223,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1263,7 +1265,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1336,7 +1338,7 @@ namespace NuGet.CommandLine.Test
                         packageZSub);
 
                     solution.Projects.Add(project);
-                    solution.Create(pathContext.SolutionRoot);
+                    solution.Create();
                 }
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1411,7 +1413,7 @@ namespace NuGet.CommandLine.Test
                         packageZSub);
 
                     solution.Projects.Add(project);
-                    solution.Create(pathContext.SolutionRoot);
+                    solution.Create();
                 }
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1482,7 +1484,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1535,7 +1537,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1586,7 +1588,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1651,7 +1653,7 @@ namespace NuGet.CommandLine.Test
                 project.WarningsAsErrors = true;
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1717,7 +1719,7 @@ namespace NuGet.CommandLine.Test
                     });
 
                     solution.Projects.Add(project);
-                    solution.Create(pathContext.SolutionRoot);
+                    solution.Create();
                 }
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1776,7 +1778,7 @@ namespace NuGet.CommandLine.Test
                     });
 
                     solution.Projects.Add(project);
-                    solution.Create(pathContext.SolutionRoot);
+                    solution.Create();
                 }
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1846,7 +1848,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(project2);
                 solution.Projects.Add(project);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1927,7 +1929,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(project2);
                 solution.Projects.Add(project);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2015,7 +2017,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(project2);
                 solution.Projects.Add(project);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2093,7 +2095,7 @@ namespace NuGet.CommandLine.Test
                     });
 
                     solution.Projects.Add(project);
-                    solution.Create(pathContext.SolutionRoot);
+                    solution.Create();
                 }
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -2166,7 +2168,7 @@ namespace NuGet.CommandLine.Test
                 });
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2228,7 +2230,7 @@ namespace NuGet.CommandLine.Test
                 });
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2298,7 +2300,7 @@ namespace NuGet.CommandLine.Test
                     solution.Projects.Add(project);
                 }
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
 
@@ -2353,7 +2355,7 @@ namespace NuGet.CommandLine.Test
                 projectB.DotnetCLIToolReferences.Add(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2413,7 +2415,7 @@ namespace NuGet.CommandLine.Test
                 projectB.DotnetCLIToolReferences.Add(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2461,7 +2463,7 @@ namespace NuGet.CommandLine.Test
                 projectB.DotnetCLIToolReferences.Add(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2520,7 +2522,7 @@ namespace NuGet.CommandLine.Test
                 });
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2601,7 +2603,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageS);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2677,7 +2679,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2727,7 +2729,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2778,7 +2780,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2837,7 +2839,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageY);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2884,7 +2886,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -2953,7 +2955,7 @@ namespace NuGet.CommandLine.Test
                     packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -3049,7 +3051,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectE);
                 solution.Projects.Add(projectF);
                 solution.Projects.Add(projectG);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -3099,7 +3101,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -3146,7 +3148,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -3212,7 +3214,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -3286,7 +3288,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectC);
                 solution.Projects.Add(projectD);
                 solution.Projects.Add(projectE);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -3381,7 +3383,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectC);
                 solution.Projects.Add(projectD);
                 solution.Projects.Add(projectE);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -3449,7 +3451,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -3535,7 +3537,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
                 solution.Projects.Add(projectD);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -3626,7 +3628,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
                 solution.Projects.Add(projectD);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -3677,7 +3679,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var yPath = await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, packageY);
                 await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, packageX);
@@ -3723,7 +3725,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -3769,7 +3771,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("PackageTargetFallback", "portable-net45+win8;dnxcore50");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -3813,7 +3815,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("PackageTargetFallback", "\n\t   portable-net45+win8 ; ; dnxcore50\n   ");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -3852,7 +3854,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = File.ReadAllText(projectA.ProjectPath);
                 xml = xml.Replace("<TargetFrameworks>", "<TargetFramework>");
@@ -3891,7 +3893,7 @@ namespace NuGet.CommandLine.Test
                     NuGetFramework.Parse("net45"));
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act && Assert
                 // Verify this is a noop and not a failure
@@ -3923,7 +3925,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -3971,7 +3973,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -4024,7 +4026,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Delete B
                 File.Delete(projectB.ProjectPath);
@@ -4068,7 +4070,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4129,7 +4131,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4185,7 +4187,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4250,7 +4252,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4297,7 +4299,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("RestoreLegacyPackagesDirectory", "true");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4340,7 +4342,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("RestoreLegacyPackagesDirectory", "false");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4384,7 +4386,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4441,7 +4443,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4497,7 +4499,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -4550,7 +4552,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, expectedExitCode: 1, testOutputHelper: _testOutputHelper);
@@ -4588,7 +4590,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -4654,7 +4656,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageZ);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // M is only in the fallback folder
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -4728,7 +4730,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageY);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -4790,7 +4792,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageY);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -4855,7 +4857,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageY);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -4910,7 +4912,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -4958,7 +4960,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5004,7 +5006,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5081,7 +5083,7 @@ namespace NuGet.CommandLine.Test
 
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // M is only in the fallback folder
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5146,7 +5148,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5221,7 +5223,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -5259,7 +5261,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5302,7 +5304,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var relativeSourceName = "valid";
                 var source = Path.Combine(pathContext.WorkingDirectory, relativeSourceName);
@@ -5350,7 +5352,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // X is only in the source
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -5389,7 +5391,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -5463,7 +5465,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -5559,7 +5561,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = File.ReadAllText(projectA.ProjectPath);
                 xml = xml.Replace("<TargetFrameworks>", "<TargetFramework>");
@@ -5643,7 +5645,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(two);
                 solution.Projects.Add(three);
                 solution.Projects.Add(parentProject);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act && Assert
                 var r = Util.RestoreSolution(pathContext, expectedExitCode: 0, testOutputHelper: _testOutputHelper);
@@ -5690,7 +5692,7 @@ namespace NuGet.CommandLine.Test
                 project.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act && Assert
                 var r = Util.RestoreSolution(pathContext, expectedExitCode: 0, testOutputHelper: _testOutputHelper);
@@ -5741,7 +5743,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 // Act
@@ -5776,7 +5778,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var secondaryProjectName = Path.Combine(Path.GetDirectoryName(project.ProjectPath), "proj-copy.csproj");
 
@@ -5838,7 +5840,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 // Act
@@ -5902,7 +5904,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -5946,7 +5948,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -5987,7 +5989,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectA.ProjectPath);
@@ -6041,7 +6043,7 @@ namespace NuGet.CommandLine.Test
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -6103,7 +6105,7 @@ namespace NuGet.CommandLine.Test
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -6150,7 +6152,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -6217,7 +6219,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -6283,7 +6285,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -6344,7 +6346,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                    pathContext.PackageSource,
@@ -6411,7 +6413,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                    pathContext.PackageSource,
@@ -6476,7 +6478,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -6530,7 +6532,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToAllFrameworks(packageX2);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -6584,7 +6586,7 @@ namespace NuGet.CommandLine.Test
                     packageX2);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectA.GetXML();
 
@@ -6659,7 +6661,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToFramework("net48", packageX2);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -6724,7 +6726,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToFramework("net48", packageX2);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -6781,7 +6783,7 @@ namespace NuGet.CommandLine.Test
                     packageX1);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectA.GetXML();
 
@@ -6837,7 +6839,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
 
@@ -6895,7 +6897,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageDownloadToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
 
@@ -6955,7 +6957,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7019,7 +7021,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7079,7 +7081,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectB.GetXML();
 
@@ -7163,7 +7165,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectA.GetXML();
                 var props = new Dictionary<string, string>();
@@ -7241,7 +7243,7 @@ namespace NuGet.CommandLine.Test
                 project.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -7301,7 +7303,7 @@ namespace NuGet.CommandLine.Test
                 project.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act & Assert
                 var r = Util.RestoreSolution(pathContext, expectedExitCode: 1, testOutputHelper: _testOutputHelper);
@@ -7339,7 +7341,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7407,7 +7409,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7483,7 +7485,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7556,7 +7558,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7623,7 +7625,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7710,7 +7712,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7777,7 +7779,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Inject dependency with exclusive lower bound
                 var doc = XDocument.Load(projectA.ProjectPath);
@@ -7855,7 +7857,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -7900,7 +7902,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 solution.Projects.Add(projectA);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 File.WriteAllText(projectA.NuGetLockFileOutputPath, "");
 
@@ -7955,7 +7957,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8026,7 +8028,7 @@ namespace NuGet.CommandLine.Test
                 File.WriteAllBytes(ridGraphPath, GetTestUtilityResource("runtime.json"));
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8088,7 +8090,7 @@ namespace NuGet.CommandLine.Test
                 File.WriteAllText(ridGraphPath, "{ dsadas , dasda, dsadas { } : dsada } ");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, expectedExitCode: 1, testOutputHelper: _testOutputHelper);
@@ -8142,7 +8144,7 @@ namespace NuGet.CommandLine.Test
                 File.WriteAllBytes(ridGraphPath, GetTestUtilityResource("runtime.json"));
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var commandRunnerResult = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8232,7 +8234,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8285,7 +8287,7 @@ namespace NuGet.CommandLine.Test
 
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // The framework as they are in the lock file
                 var lockFrameworkTransformed = intitialFrameworks.Select(f => $".NETFramework,Version=v{f.Replace("net", "")[0]}.{f.Replace("net", "")[1]}").ToList();
@@ -8371,7 +8373,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packages);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8472,7 +8474,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddProjectToAllFrameworks(projectB);
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8550,7 +8552,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddProjectToAllFrameworks(projectB);
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8608,7 +8610,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddProjectToAllFrameworks(projectB);
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8680,7 +8682,7 @@ namespace NuGet.CommandLine.Test
 
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8757,7 +8759,7 @@ namespace NuGet.CommandLine.Test
                 });
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8807,7 +8809,7 @@ namespace NuGet.CommandLine.Test
                 });
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8859,7 +8861,7 @@ namespace NuGet.CommandLine.Test
 
                 projectA.AddPackageToAllFrameworks(package);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -8936,7 +8938,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9021,7 +9023,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9096,7 +9098,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9170,7 +9172,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9243,7 +9245,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9326,7 +9328,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9444,7 +9446,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var restoreResult = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
 
@@ -9635,7 +9637,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9688,7 +9690,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("AssetTargetFallback", "net472");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9728,7 +9730,7 @@ namespace NuGet.CommandLine.Test
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -9797,7 +9799,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9862,7 +9864,7 @@ namespace NuGet.CommandLine.Test
                 solution.CentralPackageVersionsManagementFile = CentralPackageVersionsManagementFile.Create(pathContext.SolutionRoot)
                     .SetPackageVersion("PackageA", "1.0.0")
                     .SetGlobalPackageReference("ToolPackageA", "1.0.0");
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 CommandRunnerResult result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9920,7 +9922,7 @@ namespace NuGet.CommandLine.Test
                 solution.CentralPackageVersionsManagementFile = CentralPackageVersionsManagementFile.Create(pathContext.SolutionRoot, managePackageVersionsCentrally: false)
                     .SetPackageVersion("PackageA", "1.0.0")
                     .SetGlobalPackageReference("ToolPackageA", "1.0.0");
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 CommandRunnerResult result = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -9995,7 +9997,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
@@ -10077,7 +10079,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.CentralPackageVersionsManagementFile = cpvmFile;
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 CommandRunnerResult result = Util.RestoreSolution(pathContext, expectedExitCode: 1, testOutputHelper: _testOutputHelper);
@@ -10142,7 +10144,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -10218,7 +10220,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Pre-Conditions, Act & Assert.
                 Util.RestoreSolution(pathContext).Success.Should().BeTrue();
@@ -10303,7 +10305,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
                 solution.Projects.Add(projectD);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Pre-Conditions, Act & Assert.
                 Util.RestoreSolution(pathContext).Success.Should().BeTrue();
@@ -10372,7 +10374,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Pre-Conditions, Act & Assert.
                 Util.RestoreSolution(pathContext).Success.Should().BeTrue();
@@ -10447,7 +10449,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -10567,7 +10569,7 @@ namespace NuGet.CommandLine.Test
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
                 solution.Projects.Add(projectC);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var nugetexe = Util.GetNuGetExePath();
@@ -10635,7 +10637,7 @@ namespace NuGet.CommandLine.Test
             projectA.AddPackageDownloadToAllFrameworks(packageK100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -10712,7 +10714,7 @@ namespace NuGet.CommandLine.Test
             projectA.AddPackageToAllFrameworks(packageY100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -10793,7 +10795,7 @@ namespace NuGet.CommandLine.Test
             projectA.AddPackageToAllFrameworks(packageOpenSourceContosoMvc);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // SimpleTestPathContext adds a NuGet.Config with a repositoryPath,
             // so we go ahead and replace that config before running MSBuild.
@@ -10889,7 +10891,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.AddPackageToAllFrameworks(packageOpenSourceContosoMvc);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // SimpleTestPathContext adds a NuGet.Config with a repositoryPath,
             // so we go ahead and replace that config before running MSBuild.
@@ -10964,7 +10966,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     );
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectA.GetXML();
 
@@ -11029,7 +11031,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     );
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var xml = projectA.GetXML();
 
@@ -11096,7 +11098,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.Properties.Add("TreatWarningsAsErrors", "true");
             projectA.Properties.Add("WarningsNotAsErrors", "NU1603");
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var args = new string[] {
                     "restore",
@@ -11133,7 +11135,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.AddPackageToAllFrameworks(packageX);
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var args = new string[] {
                     "restore",
@@ -11196,7 +11198,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
             solution.Projects.Add(projectC);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             AddPackageReferenceToProject(projectC);
 
