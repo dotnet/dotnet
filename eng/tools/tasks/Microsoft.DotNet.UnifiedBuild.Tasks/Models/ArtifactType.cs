@@ -23,9 +23,9 @@ public static class Extensions
         };
     }
 
-    public static string GetGitArchiveArgs(this ArtifactType artifactType, string artifactFilePath, string githubRepoName, string artifactVersion, string sourceCommit)
+    public static string GetGitArchiveArgs(this ArtifactType artifactType, string artifactFilePath, string githubRepoName, string artifactPrefixVersion, string sourceCommit)
     {
-        string baseArgs = $"archive --format={artifactType.GetArtifactExtension()} --output \"{artifactFilePath}\" --prefix \"{githubRepoName}-{artifactVersion}/\" {sourceCommit}";
+        string baseArgs = $"archive --format={artifactType.GetArtifactExtension()} --output \"{artifactFilePath}\" --prefix \"{githubRepoName}-{artifactPrefixVersion}/\" {sourceCommit}";
         return artifactType switch
         {
             ArtifactType.Tarball => $"-c \"tar.tar.gz.command=gzip -cn\" {baseArgs}",
