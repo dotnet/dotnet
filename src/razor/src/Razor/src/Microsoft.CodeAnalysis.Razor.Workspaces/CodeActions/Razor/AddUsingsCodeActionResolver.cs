@@ -62,13 +62,19 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
             return false;
         }
 
+        resolutionParams = CreateAddUsingResolutionParams(@namespace, textDocument, additionalEdit, delegatedDocumentUri);
+        return true;
+    }
+
+    internal static RazorCodeActionResolutionParams CreateAddUsingResolutionParams(string @namespace, VSTextDocumentIdentifier textDocument, TextDocumentEdit? additionalEdit, Uri? delegatedDocumentUri)
+    {
         var actionParams = new AddUsingsCodeActionParams
         {
             Namespace = @namespace,
             AdditionalEdit = additionalEdit
         };
 
-        resolutionParams = new RazorCodeActionResolutionParams
+        return new RazorCodeActionResolutionParams
         {
             TextDocument = textDocument,
             Action = LanguageServerConstants.CodeActions.AddUsing,
@@ -76,8 +82,6 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
             DelegatedDocumentUri = delegatedDocumentUri,
             Data = actionParams,
         };
-
-        return true;
     }
 
     // Internal for testing

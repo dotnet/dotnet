@@ -74,8 +74,10 @@ internal sealed class RazorCompletionItem
 
     public static RazorCompletionItem CreateDirectiveAttributeParameter(
         string displayText, string insertText,
-        AggregateBoundAttributeDescription descriptionInfo)
-        => new(RazorCompletionItemKind.DirectiveAttributeParameter, displayText, insertText, sortText: null, descriptionInfo, commitCharacters: [], isSnippet: false);
+        AggregateBoundAttributeDescription descriptionInfo,
+        ImmutableArray<RazorCommitCharacter> commitCharacters,
+        bool isSnippet)
+        => new(RazorCompletionItemKind.DirectiveAttributeParameter, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet);
 
     public static RazorCompletionItem CreateMarkupTransition(
         string displayText, string insertText,

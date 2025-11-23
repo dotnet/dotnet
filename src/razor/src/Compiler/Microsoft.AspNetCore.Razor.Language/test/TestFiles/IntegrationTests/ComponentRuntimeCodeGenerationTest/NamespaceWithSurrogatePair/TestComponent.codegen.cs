@@ -18,15 +18,7 @@ namespace test_namespace
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "<h1>Generated</h1>\r\n");
-            __builder.OpenComponent<global::test_namespace.
-#nullable restore
-#line (2,2)-(2,12) "x:\dir\subdir\Test\TestComponent.cshtml"
-Component1
-
-#line default
-#line hidden
-#nullable disable
-            >(1);
+            __builder.OpenComponent<global::test_namespace.Component1>(1);
             __builder.CloseComponent();
             __builder.AddMarkupContent(2, "\r\n");
             __builder.OpenElement(3, "Shared.Component2");

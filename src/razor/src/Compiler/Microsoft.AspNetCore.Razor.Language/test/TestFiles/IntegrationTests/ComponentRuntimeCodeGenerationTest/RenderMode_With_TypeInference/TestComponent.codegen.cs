@@ -71,15 +71,7 @@ namespace __Blazor.Test.TestComponent
         public static void CreateTestComponent_0<TRenderMode>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, Microsoft.AspNetCore.Components.IComponentRenderMode __arg0, int __seq1, TRenderMode __arg1)
             where TRenderMode : global::Microsoft.AspNetCore.Components.IComponentRenderMode
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <TRenderMode>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<TRenderMode>>(seq);
         __builder.AddComponentParameter(__seq1, nameof(global::Test.TestComponent<TRenderMode>.
 #nullable restore
 #line (3,46)-(3,61) "x:\dir\subdir\Test\TestComponent.cshtml"

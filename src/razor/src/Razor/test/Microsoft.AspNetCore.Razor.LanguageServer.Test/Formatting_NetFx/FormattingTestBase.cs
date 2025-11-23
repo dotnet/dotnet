@@ -166,7 +166,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var languageKind = codeDocument.GetLanguageKind(positionAfterTrigger, rightAssociative: false);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper, codeDocument, razorLSPOptions, languageServerFeatureOptions);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled: true);
         var options = new FormattingOptions()
         {
             TabSize = tabSize,

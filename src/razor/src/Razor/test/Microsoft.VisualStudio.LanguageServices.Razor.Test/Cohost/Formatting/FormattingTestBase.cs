@@ -123,7 +123,9 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var position = inputText.GetPosition(input.Position);
 
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+        var accessor = formattingService.GetTestAccessor();
+        accessor.SetDebugAssertsEnabled(debugAssertsEnabled: true);
+        accessor.SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),

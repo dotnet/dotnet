@@ -50,7 +50,7 @@ public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return PageDirective.TryGetPageDirective(documentNode, out var _);
+        return PageDirective.TryGetPageDirective(documentNode, out _);
     }
 
     protected override void OnDocumentStructureCreated(
@@ -145,7 +145,7 @@ public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
             var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
-            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
+            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out _))
             {
                 // The page directive is not the leading directive. Add an error.
                 pageDirective.DirectiveNode.AddDiagnostic(
