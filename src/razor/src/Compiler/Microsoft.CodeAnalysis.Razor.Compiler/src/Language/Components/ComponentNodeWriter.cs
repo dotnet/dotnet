@@ -571,10 +571,8 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         var offset = nonGenericTypeName.Span.StartsWith('@')
             ? 1
             : 0;
-        using (context.BuildEnhancedLinePragma(node.StartTagSpan, offset))
-        {
-            context.CodeWriter.Write(nonGenericTypeName);
-        }
+        context.AddSourceMappingFor(node.StartTagSpan, offset);
+        context.CodeWriter.Write(nonGenericTypeName);
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]

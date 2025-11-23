@@ -22,9 +22,9 @@ public sealed record TypeParameterMetadata() : MetadataObject(MetadataKind.TypeP
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(IsCascading);
-        builder.AppendData(Constraints);
-        builder.AppendData(NameWithAttributes);
+        builder.Append(IsCascading);
+        builder.Append(Constraints);
+        builder.Append(NameWithAttributes);
     }
 
     public ref struct Builder

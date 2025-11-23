@@ -710,7 +710,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         clientConnection ??= StrictMock.Of<IClientConnection>();
 
-        var renameService = new RenameService(searchEngine, options);
+        var renameService = new RenameService(searchEngine, new FileSystem(), options);
         var endpoint = new RenameEndpoint(
             renameService,
             options,

@@ -21,7 +21,9 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             {
                 switch (filePath[i])
                 {
-                    case ':' or '\\' or '/':
+                    case '\\' or '/' when i > 0:
+                        builder.Append('/');
+                        break;
                     case char ch when !char.IsLetterOrDigit(ch):
                         builder.Append('_');
                         break;
