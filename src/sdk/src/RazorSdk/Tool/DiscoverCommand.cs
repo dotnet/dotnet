@@ -177,7 +177,7 @@ namespace Microsoft.NET.Sdk.Razor.Tool
             });
 
             var feature = engine.Engine.Features.OfType<ITagHelperFeature>().Single();
-            var tagHelpers = feature.GetDescriptors();
+            var tagHelpers = feature.GetTagHelpers();
 
             using (var stream = new MemoryStream())
             {
