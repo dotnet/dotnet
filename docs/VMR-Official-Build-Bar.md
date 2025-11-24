@@ -36,6 +36,14 @@ Evaluate each of the questions in order. You reach the end without answering "ye
 
 ### Example: Process That Does Not Meet the Bar
 
+- **Source build License scanning**
+  - Does not produce shipping assets
+  - Is critical validation, but is very expensive.
+  - Can be run async in a separate pipelione
+- **SDK Diff testing**
+  - Does not produce shipping assets
+  - Is necessary validation, but failure does not necessarily mean an unshippable product.
+  - Validation can be run as a separate, async pipeline.
 - **Mono Source Build Validation Legs**:
   - Mono Source build legs do not produce shipping assets.
   - Mono Source build legs do validate our distro partners' ability to bootstrap on non-MS supported archictures, but the builds can be flaky.
