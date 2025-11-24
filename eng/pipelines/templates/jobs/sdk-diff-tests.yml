@@ -130,11 +130,12 @@ jobs:
       echo "##vso[task.setvariable variable=MsftSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$msft_sdk_tarball_name"
       echo "##vso[task.setvariable variable=SdkTarballPath]$(Pipeline.Workspace)/Artifacts/$sdk_tarball_name"
       echo "##vso[task.setvariable variable=SourceBuiltArtifactsPath]$(Pipeline.Workspace)/Artifacts/$artifacts_path"
+      echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
     displayName: Prepare Tests
     workingDirectory: $(Build.SourcesDirectory)
 
   - script: >
-      .dotnet/dotnet test
+      $(DotNetPath)/dotnet test
       $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
       --filter "Category=SdkContent"
       --logger:'trx;LogFileName=$(Agent.JobName)_SDKDiffTests.trx'
@@ -182,6 +183,7 @@ jobs:
   - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
       - template: ../steps/create-baseline-update-pr.yml
         parameters:
+          dotnetPath: $(DotNetPath)
           pipeline: sdk
           repo: dotnet/dotnet
           originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/SdkContentTests
