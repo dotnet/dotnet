@@ -647,7 +647,9 @@ namespace Microsoft.DotNet.SignTool
                 File.WriteAllText(controlFile, fileContents);
             }
 
-            // Update the control tarball contents
+            // Update the control tarball contents. We update the contents of the control entry streams
+            // rather than recreating from the unpacked directory layout to ensure that
+            // the original entry field metadata and tar format is preserved.
             using MemoryStream streamToCompress = new();
             using (TarWriter writer = new(streamToCompress, leaveOpen: true))
             {
