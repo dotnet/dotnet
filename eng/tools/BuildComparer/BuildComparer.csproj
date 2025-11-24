@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
 		<TargetFramework>$(NetCurrent)</TargetFramework>
+		<OutputType>Exe</OutputType>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
@@ -10,4 +11,5 @@
 		<PackageReference Include="Microsoft.DotNet.Build.Manifest" />
 		<PackageReference Include="System.CommandLine" />
 	</ItemGroup>
+
 </Project>
