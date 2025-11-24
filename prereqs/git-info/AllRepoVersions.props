@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.25173.3</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>80d1922899056e081c0711aa29c72b19390d360c</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.25567.11</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>fa7cdded37981a97cec9a3e233c4a6af58a91c57</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.11-servicing.25517.16</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>988e0a8c11415978061eb7aa8bb2b0a97450a547</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.12-servicing.25555.20</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>0898abbb5899ef400b8372913c2320295798a687</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.25381.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>414104ee331917cac66e94f5bb18f6637dba091a</sdkGitCommitHash>
+    <sdkGitCommitHash>959bf3f626ee7b6d1da75dda378ec432f70964bf</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>71dbdccd13f28cfd1a35649263b55ebbeab26ee7</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.25157.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>6092b62b7f35fddbd6bf31e19b2ab64bbe2443ae</sourcebuildreferencepackagesGitCommitHash>
