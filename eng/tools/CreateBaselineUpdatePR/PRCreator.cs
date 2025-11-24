@@ -17,6 +17,7 @@ public class PRCreator
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
+    private const string UpdatedFilePrefix = "updated";
     private const int MaxRetries = 10;
     public PRCreator(string repo, string gitHubToken)
     {
@@ -109,7 +110,7 @@ public class PRCreator
     private Dictionary<string, HashSet<string>> GetUpdatedFiles(string updatedFilesDirectory) =>
         Directory
             .GetFiles(updatedFilesDirectory, "*", SearchOption.AllDirectories)
-            .Where(file => Path.GetFileName(file).StartsWith("updated", StringComparison.OrdinalIgnoreCase))
+            .Where(file => Path.GetFileName(file).StartsWith(UpdatedFilePrefix, StringComparison.OrdinalIgnoreCase))
             .GroupBy(updatedTestsFile => ParseUpdatedFileName(updatedTestsFile).Split('.')[0])
             .ToDictionary(
                 group => group.Key,
@@ -259,11 +260,11 @@ public class PRCreator
     private string ParseUpdatedFileName(string updatedFile)
     {
         string fileName = Path.GetFileName(updatedFile);
-        if (fileName.StartsWith("updated", StringComparison.OrdinalIgnoreCase))
+        if (fileName.StartsWith(UpdatedFilePrefix, StringComparison.OrdinalIgnoreCase))
         {
-            return fileName.Substring("updated".Length);
+            return fileName.Substring(UpdatedFilePrefix.Length);
         }
-        throw new ArgumentException($"File name '{fileName}' does not start with 'updated' prefix.", nameof(updatedFile));
+        throw new ArgumentException($"File name '{fileName}' does not start with '{UpdatedFilePrefix}' prefix.", nameof(updatedFile));
     }
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
