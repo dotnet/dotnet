@@ -347,7 +347,7 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>e545239117919cda700be149a2e9a032374fc284</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100-rc.2.25528.108">
+    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>e545239117919cda700be149a2e9a032374fc284</Sha>
     </Dependency>
