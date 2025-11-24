@@ -263,7 +263,7 @@ public class PRCreator
         {
             return fileName.Substring("updated".Length);
         }
-        return fileName;
+        throw new ArgumentException($"File name '{fileName}' does not start with 'updated' prefix.", nameof(updatedFile));
     }
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
