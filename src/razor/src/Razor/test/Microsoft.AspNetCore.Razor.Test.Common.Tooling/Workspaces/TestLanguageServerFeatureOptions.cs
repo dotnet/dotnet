@@ -10,7 +10,8 @@ internal class TestLanguageServerFeatureOptions(
     bool updateBuffersForClosedDocuments = false,
     bool supportsSoftSelectionInCompletion = true,
     bool useVsCodeCompletionCommitCharacters = false,
-    bool doNotInitializeMiscFilesProjectWithWorkspaceFiles = false) : LanguageServerFeatureOptions
+    bool doNotInitializeMiscFilesProjectWithWorkspaceFiles = false,
+    bool showAllCSharpCodeActions = false) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
 
@@ -26,7 +27,7 @@ internal class TestLanguageServerFeatureOptions(
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
-    public override bool ShowAllCSharpCodeActions => false;
+    public override bool ShowAllCSharpCodeActions => showAllCSharpCodeActions;
 
     public override bool UpdateBuffersForClosedDocuments => updateBuffersForClosedDocuments;
 

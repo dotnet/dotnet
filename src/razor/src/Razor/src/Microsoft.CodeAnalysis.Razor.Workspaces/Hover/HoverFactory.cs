@@ -88,14 +88,14 @@ internal static class HoverFactory
                 return SpecializedTasks.Null<LspHover>();
             }
 
-            Debug.Assert(binding.Descriptors.Any());
+            Debug.Assert(binding.TagHelpers.Any());
 
             var span = containingTagNameToken.GetLinePositionSpan(codeDocument.Source);
 
             var filePath = codeDocument.Source.FilePath.AssumeNotNull();
 
             return ElementInfoToHoverAsync(
-                filePath, binding.Descriptors, span, options, componentAvailabilityService, cancellationToken);
+                filePath, binding.TagHelpers, span, options, componentAvailabilityService, cancellationToken);
         }
 
         if (HtmlFacts.TryGetAttributeInfo(owner, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
@@ -123,7 +123,7 @@ internal static class HoverFactory
                 return SpecializedTasks.Null<LspHover>();
             }
 
-            Debug.Assert(binding.Descriptors.Any());
+            Debug.Assert(binding.TagHelpers.Any());
             var tagHelperAttributes = TagHelperFacts.GetBoundTagHelperAttributes(
                 tagHelperContext,
                 selectedAttributeName.AssumeNotNull(),
@@ -218,7 +218,7 @@ internal static class HoverFactory
 
     private static async Task<LspHover?> ElementInfoToHoverAsync(
         string documentFilePath,
-        ImmutableArray<TagHelperDescriptor> descriptors,
+        TagHelperCollection tagHelpers,
         LinePositionSpan span,
         HoverDisplayOptions options,
         IComponentAvailabilityService componentAvailabilityService,
@@ -226,7 +226,7 @@ internal static class HoverFactory
     {
         // Filter out attribute descriptors since we're creating an element hover
         var keepAttributeInfo = FileKinds.GetFileKindFromPath(documentFilePath) == RazorFileKind.Legacy;
-        var descriptionInfos = descriptors
+        var descriptionInfos = tagHelpers
             .Where(d => keepAttributeInfo || !d.IsAttributeDescriptor())
             .SelectAsArray(BoundElementDescriptionInfo.From);
         var elementDescriptionInfo = new AggregateBoundElementDescription(descriptionInfos);

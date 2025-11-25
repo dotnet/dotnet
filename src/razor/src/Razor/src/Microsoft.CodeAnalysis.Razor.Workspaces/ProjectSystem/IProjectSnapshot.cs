@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ internal interface IProjectSnapshot
     string DisplayName { get; }
     LanguageVersion CSharpLanguageVersion { get; }
 
-    ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken);
+    ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken);
 
     bool ContainsDocument(string filePath);
     bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document);

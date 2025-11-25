@@ -105,7 +105,7 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
                 switch (work)
                 {
                     case Update(var projectInfo):
-                        Logger?.LogTrace($"Sending update for {projectInfo.FilePath} with {projectInfo.ProjectWorkspaceState.TagHelpers.Length} TagHelpers");
+                        Logger?.LogTrace($"Sending update for {projectInfo.FilePath} with {projectInfo.ProjectWorkspaceState.TagHelpers.Count} TagHelpers");
                         _latestProjectInfoMap[projectInfo.ProjectKey] = projectInfo;
                         break;
 

@@ -80,6 +80,17 @@ internal partial class SolutionExplorerInProcess
             cancellationToken);
     }
 
+    public async Task CloseSolutionAndWaitAsync(CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        await CloseSolutionAsync(cancellationToken);
+
+        // Yes, this is annoying, but it seems to mitigate the dual-activate issue that the language client has
+        // when closing and reopening solutions rapidly.
+        await Task.Delay(1000, cancellationToken);
+    }
+
     public async Task OpenSolutionAsync(string solutionFileName, CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -110,7 +121,7 @@ internal partial class SolutionExplorerInProcess
         var fileExtension = Path.GetExtension(filePath);
         if (fileExtension.Equals(".razor", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals(".cshtml", StringComparison.OrdinalIgnoreCase))
         {
-            await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentAsync(filePath, cancellationToken);
+            await TestServices.RazorProjectSystem.WaitForHtmlVirtualDocumentAsync(filePath, cancellationToken);
         }
     }
 
@@ -223,7 +234,7 @@ internal partial class SolutionExplorerInProcess
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        await CloseSolutionAsync(cancellationToken);
+        await CloseSolutionAndWaitAsync(cancellationToken);
 
         var solutionFileName = Path.ChangeExtension(solutionName, ".sln");
         Directory.CreateDirectory(solutionPath);

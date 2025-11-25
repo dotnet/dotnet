@@ -139,11 +139,11 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         bool supportsFileCreation = true,
         bool supportsCodeActionResolve = true)
     {
-        var tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
+        var tagHelpers = TagHelperCollection.Empty;
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.AddTagHelpers(tagHelpers);
+            builder.SetTagHelpers(tagHelpers);
 
             builder.ConfigureParserOptions(builder =>
             {

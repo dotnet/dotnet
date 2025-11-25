@@ -180,7 +180,7 @@ public partial class DirectiveAttributeCompletionItemProviderTest : RazorTooling
     public void GetAttributeCompletions_NoDescriptorsForTag_ReturnsEmptyCollection()
     {
         // Arrange
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, tagHelpers: []);
+        var documentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
         var context = GetDefaultDirectivateAttributeCompletionContext("@bin");
 
         // Act
@@ -197,7 +197,7 @@ public partial class DirectiveAttributeCompletionItemProviderTest : RazorTooling
         var descriptor = TagHelperDescriptorBuilder.CreateTagHelper("CatchAll", "TestAssembly");
         descriptor.BoundAttributeDescriptor(boundAttribute => boundAttribute.Name = "Test");
         descriptor.TagMatchingRule(rule => rule.RequireTagName("*"));
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, [descriptor.Build()]);
+        var documentContext = TagHelperDocumentContext.GetOrCreate([descriptor.Build()]);
 
         var context = GetDefaultDirectivateAttributeCompletionContext("@bin");
 
