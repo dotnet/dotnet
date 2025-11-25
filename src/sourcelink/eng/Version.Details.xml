@@ -6,14 +6,13 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>cc7f6e84d8dae36ad9ea51a5112627b8235982cc</Sha>
     </Dependency>
-  </ProductDependencies>
-  <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25571.109">
+    <Dependency Name="System.IO.Hashing" Version="10.0.0-rc.3.25571.109" SkipProperty="true">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>cc7f6e84d8dae36ad9ea51a5112627b8235982cc</Sha>
     </Dependency>
-    <!-- Dependencies required for source build to lift to the previously-source-built version. -->
-    <Dependency Name="System.IO.Hashing" Version="10.0.0-rc.3.25571.109" SkipProperty="true">
+  </ProductDependencies>
+  <ToolsetDependencies>
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25571.109">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>cc7f6e84d8dae36ad9ea51a5112627b8235982cc</Sha>
     </Dependency>
