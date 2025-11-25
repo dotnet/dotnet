@@ -612,9 +612,9 @@ namespace Microsoft.DotNet.SignTool
             Directory.CreateDirectory(dataLayout);
 
             // Get the original control archive - to reuse package metadata and scripts
-            var entry = ReadDebContainerEntries(debianPackage, "control.tar").Single();
-            string controlArchive = Path.Combine(workingDir, entry.RelativePath);
-            entry.WriteToFile(controlArchive);
+            var controlEntry = ReadDebContainerEntries(debianPackage, "control.tar").Single();
+            string controlArchive = Path.Combine(workingDir, controlEntry.RelativePath);
+            controlEntry.WriteToFile(controlArchive);
 
             ExtractTarballContents(log, dataArchive, dataLayout);
             ExtractTarballContents(log, controlArchive, controlLayout);
@@ -647,11 +647,33 @@ namespace Microsoft.DotNet.SignTool
                 File.WriteAllText(controlFile, fileContents);
             }
 
-            // Repack the control tarball
-            using (var dstStream = File.Open(controlArchive, FileMode.Create))
+            // Update the control tarball contents. We update the contents of the control entry streams
+            // rather than recreating from the unpacked directory layout to ensure that
+            // the original entry field metadata and tar format is preserved.
+            using MemoryStream streamToCompress = new();
+            using (TarWriter writer = new(streamToCompress, leaveOpen: true))
             {
-                using var gzip = new GZipStream(dstStream, CompressionMode.Compress);
-                TarFile.CreateFromDirectory(controlLayout, gzip, includeBaseDirectory: false);
+                foreach (TarEntry entry in ReadTarGZipEntries(controlArchive))
+                {
+                    string relativeName = entry.Name;
+                    if (relativeName is "./control" or "./md5sums")
+                    {
+                        using FileStream fileStream = File.OpenRead(Path.Combine(controlLayout, relativeName));
+                        entry.DataStream = fileStream;
+                        entry.DataStream.Position = 0;
+                        writer.WriteEntry(entry);
+                        continue;
+                    }
+
+                    writer.WriteEntry(entry);
+                }
+            }
+
+            streamToCompress.Position = 0;
+            using (FileStream outputStream = File.Open(controlArchive, FileMode.Create))
+            {
+                using GZipStream compressor = new(outputStream, CompressionMode.Compress);
+                streamToCompress.CopyTo(compressor);
             }
 
             return controlArchive;
