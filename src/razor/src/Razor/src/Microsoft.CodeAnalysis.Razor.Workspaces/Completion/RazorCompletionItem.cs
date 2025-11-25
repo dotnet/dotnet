@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 internal sealed class RazorCompletionItem
 {
     public RazorCompletionItemKind Kind { get; }
@@ -23,6 +25,9 @@ internal sealed class RazorCompletionItem
     public ImmutableArray<RazorCommitCharacter> CommitCharacters { get; }
     public bool IsSnippet { get; }
     public TextEdit[]? AdditionalTextEdits { get; }
+
+    private string GetDebuggerDisplay()
+        => $"{Kind}: {DisplayText}";
 
     /// <summary>
     /// Creates a new Razor completion item

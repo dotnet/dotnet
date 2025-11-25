@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.Language;
@@ -531,13 +530,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=$0");
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath, TagHelperCollection? tagHelpers = null)
     {
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: documentFilePath);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         codeDocument.SetSyntaxTree(syntaxTree);
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: null, tagHelpers.NullToEmpty());
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers ?? []);
         codeDocument.SetTagHelperContext(tagHelperDocumentContext);
         return codeDocument;
     }

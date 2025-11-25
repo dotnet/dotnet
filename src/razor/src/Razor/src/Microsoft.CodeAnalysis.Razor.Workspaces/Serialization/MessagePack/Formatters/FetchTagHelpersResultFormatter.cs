@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using MessagePack;
 using Microsoft.AspNetCore.Razor.Language;
 
@@ -17,7 +16,7 @@ internal sealed class FetchTagHelpersResultFormatter : TopLevelFormatter<FetchTa
 
     public override FetchTagHelpersResult Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var tagHelpers = reader.Deserialize<ImmutableArray<TagHelperDescriptor>>(options);
+        var tagHelpers = reader.Deserialize<TagHelperCollection>(options);
 
         return new(tagHelpers);
     }

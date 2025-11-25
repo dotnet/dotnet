@@ -930,7 +930,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
     private static DocumentContext CreateDocumentContext(
         string documentText,
         bool isRazorFile,
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
+        TagHelperCollection tagHelpers,
         int version)
     {
         var document = CreateCodeDocument(documentText, isRazorFile, tagHelpers);

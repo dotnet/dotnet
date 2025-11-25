@@ -89,7 +89,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
             return false;
         }
 
-        if (markupElementSyntax is not { TagHelperInfo.BindingResult.Descriptors: [.. var descriptors] })
+        if (markupElementSyntax is not { TagHelperInfo.BindingResult.TagHelpers: { Count: > 0 } tagHelpers })
         {
             return false;
         }
@@ -101,7 +101,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         }
 
         // Get symbols for the markup element
-        var boundTagHelper = descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
+        var boundTagHelper = tagHelpers.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (boundTagHelper == null)
         {
             return false;

@@ -42,7 +42,7 @@ public class TagHelperBinderBenchmark
     {
         for (var i = 0; i < Count; i++)
         {
-            _binders[i] = new TagHelperBinder(tagNamePrefix: null, _tagHelpers);
+            _binders[i] = new TagHelperBinder(tagNamePrefix: null, [.. _tagHelpers]);
         }
     }
 
@@ -51,7 +51,7 @@ public class TagHelperBinderBenchmark
     {
         for (var i = 0; i < Count; i++)
         {
-            _binders[i] = new TagHelperBinder(tagNamePrefix: "abc", _tagHelpers);
+            _binders[i] = new TagHelperBinder(tagNamePrefix: "abc", [.. _tagHelpers]);
         }
     }
 }

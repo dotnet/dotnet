@@ -261,7 +261,7 @@ internal partial class CSharpFormattingPass
                 // what the user expects.
                 if (node is { Parent.Parent: MarkupTagHelperAttributeSyntax attribute } &&
                     attribute is { Parent.Parent: MarkupTagHelperElementSyntax element } &&
-                    element.TagHelperInfo.BindingResult.Descriptors is [{ } descriptor] &&
+                    element.TagHelperInfo.BindingResult.TagHelpers is [{ } descriptor] &&
                     descriptor.IsGenericTypedComponent() &&
                     descriptor.BoundAttributes.FirstOrDefault(d => d.Name == attribute.TagHelperAttributeInfo.Name) is { } boundAttribute &&
                     boundAttribute.IsTypeParameterProperty())

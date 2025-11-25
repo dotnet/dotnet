@@ -288,7 +288,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         return documentEdits;
     }
 
-    internal static ImmutableArray<TagHelperDescriptor> CreateTagHelperDescriptors()
+    internal static TagHelperCollection CreateTagHelperDescriptors()
     {
         return [.. BuildTagHelpers()];
 

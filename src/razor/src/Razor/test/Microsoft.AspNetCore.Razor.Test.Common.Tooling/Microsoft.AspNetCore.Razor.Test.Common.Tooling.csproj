@@ -83,7 +83,6 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LegacyEditor.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.Razor.IntegrationTests" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="rzls" Key="$(RazorKey)" />
   </ItemGroup>
 
   <!-- We only import JSON serialization on non-NetFx.

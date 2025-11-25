@@ -299,7 +299,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
         var sourceDocument = RazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
 
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);

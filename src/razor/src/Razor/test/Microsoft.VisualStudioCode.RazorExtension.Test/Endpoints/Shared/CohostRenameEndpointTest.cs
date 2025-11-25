@@ -17,6 +17,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
+[CollectionDefinition(nameof(CohostRenameEndpointTest), DisableParallelization = true)]
+[Collection(nameof(CohostRenameEndpointTest))]
 public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
     [Fact]
