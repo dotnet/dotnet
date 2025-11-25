@@ -14,9 +14,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- msbuild -->
+    <MicrosoftBuildVersion>17.11.48</MicrosoftBuildVersion>
+    <MicrosoftBuildTasksCoreVersion>17.11.48</MicrosoftBuildTasksCoreVersion>
     <!-- nuget -->
     <NuGetVersioningVersion>6.12.1</NuGetVersioningVersion>
     <!-- runtime -->
+    <SystemIOHashingVersion>10.0.0</SystemIOHashingVersion>
     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
   </PropertyGroup>
 
