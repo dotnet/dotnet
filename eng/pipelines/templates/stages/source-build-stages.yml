@@ -114,7 +114,7 @@ stages:
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
-            enablePoison: false                # 🚫
+            enablePoison: true                 # ✅
             runOnline: true                    # ✅
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
