@@ -17,13 +17,6 @@
     <None Include="PACKAGE.md" Pack="true" PackagePath=""/>
   </ItemGroup>
 
-  <!-- 
-    Windows Forms specific references
-    see: https://github.com/dotnet/winforms/tree/main/pkg/Microsoft.Private.Winforms/sdk/dotnet-windowsdesktop
-    -->
-  <Import Project="$(PkgMicrosoft_Private_Winforms)\sdk\dotnet-windowsdesktop\System.Windows.Forms.FileClassification.props"
-          Condition="Exists('$(PkgMicrosoft_Private_Winforms)')" />
-
   <ItemGroup>
     <!-- We don't have a ref assembly for DirectWriteForwarder -->
     <IgnoredReference Include="DirectWriteForwarder" />
