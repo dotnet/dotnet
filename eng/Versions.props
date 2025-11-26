@@ -1,12 +1,19 @@
 <Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
-  <!-- Repo Version Information -->
+
+  <Import Project="Version.Details.props" />
+
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
-    <UseVSTestRunner>true</UseVSTestRunner>
     <VersionSDKMinor>1</VersionSDKMinor>
+    <VersionPrefix>11.0.$(VersionSDKMinor)00</VersionPrefix>
+    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
+    <DotNetFinalVersionKind></DotNetFinalVersionKind>
+
+    <!-- Arcade features -->
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
+
   <PropertyGroup>
     <!--
       Building .NET from source depends on several archives, depending on the branch's current
@@ -42,4 +49,5 @@
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <OctokitVersion>13.0.1</OctokitVersion>
   </PropertyGroup>
+
 </Project>

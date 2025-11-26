@@ -7,7 +7,7 @@ Param(
   [string][Alias('os')]$targetOS,
   [string][Alias('arch')]$targetArch,
   [string][Alias('v')]$verbosity = "minimal",
-  [Parameter()][ValidateSet("preview", "rtm", "default")]
+  [Parameter()][ValidateSet("default", "prerelease", "release", "repodefault")]
   [string]$branding = "default",
   [Parameter()][ValidatePattern("^\d{8}\.\d{1,3}$")]
   [string][Alias('obid')]$officialBuildId,
@@ -39,7 +39,11 @@ function Get-Usage() {
   Write-Host "  -os, -targetOS <value>           Target operating system: e.g. windows."
   Write-Host "  -arch, -targetArch <value>       Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   Write-Host "  -verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  Write-Host "  -branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
+  Write-Host "  -branding                        Specify versioning for shipping packages/assets."
+  Write-Host "    <default>                      'default' or unspecified uses VMR defaults for release branch builds or otherwise inner repo defaults."
+  Write-Host "    <prerelease>                   'prerelease' produces assets suffixed with '.final'"
+  Write-Host "    <release>                      'release' produces assets without a suffix"
+  Write-Host "    <repodefault>                  'repodefault' uses the the repo default branding value."
   Write-Host "  -officialBuildId <YYYYMMDD.X>    Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
   Write-Host ""
 
@@ -93,9 +97,10 @@ if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
 if ($branding) {
     switch ($branding) {
-        "preview" { $arguments += "/p:DotNetFinalVersionKind=prerelease" }
-        "rtm"     { $arguments += "/p:DotNetFinalVersionKind=release" }
         "default" { $arguments += "" }
+        "prerelease" { $arguments += "/p:DotNetFinalVersionKind=prerelease" }
+        "release"     { $arguments += "/p:DotNetFinalVersionKind=release" }
+        "repodefault" { $arguments += "/p:DotNetFinalVersionKind=" }
     }
 }
 if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }

@@ -53,18 +53,15 @@ variables:
   - name: ibcEnabled
     value: false
 
-- ${{ if eq(parameters.desiredFinalVersionKind, 'Default (repo specifies)') }}:
+- ${{ if eq(parameters.desiredFinalVersionKind, 'Prerelease (Produces assets suffixed with '.final')') }}:
   - name: brandingType
-    value: 'default'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Preview') }}:
+    value: 'prerelease'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Release (Produce assets without a suffix)') }}:
   - name: brandingType
-    value: 'preview'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Final') }}:
+    value: 'release'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'RepoDefault (Uses the the repo default branding value)') }}:
   - name: brandingType
-    value: 'rtm'
-- ${{ else }}:
-  - name: brandingType
-    value: 'default'
+    value: 'repodefault'
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
