@@ -8,6 +8,9 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 namespace Microsoft.CodeAnalysis.Remote.Razor.Completion;
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
+internal sealed class OOPCSharpRazorKeywordCompletionItemProvider : CSharpRazorKeywordCompletionItemProvider;
+
+[Export(typeof(IRazorCompletionItemProvider)), Shared]
 internal sealed class OOPDirectiveCompletionItemProvider : DirectiveCompletionItemProvider;
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]

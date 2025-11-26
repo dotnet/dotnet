@@ -1003,6 +1003,26 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             htmlItemLabels: ["dir"]);
     }
 
+    [Fact]
+    public async Task RazorCSharpKeywordCompletion_ReturnsKeywords()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "@",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: [.. CSharpRazorKeywordCompletionItemProvider.CSharpRazorKeywords]);
+    }
+
     private async Task<RazorVSInternalCompletionList> VerifyCompletionListAsync(
         TestCode input,
         VSInternalCompletionContext completionContext,

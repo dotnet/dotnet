@@ -104,6 +104,11 @@
         <target state="translated">Offset non valido.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="new">{0} Keyword</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">I servizi di linguaggio Razor non sono configurati correttamente. Manca il servizio di linguaggio '{0}'.</target>

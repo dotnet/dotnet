@@ -114,4 +114,9 @@ internal sealed class RazorCompletionItem
         AttributeDescriptionInfo descriptionInfo,
         ImmutableArray<RazorCommitCharacter> commitCharacters, bool isSnippet)
         => new(RazorCompletionItemKind.Attribute, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet);
+
+    public static RazorCompletionItem CreateKeyword(
+        string displayText, string insertText,
+        ImmutableArray<RazorCommitCharacter> commitCharacters)
+        => new(RazorCompletionItemKind.CSharpRazorKeyword, displayText, insertText, sortText: null, new CSharpRazorKeywordCompletionDescription(displayText), commitCharacters, isSnippet: false);
 }
