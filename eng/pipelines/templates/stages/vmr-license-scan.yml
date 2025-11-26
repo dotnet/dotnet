@@ -118,6 +118,7 @@ stages:
     - script: |
         source ./eng/common/tools.sh
         InitializeDotNetCli true
+        echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
       displayName: Install .NET SDK
       workingDirectory: $(Build.SourcesDirectory)
 
@@ -135,6 +136,7 @@ stages:
 
     - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
       parameters:
+        dotnetPath: $(DotNetPath)
         pipeline: license
         repo: dotnet/dotnet
         originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
