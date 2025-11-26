@@ -104,6 +104,11 @@
         <target state="translated">Ungültiger Offset.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="new">{0} Keyword</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor-Sprachdienste sind nicht ordnungsgemäß konfiguriert, der Sprachdienst "{0}" fehlt.</target>
