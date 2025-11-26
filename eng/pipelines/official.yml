@@ -45,9 +45,9 @@ parameters:
   default: 'Default (Uses VMR defaults for release branch builds or otherwise repo defaults)'
   values:
     - Default (Uses VMR defaults for release branch builds or otherwise repo defaults)
-    - Prerelease (Produces assets suffixed with '.final')
+    - Prerelease (Produces assets suffixed with .final)
     - Release (Produce assets without a suffix)
-    - RepoDefault (Uses the the repo default branding value)
+    - RepoDefault (Uses the the repo defaults)
 
 variables:
 - name: isScheduleTrigger

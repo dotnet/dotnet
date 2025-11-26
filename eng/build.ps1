@@ -40,10 +40,10 @@ function Get-Usage() {
   Write-Host "  -arch, -targetArch <value>       Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   Write-Host "  -verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   Write-Host "  -branding                        Specify versioning for shipping packages/assets."
-  Write-Host "    <default>                      'default' or unspecified uses VMR defaults for release branch builds or otherwise inner repo defaults."
+  Write-Host "    <default>                      'default' or unspecified uses VMR defaults for release branch builds or otherwise repo defaults."
   Write-Host "    <prerelease>                   'prerelease' produces assets suffixed with '.final'"
   Write-Host "    <release>                      'release' produces assets without a suffix"
-  Write-Host "    <repodefault>                  'repodefault' uses the the repo default branding value."
+  Write-Host "    <repodefault>                  'repodefault' uses the the repo defaults."
   Write-Host "  -officialBuildId <YYYYMMDD.X>    Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
   Write-Host ""
 
