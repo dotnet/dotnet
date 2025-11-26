@@ -488,8 +488,6 @@ NuGet.Commands.RestoreArgs.HideWarningsAndErrors.get -> bool
 NuGet.Commands.RestoreArgs.HideWarningsAndErrors.set -> void
 ~NuGet.Commands.RestoreArgs.Inputs.get -> System.Collections.Generic.List<string>
 ~NuGet.Commands.RestoreArgs.Inputs.set -> void
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.get -> bool?
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.set -> void
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.get -> bool
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.set -> void
 ~NuGet.Commands.RestoreArgs.Log.get -> NuGet.Common.ILogger

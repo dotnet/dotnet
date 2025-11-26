@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -2751,6 +2753,71 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
+        [Fact]
+        public async Task RestoreCommand_CentralVersion_AssetsFile_UnresolvedTransitivelyPinnedPackage()
+        {
+            // Arrange
+            var framework = new NuGetFramework("net46");
+
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var projectDirectory = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "Project1"));
+
+                // PackageA 1.0.0 -> PackageB 1.0.0
+                var packageA = new SimpleTestPackageContext { Id = "PackageA", Version = "1.0.0", };
+                var packageB = new SimpleTestPackageContext { Id = "PackageB", Version = "1.0.0", };
+
+                packageA.Dependencies.Add(packageB);
+
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, packageA);
+
+                var projectSpec = PackageReferenceSpecBuilder.Create("Project1", projectDirectory.FullName)
+                    .WithTargetFrameworks(
+                    [
+                        new TargetFrameworkInformation
+                        {
+                            FrameworkName = NuGetFramework.Parse("net46"),
+                            Dependencies =
+                            [
+                                new LibraryDependency
+                                {
+                                    LibraryRange = new LibraryRange(packageA.PackageName, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All),
+                                    VersionCentrallyManaged = true,
+                                },
+                            ],
+                            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { packageA.PackageName, new CentralPackageVersion(packageA.PackageName, VersionRange.Parse(packageA.Version)) },
+                                { packageB.PackageName, new CentralPackageVersion(packageB.PackageName, VersionRange.Parse(packageB.Version)) }
+                            }
+                        }
+                    ])
+                    .WithCentralPackageVersionsEnabled()
+                    .WithCentralPackageTransitivePinningEnabled()
+                    .Build()
+                    .WithTestRestoreMetadata();
+
+                // Act
+                var restoreContext = new RestoreArgs()
+                {
+                    Sources = new List<string> { pathContext.PackageSource },
+                    GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                    Log = NullLogger.Instance,
+                    CacheContext = new TestSourceCacheContext(),
+                };
+                var request = await ProjectTestHelpers.GetRequestAsync(restoreContext, projectSpec);
+                var restoreCommand = new RestoreCommand(request);
+                var result = await restoreCommand.ExecuteAsync();
+                var lockFile = result.LockFile;
+
+                var targetLib = lockFile.Targets.First().Libraries.FirstOrDefault(l => l.Name == packageA.Id);
+
+                // Assert
+                Assert.False(result.Success);
+                Assert.Equal(0, lockFile.CentralTransitiveDependencyGroups.Count);
+            }
+        }
+
         /// <summary>
         /// Verifies an error is logged when a user attempts to specify a VersionOverride but the feature is disabled and that restore succeeds if the feature is enabled.
         /// </summary>
@@ -2953,6 +3020,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Pruning.DefaultEnabled"] = value => value.Should().BeOfType<bool>(),
                 ["Pruning.RemovablePackages.Count"] = value => value.Should().BeOfType<int>(),
                 ["Pruning.Pruned.Direct.Count"] = value => value.Should().BeOfType<int>(),
+                ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
             };
 
             HashSet<string> actualProperties = new();
@@ -3065,7 +3133,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(39);
+            projectInformationEvent.Count.Should().Be(40);
 
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
@@ -3106,6 +3174,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(0);
             projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
+            projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
         }
 
         [Fact]
@@ -3163,7 +3232,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(47);
+            projectInformationEvent.Count.Should().Be(48);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
