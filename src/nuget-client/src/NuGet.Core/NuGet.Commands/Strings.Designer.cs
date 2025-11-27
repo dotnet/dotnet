@@ -19,7 +19,7 @@ namespace NuGet.Commands {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -246,6 +246,15 @@ namespace NuGet.Commands {
         internal static string Error_CentralPackageManagement_MissingPackageVersion {
             get {
                 return ResourceManager.GetString("Error_CentralPackageManagement_MissingPackageVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The centrally pinned dependency &apos;{0}&apos; was not found in the resolved graph unexpectedly for node &apos;{1}&apos;. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        internal static string Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType {
+            get {
+                return ResourceManager.GetString("Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType", resourceCulture);
             }
         }
         
@@ -754,7 +763,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The project.json project type is deprecated. Migrate to PackageReference..
+        ///   Looks up a localized string similar to Managing packages with project.json is deprecated. Migrate to PackageReference..
         /// </summary>
         internal static string Error_ProjectJson_Deprecated {
             get {

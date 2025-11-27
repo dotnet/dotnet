@@ -47,11 +47,6 @@
         <target state="translated">추가할 패키지의 ID입니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPkg_PackagePrerelease">
-        <source>Allows prerelease packages to be installed.</source>
-        <target state="translated">시험판 패키지를 설치할 수 있습니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddPkg_PackageVersionDescription">
         <source>Version of the package to be added.</source>
         <target state="translated">추가할 패키지의 버전입니다.</target>
@@ -355,7 +350,7 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
       </trans-unit>
       <trans-unit id="Error_InvalidVersion">
         <source>Invalid version value '{0}'.</source>
-        <target state="new">Invalid version value '{0}'.</target>
+        <target state="translated">버전 값 '{0}'이(가) 잘못되었습니다.</target>
         <note>0 - package version</note>
       </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
@@ -401,6 +396,11 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
       <trans-unit id="Error_NotPRProject">
         <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
         <target state="translated">`{0}` 프로젝트는 NuGet 패키지에 대한 package.config를 사용합니다. 명령은 패키지 참조 프로젝트에서만 작동합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_VersionNotFound">
+        <source>Unable to find a valid package version</source>
+        <target state="translated">유효한 패키지 버전을 찾을 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
@@ -891,6 +891,75 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note>{0}: App full name
 {1}: App version</note>
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AllowInsecureConnectionsDescription">
+        <source>Allows downloading from HTTP (non-HTTPS) package sources.</source>
+        <target state="translated">HTTP(비 HTTPS) 패키지 원본에서 다운로드할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AlreadyInstalled">
+        <source>Skipping download. Package '{0}' version {1} already exists at '{2}'.</source>
+        <target state="translated">다운로드를 건너뛰는 중입니다. 패키지 '{0}' 버전 {1}이(가) '{2}'에 이미 있습니다.</target>
+        <note>0 - package id
+1 - version
+2 - directory path where the package was downloaded</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Description">
+        <source>Downloads a NuGet package to a local folder without requiring a project file.</source>
+        <target state="translated">프로젝트 파일을 요구하지 않고 NuGet 패키지를 로컬 폴더에 다운로드합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Failed">
+        <source>Package '{0}' ({1}) failed to download.</source>
+        <target state="translated">패키지 '{0}'({1})을(를) 다운로드하지 못했습니다.</target>
+        <note>0 - package id
+1 - package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_LatestVersion">
+        <source>latest version</source>
+        <target state="translated">최신 버전</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_OutputDirectoryDescription">
+        <source>Directory where the package will be placed. Defaults to the current working directory.</source>
+        <target state="translated">패키지를 배치할 디렉터리입니다. 기본값은 현재 작업 디렉터리입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageIdDescription">
+        <source>Package identifier (e.g. 'Newtonsoft.Json').</source>
+        <target state="translated">패키지 식별자(예: 'Newtonsoft.Json').</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
+        <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
+        <target state="translated">구성된 원본 중 '{1}' 패키지에 대해 매핑된 원본 '{0}'을(를) 찾을 수 없습니다.</target>
+        <note>0 - package source name
+1 - package name</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_SourcesDescription">
+        <source>Specifies one or more NuGet package sources to use.</source>
+        <target state="translated">사용할 NuGet 패키지 원본을 하나 이상 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Starting">
+        <source>Downloading package {0}, version {1}.</source>
+        <target state="translated">패키지 {0}, 버전 {1}을(를) 다운로드하는 중입니다.</target>
+        <note>0- package id
+1- package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Succeeded">
+        <source>Package '{0}' ({1}) successfully downloaded to '{2}'.</source>
+        <target state="translated">패키지 '{0}'({1})을 '{2}'에 다운로드했습니다.</target>
+        <note>0 - package id
+1 - package version
+2 - package download location</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_UnableToDownload">
+        <source>Package download failed for `{0} {1}` from source `{2}`.</source>
+        <target state="translated">원본 '{2}'에서 '{0} {1}'에 대한 패키지를 다운로드하지 못했습니다.</target>
+        <note>0 package id
+1 package version
+2 package source</note>
+      </trans-unit>
       <trans-unit id="PackageUpdateCommand_Description">
         <source>Update referenced packages in a project or solution.</source>
         <target state="translated">프로젝트 또는 솔루션에서 참조된 패키지를 업데이트합니다.</target>
@@ -988,6 +1057,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
         <target state="translated">사용할 수 있는 안정적인 버전이 없습니다. 사용할 수 있는 최상의 버전은 {0}입니다. --prerelease 옵션을 추가하는 것이 좋습니다.</target>
         <note>{0} - Package Version</note>
+      </trans-unit>
+      <trans-unit id="Prerelease_Description">
+        <source>Allows prerelease packages to be installed.</source>
+        <target state="translated">시험판 패키지를 설치할 수 있습니다.</target>
+        <note />
       </trans-unit>
       <trans-unit id="PushCommandSkipDuplicateDescription">
         <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
