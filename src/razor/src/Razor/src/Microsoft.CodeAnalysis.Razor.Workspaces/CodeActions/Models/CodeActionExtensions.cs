@@ -7,17 +7,17 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 
 internal static class CodeActionExtensions
 {
-    // TODO: Use Constants once https://github.com/dotnet/roslyn/pull/81094 is available
-    private const string NestedCodeActionCommand = "roslyn.client.nestedCodeAction";
-    private const string NestedCodeActionsProperty = "NestedCodeActions";
-    private const string CodeActionPathProperty = "CodeActionPath";
-    private const string FixAllFlavorsProperty = "FixAllFlavors";
+    private const string NestedCodeActionCommand = Constants.RunNestedCodeActionCommandName;
+    private const string NestedCodeActionsProperty = Constants.NestedCodeActionsPropertyName;
+    private const string CodeActionPathProperty = Constants.CodeActionPathPropertyName;
+    private const string FixAllFlavorsProperty = Constants.FixAllFlavorsPropertyName;
 
     public static SumType<Command, CodeAction> AsVSCodeCommandOrCodeAction(this VSInternalCodeAction razorCodeAction, VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri)
     {
