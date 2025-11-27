@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(ToolsDir)BinaryToolKit\BinaryToolKit.csproj" />
+    <ProjectReference Include="$(ToolsDir)BuildComparer\BuildComparer.csproj" />
+    <ProjectReference Include="$(ToolsDir)ChangeValidation\ChangeValidation.csproj" />
+    <ProjectReference Include="$(ToolsDir)CreateBaselineUpdatePR\CreateBaselineUpdatePR.csproj" />
+  </ItemGroup>
+
+</Project>

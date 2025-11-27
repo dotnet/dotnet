@@ -18,6 +18,9 @@
                       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     
     <!-- Pre-build: Init tools-->
+    <ProjectReference Include="$(RepositoryEngineeringDir)tools\repo-tools.proj"
+                      Condition="'$(BuildRepoTools)' == 'true'"
+                      BuildInParallel="true" />
     <ProjectReference Include="$(RepositoryEngineeringDir)init-cross-build.proj"
                       Condition="'$(BuildOS)' != 'windows' and '$(CrossBuild)' == 'true' and '$(ROOTFS_DIR)' == ''"
                       BuildInParallel="true" />

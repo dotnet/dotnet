@@ -35,11 +35,12 @@
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.0</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.0</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.0</MicrosoftExtensionsHostingVersion>
     <!-- external dependencies -->
-    <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>13.0.1</OctokitVersion>
+    <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
+    <OctokitVersion>14.0.0</OctokitVersion>
   </PropertyGroup>
 </Project>
