@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
+
+  <Import Project="Version.Details.props" />
+
   <PropertyGroup Label="Version settings">
-    <!-- This repo version -->
+    <VersionPrefix>18.1.0</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
+    <DotNetFinalVersionKind></DotNetFinalVersionKind>
+
     <!--
         Workaround for https://github.com/microsoft/vstest/issues/4544
         Use semantic versioning V1 because V2 will produce version like 17.7.0-preview.23280.1+94103c3f and DTAExecutionHost
@@ -17,14 +23,14 @@
     <VersionPrefix>18.3.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
+
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
     <UsingToolXliff>true</UsingToolXliff>
     <!-- Opt-in to Arcade tools for building VSIX projects. -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
-    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</FlagNetStandard1XDependencies>
   </PropertyGroup>
+
   <PropertyGroup Label="VSTest dependencies">
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
     <!--
@@ -71,6 +77,7 @@
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
+
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
     <AwesomeAssertionsVersion>8.1.0</AwesomeAssertionsVersion>
@@ -112,4 +119,5 @@
     <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
   </PropertyGroup>
+
 </Project>
