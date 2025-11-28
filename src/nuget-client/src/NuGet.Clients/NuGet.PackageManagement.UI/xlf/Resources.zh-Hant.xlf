@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">已有新版 NuGet 套件管理員可供使用。</target>
+        <target state="translated">已有新版 NuGet 套件管理器可供使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -639,7 +639,7 @@
       </trans-unit>
       <trans-unit id="Label_PackageManager">
         <source>NuGet Package Manager: {0}</source>
-        <target state="translated">NuGet 套件管理員: {0}</target>
+        <target state="translated">NuGet 套件管理器: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_PackagePrerelease">
@@ -928,7 +928,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_Title">
         <source>Package Manager Options</source>
-        <target state="translated">套件管理員選項</target>
+        <target state="translated">套件管理器選項</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
@@ -1078,7 +1078,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">套件管理員格式會套用到此 Solution 中的下列專案</target>
+        <target state="translated">套件管理器格式會套用到此 Solution 中的下列專案</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1308,7 +1308,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
         <source>NuGet Package Manager</source>
-        <target state="translated">NuGet 套件管理員</target>
+        <target state="translated">NuGet 套件管理器</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
@@ -1413,7 +1413,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="WindowTitle_PackageFormatSelector">
         <source>Choose NuGet Package Manager Format</source>
-        <target state="translated">選擇 NuGet 套件管理員格式</target>
+        <target state="translated">選擇 NuGet 套件管理器格式</target>
         <note />
       </trans-unit>
       <trans-unit id="WindowTitle_PreviewChanges">

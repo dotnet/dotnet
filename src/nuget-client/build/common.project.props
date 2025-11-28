@@ -51,6 +51,7 @@
     <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Defaults -->

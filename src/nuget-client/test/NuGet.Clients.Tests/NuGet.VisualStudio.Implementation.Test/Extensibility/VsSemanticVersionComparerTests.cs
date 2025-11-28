@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using NuGet.VisualStudio.Implementation.Extensibility;
 using Xunit;
