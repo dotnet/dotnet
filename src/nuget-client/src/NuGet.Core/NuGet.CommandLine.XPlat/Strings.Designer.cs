@@ -151,15 +151,6 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows prerelease packages to be installed..
-        /// </summary>
-        internal static string AddPkg_PackagePrerelease {
-            get {
-                return ResourceManager.GetString("AddPkg_PackagePrerelease", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Version of the package to be added..
         /// </summary>
         internal static string AddPkg_PackageVersionDescription {
@@ -760,6 +751,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Error_NoVersionsAvailable {
             get {
                 return ResourceManager.GetString("Error_NoVersionsAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find a valid package version.
+        /// </summary>
+        internal static string Error_PackageDownload_VersionNotFound {
+            get {
+                return ResourceManager.GetString("Error_PackageDownload_VersionNotFound", resourceCulture);
             }
         }
         
@@ -1599,6 +1599,114 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allows downloading from HTTP (non-HTTPS) package sources..
+        /// </summary>
+        internal static string PackageDownloadCommand_AllowInsecureConnectionsDescription {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_AllowInsecureConnectionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skipping download. Package &apos;{0}&apos; version {1} already exists at &apos;{2}&apos;..
+        /// </summary>
+        internal static string PackageDownloadCommand_AlreadyInstalled {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_AlreadyInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloads a NuGet package to a local folder without requiring a project file..
+        /// </summary>
+        internal static string PackageDownloadCommand_Description {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; ({1}) failed to download..
+        /// </summary>
+        internal static string PackageDownloadCommand_Failed {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to latest version.
+        /// </summary>
+        internal static string PackageDownloadCommand_LatestVersion {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_LatestVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directory where the package will be placed. Defaults to the current working directory..
+        /// </summary>
+        internal static string PackageDownloadCommand_OutputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_OutputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package identifier (e.g. &apos;Newtonsoft.Json&apos;)..
+        /// </summary>
+        internal static string PackageDownloadCommand_PackageIdDescription {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_PackageIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mapped source &apos;{0}&apos; for package &apos;{1}&apos; was not found among the configured sources..
+        /// </summary>
+        internal static string PackageDownloadCommand_PackageSourceMapping_NoSuchSource {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_PackageSourceMapping_NoSuchSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specifies one or more NuGet package sources to use..
+        /// </summary>
+        internal static string PackageDownloadCommand_SourcesDescription {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_SourcesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading package {0}, version {1}..
+        /// </summary>
+        internal static string PackageDownloadCommand_Starting {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; ({1}) successfully downloaded to &apos;{2}&apos;..
+        /// </summary>
+        internal static string PackageDownloadCommand_Succeeded {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_Succeeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package download failed for `{0} {1}` from source `{2}`..
+        /// </summary>
+        internal static string PackageDownloadCommand_UnableToDownload {
+            get {
+                return ResourceManager.GetString("PackageDownloadCommand_UnableToDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All packages are already up to date..
         /// </summary>
         internal static string PackageUpdate_AllPackagesAlreadyUpToDate {
@@ -1847,6 +1955,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string pkgSearch_VerbosityDescription {
             get {
                 return ResourceManager.GetString("pkgSearch_VerbosityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows prerelease packages to be installed..
+        /// </summary>
+        internal static string Prerelease_Description {
+            get {
+                return ResourceManager.GetString("Prerelease_Description", resourceCulture);
             }
         }
         

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -27,6 +29,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common.Telemetry.PowerShell;
+using NuGet.VisualStudio.Services;
 using NuGet.VisualStudio.Telemetry;
 using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 using Project = EnvDTE.Project;
@@ -43,7 +46,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private const string VSNuGetClientName = "NuGet VS VSIX";
 
         private readonly INuGetLockService _initLock;
-        private readonly Lazy<IVsProjectJsonToPackageReferenceMigrator> _projectJsonMigrator;
+        private readonly Lazy<IProjectJsonToPackageReferenceMigratorExt> _projectJsonMigrator;
         private readonly Lazy<INuGetUILogger> _outputConsoleLogger;
         private readonly ReentrantSemaphore _semaphoreLock = ReentrantSemaphore.Create(1, NuGetUIThreadHelper.JoinableTaskFactory.Context, ReentrantSemaphore.ReentrancyMode.Freeform);
 
@@ -141,7 +144,7 @@ namespace NuGet.PackageManagement.VisualStudio
             Lazy<ISettings> settings,
             INuGetFeatureFlagService featureFlagService,
             JoinableTaskContext joinableTaskContext,
-            Lazy<IVsProjectJsonToPackageReferenceMigrator> projectJsonMigrator,
+            Lazy<IProjectJsonToPackageReferenceMigratorExt> projectJsonMigrator,
             Lazy<INuGetUILogger> outputConsoleLogger)
             : this(AsyncServiceProvider.GlobalProvider,
                    projectSystemCache,
@@ -167,7 +170,7 @@ namespace NuGet.PackageManagement.VisualStudio
             Lazy<ISettings> settings,
             INuGetFeatureFlagService featureFlagService,
             JoinableTaskContext joinableTaskContext,
-            Lazy<IVsProjectJsonToPackageReferenceMigrator> projectJsonMigrator,
+            Lazy<IProjectJsonToPackageReferenceMigratorExt> projectJsonMigrator,
             Lazy<INuGetUILogger> outputConsoleLogger)
         {
             Assumes.Present(asyncServiceProvider);
@@ -744,7 +747,7 @@ namespace NuGet.PackageManagement.VisualStudio
             }
         }
 
-        private async Task<IVsProjectJsonToPackageReferenceMigrateResult> ExecuteUpgradeProjectJsonNuGetProjectCommandAsync(NuGetProject nuGetProject)
+        private async Task<IVsProjectJsonToPackageReferenceMigrateResult> ExecuteUpgradeProjectJsonNuGetProjectCommandAsync(NuGetProject nuGetProject, IVsProjectAdapter vsProjectAdapter)
         {
             IVsProjectJsonToPackageReferenceMigrateResult migrationResult = null;
 
@@ -758,7 +761,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             _outputConsoleLogger.Value.Log(MessageLevel.Info, message: projectFullPath);
 
-            var result = await _projectJsonMigrator.Value.MigrateProjectJsonToPackageReferenceAsync(projectFullPath);
+            var result = await _projectJsonMigrator.Value.MigrateProjectJsonToPackageReferenceAsync(nuGetProject, vsProjectAdapter);
 
             if (result is IVsProjectJsonToPackageReferenceMigrateResult migratorResult)
             {
@@ -828,7 +831,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private async Task MigrateProjectJsonAsync(ProjectJsonNuGetProject projectJsonNuGetProject, IVsHierarchy hierarchy, IVsProjectAdapter vsProjectAdapter)
         {
             IVsProjectJsonToPackageReferenceMigrateResult migrationResult = await
-                ExecuteUpgradeProjectJsonNuGetProjectCommandAsync(projectJsonNuGetProject);
+                ExecuteUpgradeProjectJsonNuGetProjectCommandAsync(projectJsonNuGetProject, vsProjectAdapter);
 
             if (migrationResult is not null && migrationResult.IsSuccess)
             {
@@ -1126,12 +1129,8 @@ namespace NuGet.PackageManagement.VisualStudio
 
             RemoveVsProjectAdapterFromCache(projectName);
 
-            var context = new ProjectProviderContext(
-                EmptyNuGetProjectContext,
-                () => PackagesFolderPathUtility.GetPackagesFolderPath(this, _settings.Value));
-
             var nuGetProject = await _projectSystemFactory.CreateNuGetProjectAsync<LegacyPackageReferenceProject>(
-                vsProjectAdapter, context);
+                vsProjectAdapter, optionalContext: null);
 
             var added = _projectSystemCache.AddProject(projectNames, vsProjectAdapter, nuGetProject);
 

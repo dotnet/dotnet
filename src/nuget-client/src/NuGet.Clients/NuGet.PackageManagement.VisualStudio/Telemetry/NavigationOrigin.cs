@@ -11,6 +11,7 @@ namespace NuGet.PackageManagement.Telemetry
         Options_PackageSourceMapping_RemoveAll,
         Options_LocalsCommand_ClearAll,
         PMUI_ExternalLink,
-        PMUI_PackageSourceMapping_Configure
+        PMUI_PackageSourceMapping_Configure,
+        VulnerabilityInfoBar_ManagePackages
     }
 }

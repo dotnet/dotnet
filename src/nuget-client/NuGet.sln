@@ -73,7 +73,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestExtensions", "TestExten
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{96255044-3776-439B-8496-C460DB9C4F97}"
 	ProjectSection(SolutionItems) = preProject
-		test\EndToEnd\tests\A-TopDownloadedPackages.ps1 = test\EndToEnd\tests\A-TopDownloadedPackages.ps1
 		test\EndToEnd\tests\BuildIntegratedTest.ps1 = test\EndToEnd\tests\BuildIntegratedTest.ps1
 		test\EndToEnd\tests\FindPackageTest.ps1 = test\EndToEnd\tests\FindPackageTest.ps1
 		test\EndToEnd\tests\GetPackageTest.ps1 = test\EndToEnd\tests\GetPackageTest.ps1

@@ -106,12 +106,6 @@
 
   <PropertyGroup Label="UserMacros" />
 
-  <PropertyGroup>
-
-    <PackageCertificateKeyFile>$projectname$_TemporaryKey.pfx</PackageCertificateKeyFile>
-
-  </PropertyGroup>
-
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -172,8 +166,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-
-    <None Include="$projectname$_TemporaryKey.pfx" />
 
   </ItemGroup>
 
