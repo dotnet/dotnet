@@ -14,7 +14,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>18.1.0</VersionPrefix>
+    <VersionPrefix>18.3.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
@@ -29,7 +29,7 @@
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
     <!--
         When updating the version of Microsoft.Build.Utilities.Core, go check on nuget.org which TFMs it targets.
-        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.8.3.
+        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.11.48.
         Otherwise it will restore the netstandard2.0 *reference* library into test project bin, and the test project will fail
         with File not found error.
 
@@ -39,7 +39,7 @@
       Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
       avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
     -->
-    <MicrosoftBuildFrameworkPackageVersion>17.8.3</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>17.11.48</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftBuildFrameworkReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkReferenceOnly>
