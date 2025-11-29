@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -295,80 +297,6 @@ namespace NuGet.Commands.FuncTest
             Assert.Equal(0, mainResult.LockFile.LogMessages.Count);
             Assert.Equal(expectedJson.ToString(), lockFileJson.ToString());
             Assert.Equal(94, mainResult.LockFile.Targets[0].Libraries.Count);
-        }
-
-        // Verify that File > New Project > Blank UWP App can restore without errors or warnings.
-        [Fact]
-        public async Task UWPRestore_BlankUWPAppV1()
-        {
-            // Arrange
-            List<PackageSource> sources = [new PackageSource("https://api.nuget.org/v3/index.json")];
-
-            using var pathContext = new SimpleTestPathContext();
-
-            var configJson = JObject.Parse(@"{
-                  ""frameworks"": {
-                    ""uap10.0"": {
-                      ""dependencies"": {
-                        ""Microsoft.NETCore.UniversalWindowsPlatform"": ""5.0.0""
-                      }
-                    }
-                  },
-                  ""runtimes"": {
-                    ""win10-arm"": {},
-                    ""win10-arm-aot"": {},
-                    ""win10-x86"": {},
-                    ""win10-x86-aot"": {},
-                    ""win10-x64"": {},
-                    ""win10-x64-aot"": {}
-                  }
-                }");
-
-            var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", Path.Combine(pathContext.SolutionRoot, "TestProject", "project.json")).WithTestRestoreMetadata();
-            spec.RestoreMetadata.Sources = sources;
-
-            var lockFileFormat = new LockFileFormat();
-            var expectedStream = GetResource("NuGet.Commands.FuncTest.compiler.resources.uwpBlankAppV1.json");
-
-            JObject expectedJson = null;
-
-            using (var reader = new StreamReader(expectedStream))
-            {
-                expectedJson = JObject.Parse(reader.ReadToEnd());
-            }
-
-            // Act
-            (var mainResult, var legacyResult) = await ValidateRestoreAlgorithmEquivalency(pathContext, spec);
-            await mainResult.CommitAsync(new TestLogger(), CancellationToken.None);
-
-            var lockFileJson = JObject.Parse(File.ReadAllText(mainResult.LockFilePath));
-            RemovePackageFolders(lockFileJson);
-
-            // Assert
-            Assert.True(mainResult.Success);
-            Assert.Equal(0, mainResult.CompatibilityCheckResults.Sum(checkResult => checkResult.Issues.Count));
-            Assert.Equal(0, mainResult.LockFile.LogMessages.Count);
-            Assert.Equal(expectedJson.ToString(), lockFileJson.ToString());
-            Assert.Equal(94, mainResult.LockFile.Targets[0].Libraries.Count);
-
-            static async Task<(RestoreResult, RestoreResult)> ValidateRestoreAlgorithmEquivalency(SimpleTestPathContext pathContext, params PackageSpec[] projects)
-            {
-                var legacyResolverProjects = RestoreCommandTests.DuplicateAndEnableLegacyAlgorithm(projects);
-
-                RestoreResult result = await RunRestoreAsync(pathContext, projects);
-                RestoreResult legacyResult = await RunRestoreAsync(pathContext, legacyResolverProjects);
-
-                // Assert
-                RestoreCommandTests.ValidateRestoreResults(result, legacyResult);
-                return (result, legacyResult);
-
-                static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
-                {
-                    var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, new TestLogger(), projects);
-                    request.LockFileVersion = 1;
-                    return new RestoreCommand(request).ExecuteAsync();
-                }
-            }
         }
 
         // Verify that File > New Project > Class Library (Portable) can restore without errors or warnings.

@@ -130,9 +130,9 @@ function Test-GetInstalledPackagesMultipleProjectsSameVersion {
     param($context)
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
 
     $cm = Get-VsComponentModel
@@ -152,9 +152,9 @@ function Test-GetInstalledPackagesMultipleProjectsDifferentVersion {
     param($context)
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.6 -Source $context.RepositoryPath
 
     $cm = Get-VsComponentModel
@@ -262,7 +262,7 @@ function VsPackageInstallerEvents {
 
     try {
         # Arrange
-        $p = New-WebApplication
+        $p = New-ConsoleApplication
         $cm = Get-VsComponentModel
         $installerEvents = $cm.GetService([NuGet.VisualStudio.IVsPackageInstallerEvents])
 

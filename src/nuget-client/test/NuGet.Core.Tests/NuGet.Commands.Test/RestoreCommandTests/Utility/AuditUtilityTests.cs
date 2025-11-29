@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -440,11 +438,11 @@ public class AuditUtilityTests
 
         var vulnerabilityProviders = AuditTestContext.CreateVulnerabilityInformationProviders(vulnerabilityProviderContexts);
 
-        RestoreTargetGraph[] graphs =
-        {
+        List<RestoreTargetGraph> graphs =
+        [
             await createGraphTasks[0],
             await createGraphTasks[1]
-        };
+        ];
 
         var targetFrameworks = new List<TargetFrameworkInformation>
         {
@@ -623,7 +621,7 @@ public class AuditUtilityTests
 
             return audit;
 
-            async Task<RestoreTargetGraph[]> CreateGraphsAsync()
+            async Task<List<RestoreTargetGraph>> CreateGraphsAsync()
             {
                 var walkContext = new TestRemoteWalkContext();
                 walkContext.LocalLibraryProviders.Add(PackagesDependencyProvider);
@@ -632,10 +630,9 @@ public class AuditUtilityTests
 
                 var graph = await walker.WalkAsync(_walkTarget, _framework, "", RuntimeGraph.Empty, true);
 
-                RestoreTargetGraph[] graphs = new[]
-                {
+                List<RestoreTargetGraph> graphs = [
                     RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework.GetShortFolderName(), _framework)
-                };
+                ];
 
                 return graphs;
             }
