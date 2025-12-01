@@ -6,8 +6,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOTNET_ROOT="$DIR/.dotnet"
 
-# This tells .NET Core not to go looking for .NET Core in other places
-
 # Put our local dotnet on PATH first so Visual Studio knows which one to use
 export PATH="$DOTNET_ROOT:$PATH"
 
