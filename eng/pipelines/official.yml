@@ -106,6 +106,8 @@ extends:
         enabled: true
       tsa:
         enabled: true
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
 
     containers:
       ${{ variables.almaLinuxContainerName }}:
