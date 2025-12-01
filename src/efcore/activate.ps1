@@ -32,7 +32,6 @@ deactivate -init
 $_OLD_PATH = $env:PATH
 # Tell dotnet where to find itself
 $env:DOTNET_ROOT = "$PSScriptRoot\.dotnet"
-# Tell dotnet not to look beyond the DOTNET_ROOT folder for more dotnet things
 # Put dotnet first on PATH
 $env:PATH = "${env:DOTNET_ROOT};${env:PATH}"
 

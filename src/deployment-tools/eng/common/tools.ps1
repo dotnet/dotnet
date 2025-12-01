@@ -157,7 +157,6 @@ function InitializeDotNetCli([bool]$install, [bool]$createSdkLocationFile) {
     return $global:_DotNetInstallDir
   }
 
-  # Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
 
   # Disable first run since we do not need all ASP.NET packages restored.
   $env:DOTNET_NOLOGO=1

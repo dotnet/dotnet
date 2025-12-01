@@ -111,7 +111,6 @@ function InitializeDotNetCli {
 
   local install=$1
 
-  # Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
 
   # Disable first run since we want to control all package sources
   export DOTNET_NOLOGO=1

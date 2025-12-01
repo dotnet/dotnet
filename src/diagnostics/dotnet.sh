@@ -12,7 +12,6 @@ while [[ -h $source ]]; do
 done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
-# Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
 
 # Disable first run since we want to control all package sources
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1

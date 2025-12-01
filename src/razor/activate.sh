@@ -66,7 +66,6 @@ DIR="$( cd "$( dirname "$THIS_SCRIPT" )" && pwd )"
 _OLD_PATH="$PATH"
 # Tell dotnet where to find itself
 export DOTNET_ROOT="$DIR/.dotnet"
-# Tell dotnet not to look beyond the DOTNET_ROOT folder for more dotnet things
 # Put dotnet first on PATH
 export PATH="$DOTNET_ROOT:$PATH"
 
