@@ -159,6 +159,7 @@ elseif($testhost)
     if (LocationIsSharedInstall $destination $arch)
     {
         # There is nothing fundamentally different about a test host installation versus trying to copy
+        # into program files. We just won't set the DOTNET_ROOT.
         Write-Host "Copying to Program Files, skipping setting environment variables."
     }
     else
