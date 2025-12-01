@@ -269,7 +269,7 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
 
         var env = new Dictionary<string, string?>
         {
-            ["DOTNET_ROOT"] = null,
+            ["DOTNET_ROOT"] = null
         };
         ExecuteApplication(GetDefaultDotnetMuxerLocation, $"test {projectPath} --framework {GetFrameworkVersionToForceToX64}", out string stdOut, out _, out _, env, projectDirectory);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
