@@ -12,7 +12,6 @@ while [[ -h $source ]]; do
 done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
-
 # Disable first run since we want to control all package sources
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 
