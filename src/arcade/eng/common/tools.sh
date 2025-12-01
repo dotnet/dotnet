@@ -115,7 +115,6 @@ function InitializeDotNetCli {
 
   local install=$1
 
-
   # Disable first run since we want to control all package sources
   export DOTNET_NOLOGO=1
 
