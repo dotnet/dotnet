@@ -6,7 +6,6 @@
 SET DOTNET_ROOT=%~dp0.dotnet\
 
 :: This tells .NET Core not to go looking for .NET Core in other places
-SET DOTNET_MULTILEVEL_LOOKUP=0
 
 :: Put our local dotnet.exe on PATH first so Visual Studio knows which one to use
 SET PATH=%DOTNET_ROOT%;%PATH%

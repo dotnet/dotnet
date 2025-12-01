@@ -159,7 +159,6 @@ elseif($testhost)
     if (LocationIsSharedInstall $destination $arch)
     {
         # There is nothing fundamentally different about a test host installation versus trying to copy
-        # into program files. We just won't set the DOTNET_ROOT or DOTNET_MULTILEVEL_LOOKUP.
         Write-Host "Copying to Program Files, skipping setting environment variables."
     }
     else
@@ -168,9 +167,6 @@ elseif($testhost)
         $dotnetVariableToSet = if ($arch -eq "x86") { "env:DOTNET_ROOT(x86)"} else { "env:DOTNET_ROOT"}
         Write-Host "** Setting $dotnetVariableToSet to $destination **"
         Set-Item -Path $dotnetVariableToSet -Value $destination
-
-        Write-Host "** Setting env:DOTNET_MULTILEVEL_LOOKUP to 0 **"
-        $env:DOTNET_MULTILEVEL_LOOKUP=0
     }
 }
 else

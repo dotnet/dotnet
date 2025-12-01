@@ -15,7 +15,6 @@ set /p dotnetPath=<%~dp0artifacts\toolset\sdk.txt
 set Platform=
 
 :: Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
-set DOTNET_MULTILEVEL_LOOKUP=0
 
 :: Disable first run since we want to control all package sources
 set DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1

@@ -53,8 +53,7 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
 
         var env = new Dictionary<string, string?>
             {
-                { "DOTNET_ROOT", null },
-                { "DOTNET_MULTILEVEL_LOOKUP", "0" }
+                { "DOTNET_ROOT", null }
             };
 
         // Verify native architecture
@@ -108,7 +107,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null,
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0"
         };
 
         var projectName = "ArchitectureSwitch.csproj";
@@ -130,7 +128,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
 
         env.Clear();
         env["DOTNET_ROOT"] = null;
-        env["DOTNET_MULTILEVEL_LOOKUP"] = "0";
         if (dotnetRoot)
         {
             env["DOTNET_ROOT"] = s_privateX64Installation;
@@ -171,7 +168,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null,
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0"
         };
         string privateInstallationMuxer = Path.Combine(s_privateX64Installation, GetMuxerName);
 
@@ -215,7 +211,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null,
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0"
         };
         string privateInstallationMuxer = Path.Combine(s_privateX64Installation, GetMuxerName);
 
@@ -231,7 +226,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
 
         env.Clear();
         env["DOTNET_ROOT"] = null;
-        env["DOTNET_MULTILEVEL_LOOKUP"] = "0";
         if (dotnetRoot)
         {
             env["DOTNET_ROOT"] = GetDefaultLocation;
@@ -276,7 +270,6 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null,
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0"
         };
         ExecuteApplication(GetDefaultDotnetMuxerLocation, $"test {projectPath} --framework {GetFrameworkVersionToForceToX64}", out string stdOut, out _, out _, env, projectDirectory);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))

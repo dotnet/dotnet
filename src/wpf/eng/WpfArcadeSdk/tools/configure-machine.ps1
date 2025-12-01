@@ -22,7 +22,6 @@ else
     # This is yet one more unfortunate workaround required until https://github.com/dotnet/wpf/issues/816 is addressed, or until
     # QualityVault and STI don't use WindowsDesktop any longer. Since the multi-framework support only installs the Microsoft.NETCore.App
     # runtime in the 'x86' dir, we need the ability to look outside that directory for an install of Microsoft.WindowsDesktop.App.
-    $env:DOTNET_MULTILEVEL_LOOKUP=1
 }
 
 # Set DOTNET_ROOT variables so the host can find it
