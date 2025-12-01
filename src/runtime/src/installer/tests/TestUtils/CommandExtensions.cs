@@ -58,9 +58,9 @@ namespace Microsoft.DotNet.CoreSetup.Test
         public static Command MultilevelLookup(this Command command, bool? enable)
         {
             if (enable.HasValue)
-                return command.EnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", enable.Value ? "1" : "0");
+                return command.EnvironmentVariable(Constants.MultilevelLookup.EnvironmentVariable, enable.Value ? "1" : "0");
 
-            return command.RemoveEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP");
+            return command.RemoveEnvironmentVariable(Constants.MultilevelLookup.EnvironmentVariable);
         }
 
         public static Command RuntimeId(this Command command, string rid)

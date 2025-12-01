@@ -101,6 +101,11 @@ namespace Microsoft.DotNet.CoreSetup.Test
             public const string EnvironmentVariable = "DOTNET_RUNTIME_ID";
         }
 
+        public static class MultilevelLookup
+        {
+            public const string EnvironmentVariable = "DOTNET_MULTILEVEL_LOOKUP";
+        }
+
         public static class HostTracing
         {
             public const string TraceLevelEnvironmentVariable = "DOTNET_HOST_TRACE";
