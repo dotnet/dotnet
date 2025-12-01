@@ -43,8 +43,6 @@ $dotnetPath = Join-Path (Get-Location) ".dotnet"
 $env:DOTNET_ROOT = $dotnetPath
 ${env:DOTNET_ROOT(x86)} = Join-Path $dotnetPath "x86"
 
-# This tells .NET Core not to go looking for .NET Core in other places
-
 # Put our local dotnet.exe on PATH first so Visual Studio knows which one to use
 $env:PATH = $env:DOTNET_ROOT + ";" + $env:PATH
 
