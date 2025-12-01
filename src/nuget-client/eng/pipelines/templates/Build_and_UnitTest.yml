@@ -84,6 +84,7 @@ steps:
     failOnStderr: true
   env:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    DOTNET_MULTILEVEL_LOOKUP: true
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
 - task: PowerShell@1
@@ -393,4 +394,5 @@ steps:
     failOnStderr: true
   env:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    DOTNET_MULTILEVEL_LOOKUP: true
   condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
