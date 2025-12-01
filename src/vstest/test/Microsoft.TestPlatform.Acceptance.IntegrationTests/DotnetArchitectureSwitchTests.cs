@@ -167,7 +167,7 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
 
         var env = new Dictionary<string, string?>
         {
-            ["DOTNET_ROOT"] = null,
+            ["DOTNET_ROOT"] = null
         };
         string privateInstallationMuxer = Path.Combine(s_privateX64Installation, GetMuxerName);
 
