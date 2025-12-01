@@ -45,8 +45,6 @@ if [[ -z "$RUNTIME_PATH" ]]; then
   exit -1
 fi
 
-# Don't use a globally installed SDK.
-
 exitcode_list[0]="Exited Successfully"
 exitcode_list[130]="SIGINT  Ctrl-C occurred. Likely tests timed out."
 exitcode_list[131]="SIGQUIT Ctrl-\ occurred. Core dumped."

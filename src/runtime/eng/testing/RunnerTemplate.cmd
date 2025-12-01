@@ -41,8 +41,6 @@ set EXECUTION_DIR=%~dp0
 
 :argparser_end
 
-:: Don't use a globally installed SDK.
-
 :: Assume failure
 set HAS_TEST_RESULTS=0
 
