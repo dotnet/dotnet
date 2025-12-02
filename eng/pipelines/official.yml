@@ -42,9 +42,9 @@ parameters:
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
-  default: 'Default (uses VMR defaults for release branch builds or otherwise repo defaults)'
+  default: 'Default (uses VMR branding defaults for release branch builds or otherwise repo branding defaults)'
   values:
-    - Default (uses VMR defaults for release branch builds or otherwise repo defaults)
+    - Default (uses VMR branding defaults for release branch builds or otherwise repo branding defaults)
     - RepoDefault (uses the the repo branding defaults)
     - Unstable (produces assets with the repo specified branding suffix)
     - Preview (produces assets with a '.final' branding suffix)

@@ -59,7 +59,7 @@ variables:
 - ${{ elseif eq(parameters.desiredFinalVersionKind, 'Unstable (produces assets with the repo specified branding suffix)') }}:
   - name: brandingType
     value: 'unstable'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Preview (produces assets with a '.final' branding suffix)') }}:
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Preview (produces assets with a .final branding suffix)') }}:
   - name: brandingType
     value: 'preview'
 - ${{ elseif eq(parameters.desiredFinalVersionKind, 'Release (produces assets without a branding suffix)') }}:
