@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 292575,
+      "barId": 292861,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "94ccee9f77787d406c5ac65e51303189f68640b2"
+      "commitSha": "de10f40f8bbe7f19bacb817c48be5e5c07584437"
     },
     {
       "barId": 292157,
@@ -49,16 +49,16 @@
       "commitSha": "f8b85873c9157f00b4951a78977fa87e3ab7c628"
     },
     {
-      "barId": 292589,
+      "barId": 292757,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "0e969242d8e7a71e025ed965246e7b033b0d2b17"
+      "commitSha": "61c1a22068d208a88f757bd48d5c899db5568837"
     },
     {
-      "barId": 292531,
+      "barId": 292750,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6ae7bab3a992bdecaa5ee36a6bd5967281cec2d0"
+      "commitSha": "dd27cf39334b66329ff8eea71db6e8153e0929c6"
     },
     {
       "barId": 279847,
@@ -97,10 +97,10 @@
       "commitSha": "65384c6536d6c6f6afa9c13dc023b1848f0ef69e"
     },
     {
-      "barId": 291178,
+      "barId": 292763,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "a3edc677e7df447fe8a38854fbd7a2b0bc327dc5"
+      "commitSha": "feab92a4bbe50a61eae220b7b4aa287ae5322431"
     },
     {
       "barId": 292303,
@@ -127,10 +127,10 @@
       "commitSha": "154e8babf0b97312a403b6ccf84cf1498a32ecea"
     },
     {
-      "barId": 291441,
+      "barId": 292669,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "9d90f3f51f618c68d2af7ed75564599b37bf2a65"
+      "commitSha": "132afbade9e2ce626f26e27c136f34af73dde2f1"
     },
     {
       "barId": 292327,
@@ -210,7 +210,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "3c2156268ca56c3712c0c4b304b16ca52fee1c7f"
+      "commitSha": "e097281ca8a50268b1022453fe6efd9112123a28"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
