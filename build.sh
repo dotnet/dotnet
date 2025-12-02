@@ -16,7 +16,7 @@ usage()
   echo "  --os, --target-os <value>         Target operating system: e.g. linux, osx, freebsd. Note: this is the base OS name, not the distro"
   echo "  --arch, --target-arch <value>     Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   echo "  --branding                        Specify the branding suffix for shipping packages/assets. By default uses VMR branding defaults for release branch builds or otherwise repo branding defaults."
-  echo "    <repodefault>                   'repodefault' uses the the repo branding defaults."
+  echo "    <repodefault>                   'repodefault' uses the repo branding defaults."
   echo "    <unstable>                      'unstable' produces assets with the repo specified branding suffix."
   echo "    <preview>                       'preview' produces assets with a '.final' branding suffix."
   echo "    <release>                       'release' produces assets without a branding suffix."
