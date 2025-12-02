@@ -91,16 +91,16 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 292565,
+      "barId": 292769,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ec69d0ead6f76f52a9ba8af07fa7302ffa1c81d9"
+      "commitSha": "7cdd1580f811dee58558e867e82a3ad902a1a557"
     },
     {
-      "barId": 292441,
+      "barId": 292958,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "f72a9ff20e399ce26ef282b4979750de302e3f42"
+      "commitSha": "6ada9b7d59e0c5f3afd20f9f8a9dc17e0bbbb0fe"
     },
     {
       "barId": 292507,
@@ -127,16 +127,16 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 292491,
+      "barId": 292908,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "ed43a5a690e33d6d5498cc1624b636df8eac9283"
+      "commitSha": "6f5d95d4f9231070ddffb55a22444c3030b32135"
     },
     {
-      "barId": 292334,
+      "barId": 292889,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "f9ca34ff38e11eda610a4b380a41c30a1cd1dade"
+      "commitSha": "e13e5feeebe07f1d711ea5c9de7ff12a1601850d"
     },
     {
       "barId": 291208,
@@ -210,7 +210,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "68fcfe0de4c0602b1c4d4c3cf58ea70e9f06388c"
+      "commitSha": "e097281ca8a50268b1022453fe6efd9112123a28"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
