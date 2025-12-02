@@ -1,10 +1,6 @@
 Title: Unit Testing
 Order: 14
 Description: Instructions for unit testing a Spectre.Console application.
-Reference: 
-    - T:Spectre.Console.Testing.CommandAppTester
-    - T:Spectre.Console.Testing.TestConsole
-    - T:Spectre.Console.Testing.TestConsoleInput
 ---
 
 `Spectre.Console` has a separate project that contains test harnesses for unit testing your own console applications. 
@@ -40,7 +36,7 @@ The following example validates the exit code and terminal output of a `Spectre.
             _console = console;
         }
 
-        public override int Execute(CommandContext context)
+        public override int Execute(CommandContext context, CancellationToken cancellationToken)
         {
             _console.WriteLine("Hello world.");
             return 0;
@@ -78,7 +74,7 @@ public sealed class InteractiveCommandTests
             _console = console;
         }
 
-        public override int Execute(CommandContext context)
+        public override int Execute(CommandContext context, CancellationToken cancellationToken)
         {
             var fruits = _console.Prompt(
                 new MultiSelectionPrompt<string>()
