@@ -40,7 +40,7 @@ function Get-Usage() {
   Write-Host "  -arch, -targetArch <value>       Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   Write-Host "  -verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   Write-Host "  -branding                        Specify the branding suffix for shipping packages/assets. By default uses VMR branding defaults for release branch builds or otherwise repo branding defaults."
-  Write-Host "    <repodefault>                  'repodefault' uses the the repo branding defaults."
+  Write-Host "    <repodefault>                  'repodefault' uses the repo branding defaults."
   Write-Host "    <unstable>                     'unstable' produces assets with the repo specified branding suffix."
   Write-Host "    <preview>                      'preview' produces assets with a '.final' branding suffix."
   Write-Host "    <release>                      'release' produces assets without a branding suffix."
