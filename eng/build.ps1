@@ -8,7 +8,7 @@ Param(
   [string][Alias('arch')]$targetArch,
   [string][Alias('v')]$verbosity = "minimal",
   [Parameter()][ValidateSet("repodefault", "unstable", "preview", "release")]
-  [string]$branding = "default",
+  [string]$branding,
   [Parameter()][ValidatePattern("^\d{8}\.\d{1,3}$")]
   [string][Alias('obid')]$officialBuildId,
 
