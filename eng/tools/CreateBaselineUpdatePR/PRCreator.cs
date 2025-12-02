@@ -17,6 +17,7 @@ public class PRCreator
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string TreeMode = "040000";
+    private const string UpdatedFilePrefix = "updated";
     private const int MaxRetries = 10;
     public PRCreator(string repo, string gitHubToken)
     {
@@ -105,10 +106,11 @@ public class PRCreator
     }
 
     // Return a dictionary using the filename without the 
-    // "Updated" prefix and anything after the first '.' as the key
+    // "updated" prefix (case-insensitive) and anything after the first '.' as the key
     private Dictionary<string, HashSet<string>> GetUpdatedFiles(string updatedFilesDirectory) =>
         Directory
-            .GetFiles(updatedFilesDirectory, "Updated*", SearchOption.AllDirectories)
+            .GetFiles(updatedFilesDirectory, "*", SearchOption.AllDirectories)
+            .Where(file => Path.GetFileName(file).StartsWith(UpdatedFilePrefix, StringComparison.OrdinalIgnoreCase))
             .GroupBy(updatedTestsFile => ParseUpdatedFileName(updatedTestsFile).Split('.')[0])
             .ToDictionary(
                 group => group.Key,
@@ -255,7 +257,15 @@ public class PRCreator
         return await ApiRequestWithRetries(() => _client.Git.Blob.Create(_repoOwner, _repoName, blob));
     }
 
-    private string ParseUpdatedFileName(string updatedFile) => updatedFile.Split("Updated")[1];
+    private string ParseUpdatedFileName(string updatedFile)
+    {
+        string fileName = Path.GetFileName(updatedFile);
+        if (fileName.StartsWith(UpdatedFilePrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return fileName.Substring(UpdatedFilePrefix.Length);
+        }
+        throw new ArgumentException($"File name '{fileName}' does not start with '{UpdatedFilePrefix}' prefix.", nameof(updatedFile));
+    }
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
     {
