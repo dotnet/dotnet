@@ -86,7 +86,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
-    private const string RuntimeDepsVersion = "10.0-preview";
+    private const string RuntimeDepsVersion = "10.0";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
     private const string DotnetHostPrefix = "dotnet-host-";
     private const string DotnetHostFxrPrefix = "dotnet-hostfxr-";
