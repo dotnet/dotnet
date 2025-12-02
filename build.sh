@@ -143,7 +143,21 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -branding)
-      properties+=( "/p:RepoDotNetFinalVersionKind=$2" )
+      if [ -z ${2+x} ]; then
+        echo "No branding type supplied. See help (--help) for supported values." 1>&2
+        exit 1
+      fi
+      passedBrandingType="$(echo "$2" | tr "[:upper:]" "[:lower:]")"
+      case "$passedBrandingType" in
+        repodefault|unstable|preview|release)
+          val=$passedBrandingType
+          ;;
+        *)
+          echo "Unsupported branding type '$2'."
+          echo "The allowed values are repodefault, unstable, preview or release."
+          exit 1
+          ;;
+      esac
       shift
       ;;
     -with-system-libs)
