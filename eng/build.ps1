@@ -7,7 +7,7 @@ Param(
   [string][Alias('os')]$targetOS,
   [string][Alias('arch')]$targetArch,
   [string][Alias('v')]$verbosity = "minimal",
-  [Parameter()][ValidateSet("default", "prerelease", "release", "repodefault")]
+  [Parameter()][ValidateSet("repodefault", "unstable", "preview", "release")]
   [string]$branding = "default",
   [Parameter()][ValidatePattern("^\d{8}\.\d{1,3}$")]
   [string][Alias('obid')]$officialBuildId,
@@ -39,11 +39,11 @@ function Get-Usage() {
   Write-Host "  -os, -targetOS <value>           Target operating system: e.g. windows."
   Write-Host "  -arch, -targetArch <value>       Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   Write-Host "  -verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  Write-Host "  -branding                        Specify versioning for shipping packages/assets."
-  Write-Host "    <default>                      'default' or unspecified uses VMR defaults for release branch builds or otherwise repo defaults."
-  Write-Host "    <prerelease>                   'prerelease' produces assets suffixed with '.final'"
-  Write-Host "    <release>                      'release' produces assets without a suffix"
-  Write-Host "    <repodefault>                  'repodefault' uses the the repo defaults."
+  Write-Host "  -branding                        Specify the branding suffix for shipping packages/assets. By default uses VMR branding defaults for release branch builds or otherwise repo branding defaults."
+  Write-Host "    <repodefault>                  'repodefault' uses the the repo branding defaults."
+  Write-Host "    <unstable>                     'unstable' produces assets with the repo specified branding suffix."
+  Write-Host "    <preview>                      'preview' produces assets with a '.final' branding suffix."
+  Write-Host "    <release>                      'release' produces assets without a branding suffix."
   Write-Host "  -officialBuildId <YYYYMMDD.X>    Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
   Write-Host ""
 
@@ -95,14 +95,7 @@ if ($targetArch) { $arguments += "/p:TargetArchitecture=$targetArch" }
 if ($sign) { $arguments += "/p:DotNetBuildSign=true" }
 if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
-if ($branding) {
-    switch ($branding) {
-        "default" { $arguments += "" }
-        "prerelease" { $arguments += "/p:DotNetFinalVersionKind=prerelease" }
-        "release"     { $arguments += "/p:DotNetFinalVersionKind=release" }
-        "repodefault" { $arguments += "/p:DotNetFinalVersionKind=" }
-    }
-}
+if ($branding) { $arguments += "/p:RepoDotNetFinalVersionKind=$branding" }
 if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }
 
 function Build {

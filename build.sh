@@ -15,11 +15,11 @@ usage()
   echo "  --rid, --target-rid <value>       Overrides the rid that is produced by the build. e.g. alpine.3.18-arm64, fedora.37-x64, freebsd.13-arm64, ubuntu.19.10-x64"
   echo "  --os, --target-os <value>         Target operating system: e.g. linux, osx, freebsd. Note: this is the base OS name, not the distro"
   echo "  --arch, --target-arch <value>     Target architecture: e.g. x64, x86, arm64, arm, riscv64"
-  echo "  --branding                        Specify versioning for shipping packages/assets."
-  echo "    <default>                       'default' or unspecified uses VMR defaults for release branch builds or otherwise repo defaults."
-  echo "    <prerelease>                    'prerelease' will produce assets suffixed with '.final'"
-  echo "    <release>                       'release' will produce assets without a suffix"
-  echo "    <repodefault>                   'repodefault' uses the the repo defaults."
+  echo "  --branding                        Specify the branding suffix for shipping packages/assets. By default uses VMR branding defaults for release branch builds or otherwise repo branding defaults."
+  echo "    <repodefault>                   'repodefault' uses the the repo branding defaults."
+  echo "    <unstable>                      'unstable' produces assets with the repo specified branding suffix."
+  echo "    <preview>                       'preview' produces assets with a '.final' branding suffix."
+  echo "    <release>                       'release' produces assets without a branding suffix."
   echo "  --verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. 'all' will use all supported libraries. e.g. brotli+libunwind+rapidjson+zlib"
   echo "  --official-build-id <YYYYMMDD.X>  Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
@@ -63,25 +63,6 @@ usage()
   echo "Arguments can also be passed in with a single hyphen."
 }
 
-function SetBranding()
-{
-  local brandingValue="$1"
-  
-  if [[ "$brandingValue" == "prerlease" ]]; then
-    properties+=( "/p:DotNetFinalVersionKind=prerelease" )
-  elif [[ "$brandingValue" == "release" ]]; then
-    properties+=( "/p:DotNetFinalVersionKind=release" )
-  elif [[ "$brandingValue" == "repodefault" ]]; then
-    properties+=( "/p:DotNetFinalVersionKind=" )
-  elif [[ "$brandingValue" == "default" ]]; then
-    # default branding; no extra property needed
-    :
-  else
-    echo "ERROR: Invalid branding '$brandingValue'. Allowed values are 'default', 'prerelease', 'release' or 'repodefault'."
-    exit 1
-  fi
-}
-
 function SetOfficialBuildId()
 {
   local officialBuildIdValue="$1"
@@ -109,7 +90,6 @@ binary_log=''
 configuration='Release'
 verbosity='minimal'
 officialBuildId=''
-branding=''
 
 # Actions
 clean=false
@@ -163,8 +143,7 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -branding)
-      branding="$2"
-      SetBranding "$branding"
+      properties+=( "/p:RepoDotNetFinalVersionKind=$2" )
       shift
       ;;
     -with-system-libs)

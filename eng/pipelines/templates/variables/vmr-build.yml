@@ -53,15 +53,18 @@ variables:
   - name: ibcEnabled
     value: false
 
-- ${{ if eq(parameters.desiredFinalVersionKind, 'Prerelease (Produces assets suffixed with .final)') }}:
-  - name: brandingType
-    value: 'prerelease'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Release (Produce assets without a suffix)') }}:
-  - name: brandingType
-    value: 'release'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'RepoDefault (Uses the the repo defaults)') }}:
+- ${{ if eq(parameters.desiredFinalVersionKind, 'RepoDefault (uses the the repo defaults)') }}:
   - name: brandingType
     value: 'repodefault'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Unstable (produces assets with the repo specified branding suffix)') }}:
+  - name: brandingType
+    value: 'unstable'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Preview (produces assets with a '.final' branding suffix)') }}:
+  - name: brandingType
+    value: 'preview'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Release (produces assets without a branding suffix)') }}:
+  - name: brandingType
+    value: 'release'
 - ${{ else }}:
   - name: brandingType
     value: ''

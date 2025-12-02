@@ -28,7 +28,7 @@
     <CommonArgs>$(CommonArgs) /p:PortableBuild=$(PortableBuild)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PortableTargetRid=$(PortableTargetRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
-    <CommonArgs Condition="'$(DotNetFinalVersionKind)' != '' and '$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) /p:DotNetFinalVersionKind=$(DotNetFinalVersionKind)</CommonArgs>
+    <CommonArgs Condition="'$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
     <CommonArgs Condition="'$(DotNetBuildTests)' == 'true' and '$(DotNetBuildTestsOptOut)' != 'true'">$(CommonArgs) /p:DotNetBuildTests=true</CommonArgs>

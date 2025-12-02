@@ -7,8 +7,18 @@
     <VersionPrefix>11.0.$(VersionSDKMinor)00</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
-    <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
-    <DotNetFinalVersionKind></DotNetFinalVersionKind>
+
+    <!-- Allowed values: 'repodefault', 'unstable', 'preview', 'release' -->
+    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+
+    <!-- 'repodefault' uses the the repo branding defaults. -->
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault'"></RepoDotNetFinalVersionKindArg>
+    <!-- 'unstable' produces assets with the repo specified branding suffix. -->
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
+    <!-- 'preview' produces assets with a '.final' branding suffix. -->
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
+    <!-- 'release' produces assets without a branding suffix. -->
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'release'">/p:DotNetFinalVersionKind=release</RepoDotNetFinalVersionKindArg>
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
