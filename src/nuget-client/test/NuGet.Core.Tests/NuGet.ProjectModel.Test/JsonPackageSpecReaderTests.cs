@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -858,7 +860,6 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(expectedResult, dependency.SuppressParent);
         }
 
-        // TODO NK - The whole Error reading, Error Reading thing is dumb.
         [Fact]
 
         public void GetPackageSpec_WhenDependenciesDependencyVersionValueIsInvalid_Throws()
@@ -2110,17 +2111,41 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(null, false)]
-        [InlineData(true, true)]
-        [InlineData(false, false)]
-        public void GetPackageSpec_WhenCentralPackageVersionsManagementEnabledValueIsValid_ReturnsCentralPackageVersionsManagementEnabled(
+        [InlineData("centralPackageVersionsManagementEnabled", null, false)]
+        [InlineData("centralPackageVersionsManagementEnabled", true, true)]
+        [InlineData("centralPackageVersionsManagementEnabled", false, false)]
+        [InlineData("centralPackageVersionOverrideDisabled", null, false)]
+        [InlineData("centralPackageVersionOverrideDisabled", true, true)]
+        [InlineData("centralPackageVersionOverrideDisabled", false, false)]
+        [InlineData("CentralPackageTransitivePinningEnabled", null, false)]
+        [InlineData("CentralPackageTransitivePinningEnabled", true, true)]
+        [InlineData("CentralPackageTransitivePinningEnabled", false, false)]
+        [InlineData("centralPackageFloatingVersionsEnabled", null, false)]
+        [InlineData("centralPackageFloatingVersionsEnabled", true, true)]
+        [InlineData("centralPackageFloatingVersionsEnabled", false, false)]
+        public void GetPackageSpec_WhenCentralPackageManagementPropertyIsSet_ReturnsCorrectValue(
+            string propertyName,
             bool? value,
             bool expectedValue)
         {
-            var json = $"{{\"restore\":{{\"centralPackageVersionsManagementEnabled\":{(value.HasValue ? value.ToString().ToLowerInvariant() : "null")}}}}}";
+            var json = $"{{\"restore\":{{\"{propertyName}\":{(value.HasValue ? value.ToString().ToLowerInvariant() : "null")}}}}}";
             PackageSpec packageSpec = GetPackageSpec(json);
 
-            Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageVersionsEnabled);
+            switch (propertyName)
+            {
+                case "centralPackageVersionsManagementEnabled":
+                    Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageVersionsEnabled);
+                    break;
+                case "centralPackageVersionOverrideDisabled":
+                    Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageVersionOverrideDisabled);
+                    break;
+                case "CentralPackageTransitivePinningEnabled":
+                    Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageTransitivePinningEnabled);
+                    break;
+                case "centralPackageFloatingVersionsEnabled":
+                    Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
+                    break;
+            }
         }
 
         [Fact]

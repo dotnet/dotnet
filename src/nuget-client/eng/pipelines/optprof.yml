@@ -90,6 +90,16 @@ stages:
     - download: ComponentBuildUnderTest
       artifact: BuildInfo
       displayName: 'Download buildinfo.json'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download RunSettings drop metadata'
+      inputs:
+        buildType: 'specific'
+        artifactName: 'DropMetadata-RunSettings'
+        targetPath: $(Pipeline.Workspace)\ComponentBuildUnderTest\DropMetadata-RunSettings
+        project: '$(System.TeamProjectId)'
+        definition: $(System.DefinitionId)
+        buildVersionToDownload: 'specific'
+        pipelineId: $(resources.pipeline.ComponentBuildUnderTest.runId)
     - powershell: |
         try {
           Write-Host "Set VSBranch, VsTargetChannel &  VsTargetMajorVersion variables"
@@ -132,15 +142,23 @@ stages:
       displayName: 'Set VSBranch variable'
     - powershell : |
         try {
-          $branchName = "$(resources.pipeline.ComponentBuildUnderTest.sourceBranch)"
-          $branchName = $branchName.Replace('refs/heads/', '')
-
-          $RunSettingsURI = "https://vsdrop.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.OptProfV2.runsettings"
-          Write-Host "RunSettingsURI: $RunSettingsURI"
-          # non-output variable for VS config in the configure machine job
-          # output variable for test execution job
-          Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
-          Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI
+          $dropMetadata = ConvertFrom-Json (Get-Content "$(Pipeline.Workspace)\ComponentBuildUnderTest\DropMetadata-RunSettings\VSTSDrop.json" -Raw)
+          $dropUri = $dropMetadata.VstsDropBuildArtifact.VstsDropUrl
+          if ($dropUri)
+          {
+            $dropUri = $dropUri -replace '^(.*?)/RunSettings/', 'https://vsdrop.microsoft.com/file/v1/RunSettings/'
+            $RunSettingsURI = "$dropUri;NuGet.OptProfV2.runsettings"
+            Write-Host "RunSettingsURI: $RunSettingsURI"
+            # non-output variable for VS config in the configure machine job
+            # output variable for test execution job
+            Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
+            Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI
+          }
+          else
+          {
+            Write-Error "Drop metadata: $dropMetadata"
+            throw "VSTSDropUrl not found in VSTSDrop.json"
+          }
         }
         catch {
           Write-Host $_
