@@ -45,7 +45,7 @@ parameters:
   default: 'Default (uses VMR defaults for release branch builds or otherwise repo defaults)'
   values:
     - Default (uses VMR defaults for release branch builds or otherwise repo defaults)
-    - RepoDefault (uses the the repo defaults)
+    - RepoDefault (uses the the repo branding defaults)
     - Unstable (produces assets with the repo specified branding suffix)
     - Preview (produces assets with a '.final' branding suffix)
     - Release (produces assets without a branding suffix)
