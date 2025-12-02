@@ -3,7 +3,7 @@
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Completion;
 
@@ -21,8 +21,8 @@ internal sealed class OOPDirectiveAttributeEventParameterCompletionItemProvider 
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
 [method: ImportingConstructor]
-internal sealed class OOPDirectiveAttributeTransitionCompletionItemProvider(LanguageServerFeatureOptions languageServerFeatureOptions)
-    : DirectiveAttributeTransitionCompletionItemProvider(languageServerFeatureOptions);
+internal sealed class OOPDirectiveAttributeTransitionCompletionItemProvider(IClientCapabilitiesService clientCapabilitiesService)
+    : DirectiveAttributeTransitionCompletionItemProvider(clientCapabilitiesService);
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
 internal sealed class OOPMarkupTransitionCompletionItemProvider : MarkupTransitionCompletionItemProvider;

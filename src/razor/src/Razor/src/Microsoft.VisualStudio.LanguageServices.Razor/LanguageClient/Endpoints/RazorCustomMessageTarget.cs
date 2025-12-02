@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
@@ -29,7 +28,6 @@ internal partial class RazorCustomMessageTarget
     private readonly JoinableTaskFactory _joinableTaskFactory;
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ProjectSnapshotManager _projectManager;
     private readonly ISnippetCompletionItemProvider _snippetCompletionItemProvider;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
@@ -48,7 +46,6 @@ internal partial class RazorCustomMessageTarget
         LSPDocumentSynchronizer documentSynchronizer,
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
         ProjectSnapshotManager projectManager,
         ISnippetCompletionItemProvider snippetCompletionItemProvider,
         ILoggerFactory loggerFactory)
@@ -67,7 +64,6 @@ internal partial class RazorCustomMessageTarget
         _documentSynchronizer = documentSynchronizer ?? throw new ArgumentNullException(nameof(documentSynchronizer));
         _csharpVirtualDocumentAddListener = csharpVirtualDocumentAddListener ?? throw new ArgumentNullException(nameof(csharpVirtualDocumentAddListener));
         _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _projectManager = projectManager ?? throw new ArgumentNullException(nameof(projectManager));
         _snippetCompletionItemProvider = snippetCompletionItemProvider ?? throw new ArgumentNullException(nameof(snippetCompletionItemProvider));
         _logger = loggerFactory.GetOrCreateLogger<RazorCustomMessageTarget>();
@@ -126,9 +122,7 @@ internal partial class RazorCustomMessageTarget
         var hostDocumentUri = hostDocument.DocumentUri.GetRequiredParsedUri();
 
         // For Html documents we don't do anything fancy, just call the standard service
-        // If we're not generating unique document file names, then we can treat C# documents the same way
-        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath ||
-            typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot))
+        if (typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot))
         {
             var htmlResult = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug($"{(htmlResult.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {htmlResult.VirtualSnapshot?.Uri}");
@@ -196,8 +190,7 @@ internal partial class RazorCustomMessageTarget
 
         // If we're not generating unique document file names, then we don't need to ensure we find the right virtual document
         // as there can only be one anyway
-        if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath &&
-            hostDocument.GetProjectContext() is { } projectContext &&
+        if (hostDocument.GetProjectContext() is { } projectContext &&
             FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocumentUri, projectContext) is { } virtualDocument)
         {
             return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, virtualDocument.Uri);

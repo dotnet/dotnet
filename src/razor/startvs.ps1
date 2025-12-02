@@ -73,8 +73,13 @@ if ($chooseVS) {
         $channelId = $vsInstall.installedChannelId
         $lastDotIndex = $channelId.LastIndexOf(".")
         $channelName = $channelId.Substring($lastDotIndex + 1);
+        $nickName = $vsInstall.properties.nickname
+        if ($nickName.Length -gt 0)
+        {
+            $nickName = " - '$nickName'"
+        }
 
-        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))"
+        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))$($nickName)"
         $index += 1
     }
 

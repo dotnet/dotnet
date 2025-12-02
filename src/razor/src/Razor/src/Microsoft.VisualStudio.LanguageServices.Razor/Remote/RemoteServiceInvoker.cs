@@ -180,12 +180,9 @@ internal sealed class RemoteServiceInvoker(
                 var initParams = new RemoteClientInitializationOptions
                 {
                     UseRazorCohostServer = _languageServerFeatureOptions.UseRazorCohostServer,
-                    HtmlVirtualDocumentSuffix = _languageServerFeatureOptions.HtmlVirtualDocumentSuffix,
                     ReturnCodeActionAndRenamePathsWithPrefixedSlash = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
                     SupportsFileManipulation = _languageServerFeatureOptions.SupportsFileManipulation,
                     ShowAllCSharpCodeActions = _languageServerFeatureOptions.ShowAllCSharpCodeActions,
-                    SupportsSoftSelectionInCompletion = _languageServerFeatureOptions.SupportsSoftSelectionInCompletion,
-                    UseVsCodeCompletionCommitCharacters = _languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters,
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");

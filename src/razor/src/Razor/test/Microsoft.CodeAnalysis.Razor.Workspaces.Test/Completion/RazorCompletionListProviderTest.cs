@@ -4,9 +4,9 @@
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -103,7 +103,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeTransition_SerializationDoesNotThrow()
     {
         // Arrange
-        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(TestLanguageServerFeatureOptions.Instance);
+        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(new()));
         var completionItem = directiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem;
         RazorCompletionListProvider.TryConvert(completionItem, _clientCapabilities, out var converted);
 
@@ -115,7 +115,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeTransition_ReturnsTrue()
     {
         // Arrange
-        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(TestLanguageServerFeatureOptions.Instance);
+        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(new()));
         var completionItem = directiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem;
 
         // Act

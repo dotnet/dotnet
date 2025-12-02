@@ -82,7 +82,7 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
             return NoFurtherHandling;
         }
 
-        var mappedEdit = await _editMappingService.RemapWorkspaceEditAsync(context.Snapshot, csharpEdit, cancellationToken).ConfigureAwait(false);
-        return Results(mappedEdit);
+        await _editMappingService.MapWorkspaceEditAsync(context.Snapshot, csharpEdit, cancellationToken).ConfigureAwait(false);
+        return Results(csharpEdit);
     }
 }

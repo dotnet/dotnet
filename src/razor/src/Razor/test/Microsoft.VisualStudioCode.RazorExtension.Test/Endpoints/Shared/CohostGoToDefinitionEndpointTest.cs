@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -406,7 +407,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var htmlResponse = new SumType<LspLocation, LspLocation[], DocumentLink[]>?(new LspLocation[]
         {
             new() {
-                DocumentUri = new(new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix)),
+                DocumentUri = new(new Uri(document.CreateUri(), document.Name + LanguageServerConstants.HtmlVirtualDocumentSuffix)),
                 Range = inputText.GetRange(input.Span),
             },
         });
