@@ -154,6 +154,8 @@ while [[ $# > 0 ]]; do
         *)
           echo "Unsupported branding type '$2'."
           echo "The allowed values are repodefault, unstable, preview or release."
+          echo ""
+          echo "IMPORTANT: If you previuosly passed in the '-branding rtm' argument for .NET 10, remove it entirely. The default is now set correctly (VMR branding defaults for release branch builds or otherwise repo branding defaults)."
           exit 1
           ;;
       esac
