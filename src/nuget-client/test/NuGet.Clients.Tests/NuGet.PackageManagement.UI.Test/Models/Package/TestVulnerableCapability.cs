@@ -12,7 +12,7 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
 {
     internal class TestVulnerableCapability : VulnerableCapabilityBase
     {
-        public TestVulnerableCapability(IReadOnlyList<PackageVulnerabilityMetadataContextInfo> vulnerabilities)
+        public TestVulnerableCapability(IReadOnlyList<PackageVulnerabilityMetadataContextInfo>? vulnerabilities)
         {
             Vulnerabilities = vulnerabilities;
         }

@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>Unit and integration tests for NuGet.VisualStudio.Internal.Contracts.</Description>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

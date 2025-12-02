@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace NuGet.PackageManagement.UI.ViewModels
 {
     public class TitledPageViewModelBase : ViewModelBase

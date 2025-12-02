@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">對節點 '{1}' 而言，中央釘選的相依性 '{0}' 在解析的圖形中意外地找不到。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">下列 PackageReference 項目無法定義 Version: {0} 的值。使用中央套件管理的專案必須在 PackageVersion 項目上定義 Version 值。如需詳細資訊，請造訪 https://aka.ms/nuget/cpm/gettingstarted</target>

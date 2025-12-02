@@ -9,8 +9,6 @@ using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
 
-#nullable enable
-
 namespace NuGetVSExtension
 {
     [Export(typeof(IPackageManagerLaunchService))]

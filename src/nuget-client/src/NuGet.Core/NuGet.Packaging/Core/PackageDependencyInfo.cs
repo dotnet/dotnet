@@ -7,8 +7,6 @@ using System.Globalization;
 using System.Linq;
 using NuGet.Versioning;
 
-#nullable enable
-
 namespace NuGet.Packaging.Core
 {
     /// <summary>
