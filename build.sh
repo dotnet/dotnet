@@ -150,7 +150,6 @@ while [[ $# > 0 ]]; do
       passedBrandingType="$(echo "$2" | tr "[:upper:]" "[:lower:]")"
       case "$passedBrandingType" in
         repodefault|unstable|preview|release)
-          val=$passedBrandingType
           ;;
         *)
           echo "Unsupported branding type '$2'."
@@ -158,7 +157,7 @@ while [[ $# > 0 ]]; do
           exit 1
           ;;
       esac
-      properties+=( "/p:RepoDotNetFinalVersionKind=$val" )
+      properties+=( "/p:RepoDotNetFinalVersionKind=$passedBrandingType" )
       shift
       ;;
     -with-system-libs)
