@@ -158,6 +158,7 @@ while [[ $# > 0 ]]; do
           exit 1
           ;;
       esac
+      properties+=( "/p:RepoDotNetFinalVersionKind=$val" )
       shift
       ;;
     -with-system-libs)
