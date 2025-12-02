@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,8 +24,6 @@ namespace NuGet.Commands
         public IMachineWideSettings MachineWideSettings { get; set; }
 
         public string GlobalPackagesFolder { get; set; }
-
-        public bool? IsLowercaseGlobalPackagesFolder { get; set; }
 
         public bool DisableParallel { get; set; }
 
@@ -203,12 +203,6 @@ namespace NuGet.Commands
 
             request.RequestedRuntimes.UnionWith(Runtimes);
             request.FallbackRuntimes.UnionWith(FallbackRuntimes);
-
-            if (IsLowercaseGlobalPackagesFolder.HasValue)
-            {
-                request.IsLowercasePackagesDirectory = IsLowercaseGlobalPackagesFolder.Value;
-            }
-
             request.LockFileVersion = LockFileFormat.Version;
 
             // Run runtime asset checks for project.json, and for other types if enabled.

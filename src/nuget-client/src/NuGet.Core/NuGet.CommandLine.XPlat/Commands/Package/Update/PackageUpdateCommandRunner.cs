@@ -324,7 +324,7 @@ internal static class PackageUpdateCommandRunner
                 upgradeVersion = package.VersionRange;
                 if (upgradeVersion == existingVersion)
                 {
-                    logger.LogMinimal(Messages.Warning_AlreadyUsingSameVersion(package.Id, upgradeVersion.OriginalString), ConsoleColor.Yellow);
+                    logger.LogMinimal(Messages.Warning_AlreadyUsingSameVersion(package.Id, upgradeVersion.OriginalString!), ConsoleColor.Yellow);
                     continue;
                 }
             }
@@ -342,7 +342,7 @@ internal static class PackageUpdateCommandRunner
                 upgradeVersion = VersionRange.Parse(latestVersion.OriginalVersion!);
                 if (upgradeVersion == existingVersion)
                 {
-                    logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, latestVersion.OriginalVersion, project.FilePath), ConsoleColor.Yellow);
+                    logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, latestVersion.OriginalVersion!, project.FilePath), ConsoleColor.Yellow);
                     continue;
                 }
             }

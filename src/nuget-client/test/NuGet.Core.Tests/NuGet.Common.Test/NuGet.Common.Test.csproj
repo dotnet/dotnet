@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>Unit tests for NuGet.Common.</Description>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

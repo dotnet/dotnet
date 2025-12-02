@@ -260,7 +260,7 @@
       "properties": {
         "packageSourceMapping": {
           "type": "array",
-          "title": "Package Source Mapping",
+          "title": "@116;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
           // Metadata about items in this array
           "items": {
