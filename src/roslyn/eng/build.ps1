@@ -534,22 +534,6 @@ function TestUsingRunTests() {
   }
 }
 
-function EnablePreviewSdks() {
-  $vsInfo = LocateVisualStudio
-  if ($vsInfo -eq $null) {
-    # Preview SDKs are allowed when no Visual Studio instance is installed
-    return
-  }
-
-  $vsId = $vsInfo.instanceId
-  $vsMajorVersion = $vsInfo.installationVersion.Split('.')[0]
-
-  $instanceDir = Join-Path ${env:USERPROFILE} "AppData\Local\Microsoft\VisualStudio\$vsMajorVersion.0_$vsId"
-  Create-Directory $instanceDir
-  $sdkFile = Join-Path $instanceDir "sdk.txt"
-  'UsePreviews=True' | Set-Content $sdkFile
-}
-
 # Deploy our core VSIX libraries to Visual Studio via the Roslyn VSIX tool.  This is an alternative to
 # deploying at build time.
 function Deploy-VsixViaTool() {
@@ -756,6 +740,19 @@ try {
 
   if ($restore) {
     &(Ensure-DotNetSdk) tool restore
+  }
+
+  # Above InitializeDotNetCli or Ensure-DotNetSdk may have installed a local .NET SDK.
+  # $global:_DotNetInstallDir will point to the correct global or local SDK location.
+  # We need to make sure DOTNET_HOST_PATH points to that SDK as a workaround for older MSBuild
+  # which will not set it correctly.  Removal is tracked by https://github.com/dotnet/roslyn/issues/80742
+  if (-not $env:DOTNET_HOST_PATH -and (Test-Path variable:global:_DotNetInstallDir)) {
+    $env:DOTNET_HOST_PATH = Join-Path $global:_DotNetInstallDir 'dotnet'
+    if (-not (Test-Path $env:DOTNET_HOST_PATH)) {
+      $env:DOTNET_HOST_PATH = "$($env:DOTNET_HOST_PATH).exe"
+    }
+
+    Write-Host "Setting DOTNET_HOST_PATH to $env:DOTNET_HOST_PATH"
   }
 
   if ($bootstrap -and $bootstrapDir -eq "") {

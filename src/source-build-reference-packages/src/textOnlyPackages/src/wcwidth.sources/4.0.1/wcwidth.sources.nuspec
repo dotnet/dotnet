@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Wcwidth.Sources</id>
+    <version>4.0.1</version>
+    <authors>Patrik Svensson and contributors</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/spectreconsole/wcwidth</projectUrl>
+    <description>A .NET library that calculates the width of Unicode characters.</description>
+    <releaseNotes>https://github.com/spectreconsole/wcwidth/releases</releaseNotes>
+    <repository type="git" url="https://github.com/spectreconsole/wcwidth" branch="4.0.1" commit="64a3f523d5dc27124e04ff9079137ac2c5c72143" />
+    <contentFiles>
+      <files include="cs/net10.0/External/Wcwidth/Extensions/IntegerExtensions.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/Vs16Table.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/Vs16Table.Generated.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/WideTable.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/WideTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/ZeroTable.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/Unicode.cs" buildAction="Compile" />
+      <files include="cs/net10.0/External/Wcwidth/UnicodeCalculator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Extensions/IntegerExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/Vs16Table.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/Vs16Table.Generated.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/WideTable.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/WideTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/ZeroTable.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/Unicode.cs" buildAction="Compile" />
+      <files include="cs/net9.0/External/Wcwidth/UnicodeCalculator.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Extensions/IntegerExtensions.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/Vs16Table.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/Vs16Table.Generated.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/WideTable.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/WideTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/ZeroTable.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/Unicode.cs" buildAction="Compile" />
+      <files include="cs/net8.0/External/Wcwidth/UnicodeCalculator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Extensions/IntegerExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/Vs16Table.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/Vs16Table.Generated.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/WideTable.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/WideTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/ZeroTable.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/Unicode.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/External/Wcwidth/UnicodeCalculator.cs" buildAction="Compile" />
+    </contentFiles>
+  </metadata>
+</package>
