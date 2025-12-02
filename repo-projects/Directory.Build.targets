@@ -29,7 +29,7 @@
     <CommonArgs>$(CommonArgs) /p:PortableTargetRid=$(PortableTargetRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
 
-
+    <!-- Branding -->
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault' or '$(RepoDotNetFinalVersionKind)' == ''"></RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
