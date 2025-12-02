@@ -283,7 +283,8 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         Assert.NotNull(resolveResult.Edit);
 
         var workspaceEdit = resolveResult.Edit;
-        Assert.True(workspaceEdit.TryGetTextDocumentEdits(out var documentEdits));
+        var documentEdits = workspaceEdit.EnumerateTextDocumentEdits().ToArray();
+        Assert.NotEmpty(documentEdits);
 
         return documentEdits;
     }

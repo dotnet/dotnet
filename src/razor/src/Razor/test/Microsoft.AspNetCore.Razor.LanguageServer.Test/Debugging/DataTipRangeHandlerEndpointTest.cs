@@ -90,7 +90,7 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
     {
         await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
-        var endpoint = new DataTipRangeHandlerEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
+        var endpoint = new DataTipRangeHandlerEndpoint(DocumentMappingService, languageServer, LoggerFactory);
 
         var request = new TextDocumentPositionParams
         {

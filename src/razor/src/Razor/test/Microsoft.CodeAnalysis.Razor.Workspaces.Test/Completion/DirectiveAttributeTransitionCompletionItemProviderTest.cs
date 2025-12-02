@@ -3,8 +3,8 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 public class DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private readonly TagHelperDocumentContext _tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
-    private readonly DirectiveAttributeTransitionCompletionItemProvider _provider = new(TestLanguageServerFeatureOptions.Instance);
+    private readonly DirectiveAttributeTransitionCompletionItemProvider _provider = new(new TestClientCapabilitiesService(new VSInternalClientCapabilities()));
 
     [Fact]
     public void IsValidCompletionPoint_AtPrefixLeadingEdge_ReturnsFalse()
@@ -300,9 +300,14 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputH
     [InlineData(false)]
     public void GetCompletionItems_WithAvoidExplicitCommitOption_ReturnsAppropriateCommitCharacters(bool supportsSoftSelection)
     {
+        var clientCapabilities = new VSInternalClientCapabilities()
+        {
+            SupportsVisualStudioExtensions = supportsSoftSelection
+        };
+
         // Arrange
         var context = CreateContext("<input $$ />");
-        var provider = new DirectiveAttributeTransitionCompletionItemProvider(new TestLanguageServerFeatureOptions(supportsSoftSelectionInCompletion: supportsSoftSelection));
+        var provider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(clientCapabilities));
 
         // Act
         var result = provider.GetCompletionItems(context);

@@ -26,8 +26,14 @@ internal sealed record BoundTagHelperResult(TagHelperDescriptor ElementDescripto
 
 internal static class RazorComponentDefinitionHelpers
 {
+    /// <summary>
+    /// Gets bound tag helpers that might apply to the specified index
+    /// </summary>
+    /// <remarks>
+    /// This method will not match component attribute tag helpers
+    /// </remarks>
     public static bool TryGetBoundTagHelpers(
-        RazorCodeDocument codeDocument, int absoluteIndex, bool ignoreComponentAttributes, ILogger logger,
+        RazorCodeDocument codeDocument, int absoluteIndex, ILogger logger,
         out ImmutableArray<BoundTagHelperResult> descriptors)
     {
         descriptors = default;
@@ -74,7 +80,7 @@ internal static class RazorComponentDefinitionHelpers
         foreach (var boundTagHelper in binding.TagHelpers.Where(d => !d.IsAttributeDescriptor()))
         {
             var requireAttributeMatch = false;
-            if ((!ignoreComponentAttributes || boundTagHelper.Kind != TagHelperKind.Component) &&
+            if (boundTagHelper.Kind != TagHelperKind.Component &&
                 tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
             {
                 // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave

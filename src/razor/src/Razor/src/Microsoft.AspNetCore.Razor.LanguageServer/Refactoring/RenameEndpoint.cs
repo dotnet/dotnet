@@ -26,7 +26,6 @@ internal sealed class RenameEndpoint(
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<RenameEndpoint>()), ICapabilitiesProvider
@@ -86,6 +85,8 @@ internal sealed class RenameEndpoint(
         }
 
         var documentContext = requestContext.DocumentContext.AssumeNotNull();
-        return await _editMappingService.RemapWorkspaceEditAsync(documentContext.Snapshot, response, cancellationToken).ConfigureAwait(false);
+        await _editMappingService.MapWorkspaceEditAsync(documentContext.Snapshot, response, cancellationToken).ConfigureAwait(false);
+
+        return response;
     }
 }

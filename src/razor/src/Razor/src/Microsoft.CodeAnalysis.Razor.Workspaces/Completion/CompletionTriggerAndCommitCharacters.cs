@@ -1,99 +1,85 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using System.Linq;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal class CompletionTriggerAndCommitCharacters
+internal class CompletionTriggerAndCommitCharacters(IClientCapabilitiesService clientCapabilitiesService)
 {
     /// <summary>
     ///  Trigger character that can trigger both Razor and Delegation completion
     /// </summary>
     private const char TransitionCharacter = '@';
 
-    private static readonly char[] s_vsHtmlTriggerCharacters = [':', '#', '.', '!', '*', ',', '(', '[', '-', '<', '&', '\\', '/', '\'', '"', '=', ':', ' ', '`'];
-    private static readonly char[] s_vsCodeHtmlTriggerCharacters = ['#', '.', '!', ',', '<'];
-    private static readonly char[] s_razorTriggerCharacters = ['<', ':', ' '];
-    private static readonly char[] s_csharpTriggerCharacters = [' ', '(', '=', '#', '.', '<', '[', '{', '"', '/', ':', '~'];
-    private static readonly ImmutableArray<string> s_commitCharacters = [" ", ">", ";", "="];
+    private static readonly string[] s_commitCharacters = [" ", ">", ";", "="];
 
-    private readonly HashSet<char> _csharpTriggerCharacters;
-    private readonly HashSet<char> _delegationTriggerCharacters;
-    private readonly HashSet<char> _htmlTriggerCharacters;
-    private readonly HashSet<char> _razorTriggerCharacters;
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
-    public ImmutableArray<string> AllTriggerCharacters { get; }
+    private static readonly FrozenSet<char> _csharpTriggerCharacters = [' ', '(', '=', '#', '.', '<', '[', '{', '"', '/', ':', '~'];
+    private static readonly FrozenSet<char> _vsHtmlTriggerCharacters = [TransitionCharacter, ':', '#', '.', '!', '*', ',', '(', '[', '-', '<', '&', '\\', '/', '\'', '"', '=', ':', ' ', '`'];
+    private static readonly FrozenSet<char> _vsCodeHtmlTriggerCharacters = [TransitionCharacter, '#', '.', '!', ',', '<'];
+    private static readonly FrozenSet<char> _razorTriggerCharacters = [TransitionCharacter, '<', ':', ' '];
+
+    private FrozenSet<char> HtmlTriggerCharacters => _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions
+        ? _vsHtmlTriggerCharacters
+        : _vsCodeHtmlTriggerCharacters;
+
+    private FrozenSet<char> DelegationTriggerCharacters => field ??= ComputeDelegationTriggerCharacters();
+
+    public string[] AllTriggerCharacters => field ??= ComputeAllTriggerCharacters();
 
     /// <summary>
     /// This is the intersection of C# and HTML commit characters.
     /// </summary>
-    // We need to specify it so that platform can correctly calculate ApplicableToSpan in
-    // https://devdiv.visualstudio.com/DevDiv/_git/VSLanguageServerClient?path=/src/product/RemoteLanguage/Impl/Features/Completion/AsyncCompletionSource.cs&version=GBdevelop&line=855&lineEnd=855&lineStartColumn=9&lineEndColumn=49&lineStyle=plain&_a=contents
-    // This is needed to fix https://github.com/dotnet/razor/issues/10787 in particular
-    public ImmutableArray<string> AllCommitCharacters { get; }
+    /// <remarks>
+    /// <para>
+    /// We need to specify it so that platform can correctly calculate ApplicableToSpan
+    /// This is needed to fix https://github.com/dotnet/razor/issues/10787 in particular
+    /// </para>
+    /// <para>
+    /// However we shouldn't specify commit characters for VSCode, as it doesn't appear to need
+    /// them and they interfere with normal item commit. e.g. see https://github.com/dotnet/vscode-csharp/issues/7678
+    /// </para>
+    /// </remarks>
+    public string[] AllCommitCharacters => _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions ? s_commitCharacters : [];
 
-    public CompletionTriggerAndCommitCharacters(LanguageServerFeatureOptions languageServerFeatureOptions)
+    private FrozenSet<char> ComputeDelegationTriggerCharacters()
     {
-        // C# trigger characters (do NOT include '@')
-        var csharpTriggerCharacters = new HashSet<char>();
-        csharpTriggerCharacters.UnionWith(s_csharpTriggerCharacters);
-
-        // HTML trigger characters (include '@' + HTML trigger characters)
-        var htmlTriggerCharacters = new HashSet<char>() { TransitionCharacter };
-
-        // In VS Code we want to use a smaller set of Html trigger characters, and rather than have another
-        // flag for it, we can just re-use the flag we have for commit characters
-        if (languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters)
-        {
-            htmlTriggerCharacters.UnionWith(s_vsCodeHtmlTriggerCharacters);
-        }
-        else
-        {
-            htmlTriggerCharacters.UnionWith(s_vsHtmlTriggerCharacters);
-        }
-
         // Delegation trigger characters (include '@' + C# and HTML trigger characters)
         var delegationTriggerCharacters = new HashSet<char> { TransitionCharacter };
-        delegationTriggerCharacters.UnionWith(csharpTriggerCharacters);
-        delegationTriggerCharacters.UnionWith(htmlTriggerCharacters);
+        delegationTriggerCharacters.UnionWith(_csharpTriggerCharacters);
+        delegationTriggerCharacters.UnionWith(HtmlTriggerCharacters);
 
-        // Razor trigger characters (include '@' + Razor trigger characters)
-        var razorTriggerCharacters = new HashSet<char>() { TransitionCharacter };
-        razorTriggerCharacters.UnionWith(s_razorTriggerCharacters);
+        return delegationTriggerCharacters.ToFrozenSet();
+    }
 
+    private string[] ComputeAllTriggerCharacters()
+    {
         // All trigger characters (include Razor + Delegation trigger characters)
         var allTriggerCharacters = new HashSet<char>();
-        allTriggerCharacters.UnionWith(razorTriggerCharacters);
-        allTriggerCharacters.UnionWith(delegationTriggerCharacters);
+        allTriggerCharacters.UnionWith(_razorTriggerCharacters);
+        allTriggerCharacters.UnionWith(DelegationTriggerCharacters);
 
-        _csharpTriggerCharacters = csharpTriggerCharacters;
-        _htmlTriggerCharacters = htmlTriggerCharacters;
-        _razorTriggerCharacters = razorTriggerCharacters;
-        _delegationTriggerCharacters = delegationTriggerCharacters;
-
-        // We shouldn't specify commit characters for VSCode.
-        // It doesn't appear to need them and they interfere with normal item commit.
-        // E.g. see https://github.com/dotnet/vscode-csharp/issues/7678
-        AllCommitCharacters = languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters ? [] : s_commitCharacters;
-        AllTriggerCharacters = allTriggerCharacters.SelectAsArray(static c => c.ToString());
+        return allTriggerCharacters.Select(static c => c.ToString()).ToArray();
     }
 
     public bool IsValidCSharpTrigger(CompletionContext completionContext)
         => IsValidTrigger(completionContext, _csharpTriggerCharacters);
 
     public bool IsValidDelegationTrigger(CompletionContext completionContext)
-        => IsValidTrigger(completionContext, _delegationTriggerCharacters);
+        => IsValidTrigger(completionContext, DelegationTriggerCharacters);
 
     public bool IsValidHtmlTrigger(CompletionContext completionContext)
-        => IsValidTrigger(completionContext, _htmlTriggerCharacters);
+        => IsValidTrigger(completionContext, HtmlTriggerCharacters);
 
     public bool IsValidRazorTrigger(CompletionContext completionContext)
         => IsValidTrigger(completionContext, _razorTriggerCharacters);
 
-    private static bool IsValidTrigger(CompletionContext completionContext, HashSet<char> triggerCharacters)
+    private static bool IsValidTrigger(CompletionContext completionContext, FrozenSet<char> triggerCharacters)
         => completionContext.TriggerKind != CompletionTriggerKind.TriggerCharacter ||
            completionContext.TriggerCharacter is not [var c] ||
            triggerCharacters.Contains(c);
@@ -102,10 +88,10 @@ internal class CompletionTriggerAndCommitCharacters
         => ch is [var c] && _csharpTriggerCharacters.Contains(c);
 
     public bool IsDelegationTriggerCharacter(string ch)
-        => ch is [var c] && _delegationTriggerCharacters.Contains(c);
+        => ch is [var c] && DelegationTriggerCharacters.Contains(c);
 
     public bool IsHtmlTriggerCharacter(string ch)
-        => ch is [var c] && _htmlTriggerCharacters.Contains(c);
+        => ch is [var c] && HtmlTriggerCharacters.Contains(c);
 
     public bool IsRazorTriggerCharacter(string ch)
         => ch is [var c] && _razorTriggerCharacters.Contains(c);
