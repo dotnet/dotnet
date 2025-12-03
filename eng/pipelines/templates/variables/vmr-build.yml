@@ -53,7 +53,7 @@ variables:
   - name: ibcEnabled
     value: false
 
-- ${{ if eq(parameters.desiredFinalVersionKind, 'RepoDefault (uses the repo branding defaults)') }}:
+- ${{ if eq(parameters.desiredFinalVersionKind, 'Repo default (uses the repo branding defaults)') }}:
   - name: brandingType
     value: 'repodefault'
 - ${{ elseif eq(parameters.desiredFinalVersionKind, 'Unstable (produces assets with the repo specified branding suffix)') }}:
