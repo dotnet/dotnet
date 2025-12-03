@@ -40,7 +40,6 @@ public class Build : IntegrationTestBase
         // We need to set this to point to our dotnet, because we cannot guarantee what is installed on the machine in Program Files,
         // and we install all the required SDKs and runtimes ourselves in Build.cmd.
 #pragma warning disable RS0030 // Do not used banned APIs
-        Environment.SetEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0");
         Environment.SetEnvironmentVariable("DOTNET_ROOT", DotnetDir);
         Environment.SetEnvironmentVariable("DOTNET_ROOT(x86)", Path.Combine(DotnetDir, "dotnet-sdk-x86"));
         Environment.SetEnvironmentVariable("PATH", $"{DotnetDir};{Environment.GetEnvironmentVariable("PATH")}");

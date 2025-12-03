@@ -808,8 +808,6 @@ public class IntegrationTestBase
     {
         environmentVariables ??= new();
 
-        environmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
-
         var executablePath = OSUtils.IsWindows ? @"dotnet.exe" : @"dotnet";
         var patchedDotnetPath = Path.GetFullPath(Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, "artifacts", "tmp", ".dotnet", executablePath));
         ExecuteApplication(patchedDotnetPath, string.Join(" ", command, args), out stdOut, out stdError, out exitCode, environmentVariables, workingDirectory);

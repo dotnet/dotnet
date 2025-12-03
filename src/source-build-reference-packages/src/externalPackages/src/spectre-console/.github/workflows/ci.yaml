@@ -28,16 +28,17 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
+            10.0.x
 
       - name: Build
         shell: bash
         run: |
           dotnet tool restore
-          dotnet cake
+          dotnet make
 
       - name: Upload Verify Test Results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: verify-test-results
           path: |
