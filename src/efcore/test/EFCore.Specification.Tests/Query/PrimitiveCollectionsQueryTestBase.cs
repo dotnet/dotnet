@@ -227,6 +227,16 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => new[] { 2, 999, 1000 }.Contains(c.Id)));
 
     [ConditionalFact]
+    public virtual Task Inline_collection_Contains_with_IEnumerable_EF_Parameter()
+    {
+        List<string?> data = ["10", "a", "aa",];
+
+        return AssertQuery(
+                ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => EF.Parameter(data.Select(x => x)).Contains(c.NullableString)),
+                ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => data.Select(x => x).Contains(c.NullableString)));
+    }
+
+    [ConditionalFact]
     public virtual Task Inline_collection_Count_with_column_predicate_with_EF_Parameter()
         => AssertQuery(
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => EF.Parameter(new[] { 2, 999, 1000 }).Count(i => i > c.Id) == 2),
@@ -455,6 +465,26 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
         await AssertQuery(
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => ints!.Contains(c.Int)),
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => false),
+            assertEmpty: true);
+    }
+
+    [ConditionalFact]
+    public virtual async Task Parameter_collection_empty_Contains()
+    {
+        int[] ints = [];
+
+        await AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => ints.Contains(c.Int)),
+            assertEmpty: true);
+    }
+
+    [ConditionalFact] // #37216
+    public virtual async Task Parameter_collection_empty_Join()
+    {
+        int[] ints = [];
+
+        await AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Join(ints, e => e.Id, i => i, (e, i) => e),
             assertEmpty: true);
     }
 

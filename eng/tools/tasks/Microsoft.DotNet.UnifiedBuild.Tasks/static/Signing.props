@@ -31,6 +31,7 @@
     <FileSignInfo Include="Mono.Cecil.Pdb.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.Rocks.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Spectre.Console.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Valleysoft.DockerCredsProvider.dll" CertificateName="$(ExternalCertificateId)" />
 
     <!--
