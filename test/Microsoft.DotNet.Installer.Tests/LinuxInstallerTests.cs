@@ -149,7 +149,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
@@ -167,7 +167,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
