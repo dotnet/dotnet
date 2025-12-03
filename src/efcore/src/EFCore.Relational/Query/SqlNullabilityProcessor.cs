@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
@@ -19,6 +20,9 @@ namespace Microsoft.EntityFrameworkCore.Query;
 /// </summary>
 public class SqlNullabilityProcessor : ExpressionVisitor
 {
+    private static readonly bool UseOldBehavior37204 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37204", out var enabled) && enabled;
+
     private readonly List<ColumnExpression> _nonNullableColumns;
     private readonly List<ColumnExpression> _nullValueColumns;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
@@ -27,6 +31,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     ///     Tracks parameters for collection expansion, allowing reuse.
     /// </summary>
     private readonly Dictionary<SqlParameterExpression, List<SqlParameterExpression>> _collectionParameterExpansionMap;
+
+    private static readonly bool UseOldBehavior37216 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37216", out var enabled) && enabled;
 
     /// <summary>
     ///     Creates a new instance of the <see cref="SqlNullabilityProcessor" /> class.
@@ -183,6 +190,33 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
                     default:
                         throw new UnreachableException();
+                }
+
+                // We've inlined the user-provided collection from the values parameter into the SQL VALUES expression: (VALUES (1), (2)...).
+                // However, if the collection happens to be empty, this doesn't work as VALUES does not support empty sets. We convert it
+                // to a SELECT ... WHERE false to produce an empty result set instead.
+                if (!UseOldBehavior37216 && processedValues.Count == 0)
+                {
+                    var select = new SelectExpression(
+                        valuesExpression.Alias,
+                        tables: [],
+                        predicate: new SqlConstantExpression(false, Dependencies.TypeMappingSource.FindMapping(typeof(bool))),
+                        groupBy: [],
+                        having: null,
+                        projections: valuesExpression.ColumnNames
+                            .Select(n => new ProjectionExpression(
+                                new SqlConstantExpression(value: null, elementTypeMapping.ClrType, elementTypeMapping), n))
+                            .ToList(),
+                        distinct: false,
+                        orderings: [],
+                        offset: null,
+                        limit: null,
+                        tags: ReadOnlySet<string>.Empty,
+                        annotations: null,
+                        sqlAliasManager: null!,
+                        isMutable: false);
+
+                    return select;
                 }
 
                 return valuesExpression.Update(processedValues);
@@ -1858,9 +1892,23 @@ public class SqlNullabilityProcessor : ExpressionVisitor
         {
             // We're looking at a parameter beyond its simple nullability, so we can't use the SQL cache for this query.
             var parameters = ParametersDecorator.GetAndDisableCaching();
-            if (parameters[collectionParameter.Name] is not IList values)
+
+            IList values;
+            if (UseOldBehavior37204)
             {
-                throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IList.");
+                if (parameters[collectionParameter.Name] is not IList list)
+                {
+                    throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IList.");
+                }
+                values = list;
+            }
+            else
+            {
+                if (parameters[collectionParameter.Name] is not IEnumerable enumerable)
+                {
+                    throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IEnumerable.");
+                }
+                values = enumerable.Cast<object?>().ToList();
             }
 
             IList? processedValues = null;
