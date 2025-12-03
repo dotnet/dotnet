@@ -22,3 +22,6 @@
 [submodule "vs-solutionpersistence"]
 	path = src/externalPackages/src/vs-solutionpersistence
 	url = https://github.com/microsoft/vs-solutionpersistence.git
+[submodule "spectre-console"]
+	path = src/externalPackages/src/spectre-console
+	url = https://github.com/spectreconsole/spectre.console

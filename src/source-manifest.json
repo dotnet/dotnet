@@ -37,10 +37,10 @@
       "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
     },
     {
-      "barId": 292703,
+      "barId": 292896,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "c14edd18895fe53efd010d4517da332f30784df6"
+      "commitSha": "3042fe7f891cd25aa80143ef6665756cab63e076"
     },
     {
       "barId": 291014,
@@ -55,10 +55,10 @@
       "commitSha": "f779efc8c61a92528741de0210e46b47b8e71601"
     },
     {
-      "barId": 292441,
+      "barId": 292884,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "f72a9ff20e399ce26ef282b4979750de302e3f42"
+      "commitSha": "09a7264b4b0dd010075cc47e3aee4b32db329c47"
     },
     {
       "barId": 292299,
@@ -128,7 +128,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "68fcfe0de4c0602b1c4d4c3cf58ea70e9f06388c"
+      "commitSha": "e097281ca8a50268b1022453fe6efd9112123a28"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
