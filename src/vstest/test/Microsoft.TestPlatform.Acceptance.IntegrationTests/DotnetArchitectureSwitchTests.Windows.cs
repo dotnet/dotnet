@@ -40,7 +40,6 @@ public class DotnetArchitectureSwitchTestsWindowsOnly : AcceptanceTestBase
 
         var environmentVariables = new Dictionary<string, string?>
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             [$"DOTNET_ROOT_{architectureTo}"] = Path.GetDirectoryName(dotnetPathTo)!,
             ["ExpectedArchitecture"] = architectureTo
         };
@@ -74,7 +73,6 @@ public class UnitTest1
 
         environmentVariables = new Dictionary<string, string?>
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             ["DOTNET_ROOT"] = Path.GetDirectoryName(dotnetPathTo),
             ["ExpectedArchitecture"] = architectureTo
         };
@@ -88,7 +86,6 @@ public class UnitTest1
 
         environmentVariables = new Dictionary<string, string?>
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             [$"DOTNET_ROOT_{architectureTo}"] = Path.GetDirectoryName(dotnetPathTo),
             ["DOTNET_ROOT"] = "WE SHOULD PICK THE ABOVE ONE BEFORE FALLBACK TO DOTNET_ROOT",
             ["ExpectedArchitecture"] = architectureTo
