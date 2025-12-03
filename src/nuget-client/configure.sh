@@ -48,12 +48,10 @@ else
 fi
 
 export DOTNET_ROOT="$CLI_DIR"
-export DOTNET_MULTILEVEL_LOOKUP="0"
 export "PATH=$CLI_DIR:$PATH"
 
 if [ "$CI" == "true" ]; then
     echo "##vso[task.setvariable variable=DOTNET_ROOT;isOutput=false;issecret=false;]$CLI_DIR"
-    echo "##vso[task.setvariable variable=DOTNET_MULTILEVEL_LOOKUP;isOutput=false;issecret=false;]0"
     echo "##vso[task.prependpath]$CLI_DIR"
 fi
 

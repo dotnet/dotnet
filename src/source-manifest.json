@@ -25,10 +25,10 @@
       "commitSha": "cf5fd8d696450a48d3cc75a7a1792d34b5303f88"
     },
     {
-      "barId": 288748,
+      "barId": 292166,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "84ccc0553245e90355f32ea8ddcf169d9bd8f640"
+      "commitSha": "56c3d96916e1b2bb065732ffedd6b9e0285a6ed4"
     },
     {
       "barId": 288647,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 292575,
+      "barId": 292861,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "94ccee9f77787d406c5ac65e51303189f68640b2"
+      "commitSha": "de10f40f8bbe7f19bacb817c48be5e5c07584437"
     },
     {
       "barId": 292157,
@@ -97,10 +97,10 @@
       "commitSha": "65384c6536d6c6f6afa9c13dc023b1848f0ef69e"
     },
     {
-      "barId": 291178,
+      "barId": 292763,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "a3edc677e7df447fe8a38854fbd7a2b0bc327dc5"
+      "commitSha": "feab92a4bbe50a61eae220b7b4aa287ae5322431"
     },
     {
       "barId": 292303,
@@ -127,10 +127,10 @@
       "commitSha": "154e8babf0b97312a403b6ccf84cf1498a32ecea"
     },
     {
-      "barId": 291441,
+      "barId": 292669,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "9d90f3f51f618c68d2af7ed75564599b37bf2a65"
+      "commitSha": "132afbade9e2ce626f26e27c136f34af73dde2f1"
     },
     {
       "barId": 292327,
@@ -210,7 +210,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "3c2156268ca56c3712c0c4b304b16ca52fee1c7f"
+      "commitSha": "e097281ca8a50268b1022453fe6efd9112123a28"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
