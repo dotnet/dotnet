@@ -35,7 +35,7 @@ steps:
 
       branchName=$(echo "$(Build.SourceBranch)" | sed 's/refs\/heads\///g')
 
-      $(DotNetPath)/dotnet run \
+      ${{ parameters.dotnetPath }}/dotnet run \
         --project eng/tools/CreateBaselineUpdatePR/ \
         --property:RestoreSources="$restoreSources" \
         "${{ parameters.pipeline }}" \
