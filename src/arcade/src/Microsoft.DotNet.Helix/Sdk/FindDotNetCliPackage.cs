@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
@@ -59,7 +60,34 @@ namespace Microsoft.DotNet.Helix.Sdk
 
         public override void ConfigureServices(IServiceCollection collection)
         {
-            _httpMessageHandler = new HttpClientHandler {  CheckCertificateRevocationList = true };
+#if NET
+            var socketsHandler = new SocketsHttpHandler
+            {
+                AllowAutoRedirect = true,
+            };
+            socketsHandler.SslOptions.CertificateChainPolicy = new X509ChainPolicy
+            {
+                // Yes, check revocation.
+                // Yes, allow it to be downloaded if needed.
+                // Online is the default, but it doesn't hurt to be explicit.
+                RevocationMode = X509RevocationMode.Online,
+                // Roots never bother with revocation.
+                // ExcludeRoot is the default, but it doesn't hurt to be explicit.
+                RevocationFlag = X509RevocationFlag.ExcludeRoot,
+                // RevocationStatusUnknown at the EndEntity/Leaf certificate will not fail the chain build.
+                // RevocationStatusUnknown for any intermediate CA will not fail the chain build.
+                // IgnoreRootRevocationUnknown could also be specified, but it won't apply given ExcludeRoot above.
+                // The default is that all status codes are bad, this is not the default.
+                VerificationFlags =
+                    X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown |
+                    X509VerificationFlags.IgnoreEndRevocationUnknown,
+                // Always use the "now" when building the chain, rather than the "now" of when this policy object was constructed.
+                VerificationTimeIgnored = true,
+            };
+            _httpMessageHandler = socketsHandler;
+#else
+            _httpMessageHandler = new HttpClientHandler { CheckCertificateRevocationList = true };
+#endif
             collection.TryAddSingleton(_httpMessageHandler);
             collection.TryAddSingleton(Log);
         }
@@ -81,7 +109,7 @@ namespace Microsoft.DotNet.Helix.Sdk
         {
             NormalizeParameters();
             var feeds = new List<ITaskItem>();
-            feeds.Add(new MSBuild.TaskItem("https://dotnetcli.blob.core.windows.net/dotnet"));
+            feeds.Add(new MSBuild.TaskItem("https://builds.dotnet.microsoft.com/dotnet"));
             feeds.Add(new MSBuild.TaskItem("https://ci.dot.net/public"));
             if (AdditionalFeeds != null)
             {

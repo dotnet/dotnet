@@ -54,19 +54,13 @@ namespace Microsoft.DotNet.SignTool
             return null;
         }
 
-        public static IEnumerable<ZipDataEntry> ReadEntries(
-            string archivePath,
-            string tempDir,
-            string dotNetPathTooling,
-            string tarToolPath,
-            string pkgToolPath,
-            bool ignoreContent = false)
+        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, bool ignoreContent = false)
         {
             if (FileSignInfo.IsTarGZip(archivePath))
             {
                 // Tar APIs not available on .NET FX. We need sign tool to run on desktop msbuild because building VSIX packages requires desktop.
 #if NET472
-                return ReadTarGZipEntries(archivePath, tempDir, dotNetPathTooling, tarToolPath, ignoreContent);
+                return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
                 return ReadTarGZipEntries(archivePath)
                     .Select(static entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length)
@@ -77,7 +71,7 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
             {
-                return ReadPkgOrAppBundleEntries(archivePath, tempDir, dotNetPathTooling, pkgToolPath, ignoreContent);
+                return ReadPkgOrAppBundleEntries(archivePath, tempDir, pkgToolPath, ignoreContent);
             }
             else if (FileSignInfo.IsDeb(archivePath))
             {
@@ -109,14 +103,7 @@ namespace Microsoft.DotNet.SignTool
         /// <summary>
         /// Repack the zip container with the signed files.
         /// </summary>
-        public void Repack(
-            TaskLoggingHelper log,
-            string tempDir,
-            string wix3ToolsPath,
-            string wixToolsPath,
-            string dotNetPathTooling,
-            string tarToolPath,
-            string pkgToolPath)
+        public void Repack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath, string tarToolPath, string pkgToolPath)
         {
 #if NET472
             if (FileSignInfo.IsVsix())
@@ -127,7 +114,7 @@ namespace Microsoft.DotNet.SignTool
 #endif
             if (FileSignInfo.IsTarGZip())
             {
-                RepackTarGZip(log, tempDir, dotNetPathTooling, tarToolPath);
+                RepackTarGZip(log, tempDir, tarToolPath);
             }
             else if (FileSignInfo.IsUnpackableWixContainer())
             {
@@ -135,7 +122,7 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsPkg() || FileSignInfo.IsAppBundle())
             {
-                RepackPkgOrAppBundles(log, tempDir, dotNetPathTooling, pkgToolPath);
+                RepackPkgOrAppBundles(log, tempDir, pkgToolPath);
             }
             else if (FileSignInfo.IsDeb())
             {
@@ -309,12 +296,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        internal static bool RunPkgProcess(
-            string srcPath,
-            string dstPath,
-            string action,
-            string dotNetPathTooling,
-            string pkgToolPath)
+        internal static bool RunPkgProcess(string srcPath, string dstPath, string action, string pkgToolPath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -330,7 +312,7 @@ namespace Microsoft.DotNet.SignTool
 
             var process = Process.Start(new ProcessStartInfo()
             {
-                FileName = dotNetPathTooling,
+                FileName = "dotnet",
                 Arguments = $@"exec ""{pkgToolPath}"" {args}",
                 UseShellExecute = false,
                 RedirectStandardError = true
@@ -340,17 +322,12 @@ namespace Microsoft.DotNet.SignTool
             return process.ExitCode == 0;
         }
 
-        private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(
-            string archivePath,
-            string tempDir,
-            string dotNetPathTooling,
-            string pkgToolPath,
-            bool ignoreContent)
+        private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
         {
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
-                if (!RunPkgProcess(archivePath, extractDir, "unpack", dotNetPathTooling, pkgToolPath))
+                if (!RunPkgProcess(archivePath, extractDir, "unpack", pkgToolPath))
                 {
                     throw new Exception($"Failed to unpack pkg {archivePath}");
                 }
@@ -374,7 +351,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string dotNetPathTooling, string pkgToolPath)
+        private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string pkgToolPath)
         {
 #if NET472
             throw new NotImplementedException("PKG manipulation is not supported on .NET Framework");
@@ -388,7 +365,7 @@ namespace Microsoft.DotNet.SignTool
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
-                if (!RunPkgProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, "unpack", dotNetPathTooling, pkgToolPath))
+                if (!RunPkgProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, "unpack", pkgToolPath))
                 {
                     return;
                 }
@@ -412,7 +389,7 @@ namespace Microsoft.DotNet.SignTool
                     File.SetUnixFileMode(path, extractedFileMode);
                 }
 
-                if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", dotNetPathTooling, pkgToolPath))
+                if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", pkgToolPath))
                 {
                     return;
                 }
@@ -428,11 +405,11 @@ namespace Microsoft.DotNet.SignTool
         }
 
 #if NETFRAMEWORK
-        private static bool RunTarProcess(string srcPath, string dstPath, string dotNetPathTooling, string tarToolPath)
+        private static bool RunTarProcess(string srcPath, string dstPath, string tarToolPath)
         {
             var process = Process.Start(new ProcessStartInfo()
             {
-                FileName = dotNetPathTooling,
+                FileName = "dotnet",
                 Arguments = $@"exec ""{tarToolPath}"" ""{srcPath}"" ""{dstPath}""",
                 UseShellExecute = false
             });
@@ -441,19 +418,14 @@ namespace Microsoft.DotNet.SignTool
             return process.ExitCode == 0;
         }
 
-        private static IEnumerable<ZipDataEntry> ReadTarGZipEntries(
-            string archivePath,
-            string tempDir,
-            string dotNetPathTooling,
-            string tarToolPath,
-            bool ignoreContent)
+        private static IEnumerable<ZipDataEntry> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
         {
             var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
                 Directory.CreateDirectory(extractDir);
 
-                if (!RunTarProcess(archivePath, extractDir, dotNetPathTooling, tarToolPath))
+                if (!RunTarProcess(archivePath, extractDir, tarToolPath))
                 {
                     throw new Exception($"Failed to unpack tar archive: {archivePath}");
                 }
@@ -471,16 +443,16 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string dotNetPathTooling, string tarToolPath)
+        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
             var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
                 Directory.CreateDirectory(extractDir);
 
-                if (!RunTarProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, dotNetPathTooling, tarToolPath))
+                if (!RunTarProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, tarToolPath))
                 {
-                    log.LogMessage(MessageImportance.Low, $"Failed to unpack tar archive: {dotNetPathTooling} {tarToolPath} {FileSignInfo.FullPath}");
+                    log.LogMessage(MessageImportance.Low, $"Failed to unpack tar archive: dotnet {tarToolPath} {FileSignInfo.FullPath}");
                     return;
                 }
 
@@ -499,9 +471,9 @@ namespace Microsoft.DotNet.SignTool
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
                 }
 
-                if (!RunTarProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, dotNetPathTooling, tarToolPath))
+                if (!RunTarProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, tarToolPath))
                 {
-                    log.LogMessage(MessageImportance.Low, $"Failed to pack tar archive: {dotNetPathTooling} {tarToolPath} {FileSignInfo.FullPath}");
+                    log.LogMessage(MessageImportance.Low, $"Failed to pack tar archive: dotnet {tarToolPath} {FileSignInfo.FullPath}");
                     return;
                 }
             }
@@ -511,7 +483,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 #else
-        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string dotNetPathTooling, string tarToolPath)
+        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
             using MemoryStream streamToCompress = new();
             using (TarWriter writer = new(streamToCompress, leaveOpen: true))
