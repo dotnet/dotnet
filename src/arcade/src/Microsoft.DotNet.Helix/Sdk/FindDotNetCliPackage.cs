@@ -106,8 +106,8 @@ namespace Microsoft.DotNet.Helix.Sdk
         {
             NormalizeParameters();
             var feeds = new List<ITaskItem>();
-            feeds.Add(new MSBuild.TaskItem("https://dotnetcli.blob.core.windows.net/dotnet"));
-            feeds.Add(new MSBuild.TaskItem("https://dotnetbuilds.blob.core.windows.net/public"));
+            feeds.Add(new MSBuild.TaskItem("https://builds.dotnet.microsoft.com/dotnet"));
+            feeds.Add(new MSBuild.TaskItem("https://ci.dot.net/public"));
             if (AdditionalFeeds != null)
             {
                 feeds.AddRange(AdditionalFeeds);
