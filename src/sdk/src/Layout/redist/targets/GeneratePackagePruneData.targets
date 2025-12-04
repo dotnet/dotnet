@@ -50,8 +50,7 @@
       <PackageDownload Remove="@(PackageDownload)" />
     </ItemGroup>
     
-    <CollatePackageDownloads Packages="@(TargetingPackToDownloadForPruneData->Metadata('PackageName'));@(_ExistingPackageDownload)"
-                             Condition="'@(TargetingPackToDownloadForPruneData)' != ''">
+    <CollatePackageDownloads Packages="@(TargetingPackToDownloadForPruneData->Metadata('PackageName'));@(_ExistingPackageDownload)">
       <Output TaskParameter="PackageDownloads" ItemName="PackageDownload" />
     </CollatePackageDownloads>
   </Target>
