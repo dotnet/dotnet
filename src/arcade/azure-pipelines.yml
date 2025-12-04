@@ -47,6 +47,9 @@ extends:
         enabled: true
       tsa:
         enabled: true
+      binskim:
+        scanOutputDirectoryOnly: true
+        analyzeTargetGlob: +:f|**/artifacts/**/*.dll;+:f|**/artifacts/**/*.exe;-:f|**/*.Tests/**/*;-:f|**/wix/**/*;-:f|**/wix3/**/*;-:f|**/winterop.dll;
 
     stages:
     - template: /eng/build.yml@self
