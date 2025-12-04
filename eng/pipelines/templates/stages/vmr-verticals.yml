@@ -117,7 +117,7 @@ stages:
             image: ${{ variables.ubuntuContainerImage }}
           targetOS: linux
           targetArchitecture: x64
-          extraProperties: /p:DotNetBuildTests=true /p:BuildRepoTools=true
+          extraProperties: /p:DotNetBuildTests=true
 
     - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-windows-buildtests')) }}:
       - template: ../jobs/vmr-build.yml
@@ -127,7 +127,7 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
-          extraProperties: /p:DotNetBuildTests=true /p:BuildRepoTools=true
+          extraProperties: /p:DotNetBuildTests=true
 
 #### VERTICAL BUILD (Official) ####
 - ${{ if and(notin(parameters.scope, 'scout'), or(in(parameters.scope, 'full') , contains(join(';', parameters.verifications), 'unified-build-'))) }}:
