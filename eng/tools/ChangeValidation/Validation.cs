@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using Maestro.Common;
 using Microsoft.DotNet.DarcLib.Helpers;
 using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
 using Microsoft.Extensions.DependencyInjection;
@@ -102,7 +103,10 @@ internal static class Validation
 
     private static ServiceProvider RegisterServices(string repoRoot)
     {
-        return new ServiceCollection().AddCodeflow("tmp", vmrPath: repoRoot).BuildServiceProvider();
+        return new ServiceCollection()
+            .AddCodeflow("tmp", vmrPath: repoRoot)
+            .AddSingleton<IRemoteTokenProvider, NullRemoteTokenProvider>()
+            .BuildServiceProvider();
     }
 
     private static List<IValidationStep> CreateValidationSteps(IServiceProvider serviceProvider)
@@ -112,5 +116,11 @@ internal static class Validation
             ActivatorUtilities.CreateInstance<SubmoduleValidation>(serviceProvider),
             ActivatorUtilities.CreateInstance<ExclusionFileValidation>(serviceProvider)
             ];
+    }
+
+    private class NullRemoteTokenProvider : IRemoteTokenProvider
+    {
+        public string? GetTokenForRepository(string repoUri) => null;
+        public Task<string?> GetTokenForRepositoryAsync(string repoUri) => Task.FromResult<string?>(null);
     }
 }
