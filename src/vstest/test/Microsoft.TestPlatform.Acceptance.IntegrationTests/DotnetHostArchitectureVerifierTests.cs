@@ -38,7 +38,6 @@ public class DotnetHostArchitectureVerifierTests : IntegrationTestBase
 
         var environmentVariables = new Dictionary<string, string?>
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             ["ExpectedArchitecture"] = architecture
         };
 

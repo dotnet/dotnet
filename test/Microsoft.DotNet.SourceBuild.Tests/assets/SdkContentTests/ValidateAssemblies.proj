@@ -10,11 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.DotNet.ApiCompat.Task" Version="10.0.100-rc.1.25451.107" />
-    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" />
     <PackageReference Include="Microsoft.CodeAnalysis" />
   </ItemGroup>
