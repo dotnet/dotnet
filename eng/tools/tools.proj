@@ -4,4 +4,11 @@
     <ProjectReference Include="**\*.csproj" />
   </ItemGroup>
 
+  <!-- Skip projects that aren't needed for source-build and which would introduce prebuilts. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <ProjectReference Remove="BuildComparer\BuildComparer.csproj" />
+    <ProjectReference Remove="ChangeValidation\ChangeValidation.csproj" />
+    <ProjectReference Remove="CreateBaselineUpdatePR\CreateBaselineUpdatePR.csproj" />
+  </ItemGroup>
+
 </Project>
