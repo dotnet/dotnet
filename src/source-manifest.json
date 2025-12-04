@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25562.4",
+      "packageVersion": "9.0.0-beta.25577.5",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6e2d8e204cebac7d3989c1996f96e5a9ed63fa80"
+      "commitSha": "0890ca08513391dafe556fb326c73c6c5c6cb329"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.52-preview-25520-14",
+      "packageVersion": "17.12.53-preview-25570-13",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "2681ee4bc1172eb7bc551555f3e46ddc7381c2ae"
+      "commitSha": "a3e0085f1d5f33a0e6250dc7b5158c28e12bd457"
     },
     {
       "packageVersion": "6.12.4",
@@ -79,10 +79,10 @@
       "commitSha": "2120c57cad2f9bedc66a5dcea6eecddfafc954ba"
     },
     {
-      "packageVersion": "4.12.0-3.25567.11",
+      "packageVersion": "4.12.0-3.25571.3",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "80d1922899056e081c0711aa29c72b19390d360c"
+      "commitSha": "c795154af418b5473d67f053aec5d290a3e5c410"
     },
     {
       "packageVersion": "3.11.0-beta1.25173.3",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ccd519e67f6cab4022025ebdcba81ad273805fee"
+      "commitSha": "b4a83a5aa0115814b7ff5beb1df2dbfc5954eb5f"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.113-servicing.25562.8",
+      "packageVersion": "9.0.113-servicing.25602.8",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e784f3d6d4dc06ae806a254dd14b0979248aa83a"
+      "commitSha": "9887f549bbf4a5eb3796e3d783826a3758b6b1a9"
     },
     {
       "packageVersion": "1.1.0-rtm.25262.1",
