@@ -1,15 +1,14 @@
-From dc5adfd1633f110e26c02693ca0b84b2e4c26a30 Mon Sep 17 00:00:00 2001
-From: Jonathan Peppers <jonathan.peppers@gmail.com>
-Date: Wed, 29 Oct 2025 21:19:22 +0000
+From 1250cea7252e45de242063668469b75ff7618ee0 Mon Sep 17 00:00:00 2001
+From: Andy Zivkovic <zivkan@users.noreply.github.com>
+Date: Thu, 27 Nov 2025 10:42:15 +1030
 Subject: [PATCH] Remove PolySharp
 
-PolySharp is not available in source-build environments.
 ---
  src/Spectre.Console/Spectre.Console.csproj | 4 ----
  1 file changed, 4 deletions(-)
 
 diff --git a/src/Spectre.Console/Spectre.Console.csproj b/src/Spectre.Console/Spectre.Console.csproj
-index bb56ec6..ddfa90e 100644
+index 5a9e161..991c064 100644
 --- a/src/Spectre.Console/Spectre.Console.csproj
 +++ b/src/Spectre.Console/Spectre.Console.csproj
 @@ -22,10 +22,6 @@
@@ -24,5 +23,5 @@ index bb56ec6..ddfa90e 100644
  
    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 -- 
-2.47.3
+2.43.0
 
