@@ -929,6 +929,12 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <target state="translated">Paketbezeichner (z. B. „Newtonsoft.Json“).</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">Das Paket „{0}“ kann nicht heruntergeladen werden. PackageSourceMapping ist aktiviert, aber für dieses Paket wurden keine zugeordneten Quellen gefunden. Die folgenden Quellen wurden nicht berücksichtigt: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
       <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
         <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
         <target state="translated">Die zugeordnete Quelle {0} für das Paket {1} wurde unter den konfigurierten Quellen nicht gefunden.</target>
