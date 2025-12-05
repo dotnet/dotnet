@@ -339,9 +339,12 @@ extends:
             runTests: false
 
       # Source Build
-      - template: /eng/common/templates-official/jobs/source-build.yml@self
+      - template: /eng/common/templates-official/job/source-build.yml@self
         parameters:
           enableInternalSources: true
+          platform:
+            name: Managed
+            container: centosStream9
 
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.DefinitionName'], 'dotnet-installer-official-ci')) }}:
       - stage: Publish
