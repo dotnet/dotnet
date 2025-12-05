@@ -86,7 +86,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
-    private const string RuntimeDepsVersion = "10.0-preview";
+    private const string RuntimeDepsVersion = "10.0";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
     private const string DotnetHostPrefix = "dotnet-host-";
     private const string DotnetHostFxrPrefix = "dotnet-hostfxr-";
@@ -149,7 +149,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
@@ -167,7 +167,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
