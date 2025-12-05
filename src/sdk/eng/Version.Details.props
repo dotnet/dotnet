@@ -53,8 +53,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetBuildTasksWorkloadsPackageVersion>11.0.0-beta.25515.110</MicrosoftDotNetBuildTasksWorkloadsPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25515.110</MicrosoftDotNetHelixSdkPackageVersion>
     <MicrosoftDotNetSignToolPackageVersion>11.0.0-beta.25515.110</MicrosoftDotNetSignToolPackageVersion>
-    <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotNetWebItemTemplates100PackageVersion>
-    <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotNetWebProjectTemplates100PackageVersion>
+    <MicrosoftDotNetWebItemTemplates110PackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotNetWebItemTemplates110PackageVersion>
+    <MicrosoftDotNetWebProjectTemplates110PackageVersion>10.0.0-rc.1.25515.110</MicrosoftDotNetWebProjectTemplates110PackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25515.110</MicrosoftDotNetXliffTasksPackageVersion>
     <MicrosoftDotNetXUnitExtensionsPackageVersion>11.0.0-beta.25515.110</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <MicrosoftExtensionsConfigurationIniPackageVersion>10.0.0-rc.1.25515.110</MicrosoftExtensionsConfigurationIniPackageVersion>
