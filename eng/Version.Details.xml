@@ -22,5 +22,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.0-rtm.25523.111">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
