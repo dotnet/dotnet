@@ -106,7 +106,7 @@
       </trans-unit>
       <trans-unit id="KeywordDescription">
         <source>{0} Keyword</source>
-        <target state="translated">Palabra clave{0}</target>
+        <target state="translated">{0} Palabra clave</target>
         <note />
       </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
