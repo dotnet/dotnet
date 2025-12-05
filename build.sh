@@ -115,8 +115,6 @@ exclude_ci_binary_log=''
 node_reuse=''
 prepare_machine=''
 warn_as_error=''
-targetOS=''
-targetArch=''
 
 properties=()
 while [[ $# > 0 ]]; do
@@ -139,12 +137,10 @@ while [[ $# > 0 ]]; do
       ;;
     -os|-target-os)
       properties+=( "/p:TargetOS=$2" )
-      targetOS="$2"
       shift
       ;;
     -arch|-target-arch)
       properties+=( "/p:TargetArchitecture=$2" )
-      targetArch="$2"
       shift
       ;;
     -branding)
@@ -347,20 +343,7 @@ fi
 # Initialize __DistroRid and __PortableTargetOS
 source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
-
 initDistroRidGlobal "$os" "$arch" ""
-
-if [[ -n "$__DistroRid" ]]; then
-  properties+=( "/p:BuildRid=$__DistroRid" )
-fi
-
-# if targetOS and targetArch were provided, recompute __PortableTargetOS
-if [[ -n "$targetOS" && -n "$targetArch" ]]; then
-  unset __PortableTargetOS
-  initDistroRidGlobal "$targetOS" "$targetArch" ""
-fi
-
-properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
