@@ -307,7 +307,12 @@ public static class IntermediateNodeAssert
         }
     }
 
-    internal static void TagHelper(string tagName, TagMode tagMode, IEnumerable<TagHelperDescriptor> tagHelpers, IntermediateNode node, params Action<IntermediateNode>[] childValidators)
+    internal static void TagHelper(
+        string tagName,
+        TagMode tagMode,
+        TagHelperCollection tagHelpers,
+        IntermediateNode node,
+        params Action<IntermediateNode>[] childValidators)
     {
         var tagHelperNode = Assert.IsType<TagHelperIntermediateNode>(node);
 

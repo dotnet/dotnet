@@ -64,7 +64,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
 
         var searchEngine = new RazorComponentSearchEngine(LoggerFactory);
 
-        var renameService = new RenameService(searchEngine, LanguageServerFeatureOptions);
+        var renameService = new RenameService(searchEngine, new FileSystem(), LanguageServerFeatureOptions);
 
         var endpoint = new RenameEndpoint(
             renameService,

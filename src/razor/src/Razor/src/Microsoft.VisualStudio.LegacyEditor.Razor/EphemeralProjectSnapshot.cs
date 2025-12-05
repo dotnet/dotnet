@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -26,7 +25,7 @@ internal sealed class EphemeralProjectSnapshot(IProjectEngineFactoryProvider pro
     public RazorConfiguration Configuration => FallbackRazorConfiguration.Latest;
     public string? RootNamespace => null;
     public LanguageVersion CSharpLanguageVersion => LanguageVersion.Default;
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => [];
+    public TagHelperCollection TagHelpers => [];
 
     public RazorProjectEngine GetProjectEngine()
         => _projectEngine.Value;

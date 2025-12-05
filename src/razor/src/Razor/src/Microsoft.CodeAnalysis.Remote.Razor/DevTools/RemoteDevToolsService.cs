@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,12 +86,12 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
         {
             TagHelpersKind.All => codeDocument.GetTagHelpers(),
             TagHelpersKind.InScope => codeDocument.GetRequiredTagHelperContext().TagHelpers,
-            TagHelpersKind.Referenced => (IEnumerable<TagHelperDescriptor>?)codeDocument.GetReferencedTagHelpers(),
+            TagHelpersKind.Referenced => codeDocument.GetReferencedTagHelpers(),
             _ => []
         };
 
         tagHelpers ??= [];
-        return new FetchTagHelpersResult(tagHelpers.ToImmutableArray());
+        return new FetchTagHelpersResult(tagHelpers);
     }
 
     public ValueTask<SyntaxVisualizerTree?> GetRazorSyntaxTreeAsync(

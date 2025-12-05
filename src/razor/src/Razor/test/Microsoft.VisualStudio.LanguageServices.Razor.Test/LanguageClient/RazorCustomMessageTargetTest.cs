@@ -60,7 +60,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -103,7 +102,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -157,7 +155,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true),
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -199,7 +196,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -269,7 +265,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer,
             csharpVirtualDocumentAddListener,
             telemetryReporter.Object,
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -325,6 +320,8 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(r => r.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 1,
                 It.IsAny<Uri>(),
+                It.IsAny<Uri>(),
+                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DefaultLSPDocumentSynchronizer.SynchronizedResult<CSharpVirtualDocumentSnapshot>(true, csharpVirtualDocument));
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
@@ -339,7 +336,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             csharpVirtualDocumentAddListener,
             telemetryReporter.Object,
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -377,7 +373,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -420,7 +415,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer,
             new CSharpVirtualDocumentAddListener(LoggerFactory),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -475,6 +469,8 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(r => r.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 0,
                 It.IsAny<Uri>(),
+                It.IsAny<Uri>(),
+                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DefaultLSPDocumentSynchronizer.SynchronizedResult<CSharpVirtualDocumentSnapshot>(true, csharpVirtualDocument));
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
@@ -496,7 +492,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             csharpVirtualDocumentAddListener,
             telemetryReporter.Object,
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);
@@ -552,6 +547,8 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(r => r.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 0,
                 It.IsAny<Uri>(),
+                It.IsAny<Uri>(),
+                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DefaultLSPDocumentSynchronizer.SynchronizedResult<CSharpVirtualDocumentSnapshot>(true, csharpVirtualDocument));
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
@@ -573,7 +570,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             documentSynchronizer.Object,
             csharpVirtualDocumentAddListener,
             telemetryReporter.Object,
-            TestLanguageServerFeatureOptions.Instance,
             CreateProjectSnapshotManager(),
             new SnippetCompletionItemProvider(new SnippetCache()),
             LoggerFactory);

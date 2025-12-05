@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -19,9 +18,9 @@ public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(t
     public void ProjectSnapshotHandleProxy_RoundTripsProperly()
     {
         // Arrange
-        var tagHelpers = ImmutableArray.Create(
+        TagHelperCollection tagHelpers = [
             TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build(),
-            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper2", "TestAssembly2").Build());
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper2", "TestAssembly2").Build()];
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         var expectedConfiguration = RazorConfiguration.Default;

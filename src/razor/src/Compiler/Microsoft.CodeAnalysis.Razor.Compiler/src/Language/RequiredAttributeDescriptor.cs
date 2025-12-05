@@ -42,11 +42,11 @@ public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttrib
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData((int)Flags);
-        builder.AppendData(Name);
-        builder.AppendData((int)NameComparison);
-        builder.AppendData(Value);
-        builder.AppendData((int)ValueComparison);
+        builder.Append((int)Flags);
+        builder.Append(Name);
+        builder.Append((int)NameComparison);
+        builder.Append(Value);
+        builder.Append((int)ValueComparison);
     }
 
     public TagMatchingRuleDescriptor Parent

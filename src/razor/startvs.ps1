@@ -43,9 +43,6 @@ $dotnetPath = Join-Path (Get-Location) ".dotnet"
 $env:DOTNET_ROOT = $dotnetPath
 ${env:DOTNET_ROOT(x86)} = Join-Path $dotnetPath "x86"
 
-# This tells .NET Core not to go looking for .NET Core in other places
-$env:DOTNET_MULTILEVEL_LOOKUP = 0
-
 # Put our local dotnet.exe on PATH first so Visual Studio knows which one to use
 $env:PATH = $env:DOTNET_ROOT + ";" + $env:PATH
 
@@ -73,8 +70,13 @@ if ($chooseVS) {
         $channelId = $vsInstall.installedChannelId
         $lastDotIndex = $channelId.LastIndexOf(".")
         $channelName = $channelId.Substring($lastDotIndex + 1);
+        $nickName = $vsInstall.properties.nickname
+        if ($nickName.Length -gt 0)
+        {
+            $nickName = " - '$nickName'"
+        }
 
-        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))"
+        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))$($nickName)"
         $index += 1
     }
 

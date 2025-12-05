@@ -49,6 +49,8 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
                     Assert.Equal(expected: "Counter.razor", Path.GetFileName(reference.DocumentName));
                 },
             });
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
     [IdeFact]
@@ -88,6 +90,8 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
                 Assert.Equal("public string? Title { get; set; }", reference.Code);
             }
         );
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
     [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
@@ -127,6 +131,8 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
                 Assert.Equal(expected: "Title", reference.Code);
             }
         );
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
     [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
@@ -201,6 +207,8 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
                     Assert.Equal(expected: "MyPage.razor", Path.GetFileName(reference.DocumentName));
                 },
             });
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
     private static IEnumerable<TableEntry> OrderResults(ImmutableArray<ITableEntryHandle2> results)

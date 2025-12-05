@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -43,11 +42,8 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         var builder = TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly");
         builder.TypeName = "PTagHelper";
         builder.TagMatchingRule(rule => rule.TagName = "p");
-        var descriptors = new[]
-        {
-            builder.Build()
-        };
-        var projectEngine = CreateProjectEngine(tagHelpers: descriptors);
+        TagHelperCollection tagHelpers = [builder.Build()];
+        var projectEngine = CreateProjectEngine(tagHelpers);
         var projectItem = new TestRazorProjectItem("Index.cshtml")
         {
             Content = edit.OldSnapshot.GetText()
@@ -116,8 +112,8 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
             attribute.TypeName = typeof(string).FullName;
             attribute.PropertyName = "StringAttribute";
         });
-        var descriptors = new[] { builder.Build() };
-        var projectEngine = CreateProjectEngine(tagHelpers: descriptors);
+        TagHelperCollection tagHelpers = [builder.Build()];
+        var projectEngine = CreateProjectEngine(tagHelpers);
         var sourceDocument = new TestRazorProjectItem("Index.cshtml")
         {
             Content = edit.OldSnapshot.GetText()
@@ -390,8 +386,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         return new TestEdit(sourceChange, oldSnapshot, changedSnapshot);
     }
 
-    private static RazorProjectEngine CreateProjectEngine(
-        IEnumerable<TagHelperDescriptor> tagHelpers = null)
+    private static RazorProjectEngine CreateProjectEngine(TagHelperCollection tagHelpers = null)
     {
         var fileSystem = new TestRazorProjectFileSystem();
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, fileSystem, builder =>
@@ -402,7 +397,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
 
             if (tagHelpers != null)
             {
-                builder.AddTagHelpers(tagHelpers);
+                builder.SetTagHelpers(tagHelpers);
             }
 
             builder.ConfigureParserOptions(VisualStudioRazorParser.ConfigureParserOptions);

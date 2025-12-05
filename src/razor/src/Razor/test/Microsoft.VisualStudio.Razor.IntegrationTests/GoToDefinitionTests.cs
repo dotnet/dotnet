@@ -39,6 +39,8 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         // Assert
         await TestServices.Editor.WaitForActiveWindowAsync("Program.cs", ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", saveFile: false, ControlledHangMitigatingCancellationToken);
     }
 
     [IdeFact]

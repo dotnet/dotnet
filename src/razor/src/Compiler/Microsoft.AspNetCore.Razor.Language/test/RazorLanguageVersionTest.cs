@@ -19,7 +19,7 @@ public class RazorLanguageVersionTest
         var value = "not-version";
 
         // Act
-        var result = RazorLanguageVersion.TryParse(value, out var _);
+        var result = RazorLanguageVersion.TryParse(value, out _);
 
         // Assert
         Assert.False(result);

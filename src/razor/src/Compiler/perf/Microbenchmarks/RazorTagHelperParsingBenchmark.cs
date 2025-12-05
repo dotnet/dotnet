@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
@@ -63,18 +61,18 @@ public class RazorTagHelperParsingBenchmark
         ComponentDirectiveVisitor.Visit(SyntaxTree);
     }
 
-    private static ImmutableArray<TagHelperDescriptor> ReadTagHelpers(string filePath)
+    private static TagHelperCollection ReadTagHelpers(string filePath)
     {
         using var reader = new StreamReader(filePath);
-        return JsonDataConvert.DeserializeTagHelperArray(reader);
+        var array = JsonDataConvert.DeserializeTagHelperArray(reader);
+
+        return TagHelperCollection.Create(array);
     }
 
-    private sealed class StaticTagHelperFeature(IReadOnlyList<TagHelperDescriptor> descriptors)
+    private sealed class StaticTagHelperFeature(TagHelperCollection tagHelpers)
         : RazorEngineFeatureBase, ITagHelperFeature
     {
-        public IReadOnlyList<TagHelperDescriptor> Descriptors { get; } = descriptors;
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
-            => Descriptors;
+        public TagHelperCollection GetTagHelpers(CancellationToken cancellationToken = default)
+            => tagHelpers;
     }
 }

@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -25,8 +24,8 @@ public sealed partial class RazorCodeDocument
 
         private readonly object?[] _values = new object?[Size];
 
-        public Property<IReadOnlyList<TagHelperDescriptor>> TagHelpers => new(_values, 0);
-        public Property<ISet<TagHelperDescriptor>> ReferencedTagHelpers => new(_values, 1);
+        public Property<TagHelperCollection> TagHelpers => new(_values, 0);
+        public Property<TagHelperCollection> ReferencedTagHelpers => new(_values, 1);
         public Property<RazorSyntaxTree> PreTagHelperSyntaxTree => new(_values, 2);
         public Property<RazorSyntaxTree> SyntaxTree => new(_values, 3);
         public BoxedProperty<ImmutableArray<RazorSyntaxTree>> ImportSyntaxTrees => new(_values, 4);
