@@ -67,7 +67,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitExtensionsPackageVersion>11.0.0-beta.25528.108</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-1.25528.108</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftNETSdkILPackageVersion>10.0.0-rc.1.25528.108</MicrosoftNETSdkILPackageVersion>
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportPackageVersion>10.0.100-rc.2.25528.108</MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportPackageVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion>10.0.100-rc.2.25528.108</MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.0-rc.1.25528.108</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>10.0.0-rc.1.25528.108</MicrosoftNETCoreILAsmPackageVersion>
     <NuGetFrameworksPackageVersion>7.0.0-preview.1.2908</NuGetFrameworksPackageVersion>
@@ -182,7 +182,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitExtensionsVersion>$(MicrosoftDotNetXUnitExtensionsPackageVersion)</MicrosoftDotNetXUnitExtensionsVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftNETSdkILVersion>$(MicrosoftNETSdkILPackageVersion)</MicrosoftNETSdkILVersion>
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportPackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreILAsmVersion>$(MicrosoftNETCoreILAsmPackageVersion)</MicrosoftNETCoreILAsmVersion>
     <NuGetFrameworksVersion>$(NuGetFrameworksPackageVersion)</NuGetFrameworksVersion>
