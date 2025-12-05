@@ -40,8 +40,6 @@ namespace Microsoft.Build.Eventing
         /// </summary>
         public static MSBuildEventSource Log = new MSBuildEventSource();
 
-        private MSBuildEventSource() { }
-
         #region Events
 
         /// <summary>
