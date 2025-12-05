@@ -197,7 +197,7 @@ Alternatively, you can also provide a manifest file where this information can b
 
 Sometimes you want to make a change in a repository and test that change in the VMR locally (or vice versa). You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
-To do this, you need to use the [`darc vmr forwardflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) or [`darc vmr backflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) commands which can move your changes from your repository's dev branch into a local VMR one. Please refer to command's documentation (`--help`) for more details.
+To do this, you need to use the [`darc vmr forwardflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) or [`darc vmr backflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#backflow) commands which can move your changes from your repository's dev branch into a local VMR one. Please refer to command's documentation (`--help`) for more details.
 
 ## Filing Issues
 
