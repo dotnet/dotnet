@@ -12,6 +12,9 @@
 
     <!-- TODO: Remove warnaserror=false, https://github.com/dotnet/dotnet/issues/1848 -->
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
+
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
