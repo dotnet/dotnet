@@ -175,7 +175,6 @@ namespace Dotnet.Integration.Test
             Dictionary<string, string> finalEnvironmentVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["MSBuildSDKsPath"] = MsBuildSdksPath,
-                ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
                 ["DOTNET_ROOT"] = _cliDirectory,
                 // We need to force-override this because otherwise the MSBuildExtensionsPath
                 // set from the _outer_ dotnet cli call (which could be any version) will override

@@ -216,7 +216,6 @@ Function SetupNuGetFolders([string] $nugetClientFilePath, [string] $nugetFolders
 
     # This environment variable is not recognized by any NuGet client.
     $Env:NUGET_SOLUTION_PACKAGES_FOLDER_PATH = [System.IO.Path]::Combine($nugetFoldersPath, "sp")
-    $Env:DOTNET_MULTILEVEL_LOOKUP=0
 
     LocalsClearAll $nugetClientFilePath
 }
@@ -236,7 +235,6 @@ Function CleanNuGetFolders([string] $nugetClientFilePath, [string] $nugetFolders
     [Environment]::SetEnvironmentVariable("NUGET_PLUGINS_CACHE_PATH", $Null)
     [Environment]::SetEnvironmentVariable("NUGET_SOLUTION_PACKAGES_FOLDER_PATH", $Null)
     [Environment]::SetEnvironmentVariable("NUGET_FOLDERS_PATH", $Null)
-    [Environment]::SetEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", $Null)
 }
 
 # Given a repository, a client and directories for the results/logs, runs the configured performance tests.

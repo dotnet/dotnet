@@ -190,11 +190,9 @@ Function Install-DotnetCLI {
 
     if ($env:CI -eq "true") {
         Write-Host "##vso[task.setvariable variable=DOTNET_ROOT;isOutput=false;issecret=false;]$CLIRoot"
-        Write-Host "##vso[task.setvariable variable=DOTNET_MULTILEVEL_LOOKUP;isOutput=false;issecret=false;]0"
         Write-Host "##vso[task.prependpath]$CLIRoot"
     } else {
         $env:DOTNET_ROOT=$CLIRoot
-        $env:DOTNET_MULTILEVEL_LOOKUP=0
         if (-not $env:path.Contains($CLIRoot)) {
             $env:path = $CLIRoot + ";" + $env:path
         }

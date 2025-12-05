@@ -20,7 +20,6 @@ namespace Msbuild.Integration.Test
 
         private readonly Dictionary<string, string> _processEnvVars = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             // Uncomment to debug the msbuild call
             //["DEBUG_RESTORE_TASK"] = bool.TrueString,
             ["UNIT_TEST_RESTORE_TASK"] = bool.TrueString,
