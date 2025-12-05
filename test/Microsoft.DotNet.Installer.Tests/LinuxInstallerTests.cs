@@ -58,14 +58,6 @@ public partial class LinuxInstallerTests : IDisposable
         }
     };
 
-    // Transform patch versions in 100-199 range by removing leading "1"
-    // e.g., 10.0.100-rc.1.25405.108 -> 10.0.0-rc.1.25405.108
-    // e.g., 10.0.112-rc.1.25405.108 -> 10.0.12-rc.1.25405.108
-    // Note: This will transform 108 -> 8, 112 -> 12, etc.
-    [GeneratedRegex(@"^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$")]
-    private static partial Regex SdkVersionToRuntimeVersionRegex { get; }
-    private static readonly string Runtime1xxVersion = SdkVersionToRuntimeVersionRegex.Replace(Config.Sdk1xxVersion, "$1$3$4");
-
     // Extract the package prefix from the package name
     // e.g., dotnet-runtime-10.0.0-rc.2.25418.119-x64 -> dotnet-runtime-
     [GeneratedRegex(@"^(.*?-)(?=\d)")]
@@ -320,7 +312,7 @@ public partial class LinuxInstallerTests : IDisposable
         string runtimeLocation = "Runtime",
         string distroLabel = "")
     {
-        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Runtime1xxVersion}/{packagePrefix}{Runtime1xxVersion}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
+        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Config.MicrosoftNETCorePlatformsVersion1xx}/{packagePrefix}{Config.MicrosoftNETCoreAppRefVersion1xx}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
         downloadsToProcess.Add((packageUrl, packageUrl.Segments.Last()));
     }
 
