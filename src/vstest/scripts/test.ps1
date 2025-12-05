@@ -68,8 +68,6 @@ $env:PATH = "$(Split-Path $(Get-DotNetPath));$env:PATH"
 $env:DOTNET_ROOT = Join-Path $env:TP_TOOLS_DIR "dotnet"
 # set the root for x86 runtimes as well
 ${env:DOTNET_ROOT(x86)} = "${env:DOTNET_ROOT}_x86"
-# disable looking up other dotnets in programfiles
-$env:DOTNET_MULTILEVEL_LOOKUP = 0
 
 # Disable first run since we want to control all package sources
 $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 1

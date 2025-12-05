@@ -152,7 +152,6 @@ Write-Host "Installing .NET Core SDK and runtimes to $DotNetInstallDir" -Foregro
 
 if ($DotNetInstallDir) {
     $switches += '-InstallDir',"`"$DotNetInstallDir`""
-    $envVars['DOTNET_MULTILEVEL_LOOKUP'] = '0'
     $envVars['DOTNET_ROOT'] = $DotNetInstallDir
 }
 
