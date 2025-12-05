@@ -23,8 +23,6 @@
     <!-- dotnet-symuploader -->
     <MicrosoftSymbolUploaderBuildTaskVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderBuildTaskVersion>
     <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderVersion>
-    <!-- linker -->
-    <MicrosoftNETILLinkTasksVersion>6.0.100-1.22103.2</MicrosoftNETILLinkTasksVersion>
     <!-- msbuild -->
     <MicrosoftBuildFrameworkVersion>17.3.2</MicrosoftBuildFrameworkVersion>
     <MicrosoftBuildTasksCoreVersion>17.3.2</MicrosoftBuildTasksCoreVersion>
@@ -43,9 +41,9 @@
     <MicrosoftNetCompilersToolsetVersion>4.6.0</MicrosoftNetCompilersToolsetVersion>
     <!-- runtime -->
     <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>8.0.2</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
-    <MicrosoftExtensionsDependencyInjectionVersion>6.0.0</MicrosoftExtensionsDependencyInjectionVersion>
-    <MicrosoftExtensionsDependencyModelVersion>8.0.0-preview.4.23259.5</MicrosoftExtensionsDependencyModelVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>6.0.0</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsDependencyInjectionVersion>8.0.1</MicrosoftExtensionsDependencyInjectionVersion>
+    <MicrosoftExtensionsDependencyModelVersion>8.0.2</MicrosoftExtensionsDependencyModelVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>8.0.1</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftNETCorePlatformsVersion>5.0.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
     <MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>

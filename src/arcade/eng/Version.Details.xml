@@ -56,10 +56,6 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>7cd773320dcccaaedb8f91c314aaa83dc7e171ce</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="6.0.100-1.22103.2">
-      <Uri>https://github.com/dotnet/linker</Uri>
-      <Sha>3efd231da430baa0fd670e278f6b5c3e62834bde</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.SymbolManifestGenerator" Version="8.0.0-preview.24461.2">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
       <Sha>3007744d190d50dc586acdb761c4ce6c0d5bdc15</Sha>
@@ -82,11 +78,27 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d099f075e45d2aa6007a22b71b45a08758559f80</Sha>
     </Dependency>
-    <!-- Latest preview version required by source-build. The dependency is loaded in during built-time
-      by consumers of SharedFramework.Sdk (such as runtime), so we cannot use a ref pack for it -->
-    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="8.0.0-preview.4.23259.5">
+    <!-- Necessary for source-build. This allows the live version of the dependency
+         to flow in and eliminates related prebuilts. -->
+    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>547c506abe05e510bd43330fc8f6d4c5961e9223</Sha>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
+    </Dependency>
+    <!-- Necessary for source-build. This allows the live version of the dependency
+         to flow in and eliminates related prebuilts. -->
+    <Dependency Name="Microsoft.Extensions.DependencyInjection" Version="8.0.1">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
+    </Dependency>
+    <!-- Necessary for source-build. The dependency is loaded in during built-time
+         by consumers of SharedFramework.Sdk (such as runtime), so we cannot use a ref pack for it -->
+    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="8.0.2">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
+    </Dependency>
+    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.22-servicing.25527.7">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>a2266c728f63a494ccb6786d794da2df135030be</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
     <!-- Explicit dependency because msbuild has a coherency tie to this dependency. -->
@@ -95,7 +107,21 @@
       <Sha>73f0850939d96131c28cf6ea6ee5aacb4da0083a</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23475.1">
+    <!-- Necessary for source-build. This allows the live version of the dependency
+         to flow in and eliminates related prebuilts. -->
+    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.1">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
+    </Dependency>
+    <Dependency Name="System.Text.Encodings.Web" Version="8.0.0">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>5535e31a712343a63f5d7d796cd874e563e5ac14</Sha>
+    </Dependency>
+    <Dependency Name="System.Text.Json" Version="8.0.5">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24067.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
       <Sha>0650b50b2a5263c735d12b5c36c5deb34e7e6b60</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
