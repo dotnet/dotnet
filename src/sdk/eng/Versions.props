@@ -43,6 +43,7 @@
     <!-- workload-specific version information -->
     <VersionFeature80ForWorkloads>$(VersionFeature80)</VersionFeature80ForWorkloads>
     <VersionFeature90ForWorkloads>$(VersionFeature90)</VersionFeature90ForWorkloads>
+    <VersionFeature100ForWorkloads>$(VersionFeature100)</VersionFeature100ForWorkloads>
   </PropertyGroup>
 
   <PropertyGroup Label="Restore feeds">
