@@ -71,7 +71,7 @@ jobs:
         if: steps.extract-configuration-values.outputs.configurationFound != 'true'
         name: Read configuration status
 
-      - run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\inter-branch-merge.ps1 -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -MergeToBranch ${{ steps.extract-configuration-values.outputs.mergeToBranch }} ${{ steps.extract-configuration-values.outputs.mergeSwitchArguments }}
+      - run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\inter-branch-merge.ps1 -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -MergeToBranch ${{ steps.extract-configuration-values.outputs.mergeToBranch }} -ResetToTargetPaths "${{ steps.extract-configuration-values.outputs.resetToTargetPaths }}" ${{ steps.extract-configuration-values.outputs.mergeSwitchArguments }}
         if: steps.extract-configuration-values.outputs.configurationFound == 'true'
         name: Merge branches
         working-directory: ${{ github.workspace }}/repository
