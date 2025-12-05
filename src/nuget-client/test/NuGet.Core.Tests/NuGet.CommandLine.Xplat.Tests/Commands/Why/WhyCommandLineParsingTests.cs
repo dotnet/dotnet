@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.CommandLine.XPlat.Commands;
 using NuGet.CommandLine.XPlat.Commands.Why;
+using Spectre.Console.Testing;
 using Xunit;
 
 namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
@@ -20,7 +21,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             Command rootCommand = new("nuget");
 
             // Act
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance);
+            WhyCommand.Register(rootCommand, new TestConsole());
 
             // Assert
             rootCommand.Subcommands[0].Should().BeAssignableTo<DocumentedCommand>();
@@ -33,7 +34,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be(@"path\to\my.proj");
@@ -54,7 +55,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().NotBeNull();
@@ -75,7 +76,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 throw new Exception("Should not get here");
@@ -92,7 +93,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 throw new Exception("Should not get here");
@@ -112,7 +113,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -135,7 +136,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -156,7 +157,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -177,7 +178,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
             // Arrange
             Command rootCommand = new("nuget");
 
-            WhyCommand.Register(rootCommand, NullLoggerWithColor.GetInstance, whyCommandArgs =>
+            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");

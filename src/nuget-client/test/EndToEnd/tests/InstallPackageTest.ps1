@@ -303,7 +303,7 @@ function Test-PackageWithIncompatibleAssembliesRollsInstallBack {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act & Assert
     Assert-Throws { Install-Package BingMapAppSDK -Project $p.Name -Source $context.RepositoryPath } "Could not install package 'BingMapAppSDK 1.0.1011.1716'. You are trying to install this package into a project that targets '.NETFramework,Version=v4.7.2', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author."
@@ -473,7 +473,7 @@ function Test-InstallCanPipeToFSharpProjects {
 
 function Test-PipingMultipleProjectsToInstall {
     # Arrange
-    $projects = @((New-WebSite), (New-ClassLibrary), (New-WebApplication))
+    $projects = @((New-WebSite), (New-ClassLibrary), (New-ConsoleApplication))
 
 Write-Host 'proejct creation successful'
     # Act
@@ -533,7 +533,7 @@ function Test-InstallPackageWithNestedReferences {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package PackageWithNestedReferenceFolders -Source $context.RepositoryRoot
@@ -1461,7 +1461,7 @@ function Test-InstallPackageTargetingNetClientAndNet {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     $p | Install-Package PackageTargetingNetClientAndNet -Source $context.RepositoryRoot
