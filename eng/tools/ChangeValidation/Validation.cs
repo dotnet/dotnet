@@ -1,19 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.DotNet.DarcLib;
+using Maestro.Common;
 using Microsoft.DotNet.DarcLib.Helpers;
 using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
-using Microsoft.DotNet.DarcLib.Models.VirtualMonoRepo;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace ChangeValidation;
@@ -111,21 +104,12 @@ internal static class Validation
         return new PrInfo(targetBranch, changedFiles);
     }
 
-    private static IServiceProvider RegisterServices(string repoRoot)
+    private static ServiceProvider RegisterServices(string repoRoot)
     {
-        var services = new ServiceCollection();
-
-        VmrRegistrations.AddSingleVmrSupport(
-            services,
-            "git",
-            repoRoot,
-            "tmp",
-            null,
-            null);
-
-        var serviceProvider = services.BuildServiceProvider();
-
-        return serviceProvider;
+        return new ServiceCollection()
+            .AddCodeflow("tmp", vmrPath: repoRoot)
+            .AddSingleton<IRemoteTokenProvider, NullRemoteTokenProvider>()
+            .BuildServiceProvider();
     }
 
     private static List<IValidationStep> CreateValidationSteps(IServiceProvider serviceProvider)
@@ -135,5 +119,11 @@ internal static class Validation
             ActivatorUtilities.CreateInstance<SubmoduleValidation>(serviceProvider),
             ActivatorUtilities.CreateInstance<ExclusionFileValidation>(serviceProvider)
             ];
+    }
+
+    private class NullRemoteTokenProvider : IRemoteTokenProvider
+    {
+        public string? GetTokenForRepository(string repoUri) => null;
+        public Task<string?> GetTokenForRepositoryAsync(string repoUri) => Task.FromResult<string?>(null);
     }
 }
