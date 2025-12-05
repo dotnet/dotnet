@@ -12,7 +12,7 @@ namespace Microsoft.Build.Eventing
     /// Changes to existing event method signatures will not be reflected unless you update the <see cref="EventAttribute.Version" /> property or assign a new event ID.
     /// </remarks>
     [EventSource(Name = "Microsoft-Build")]
-    internal sealed class MSBuildEventSource : EventSource
+    internal sealed partial class MSBuildEventSource : EventSource
     {
         public static class Keywords
         {
