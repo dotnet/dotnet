@@ -98,8 +98,15 @@ if ($configuration -ne $null) {
         $ExtraSwitches = $configuration['ExtraSwitches']
     }
 
+    $ResetToTargetPaths = "";
+    if($configuration.ContainsKey('ResetToTargetPaths')){
+        # Convert array to semicolon-separated string for output
+        $ResetToTargetPaths = $configuration['ResetToTargetPaths'] -join ";"
+    }
+
     "mergeSwitchArguments=$ExtraSwitches" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
     "mergeToBranch=$MergeToBranch" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+    "resetToTargetPaths=$ResetToTargetPaths" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
     "configurationFound=$true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 }
 
