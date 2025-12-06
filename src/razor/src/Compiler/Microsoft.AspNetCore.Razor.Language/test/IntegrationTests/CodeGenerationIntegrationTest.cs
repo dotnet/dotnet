@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -371,19 +370,19 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertCSharpDiagnosticsMatchBaseline(codeDocument, testName);
     }
 
-    private void RunTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, [CallerMemberName] string testName = "")
+    private void RunTagHelpersTest(TagHelperCollection tagHelpers, [CallerMemberName] string testName = "")
     {
         if (designTime)
         {
-            RunDesignTimeTagHelpersTest(descriptors, testName);
+            RunDesignTimeTagHelpersTest(tagHelpers, testName);
         }
         else
         {
-            RunRuntimeTagHelpersTest(descriptors, testName);
+            RunRuntimeTagHelpersTest(tagHelpers, testName);
         }
     }
 
-    private void RunRuntimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, string testName)
+    private void RunRuntimeTagHelpersTest(TagHelperCollection tagHelpers, string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(RazorExtensions.Register);
@@ -391,10 +390,10 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var projectItem = CreateProjectItemFromFile(testName: testName);
         var imports = GetImports(projectEngine, projectItem);
 
-        AddTagHelperStubs(descriptors);
+        AddTagHelperStubs(tagHelpers);
 
         // Act
-        var codeDocument = projectEngine.Process(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, descriptors.ToList());
+        var codeDocument = projectEngine.Process(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, tagHelpers);
 
         // Assert
         AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
@@ -402,7 +401,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertCSharpDiagnosticsMatchBaseline(codeDocument, testName);
     }
 
-    private void RunDesignTimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, string testName)
+    private void RunDesignTimeTagHelpersTest(TagHelperCollection tagHelpers, string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(RazorExtensions.Register);
@@ -410,10 +409,10 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var projectItem = CreateProjectItemFromFile(testName: testName);
         var imports = GetImports(projectEngine, projectItem);
 
-        AddTagHelperStubs(descriptors);
+        AddTagHelperStubs(tagHelpers);
 
         // Act
-        var codeDocument = projectEngine.ProcessDesignTime(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, descriptors.ToList());
+        var codeDocument = projectEngine.ProcessDesignTime(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, tagHelpers);
 
         // Assert
         AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
@@ -435,9 +434,9 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         return result.ToImmutable();
     }
 
-    private void AddTagHelperStubs(IEnumerable<TagHelperDescriptor> descriptors)
+    private void AddTagHelperStubs(TagHelperCollection tagHelpers)
     {
-        var tagHelperClasses = descriptors.Select(descriptor =>
+        var tagHelperClasses = tagHelpers.Select(descriptor =>
         {
             var typeName = descriptor.TypeName;
             var namespaceSeparatorIndex = typeName.LastIndexOf('.');

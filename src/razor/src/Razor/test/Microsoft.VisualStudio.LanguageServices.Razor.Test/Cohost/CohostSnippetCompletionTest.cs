@@ -53,7 +53,6 @@ public class CohostSnippetCompletionTest(ITestOutputHelper testOutputHelper) : C
             ClientSettingsManager,
             ClientCapabilitiesService,
             snippetCompletionItemProvider,
-            FeatureOptions,
             requestInvoker,
             completionListCache,
             NoOpTelemetryReporter.Instance,

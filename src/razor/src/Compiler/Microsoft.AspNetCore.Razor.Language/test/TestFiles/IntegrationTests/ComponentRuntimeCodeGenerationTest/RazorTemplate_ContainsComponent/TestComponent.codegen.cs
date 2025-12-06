@@ -28,15 +28,7 @@ namespace Test
 
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (2,51)-(2,62) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-                >(1);
+                __builder2.OpenComponent<global::Test.MyComponent>(1);
                 __builder2.AddComponentParameter(2, nameof(global::Test.MyComponent.
 #nullable restore
 #line (2,63)-(2,67) "x:\dir\subdir\Test\TestComponent.cshtml"

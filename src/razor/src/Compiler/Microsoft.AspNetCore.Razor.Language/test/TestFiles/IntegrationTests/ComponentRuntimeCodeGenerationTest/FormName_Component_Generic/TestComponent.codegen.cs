@@ -94,15 +94,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateTestComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, global::System.Object __arg2, int __seq3, T __arg3)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <T>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddComponentParameter(__seq0, "method", __arg0);
         __builder.AddComponentParameter(__seq1, "onsubmit", __arg1);
         __builder.AddComponentParameter(__seq2, "@formname", __arg2);
@@ -119,15 +111,7 @@ Parameter
         }
         public static void CreateTestComponent_1<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, global::System.Object __arg2, int __seq3, T __arg3)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (4,2)-(4,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <T>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddComponentParameter(__seq0, "method", __arg0);
         __builder.AddComponentParameter(__seq1, "onsubmit", __arg1);
         __builder.AddComponentParameter(__seq2, "@formname", __arg2);

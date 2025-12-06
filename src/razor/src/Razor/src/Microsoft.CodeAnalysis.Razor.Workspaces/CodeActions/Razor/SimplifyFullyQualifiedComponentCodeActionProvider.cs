@@ -123,8 +123,8 @@ internal class SimplifyFullyQualifiedComponentCodeActionProvider : IRazorCodeAct
         @namespace = string.Empty;
         componentName = string.Empty;
 
-        var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
-        var boundTagHelper = descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
+        var tagHelpers = element.TagHelperInfo.BindingResult.TagHelpers;
+        var boundTagHelper = tagHelpers.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (boundTagHelper is null)
         {
             return false;

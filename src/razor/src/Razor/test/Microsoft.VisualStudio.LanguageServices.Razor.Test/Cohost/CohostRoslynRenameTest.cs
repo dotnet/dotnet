@@ -271,7 +271,8 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
 
     private static string ApplyDocumentEdits(SourceText inputText, Uri documentUri, WorkspaceEdit result)
     {
-        Assert.True(result.TryGetTextDocumentEdits(out var textDocumentEdits));
+        var textDocumentEdits = result.EnumerateTextDocumentEdits().ToArray();
+        Assert.NotEmpty(textDocumentEdits);
         var changes = textDocumentEdits
             .Where(e => e.TextDocument.DocumentUri.GetRequiredParsedUri() == documentUri)
             .SelectMany(e => e.Edits)

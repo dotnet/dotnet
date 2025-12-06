@@ -19,21 +19,21 @@ public sealed record ViewComponentMetadata : MetadataObject
     public string Name { get; }
     internal TypeNameObject OriginalTypeNameObject { get; }
 
-    public string OriginalTypeName => OriginalTypeNameObject.FullName.AssumeNotNull();
+    public string? OriginalTypeName => OriginalTypeNameObject.FullName;
 
     internal override bool HasDefaultValue => false;
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Name);
+        builder.Append(Name);
     }
 
     public ref struct Builder
     {
         public string? Name { get; set; }
-        internal TypeNameObject? OriginalTypeNameObject { get; set; }
+        internal TypeNameObject OriginalTypeNameObject { get; set; }
 
         public readonly ViewComponentMetadata Build()
-            => new(Name.AssumeNotNull(), OriginalTypeNameObject.AssumeNotNull());
+            => new(Name.AssumeNotNull(), OriginalTypeNameObject);
     }
 }

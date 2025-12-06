@@ -3,10 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -30,7 +28,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                 return;
             }
 
-            tagHelpers = tagHelperFeature.GetDescriptors(cancellationToken);
+            tagHelpers = tagHelperFeature.GetTagHelpers(cancellationToken);
         }
 
         using var _ = GetPooledVisitor(codeDocument, tagHelpers, cancellationToken, out var visitor);
@@ -53,7 +51,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         // This will always be null for a component document.
         var tagHelperPrefix = visitor.TagHelperPrefix;
 
-        var context = TagHelperDocumentContext.Create(tagHelperPrefix, visitor.GetResults());
+        var context = TagHelperDocumentContext.GetOrCreate(tagHelperPrefix, visitor.GetResults());
         codeDocument.SetTagHelperContext(context);
         codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
@@ -79,7 +77,9 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         private RazorSourceDocument? _source;
         private CancellationToken _cancellationToken;
 
-        private readonly HashSet<TagHelperDescriptor> _matches = [];
+        private TagHelperCollection.Builder? _matches;
+
+        private TagHelperCollection.Builder Matches => _matches ??= [];
 
         protected bool IsInitialized => _isInitialized;
         protected RazorSourceDocument Source => _source.AssumeNotNull();
@@ -100,7 +100,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             Visit(tree.Root);
         }
 
-        public ImmutableArray<TagHelperDescriptor> GetResults() => [.. _matches];
+        public TagHelperCollection GetResults() => _matches?.ToCollection() ?? [];
 
         protected void Initialize(string? filePath, CancellationToken cancellationToken)
         {
@@ -111,7 +111,12 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public virtual void Reset()
         {
-            _matches.Clear();
+            if (_matches is { } matches)
+            {
+                matches.Dispose();
+                _matches = null;
+            }
+
             _filePath = null;
             _source = null;
             _cancellationToken = default;
@@ -121,7 +126,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         protected void AddMatch(TagHelperDescriptor tagHelper)
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            _matches.Add(tagHelper);
+            Matches.Add(tagHelper);
         }
 
         protected void AddMatches(List<TagHelperDescriptor> tagHelpers)
@@ -130,14 +135,14 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
             foreach (var tagHelper in tagHelpers)
             {
-                _matches.Add(tagHelper);
+                Matches.Add(tagHelper);
             }
         }
 
         protected void RemoveMatch(TagHelperDescriptor tagHelper)
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            _matches.Remove(tagHelper);
+            Matches.Remove(tagHelper);
         }
 
         protected void RemoveMatches(List<TagHelperDescriptor> tagHelpers)
@@ -146,7 +151,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
             foreach (var tagHelper in tagHelpers)
             {
-                _matches.Remove(tagHelper);
+                Matches.Remove(tagHelper);
             }
         }
 
@@ -180,7 +185,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         /// </summary>
         private readonly Dictionary<string, List<TagHelperDescriptor>> _tagHelperMap = new(StringComparer.Ordinal);
 
-        private IReadOnlyList<TagHelperDescriptor>? _descriptors;
+        private TagHelperCollection? _tagHelpers;
         private bool _tagHelperMapComputed;
         private string? _tagHelperPrefix;
 
@@ -201,13 +206,13 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
                 void ComputeTagHelperMap()
                 {
-                    var tagHelpers = _descriptors.AssumeNotNull();
+                    var tagHelpers = _tagHelpers.AssumeNotNull();
 
                     string? currentAssemblyName = null;
                     List<TagHelperDescriptor>? currentTagHelpers = null;
 
                     // We don't want to consider components in a view document.
-                    foreach (var tagHelper in tagHelpers.AsEnumerable())
+                    foreach (var tagHelper in tagHelpers)
                     {
                         if (!tagHelper.IsAnyComponentDocumentTagHelper())
                         {
@@ -230,13 +235,13 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         }
 
         public void Initialize(
-            IReadOnlyList<TagHelperDescriptor> descriptors,
+            TagHelperCollection tagHelpers,
             string? filePath,
             CancellationToken cancellationToken = default)
         {
             Debug.Assert(!IsInitialized);
 
-            _descriptors = descriptors;
+            _tagHelpers = tagHelpers;
 
             base.Initialize(filePath, cancellationToken);
         }
@@ -250,7 +255,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
             _tagHelperMap.Clear();
             _tagHelperMapComputed = false;
-            _descriptors = null;
+            _tagHelpers = null;
             _tagHelperPrefix = null;
 
             base.Reset();
@@ -381,14 +386,14 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         private List<TagHelperDescriptor>? _componentsWithoutNamespace;
 
         public void Initialize(
-            IReadOnlyList<TagHelperDescriptor> descriptors,
+            TagHelperCollection tagHelpers,
             string? filePath,
             string? currentNamespace,
             CancellationToken cancellationToken = default)
         {
             Debug.Assert(!IsInitialized);
 
-            foreach (var component in descriptors.AsEnumerable())
+            foreach (var component in tagHelpers)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 

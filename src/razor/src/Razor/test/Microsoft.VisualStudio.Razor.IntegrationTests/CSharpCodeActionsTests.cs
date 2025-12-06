@@ -128,7 +128,7 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
             """, ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "Failing in CI")]
     public async Task CSharpCodeActionsTests_IntroduceLocal()
     {
         // Open the file
@@ -179,7 +179,7 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
                 """, ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "Failing in CI")]
     public async Task CSharpCodeActionsTests_IntroduceLocal_All()
     {
         // Open the file

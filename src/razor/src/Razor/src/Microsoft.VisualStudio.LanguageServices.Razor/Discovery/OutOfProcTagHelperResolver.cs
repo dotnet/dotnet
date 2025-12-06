@@ -40,7 +40,7 @@ internal class OutOfProcTagHelperResolver(
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly TagHelperResultCache _resultCache = new();
 
-    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+    public async ValueTask<TagHelperCollection?> GetTagHelpersAsync(
         Project project,
         ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
@@ -52,7 +52,7 @@ internal class OutOfProcTagHelperResolver(
             var result = await ResolveTagHelpersOutOfProcessAsync(project, projectSnapshot, cancellationToken).ConfigureAwait(false);
 
             // We received tag helpers, so we're done.
-            if (!result.IsDefault)
+            if (result is not null)
             {
                 return result;
             }
@@ -70,11 +70,11 @@ internal class OutOfProcTagHelperResolver(
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, $"Error encountered from project '{projectSnapshot.FilePath}':{Environment.NewLine}{ex}");
-            return default;
+            return null;
         }
     }
 
-    protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project project, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    protected virtual async ValueTask<TagHelperCollection?> ResolveTagHelpersOutOfProcessAsync(Project project, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         if (!_resultCache.TryGetId(project.Id, out var lastResultId))
         {
@@ -92,7 +92,7 @@ internal class OutOfProcTagHelperResolver(
         if (deltaResult is null)
         {
             // For some reason, TryInvokeAsync can return null if it is cancelled while fetching the client.
-            return default;
+            return null;
         }
 
         // Apply the delta we received to any cached checksums for the current project.
@@ -137,7 +137,7 @@ internal class OutOfProcTagHelperResolver(
             if (fetchResult is null)
             {
                 // For some reason, TryInvokeAsync can return null if it is cancelled while fetching the client.
-                return default;
+                return null;
             }
 
             var fetchedTagHelpers = fetchResult.TagHelpers;
@@ -149,7 +149,7 @@ internal class OutOfProcTagHelperResolver(
             }
 
             Debug.Assert(
-                checksumsToFetch.Length == fetchedTagHelpers.Length,
+                checksumsToFetch.Length == fetchedTagHelpers.Count,
                 $"{nameof(FetchTagHelpersResult)} should return the same number of tag helpers as checksums requested.");
 
             Debug.Assert(
@@ -159,7 +159,7 @@ internal class OutOfProcTagHelperResolver(
             // Be sure to add the tag helpers we just fetched to the cache.
             var cache = TagHelperCache.Default;
 
-            for (var i = 0; i < fetchedTagHelpers.Length; i++)
+            for (var i = 0; i < fetchedTagHelpers.Count; i++)
             {
                 var index = checksumIndicesBuilder[i];
                 Debug.Assert(result[index] is null);
@@ -169,14 +169,14 @@ internal class OutOfProcTagHelperResolver(
                 cache.TryAdd(fetchedTagHelper.Checksum, fetchedTagHelper);
             }
 
-            if (checksumsToFetch.Length != fetchedTagHelpers.Length)
+            if (checksumsToFetch.Length != fetchedTagHelpers.Count)
             {
                 _logger.LogWarning($"Expected to receive {checksumsToFetch.Length} tag helpers from Roslyn OOP, " +
-                    $"but received {fetchedTagHelpers.Length} instead. Returning a partial set of tag helpers.");
+                    $"but received {fetchedTagHelpers.Count} instead. Returning a partial set of tag helpers.");
 
                 // We didn't receive all the tag helpers we requested. This is bad. However, instead of failing,
                 // we'll just return the tag helpers we were able to retrieve.
-                using var resultBuilder = new PooledArrayBuilder<TagHelperDescriptor>(capacity: result.Length);
+                using var resultBuilder = new TagHelperCollection.RefBuilder(initialCapacity: result.Length);
 
                 foreach (var tagHelper in result)
                 {
@@ -186,11 +186,17 @@ internal class OutOfProcTagHelperResolver(
                     }
                 }
 
-                return resultBuilder.ToImmutableAndClear();
+                return resultBuilder.ToCollection();
             }
         }
 
-        return ImmutableCollectionsMarshal.AsImmutableArray(result);
+        // If we pass 'result' to TagHelperCollection.Create(...) the overload that takes
+        // a ReadOnlySpan<TagHelperDescriptor> will be called, resulting in 'result' being
+        // copied to a new array. By first wrapping 'result' in an ImmutableArray we ensure
+        // that TagHelperCollection.Create(...) slices 'result' into segments.
+        var resultArray = ImmutableCollectionsMarshal.AsImmutableArray(result);
+
+        return TagHelperCollection.Create(resultArray);
     }
 
     // Protected virtual for testing
@@ -224,9 +230,9 @@ internal class OutOfProcTagHelperResolver(
         return checksums;
     }
 
-    protected virtual ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersInProcessAsync(
+    protected virtual ValueTask<TagHelperCollection> ResolveTagHelpersInProcessAsync(
         Project project,
         ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
-        => project.GetTagHelpersAsync(projectSnapshot.ProjectEngine, _telemetryReporter, cancellationToken);
+        => project.GetTagHelpersAsync(projectSnapshot.ProjectEngine, cancellationToken);
 }

@@ -100,7 +100,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
 
         optionsMonitor ??= GetOptionsMonitor();
         var endpoint = new SignatureHelpEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, languageServer, optionsMonitor, LoggerFactory);
+            DocumentMappingService, languageServer, optionsMonitor, LoggerFactory);
 
         var request = new SignatureHelpParams
         {

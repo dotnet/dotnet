@@ -19,11 +19,11 @@ Generated Location: (1339:40,0 [21] )
 
 Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyComponent|
-Generated Location: (1922:59,0 [11] )
+Generated Location: (1839:56,45 [11] )
 |MyComponent|
 
 Source Location: (30:0,30 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (2180:68,0 [5] )
+Generated Location: (2037:60,0 [5] )
 |Value|
 

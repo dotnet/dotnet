@@ -21,12 +21,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 internal sealed class HoverEndpoint(
     IComponentAvailabilityService componentAvailabilityService,
     IClientCapabilitiesService clientCapabilitiesService,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, LspHover?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<HoverEndpoint>()), ICapabilitiesProvider
@@ -77,8 +75,7 @@ internal sealed class HoverEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
-        // We can only do this if we're in single server mode though, otherwise we won't be delegating to Roslyn at all
-        if (SingleServerSupport && DocumentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
+        if (DocumentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
         {
             return null;
         }

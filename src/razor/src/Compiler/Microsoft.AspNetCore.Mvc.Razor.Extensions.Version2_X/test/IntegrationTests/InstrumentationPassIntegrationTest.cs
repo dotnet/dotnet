@@ -31,36 +31,36 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
     public void BasicTest()
     {
         // Arrange
-        var descriptors = new[]
-        {
-                CreateTagHelperDescriptor(
-                    tagName: "p",
-                    typeName: "PTagHelper",
-                    assemblyName: "TestAssembly"),
-                CreateTagHelperDescriptor(
-                    tagName: "form",
-                    typeName: "FormTagHelper",
-                    assemblyName: "TestAssembly"),
-                CreateTagHelperDescriptor(
-                    tagName: "input",
-                    typeName: "InputTagHelper",
-                    assemblyName: "TestAssembly",
-                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                    {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),      // Gets preallocated
-                        builder => builder
-                            .Name("date")
-                            .PropertyName("BarProp")
-                            .TypeName("System.DateTime"),    // Doesn't get preallocated
-                    })
-            };
+        TagHelperCollection tagHelpers =
+        [
+            CreateTagHelperDescriptor(
+                tagName: "p",
+                typeName: "PTagHelper",
+                assemblyName: "TestAssembly"),
+            CreateTagHelperDescriptor(
+                tagName: "form",
+                typeName: "FormTagHelper",
+                assemblyName: "TestAssembly"),
+            CreateTagHelperDescriptor(
+                tagName: "input",
+                typeName: "InputTagHelper",
+                assemblyName: "TestAssembly",
+                attributes:
+                [
+                    builder => builder
+                        .Name("value")
+                        .PropertyName("FooProp")
+                        .TypeName("System.String"),      // Gets preallocated
+                    builder => builder
+                        .Name("date")
+                        .PropertyName("BarProp")
+                        .TypeName("System.DateTime"),    // Doesn't get preallocated
+                ])
+        ];
 
         var engine = CreateProjectEngine(b =>
         {
-            b.AddTagHelpers(descriptors);
+            b.SetTagHelpers(tagHelpers);
             b.Features.Add(new InstrumentationPass());
 
                 // This test includes templates

@@ -63,28 +63,28 @@ public sealed partial class RazorCodeDocument
         return new RazorCodeDocument(source, imports, parserOptions, codeGenerationOptions);
     }
 
-    internal bool TryGetTagHelpers([NotNullWhen(true)] out IReadOnlyList<TagHelperDescriptor>? result)
+    internal bool TryGetTagHelpers([NotNullWhen(true)] out TagHelperCollection? result)
         => _properties.TagHelpers.TryGetValue(out result);
 
-    internal IReadOnlyList<TagHelperDescriptor>? GetTagHelpers()
+    internal TagHelperCollection? GetTagHelpers()
         => _properties.TagHelpers.Value;
 
-    internal IReadOnlyList<TagHelperDescriptor> GetRequiredTagHelpers()
+    internal TagHelperCollection GetRequiredTagHelpers()
         => _properties.TagHelpers.RequiredValue;
 
-    internal void SetTagHelpers(IReadOnlyList<TagHelperDescriptor>? value)
+    internal void SetTagHelpers(TagHelperCollection? value)
         => _properties.TagHelpers.SetValue(value);
 
-    internal bool TryGetReferencedTagHelpers([NotNullWhen(true)] out ISet<TagHelperDescriptor>? result)
+    internal bool TryGetReferencedTagHelpers([NotNullWhen(true)] out TagHelperCollection? result)
         => _properties.ReferencedTagHelpers.TryGetValue(out result);
 
-    internal ISet<TagHelperDescriptor>? GetReferencedTagHelpers()
+    internal TagHelperCollection? GetReferencedTagHelpers()
         => _properties.ReferencedTagHelpers.Value;
 
-    internal ISet<TagHelperDescriptor> GetRequiredReferencedTagHelpers()
+    internal TagHelperCollection GetRequiredReferencedTagHelpers()
         => _properties.ReferencedTagHelpers.RequiredValue;
 
-    internal void SetReferencedTagHelpers(ISet<TagHelperDescriptor> value)
+    internal void SetReferencedTagHelpers(TagHelperCollection value)
     {
         ArgHelper.ThrowIfNull(value);
         _properties.ReferencedTagHelpers.SetValue(value);

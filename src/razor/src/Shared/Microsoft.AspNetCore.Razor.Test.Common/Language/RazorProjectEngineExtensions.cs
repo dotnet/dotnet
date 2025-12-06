@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -32,33 +31,33 @@ public static class RazorProjectEngineExtensions
 
     public static RazorCodeDocument CreateEmptyCodeDocument(
         this RazorProjectEngine projectEngine,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyCodeDocumentCore(tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorFileKind fileKind,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyCodeDocumentCore(fileKind, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyCodeDocument(
         this RazorProjectEngine projectEngine,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyCodeDocumentCore(importSources: importSources, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyCodeDocumentCore(fileKind, importSources, tagHelpers);
 
     private static RazorCodeDocument CreateEmptyCodeDocumentCore(
         this RazorProjectEngine projectEngine,
         RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+        TagHelperCollection? tagHelpers = null)
         => projectEngine.CreateCodeDocumentCore(string.Empty, fileKind, importSources, tagHelpers);
 
     public static RazorCodeDocument CreateEmptyDesignTimeCodeDocument(this RazorProjectEngine projectEngine)
@@ -80,33 +79,33 @@ public static class RazorProjectEngineExtensions
 
     public static RazorCodeDocument CreateEmptyDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyDesignTimeCodeDocumentCore(tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorFileKind fileKind,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyDesignTimeCodeDocumentCore(fileKind, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyDesignTimeCodeDocumentCore(importSources: importSources, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateEmptyDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateEmptyDesignTimeCodeDocumentCore(fileKind, importSources, tagHelpers);
 
     private static RazorCodeDocument CreateEmptyDesignTimeCodeDocumentCore(
         this RazorProjectEngine projectEngine,
         RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+        TagHelperCollection? tagHelpers = null)
         => projectEngine.CreateDesignTimeCodeDocumentCore(string.Empty, fileKind, importSources, tagHelpers);
 
     public static RazorCodeDocument CreateCodeDocument(this RazorProjectEngine projectEngine, string content)
@@ -131,21 +130,21 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         string content,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateCodeDocumentCore(content, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         string content,
         RazorFileKind fileKind,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateCodeDocumentCore(content, fileKind, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateCodeDocument(
         this RazorProjectEngine projectEngine,
         string content,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateCodeDocumentCore(content, importSources: importSources, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateCodeDocument(
@@ -153,7 +152,7 @@ public static class RazorProjectEngineExtensions
         string content,
         RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateCodeDocumentCore(content, fileKind, importSources, tagHelpers);
 
     private static RazorCodeDocument CreateCodeDocumentCore(
@@ -161,7 +160,7 @@ public static class RazorProjectEngineExtensions
         string content,
         RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+        TagHelperCollection? tagHelpers = null)
     {
         var source = TestRazorSourceDocument.Create(content);
 
@@ -174,7 +173,7 @@ public static class RazorProjectEngineExtensions
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
         this RazorProjectEngine projectEngine,
         string content,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers)
+        TagHelperCollection? tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(content, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateDesignTimeCodeDocument(this RazorProjectEngine projectEngine, string content, RazorFileKind fileKind)
@@ -184,7 +183,7 @@ public static class RazorProjectEngineExtensions
         this RazorProjectEngine projectEngine,
         string content,
         RazorFileKind fileKind,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers)
+        TagHelperCollection? tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(content, fileKind, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
@@ -197,7 +196,7 @@ public static class RazorProjectEngineExtensions
         this RazorProjectEngine projectEngine,
         string content,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(content, importSources: importSources, tagHelpers: tagHelpers);
 
     public static RazorCodeDocument CreateDesignTimeCodeDocument(
@@ -212,7 +211,7 @@ public static class RazorProjectEngineExtensions
         string content,
         RazorFileKind fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        TagHelperCollection tagHelpers)
         => projectEngine.CreateDesignTimeCodeDocumentCore(content, fileKind, importSources, tagHelpers);
 
     private static RazorCodeDocument CreateDesignTimeCodeDocumentCore(
@@ -220,7 +219,7 @@ public static class RazorProjectEngineExtensions
         string content,
         RazorFileKind? fileKind = null,
         ImmutableArray<RazorSourceDocument> importSources = default,
-        IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+        TagHelperCollection? tagHelpers = null)
     {
         var source = TestRazorSourceDocument.Create(content);
 

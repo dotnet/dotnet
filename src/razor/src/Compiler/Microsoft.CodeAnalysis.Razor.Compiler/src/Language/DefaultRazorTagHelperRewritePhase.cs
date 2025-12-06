@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -18,15 +16,15 @@ internal sealed class DefaultRazorTagHelperRewritePhase : RazorEnginePhaseBase
         {
             // No descriptors, so no need to see if any are used. Without setting this though,
             // we trigger an Assert in the ProcessRemaining method in the source generator.
-            codeDocument.SetReferencedTagHelpers(ImmutableHashSet<TagHelperDescriptor>.Empty);
+            codeDocument.SetReferencedTagHelpers([]);
             return;
         }
 
         var binder = context.GetBinder();
-        var usedHelpers = new HashSet<TagHelperDescriptor>();
+        using var usedHelpers = new TagHelperCollection.Builder();
         var rewrittenSyntaxTree = TagHelperParseTreeRewriter.Rewrite(syntaxTree, binder, usedHelpers, cancellationToken);
 
-        codeDocument.SetReferencedTagHelpers(usedHelpers);
+        codeDocument.SetReferencedTagHelpers(usedHelpers.ToCollection());
         codeDocument.SetSyntaxTree(rewrittenSyntaxTree);
     }
 }

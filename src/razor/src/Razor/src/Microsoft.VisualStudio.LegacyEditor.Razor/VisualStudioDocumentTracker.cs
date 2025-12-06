@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -70,7 +68,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     public ClientSpaceSettings EditorSettings => _workspaceEditorSettings.Current.ClientSpaceSettings;
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers
+    public TagHelperCollection TagHelpers
         => _projectSnapshot is { TagHelpers: var tagHelpers }
             ? tagHelpers
             : [];
@@ -218,7 +216,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
                     OnContextChangedAsync(ContextChangeKind.ProjectChanged).Forget();
 
                     if (e.Older is not ILegacyProjectSnapshot older ||
-                        !older.TagHelpers.SequenceEqual(newer.TagHelpers))
+                        !older.TagHelpers.Equals(newer.TagHelpers))
                     {
                         OnContextChangedAsync(ContextChangeKind.TagHelpersChanged).Forget();
                     }

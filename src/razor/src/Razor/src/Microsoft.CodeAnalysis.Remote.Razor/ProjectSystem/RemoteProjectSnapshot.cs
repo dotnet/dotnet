@@ -56,13 +56,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
-    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    public async ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
         var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
-        if (generatorResult.IsDefault)
-            return [];
 
-        return [.. generatorResult.TagHelpers];
+        return !generatorResult.IsDefault
+            ? generatorResult.TagHelpers
+            : [];
     }
 
     public RemoteDocumentSnapshot GetDocument(TextDocument document)

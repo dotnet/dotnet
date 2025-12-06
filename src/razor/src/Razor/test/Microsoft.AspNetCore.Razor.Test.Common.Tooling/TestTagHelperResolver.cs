@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -11,11 +10,11 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-internal class TestTagHelperResolver(ImmutableArray<TagHelperDescriptor> tagHelpers) : ITagHelperResolver
+internal class TestTagHelperResolver(TagHelperCollection tagHelpers) : ITagHelperResolver
 {
-    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; } = tagHelpers;
+    public TagHelperCollection TagHelpers { get; } = tagHelpers;
 
-    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+    public ValueTask<TagHelperCollection?> GetTagHelpersAsync(
         Project workspaceProject,
         ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)

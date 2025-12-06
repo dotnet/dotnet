@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,7 +21,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetAttributeInfo_NonAttribute_ReturnsFalse()
     {
         // Arrange
-        var node = GetNodeAt("@DateTime.Now", 4);
+        var node = GetNode($"@Dat$$eTime.Now");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out _, out _, out _, out _, out _);
@@ -33,7 +34,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetAttributeInfo_EmptyAttribute_ReturnsFalse()
     {
         // Arrange
-        var node = GetNodeAt("<p    >", 3);
+        var node = GetNode("<p $$   >");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out _, out _, out _, out _, out _);
@@ -46,7 +47,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetAttributeInfo_PartialAttribute_ReturnsTrue()
     {
         // Arrange
-        var node = GetNodeAt("<p bin>", 4);
+        var node = GetNode("<p b$$in>");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out _);
@@ -63,7 +64,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetAttributeInfo_PartialTransitionedAttribute_ReturnsTrue()
     {
         // Arrange
-        var node = GetNodeAt("<p @>", 4);
+        var node = GetNode("<p @$$>");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out _);
@@ -80,7 +81,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetAttributeInfo_FullAttribute_ReturnsTrue()
     {
         // Arrange
-        var node = GetNodeAt("<p foo=\"anything\">", 4);
+        var node = GetNode("<p f$$oo=\"anything\">");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out _);
@@ -96,7 +97,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     [Fact]
     public void TryGetAttributeInfo_PartialDirectiveAttribute_ReturnsTrue()
     {
-        var node = GetNodeAt("<input type=\"text\" @bind />", 22);
+        var node = GetNode($"<input type=\"text\" @bi$$nd />");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out _);
@@ -112,10 +113,10 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     [Fact]
     public void TryGetAttributeInfo_DirectiveAttribute_ReturnsTrue()
     {
-        var node = GetNodeAt(@"<input type=""text"" @bind=""@CurrentDate"" />
+        var node = GetNode(@"<input type=""text"" @bi$$nd=""@CurrentDate"" />
 @code {
     public DateTime CurrentDate { get; set; } = DateTime.Now;
-}", 22);
+}");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out _);
@@ -131,10 +132,10 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     [Fact]
     public void TryGetAttributeInfo_DirectiveAttributeWithParameter_ReturnsTrue()
     {
-        var node = GetNodeAt(@"<input type=""text"" @bind:format=""MM/dd/yyyy"" @bind=""@CurrentDate"" />
+        var node = GetNode(@"<input type=""text"" @bi$$nd:format=""MM/dd/yyyy"" @bind=""@CurrentDate"" />
 @code {
     public DateTime CurrentDate { get; set; } = DateTime.Now;
-}", 22);
+}");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetAttributeInfo(node, out var prefixLocation, out var name, out var nameLocation, out var parameterName, out var parameterNameLocation);
@@ -152,7 +153,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetElementInfo_MarkupTagParent()
     {
         // Arrange
-        var node = GetNodeAt("<p class='hello @DateTime.Now'>", 2);
+        var node = GetNode("<p$$ class='hello @DateTime.Now'>");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out var tagName, out var attributes);
@@ -168,10 +169,10 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetElementInfo_TagHelperParent()
     {
         // Arrange
-        var node = GetNodeAt(@"<input type=""text"" @bind=""@CurrentDate"" />
+        var node = GetNode(@"<i$$nput type=""text"" @bind=""@CurrentDate"" />
 @code {
     public DateTime CurrentDate { get; set; } = DateTime.Now;
-}", 2);
+}");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out var tagName, out var attributes);
@@ -186,7 +187,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetElementInfo_NoAttributes_ReturnsEmptyAttributeCollection()
     {
         // Arrange
-        var node = GetNodeAt("<p>", 2);
+        var node = GetNode("<p$$>");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
@@ -200,7 +201,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetElementInfo_SingleAttribute_ReturnsAttributeName()
     {
         // Arrange
-        var node = GetNodeAt("<p class='hello @DateTime.Now'>", 2);
+        var node = GetNode("<p$$ class='hello @DateTime.Now'>");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
@@ -215,10 +216,10 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     public void TryGetElementInfo_MixedAttributes_ReturnsStringifiedAttributesResult()
     {
         // Arrange
-        var node = GetNodeAt(@"<input type=""text"" @bind:format=""MM/dd/yyyy"" something @bind=""@CurrentDate"" />
+        var node = GetNode(@"<i$$nput type=""text"" @bind:format=""MM/dd/yyyy"" something @bind=""@CurrentDate"" />
 @code {
     public DateTime CurrentDate { get; set; } = DateTime.Now;
-}", 2);
+}");
 
         // Act
         var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
@@ -228,9 +229,10 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
         Assert.Equal<string>(["type", "@bind:format", "something", "@bind"], attributes);
     }
 
-    private RazorSyntaxNode GetNodeAt(string content, int index)
+    private RazorSyntaxNode GetNode(TestCode testCode)
     {
-        var result = CompileToCSharp(content, throwOnFailure: false);
+        var index = testCode.Position;
+        var result = CompileToCSharp(testCode.Text, throwOnFailure: false);
         var root = result.CodeDocument.GetRequiredSyntaxRoot();
         var owner = root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);

@@ -10,17 +10,17 @@ Generated Location: (620:24,0 [6] )
 
 Source Location: (168:10,1 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestComponent|
-Generated Location: (1082:38,0 [13] )
+Generated Location: (997:35,49 [13] )
 |TestComponent|
 
 Source Location: (202:10,35 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |string|
-Generated Location: (1246:46,0 [6] )
+Generated Location: (1097:38,0 [6] )
 |string|
 
 Source Location: (190:10,23 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |int|
-Generated Location: (1404:54,0 [3] )
+Generated Location: (1255:46,0 [3] )
 |int|
 
 Source Location: (44:2,7 [118] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -31,7 +31,7 @@ Source Location: (44:2,7 [118] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public TItem2 MyItem2 { get; set; }
 |
-Generated Location: (1649:65,0 [118] )
+Generated Location: (1500:57,0 [118] )
 |
     [Parameter]
     public TItem MyItem { get; set; }

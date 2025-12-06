@@ -21,7 +21,9 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             {
                 switch (filePath[i])
                 {
-                    case ':' or '\\' or '/':
+                    case '\\' or '/' when i > 0:
+                        builder.Append('/');
+                        break;
                     case char ch when !char.IsLetterOrDigit(ch):
                         builder.Append('_');
                         break;
@@ -78,11 +80,11 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             var tagHelperFeature = new StaticCompilationTagHelperFeature(compilation);
 
-            // the tagHelperFeature will have its Engine property set as part of adding it to the engine, which is used later when doing the actual discovery
+            // the tagHelperFeature will have its Engine property set as part of adding it to the engine,
+            // which is used later when doing the actual discovery
             var discoveryProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new VirtualRazorProjectFileSystem(), b =>
             {
                 b.Features.Add(tagHelperFeature);
-                b.Features.Add(new DefaultTagHelperDescriptorProvider());
 
                 CompilerFeatures.Register(b);
                 RazorExtensions.Register(b);

@@ -37,7 +37,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
 
     public RazorProjectEngine ProjectEngine => _state.ProjectEngine;
 
-    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    public ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken)
         => new(_state.TagHelpers);
 
     public bool ContainsDocument(string filePath)
@@ -143,7 +143,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     string ILegacyProjectSnapshot.FilePath => FilePath;
     string? ILegacyProjectSnapshot.RootNamespace => RootNamespace;
     LanguageVersion ILegacyProjectSnapshot.CSharpLanguageVersion => CSharpLanguageVersion;
-    ImmutableArray<TagHelperDescriptor> ILegacyProjectSnapshot.TagHelpers => ProjectWorkspaceState.TagHelpers;
+    TagHelperCollection ILegacyProjectSnapshot.TagHelpers => ProjectWorkspaceState.TagHelpers;
 
     RazorProjectEngine ILegacyProjectSnapshot.GetProjectEngine()
         => _state.ProjectEngine;

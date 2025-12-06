@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.Language.TagHelpers.Producers;
 using Microsoft.CodeAnalysis.CSharp;
 using RazorExtensionsV1_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.RazorExtensions;
 using RazorExtensionsV2_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.RazorExtensions;
@@ -47,6 +48,18 @@ public static class RazorProjectEngineBuilderExtensions
                 RazorExtensionsV3.Register(builder);
                 break;
         }
+    }
+
+    public static RazorProjectEngineBuilder RegisterDefaultTagHelperProducer(this RazorProjectEngineBuilder builder)
+    {
+        ArgHelper.ThrowIfNull(builder);
+
+        if (!builder.Features.OfType<DefaultTagHelperProducer.Factory>().Any())
+        {
+            builder.Features.Add(new DefaultTagHelperProducer.Factory());
+        }
+
+        return builder;
     }
 
     public static RazorProjectEngineBuilder ConfigureParserOptions(this RazorProjectEngineBuilder builder, Action<RazorParserOptions.Builder> configure)
