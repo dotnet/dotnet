@@ -22,6 +22,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     
     [Theory]
     [MemberData(nameof(GetLanguages))]
+    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyConsoleTemplateComplex(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -231,6 +232,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Fact]
     [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
     [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
+    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyWebTemplatePublishBundledAot()
     {
         var newTest = new SdkTemplateTest(
